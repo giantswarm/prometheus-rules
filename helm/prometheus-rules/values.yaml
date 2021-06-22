@@ -1,0 +1,9 @@
+name: prometheus-rules
+namespace: monitoring
+serviceType: managed
+
+project:
+  branch: "[[ .Branch ]]"
+  commit: "[[ .SHA ]]"
+
+

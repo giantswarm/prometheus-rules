@@ -7,11 +7,10 @@ workflows:
     jobs:
       - architect/push-to-app-catalog:
           context: "architect"
-          # executor: "app-build-suite" # uncomment this if you want automatic metadata generation
-          name: "package and push {APP-NAME} chart"
-          app_catalog: "giantswarm-playground-catalog"
-          app_catalog_test: "giantswarm-playground-test-catalog"
-          chart: "{APP-NAME}"
+          name: "package and push prometheus-rules chart"
+          app_catalog: "control-plane-catalog"
+          app_catalog_test: "control-plane-test-catalog"
+          chart: "prometheus-rules"
           # Trigger job on git tag.
           filters:
             tags:

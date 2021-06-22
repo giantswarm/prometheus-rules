@@ -1,0 +1,36 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: draughtsman.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: draughtsman
+    rules:
+    - alert: DraughtsmanRateLimitAlmostReached
+      annotations:
+        description: '{{`Draughtsman rate limit is almost reached.`}}'
+        opsrecipe: draughtsman-rate-limit-almost-reached/
+      expr: (draughtsman_github_eventer_rate_limit_remaining / draughtsman_github_eventer_rate_limit_limit) * 100 < 10
+      for: 5m
+      labels:
+        area: empowerment
+        severity: notify
+        team: biscuit
+        topic: releng
+    - alert: AppCollectionDeploymentFailed
+      annotations:
+        description: '{{`Deployment {{ $labels.name }} is failed.`}}'
+        opsrecipe: app-collection-deployment-failed/
+      expr: draughtsman_helm_installer_helm_release_failed{name=~".*-app-collection", status!="deployed"} == 1
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: releng

@@ -1,0 +1,91 @@
+{{- if eq .Values.Installation.V1.Provider.Kind "azure" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "workload_cluster"
+  name: azure.workload-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: azure
+    rules:
+    - alert: WorkloadClusterAutoscalerIsRestartingFrequentlyAzure
+      annotations:
+        description: '{{`Cluster-Autoscaler {{ $labels.cluster_id }}/{{ $labels.pod_name }} /{{ $labels.pod }} is restarting often.`}}'
+        opsrecipe: cluster-autoscaler-is-restarting-often/
+      expr: increase(kube_pod_container_status_restarts_total{container="cluster-autoscaler", provider="azure"}[3h]) > 3
+      for: 5m
+      labels:
+        area: kaas
+        severity: notify
+        team: celestial
+        topic: kubernetes
+    - alert: WorkloadClusterCriticalPodNotRunningAzure
+      annotations:
+        description: '{{`Critical pod {{ $labels.namespace }}/{{ $labels.pod }} is not running.`}}'
+        opsrecipe: critical-pod-is-not-running/
+      expr: kube_pod_container_status_running{container=~"(k8s-api-server|k8s-controller-manager|k8s-scheduler)"} != 1
+      for: 5m
+      labels:
+        area: kaas
+        severity: page
+        team: celestial
+        topic: kubernetes
+    - alert: WorkloadClusterCriticalPodMetricMissingAzure
+      annotations:
+        description: '{{`Critical pod {{ $labels.container }} does not have metrics.`}}'
+        opsrecipe: critical-pod-is-not-running/
+      expr: absent(kube_pod_container_status_running{container="k8s-api-server"}) == 1 or absent(kube_pod_container_status_running{container="k8s-controller-manager"}) == 1 or absent(kube_pod_container_status_running{container="k8s-scheduler"}) == 1
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_kube_state_metrics_down: "true"
+        severity: page
+        team: celestial
+        topic: kubernetes
+    - alert: WorkloadClusterPodLimitAlmostReachedAzure
+      annotations:
+        description: '{{`Cluster {{ $labels.cluster_id }} is almost exceeding its pod limit.`}}'
+      expr: (sum(kube_pod_info) by (cluster_id) / sum(kube_node_status_capacity_pods) by (cluster_id)) > 0.8
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: notify
+        team: celestial
+        topic: kubernetes
+    # WorkloadClusterMasterNodeMissingCelestial in this file is Azure specific and thus
+    # assigned to Team Celestial. The alert is also defined for all the other
+    # providers with other team assignments.
+    #
+    #     kubernetes_build_info{app="kubelet"} gives us a vector of all the
+    #     kubelets.
+    #
+    #     kubernetes_build_info{app="kubelet", role="master"} gives us a vector
+    #     of all master node kubelets.
+    #
+    #     `unless` results in a vector consisting of the masters for which
+    #     there are no master kubelets, which we can then alert on. See
+    #     https://prometheus.io/docs/prometheus/latest/querying/operators.
+    #
+    - alert: WorkloadClusterMasterNodeMissingCelestial
+      annotations:
+        description: '{{`Master node is missing.`}}'
+        opsrecipe: master-node-missing/
+      expr: kubernetes_build_info{app="kubelet"} unless on(cluster_id) kubernetes_build_info{app="kubelet", role="master"}
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        master_node_down: "true"
+        severity: page
+        team: celestial
+        topic: kubernetes
+{{- end }}

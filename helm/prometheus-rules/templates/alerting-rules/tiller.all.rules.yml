@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: tiller.all.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: tiller
+    rules:
+    - alert: TillerRunningPods
+      annotations:
+        description: '{{`Tiller deployment has too many running pods.`}}'
+      expr: chart_operator_tiller_running_pods > 1
+      for: 10m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: notify
+        team: batman
+        topic: releng

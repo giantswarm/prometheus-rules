@@ -1,0 +1,55 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: etcd.management-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: etcd
+    rules:
+    - alert: ManagementClusterEtcdCommitDurationTooHigh
+      annotations:
+        description: '{{`Etcd ({{ $labels.instance }}) has a too high commit duration.`}}'
+        opsrecipe: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/etcd-high-commit-duration/
+      expr: histogram_quantile(0.95, rate(etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="management_cluster"}[5m])) > 1.0
+      for: 15m
+      labels:
+        area: kaas
+        severity: notify
+        team: biscuit
+        topic: etcd
+    - alert: ManagementClusterEtcdDBSizeTooLarge
+      annotations:
+        description: '{{`Etcd ({{ $labels.instance }}) has a too large database.`}}'
+        opsrecipe: etcd-db-size-too-large/
+      expr: etcd_debugging_mvcc_db_total_size_in_bytes{cluster_type="management_cluster"} > 500 * 1024 * 1024
+      for: 10m
+      labels:
+        area: kaas
+        severity: page
+        team: biscuit
+        topic: etcd
+    - alert: ManagementClusterEtcdNumberOfLeaderChangesTooHigh
+      annotations:
+        description: '{{`Etcd has too many leader changes.`}}'
+      expr: increase(etcd_server_leader_changes_seen_total{cluster_type="management_cluster"}[1h]) > 8
+      labels:
+        area: kaas
+        severity: notify
+        team: biscuit
+        topic: etcd
+    - alert: ManagementClusterEtcdHasNoLeader
+      annotations:
+        description: '{{`Etcd has no leader.`}}'
+        opsrecipe: etcd-has-no-leader/
+      expr: etcd_server_has_leader{role="master", cluster_type="management_cluster"} == 0
+      for: 5m
+      labels:
+        area: kaas
+        severity: page
+        team: biscuit
+        topic: etcd

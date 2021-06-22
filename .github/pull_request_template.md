@@ -12,27 +12,6 @@ This PR:
 
 - adds/changes/removes etc
 
-### Testing
-
-Description on how {APP-NAME} can be tested.
-
-- [ ] fresh install works
-  - [ ] AWS
-  - [ ] Azure
-  - [ ] KVM
-- [ ] upgrade from previous version works
-  - [ ] AWS
-  - [ ] Azure
-  - [ ] KVM
-
-#### Other testing
-
-Description of features to additionally test for {APP-NAME} installations.
-
-- [ ] check reconciliation of existing resources after upgrading
-- [ ] X still works after upgrade
-- [ ] Y is installed correctly
-
 <!--
 Changelog must always be updated.
 -->
@@ -40,4 +19,3 @@ Changelog must always be updated.
 ### Checklist
 
 - [ ] Update changelog in CHANGELOG.md.
-- [ ] Make sure `values.yaml` and `values.schema.json` are valid.

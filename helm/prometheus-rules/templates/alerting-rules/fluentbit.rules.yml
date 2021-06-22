@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: fluentbit.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: fluentbit
+    rules:
+    - alert: FluentbitTooManyErrors
+      annotations:
+        description: '{{`Fluentbit ({{ $labels.instance }}) is erroring.`}}'
+      expr: rate(fluentbit_output_retries_failed_total[10m]) > 0
+      for: 10m
+      labels:
+        area: empowerment
+        severity: notify
+        team: atlas
+        topic: observability

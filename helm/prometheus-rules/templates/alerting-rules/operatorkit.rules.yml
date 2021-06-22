@@ -1,0 +1,189 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: operatorkit.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: operatorkit
+    rules:
+    - alert: OperatorkitErrorRateTooHighBatman
+      annotations:
+        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
+        opsrecipe: check-operator-error-rate-high/
+      expr: operatorkit_controller_error_total{app=~"app-operator.*|chart-operator.*"} > 5
+      for: 1m
+      labels:
+        area: kaas
+        severity: notify
+        team: batman
+        topic: qa
+    - alert: OperatorNotReconcilingBatman
+      annotations:
+        description: |-
+          {{`{{$labels.app_name}} (version {{$labels.app_version}}) not reconciling controller
+          {{$labels.controller}}.
+          `}}
+      expr: (time() - operatorkit_controller_last_reconciled{app=~"app-operator.*|chart-operator.*"}) / 60 > 30
+      for: 10m
+      labels:
+        area: managedservices
+        severity: notify
+        team: batman
+        topic: releng
+    - alert: OperatorkitErrorRateTooHighCelestial
+      annotations:
+        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
+        opsrecipe: check-operator-error-rate-high/
+      expr: operatorkit_controller_error_total{app=~"azure-operator.*"} > 5
+      for: 1m
+      labels:
+        area: kaas
+        severity: page
+        team: celestial
+        cancel_if_outside_working_hours: "true"
+        topic: qa
+    # Celestial
+    # It might happen that CRs get orphaned or deletion gets kind of stuck during
+    # the cleanup process. Then we want to get notified and figure out what went
+    # wrong to fix the root cause eventually.
+    - alert: OperatorkitCRNotDeletedCelestial
+      annotations:
+        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has not deleted object {{ $labels.namespace }}/{{ $labels.name }} of type {{ $labels.kind }} for too long.`}}'
+        opsrecipe: check-not-deleted-object/
+      expr: (time() - operatorkit_controller_deletion_timestamp{app=~"azure-operator.*|cluster-operator.*", provider="azure"}) > 18000
+      for: 5m
+      labels:
+        area: kaas
+        severity: notify
+        team: celestial
+        cancel_if_outside_working_hours: "true"
+        topic: qa
+    # In case something stops an operator from reconciling CRs we want to
+    # be paged to be able to fix the issue immediately.
+    - alert: OperatorNotReconcilingCelestial
+      annotations:
+        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
+        opsrecipe: operator-not-reconciling/
+      expr: (sum by (instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"azure-operator.*"}[10m])) == 0 and on (instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
+      for: 20m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: celestial
+        topic: qa
+    # In case something stops an operator from reconciling CRs we want to
+    # be paged to be able to fix the issue immediately.
+    - alert: OperatorkitErrorRateTooHighFirecracker
+      annotations:
+        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
+        opsrecipe: check-operator-error-rate-high/
+      expr: operatorkit_controller_error_total{app=~"aws-operator.+|cluster-operator.+"} > 5
+      for: 1m
+      labels:
+        area: kaas
+        severity: notify
+        team: firecracker
+        topic: qa
+    # Firecracker
+    # It might happen that CRs get orphaned or deletion gets kind of stuck during
+    # the cleanup process. Then we want to get notified and figure out what went
+    # wrong to fix the root cause eventually.
+    - alert: OperatorkitCRNotDeletedFirecracker
+      annotations:
+        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has not deleted object {{ $labels.namespace }}/{{ $labels.name }} of type {{ $labels.kind }} for too long.`}}'
+        opsrecipe: check-not-deleted-object/
+      expr: (time() - operatorkit_controller_deletion_timestamp{app=~"aws-operator.+|cluster-operator.+", provider="aws"}) > 18000
+      for: 5m
+      labels:
+        area: kaas
+        severity: notify
+        team: firecracker
+        topic: qa
+    # In case something stops an operator from reconciling CRs we want to
+    # be paged to be able to fix the issue immediately.
+    - alert: OperatorNotReconcilingFirecracker
+      annotations:
+        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
+        opsrecipe: operator-not-reconciling/
+      expr: (sum by (instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"aws-operator.+|cluster-operator.+"}[10m])) == 0 and on (instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
+      for: 20m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: firecracker
+        topic: qa
+
+    # In case something stops an operator from reconciling CRs we want to
+    # be paged to be able to fix the issue immediately.
+    - alert: OperatorkitErrorRateTooHighRocket
+      annotations:
+        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
+        opsrecipe: check-operator-error-rate-high/
+      expr: operatorkit_controller_error_total{app=~"kvm-operator"} > 5
+      for: 1m
+      labels:
+        area: kaas
+        severity: notify
+        team: rocket
+        topic: qa
+    # It might happen that CRs get orphaned or deletion gets kind of stuck during
+    # the cleanup process. Then we want to get notified and figure out what went
+    # wrong to fix the root cause eventually.
+    - alert: OperatorkitCRNotDeletedRocket
+      annotations:
+        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has not deleted object {{ $labels.namespace }}/{{ $labels.name }} of type {{ $labels.kind }} for too long.`}}'
+        opsrecipe: check-not-deleted-object/
+      expr: (time() - operatorkit_controller_deletion_timestamp{app=~"kvm-operator|cluster-operator", provider=~"kvm|vmware"}) > 18000
+      for: 5m
+      labels:
+        area: kaas
+        severity: notify
+        team: rocket
+        topic: qa
+    # In case something stops an operator from reconciling CRs we want to
+    # be paged to be able to fix the issue immediately.
+    - alert: OperatorNotReconcilingRocket
+      annotations:
+        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
+        opsrecipe: operator-not-reconciling/
+      expr: (sum by (instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"kvm-operator|flannel-operator"}[10m])) == 0 and on (instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
+      for: 20m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: rocket
+        topic: qa
+    - alert: OperatorkitErrorRateTooHighLudacris
+      #  Ludacris is responsible ignition-operator,cert-operator,node-operator.
+      annotations:
+        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
+        opsrecipe: check-operator-error-rate-high/
+      expr: operatorkit_controller_error_total{app=~"ignition-operator|cert-operator|node-operator"} > 5
+      for: 1m
+      labels:
+        area: kaas
+        severity: notify
+        team: ludacris
+        topic: qa
+    # In case something stops an operator from reconciling CRs we want to
+    # be paged to be able to fix the issue immediately.
+    - alert: OperatorNotReconcilingLudacris
+      annotations:
+        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
+        opsrecipe: operator-not-reconciling/
+      expr: (sum by (instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"cert-operator|node-operator"}[10m])) == 0 and on (instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
+      for: 20m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: ludacris
+        topic: qa

@@ -1,0 +1,36 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: prometheus.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: prometheus
+    rules:
+    - alert: PrometheusCantCommunicateWithKubernetesAPI
+      annotations:
+        description: '{{`Prometheus can''t communicate with Kubernetes API.`}}'
+        opsrecipe: prometheus-cant-communicate/
+      expr: rate(prometheus_sd_kubernetes_http_request_total{app!="promxy-app-unique", status_code="<error>"}[15m]) > 0.25
+      for: 30m
+      labels:
+        area: empowerment
+        cancel_if_any_apiserver_down: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    ## Pages Atlas when prometheus fails to send samples to cortex
+    - alert: PrometheusFailsToCommunicateWithRemoteStorageAPI
+      annotations:
+        description: '{{`Prometheus can''t communicate with Remote Storage API at {{ $labels.url }}.`}}'
+      expr: rate(prometheus_remote_storage_samples_failed_total[1h]) > 0.10 or rate(prometheus_remote_storage_samples_total[1h]) == 0 or rate(prometheus_remote_storage_metadata_retried_total[5m]) > 0
+      for: 1h
+      labels:
+        area: empowerment
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability

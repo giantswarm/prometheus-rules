@@ -1,0 +1,8 @@
+apiVersion: v1
+appVersion: 0.0.1
+description: A Helm chart for Giant Swarm prometheus alerting and recording rules
+engine: gotpl
+home: https://github.com/giantswarm/prometheus-rules
+icon: https://s.giantswarm.io/app-icons/1/png/default-app-light.png
+name: prometheus-rules
+version: [[ .Version ]]

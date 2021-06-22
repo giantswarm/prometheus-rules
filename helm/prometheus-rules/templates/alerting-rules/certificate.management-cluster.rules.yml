@@ -1,0 +1,49 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: certificate.management-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: certificate
+    rules:
+    - alert: ManagementClusterKVMCertificateWillExpireInLessThanTwoWeeks
+      annotations:
+        description: '{{`Certificate {{ $labels.path }} on {{ $labels.instance }} will expire in less than two weeks.`}}'
+        opsrecipe: renew-certificates/
+      expr: (cert_exporter_not_after{cluster_type="management_cluster", provider="kvm", path!="/etc/kubernetes/ssl/service-account-crt.pem"} - time()) < 2 * 7 * 24 * 60 * 60
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: rocket
+        topic: security
+    - alert: ManagementClusterAWSCertificateWillExpireInLessThanTwoWeeks
+      annotations:
+        description: '{{`Certificate {{ $labels.path }} on {{ $labels.instance }} will expire in less than two weeks.`}}'
+        opsrecipe: renew-certificates/
+      expr: (cert_exporter_not_after{cluster_type="management_cluster", provider="aws", path!="/etc/kubernetes/ssl/service-account-crt.pem"} - time()) < 2 * 7 * 24 * 60 * 60
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: security
+    - alert: ManagementClusterAzureCertificateWillExpireInLessThanTwoWeeks
+      annotations:
+        description: '{{`Certificate {{ $labels.path }} on {{ $labels.instance }} will expire in less than two weeks.`}}'
+        opsrecipe: renew-certificates/
+      expr: (cert_exporter_not_after{cluster_type="management_cluster", provider="azure", path!="/etc/kubernetes/ssl/service-account-crt.pem"} - time()) < 2 * 7 * 24 * 60 * 60
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: security

@@ -1,0 +1,36 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: job.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: job
+    rules:
+    - alert: ManagementClusterJobFailed
+      annotations:
+        description: '{{`Job {{ $labels.namespace }}/{{ $labels.job_name }} is failed.`}}'
+      expr: kube_job_failed{cluster_type="management_cluster", condition="true"} == 1
+      for: 15m
+      labels:
+        area: kaas
+        severity: notify
+        team: biscuit
+        topic: managementcluster
+    {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+    - alert: JobHasNotBeenScheduledForTooLong
+      annotations:
+        description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 2 hours.`}}'
+        opsrecipe: job-has-not-been-scheduled-for-too-long/
+      expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="route53-manager"} ) > 7200
+      for: 15m
+      labels:
+        area: kaas
+        severity: page
+        team: firecracker
+        topic: managementcluster
+    {{- end }}

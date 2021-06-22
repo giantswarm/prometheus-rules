@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "workload_cluster"
+  name: tiller.workload-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: tiller
+    rules:
+    - alert: TillerUnreachable
+      annotations:
+        description: '{{`Tiller is not reachable from chart-operator.`}}'
+      expr: chart_operator_tiller_reachable{cluster_type="workload_cluster"} == 0
+      for: 10m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: notify
+        team: batman
+        topic: releng

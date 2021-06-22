@@ -1,0 +1,128 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: workload_cluster
+  name: node.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: node
+    rules:
+    - alert: WorkloadClusterNodeIsUnschedulable
+      annotations:
+        description: '{{`Node {{ $labels.node }} is unschedulable.`}}'
+        opsrecipe: node-is-unschedulable/
+      expr: kube_node_spec_unschedulable != 0
+      for: 45m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: notify
+        {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+        team: firecracker
+        {{- else if eq .Values.Installation.V1.Provider.Kind "azure" }}
+        team: celestial
+        {{- else }}
+        team: rocket
+        {{- end }}
+        topic: kubernetes
+    - alert: AWSWorkloadClusterNodeTooManyAutoTermination
+      annotations:
+        description: '{{`Cluster {{ $labels.cluster_id }} has too many nodes terminated by node auto termination feature in a short time.`}}'
+        opsrecipe: node-too-many-auto-termination-aws/
+      expr: increase(aws_operator_unhealthy_node_termination_count[60m]) > 10
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: page
+        team: firecracker
+        topic: kubernetes
+    - alert: NodeStateFlappingUnderLoad
+      # Check if the kubelet status is flapping, unless the node is under load.
+      # It helps to read this rule from the bottom upwards.
+      #
+      # If the kubelet status is flapping between Ready and something else,
+      # matching against the kubelet labels, as kube_node_status_condition labels
+      # by the node name, and node_exporter labels by the ip,
+      # unless,
+      # the load over 15 minutes divided by number of CPUs is higher than 2 (the node is overloaded),
+      # relabelling 'ip' to 'label_ip' to match against 'kube_node_labels'.
+      annotations:
+        description: '{{`Node {{ $labels.label_ip }} status is flapping under load.`}}'
+      expr: label_replace( node_load15 / count(count(node_cpu) without (mode)) without (cpu) >= 2, "label_ip", "$1", "ip", "(.*)" ) unless on (label_ip) kube_node_labels and on (ip) changes(kube_node_status_condition{condition="Ready", status="true"}[30m]) >= 6
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: notify
+        team: biscuit
+        topic: kubernetes
+    - alert: NodeHasConstantOOMKills
+      annotations:
+        description: '{{`Node {{ $labels.ip }} has constant OOM kills.`}}'
+      expr: kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset 1h >= 1 AND ignoring(reason) kube_pod_container_status_last_terminated_reason{reason='OOMKilled'} > 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: notify
+        team: biscuit
+        topic: kubernetes
+    - alert: NodeConnTrackAlmostExhausted
+      annotations:
+        description: '{{`Node {{ $labels.node }} reports a connection usage above 90%.`}}'
+        opsrecipe: node-conntrack-limits/
+      expr: node_nf_conntrack_entries / node_nf_conntrack_entries_limit >= 0.90
+      for: 5m
+      labels:
+        area: kaas
+        severity: page
+        team: biscuit
+        topic: kubernetes
+    - alert: MachineEntropyTooLow
+      annotations:
+        description: '{{`Machine {{ $labels.instance }} entropy is too low.`}}'
+        opsrecipe: low-entropy/
+      expr: node_entropy_available_bits < 250
+      for: 10m
+      labels:
+        area: kaas
+        severity: notify
+        team: biscuit
+        topic: infrastructure
+    - alert: MachineAllocatedFileDescriptorsTooHigh
+      annotations:
+        description: '{{`Machine {{ $labels.instance }} has too many allocated file descriptors.`}}'
+        opsrecipe: high-number-file-descriptors/
+      expr: node_filefd_allocated / node_filefd_maximum * 100 > 80
+      for: 15m
+      labels:
+        area: kaas
+        severity: notify
+        team: biscuit
+        topic: infrastructure
+    {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+    - alert: WorkloadClusterNodeUnexpectedTaintNodeWithImpairedVolumes
+      annotations:
+        description: '{{`Node {{ $labels.node }} has unexpected taint NodeWithImpairedVolumes`}}'
+        opsrecipe: aws-node-taint-NodeWithImpairedVolumes/
+      expr: kube_node_spec_taint{key="NodeWithImpairedVolumes"}
+      for: 30m
+      labels:
+        area: kaas
+        severity: notify
+        team: firecracker
+        topic: kubernetes
+    {{- end }}

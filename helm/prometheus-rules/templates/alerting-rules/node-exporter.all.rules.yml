@@ -1,0 +1,32 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: node-exporter.workload-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: node-exporter
+    rules:
+    - alert: NodeExporterCollectorFailed
+      annotations:
+        description: '{{`NodeExporter Collector {{ $labels.collector }} on {{ $labels.instance }} is failed.`}}'
+      expr: node_scrape_collector_success{collector!~"bonding|hwmon|powersupplyclass|mdadm|nfs|nfsd"} == 0
+      for: 5m
+      labels:
+        area: kaas
+        severity: notify
+        team: ludacris
+        topic: observability
+    - alert: NodeExporterDeviceError
+      annotations:
+        description: '{{`NodeExporter Mountpoint {{ $labels.mountpoint }} on device {{ $labels.device }} on {{ $labels.instance }} is erroring.`}}'
+      expr: node_filesystem_device_error == 1
+      for: 10m
+      labels:
+        area: kaas
+        severity: notify
+        team: ludacris
+        topic: observability

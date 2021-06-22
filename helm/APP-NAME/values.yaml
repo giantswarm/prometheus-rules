@@ -1,0 +1,15 @@
+# TEMPLATE-APP: This is set as a reasonable default, feel free to change.
+
+name: {APP-NAME}
+namespace: kube-system
+serviceType: managed
+
+project:
+  branch: "[[ .Branch ]]"
+  commit: "[[ .SHA ]]"
+
+image:
+  registry: quay.io
+  name: giantswarm/{APP-NAME}
+  tag: v0.0.1
+  pullPolicy: IfNotPresent

@@ -1,0 +1,41 @@
+name: 'check if values schema file has been updated'
+on: pull_request
+
+jobs:
+  check:
+    name: 'check files in PR'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'checkout'
+        uses: actions/checkout@v2
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+      - name: 'show changed files in PR'
+        run: echo "${{ steps.files.outputs.all }}"
+      - name: 'check if values.schema.json was updated'
+        run: |
+          VALUES_FILE_CHANGED="false"
+          SCHEMA_FILE_CHANGED="false"
+
+          if git ls-tree -r ${{ github.ref }} | grep -q "values.schema.json" ; then
+
+            if grep -q "values.yaml" <<< "${{ steps.files.outputs.all }}" ; then
+              VALUES_FILE_CHANGED="true"
+            fi
+
+            if grep -q "values.schema.json" <<< "${{ steps.files.outputs.all }}" ; then
+              SCHEMA_FILE_CHANGED="true"
+            fi
+
+            if [ $VALUES_FILE_CHANGED != $SCHEMA_FILE_CHANGED ]; then
+              echo "FAILED: values.yaml was updated but values.schema.json hasn't been regenerated"
+              echo "Please refer to this doc: https://intranet.giantswarm.io/docs/organizational-structure/teams/halo/app-updates/helm-values-schema/"
+              exit 1
+            fi
+
+            echo "PASSED: values.yaml and values.schema.json both appear to have been updated"
+            exit 0
+          fi
+
+          echo "INFO: values.schema.json not present in this repo - nothing to do"
+

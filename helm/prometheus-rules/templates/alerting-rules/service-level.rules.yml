@@ -32,26 +32,3 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
-    - alert: ServiceLevelBurnRateTicket
-      annotations:
-        description: '{{`There is a constant low burn rate for {{ $labels.service }} service. Please create a PM.`}}'
-        opsrecipe: service-level-burn-rate-too-high/
-      expr: |
-        slo_errors_per_request:ratio_rate1h{service!~"efk-.*|.*external-dns.*|kong-.*|.*nginx-.*"}
-        and on (service)
-        (
-        slo_errors_per_request:ratio_rate24h > on (service) group_left (cluster_type, cluster_id, class) 3 * slo_target
-        and
-        slo_errors_per_request:ratio_rate2h > on (service) group_left (cluster_type, cluster_id, class) 3 * slo_target
-        or
-        slo_errors_per_request:ratio_rate3d > on (service) group_left (cluster_type, cluster_id, class) slo_target
-        and
-        slo_errors_per_request:ratio_rate6h > on (service) group_left (cluster_type, cluster_id, class) slo_target
-        )
-      for: 5m
-      labels:
-        cancel_if_outside_working_hours: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: page

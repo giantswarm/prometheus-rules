@@ -1,17 +1,73 @@
 version: 2.1
 orbs:
-  architect: giantswarm/architect@2.5.0
+  architect: giantswarm/architect@2.7.0
 
 workflows:
   package-and-push-chart-on-tag:
     jobs:
       - architect/push-to-app-catalog:
           context: "architect"
-          name: "package and push prometheus-rules chart"
+          name: app-catalog
           app_catalog: "control-plane-catalog"
           app_catalog_test: "control-plane-test-catalog"
           chart: "prometheus-rules"
           # Trigger job on git tag.
           filters:
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-app-collection:
+          context: "architect"
+          name: aws-app-collection
+          app_name: "prometheus-rules"
+          app_namespace: "monitoring"
+          app_collection_repo: "aws-app-collection"
+          requires:
+            - app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-app-collection:
+          context: "architect"
+          name: azure-app-collection
+          app_name: "prometheus-rules"
+          app_namespace: "monitoring"
+          app_collection_repo: "azure-app-collection"
+          requires:
+            - app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-app-collection:
+          context: "architect"
+          name: kvm-app-collection
+          app_name: "prometheus-rules"
+          app_namespace: "monitoring"
+          app_collection_repo: "kvm-app-collection"
+          requires:
+            - app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-app-collection:
+          context: "architect"
+          name: vmware-app-collection
+          app_name: "prometheus-rules"
+          app_namespace: "monitoring"
+          app_collection_repo: "vmware-app-collection"
+          requires:
+            - app-catalog
+          filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /^v.*/

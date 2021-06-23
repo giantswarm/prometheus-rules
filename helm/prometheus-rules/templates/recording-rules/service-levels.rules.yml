@@ -3,7 +3,7 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: service-level
+  name: service-level.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:

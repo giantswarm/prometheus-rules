@@ -3,7 +3,7 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: kube-mixins-rules
+  name: kube-mixins.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:

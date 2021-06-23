@@ -7,7 +7,7 @@ workflows:
     jobs:
       - architect/push-to-app-catalog:
           context: "architect"
-          name: "package and push prometheus-rules chart"
+          name: app-catalog
           app_catalog: "control-plane-catalog"
           app_catalog_test: "control-plane-test-catalog"
           chart: "prometheus-rules"
@@ -23,8 +23,6 @@ workflows:
           app_namespace: "monitoring"
           app_collection_repo: "aws-app-collection"
           requires:
-            - push-to-quay
-            - push-to-aliyun
             - app-catalog
           filters:
             branches:
@@ -39,8 +37,6 @@ workflows:
           app_namespace: "monitoring"
           app_collection_repo: "azure-app-collection"
           requires:
-            - push-to-quay
-            - push-to-aliyun
             - app-catalog
           filters:
             branches:
@@ -55,8 +51,6 @@ workflows:
           app_namespace: "monitoring"
           app_collection_repo: "kvm-app-collection"
           requires:
-            - push-to-quay
-            - push-to-aliyun
             - app-catalog
           filters:
             branches:
@@ -71,8 +65,6 @@ workflows:
           app_namespace: "monitoring"
           app_collection_repo: "vmware-app-collection"
           requires:
-            - push-to-quay
-            - push-to-aliyun
             - app-catalog
           filters:
             branches:

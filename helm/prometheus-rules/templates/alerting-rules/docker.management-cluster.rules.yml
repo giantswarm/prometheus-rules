@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: docker.management-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: docker
+    rules:
+    - alert: DockerMemoryUsageTooHigh
+      annotations:
+        description: '{{`Docker memory usage on {{ $labels.instance }} is too high.`}}'
+        opsrecipe: docker-memory-usage-high
+      expr: process_resident_memory_bytes{app="docker", cluster_type="management_cluster"} > (5 * 1024 * 1024 * 1024)
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: observability

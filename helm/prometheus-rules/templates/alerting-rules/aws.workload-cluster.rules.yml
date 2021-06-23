@@ -1,0 +1,105 @@
+{{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "workload_cluster"
+  name: aws.workload-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: aws
+    rules:
+    - alert: WorkloadClusterContainerIsRestartingTooFrequentlyFirecracker
+      annotations:
+        description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
+        opsrecipe: container-is-restarting-too-often/
+      expr: increase(kube_pod_container_status_restarts_total{container=~"aws-node.*|kiam-.+|cluster-autoscaler.*"}[1h]) > 10
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: firecracker
+        topic: kubernetes
+          #    - alert: WorkloadClusterCriticalPodNotRunningAWS
+          #annotations:
+          #description: '{{`Critical pod {{ $labels.namespace }}/{{ $labels.pod }} is not running.`}}'
+          #opsrecipe: critical-pod-is-not-running/
+          #expr: kube_pod_container_status_running{container=~"(k8s-api-server|k8s-controller-manager|k8s-scheduler)"} != 1 or absent(kube_pod_container_status_running{container="k8s-api-server"}) == 1 or absent(kube_pod_container_status_running{container="k8s-controller-manager"}) == 1 or absent(kube_pod_container_status_running{container="k8s-scheduler"}) == 1
+          #for: 5m
+          #labels:
+          #area: kaas
+          #cancel_if_cluster_status_creating: "true"
+          #cancel_if_cluster_status_deleting: "true"
+          #cancel_if_cluster_status_updating: "true"
+          #severity: page
+          #team: firecracker
+          #topic: kubernetes
+    # WorkloadClusterMasterNodeMissingFirecracker in this file is AWS specific and thus
+    # assigned to Team Firecracker. The alert is also defined for all the other
+    # providers with other team assignments.
+    #
+    #     kubernetes_build_info{app="kubelet"} gives us a vector of all the
+    #     kubelet.
+    #
+    #     kubernetes_build_info{app="kubelet", role="master"} gives us a vector
+    #     of all master node kubelets.
+    #
+    #     `unless` results in a vector consisting of the masters for which
+    #     there are no kubelets, which we can then alert on. See
+    #     https://prometheus.io/docs/prometheus/latest/querying/operators.
+    #
+    - alert: WorkloadClusterMasterNodeMissingFirecracker
+      annotations:
+        description: '{{`Master node is missing.`}}'
+        opsrecipe: master-node-missing/
+      expr: kubernetes_build_info{app="kubelet"} unless on(cluster_id) kubernetes_build_info{app="kubelet", role="master"}
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        master_node_down: "true"
+        severity: page
+        team: firecracker
+        topic: kubernetes
+    - alert: WorkloadClusterHAMasterDownForTooLong
+      annotations:
+        description: '{{`Master node in HA setup is down for a long time.`}}'
+        opsrecipe: master-node-missing/
+      expr: kubernetes_build_info{app="kubelet"} and on(cluster_id) sum(kubernetes_build_info{app="kubelet", role="master"}) by (cluster_id) == 2
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        master_node_down: "true"
+        severity: page
+        team: firecracker
+        topic: kubernetes
+    - alert: WorkloadClusterPodPendingFirecracker
+      annotations:
+        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
+        opsrecipe: pod-stuck-in-pending/
+      expr: kube_pod_status_phase{namespace="kube-system",pod=~"(aws-node.*|kiam.*|cluster-autoscaler.*)",phase="Pending"} == 1
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        severity: page
+        team: firecracker
+        topic: managementcluster
+{{- end }}

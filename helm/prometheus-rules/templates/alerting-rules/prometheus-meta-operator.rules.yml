@@ -1,0 +1,71 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: prometheus-meta-operator
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: observability
+    rules:
+    - alert: "Heartbeat"
+      expr: up{app="prometheus"}
+      for: 10m
+      labels:
+        area: "empowerment"
+        installation: {{ .Values.Installation.V1.Name }}
+        team: "atlas"
+        topic: "observability"
+        type: "heartbeat"
+      annotations:
+        description: This alert is used to ensure the entire alerting pipeline is functional.
+    - alert: "MatchingNumberOfPrometheusAndCluster"
+      annotations:
+        description: This alert is used to ensure we have as many workload cluster prometheus as we have workload cluster CR.
+        opsrecipe: matching-number-of-prometheus-and-cluster/
+      # This expression list all the cluster IDs that exist and are not being deleted and compares them (using unless) to the running prometheus pods.
+      # If a prometheus is missing, this alert will fire. This alert will not check if a prometheus is running when it should not (e.g. deleted cluster)
+      expr: |
+        (
+          sum by(cluster_id) (
+            {__name__=~"cluster_service_cluster_info|cluster_operator_cluster_status", status!="Deleting"}
+          ) unless sum by(cluster_id) (
+            label_replace(
+              kube_pod_container_status_running{container="prometheus", namespace!="{{ .Values.Installation.V1.Name }}-prometheus", namespace=~".*-prometheus"},
+              "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)"
+            )
+          )
+        ) > 0
+      for: 10m
+      labels:
+        area: "empowerment"
+        cancel_if_mc_kube_state_metrics_down: "true"
+        installation: {{ .Values.Installation.V1.Name }}
+        severity: "page"
+        team: "atlas"
+        topic: "observability"
+  - name: "labelling-schema"
+    rules:
+      - alert: "InvalidLabellingSchema"
+        expr: |
+          up{cluster_type!~"management_cluster|workload_cluster"}
+          or up{app=""}
+          or up{installation=""}
+          or up{cluster_id=""}
+          or up{provider!~"aws|azure|kvm|vmware"}
+          or up{instance!~"(\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+)|vault.*|bastion.*"}
+        for: "10m"
+        labels:
+          area: "empowerment"
+          cancel_if_cluster_status_creating: "true"
+          cancel_if_cluster_status_updating: "true"
+          cancel_if_cluster_status_deleting: "true"
+          cancel_if_cluster_with_notready_nodepools: "true"
+          installation: {{ .Values.Installation.V1.Name }}
+          severity: "notify"
+          team: "atlas"
+          topic: "observability"
+        annotations:
+          description: Labelling schema is invalid.
+      

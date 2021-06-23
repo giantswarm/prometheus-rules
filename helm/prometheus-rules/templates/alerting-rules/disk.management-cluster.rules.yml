@@ -1,0 +1,96 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: disk.management-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: disk
+    rules:
+    - alert: DockerVolumeSpaceTooLow
+      annotations:
+        description: '{{`Docker volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
+        opsrecipe: low-disk-space/#docker-volume
+      expr: node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/docker"} < (2 * 1024 * 1024 * 1024)
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: storage
+    - alert: EtcdVolumeSpaceTooLow
+      annotations:
+        description: '{{`Etcd volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
+        opsrecipe: low-disk-space/#etcd-volume
+      expr: 100 * node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/etcd"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/lib/etcd"} < 10
+      for: 10m
+      labels:
+        area: kaas
+        severity: page
+        team: biscuit
+        topic: storage
+    - alert: KubeletVolumeSpaceTooLow
+      annotations:
+        description: '{{`Kubelet volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
+        opsrecipe: low-disk-space/#root-volume
+      expr: node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet"} < (2 * 1024 * 1024 * 1024)
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: storage
+    - alert: LogVolumeSpaceTooLow
+      annotations:
+        description: '{{`Log volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
+        opsrecipe: low-disk-space/#root-volume
+      expr: 100 * node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/log"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/log"} < 20
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: storage
+    - alert: PersistentVolumeSpaceTooLow
+      annotations:
+        description: '{{`Persistent volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
+        opsrecipe: low-disk-space/#persistent-volume
+      expr: 100 * ((node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*"}) * on (pod_id) group_left label_replace(kube_pod_info{priority_class!="prometheus"}, "pod_id", "$1", "uid", "(.*)")) < 10
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: storage
+    - alert: RootVolumeSpaceTooLow
+      annotations:
+        description: '{{`Root volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
+        opsrecipe: low-disk-space/#root-volume
+      expr: 100 * node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/"} < 10
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: storage
+    - alert: PrometheusPersistentVolumeSpaceTooLow
+      annotations:
+        description: '{{`Persistent volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
+        opsrecipe: low-disk-space/#persistent-volume
+      expr: 100 * ((node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*"}) * on (pod_id) group_left label_replace(kube_pod_info{priority_class="prometheus"}, "pod_id", "$1", "uid", "(.*)")) < 5
+      for: 1h
+      labels:
+        area: empowerment
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability

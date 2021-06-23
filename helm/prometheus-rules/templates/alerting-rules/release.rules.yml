@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: release.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: release
+    rules:
+    - alert: ReleaseNotReady
+      annotations:
+        description: '{{`Release {{ $labels.name }} ({{ $labels.state }}) is not ready.`}}'
+        opsrecipe: release-operator-release-not-ready/
+      expr: release_operator_release_status{ready="false", inUse="true"} == 1
+      for: 30m
+      labels:
+        area: kaas
+        severity: page
+        team: ludacris
+        topic: managementcluster

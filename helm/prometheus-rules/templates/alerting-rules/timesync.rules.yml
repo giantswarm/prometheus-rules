@@ -1,0 +1,29 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: timesync.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: timesync
+    rules:
+    - alert: ClockOutOfSync
+      annotations:
+        description: '{{`Clock is out of sync on {{ $labels.instance }}.`}}'
+        opsrecipe: clock-out-of-sync/
+      expr: timestamp(node_time_seconds) - node_time_seconds > 60
+      for: 30m
+      labels:
+        area: kaas
+        severity: page
+        {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+        team: firecracker
+        {{- else if eq .Values.Installation.V1.Provider.Kind "azure" }}
+        team: celestial
+        {{- else if or (eq .Values.Installation.V1.Provider.Kind "kvm") (eq .Values.Installation.V1.Provider.Kind "vmware") }}
+        team: rocket
+        {{- end }}
+        topic: infrastructure

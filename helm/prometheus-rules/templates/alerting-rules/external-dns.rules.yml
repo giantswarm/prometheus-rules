@@ -1,0 +1,45 @@
+{{- if (or (eq .Values.Installation.V1.Provider.Kind "aws") (eq .Values.Installation.V1.Provider.Kind "azure")) }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "workload_cluster"
+  name: external-dns.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: external-dns
+    rules:
+    - alert: ExternalDNSCantAccessRegistry
+      annotations:
+        description: '{{`external-dns can''t access registry (cloud service provider DNS service).`}}'
+        opsrecipe: external-dns-cant-access-registry/
+      expr: rate(external_dns_registry_errors_total[2m]) > 0
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_kiam_has_errors: "true"
+        severity: page
+        team: batman
+        topic: external-dns
+    - alert: ExternalDNSCantAccessSource
+      annotations:
+        description: '{{`external-dns can''t access source (Service or Ingress resource).`}}'
+        opsrecipe: external-dns-cant-access-source/
+      expr: rate(external_dns_source_errors_total[2m]) > 0
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_kiam_has_errors: "true"
+        severity: page
+        team: batman
+        topic: external-dns
+{{- end }}

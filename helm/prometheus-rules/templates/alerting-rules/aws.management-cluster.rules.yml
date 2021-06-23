@@ -1,0 +1,135 @@
+{{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: aws.management-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: aws
+    rules:
+    - alert: AWSClusterCreationFailed
+      annotations:
+        description: '{{`Cluster {{ $labels.cluster_id }} creation is taking longer than expected.`}}'
+        opsrecipe: cluster-creation-failed/
+      expr: (statusresource_cluster_status{app=~"aws-operator.*", status="Creating"} == 1 or cluster_operator_cluster_status{app=~"cluster-operator.*", status="Creating", provider="aws"} == 1)
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        cancel_if_stack_failed: "true"
+        severity: page
+        team: firecracker
+        topic: aws
+    - alert: AWSClusterUpdateFailed
+      annotations:
+        description: '{{`Cluster {{ $labels.cluster_id }} update is taking longer than expected.`}}'
+        opsrecipe: cluster-update-failed/
+      expr: (statusresource_cluster_status{app=~"aws-operator.*", status="Updating"} == 1 or cluster_operator_cluster_status{app=~"cluster-operator.*", status="Updating", provider="aws"} == 1)
+      for: 2h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        cancel_if_stack_failed: "true"
+        severity: page
+        team: firecracker
+        topic: aws
+    - alert: CloudFormationStackFailed
+      annotations:
+        description: '{{`CloudFormation Stack "{{ $labels.stack_type }}" for {{ $labels.installation }}/{{ $labels.cluster_id }}, id "{{ $labels.id }}" remains in {{$labels.state }} state.`}}'
+        opsrecipe: aws-cloudformation-failed-state/
+      expr: aws_operator_cloudformation_info{state=~"CREATE_FAILED|DELETE_FAILED|ROLLBACK_FAILED|UPDATE_ROLLBACK_FAILED"}
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        stack_failed: "true"
+        severity: page
+        team: firecracker
+        topic: aws
+    - alert: CloudFormationStackRollback
+      annotations:
+        description: '{{`Creation or update of CloudFormation Stack "{{ $labels.stack_type }}" for {{ $labels.installation }}/{{ $labels.cluster_id }}, id "{{ $labels.id }}" is rolled back and remains in {{ $labels.state }} state.`}}'
+        opsrecipe: aws-cloudformation-rollback/
+      expr: aws_operator_cloudformation_info{state=~"ROLLBACK_COMPLETE|ROLLBACK_IN_PROGRESS|UPDATE_ROLLBACK_IN_PROGRESS|UPDATE_ROLLBACK_COMPLETE|UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS"}
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        stack_failed: "true"
+        severity: page
+        team: firecracker
+        topic: aws
+    - alert: ELBHostsOutOfService
+      annotations:
+        description: '{{`ELB {{ $labels.elb }} has unhealthy hosts.`}}'
+        opsrecipe: elb-has-unhealthy-hosts/
+      expr: aws_operator_elb_instance_out_of_service_count{elb=~"([a-z0-9]*)-(api|ingress)"} > 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: page
+        team: firecracker
+        topic: aws
+    - alert: ManagementClusterPodPendingFirecracker
+      annotations:
+        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
+        opsrecipe: pod-stuck-in-pending/
+      expr: kube_pod_status_phase{namespace="giantswarm",pod=~"(aws-operator.*|cluster-operator.*)",phase="Pending"} == 1
+      for: 25m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        severity: page
+        team: firecracker
+        topic: managementcluster
+    - alert: NATGatewaysPerVPCApproachingLimit
+      annotations:
+        description: '{{`AWS number of NAT Gateways for {{ $labels.vpc }} in account {{ $labels.account_id }} is too close to limit.`}}'
+        opsrecipe: service-usage-approaching-limit/
+      expr: sum by (vpc, availability_zone, account_id) (aws_operator_nat_info) / ignoring(vpc, availability_zone) group_left count by (account_id) (aws_operator_servicequota_info) * 100 > 80
+      for: 10m
+      labels:
+        area: kaas
+        severity: notify
+        team: se
+        topic: aws
+    - alert: ServiceUsageApproachingLimit
+      annotations:
+        description: '{{`AWS service usage for {{ $labels.service }} - {{ $labels.name }} ({{ $labels.account_id}}/{{ $labels.region }}) is too close to limit.`}}'
+        opsrecipe: service-usage-approaching-limit/
+      expr: aws_operator_service_usage / aws_operator_service_limit * 100 > 80
+      for: 10m
+      labels:
+        area: kaas
+        severity: notify
+        team: se
+        topic: aws
+    - alert: ManagementClusterContainerIsRestartingTooFrequentlyFirecracker
+      annotations:
+        description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
+        opsrecipe: container-is-restarting-too-often/
+      ## route53-manager is only used in China as route53 did not used to exist there
+      expr: increase(kube_pod_container_status_restarts_total{container=~"aws-admission-controller.*|aws-node.*|aws-operator.*|cluster-operator.*|route53-manager.*"}[1h]) > 6
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: firecracker
+        topic: kubernetes
+{{- end }}

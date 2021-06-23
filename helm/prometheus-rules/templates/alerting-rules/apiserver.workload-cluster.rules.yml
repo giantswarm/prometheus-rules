@@ -1,0 +1,53 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "workload_cluster"
+  name: apiserver.workload-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: apiserver
+    rules:
+    # expr produces 95th percentile latency for requests to the api server, by request verb.
+    # verb WATCH is excluded because it produces a flat line and is not relevant.
+    # apiserver_request_latencies_bucket are expressed in microseconds, dividing by 1e+06 bring this to seconds.
+    - alert: WorkloadClusterAPIServerLatencyTooHigh
+      annotations:
+        description: '{{`Kubernetes API Server {{ $labels.verb }} request latency is too high.`}}'
+        opsrecipe: apiserver-overloaded/
+      expr: histogram_quantile(0.95, sum(rate(apiserver_request_latencies_bucket{verb=~"CONNECT|DELETE|GET|PATCH|POST|PUT"}[1h])) by (verb, le)) / 1e+06 > 1
+      for: 1h
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_cluster_with_notready_nodepools: "true"
+        severity: notify
+        team: ludacris
+        topic: kubernetes
+    - alert: WorkloadClusterAPIServerAdmissionWebhookErrors
+      annotations:
+        description: '{{`Kubernetes API Server {{ $labels.cluster_id }} having admission webhook errors.`}}'
+        opsrecipe: apiserver-admission-webhook-errors/
+      expr: rate(apiserver_admission_webhook_rejection_count{error_type=~"calling_webhook_error|apiserver_internal_error"}[5m]) > 0
+      for: 5m
+      labels:
+        area: kaas
+        severity: notify
+        team: ludacris
+        topic: kubernetes
+    - alert: WorkloadClusterWebhookDurationExceedsTimeout
+      annotations:
+        description: '{{`Kubernetes API Server admission webhook for {{ $labels.cluster_id }} is timing out.`}}'
+        opsrecipe: apiserver-admission-webhook-errors/
+      expr: rate(apiserver_admission_webhook_admission_duration_seconds_sum[5m]) / rate(apiserver_admission_webhook_admission_duration_seconds_count[5m]) > 8
+      for: 15m
+      labels:
+        area: kaas
+        severity: page
+        team: ludacris
+        topic: kubernetes

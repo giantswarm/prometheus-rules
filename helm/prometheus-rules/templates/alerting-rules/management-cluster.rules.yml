@@ -1,0 +1,130 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: management-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: management-cluster
+    rules:
+    {{- if or (eq .Values.Installation.V1.Provider.Kind "aws") (eq .Values.Installation.V1.Provider.Kind "azure") }}
+    - alert: ManagementClusterPodPendingFor15Min
+      annotations:
+        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
+      expr: (kube_pod_status_phase{cluster_type="management_cluster", phase="Pending",pod!~"(aws-operator.*|azure-operator.*|cluster-operator.*)", namespace!~".*-prometheus"} * on (pod,namespace) group_left(node) kube_pod_info{}) == 1
+      for: 15m
+      labels:
+        area: kaas
+        severity: notify
+        team: biscuit
+        topic: managementcluster
+    - alert: ManagementClusterPodPending
+      annotations:
+        description: '{{`Pod {{ $labels.pod }} is stuck in Pending.`}}'
+        opsrecipe: management-cluster-pod-pending/
+      expr: (kube_pod_status_phase{cluster_type="management_cluster", phase="Pending", pod!~"(aws-operator.*|azure-operator.*|cluster-operator.*)", namespace!~".*-prometheus"} * on (pod,namespace) group_left(node) kube_pod_info{}) == 1
+      for: 1h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: managementcluster
+    - alert: ManagementClusterHasLessThanThreeNodes
+      annotations:
+        description: '{{`Management cluster {{ $labels.cluster_id }} has less than 3 nodes.`}}'
+        opsrecipe: management-cluster-less-than-three-workers/
+      expr: sum(kube_node_labels{cluster_type="management_cluster", label_role="worker"}) < 3
+      for: 1h
+      labels:
+        area: kaas
+        severity: page
+        team: biscuit
+        topic: managementcluster
+    - alert: ManagementClusterMissingNodes
+      annotations:
+        description: '{{`Management cluster {{ $labels.cluster_id }} has less than 4 minimum nodes.`}}'
+      expr: sum(kube_node_status_condition{cluster_type="management_cluster", condition="Ready", status="true"}) < 4
+      for: 15m
+      labels:
+        area: kaas
+        severity: notify
+        team: biscuit
+        topic: managementcluster
+    - alert: ManagementClusterCPUUsageTooHigh
+      annotations:
+        description: '{{`Management cluster {{ $labels.cluster_id }} cpu usage is too high.`}}'
+        opsrecipe: management-cluster-resource-limit-reached/
+      expr: avg_over_time(aggregation:kubernetes:pod_resource_requests_cpu_cores{cluster_type="management_cluster"}[2d]) / avg_over_time(aggregation:kubernetes:node_allocatable_cpu_cores_total{cluster_type="management_cluster"}[2d]) > 0.93
+      for: 1h
+      labels:
+        area: kass
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: managementcluster
+    - alert: ManagementClusterMemoryUsageTooHigh
+      annotations:
+        description: '{{`Management cluster {{ $labels.cluster_id }} memory usage is too high.`}}'
+        opsrecipe: management-cluster-resource-limit-reached/
+      expr: avg_over_time(aggregation:kubernetes:pod_resource_requests_memory_bytes{cluster_type="management_cluster"}[2d]) / avg_over_time(aggregation:kubernetes:node_allocatable_memory_bytes{cluster_type="management_cluster"}[2d]) > 0.93
+      for: 1h
+      labels:
+        area: kass
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: managementcluster
+    - alert: ManagementClusterPodLimitAlmostReached
+      annotations:
+        description: '{{`Cluster {{ $labels.cluster_id }} is almost exceeding its pod limit.`}}'
+      expr: (sum(kube_pod_info) by (cluster_id) / sum(kube_node_status_capacity_pods) by (cluster_id)) > 0.8
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: notify
+        team: biscuit
+        topic: managementcluster
+    - alert: ManagementClusterCriticalPodNotRunning
+      annotations:
+        description: '{{`Critical pod {{ $labels.namespace }}/{{ $labels.pod }} is not running.`}}'
+        opsrecipe: critical-pod-is-not-running/
+      expr: kube_pod_container_status_running{container=~"(k8s-api-server|k8s-controller-manager|k8s-scheduler)"} != 1
+      for: 5m
+      labels:
+        area: kaas
+        severity: page
+        team: biscuit
+        topic: managementcluster
+    - alert: ManagementClusterCriticalPodMetricMissing
+      annotations:
+        description: '{{`Critical pod {{ $labels.container }} does not have metrics.`}}'
+        opsrecipe: critical-pod-is-not-running/
+      expr: absent(kube_pod_container_status_running{container="k8s-api-server"}) == 1 or absent(kube_pod_container_status_running{container="k8s-controller-manager"}) == 1 or absent(kube_pod_container_status_running{container="k8s-scheduler"}) == 1
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_kube_state_metrics_down: "true"
+        severity: page
+        team: biscuit
+        topic: managementcluster
+    {{- end }}
+    - alert: ManagementClusterContainerIsRestartingTooFrequently
+      # Prometheus and firecracker containers are excluded
+      annotations:
+        description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
+        opsrecipe: container-is-restarting-too-often/
+      expr: increase(kube_pod_container_status_restarts_total{cluster_type="management_cluster", container!="prometheus.*|promxy.*|.*-admission-controller.*|aws-*|route53-manager.*"}[1h]) > 5
+      for: 5m
+      labels:
+        area: kaas
+        severity: notify
+        team: ludacris
+        topic: kubernetes

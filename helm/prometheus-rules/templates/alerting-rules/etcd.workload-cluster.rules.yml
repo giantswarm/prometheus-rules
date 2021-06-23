@@ -1,0 +1,100 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "workload_cluster"
+  name: etcd.workload-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: etcd
+    rules:
+    - alert: WorkloadClusterEtcdDown
+      annotations:
+        description: '{{`Etcd ({{ $labels.instance }}) on workload cluster {{ $labels.cluster_id }} is down.`}}'
+        opsrecipe: etcd-down/
+      expr: up{cluster_type="workload_cluster", app=~"etcd.*"} == 0
+      for: 20m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_master_node_down: "true"
+        severity: page
+        {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+        team: firecracker
+        {{- else if eq .Values.Installation.V1.Provider.Kind "azure" }}
+        team: celestial
+        {{- else if or (eq .Values.Installation.V1.Provider.Kind "kvm") (eq .Values.Installation.V1.Provider.Kind "vmware") }}
+        team: rocket
+        {{- end }}
+        topic: etcd
+    - alert: WorkloadClusterEtcdCommitDurationTooHigh
+      annotations:
+        description: '{{`Etcd ({{ $labels.instance }}) has a too high commit duration.`}}'
+        opsrecipe: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/etcd-high-commit-duration/
+      expr: histogram_quantile(0.95, rate(etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="workload_cluster"}[5m])) > 1.0
+      for: 15m
+      labels:
+        area: kaas
+        severity: notify
+        {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+        team: firecracker
+        {{- else if eq .Values.Installation.V1.Provider.Kind "azure" }}
+        team: celestial
+        {{- else if or (eq .Values.Installation.V1.Provider.Kind "kvm") (eq .Values.Installation.V1.Provider.Kind "vmware") }}
+        team: rocket
+        {{- end }}
+        topic: etcd
+    - alert: WorkloadClusterEtcdDBSizeTooLarge
+      annotations:
+        description: '{{`Etcd ({{ $labels.instance }}) has a too large database.`}}'
+        opsrecipe: etcd-db-size-too-large/
+      expr: etcd_debugging_mvcc_db_total_size_in_bytes{cluster_type="workload_cluster"} > 500 * 1024 * 1024
+      for: 35m
+      labels:
+        area: kaas
+        severity: page
+        {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+        team: firecracker
+        {{- else if eq .Values.Installation.V1.Provider.Kind "azure" }}
+        team: celestial
+        {{- else if or (eq .Values.Installation.V1.Provider.Kind "kvm") (eq .Values.Installation.V1.Provider.Kind "vmware") }}
+        team: rocket
+        {{- end }}
+        topic: etcd
+    - alert: WorkloadClusterEtcdNumberOfLeaderChangesTooHigh
+      annotations:
+        description: '{{`Etcd has too many leader changes.`}}'
+      expr: increase(etcd_server_leader_changes_seen_total{cluster_type="workload_cluster"}[1h]) > 8
+      labels:
+        area: kaas
+        severity: notify
+        {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+        team: firecracker
+        {{- else if eq .Values.Installation.V1.Provider.Kind "azure" }}
+        team: celestial
+        {{- else if or (eq .Values.Installation.V1.Provider.Kind "kvm") (eq .Values.Installation.V1.Provider.Kind "vmware") }}
+        team: rocket
+        {{- end }}
+        topic: etcd
+    - alert: WorkloadClusterEtcdHasNoLeader
+      annotations:
+        description: '{{`Etcd has no leader.`}}'
+        opsrecipe: etcd-has-no-leader/
+      expr: etcd_server_has_leader{cluster_type="workload_cluster"} == 0
+      for: 35m
+      labels:
+        area: kaas
+        severity: page
+        {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+        team: firecracker
+        {{- else if eq .Values.Installation.V1.Provider.Kind "azure" }}
+        team: celestial
+        {{- else if or (eq .Values.Installation.V1.Provider.Kind "kvm") (eq .Values.Installation.V1.Provider.Kind "vmware") }}
+        team: rocket
+        {{- end }}
+        topic: etcd

@@ -1,0 +1,35 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: alertmanager.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: alertmanager
+    rules:
+    - alert: AlertManagerNotificationsFailing
+      annotations:
+        description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
+        opsrecipe: alert-manager-notifications-failing/
+      expr: rate(alertmanager_notifications_failed_total{cluster_id!~"argali|giraffe", integration!~"slack|webhook"}[5m]) > 0
+      for: 10m
+      labels:
+        area: empowerment
+        severity: page
+        team: atlas
+        topic: monitoring
+    - alert: AlertManagerNotificationsFailingChina
+      annotations:
+        description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
+        opsrecipe: alert-manager-notifications-failing/
+      expr: rate(alertmanager_notifications_failed_total{cluster_id=~"argali|giraffe", integration!~"slack|webhook"}[5m]) > 0
+      for: 120m
+      labels:
+        area: empowerment
+        severity: page
+        team: atlas
+        topic: monitoring

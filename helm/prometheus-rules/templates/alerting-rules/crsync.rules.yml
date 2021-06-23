@@ -1,0 +1,42 @@
+{{- if eq .Values.Installation.V1.Name "gorilla" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: crsync.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: crsync
+    rules:
+    - alert: CrsyncDeploymentNotSatisfied
+      annotations:
+        description: '{{`Crsync deployment is not satisfied.`}}'
+        opsrecipe: deployment-not-satisfied/
+      expr: kube_deployment_status_replicas_available{cluster_type="workload_cluster", cluster_id="rfjh2", deployment=~"crsync-.*"} == 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: releng
+    - alert: CrsyncTooManyTagsMissing
+      annotations:
+        description: '{{`Too many tags are not synchronised to registry mirrors.`}}'
+        opsrecipe: crsync-too-many-tags-missing/
+      expr: crsync_sync_tags_total{registry="quay.io"} - on (repository,app) group_left sum by(repository,app) (crsync_sync_tags_total{registry!="quay.io"}) > 0
+      for: 1h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: releng
+{{- end }}

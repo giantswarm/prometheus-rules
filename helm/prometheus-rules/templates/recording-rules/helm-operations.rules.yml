@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: helm-operations.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: helm-operations
+    rules:
+    - expr: "sum by (cluster_id, release, event) (helmclient_library_event_total{release!=''})"
+      record: monitoring:helm:number_of_operations_on_release

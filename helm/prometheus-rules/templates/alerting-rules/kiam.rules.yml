@@ -1,0 +1,30 @@
+{{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "workload_cluster"
+  name: kiam.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: kiam
+    rules:
+    - alert: KiamMetadataFindRoleErrors
+      annotations:
+        description: '{{`Kiam pod {{ $labels.namespace}}/{{ $labels.pod_name }} on {{ $labels.cluster_id}}/{{ $labels.cluster }} has increased metadata find role errors.`}}'
+        opsrecipe: kiam-find-role-errors/
+      expr: increase(kiam_metadata_find_role_errors_total[10m]) > 0
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: firecracker
+        topic: kiam
+{{- end }}

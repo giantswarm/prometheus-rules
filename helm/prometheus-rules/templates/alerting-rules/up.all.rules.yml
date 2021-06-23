@@ -1,0 +1,74 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: up.all.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: up
+    rules:
+    - alert: ChartOperatorDown
+      annotations:
+        description: '{{`ChartOperator ({{ $labels.instance }}) is down.`}}'
+        opsrecipe: chart-operator-down/
+      expr: up{app=~"chart-operator.*"} == 0
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_scrape_timeout: "true"
+        severity: notify
+        team: batman
+        topic: releng
+    - alert: CadvisorDown
+      annotations:
+        description: '{{`Cadvisor ({{ $labels.ip }}) is down.`}}'
+      expr: up{app="cadvisor"} == 0
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_kubelet_down: "true"
+        severity: notify
+        team: ludacris
+        topic: observability
+    - alert: KubeStateMetricsDown
+      annotations:
+        description: '{{`KubeStateMetrics ({{ $labels.instance }}) is down.`}}'
+        opsrecipe: kube-state-metrics-down/
+      expr: up{app="kube-state-metrics"} == 0
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_any_kube_state_metrics_down: "true"
+        severity: page
+        team: ludacris
+        topic: observability
+    - alert: KubeStateMetricsMissing
+      annotations:
+        description: '{{`KubeStateMetrics ({{ $labels.instance }}) is missing.`}}'
+        opsrecipe: kube-state-metrics-down/
+      expr: absent(up{app="kube-state-metrics"} == 1)
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_any_kube_state_metrics_down: "true"
+        severity: page
+        team: ludacris
+        topic: observability

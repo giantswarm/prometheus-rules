@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: node-exporter.management-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: node-exporter
+    rules:
+    - alert: NodeExporterMissing
+      annotations:
+        description: '{{`NodeExporter on {{ $labels.cluster_id }} is missing.`}}'
+      expr: sum(cluster_service_cluster_info or cluster_operator_cluster_status) by (cluster_id) unless on (cluster_id) up{app='node-exporter'}
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        severity: notify
+        team: ludacris
+        topic: observability

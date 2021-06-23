@@ -1,0 +1,69 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: etcdbackup.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: etcdbackup
+    rules:
+    - alert: ETCDBackupJobFailedOrStuck
+      annotations:
+        description: '{{`Job {{ $labels.job }} failed or has not been completed for more than 30 minutes.`}}'
+        opsrecipe: etcd-backup-failed/
+      expr: kube_job_failed{cluster_type="management_cluster",condition="true",job=~"etcd-backup.+"} == 1 or kube_pod_status_phase{cluster_type="management_cluster",phase="Pending",pod=~"etcd-backup.+"} == 1 or kube_job_status_succeeded{cluster_type="management_cluster",job=~"etcd-backup.+"} == 0
+      for: 30m
+      labels:
+        area: kaas
+        severity: page
+        team: celestial
+        topic: etcd
+    - alert: LatestETCDBackup1DayOld
+      annotations:
+        description: '{{`Latest successfull ETCD backup for {{ $labels.cluster_id }}/{{ $labels.tenant_cluster_id }} was more than 24h ago.`}}'
+        opsrecipe: etcd-backup-failed/
+      expr: (time() - etcd_backup_latest_success{tenant_cluster_id!="Control Plane"}) > 24 * 60 * 60 and (time() - etcd_backup_latest_success{tenant_cluster_id!="Control Plane"}) < 48 * 60 * 60
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: celestial
+        topic: etcd-backup
+    - alert: LatestETCDBackup2DaysOld
+      annotations:
+        description: '{{`Latest successfull ETCD backup for {{ $labels.cluster_id }}/{{ $labels.tenant_cluster_id }} was more than 48h ago.`}}'
+        opsrecipe: etcd-backup-failed/
+      expr: (time() - etcd_backup_latest_success{tenant_cluster_id!="Control Plane"}) > 48 * 60 * 60
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: celestial
+        topic: etcd-backup
+    - alert: ManagementClusterNotBackedUp24h
+      annotations:
+        description: '{{`{{ $labels.cluster_id }} management cluster''s ETCD backup was unsuccessful.`}}'
+        opsrecipe: etcd-backup-failed/
+      expr: time() - etcd_backup_latest_success{etcd_version="V2",tenant_cluster_id="Control Plane"} > 60*60*24 or time() - etcd_backup_latest_success{etcd_version="V3",tenant_cluster_id="Control Plane"} > 60*60*24
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: celestial
+        topic: etcd-backup

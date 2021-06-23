@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: cert-manager.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: cert-manager
+    rules:
+    - alert: CertManagerPodHighMemoryUsage
+      annotations:
+        description: |-
+          {{`High memory usage ({{ $value }}) for container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }}.
+          If memory usage value is equal to memory limit value then it is likely the pod will be evicted.
+          If no limits are set then the pod will burst.
+          `}}
+      expr: sum by (pod, namespace, container) (container_memory_working_set_bytes{container=~"(cert-manager)"}) / sum by (pod, namespace, container) (kube_pod_container_resource_requests_memory_bytes{container=~"(cert-manager)"}) >= 0.85
+      for: 10m
+      labels:
+        area: kaas
+        severity: notify
+        team: batman
+        topic: observability

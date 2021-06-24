@@ -14,7 +14,7 @@ spec:
       annotations:
         description: '{{`Ingress Controller Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: ingress-controller-deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_available{deployment="nginx-ingress-controller"} / (kube_deployment_status_replicas_available{deployment="nginx-ingress-controller"} + kube_deployment_status_replicas_unavailable{deployment="nginx-ingress-controller"}) * 100 < 51
+      expr: kube_deployment_status_replicas_available_gs{label_app="nginx-ingress-controller"} / (kube_deployment_status_replicas_available_gs{label_app="nginx-ingress-controller"} + kube_deployment_status_replicas_unavailable_gs{label_app="nginx-ingress-controller"}) * 100 < 51
       for: 10m
       labels:
         area: managedservices

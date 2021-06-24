@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: gs-deployment-status.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: ingress-controller
+    rules:
+    - expr: kube_deployment_status_replicas_available *
+            on (deployment) group_left(label_giantswarm_io_service_type, label_app)
+            kube_deployment_labels{label_giantswarm_io_service_type="managed"}
+      record: kube_deployment_status_replicas_available_gs
+    - expr: kube_deployment_status_replicas_unavailable *
+            on (deployment) group_left(label_giantswarm_io_service_type, label_app)
+            kube_deployment_labels{label_giantswarm_io_service_type="managed"}
+      record: kube_deployment_status_replicas_unavailable_gs

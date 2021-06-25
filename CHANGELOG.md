@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Recording rules `kube_deployment_status_replicas_available_gs` and `kube_deployment_status_replicas_unavailable_gs` for deployments with label `giantswarm.io/service-type: "managed"`
+- Recording rules `managed_app_deployment_status_replicas_available` and `managed_app_deployment_status_replicas_unavailable` for deployments with label `giantswarm.io/service-type: "managed"`
 
 ## [0.1.1] - 2021-06-24
 

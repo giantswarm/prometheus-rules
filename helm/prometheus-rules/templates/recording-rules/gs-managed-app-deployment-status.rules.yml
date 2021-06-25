@@ -3,11 +3,11 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: gs-deployment-status.rules
+  name: gs-managed-app-deployment-status.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: ingress-controller
+  - name: gs-managed-app-deployments
     rules:
     - expr: kube_deployment_status_replicas_available *
             on (deployment) group_left(label_giantswarm_io_service_type, label_app)

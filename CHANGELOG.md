@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Alert `IngressControllerDeploymentNotSatisfied` uses newly introduced recording rules and selects on app label
+
+### Added
+
+- Recording rules `kube_deployment_status_replicas_available_gs` and `kube_deployment_status_replicas_unavailable_gs` for deployments with label `giantswarm.io/service-type: "managed"`
+
 ## [0.1.1] - 2021-06-24
 
 ### Added

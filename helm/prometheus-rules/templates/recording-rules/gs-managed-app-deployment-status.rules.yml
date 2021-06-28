@@ -9,11 +9,15 @@ spec:
   groups:
   - name: gs-managed-app-deployments
     rules:
-    - expr: kube_deployment_status_replicas_available *
-            on (deployment) group_left(label_giantswarm_io_service_type, label_app)
-            kube_deployment_labels{label_giantswarm_io_service_type="managed"}
+    - expr: label_replace(
+              kube_deployment_status_replicas_available *
+              on (deployment) group_left(label_app_kubernetes_io_name)
+              kube_deployment_labels{label_giantswarm_io_service_type="managed"},
+            "managed_app", "$1", "label_app_kubernetes_io_name", "(.*)" )
       record: managed_app_deployment_status_replicas_available
-    - expr: kube_deployment_status_replicas_unavailable *
-            on (deployment) group_left(label_giantswarm_io_service_type, label_app)
-            kube_deployment_labels{label_giantswarm_io_service_type="managed"}
+    - expr: label_replace(
+              kube_deployment_status_replicas_unavailable *
+              on (deployment) group_left(label_app_kubernetes_io_name)
+              kube_deployment_labels{label_giantswarm_io_service_type="managed"},
+            "managed_app", "$1", "label_app_kubernetes_io_name", "(.*)" )
       record: managed_app_deployment_status_replicas_unavailable

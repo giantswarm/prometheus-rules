@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Only alert during working hours for `ElasticsearchDataVolumeSpaceTooLow`
+- Alert `IngressControllerDeploymentNotSatisfied` uses newly introduced recording rules and selects on app label
+
+### Added
+
+- Recording rules `managed_app_deployment_status_replicas_available` and `managed_app_deployment_status_replicas_unavailable` for deployments with label `giantswarm.io/service-type: "managed"`
 
 ## [0.1.1] - 2021-06-24
 

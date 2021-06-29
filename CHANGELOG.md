@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `ManagementClusterAppFailedLudacris`.
+
+### Removed
+
+- Remove outdated `cluster-autoscaler` app rules.
+
 ## [0.1.2] - 2021-06-28
 
 ### Changed

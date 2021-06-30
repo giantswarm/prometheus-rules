@@ -1,0 +1,118 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: draughtsman.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+  - name: loki
+    rules:
+    - alert: LokiRequestErrors
+      annotations:
+        description: '{{`{{ $labels.job }} {{ $labels.route }} is experiencing {{ printf "%.2f" $value }}% errors.`}}'
+      expr: |
+        100 * sum(rate(loki_request_duration_seconds_count{status_code=~"5.."}[1m])) by (namespace, job, route)
+          /
+        sum(rate(loki_request_duration_seconds_count[1m])) by (namespace, job, route)
+          > 10
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: batman
+        topic: loki
+    - alert: LokiRequestPanics
+      annotations:
+        description: '{{`{{ $labels.job }} is experiencing {{ printf "%.2f" $value }}% increase of panics.`}}'
+      expr: 'sum(increase(loki_panic_total[10m])) by (namespace, job) > 0'
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: batman
+        topic: loki
+    - alert: LokiRequestLatency
+      annotations:
+        description: '{{`{{ $labels.job }} {{ $labels.route }} is experiencing {{ printf "%.2f" $value }}s 99th percentile latency.`}}'
+      expr: 'namespace_job_route:loki_request_duration_seconds:99quantile{route!~"(?i).*tail.*"} > 1'
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: batman
+        topic: loki
+    - alert: PromtailRequestsErrors
+      annotations:
+        description: '{{`{{ $labels.job }} {{ $labels.route }} is experiencing {{ printf "%.2f" $value }}% errors.`}}'
+      expr: |
+        100 * sum(rate(promtail_request_duration_seconds_count{status_code=~"5..|failed"}[1m])) by (namespace, job, route, instance)
+          /
+        sum(rate(promtail_request_duration_seconds_count[1m])) by (namespace, job, route, instance)
+          > 10
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: batman
+        topic: loki
+    - alert: PromtailRequestLatency
+      annotations:
+        description: '{{`{{ $labels.job }} {{ $labels.route }} is experiencing {{ printf "%.2f" $value }}s 99th percentile latency.`}}'
+      expr: 'job_status_code_namespace:promtail_request_duration_seconds:99quantile > 1'
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: batman
+        topic: loki
+    - alert: PromtailFileLagging
+      annotations:
+        description: '{{`{{ $labels.instance }} {{ $labels.job }} {{ $labels.path }} has been lagging by more than 1MB for more than 15m.`}}'
+      expr: 'abs(promtail_file_bytes_total - promtail_read_bytes_total) > 1e6'
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: batman
+        topic: loki
+    - alert: PromtailFileMissing
+      annotations:
+        description: '{{`{{ $labels.instance }} {{ $labels.job }} {{ $labels.path }} matches the glob but is not being tailed.`}}'
+      expr: 'promtail_file_bytes_total unless promtail_read_bytes_total'
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: batman
+        topic: loki

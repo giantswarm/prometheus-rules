@@ -11,22 +11,6 @@ spec:
   groups:
   - name: app
     rules:
-    - alert: ManagementClusterAppFailedBatman
-      annotations:
-        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team=~"batman|halo"}
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        sig: none
-        team: batman
-        topic: releng
     - alert: ManagementClusterAppFailedAtlas
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
@@ -42,6 +26,22 @@ spec:
         severity: page
         sig: none
         team: atlas
+        topic: releng
+    - alert: ManagementClusterAppFailedBatman
+      annotations:
+        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        opsrecipe: app-failed/
+      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team=~"batman|halo"}
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        sig: none
+        team: batman
         topic: releng
     - alert: ManagementClusterAppFailedBiscuit
       annotations:
@@ -91,11 +91,11 @@ spec:
         sig: none
         team: firecracker
         topic: releng
-    - alert: ManagementClusterAppFailedRocket
+    - alert: ManagementClusterAppFailedLudacris
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="rocket"}
+      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="ludacris"}
       for: 30m
       labels:
         area: managedservices
@@ -105,7 +105,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         severity: page
         sig: none
-        team: rocket
+        team: ludacris
         topic: releng
     - alert: ManagementClusterAppPendingUpdate
       annotations:
@@ -124,7 +124,7 @@ spec:
     ## Workload cluster app rules only available on the management cluster Prometheus because the source is app-exporter
     - alert: WorkloadClusterAppFailed
       annotations:
-        description: '{{`Workload Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
       expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog!~"control-plane-.*"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
       for: 30m
@@ -152,24 +152,10 @@ spec:
         severity: notify
         team: batman
         topic: releng
-    {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
-    - alert: ClusterAutoscalerAppFailedAWS
+    - alert: AppPendingUpdate
       annotations:
-        description: '{{`App {{ $labels.name }}, version {{ $labels.version }} is in failed state.`}}'
-      expr: label_replace(app_operator_app_info{status="FAILED",name=~"cluster-autoscaler.*"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
-      for: 10m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: notify
-        team: batman
-        topic: releng
-    - alert: ClusterAutoscalerAppNotInstalledAWS
-      annotations:
-        description: '{{`App {{ $labels.name }} was not installed in {{ $labels.namespace }} namespace.`}}'
-      expr: label_replace(app_operator_app_info{status="",name=~"cluster-autoscaler.*"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+        description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
+      expr: app_operator_app_info{deployed_version!="", status="deployed", version_mismatch="true"}
       for: 40m
       labels:
         area: managedservices
@@ -180,88 +166,6 @@ spec:
         severity: notify
         team: batman
         topic: releng
-    - alert: ClusterAutoscalerAppPendingInstallAWS
-      annotations:
-        description: '{{`App {{ $labels.name }}, version {{ $labels.version }} is in pending install state.`}}'
-      expr: label_replace(app_operator_app_info{status="PENDING_INSTALL",name=~"cluster-autoscaler.*"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: notify
-        team: batman
-        topic: releng
-    - alert: ClusterAutoscalerAppPendingUpgradeAWS
-      annotations:
-        description: '{{`App {{ $labels.name }}, version {{ $labels.version }} is in pending upgrade state.`}}'
-      expr: label_replace(app_operator_app_info{status="PENDING_UPGRADE",name=~"cluster-autoscaler.*"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: notify
-        team: batman
-        topic: releng
-    {{- end }}
-    {{- if eq .Values.Installation.V1.Provider.Kind "azure" }}
-    - alert: ClusterAutoscalerAppFailedAzure
-      annotations:
-        description: '{{`App {{ $labels.name }}, version {{ $labels.version }} is in failed state.`}}'
-      expr: label_replace(app_operator_app_info{status="FAILED",name=~"cluster-autoscaler.*"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
-      for: 10m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: notify
-        team: batman
-        topic: releng
-    - alert: ClusterAutoscalerAppPendingInstallAzure
-      annotations:
-        description: '{{`App {{ $labels.name }}, version {{ $labels.version }} is in pending install state.`}}'
-      expr: label_replace(app_operator_app_info{status="PENDING_INSTALL",name=~"cluster-autoscaler.*"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: notify
-        team: batman
-        topic: releng
-    - alert: ClusterAutoscalerAppPendingUpgradeAzure
-      annotations:
-        description: '{{`App {{ $labels.name }}, version {{ $labels.version }} is in pending upgrade state.`}}'
-      expr: label_replace(app_operator_app_info{status="PENDING_UPGRADE",name=~"cluster-autoscaler.*"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: notify
-        team: batman
-        topic: releng
-    - alert: ClusterAutoscalerAppNotInstalledAzure
-      annotations:
-        description: '{{`App {{ $labels.name }} was not installed in {{ $labels.namespace }} namespace.`}}'
-      expr: label_replace(app_operator_app_info{status="",name=~"cluster-autoscaler.*"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
-      for: 40m
-      labels:
-        area: managedservices
-        cancel_if_apiserver_down: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: notify
-        team: batman
-        topic: releng
-    {{- end }}
     - alert: AppWithoutTeamLabel
       annotations:
         description: '{{`App {{ $labels.name }} has no team label.`}}'

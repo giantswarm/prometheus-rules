@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `ManagementClusterAppFailedLudacris`.
 
+### Fixed
+
+- Fix cluster ID in `WorkloadClusterAppPendingUpdate`.
+
 ### Removed
 
 - Removed unused `NodeExporterMissing` alert.

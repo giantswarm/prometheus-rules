@@ -95,7 +95,7 @@ spec:
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="firecracker"}
+      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="ludacris"}
       for: 30m
       labels:
         area: managedservices
@@ -123,10 +123,24 @@ spec:
         sig: none
         team: rocket
         topic: releng
-    ## This rule is only available on the management cluster prometheus because the source is app-exporter
+    - alert: ManagementClusterAppPendingUpdate
+      annotations:
+        description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
+      expr: app_operator_app_info{catalog=~"control-plane-.*", deployed_version!="", status="deployed", version_mismatch="true"}
+      for: 40m
+      labels:
+        area: managedservices
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: notify
+        team: batman
+        topic: releng
+    ## Workload cluster app rules only available on the management cluster Prometheus because the source is app-exporter
     - alert: WorkloadClusterAppFailed
       annotations:
-        description: '{{`Workload Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
       expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog!~"control-plane-.*"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
       for: 30m
@@ -138,6 +152,20 @@ spec:
         cancel_if_outside_working_hours: "true"
         severity: page
         sig: none
+        team: batman
+        topic: releng
+    - alert: WorkloadClusterAppPendingUpdate
+      annotations:
+        description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
+      expr: label_replace(app_operator_app_info{catalog!~"control-plane-.*", deployed_version!="", status="deployed", version_mismatch="true"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      for: 40m
+      labels:
+        area: managedservices
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: notify
         team: batman
         topic: releng
     - alert: AppPendingUpdate

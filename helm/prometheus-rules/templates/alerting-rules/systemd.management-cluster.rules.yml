@@ -33,3 +33,14 @@ spec:
         severity: page
         team: biscuit
         topic: infrastructure
+    - alert: ManagementClusterRuntimeSystemdUnitFailed
+      annotations:
+        description: '{{`Runtime systemd unit {{ $labels.name }} is failed on {{ $labels.instance }}.`}}'
+        opsrecipe: critical-systemd-unit-failed/
+      expr: node_systemd_unit_state{cluster_type="management_cluster",name=~"docker.service|containerd.service", state="failed"} == 1
+      for: 5m
+      labels:
+        area: kaas
+        severity: page
+        team: biscuit
+        topic: infrastructure

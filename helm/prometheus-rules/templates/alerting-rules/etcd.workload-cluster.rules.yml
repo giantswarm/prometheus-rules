@@ -85,7 +85,7 @@ spec:
       annotations:
         description: '{{`Etcd has no leader.`}}'
         opsrecipe: etcd-has-no-leader/
-      expr: etcd_server_has_leader{cluster_type="workload_cluster"} == 0
+      expr: etcd_server_has_leader{cluster_type="workload_cluster", container!~"loki|promtail"} == 0
       for: 35m
       labels:
         area: kaas

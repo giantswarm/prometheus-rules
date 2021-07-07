@@ -37,7 +37,7 @@ spec:
       annotations:
         description: '{{`Runtime systemd unit {{ $labels.name }} is failed on {{ $labels.instance }}.`}}'
         opsrecipe: critical-systemd-unit-failed/
-      expr: node_systemd_unit_state{cluster_type="workload_cluster",name=~"docker.service|containerd.service", state="failed"} == 1
+      expr: node_systemd_unit_state{cluster_type="workload_cluster",name=~"docker.service|containerd.service",state!="active"} == 1
       for: 5m
       labels:
         area: kaas

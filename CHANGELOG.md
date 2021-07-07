@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add `ManagementClusterRuntimeSystemdUnitFailed` and `WorkloadClusterRuntimeSystemdUnitFailed`.
+### Changed
+
+- `WorkloadClusterEtcdHasNoLeader` will not fire for loki or promtail pods any more.
 
 ## [0.2.0] - 2021-07-02
 

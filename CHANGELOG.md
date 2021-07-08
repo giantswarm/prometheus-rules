@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `WorkloadClusterEtcdHasNoLeader` will not fire for loki or promtail pods any more.
 
+### Fixed
+
+- Add namespace to `AppOperatorNotReady` alert description.
+
 ## [0.2.0] - 2021-07-02
 
 ### Added

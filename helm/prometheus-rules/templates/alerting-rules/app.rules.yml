@@ -210,7 +210,7 @@ spec:
         topic: releng
     - alert: AppOperatorNotReady
       annotations:
-        description: '{{`app CR version ({{ $labels.version }}) has no ready app-operator.`}}'
+        description: '{{`app CR version ({{ $labels.version }}) in namespace {{ $labels.namespace }} has no ready app-operator.`}}'
         opsrecipe: app-operator-not-ready/
       expr: app_operator_ready_total != 1
       for: 15m

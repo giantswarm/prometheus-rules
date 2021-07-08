@@ -1,4 +1,4 @@
-{{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+{{- if eq .Values.managementCluster.provider.kind "aws" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:

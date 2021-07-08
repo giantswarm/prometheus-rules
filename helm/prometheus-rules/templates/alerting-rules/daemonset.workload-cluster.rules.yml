@@ -11,7 +11,7 @@ spec:
   groups:
   - name: daemonset
     rules:
-    {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+    {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: WorkloadClusterDaemonSetNotSatisfiedFirecracker
       expr: kube_daemonset_status_number_unavailable{cluster_type="workload_cluster", namespace=~"giantswarm|kube-system", daemonset=~"aws-node|kiam-server|kiam-agent"} > 0
       for: 30m

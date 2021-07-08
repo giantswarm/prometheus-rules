@@ -28,7 +28,7 @@ spec:
         kube_state_metrics_down: "true"
         team: ludacris
         topic: status
-    {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+    {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: InhibitionKiamErrors
       annotations:
         description: '{{`Kiam on cluster {{ $labels.cluster_id }} has increased error rate.`}}'

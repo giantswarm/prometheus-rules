@@ -23,9 +23,9 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+        {{- if eq .Values.managementCluster.provider.kind "aws" }}
         team: firecracker
-        {{- else if eq .Values.Installation.V1.Provider.Kind "azure" }}
+        {{- else if eq .Values.managementCluster.provider.kind "azure" }}
         team: celestial
         {{- else }}
         team: rocket
@@ -113,7 +113,7 @@ spec:
         severity: notify
         team: biscuit
         topic: infrastructure
-    {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+    {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: WorkloadClusterNodeUnexpectedTaintNodeWithImpairedVolumes
       annotations:
         description: '{{`Node {{ $labels.node }} has unexpected taint NodeWithImpairedVolumes`}}'

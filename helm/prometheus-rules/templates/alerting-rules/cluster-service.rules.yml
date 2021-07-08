@@ -23,7 +23,7 @@ spec:
         severity: page
         team: biscuit
         topic: managementcluster
-    {{- if .Values.Installation.V1.Infra.TestingEnvironment }}
+    {{- if eq .Values.managementCluster.pipeline "testing" }}
     - alert: TestClusterTooOld
       annotations:
         description: '{{`Workload cluster with ID "{{ $labels.cluster_id }}" and name "{{ $labels.name}}" is older than 12 hours. Please clean it up to save costs and resources.`}}'

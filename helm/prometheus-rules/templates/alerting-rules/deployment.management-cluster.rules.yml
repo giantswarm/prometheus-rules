@@ -89,6 +89,20 @@ spec:
         severity: page
         team: biscuit
         topic: managementcluster
+    - alert: DeploymentNotSatisfiedLudacris
+      annotations:
+        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        opsrecipe: deployment-not-satisfied/
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"kyverno.*"} > 0
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: page
+        team: ludacris
+        topic: managementcluster
     {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
     - alert: AWSManagementClusterDeploymentScaledDownToZero
       annotations:

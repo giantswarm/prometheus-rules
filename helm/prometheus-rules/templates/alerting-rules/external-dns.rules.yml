@@ -1,4 +1,4 @@
-{{- if (or (eq .Values.Installation.V1.Provider.Kind "aws") (eq .Values.Installation.V1.Provider.Kind "azure")) }}
+{{- if (or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure")) }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:

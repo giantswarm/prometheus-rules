@@ -103,7 +103,7 @@ spec:
         severity: page
         team: ludacris
         topic: managementcluster
-    {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+    {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: AWSManagementClusterDeploymentScaledDownToZero
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} on AWS has been scaled down to zero for prolonged period of time.`}}'
@@ -143,7 +143,7 @@ spec:
         team: firecracker
         topic: managementcluster
     {{- end }}
-    {{- if eq .Values.Installation.V1.Provider.Kind "azure" }}
+    {{- if eq .Values.managementCluster.provider.kind "azure" }}
     - alert: AzureManagementClusterDeploymentScaledDownToZero
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} on Azure has been scaled down to zero for prolonged period of time.`}}'
@@ -169,7 +169,7 @@ spec:
         team: celestial
         topic: managementcluster
     {{- end }}
-    {{- if eq .Values.Installation.V1.Provider.Kind "kvm" }}
+    {{- if eq .Values.managementCluster.provider.kind "kvm" }}
     - alert: KVMManagementClusterDeploymentScaledDownToZero
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} on KVM has been scaled down to zero for prolonged period of time.`}}'

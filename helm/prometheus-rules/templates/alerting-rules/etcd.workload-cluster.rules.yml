@@ -24,11 +24,11 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_master_node_down: "true"
         severity: page
-        {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+        {{- if eq .Values.managementCluster.provider.kind "aws" }}
         team: firecracker
-        {{- else if eq .Values.Installation.V1.Provider.Kind "azure" }}
+        {{- else if eq .Values.managementCluster.provider.kind "azure" }}
         team: celestial
-        {{- else if or (eq .Values.Installation.V1.Provider.Kind "kvm") (eq .Values.Installation.V1.Provider.Kind "vmware") }}
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
         {{- end }}
         topic: etcd
@@ -41,11 +41,11 @@ spec:
       labels:
         area: kaas
         severity: notify
-        {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+        {{- if eq .Values.managementCluster.provider.kind "aws" }}
         team: firecracker
-        {{- else if eq .Values.Installation.V1.Provider.Kind "azure" }}
+        {{- else if eq .Values.managementCluster.provider.kind "azure" }}
         team: celestial
-        {{- else if or (eq .Values.Installation.V1.Provider.Kind "kvm") (eq .Values.Installation.V1.Provider.Kind "vmware") }}
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
         {{- end }}
         topic: etcd
@@ -58,11 +58,11 @@ spec:
       labels:
         area: kaas
         severity: page
-        {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+        {{- if eq .Values.managementCluster.provider.kind "aws" }}
         team: firecracker
-        {{- else if eq .Values.Installation.V1.Provider.Kind "azure" }}
+        {{- else if eq .Values.managementCluster.provider.kind "azure" }}
         team: celestial
-        {{- else if or (eq .Values.Installation.V1.Provider.Kind "kvm") (eq .Values.Installation.V1.Provider.Kind "vmware") }}
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
         {{- end }}
         topic: etcd
@@ -73,11 +73,11 @@ spec:
       labels:
         area: kaas
         severity: notify
-        {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+        {{- if eq .Values.managementCluster.provider.kind "aws" }}
         team: firecracker
-        {{- else if eq .Values.Installation.V1.Provider.Kind "azure" }}
+        {{- else if eq .Values.managementCluster.provider.kind "azure" }}
         team: celestial
-        {{- else if or (eq .Values.Installation.V1.Provider.Kind "kvm") (eq .Values.Installation.V1.Provider.Kind "vmware") }}
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
         {{- end }}
         topic: etcd
@@ -90,11 +90,11 @@ spec:
       labels:
         area: kaas
         severity: page
-        {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+        {{- if eq .Values.managementCluster.provider.kind "aws" }}
         team: firecracker
-        {{- else if eq .Values.Installation.V1.Provider.Kind "azure" }}
+        {{- else if eq .Values.managementCluster.provider.kind "azure" }}
         team: celestial
-        {{- else if or (eq .Values.Installation.V1.Provider.Kind "kvm") (eq .Values.Installation.V1.Provider.Kind "vmware") }}
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
         {{- end }}
         topic: etcd

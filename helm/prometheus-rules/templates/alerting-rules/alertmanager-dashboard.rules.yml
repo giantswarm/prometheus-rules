@@ -1,4 +1,4 @@
-{{- if eq .Values.Installation.V1.Name "gorilla" }}
+{{- if eq .Values.managementCluster.name "gorilla" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:

@@ -34,7 +34,7 @@ spec:
         severity: notify
         team: atlas
         topic: managementcluster
-    {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+    {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: ManagementClusterDaemonSetNotSatisfiedFirecracker
       annotations:
         description: '{{`Daemonset {{ $labels.namespace}}/{{ $labels.daemonset }} is not satisfied.`}}'

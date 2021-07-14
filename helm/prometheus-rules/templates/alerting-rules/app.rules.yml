@@ -140,7 +140,7 @@ spec:
     ## Workload cluster app rules only available on the management cluster Prometheus because the source is app-exporter
     - alert: WorkloadClusterAppFailed
       annotations:
-        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        description: '{{`Workload Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
       expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog!~"control-plane-.*"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
       for: 30m

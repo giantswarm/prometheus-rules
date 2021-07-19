@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Only alert for failed etcd v2 backups on kvm management clusters.
+
 ## [0.4.0] - 2021-07-14
 
 ### Changed

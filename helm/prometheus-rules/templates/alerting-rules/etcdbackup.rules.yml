@@ -56,7 +56,7 @@ spec:
       annotations:
         description: '{{`{{ $labels.cluster_id }} management cluster''s ETCD backup was unsuccessful.`}}'
         opsrecipe: etcd-backup-failed/
-      expr: time() - etcd_backup_latest_success{etcd_version="V2",tenant_cluster_id="Control Plane"} > 60*60*24 or time() - etcd_backup_latest_success{etcd_version="V3",tenant_cluster_id="Control Plane"} > 60*60*24
+      expr: time() - etcd_backup_latest_success{etcd_version="V2",tenant_cluster_id="Control Plane", provider="kvm"} > 60*60*24 or time() - etcd_backup_latest_success{etcd_version="V3",tenant_cluster_id="Control Plane"} > 60*60*24
       for: 5m
       labels:
         area: kaas

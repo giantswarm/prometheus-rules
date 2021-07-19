@@ -14,7 +14,7 @@ spec:
       annotations:
         description: '{{`Certificate stored in Secret {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
         opsrecipe: managed-app-cert-manager/
-      expr: (cert_exporter_secret_not_after{type="secret"} - time()) < 2 * 7 * 24 * 60 * 60
+      expr: (cert_exporter_secret_not_after{type="secret"} - time()) < 2 * 7 * 24 * 60 * 60 and cert_exporter_secret_not_after{type="secret"} > time()
       for: 5m
       labels:
         area: managedapps

@@ -130,19 +130,4 @@ spec:
         severity: notify
         team: rocket
         topic: kvm
-    {{- if or (eq .Values.managementCluster.name "dragon") (eq .Values.managementCluster.name "dinosaur") }}
-    - alert: BackendServerUP
-      annotations:
-        description: '{{`Backend {{ $labels.server }} is not reachable from haproxy load balancer.`}}'
-      expr: haproxy_server_up{app="haproxy-exporter",cluster_type="management_cluster"} == 0
-      for: 5m
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: notify
-        team: rocket
-        topic: managementcluster
-    {{- end }}
 {{- end }}

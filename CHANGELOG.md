@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Removed custom alerts for `dragon` and `dinosaur` installations.
+
 ## [0.5.0] - 2021-07-19
 
 ### Changed

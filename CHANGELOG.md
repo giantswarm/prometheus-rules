@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Alert when Calico cannot save or restore iptables rules (KVM only).
+
 ### Removed
 
 - Removed custom alerts for `dragon` and `dinosaur` installations.

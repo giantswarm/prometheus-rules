@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added 
 
 - Added KiamSTSIssuingErrors for AWS workload clusters.
+- Alert when Calico cannot save or restore iptables rules (KVM only).
 
 ### Removed
 

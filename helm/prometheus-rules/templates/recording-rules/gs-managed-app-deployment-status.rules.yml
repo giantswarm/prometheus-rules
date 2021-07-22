@@ -3,11 +3,11 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: gs-managed-app-deployment-status.rules
+  name: gs-managed-app-deployment-status.recording.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: gs-managed-app-deployments
+  - name: gs-managed-app-deployments.recording
     rules:
     - expr: label_replace(
               kube_deployment_status_replicas_available *

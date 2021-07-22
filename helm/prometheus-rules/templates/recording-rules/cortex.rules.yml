@@ -3,11 +3,11 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: cortex.rules
+  name: cortex.recording.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: cortex
+  - name: cortex.recording
     rules:
     - expr: sum(alertmanager_alerts{state="active"})
       record: aggregation:alertmanager:alerts_active_total

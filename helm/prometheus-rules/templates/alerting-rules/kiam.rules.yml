@@ -33,7 +33,7 @@ spec:
       annotations:
         description: '{{`Kiam pod {{ $labels.namespace}}/{{ $labels.pod_name }} on {{ $labels.cluster_id}}/{{ $labels.cluster }} has increased STS issuing errors.`}}'
         opsrecipe: kiam_sts_issuing_errors_total/
-      expr: increase(kiam_sts_issuing_errors_total[10m]) > 0
+      expr: increase(kiam_sts_issuing_errors_total[10m]) > 5
       for: 15m
       labels:
         area: managedservices

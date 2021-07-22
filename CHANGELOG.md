@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Add recording in recording Prometheus Rules to avoid conflicts with alerting rules.
+
 ## [0.6.0] - 2021-07-22
 
 ### Added

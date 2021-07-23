@@ -27,8 +27,6 @@ spec:
         severity: page
         team: firecracker
         topic: kiam
-  - name: kiam
-    rules:
     - alert: KiamSTSIssuingErrors
       annotations:
         description: '{{`Kiam pod {{ $labels.namespace}}/{{ $labels.pod_name }} on {{ $labels.cluster_id}}/{{ $labels.cluster }} has increased STS issuing errors.`}}'

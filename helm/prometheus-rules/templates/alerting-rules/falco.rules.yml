@@ -14,8 +14,7 @@ spec:
     - alert: FalcoCriticalAlertFiring
       annotations:
         description: '{{`Falco has alerted on a critical severity event.`}}'
-      expr: rate(falco_events{priority=~"0|1|2|3"}[5m]) > 0
-      for: 1m
+      expr: sum(falco_events{priority=~"0|1|2|3"}) > 0
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"
@@ -27,9 +26,8 @@ spec:
         topic: security
     - alert: FalcoMediumAlertFiring
       annotations:
-        description: '{{`Too many tags are not synchronised to registry mirrors.`}}'
-      expr: rate(falco_events{priority=~"4|5"}[5m]) > 0
-      for: 1m
+        description: '{{`Falco has alerted on a medium severity event.`}}'
+      expr: sum(falco_events{priority=~"4|5"}) > 0
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"
@@ -40,9 +38,8 @@ spec:
         topic: security
     - alert: FalcoInformationalAlert
       annotations:
-        description: '{{`Too many tags are not synchronised to registry mirrors.`}}'
-      expr: rate(falco_events{priority="6"}[5m]) > 0
-      for: 1m
+        description: '{{`Falco has alerted on a low severity event.`}}'
+      expr: sum(falco_events{priority="6"}) > 0
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"
@@ -53,9 +50,8 @@ spec:
         topic: security
     - alert: FalcoDebugAlert
       annotations:
-        description: '{{`Too many tags are not synchronised to registry mirrors.`}}'
+        description: '{{`Falco is reporting a debug event.`}}'
       expr: rate(falco_events{priority="7"}[5m]) > 0
-      for: 1m
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"

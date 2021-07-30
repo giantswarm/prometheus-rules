@@ -51,3 +51,16 @@ spec:
         severity: notify
         team: ludacris
         topic: security
+    - alert: FalcoDebugAlert
+      annotations:
+        description: '{{`Too many tags are not synchronised to registry mirrors.`}}'
+      expr: rate(falco_events{priority="7"}[5m]) > 0
+      for: 1m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: notify
+        team: ludacris
+        topic: security

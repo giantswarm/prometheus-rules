@@ -1,0 +1,53 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: falco.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: falco
+    rules:
+    - alert: FalcoCriticalAlertFiring
+      annotations:
+        description: '{{`Falco has alerted on a critical severity event.`}}'
+      expr: rate(falco_events{priority=~"0|1|2|3"}[5m]) > 0
+      for: 1m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: ludacris
+        topic: security
+    - alert: FalcoMediumAlertFiring
+      annotations:
+        description: '{{`Too many tags are not synchronised to registry mirrors.`}}'
+      expr: rate(falco_events{priority=~"4|5"}[5m]) > 0
+      for: 1m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: notify
+        team: ludacris
+        topic: security
+    - alert: FalcoInformationalAlert
+      annotations:
+        description: '{{`Too many tags are not synchronised to registry mirrors.`}}'
+      expr: rate(falco_events{priority="6"}[5m]) > 0
+      for: 1m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: notify
+        team: ludacris
+        topic: security

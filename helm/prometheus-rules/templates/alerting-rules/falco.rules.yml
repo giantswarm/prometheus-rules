@@ -13,7 +13,7 @@ spec:
     rules:
     - alert: FalcoCriticalAlertFiring
       annotations:
-        description: '{{`Falco has alerted on a critical severity event.`}}'
+        description: '{{`[Priority {{ $labels.priority}}] - Pod {{ $labels.k8s_ns_name}}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }}.`}}'
       expr: sum(falco_events{priority=~"0|1|2|3"}) > 0
       labels:
         area: kaas
@@ -26,7 +26,7 @@ spec:
         topic: security
     - alert: FalcoMediumAlertFiring
       annotations:
-        description: '{{`Falco has alerted on a medium severity event.`}}'
+        description: '{{`[Priority {{ $labels.priority}}] - Pod {{ $labels.k8s_ns_name}}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }}.`}}'
       expr: sum(falco_events{priority=~"4|5"}) > 0
       labels:
         area: kaas
@@ -38,7 +38,7 @@ spec:
         topic: security
     - alert: FalcoInformationalAlert
       annotations:
-        description: '{{`Falco has alerted on a low severity event.`}}'
+        description: '{{`[Priority {{ $labels.priority}}] - Pod {{ $labels.k8s_ns_name}}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }}.`}}'
       expr: sum(falco_events{priority="6"}) > 0
       labels:
         area: kaas
@@ -50,7 +50,7 @@ spec:
         topic: security
     - alert: FalcoDebugAlert
       annotations:
-        description: '{{`Falco is reporting a debug event.`}}'
+        description: '{{`[Priority {{ $labels.priority}}] - Pod {{ $labels.k8s_ns_name}}/{{ $labels.k8s_pod_name }} triggered the Falco debug rule {{ $labels.rule }}.`}}'
       expr: rate(falco_events{priority="7"}[5m]) > 0
       labels:
         area: kaas

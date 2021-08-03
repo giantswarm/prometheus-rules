@@ -14,7 +14,7 @@ spec:
     - alert: FalcoCriticalAlertFiring
       annotations:
         description: '{{`[Priority {{ $labels.priority }}] - Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }}.`}}'
-      expr: sum(falco_events{priority=~"0|1|2|3"}) > 0
+      expr: sum(falco_events{priority=~"0|1|2|3"}) by (rule, k8s_ns_name, k8s_pod_name) > 0
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"
@@ -27,7 +27,7 @@ spec:
     - alert: FalcoMediumAlertFiring
       annotations:
         description: '{{`[Priority {{ $labels.priority }}] - Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }}.`}}'
-      expr: sum(falco_events{priority=~"4|5"}) > 0
+      expr: sum(falco_events{priority=~"4|5"}) by (rule, k8s_ns_name, k8s_pod_name) > 0
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"
@@ -39,7 +39,7 @@ spec:
     - alert: FalcoInformationalAlert
       annotations:
         description: '{{`[Priority {{ $labels.priority }}] - Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }}.`}}'
-      expr: sum(falco_events{priority="6"}) > 0
+      expr: sum(falco_events{priority="6"}) by (rule, k8s_ns_name, k8s_pod_name) > 0
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"
@@ -51,7 +51,7 @@ spec:
     - alert: FalcoDebugAlert
       annotations:
         description: '{{`[Priority {{ $labels.priority }}] - Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }}.`}}'
-      expr: rate(falco_events{priority="7"}[5m]) > 0
+      expr: sum(falco_events{priority="7"}) by (rule, k8s_ns_name, k8s_pod_name) > 0
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add missing opsrecipe for `PrometheusFailsToCommunicateWithRemoteStorageAPI`.
+- Add new alerts for the Prometheus Operator.
 
 ## [0.7.2] - 2021-07-26
 

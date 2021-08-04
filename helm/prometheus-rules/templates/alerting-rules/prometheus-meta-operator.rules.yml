@@ -63,7 +63,6 @@ spec:
           cancel_if_cluster_status_deleting: "true"
           cancel_if_cluster_with_notready_nodepools: "true"
           installation: {{ .Values.managementCluster.name }}
-          severity: "notify"
           team: "atlas"
           topic: "observability"
         annotations:

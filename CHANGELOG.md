@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add missing opsrecipe for `PrometheusFailsToCommunicateWithRemoteStorageAPI`.
+- Add recording rules to send the total of ready and not ready pods to Cortex to be able to investigate outages when a prometheus is gone or missing.
 
 ### Removed
 

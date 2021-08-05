@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed recording rule naming for IP exhaustion.
+
 ## [0.9.0] - 2021-08-05
 
 ### Added

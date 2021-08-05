@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add new alerts for the Prometheus Operator.
+- Add recording rules to send the total of ready and not ready pods to Cortex to be able to investigate outages when a prometheus is gone or missing.
+
 ## [0.8.0] - 2021-08-05
 
 ### Changed
@@ -17,7 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add recording rules for IP exhaustion on AWS.
 - Add missing opsrecipe for `PrometheusFailsToCommunicateWithRemoteStorageAPI`.
-- Add new alerts for the Prometheus Operator.
 
 ### Removed
 

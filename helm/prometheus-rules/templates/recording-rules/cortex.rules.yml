@@ -24,9 +24,9 @@ spec:
       record: aggregation:aws:instance_types
     # Available IPs
     - expr: min(aws_operator_subnet_available_ips_percentage{subnet_type="aws-cni"}) by (cluster_type, cluster_id, availability_zone)
-      record: aggregation:aws:available_ip_count
-    - expr: min(aws_operator_subnet_available_ips{subnet_type="aws-cni"}) by (cluster_type, cluster_id, availability_zone)
       record: aggregation:aws:available_ip_percentage
+    - expr: min(aws_operator_subnet_available_ips{subnet_type="aws-cni"}) by (cluster_type, cluster_id, availability_zone)
+      record: aggregation:aws:available_ip_count
     # Spot Instances being used
     - expr: count(sum(aws_operator_ec2_instance_status{lifecycle != ""}) by (ec2_instance, lifecycle)) by  (lifecycle)
       record: aggregation:aws:instance_lifecycle

@@ -35,16 +35,6 @@ spec:
         team: atlas
         topic: managementcluster
     {{- if eq .Values.managementCluster.provider.kind "aws" }}
-    - alert: ManagementClusterDaemonSetNotSatisfiedFirecracker
-      annotations:
-        description: '{{`Daemonset {{ $labels.namespace}}/{{ $labels.daemonset }} is not satisfied.`}}'
-      expr: kube_daemonset_status_number_unavailable{cluster_type="management_cluster", cluster_id!="argali|giraffe", daemonset=~"aws-node"} > 0
-      for: 30m
-      labels:
-        area: kaas
-        severity: notify
-        team: firecracker
-        topic: managementcluster
     # We split up the alerts for unsatisfied daemon sets because of network
     # bandwidth issues in China. The alert here is for all CHINA installations
     # with relaxed rules.

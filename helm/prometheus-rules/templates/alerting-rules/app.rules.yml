@@ -126,6 +126,7 @@ spec:
     - alert: ManagementClusterAppPendingUpdate
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
+        opsrecipe: app-pending-update/
       expr: app_operator_app_info{catalog=~"control-plane-.*", deployed_version!="", status="deployed", version_mismatch="true"}
       for: 40m
       labels:
@@ -134,7 +135,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        severity: notify
+        severity: page
         team: batman
         topic: releng
     ## Workload cluster app rules only available on the management cluster Prometheus because the source is app-exporter
@@ -157,6 +158,7 @@ spec:
     - alert: WorkloadClusterAppPendingUpdate
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
+        opsrecipe: app-pending-update/
       expr: label_replace(app_operator_app_info{catalog!~"control-plane-.*", deployed_version!="", status="deployed", version_mismatch="true"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
       for: 40m
       labels:
@@ -165,21 +167,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        severity: notify
-        team: batman
-        topic: releng
-    - alert: AppPendingUpdate
-      annotations:
-        description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
-      expr: app_operator_app_info{deployed_version!="", status="deployed", version_mismatch="true"}
-      for: 40m
-      labels:
-        area: managedservices
-        cancel_if_apiserver_down: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: notify
+        severity: page
         team: batman
         topic: releng
     - alert: AppWithoutTeamLabel

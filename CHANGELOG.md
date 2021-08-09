@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add basic Falco alerting rules.
+
 ### Changed
 
 - Upgrade AppPendingUpdate alerts to page during working hours.
@@ -34,7 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add recording rules for IP exhaustion on AWS.
 - Add missing opsrecipe for `PrometheusFailsToCommunicateWithRemoteStorageAPI`.
-- Add basic Falco alerting rules.
 
 ### Removed
 

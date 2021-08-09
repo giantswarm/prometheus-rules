@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade AppPendingUpdate alerts to page during working hours.
+
+## [0.9.1] - 2021-08-05
+
+### Fixed
+
+- Fixed recording rule naming for IP exhaustion.
+
+## [0.9.0] - 2021-08-05
+
+### Added
+
+- Add new alerts for the Prometheus Operator.
+- Add recording rules to send the total of ready and not ready pods to Cortex to be able to investigate outages when a prometheus is gone or missing.
+
+## [0.8.0] - 2021-08-05
+
+### Changed
+
+- Turn `DaemonSetNotSatisfiedFirecracker` into `ServiceLevelBurnRateTooHigh` SLO alert.
+
 ### Added
 
 - Add recording rules for IP exhaustion on AWS.
@@ -117,7 +140,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.7.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.9.1...HEAD
+[0.9.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.9.0...v0.9.1
+[0.9.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.8.0...v0.9.0
+[0.8.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.7.2...v0.8.0
 [0.7.2]: https://github.com/giantswarm/prometheus-rules/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.6.1...v0.7.0

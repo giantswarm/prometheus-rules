@@ -210,3 +210,5 @@ spec:
       record: aggregation:dex_requests_status_4xx
     - expr: sum(nginx_ingress_controller_requests{namespace="giantswarm",ingress="dex",status=~"[23].."})
       record: aggregation:dex_requests_status_ok
+    - expr: grafana_analytics_sessions_total
+      record: aggregation:grafana_analytics_sessions_total

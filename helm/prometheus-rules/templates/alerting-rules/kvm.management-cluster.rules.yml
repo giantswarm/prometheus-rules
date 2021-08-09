@@ -1,4 +1,4 @@
-{{- if eq .Values.Installation.V1.Provider.Kind "kvm" }}
+{{- if eq .Values.managementCluster.provider.kind "kvm" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -130,19 +130,4 @@ spec:
         severity: notify
         team: rocket
         topic: kvm
-    {{- if or (eq .Values.Installation.V1.Name "dragon") (eq .Values.Installation.V1.Name "dinosaur") }}
-    - alert: BackendServerUP
-      annotations:
-        description: '{{`Backend {{ $labels.server }} is not reachable from haproxy load balancer.`}}'
-      expr: haproxy_server_up{app="haproxy-exporter",cluster_type="management_cluster"} == 0
-      for: 5m
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: notify
-        team: rocket
-        topic: managementcluster
-    {{- end }}
 {{- end }}

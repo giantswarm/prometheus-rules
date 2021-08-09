@@ -1,9 +1,0 @@
----
-Installation:
-  V1:
-    Customer: ""
-    Name: ""
-    Infra:
-      TestingEnvironment: ""
-    Provider:
-      Kind: ""

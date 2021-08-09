@@ -21,7 +21,7 @@ spec:
         severity: notify
         team: biscuit
         topic: managementcluster
-    {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+    {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: JobHasNotBeenScheduledForTooLong
       annotations:
         description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 2 hours.`}}'

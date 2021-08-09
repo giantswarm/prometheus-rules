@@ -56,7 +56,7 @@ spec:
         cluster_status_deleting: "true"
         team: ludacris
         topic: status
-    {{- if eq .Values.Installation.V1.Provider.Kind "kvm" }}
+    {{- if eq .Values.managementCluster.provider.kind "kvm" }}
     - alert: InhibitionKVMClusterHasNoRunningCPNodes
       annotations:
         description: '{{`KVM Cluster {{ $labels.cluster_id }} has nodes down.`}}'
@@ -67,7 +67,7 @@ spec:
         team: ludacris
         topic: status
     {{- end }}
-    {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
+    {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: InhibitionClusterWithNoNodePools
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} doesn''t have any node pools.`}}'

@@ -3,11 +3,11 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: cortex.rules
+  name: cortex.recording.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: cortex
+  - name: cortex.recording
     rules:
     - expr: sum(alertmanager_alerts{state="active"})
       record: aggregation:alertmanager:alerts_active_total
@@ -22,6 +22,11 @@ spec:
     # Instance types used
     - expr: count(sum(aws_operator_ec2_instance_status) by (ec2_instance, instance_type)) by (instance_type)
       record: aggregation:aws:instance_types
+    # Available IPs
+    - expr: min(aws_operator_subnet_available_ips_percentage{subnet_type="aws-cni"}) by (cluster_type, cluster_id, availability_zone)
+      record: aggregation:aws:available_ip_percentage
+    - expr: min(aws_operator_subnet_available_ips{subnet_type="aws-cni"}) by (cluster_type, cluster_id, availability_zone)
+      record: aggregation:aws:available_ip_count
     # Spot Instances being used
     - expr: count(sum(aws_operator_ec2_instance_status{lifecycle != ""}) by (ec2_instance, lifecycle)) by  (lifecycle)
       record: aggregation:aws:instance_lifecycle
@@ -140,6 +145,10 @@ spec:
       record: aggregation:kubernetes:top10_pod_resource_requests_memory_bytes
     - expr: count(kube_pod_created) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:pod_total
+    - expr: sum(kube_pod_status_ready{condition="false"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:pod_status_not_ready_total
+    - expr: sum(kube_pod_status_ready{condition="true"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:pod_status_ready_total
     - expr: sum(kube_replicaset_spec_replicas) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:replicaset_replicas_desired
     - expr: sum(kube_replicaset_status_ready_replicas) by (cluster_type, cluster_id)

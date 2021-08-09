@@ -11,23 +11,6 @@ spec:
   groups:
   - name: daemonset
     rules:
-    {{- if eq .Values.Installation.V1.Provider.Kind "aws" }}
-    - alert: WorkloadClusterDaemonSetNotSatisfiedFirecracker
-      expr: kube_daemonset_status_number_unavailable{cluster_type="workload_cluster", namespace=~"giantswarm|kube-system", daemonset=~"aws-node|kiam-server|kiam-agent"} > 0
-      for: 30m
-      labels:
-        severity: page
-        area: kaas
-        team: firecracker
-        topic: workloadcluster
-        cancel_if_any_kubelet_down: true
-        cancel_if_any_kubelet_not_ready: true
-        cancel_if_instance_state_not_running: true
-        cancel_if_kube_state_metrics_down: true
-      annotations:
-        description: '{{`Daemonset {{ $labels.namespace}}/{{ $labels.daemonset }} is not satisfied.`}}'
-        opsrecipe: daemonset-not-satisfied/
-    {{- end }}
     - alert: WorkloadClusterDaemonSetNotSatisfiedLudacris
       annotations:
         description: '{{`Daemonset {{ $labels.namespace}}/{{ $labels.daemonset }} is not satisfied.`}}'

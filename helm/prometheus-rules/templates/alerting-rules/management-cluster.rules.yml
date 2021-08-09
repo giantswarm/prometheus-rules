@@ -11,7 +11,7 @@ spec:
   groups:
   - name: management-cluster
     rules:
-    {{- if or (eq .Values.Installation.V1.Provider.Kind "aws") (eq .Values.Installation.V1.Provider.Kind "azure") }}
+    {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
     - alert: ManagementClusterPodPendingFor15Min
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'

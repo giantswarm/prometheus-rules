@@ -3,11 +3,11 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: service-level.rules
+  name: service-level.recording.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: service-level
+  - name: service-level.recording
     rules:
       # -- api-server
     - expr: "count(up{app='kubernetes'}) by (cluster_type,cluster_id)"
@@ -36,6 +36,45 @@ spec:
       labels:
         area: kaas
         service: api-server
+      record: slo_target
+
+      # -- daemonset
+    - expr: |
+        label_replace(
+          kube_daemonset_status_desired_number_scheduled{cluster_id!="argali|giraffe", namespace=~"giantswarm|kube-system", daemonset=~"aws-node|kiam-server|kiam-agent"},
+        "service", "$1", "workload_name", "(.*)" )
+      labels:
+        class: MEDIUM
+        area: kaas
+      record: raw_slo_requests
+      # -- the errors are counted as follows: 
+      # -- pods in a daemonset that are UNAVAILABLE NOW and have been UNAVAILABLE 10 MINUTES AGO 
+      # -- which are on a SCHEDULABLE node that was CREATED AT LEAST 10 MINUTES AGO
+    - expr: |
+        (
+          (
+            label_replace(
+              kube_daemonset_status_number_unavailable{cluster_id!="argali|giraffe", namespace=~"giantswarm|kube-system", daemonset=~"aws-node|kiam-server|kiam-agent"},
+              "service", "$1", "workload_name", "(.*)" ) > 0
+            and on (daemonset, node)
+            label_replace(
+              kube_daemonset_status_number_unavailable{cluster_id!="argali|giraffe", namespace=~"giantswarm|kube-system", daemonset=~"aws-node|kiam-server|kiam-agent"} offset 10m,
+              "service", "$1", "workload_name", "(.*)" ) > 0
+          )
+          and
+          on (node) kube_node_spec_unschedulable == 0
+        )
+        and
+        on (node) time() - kube_node_created > 10 * 60
+      labels:
+        class: MEDIUM
+        area: kaas
+      record: raw_slo_errors
+      # -- 99% availability
+      # -- this expression collects all the daemonsets and assigns the same slo target to all of them
+    - expr: sum by (service, area) (raw_slo_errors{area="kaas", service=~"aws-node|kiam-server|kiam-agent"} - raw_slo_errors{area="kaas", service=~"aws-node|kiam-server|kiam-agent"}) + 1-0.99
+      labels:
+        area: kaas
       record: slo_target
 
       # -- kubelet

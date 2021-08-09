@@ -14,7 +14,7 @@ spec:
       for: 10m
       labels:
         area: "empowerment"
-        installation: {{ .Values.Installation.V1.Name }}
+        installation: {{ .Values.managementCluster.name }}
         team: "atlas"
         topic: "observability"
         type: "heartbeat"
@@ -32,7 +32,7 @@ spec:
             {__name__=~"cluster_service_cluster_info|cluster_operator_cluster_status", status!="Deleting"}
           ) unless sum by(cluster_id) (
             label_replace(
-              kube_pod_container_status_running{container="prometheus", namespace!="{{ .Values.Installation.V1.Name }}-prometheus", namespace=~".*-prometheus"},
+              kube_pod_container_status_running{container="prometheus", namespace!="{{ .Values.managementCluster.name }}-prometheus", namespace=~".*-prometheus"},
               "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)"
             )
           )
@@ -41,7 +41,7 @@ spec:
       labels:
         area: "empowerment"
         cancel_if_mc_kube_state_metrics_down: "true"
-        installation: {{ .Values.Installation.V1.Name }}
+        installation: {{ .Values.managementCluster.name }}
         severity: "page"
         team: "atlas"
         topic: "observability"
@@ -62,8 +62,7 @@ spec:
           cancel_if_cluster_status_updating: "true"
           cancel_if_cluster_status_deleting: "true"
           cancel_if_cluster_with_notready_nodepools: "true"
-          installation: {{ .Values.Installation.V1.Name }}
-          severity: "notify"
+          installation: {{ .Values.managementCluster.name }}
           team: "atlas"
           topic: "observability"
         annotations:

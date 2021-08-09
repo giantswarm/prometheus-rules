@@ -211,5 +211,5 @@ spec:
     - expr: sum(nginx_ingress_controller_requests{namespace="giantswarm",ingress="dex",status=~"[23].."})
       record: aggregation:dex_requests_status_ok
     # Falco event counts
-    - expr: sum(falco_events{priority=~"0|1|2|3|4|5|6|7"}) by (cluster_type, cluster_id, priority)
+    - expr: sum(falco_events{priority=~"0|1|2|3|4|5|6|7"}) by (cluster_type, cluster_id, priority, rule)
       record: aggregation:falco_events

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade AppPendingUpdate alerts to page.
+
 ## [0.9.1] - 2021-08-05
 
 ### Fixed
@@ -91,11 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `WorkloadClusterEtcdHasNoLeader` will not fire for loki or promtail pods any more.
-<<<<<<< HEAD
-- Upgrade AppPendingUpdate alerts to page.
-=======
 - Use configuration management instead of `Installation.V1` values.
->>>>>>> master
 
 ### Fixed
 

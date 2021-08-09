@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add workload cluster vertical pod autoscaler (VPA) availability alerts.
+- Push Falco event counts to cortex.
+
 ## [0.10.0] - 2021-08-09
 
 ### Added

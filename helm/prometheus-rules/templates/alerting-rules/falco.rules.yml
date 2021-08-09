@@ -48,15 +48,3 @@ spec:
         severity: notify
         team: ludacris
         topic: security
-    - alert: FalcoDebugAlert
-      annotations:
-        description: '{{`Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }}.`}}'
-      expr: increase(falco_events{priority="7"}[10m] ) > 0
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: notify
-        team: ludacris
-        topic: security

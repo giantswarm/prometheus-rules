@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Upgrade AppPendingUpdate alerts to page.
+- Upgrade AppPendingUpdate alerts to page during working hours.
 
 ## [0.9.1] - 2021-08-05
 

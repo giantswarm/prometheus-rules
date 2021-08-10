@@ -41,7 +41,7 @@ spec:
       # -- daemonset
     - expr: |
         label_replace(
-          kube_daemonset_status_desired_number_scheduled{cluster_id!="argali|giraffe", namespace=~"giantswarm|kube-system", daemonset=~"aws-node|kiam-server|kiam-agent"},
+          kube_daemonset_status_desired_number_scheduled{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|kiam-server|kiam-agent"},
         "service", "$1", "workload_name", "(.*)" )
       labels:
         class: MEDIUM
@@ -54,11 +54,11 @@ spec:
         (
           (
             label_replace(
-              kube_daemonset_status_number_unavailable{cluster_id!="argali|giraffe", namespace=~"giantswarm|kube-system", daemonset=~"aws-node|kiam-server|kiam-agent"},
+              kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|kiam-server|kiam-agent"},
               "service", "$1", "workload_name", "(.*)" ) > 0
             and on (daemonset, node)
             label_replace(
-              kube_daemonset_status_number_unavailable{cluster_id!="argali|giraffe", namespace=~"giantswarm|kube-system", daemonset=~"aws-node|kiam-server|kiam-agent"} offset 10m,
+              kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|kiam-server|kiam-agent"} offset 10m,
               "service", "$1", "workload_name", "(.*)" ) > 0
           )
           and

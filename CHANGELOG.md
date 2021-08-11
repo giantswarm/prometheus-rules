@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add recording rule for `grafana_analytics_sessions_total`
 
+### Changed
+
+- Include `DaemonSetNotSatisfiedChinaFirecracker` into `ServiceLevelBurnRateTooHigh` SLO alert for daemonsets.
+
 ## [0.10.0] - 2021-08-09
 
 ### Added

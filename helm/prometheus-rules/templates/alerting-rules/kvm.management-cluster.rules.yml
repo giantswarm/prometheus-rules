@@ -12,6 +12,17 @@ spec:
   groups:
   - name: kvm
     rules:
+    - alert: BlackboxExporterEndpointDown
+      annotations:
+        description: '{{`Blackbox exporter endpoint ({{ $labels.instance }}) is down.`}}'
+        opsrecipe: blackbox-exporter-endpoint-down/
+      expr: up{job="management-cluster-blackbox-ingress-http"} == 0
+      for: 15m
+      labels:
+        area: kaas
+        severity: page
+        team: rocket
+        topic: observability
     - alert: ManagementClusterPodPendingFor15Min
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'

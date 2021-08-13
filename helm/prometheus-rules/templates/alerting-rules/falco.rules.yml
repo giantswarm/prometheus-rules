@@ -14,6 +14,7 @@ spec:
     - alert: FalcoCriticalAlertFiring
       annotations:
         description: '{{`Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }}.`}}'
+        opsrecipe: falco-alerts/
       expr: increase(falco_events{priority=~"0|1|2|3"}[10m] ) > 0
       labels:
         area: kaas
@@ -27,6 +28,7 @@ spec:
     - alert: FalcoMediumAlertFiring
       annotations:
         description: '{{`Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }}.`}}'
+        opsrecipe: falco-alerts/
       expr: increase(falco_events{priority=~"4|5"}[10m] ) > 0
       labels:
         area: kaas
@@ -39,19 +41,8 @@ spec:
     - alert: FalcoInformationalAlert
       annotations:
         description: '{{`Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }}.`}}'
+        opsrecipe: falco-alerts/
       expr: increase(falco_events{priority="6"}[10m] ) > 0
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: notify
-        team: ludacris
-        topic: security
-    - alert: FalcoDebugAlert
-      annotations:
-        description: '{{`Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }}.`}}'
-      expr: increase(falco_events{priority="7"}[10m] ) > 0
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"

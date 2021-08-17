@@ -19,6 +19,7 @@ spec:
       for: 15m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: biscuit
         topic: releng
@@ -31,6 +32,7 @@ spec:
       for: 15m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: biscuit
         topic: releng

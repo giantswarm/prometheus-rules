@@ -23,6 +23,17 @@ spec:
         severity: page
         team: rocket
         topic: observability
+    - alert: BlackboxExporterEndpointNotResponding
+      annotations:
+        description: '{{`Blackbox exporter endpoint ({{ $labels.instance }}) is not responding.`}}'
+        opsrecipe: blackbox-exporter-endpoint-down/
+      expr: sum by(instance) (avg_over_time(probe_http_duration_seconds[5m])) > 0.2
+      for: 5m
+      labels:
+        area: kaas
+        severity: notify
+        team: rocket
+        topic: observability
     - alert: ManagementClusterPodPendingFor15Min
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'

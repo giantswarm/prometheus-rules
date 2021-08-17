@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2021-08-11
+
 ### Added
 
 - Add recording rule for `grafana_analytics_sessions_total`
@@ -15,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Include `DaemonSetNotSatisfiedChinaFirecracker` into `ServiceLevelBurnRateTooHigh` SLO alert for daemonsets.
+- Improve `KiamSTSIssuingErrors` for AWS workload clusters.
 
 ## [0.10.0] - 2021-08-09
 
@@ -154,7 +157,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.8.0...v0.9.0

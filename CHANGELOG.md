@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Rename deployment `cluster-api-core-unique-webhook` -> `cluster-api-core-webhook`.
+
 ## [0.11.1] - 2021-08-16
 
 ### Added

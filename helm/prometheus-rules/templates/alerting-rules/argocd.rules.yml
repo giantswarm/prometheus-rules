@@ -16,7 +16,7 @@ spec:
           {{`ArgoCD application {{ $labels.namespace }}/{{ $labels.name }} is {{ $labels.health_status }}.`}}
         opsrecipe: argocd-application-unhealthy/
       expr: argocd_app_info{health_status!~"Healthy|Suspended"}
-      for: 15m
+      for: 30m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
@@ -29,7 +29,7 @@ spec:
           {{`ArgoCD application {{ $labels.namespace }}/{{ $labels.name }} is {{ $labels.sync_status }}.`}}
         opsrecipe: argocd-application-out-of-sync/
       expr: argocd_app_info{sync_status!="Synced"}
-      for: 15m
+      for: 30m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"

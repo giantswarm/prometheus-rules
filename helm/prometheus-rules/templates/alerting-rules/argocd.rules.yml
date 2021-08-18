@@ -1,0 +1,38 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: argocd.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: argocd
+    rules:
+    - alert: ArgoCDApplicationUnhealthy
+      annotations:
+        description: |-
+          {{`ArgoCD application {{ $labels.namespace }}/{{ $labels.name }} is {{ $labels.health_status }}.`}}
+        opsrecipe: argocd-application-unhealthy/
+      expr: argocd_app_info{health_status!~"Healthy|Suspended"}
+      for: 2h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: releng
+    - alert: ArgoCDApplicationOutOfSync
+      annotations:
+        description: |-
+          {{`ArgoCD application {{ $labels.namespace }}/{{ $labels.name }} is {{ $labels.sync_status }}.`}}
+        opsrecipe: argocd-application-out-of-sync/
+      expr: argocd_app_info{sync_status!="Synced"}
+      for: 2h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: biscuit
+        topic: releng

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add workload cluster vertical pod autoscaler (VPA) availability alerts.
 
+### Changed
+
+- Remove `-unique` suffix from app, deployment, and daemonset names used in multiple alerts.
+
 ## [0.15.0] - 2021-08-18
 
 ### Changed

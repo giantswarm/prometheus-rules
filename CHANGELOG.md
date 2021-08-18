@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Adds alerts for unhealthy/out-of-sync ArgoCD Applications.
+- Add alerts for unhealthy/out-of-sync ArgoCD Applications.
 
 ## [0.12.0] - 2021-08-17
 

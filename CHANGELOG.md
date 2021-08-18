@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Increase timeout for ArgoCD alerts.
+
 ## [0.13.0] - 2021-08-18
 
 ### Added

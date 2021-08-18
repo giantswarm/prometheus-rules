@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0] - 2021-08-18
+
+### Changed
+
+- Increase timeout for ArgoCD alerts to 2h.
+
+## [0.14.0] - 2021-08-18
+
+### Changed
+
+- Increase timeout for ArgoCD alerts to 30m.
+
+## [0.13.0] - 2021-08-18
+
+### Added
+
+- Add alerts for unhealthy/out-of-sync ArgoCD Applications.
+
 ## [0.12.0] - 2021-08-17
 
 ### Changed
@@ -83,7 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.7.0] - 2021-07-23
 
-### Added 
+### Added
 
 - Added KiamSTSIssuingErrors for AWS workload clusters.
 
@@ -169,7 +187,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.15.0...HEAD
+[0.15.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.14.0...v0.15.0
+[0.14.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.13.0...v0.14.0
+[0.13.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.10.0...v0.11.0

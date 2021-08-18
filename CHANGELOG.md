@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Adds alerts for unhealthy/out-of-sync ArgoCD Applications.
+
 ## [0.12.0] - 2021-08-17
 
 ### Changed
@@ -82,7 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.7.0] - 2021-07-23
 
-### Added 
+### Added
 
 - Added KiamSTSIssuingErrors for AWS workload clusters.
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Drop user related labels from aggregation:grafana_analytics_sessions_total
+
 ## [0.15.0] - 2021-08-18
 
 ### Changed

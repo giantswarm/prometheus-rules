@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.0] - 2021-08-30
+
 ### Added
 
 - Add workload cluster vertical pod autoscaler (VPA) availability alerts.
@@ -14,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Remove `-unique` suffix from app, deployment, and daemonset names used in multiple alerts.
+- Update grafana analytics recoding rule. #76 #80
 
 ### Fixed
 
@@ -204,7 +207,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.16.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.17.0...HEAD
+[0.17.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.13.0...v0.14.0

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix CI by upgrading architect-orb to 4.2.0
+- Fix aggregation:grafana_analytics_sessions_total error. #85
 
 ## [0.17.0] - 2021-08-30
 

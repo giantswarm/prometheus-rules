@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Remove `-unique` suffix from app, deployment, and daemonset names used in multiple alerts.
-- Update grafana analytics recoding rule. #76 #80
+- Update grafana analytics recoding rule.
 
 ### Fixed
 

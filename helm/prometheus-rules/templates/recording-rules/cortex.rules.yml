@@ -210,7 +210,7 @@ spec:
       record: aggregation:dex_requests_status_4xx
     - expr: sum(nginx_ingress_controller_requests{namespace="giantswarm",ingress="dex",status=~"[23].."})
       record: aggregation:dex_requests_status_ok
-    - expr: sum(increase(grafana_analytics_sessions_total[60s]) / (132 / 99)) without (user_locale, user_login, user_name, user_role, user_theme, user_timezone)
+    - expr: sum(increase(grafana_analytics_sessions_total[60s]) / (132 / 99)) without (user_email, user_name)
       record: aggregation:grafana_analytics_sessions_total
     # Falco event counts
     - expr: sum(falco_events{priority=~"0|1|2|3|4|5|6|7"}) by (cluster_type, cluster_id, priority, rule)

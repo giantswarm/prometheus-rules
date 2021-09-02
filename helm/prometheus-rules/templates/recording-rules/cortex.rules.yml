@@ -48,6 +48,8 @@ spec:
       record: aggregation:giantswarm:app_deployed_management_cluster_total
     - expr: count(app_operator_app_info{status=~"deployed|DEPLOYED",namespace!="giantswarm"}) by (app,name,version,catalog)
       record: aggregation:giantswarm:app_deployed_workload_cluster_total
+    - expr: count(app_operator_app_info{upgrade_available="true"}) by (app,catalog,latest_version,namespace,version)
+      record: aggregation:giantswarm:app_upgrade_available
     - expr: min(cert_exporter_not_after) by (cluster_id, cluster_type)
       record: aggregation:giantswarm:cluster_certificate_not_after_seconds
     - expr: sum(azure_operator_cluster_release{release_version!=""}) by (release_version, cluster_id) or sum(cluster_service_cluster_info) by (release_version, cluster_id) / 2 or sum(cluster_operator_cluster_status{release_version!=""}) by (release_version, cluster_id)

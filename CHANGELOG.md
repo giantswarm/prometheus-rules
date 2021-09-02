@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Only drop PII labels from `aggregation:grafana_analytics_sessions_total`,
+  preserve the others so they can be used in analytics dashboard.
+
 ## [0.18.0] - 2021-09-02
 
 ### Added

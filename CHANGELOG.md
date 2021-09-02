@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add recording rules for Managed Apps available upgrades.
+- Add recording rule for Managed Apps with available upgrades.
 
 ## [0.17.1] - 2021-08-30
 

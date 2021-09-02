@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Only drop PII labels from `aggregation:grafana_analytics_sessions_total`,
   preserve the others so they can be used in analytics dashboard.
 
+## [0.18.0] - 2021-09-02
+
+### Added
+
+- Add recording rule for Managed Apps with available upgrades.
+
 ## [0.17.1] - 2021-08-30
 
 ### Fixed
@@ -219,7 +225,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.17.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.18.0...HEAD
+[0.18.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.17.1...v0.18.0
 [0.17.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.17.0...v0.17.1
 [0.17.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.15.0...v0.16.0

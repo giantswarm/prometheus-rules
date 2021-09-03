@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.0] - 2021-09-02
+
 ### Changed
 
 - Only drop PII labels from `aggregation:grafana_analytics_sessions_total`,
@@ -225,7 +227,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.18.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.19.0...HEAD
+[0.19.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.17.1...v0.18.0
 [0.17.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.17.0...v0.17.1
 [0.17.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.16.0...v0.17.0

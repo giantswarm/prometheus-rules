@@ -140,7 +140,7 @@ spec:
         service: blackbox-exporter
       record: raw_slo_requests
       # record of number of endpoints that are down.
-    - expr: sum(1 - probe_success == 0) by (cluster_id, cluster_type)
+    - expr: sum(1 - probe_success) by (cluster_id, cluster_type)
       labels:
         area: kaas
         class: MEDIUM

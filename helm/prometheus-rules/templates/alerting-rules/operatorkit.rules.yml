@@ -13,7 +13,7 @@ spec:
     rules:
     - alert: OperatorkitErrorRateTooHighBatman
       annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
+        description: '{{`{{ $labels.namespace }}/{{ $labels.app }} has reported errors. Please check logs.`}}'
         opsrecipe: check-operator-error-rate-high/
       expr: operatorkit_controller_error_total{app=~"app-operator.*|chart-operator.*"} > 5
       for: 1m
@@ -24,10 +24,7 @@ spec:
         topic: qa
     - alert: OperatorNotReconcilingBatman
       annotations:
-        description: |-
-          {{`{{$labels.app_name}} (version {{$labels.app_version}}) not reconciling controller
-          {{$labels.controller}}.
-          `}}
+        description: '{{`{{ $labels.namespace }}/{{ $labels.app }} not reconciling controller {{$labels.controller}}. Please check logs.`}}'
       expr: (time() - operatorkit_controller_last_reconciled{app=~"app-operator.*|chart-operator.*"}) / 60 > 30
       for: 10m
       labels:

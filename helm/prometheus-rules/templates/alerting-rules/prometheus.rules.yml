@@ -14,7 +14,7 @@ spec:
       annotations:
         description: '{{`Prometheus can''t communicate with Kubernetes API.`}}'
         opsrecipe: prometheus-cant-communicate/
-      expr: rate(prometheus_sd_kubernetes_http_request_total{app!="promxy-app-unique", status_code="<error>"}[15m]) > 0.25
+      expr: rate(prometheus_sd_kubernetes_http_request_total{app!="promxy-app", status_code="<error>"}[15m]) > 0.25
       for: 30m
       labels:
         area: empowerment

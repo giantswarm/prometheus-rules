@@ -45,26 +45,3 @@ spec:
         severity: "page"
         team: "atlas"
         topic: "observability"
-  - name: "labelling-schema"
-    rules:
-      - alert: "InvalidLabellingSchema"
-        expr: |
-          up{cluster_type!~"management_cluster|workload_cluster"}
-          or up{app=""}
-          or up{installation=""}
-          or up{cluster_id=""}
-          or up{provider!~"aws|azure|kvm|vmware"}
-          or up{instance!~"(\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+)|vault.*|bastion.*"}
-        for: "10m"
-        labels:
-          area: "empowerment"
-          cancel_if_cluster_status_creating: "true"
-          cancel_if_cluster_status_updating: "true"
-          cancel_if_cluster_status_deleting: "true"
-          cancel_if_cluster_with_notready_nodepools: "true"
-          installation: {{ .Values.managementCluster.name }}
-          team: "atlas"
-          topic: "observability"
-        annotations:
-          description: Labelling schema is invalid.
-      

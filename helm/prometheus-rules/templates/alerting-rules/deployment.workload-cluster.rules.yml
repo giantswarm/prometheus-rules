@@ -26,7 +26,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: workload-cluster-deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="workload_cluster", deployment="metrics-server"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="workload_cluster", deployment=~"metrics-server|vertical-pod-autoscaler-app-admission-controller|vertical-pod-autoscaler-app-recommender|vertical-pod-autoscaler-app-updater"} > 0
       for: 30m
       labels:
         area: kaas

@@ -7,6 +7,71 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.0] - 2021-09-03
+
+### Changed
+
+- Remove 'InvalidLabellingSchema' alert.
+
+## [0.19.0] - 2021-09-02
+
+### Changed
+
+- Only drop PII labels from `aggregation:grafana_analytics_sessions_total`,
+  preserve the others so they can be used in analytics dashboard.
+
+## [0.18.0] - 2021-09-02
+
+### Added
+
+- Add recording rule for Managed Apps with available upgrades.
+
+## [0.17.1] - 2021-08-30
+
+### Fixed
+
+- Fix CI by upgrading architect-orb to 4.2.0
+- Fix aggregation:grafana_analytics_sessions_total error. #85
+
+## [0.17.0] - 2021-08-30
+
+### Added
+
+- Add workload cluster vertical pod autoscaler (VPA) availability alerts.
+
+### Changed
+
+- Remove `-unique` suffix from app, deployment, and daemonset names used in multiple alerts.
+- Update grafana analytics recoding rule. #76 #80
+
+### Fixed
+
+- Fix labels on Batman operatorkit alerts.
+
+## [0.16.0] - 2021-08-19
+
+### Changed
+
+- Drop user related labels from aggregation:grafana_analytics_sessions_total
+
+## [0.15.0] - 2021-08-18
+
+### Changed
+
+- Increase timeout for ArgoCD alerts to 2h.
+
+## [0.14.0] - 2021-08-18
+
+### Changed
+
+- Increase timeout for ArgoCD alerts to 30m.
+
+## [0.13.0] - 2021-08-18
+
+### Added
+
+- Add alerts for unhealthy/out-of-sync ArgoCD Applications.
+
 ## [0.12.0] - 2021-08-17
 
 ### Changed
@@ -83,7 +148,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.7.0] - 2021-07-23
 
-### Added 
+### Added
 
 - Added KiamSTSIssuingErrors for AWS workload clusters.
 
@@ -169,7 +234,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.20.0...HEAD
+[0.20.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.19.0...v0.20.0
+[0.19.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.18.0...v0.19.0
+[0.18.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.17.1...v0.18.0
+[0.17.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.17.0...v0.17.1
+[0.17.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.16.0...v0.17.0
+[0.16.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.15.0...v0.16.0
+[0.15.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.14.0...v0.15.0
+[0.14.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.13.0...v0.14.0
+[0.13.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.10.0...v0.11.0

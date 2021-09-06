@@ -19,6 +19,7 @@ spec:
       labels:
         area: empowerment
         cancel_if_any_apiserver_down: "true"
+        cancel_if_cluster_status_deleting: "true"
         severity: page
         team: atlas
         topic: observability

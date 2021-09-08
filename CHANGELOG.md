@@ -97,6 +97,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add recording rule for `grafana_analytics_sessions_total`
+- Add alerting rule for blackbox exporter endpoint down on KVM.
 
 ### Changed
 

@@ -131,6 +131,28 @@ spec:
         service: node-exporter
       record: slo_target
 
+      # -- blackbox-exporter
+      # record number of endpoints.
+    - expr: count(probe_success) by (cluster_id, cluster_type)
+      labels:
+        class: MEDIUM
+        area: kaas
+        service: blackbox-exporter
+      record: raw_slo_requests
+      # record of number of endpoints that are down.
+    - expr: sum(1 - probe_success) by (cluster_id, cluster_type)
+      labels:
+        area: kaas
+        class: MEDIUM
+        service: blackbox-exporter
+      record: raw_slo_errors
+      # -- 99.999% availability
+    - expr: "vector((1 - 0.99999))"
+      labels:
+        area: kaas
+        service: blackbox-exporter
+      record: slo_target
+
     # -- managed-apps
     # -- error recording rules
     # record when pods of a daemonset with label "label_giantswarm_io_monitoring_basic_sli" are down

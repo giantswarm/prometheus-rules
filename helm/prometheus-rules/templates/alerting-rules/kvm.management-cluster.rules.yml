@@ -12,6 +12,18 @@ spec:
   groups:
   - name: kvm
     rules:
+    # If the blackbox-exporter itself goes down, we are blind to endpoint issues and should be alerted.
+    - alert: BlackboxExporterEndpointDown
+      annotations:
+        description: '{{`Blackbox exporter endpoint ({{ $labels.instance }}) is down.`}}'
+        opsrecipe: blackbox-exporter-endpoint-down/
+      expr: up{job=~"blackbox-exporter-.*"} == 0
+      for: 5m
+      labels:
+        area: kaas
+        severity: page
+        team: rocket
+        topic: observability
     - alert: ManagementClusterPodPendingFor15Min
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'

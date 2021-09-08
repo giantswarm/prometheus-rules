@@ -46,7 +46,7 @@ spec:
       record: aggregation:giantswarm:api_requests
     - expr: count(app_operator_app_info{status="deployed",namespace="giantswarm"}) by (app,name,version,catalog)
       record: aggregation:giantswarm:app_deployed_management_cluster_total
-    - expr: count(app_operator_app_info{status=~"deployed|DEPLOYED",namespace!="giantswarm"}) by (app,name,version,catalog)
+    - expr: count(app_operator_app_info{status=~"deployed|DEPLOYED",namespace!="giantswarm"}) by (app,app_version,name,version,catalog)
       record: aggregation:giantswarm:app_deployed_workload_cluster_total
     - expr: count(app_operator_app_info{upgrade_available="true"}) by (app,catalog,latest_version,namespace,version)
       record: aggregation:giantswarm:app_upgrade_available

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.0] - 2021-09-08
+
 ### Added
 
 - Add `app_version` label to `aggregation:giantswarm:app_deployed_workload_cluster_total`.
@@ -242,7 +244,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.20.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.21.0...HEAD
+[0.21.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.17.1...v0.18.0

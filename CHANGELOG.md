@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `app_version` label to `aggregation:giantswarm:app_deployed_workload_cluster_total`.
+
+### Changed
+
+- Cancel `PrometheusCantCommunicateWithKubernetesAPI` for deleting clusters.
+
 ## [0.20.0] - 2021-09-03
 
 ### Changed

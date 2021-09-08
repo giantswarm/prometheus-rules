@@ -12,6 +12,7 @@ spec:
   groups:
   - name: kvm
     rules:
+    # If the blackbox-exporter itself goes down, we are blind to endpoint issues and should be alerted.
     - alert: BlackboxExporterEndpointDown
       annotations:
         description: '{{`Blackbox exporter endpoint ({{ $labels.instance }}) is down.`}}'

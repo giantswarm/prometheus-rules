@@ -118,7 +118,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator.*|cluster-operator.*|cluster-api-core-webhook.*|upgrade-schedule-operator.*"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator.*|cluster-operator.*|cluster-api-core-webhook.*|upgrade-schedule-operator.*|event-exporter-app.*"} > 0
       for: 30m
       labels:
         area: kaas
@@ -132,7 +132,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator.*|cluster-operator.*|cluster-api-core-webhook.*|upgrade-schedule-operator.*", cluster_id=~"argali|giraffe"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator.*|cluster-operator.*|cluster-api-core-webhook.*|upgrade-schedule-operator.*|event-exporter-app.*", cluster_id=~"argali|giraffe"} > 0
       for: 3h
       labels:
         area: kaas

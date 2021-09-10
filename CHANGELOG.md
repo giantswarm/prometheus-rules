@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `upgrade-schedule-operator` and `event-exporter-app` to `DeploymentNotSatisfiedFirecracker`
+
 ## [0.21.0] - 2021-09-08
 
 ### Added

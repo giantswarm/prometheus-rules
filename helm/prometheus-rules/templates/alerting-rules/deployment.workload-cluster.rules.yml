@@ -37,7 +37,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: workload-cluster-managed-deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="workload_cluster", deployment=~"cert-manager|external-dns"} > 0
+      expr: managed_app_deployment_status_replicas_unavailable{cluster_type="workload_cluster", managed_app=~"cert-manager|external-dns"} > 0
       for: 30m
       labels:
         area: managedservices

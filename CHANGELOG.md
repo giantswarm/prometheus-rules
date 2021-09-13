@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Ignore non GS deployments in `WorkloadClusterManagedDeploymentNotSatisfied` alert.
+
 ## [0.22.0] - 2021-09-10
 
 ### Added

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Ignore non GS deployments in `WorkloadClusterManagedDeploymentNotSatisfied` alert.
 
+### Fixed
+
+- Exclude apps in giantswarm namespace from `aggregation:giantswarm:app_upgrade_available`.
+
 ## [0.22.0] - 2021-09-10
 
 ### Added

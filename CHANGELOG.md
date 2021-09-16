@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add recording rule for scheduled cluster upgrades `aggregation:giantswarm:cluster_scheduled_upgrades_time`
+
 ## [0.23.0] - 2021-09-16
 
 ### Changed

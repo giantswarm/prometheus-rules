@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.0] - 2021-09-16
+
 ### Changed
 
 - Ignore non GS deployments in `WorkloadClusterManagedDeploymentNotSatisfied` alert.
@@ -258,7 +260,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.22.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.23.0...HEAD
+[0.23.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.22.0...v0.23.0
 [0.22.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.19.0...v0.20.0

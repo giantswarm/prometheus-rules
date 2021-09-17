@@ -5,8 +5,6 @@ metadata:
     {{- include "labels.common" . | nindent 4 }}
   name: service-level.recording.rules
   namespace: {{ .Values.namespace  }}
-  annotations:
-    release.revision: {{ .Release.Revision | quote }}
 spec:
   groups:
   - name: service-level.recording

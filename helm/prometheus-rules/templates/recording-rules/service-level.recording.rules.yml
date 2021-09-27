@@ -3,11 +3,11 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: service-level.recording.rules
+  name: service-level-recording.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: service-level.recording
+  - name: service-level-recording
     rules:
       # -- api-server
     - expr: "count(up{app='kubernetes'}) by (cluster_type,cluster_id)"

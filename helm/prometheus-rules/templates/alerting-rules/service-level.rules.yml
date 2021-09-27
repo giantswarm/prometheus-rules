@@ -32,3 +32,4 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
+        update: me

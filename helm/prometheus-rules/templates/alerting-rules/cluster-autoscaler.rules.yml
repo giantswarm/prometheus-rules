@@ -1,0 +1,45 @@
+{{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "workload_cluster"
+  name: cluster-autoscaler.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: cluster-autoscaler
+    rules:
+    - alert: ClusterAutoscalerErrors
+      annotations:
+        description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has increased errors.`}}'
+        opsrecipe: cluster-autoscaler-scaling/
+      expr: increase(cluster_autoscaler_errors_total[1h]) > 0
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: firecracker
+        topic: cluster-autoscaler
+    - alert: ClusterAutoscalerFailedScaling
+      annotations:
+        description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has failed scaling up.`}}'
+        opsrecipe: cluster-autoscaler-scaling/
+      expr: increase(cluster_autoscaler_failed_scale_ups_total[1h]) > 0
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: firecracker
+        topic: cluster-autoscaler
+{{- end }}

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Reduce blackbox-exporter service level target from 99.999% to 99.99%.
 
+### Added
+
+- Add alerts for the `cluster-autoscaler`.
+
 ## [0.24.0] - 2021-09-16
 
 ### Added

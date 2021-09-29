@@ -16,7 +16,7 @@ spec:
       annotations:
         description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has increased errors.`}}'
         opsrecipe: cluster-autoscaler-scaling/
-      expr: increase(cluster_autoscaler_errors_total[1h]) > 0
+      expr: increase(cluster_autoscaler_errors_total[10m]) > 0
       for: 15m
       labels:
         area: managedservices

@@ -11,6 +11,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Adjust `ServiceLevelBurnRateTooHigh` metric to avoid "multiple matches for labels" error.
 
+## [0.25.1] - 2021-09-29
+
+### Changed
+
+- Adjust time frame for error reports in `cluster-autoscaler`.
+
+## [0.25.0] - 2021-09-28
+
+### Changed
+
+- Reduce blackbox-exporter service level target from 99.999% to 99.99%.
+
+### Added
+
+- Add alerts for the `cluster-autoscaler`.
+
+## [0.24.0] - 2021-09-16
+
+### Added
+
+- Add recording rule for scheduled cluster upgrades `aggregation:giantswarm:cluster_scheduled_upgrades_time`
+
 ## [0.23.0] - 2021-09-16
 
 ### Changed
@@ -264,7 +286,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.23.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.25.1...HEAD
+[0.25.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.25.0...v0.25.1
+[0.25.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.24.0...v0.25.0
+[0.24.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.22.0...v0.23.0
 [0.22.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.20.0...v0.21.0

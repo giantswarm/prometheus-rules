@@ -58,6 +58,9 @@ spec:
       record: aggregation:giantswarm:cluster_transition_create
     - expr: avg_over_time(cluster_operator_cluster_update_transition[1w])
       record: aggregation:giantswarm:cluster_transition_update
+    # Scheduled cluster upgrade times
+    - expr: upgrade_schedule_operator_cluster_scheduled_upgrades_time
+      record: aggregation:giantswarm:cluster_scheduled_upgrades_time
     # Happa requests
     - expr: sum(rate(nginx_ingress_controller_requests{namespace="giantswarm", ingress="happa"}[5m])) by (status)
       record: aggregation:giantswarm:happa_requests

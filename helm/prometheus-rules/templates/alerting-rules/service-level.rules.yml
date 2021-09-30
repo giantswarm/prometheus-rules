@@ -15,16 +15,16 @@ spec:
         description: '{{`Service level burn rate is too high for {{ $labels.service }} service.`}}'
         opsrecipe: service-level-burn-rate-too-high/
       expr: |
-        slo_errors_per_request:ratio_rate1h{service!~"efk-.*|.*external-dns.*|kong-.*|.*nginx-.*"}
-        and on (service)
         (
-        slo_errors_per_request:ratio_rate1h > on (service) group_left (cluster_type, cluster_id, class) slo_threshold_high
+          slo_errors_per_request:ratio_rate1h{service!~"efk-.*|.*external-dns.*|kong-.*|.*nginx-.*"} > on (service) group_left slo_threshold_high
         and
-        slo_errors_per_request:ratio_rate5m > on (service) group_left (cluster_type, cluster_id, class) slo_threshold_high
+          slo_errors_per_request:ratio_rate5m{service!~"efk-.*|.*external-dns.*|kong-.*|.*nginx-.*"} > on (service) group_left slo_threshold_high
+        )
         or
-        slo_errors_per_request:ratio_rate6h > on (service) group_left (cluster_type, cluster_id, class) slo_threshold_low
+        (
+          slo_errors_per_request:ratio_rate6h{service!~"efk-.*|.*external-dns.*|kong-.*|.*nginx-.*"} > on (service) group_left slo_threshold_low
         and
-        slo_errors_per_request:ratio_rate30m > on (service) group_left (cluster_type, cluster_id, class) slo_threshold_low
+          slo_errors_per_request:ratio_rate30m{service!~"efk-.*|.*external-dns.*|kong-.*|.*nginx-.*"} > on (service) group_left slo_threshold_low
         )
       for: 5m
       labels:

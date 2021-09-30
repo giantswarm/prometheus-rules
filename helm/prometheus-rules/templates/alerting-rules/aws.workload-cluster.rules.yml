@@ -27,20 +27,20 @@ spec:
         severity: page
         team: firecracker
         topic: kubernetes
-          #    - alert: WorkloadClusterCriticalPodNotRunningAWS
-          #annotations:
-          #description: '{{`Critical pod {{ $labels.namespace }}/{{ $labels.pod }} is not running.`}}'
-          #opsrecipe: critical-pod-is-not-running/
-          #expr: kube_pod_container_status_running{container=~"(k8s-api-server|k8s-controller-manager|k8s-scheduler)"} != 1 or absent(kube_pod_container_status_running{container="k8s-api-server"}) == 1 or absent(kube_pod_container_status_running{container="k8s-controller-manager"}) == 1 or absent(kube_pod_container_status_running{container="k8s-scheduler"}) == 1
-          #for: 5m
-          #labels:
-          #area: kaas
-          #cancel_if_cluster_status_creating: "true"
-          #cancel_if_cluster_status_deleting: "true"
-          #cancel_if_cluster_status_updating: "true"
-          #severity: page
-          #team: firecracker
-          #topic: kubernetes
+    - alert: WorkloadClusterCriticalPodNotRunningAWS
+      annotations:
+        description: '{{`Critical pod {{ $labels.namespace }}/{{ $labels.pod }} is not running.`}}'
+        opsrecipe: critical-pod-is-not-running/
+      expr: kube_pod_container_status_running{container=~"(k8s-api-server|k8s-controller-manager|k8s-scheduler)"} != 1 or absent(kube_pod_container_status_running{container="k8s-api-server"}) == 1 or absent(kube_pod_container_status_running{container="k8s-controller-manager"}) == 1 or absent(kube_pod_container_status_running{container="k8s-scheduler"}) == 1
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: page
+        team: firecracker
+        topic: kubernetes
     # WorkloadClusterMasterNodeMissingFirecracker in this file is AWS specific and thus
     # assigned to Team Firecracker. The alert is also defined for all the other
     # providers with other team assignments.

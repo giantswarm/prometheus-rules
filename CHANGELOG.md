@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Move event-exporter-.* to firecracker.
+
 ### Fixed
 
 - Adjust `ServiceLevelBurnRateTooHigh` metric to avoid "multiple matches for labels" error.

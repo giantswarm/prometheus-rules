@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.27.2] - 2021-10-05
+
 ### Changed
 
 - Revert cluster-api deployments to the `ManagementClusterDeploymentMissingFirecracker` alert rule.
@@ -319,7 +321,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.27.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.27.2...HEAD
+[0.27.2]: https://github.com/giantswarm/prometheus-rules/compare/v0.27.1...v0.27.2
 [0.27.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.27.0...v0.27.1
 [0.27.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.26.1...v0.27.0
 [0.26.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.26.0...v0.26.1

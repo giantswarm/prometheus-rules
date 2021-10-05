@@ -136,14 +136,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.workload_name }} is missing.`}}'
         opsrecipe: management-cluster-deployment-is-missing/
-      ## `label_replace` used when using a regex match to ensure the general name of the missing deployment is passed through to the alert
-      expr: |
-        absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", workload_name="aws-admission-controller"}) or
-        absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", workload_name="cluster-api-core-webhook"}) or
-        label_replace(absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", workload_name=~"cluster-api-core-\\d+-\\d+-\\d+-gs\\d"}), "workload_name", "cluster-api-core", "", "") or
-        label_replace(absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", workload_name=~"cluster-api-provider-aws-.+"}), "workload_name", "cluster-api-provider-aws", "", "") or
-        label_replace(absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", workload_name=~"cluster-api-control-plane-.+"}), "workload_name", "cluster-api-control-plane", "", "") or
-        label_replace(absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", workload_name=~"cluster-api-bootstrap-provider-kubeadm-.+"}), "workload_name", "cluster-api-bootstrap-provider-kubeadm", "", "")
+      expr: absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", workload_name="aws-admission-controller"})
       for: 5m
       labels:
         area: kaas

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Revert cluster-api deployments to the `ManagementClusterDeploymentMissingFirecracker` alert rule.
+
 ## [0.27.1] - 2021-10-05
 
 ### Added

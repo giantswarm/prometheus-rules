@@ -132,4 +132,18 @@ spec:
         severity: page
         team: firecracker
         topic: kubernetes
+    - alert: ManagementClusterDeploymentMissingFirecracker
+      annotations:
+        description: '{{`Deployment {{ $labels.workload_name }} is missing.`}}'
+        opsrecipe: management-cluster-deployment-is-missing/
+      expr: absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", workload_name="aws-admission-controller"})
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: page
+        team: firecracker
+        topic: kubernetes
 {{- end }}

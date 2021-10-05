@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `ManagementClusterDeploymentMissingFirecracker` alert added to notify on missing critical MC deployments.
+
 ## [0.26.1] - 2021-10-05
 
 ### Changed

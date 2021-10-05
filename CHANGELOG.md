@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.27.0] - 2021-10-05
+
 ### Added
 
 - `ManagementClusterDeploymentMissingFirecracker` alert added to notify on missing critical MC deployments.
@@ -307,7 +309,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.26.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.27.0...HEAD
+[0.27.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.26.1...v0.27.0
 [0.26.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.26.0...v0.26.1
 [0.26.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.25.1...v0.26.0
 [0.25.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.25.0...v0.25.1

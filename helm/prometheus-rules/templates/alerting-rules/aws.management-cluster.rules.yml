@@ -78,7 +78,7 @@ spec:
         severity: page
         team: phoenix
         topic: aws
-    - alert: ManagementClusterPodPendingAWSPhoenix
+    - alert: ManagementClusterPodPendingAWS
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
         opsrecipe: pod-stuck-in-pending/
@@ -116,7 +116,7 @@ spec:
         severity: notify
         team: se
         topic: aws
-    - alert: ManagementClusterContainerIsRestartingTooFrequentlyAWSPhoenix
+    - alert: ManagementClusterContainerIsRestartingTooFrequentlyAWS
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/
@@ -132,7 +132,7 @@ spec:
         severity: page
         team: phoenix
         topic: kubernetes
-    - alert: ManagementClusterDeploymentMissingAWSPhoenix
+    - alert: ManagementClusterDeploymentMissingAWS
       annotations:
         description: '{{`Deployment {{ $labels.workload_name }} is missing.`}}'
         opsrecipe: management-cluster-deployment-is-missing/

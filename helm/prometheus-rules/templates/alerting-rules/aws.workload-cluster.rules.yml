@@ -12,7 +12,7 @@ spec:
   groups:
   - name: aws
     rules:
-    - alert: WorkloadClusterContainerIsRestartingTooFrequentlyAWSPhoenix
+    - alert: WorkloadClusterContainerIsRestartingTooFrequentlyAWS
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/
@@ -41,8 +41,8 @@ spec:
         severity: page
         team: phoenix
         topic: kubernetes
-    # WorkloadClusterMasterNodeMissingAWSPhoenix in this file is AWS specific and thus
-    # assigned to Team AWSPhoenix. The alert is also defined for all the other
+    # WorkloadClusterMasterNodeMissingAWS in this file is AWS specific and thus
+    # assigned to Team Phoenix. The alert is also defined for all the other
     # providers with other team assignments.
     #
     #     kubernetes_build_info{app="kubelet"} gives us a vector of all the
@@ -55,7 +55,7 @@ spec:
     #     there are no kubelets, which we can then alert on. See
     #     https://prometheus.io/docs/prometheus/latest/querying/operators.
     #
-    - alert: WorkloadClusterMasterNodeMissingAWSPhoenix
+    - alert: WorkloadClusterMasterNodeMissingAWS
       annotations:
         description: '{{`Master node is missing.`}}'
         opsrecipe: master-node-missing/
@@ -86,7 +86,7 @@ spec:
         severity: page
         team: phoenix
         topic: kubernetes
-    - alert: WorkloadClusterPodPendingAWSPhoenix
+    - alert: WorkloadClusterPodPendingAWS
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
         opsrecipe: pod-stuck-in-pending/

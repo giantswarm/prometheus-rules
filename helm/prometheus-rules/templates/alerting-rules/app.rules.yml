@@ -75,7 +75,7 @@ spec:
         sig: none
         team: celestial
         topic: releng
-    - alert: ManagementClusterAppFailedAWSPhoenix
+    - alert: ManagementClusterAppFailedPhoenix
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/

@@ -114,7 +114,7 @@ spec:
         severity: notify
         team: phoenix
         topic: managementcluster
-    - alert: DeploymentNotSatisfiedAWSPhoenix
+    - alert: DeploymentNotSatisfiedAWS
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/

@@ -24,7 +24,7 @@ spec:
         cancel_if_cluster_with_scaling_nodepools: "true"
         severity: page
         {{- if eq .Values.managementCluster.provider.kind "aws" }}
-        team: firecracker
+        team: phoenix
         {{- else if eq .Values.managementCluster.provider.kind "azure" }}
         team: celestial
         {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
@@ -45,7 +45,7 @@ spec:
         cancel_if_cluster_with_scaling_nodepools: "true"
         severity: page
         {{- if eq .Values.managementCluster.provider.kind "aws" }}
-        team: firecracker
+        team: phoenix
         {{- else if eq .Values.managementCluster.provider.kind "azure" }}
         team: celestial
         {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
@@ -69,7 +69,7 @@ spec:
         cancel_if_nodes_down: "true"
         severity: page
         {{- if eq .Values.managementCluster.provider.kind "aws" }}
-        team: firecracker
+        team: phoenix
         {{- else if eq .Values.managementCluster.provider.kind "azure" }}
         team: celestial
         {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}

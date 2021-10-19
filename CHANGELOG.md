@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change ownership of rules from `firecracker` to `phoenix`.
+
 ## [0.28.0] - 2021-10-18
 
 ### Changed

@@ -12,7 +12,7 @@ spec:
   groups:
   - name: aws
     rules:
-    - alert: WorkloadClusterContainerIsRestartingTooFrequentlyFirecracker
+    - alert: WorkloadClusterContainerIsRestartingTooFrequentlyAWS
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/
@@ -25,7 +25,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: kubernetes
     - alert: WorkloadClusterCriticalPodNotRunningAWS
       annotations:
@@ -39,10 +39,10 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: kubernetes
-    # WorkloadClusterMasterNodeMissingFirecracker in this file is AWS specific and thus
-    # assigned to Team Firecracker. The alert is also defined for all the other
+    # WorkloadClusterMasterNodeMissingAWS in this file is AWS specific and thus
+    # assigned to Team Phoenix. The alert is also defined for all the other
     # providers with other team assignments.
     #
     #     kubernetes_build_info{app="kubelet"} gives us a vector of all the
@@ -55,7 +55,7 @@ spec:
     #     there are no kubelets, which we can then alert on. See
     #     https://prometheus.io/docs/prometheus/latest/querying/operators.
     #
-    - alert: WorkloadClusterMasterNodeMissingFirecracker
+    - alert: WorkloadClusterMasterNodeMissingAWS
       annotations:
         description: '{{`Master node is missing.`}}'
         opsrecipe: master-node-missing/
@@ -68,7 +68,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         master_node_down: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: kubernetes
     - alert: WorkloadClusterHAMasterDownForTooLong
       annotations:
@@ -84,9 +84,9 @@ spec:
         cancel_if_outside_working_hours: "true"
         master_node_down: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: kubernetes
-    - alert: WorkloadClusterPodPendingFirecracker
+    - alert: WorkloadClusterPodPendingAWS
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
         opsrecipe: pod-stuck-in-pending/
@@ -100,6 +100,6 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: managementcluster
 {{- end }}

@@ -56,7 +56,7 @@ spec:
     # replacing `version` with `reconciled_version` is only done if the latter
     # is non-empty and is done to work with old operator versions using
     # microendpoint < 0.1.0 (i.e. before VOO)
-    - alert: CollidingOperatorsFirecracker
+    - alert: CollidingOperatorsAWS
       annotations:
         description: '{{`CR version {{ $labels.version }} in cluster {{ $labels.cluster_id }} is reconciled by multiple apps including {{ $labels.app }}.`}}'
         opsrecipe: multiple-operators-running-same-version/
@@ -65,7 +65,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: firecracker
+        team: phoenix
         topic: releng
     - alert: CollidingOperatorsLudacris
       # replacing `version` with `reconciled_version` is only done if the latter

@@ -128,7 +128,7 @@ spec:
         severity: page
         team: phoenix
         topic: managementcluster
-    - alert: DeploymentNotSatisfiedChinaPhoenix
+    - alert: DeploymentNotSatisfiedChina
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/

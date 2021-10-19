@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Move all daemonset alerts on workload clusters to the SLO framework. 
+- Move firecracker daemonset alerts on management clusters to the SLO framework.
+
 ## [0.28.0] - 2021-10-18
 
 ### Changed

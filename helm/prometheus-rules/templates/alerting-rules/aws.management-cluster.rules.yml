@@ -23,7 +23,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         cancel_if_stack_failed: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: aws
     - alert: AWSClusterUpdateFailed
       annotations:
@@ -36,7 +36,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         cancel_if_stack_failed: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: aws
     - alert: CloudFormationStackFailed
       annotations:
@@ -49,7 +49,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         stack_failed: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: aws
     - alert: CloudFormationStackRollback
       annotations:
@@ -62,7 +62,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         stack_failed: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: aws
     - alert: ELBHostsOutOfService
       annotations:
@@ -76,9 +76,9 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: aws
-    - alert: ManagementClusterPodPendingFirecracker
+    - alert: ManagementClusterPodPendingPhoenix
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
         opsrecipe: pod-stuck-in-pending/
@@ -92,7 +92,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: managementcluster
     - alert: NATGatewaysPerVPCApproachingLimit
       annotations:
@@ -116,7 +116,7 @@ spec:
         severity: notify
         team: se
         topic: aws
-    - alert: ManagementClusterContainerIsRestartingTooFrequentlyFirecracker
+    - alert: ManagementClusterContainerIsRestartingTooFrequentlyPhoenix
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/
@@ -130,9 +130,9 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: kubernetes
-    - alert: ManagementClusterDeploymentMissingFirecracker
+    - alert: ManagementClusterDeploymentMissingPhoenix
       annotations:
         description: '{{`Deployment {{ $labels.workload_name }} is missing.`}}'
         opsrecipe: management-cluster-deployment-is-missing/
@@ -144,6 +144,6 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: kubernetes
 {{- end }}

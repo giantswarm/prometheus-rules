@@ -112,9 +112,9 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: firecracker
+        team: phoenix
         topic: managementcluster
-    - alert: DeploymentNotSatisfiedFirecracker
+    - alert: DeploymentNotSatisfiedPhoenix
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
@@ -126,9 +126,9 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: managementcluster
-    - alert: DeploymentNotSatisfiedChinaFirecracker
+    - alert: DeploymentNotSatisfiedChinaPhoenix
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
@@ -140,7 +140,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: managementcluster
     {{- end }}
     {{- if eq .Values.managementCluster.provider.kind "azure" }}

@@ -75,11 +75,11 @@ spec:
         sig: none
         team: celestial
         topic: releng
-    - alert: ManagementClusterAppFailedFirecracker
+    - alert: ManagementClusterAppFailedPhoenix
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="firecracker"}
+      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="phoenix"}
       for: 30m
       labels:
         area: managedservices
@@ -89,7 +89,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         severity: page
         sig: none
-        team: firecracker
+        team: phoenix
         topic: releng
     - alert: ManagementClusterAppFailedLudacris
       annotations:

@@ -31,6 +31,6 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: firecracker
+        team: phoenix
         topic: managementcluster
     {{- end }}

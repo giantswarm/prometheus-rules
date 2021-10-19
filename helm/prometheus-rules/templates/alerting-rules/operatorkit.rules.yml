@@ -76,7 +76,7 @@ spec:
         topic: qa
     # In case something stops an operator from reconciling CRs we want to
     # be paged to be able to fix the issue immediately.
-    - alert: OperatorkitErrorRateTooHighFirecracker
+    - alert: OperatorkitErrorRateTooHighPhoenix
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
         opsrecipe: check-operator-error-rate-high/
@@ -85,13 +85,13 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: firecracker
+        team: phoenix
         topic: qa
-    # Firecracker
+    # Phoenix
     # It might happen that CRs get orphaned or deletion gets kind of stuck during
     # the cleanup process. Then we want to get notified and figure out what went
     # wrong to fix the root cause eventually.
-    - alert: OperatorkitCRNotDeletedFirecracker
+    - alert: OperatorkitCRNotDeletedPhoenix
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has not deleted object {{ $labels.namespace }}/{{ $labels.name }} of type {{ $labels.kind }} for too long.`}}'
         opsrecipe: check-not-deleted-object/
@@ -100,11 +100,11 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: firecracker
+        team: phoenix
         topic: qa
     # In case something stops an operator from reconciling CRs we want to
     # be paged to be able to fix the issue immediately.
-    - alert: OperatorNotReconcilingFirecracker
+    - alert: OperatorNotReconcilingPhoenix
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
         opsrecipe: operator-not-reconciling/
@@ -114,7 +114,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: firecracker
+        team: phoenix
         topic: qa
 
     # In case something stops an operator from reconciling CRs we want to

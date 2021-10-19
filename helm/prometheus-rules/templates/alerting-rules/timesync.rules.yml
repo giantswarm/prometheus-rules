@@ -20,7 +20,7 @@ spec:
         area: kaas
         severity: page
         {{- if eq .Values.managementCluster.provider.kind "aws" }}
-        team: firecracker
+        team: phoenix
         {{- else if eq .Values.managementCluster.provider.kind "azure" }}
         team: celestial
         {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}

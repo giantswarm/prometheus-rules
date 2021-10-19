@@ -117,7 +117,7 @@ spec:
         topic: managementcluster
     {{- end }}
     - alert: ManagementClusterContainerIsRestartingTooFrequently
-      # Prometheus and firecracker containers are excluded
+      # Prometheus and phoenix containers are excluded
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/

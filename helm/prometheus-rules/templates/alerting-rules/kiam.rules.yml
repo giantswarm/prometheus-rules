@@ -25,7 +25,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: kiam
     - alert: KiamSTSIssuingErrors
       annotations:
@@ -40,6 +40,6 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: kiam
 {{- end }}

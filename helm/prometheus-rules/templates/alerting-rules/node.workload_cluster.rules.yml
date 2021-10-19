@@ -24,7 +24,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         severity: notify
         {{- if eq .Values.managementCluster.provider.kind "aws" }}
-        team: firecracker
+        team: phoenix
         {{- else if eq .Values.managementCluster.provider.kind "azure" }}
         team: celestial
         {{- else }}
@@ -43,7 +43,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
-        team: firecracker
+        team: phoenix
         topic: kubernetes
     - alert: NodeStateFlappingUnderLoad
       # Check if the kubelet status is flapping, unless the node is under load.
@@ -123,6 +123,6 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: firecracker
+        team: phoenix
         topic: kubernetes
     {{- end }}

@@ -75,7 +75,7 @@ spec:
       labels:
         area: kaas
         cluster_with_no_nodepools: "true"
-        team: firecracker
+        team: phoenix
         topic: status
     - alert: InhibitionClusterScalingNodePools
       annotations:
@@ -84,7 +84,7 @@ spec:
       labels:
         area: kaas
         cluster_with_scaling_nodepools: "true"
-        team: firecracker
+        team: phoenix
         topic: status
     - alert: InhibitionClusterNodePoolsNotReady
       annotations:
@@ -93,7 +93,7 @@ spec:
       labels:
         area: kaas
         cluster_with_notready_nodepools: "true"
-        team: firecracker
+        team: phoenix
         topic: status
     - alert: InhibitionInstanceStateNotRunning
       annotations:
@@ -102,6 +102,6 @@ spec:
       labels:
         area: kaas
         instance_state_not_running: "true"
-        team: firecracker
+        team: phoenix
         topic: status
     {{- end }}

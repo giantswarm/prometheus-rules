@@ -36,6 +36,6 @@ spec:
       labels:
         area: kaas
         kiam_has_errors: "true"
-        team: firecracker
+        team: phoenix
         topic: kiam
     {{- end }}

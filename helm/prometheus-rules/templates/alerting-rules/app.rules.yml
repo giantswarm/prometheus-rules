@@ -27,11 +27,11 @@ spec:
         sig: none
         team: atlas
         topic: releng
-    - alert: ManagementClusterAppFailedBatman
+    - alert: ManagementClusterAppFailedHoneybadger
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team=~"batman|halo"}
+      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team=~"batman|biscuit|halo|honeybadger"}
       for: 30m
       labels:
         area: managedservices
@@ -41,45 +41,13 @@ spec:
         cancel_if_outside_working_hours: "true"
         severity: page
         sig: none
-        team: batman
-        topic: releng
-    - alert: ManagementClusterAppFailedBiscuit
-      annotations:
-        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="biscuit"}
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        sig: none
-        team: biscuit
-        topic: releng
-    - alert: ManagementClusterAppFailedCelestial
-      annotations:
-        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="celestial"}
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        sig: none
-        team: celestial
+        team: honeybadger
         topic: releng
     - alert: ManagementClusterAppFailedPhoenix
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="phoenix"}
+      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team=~"celestial|ludacris|phoenix"}
       for: 30m
       labels:
         area: managedservices
@@ -90,22 +58,6 @@ spec:
         severity: page
         sig: none
         team: phoenix
-        topic: releng
-    - alert: ManagementClusterAppFailedLudacris
-      annotations:
-        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="ludacris"}
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        sig: none
-        team: ludacris
         topic: releng
     - alert: ManagementClusterAppFailedRocket
       annotations:
@@ -137,7 +89,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: batman
+        team: honeybadger
         topic: releng
     ## Workload cluster app rules only available on the management cluster Prometheus because the source is app-exporter
     - alert: WorkloadClusterAppFailed
@@ -154,7 +106,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         severity: page
         sig: none
-        team: batman
+        team: honeybadger
         topic: releng
     - alert: WorkloadClusterAppPendingUpdate
       annotations:
@@ -170,7 +122,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: batman
+        team: honeybadger
         topic: releng
     - alert: AppWithoutTeamLabel
       annotations:
@@ -185,7 +137,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: batman
+        team: honeybadger
         topic: releng
     - alert: CordonedAppExpired
       annotations:
@@ -196,7 +148,7 @@ spec:
       labels:
         area: managedservices
         severity: notify
-        team: batman
+        team: honeybadger
         topic: releng
     - alert: AppOperatorNotReady
       annotations:
@@ -208,5 +160,5 @@ spec:
         area: managedservices
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: batman
+        team: honeybadger
         topic: releng

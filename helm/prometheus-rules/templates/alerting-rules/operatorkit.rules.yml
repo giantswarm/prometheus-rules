@@ -11,7 +11,7 @@ spec:
   groups:
   - name: operatorkit
     rules:
-    - alert: OperatorkitErrorRateTooHighBatman
+    - alert: OperatorkitErrorRateTooHighHoneybadger
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }} has reported errors. Please check logs.`}}'
         opsrecipe: check-operator-error-rate-high/
@@ -20,9 +20,9 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: batman
+        team: honeybadger
         topic: qa
-    - alert: OperatorNotReconcilingBatman
+    - alert: OperatorNotReconcilingHoneybadger
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }} not reconciling controller {{$labels.controller}}. Please check logs.`}}'
       expr: (time() - operatorkit_controller_last_reconciled{app=~"app-operator.*|chart-operator.*"}) / 60 > 30
@@ -30,9 +30,9 @@ spec:
       labels:
         area: managedservices
         severity: notify
-        team: batman
+        team: honeybadger
         topic: releng
-    - alert: OperatorkitErrorRateTooHighCelestial
+    - alert: OperatorkitErrorRateTooHighPhoenix
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
         opsrecipe: check-operator-error-rate-high/
@@ -41,14 +41,14 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: celestial
+        team: phoenix
         cancel_if_outside_working_hours: "true"
         topic: qa
-    # Celestial
+    # Phoenix
     # It might happen that CRs get orphaned or deletion gets kind of stuck during
     # the cleanup process. Then we want to get notified and figure out what went
     # wrong to fix the root cause eventually.
-    - alert: OperatorkitCRNotDeletedCelestial
+    - alert: OperatorkitCRNotDeletedPhoenix
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has not deleted object {{ $labels.namespace }}/{{ $labels.name }} of type {{ $labels.kind }} for too long.`}}'
         opsrecipe: check-not-deleted-object/
@@ -57,12 +57,12 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: celestial
+        team: phoenix
         cancel_if_outside_working_hours: "true"
         topic: qa
     # In case something stops an operator from reconciling CRs we want to
     # be paged to be able to fix the issue immediately.
-    - alert: OperatorNotReconcilingCelestial
+    - alert: OperatorNotReconcilingPhoenix
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
         opsrecipe: operator-not-reconciling/
@@ -72,7 +72,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: celestial
+        team: phoenix
         topic: qa
     # In case something stops an operator from reconciling CRs we want to
     # be paged to be able to fix the issue immediately.
@@ -123,7 +123,7 @@ spec:
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
         opsrecipe: check-operator-error-rate-high/
-      expr: operatorkit_controller_error_total{app=~"kvm-operator"} > 5
+      expr: operatorkit_controller_error_total{app=~"kvm-operator|ignition-operator|cert-operator|node-operator"} > 5
       for: 1m
       labels:
         area: kaas
@@ -150,37 +150,11 @@ spec:
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
         opsrecipe: operator-not-reconciling/
-      expr: (sum by (instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"kvm-operator|flannel-operator"}[10m])) == 0 and on (instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
+      expr: (sum by (instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"kvm-operator|flannel-operator|cert-operator|node-operator"}[10m])) == 0 and on (instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
       for: 20m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: rocket
-        topic: qa
-    - alert: OperatorkitErrorRateTooHighLudacris
-      #  Ludacris is responsible ignition-operator,cert-operator,node-operator.
-      annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
-        opsrecipe: check-operator-error-rate-high/
-      expr: operatorkit_controller_error_total{app=~"ignition-operator|cert-operator|node-operator"} > 5
-      for: 1m
-      labels:
-        area: kaas
-        severity: notify
-        team: ludacris
-        topic: qa
-    # In case something stops an operator from reconciling CRs we want to
-    # be paged to be able to fix the issue immediately.
-    - alert: OperatorNotReconcilingLudacris
-      annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
-        opsrecipe: operator-not-reconciling/
-      expr: (sum by (instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"cert-operator|node-operator"}[10m])) == 0 and on (instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
-      for: 20m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: "true"
-        severity: notify
-        team: ludacris
         topic: qa

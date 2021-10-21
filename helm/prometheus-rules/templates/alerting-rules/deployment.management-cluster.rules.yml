@@ -39,11 +39,11 @@ spec:
         severity: page
         team: atlas
         topic: managementcluster
-    - alert: DeploymentNotSatisfiedBatman
+    - alert: DeploymentNotSatisfiedHoneybadger
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"app-admission-controller-.+|app-operator-.+|chart-operator-.+", cluster_id!~"argali|giraffe"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"app-admission-controller-.+|app-operator-.+|chart-operator-.+|kyverno.*", cluster_id!~"argali|giraffe"} > 0
       for: 30m
       labels:
         area: managedservices
@@ -51,20 +51,20 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
-        team: batman
+        team: honeybadger
         topic: managementcluster
-    - alert: DeploymentNotSatisfiedChinaBatman
+    - alert: DeploymentNotSatisfiedChinaHoneybadger
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied-china/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"app-admission-controller-.+|app-operator-.+|chart-operator-.+", cluster_id=~"argali|giraffe"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"app-admission-controller-.+|app-operator-.+|chart-operator-.+|kyverno.*", cluster_id=~"argali|giraffe"} > 0
       for: 3h
       labels:
         area: managedservices
         severity: page
-        team: batman
+        team: honeybadger
         topic: managementcluster
-    - alert: DeploymentNotSatisfiedBiscuit
+    - alert: DeploymentNotSatisfiedPhoenix
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
@@ -76,9 +76,9 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
-        team: biscuit
+        team: phoenix
         topic: managementcluster
-    - alert: DeploymentNotSatisfiedChinaBiscuit
+    - alert: DeploymentNotSatisfiedChinaPhoenix
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied-china/
@@ -87,21 +87,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: biscuit
-        topic: managementcluster
-    - alert: DeploymentNotSatisfiedLudacris
-      annotations:
-        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"kyverno.*"} > 0
-      for: 30m
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: page
-        team: ludacris
+        team: phoenix
         topic: managementcluster
     {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: AWSManagementClusterDeploymentScaledDownToZero
@@ -152,9 +138,9 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: celestial
+        team: phoenix
         topic: managementcluster
-    - alert: DeploymentNotSatisfiedCelestial
+    - alert: DeploymentNotSatisfiedPhoenix
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
@@ -166,7 +152,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
-        team: celestial
+        team: phoenix
         topic: managementcluster
     {{- end }}
     {{- if eq .Values.managementCluster.provider.kind "kvm" }}

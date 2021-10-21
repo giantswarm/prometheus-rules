@@ -25,7 +25,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_kiam_has_errors: "true"
         severity: page
-        team: batman
+        team: cabbage
         topic: external-dns
     - alert: ExternalDNSCantAccessSource
       annotations:
@@ -40,6 +40,6 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_kiam_has_errors: "true"
         severity: page
-        team: batman
+        team: cabbage
         topic: external-dns
 {{- end }}

@@ -20,7 +20,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: managementcluster
     - alert: ManagementClusterPodPending
       annotations:
@@ -32,7 +32,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: biscuit
+        team: phoenix
         topic: managementcluster
     - alert: ManagementClusterHasLessThanThreeNodes
       annotations:
@@ -43,7 +43,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: biscuit
+        team: phoenix
         topic: managementcluster
     - alert: ManagementClusterMissingNodes
       annotations:
@@ -53,7 +53,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: managementcluster
     - alert: ManagementClusterCPUUsageTooHigh
       annotations:
@@ -65,7 +65,7 @@ spec:
         area: kass
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: biscuit
+        team: phoenix
         topic: managementcluster
     - alert: ManagementClusterMemoryUsageTooHigh
       annotations:
@@ -77,7 +77,7 @@ spec:
         area: kass
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: biscuit
+        team: phoenix
         topic: managementcluster
     - alert: ManagementClusterPodLimitAlmostReached
       annotations:
@@ -90,7 +90,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: managementcluster
     - alert: ManagementClusterCriticalPodNotRunning
       annotations:
@@ -101,7 +101,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: biscuit
+        team: phoenix
         topic: managementcluster
     - alert: ManagementClusterCriticalPodMetricMissing
       annotations:
@@ -113,7 +113,7 @@ spec:
         area: kaas
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: biscuit
+        team: phoenix
         topic: managementcluster
     {{- end }}
     - alert: ManagementClusterContainerIsRestartingTooFrequently
@@ -126,5 +126,5 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: rocket
         topic: kubernetes

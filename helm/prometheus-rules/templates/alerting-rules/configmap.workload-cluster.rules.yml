@@ -20,5 +20,5 @@ spec:
       labels:
         area: managedservices
         severity: notify
-        team: batman
+        team: honeybadger
         topic: releng

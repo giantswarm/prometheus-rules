@@ -18,7 +18,7 @@ spec:
       labels:
         area: kaas
         cluster_status_creating: "true"
-        team: ludacris
+        team: phoenix
         topic: status
     - alert: InhibitionClusterStatusCreated
       annotations:
@@ -27,7 +27,7 @@ spec:
       labels:
         area: kaas
         cluster_status_created: "true"
-        team: ludacris
+        team: phoenix
         topic: status
     - alert: InhibitionClusterStatusUpdating
       annotations:
@@ -36,7 +36,7 @@ spec:
       labels:
         area: kaas
         cluster_status_updating: "true"
-        team: ludacris
+        team: phoenix
         topic: status
     - alert: InhibitionClusterStatusUpdated
       annotations:
@@ -45,7 +45,7 @@ spec:
       labels:
         area: kaas
         cluster_status_updated: "true"
-        team: ludacris
+        team: phoenix
         topic: status
     - alert: InhibitionClusterStatusDeleting
       annotations:
@@ -54,7 +54,7 @@ spec:
       labels:
         area: kaas
         cluster_status_deleting: "true"
-        team: ludacris
+        team: phoenix
         topic: status
     {{- if eq .Values.managementCluster.provider.kind "kvm" }}
     - alert: InhibitionKVMClusterHasNoRunningCPNodes
@@ -64,7 +64,7 @@ spec:
       labels:
         area: kaas
         nodes_down: "true"
-        team: ludacris
+        team: phoenix
         topic: status
     {{- end }}
     {{- if eq .Values.managementCluster.provider.kind "aws" }}

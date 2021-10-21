@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change ownership of rules to match new team structure.
+
 ## [0.29.0] - 2021-10-19
 
 ### Changed
 
-- Move all daemonset alerts on workload clusters to the SLO framework. 
+- Move all daemonset alerts on workload clusters to the SLO framework.
 - Move firecracker daemonset alerts on management clusters to the SLO framework.
 - Change ownership of rules from `firecracker` to `phoenix`.
 
@@ -19,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Moved `WorkloadClusterDaemonSetNotSatisfiedLudacris` to `ServiceLevelBurnRateTooHigh` for calico daemonset. 
+- Moved `WorkloadClusterDaemonSetNotSatisfiedLudacris` to `ServiceLevelBurnRateTooHigh` for calico daemonset.
 
 ## [0.27.2] - 2021-10-05
 

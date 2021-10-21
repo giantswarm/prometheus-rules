@@ -24,7 +24,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_scrape_timeout: "true"
         severity: notify
-        team: batman
+        team: honeybadger
         topic: releng
     - alert: CadvisorDown
       annotations:
@@ -38,7 +38,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_kubelet_down: "true"
         severity: notify
-        team: ludacris
+        team: atlas
         topic: observability
     - alert: KubeStateMetricsDown
       annotations:
@@ -54,7 +54,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_any_kube_state_metrics_down: "true"
         severity: page
-        team: ludacris
+        team: atlas
         topic: observability
     - alert: KubeStateMetricsMissing
       annotations:
@@ -70,5 +70,5 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_any_kube_state_metrics_down: "true"
         severity: page
-        team: ludacris
+        team: atlas
         topic: observability

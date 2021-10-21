@@ -18,6 +18,7 @@ spec:
         area: empowerment
         nodes_down: "true"
         outside_working_hours: "true"
+        team: phoenix
         topic: monitoring
     - alert: InhibitionKubeStateMetricsDown
       annotations:
@@ -26,7 +27,7 @@ spec:
       labels:
         area: kaas
         kube_state_metrics_down: "true"
-        team: ludacris
+        team: phoenix
         topic: status
     {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: InhibitionKiamErrors

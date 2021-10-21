@@ -21,7 +21,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: celestial
+        team: phoenix
         topic: kubernetes
     - alert: WorkloadClusterCriticalPodNotRunningAzure
       annotations:
@@ -32,7 +32,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: celestial
+        team: phoenix
         topic: kubernetes
     - alert: WorkloadClusterCriticalPodMetricMissingAzure
       annotations:
@@ -44,7 +44,7 @@ spec:
         area: kaas
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: celestial
+        team: phoenix
         topic: kubernetes
     - alert: WorkloadClusterPodLimitAlmostReachedAzure
       annotations:
@@ -57,10 +57,10 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: celestial
+        team: phoenix
         topic: kubernetes
-    # WorkloadClusterMasterNodeMissingCelestial in this file is Azure specific and thus
-    # assigned to Team Celestial. The alert is also defined for all the other
+    # WorkloadClusterMasterNodeMissingPhoenix in this file is Azure specific and thus
+    # assigned to Team Phoenix. The alert is also defined for all the other
     # providers with other team assignments.
     #
     #     kubernetes_build_info{app="kubelet"} gives us a vector of all the
@@ -73,7 +73,7 @@ spec:
     #     there are no master kubelets, which we can then alert on. See
     #     https://prometheus.io/docs/prometheus/latest/querying/operators.
     #
-    - alert: WorkloadClusterMasterNodeMissingCelestial
+    - alert: WorkloadClusterMasterNodeMissingPhoenix
       annotations:
         description: '{{`Master node is missing.`}}'
         opsrecipe: master-node-missing/
@@ -86,6 +86,6 @@ spec:
         cancel_if_cluster_status_updating: "true"
         master_node_down: "true"
         severity: page
-        team: celestial
+        team: phoenix
         topic: kubernetes
 {{- end }}

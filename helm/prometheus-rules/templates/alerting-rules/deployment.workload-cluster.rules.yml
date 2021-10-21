@@ -20,9 +20,9 @@ spec:
       labels:
         area: managedservices
         severity: page
-        team: batman
+        team: honeybadger
         topic: releng
-    - alert: WorkloadClusterDeploymentNotSatisfiedLudacris
+    - alert: WorkloadClusterDeploymentNotSatisfiedPhoenix
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: workload-cluster-deployment-not-satisfied/
@@ -31,7 +31,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: ludacris
+        team: phoenix
         topic: observability
     - alert: WorkloadClusterManagedDeploymentNotSatisfied
       annotations:
@@ -42,7 +42,7 @@ spec:
       labels:
         area: managedservices
         severity: page
-        team: batman
+        team: honeybadger
         topic: releng
     - alert: WorkloadClusterDeploymentScaledDownToZero
       annotations:
@@ -52,5 +52,5 @@ spec:
       labels:
         area: managedservices
         severity: notify
-        team: batman
+        team: honeybadger
         topic: releng

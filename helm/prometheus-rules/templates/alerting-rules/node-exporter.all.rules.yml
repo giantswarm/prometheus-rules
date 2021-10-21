@@ -18,7 +18,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: atlas
         topic: observability
     - alert: NodeExporterDeviceError
       annotations:
@@ -28,5 +28,5 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: atlas
         topic: observability

@@ -21,7 +21,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: biscuit
+        team: phoenix
         topic: storage
     - alert: EtcdVolumeSpaceTooLow
       annotations:
@@ -32,7 +32,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: biscuit
+        team: phoenix
         topic: storage
     - alert: KubeletVolumeSpaceTooLow
       annotations:
@@ -44,7 +44,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: biscuit
+        team: phoenix
         topic: storage
     - alert: LogVolumeSpaceTooLow
       annotations:
@@ -56,7 +56,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: biscuit
+        team: phoenix
         topic: storage
     - alert: PersistentVolumeSpaceTooLow
       annotations:
@@ -68,7 +68,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: biscuit
+        team: phoenix
         topic: storage
     - alert: RootVolumeSpaceTooLow
       annotations:
@@ -80,7 +80,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: biscuit
+        team: phoenix
         topic: storage
     - alert: PrometheusPersistentVolumeSpaceTooLow
       annotations:

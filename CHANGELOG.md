@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Report affected node instead of cert-exporter instance in certificate expiration alerts (WC and MC).
+
 ## [0.29.0] - 2021-10-19
 
 ### Changed

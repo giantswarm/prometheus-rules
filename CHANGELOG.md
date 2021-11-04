@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Ignore secrets whose name contains `kiam` in `CertificateSecretWillExpireInLessThanTwoWeeks`.
+- Add `KiamCertificateSecretWillExpireInLessThanTwoWeeks` alerting for certificate secrets whose name contain `kiam`.
+- Add `ManagedCertificateCRWillExpireInLessThanTwoWeeks` alerting on cert-manager certificates issued by default giantswarm managed `ClusterIssuer`.
 - Report affected node instead of cert-exporter instance in certificate expiration alerts (WC and MC).
 
 ## [0.29.0] - 2021-10-19

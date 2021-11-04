@@ -10,15 +10,39 @@ spec:
   groups:
   - name: certificate
     rules:
-    - alert: CertificateSecretWillExpireInLessThanTwoWeeks
+    - alert: KiamCertificateSecretWillExpireInLessThanTwoWeeks
       annotations:
-        description: '{{`Certificate stored in Secret {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
-        opsrecipe: managed-app-cert-manager/
-      expr: (cert_exporter_secret_not_after{type="secret"} - time()) < 2 * 7 * 24 * 60 * 60
+        description: '{{`Kiam Certificate stored in Secret {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
+        opsrecipe: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
+      expr: (cert_exporter_secret_not_after{name=~"kiam.*"} - time()) < 2 * 7 * 24 * 60 * 60
       for: 5m
       labels:
         area: managedapps
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: batman
+        team: cabbage
+        topic: cert-manager
+    - alert: CertificateSecretWillExpireInLessThanTwoWeeks
+      annotations:
+        description: '{{`Certificate stored in Secret {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
+        opsrecipe: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
+      expr: (cert_exporter_secret_not_after{name!~"kiam.*"} - time()) < 2 * 7 * 24 * 60 * 60
+      for: 5m
+      labels:
+        area: managedapps
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: cert-manager
+    - alert: ManagedCertificateCRWillExpireInLessThanTwoWeeks
+      annotations:
+        description: '{{`Certificate CR {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
+        opsrecipe: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
+      expr: (cert_exporter_certificate_cr_not_after{managed_issuer="true"} - time()) < 2 * 7 * 24 * 60 * 60
+      for: 15m
+      labels:
+        area: managedapps
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
         topic: cert-manager

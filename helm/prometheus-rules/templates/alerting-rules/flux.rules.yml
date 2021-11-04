@@ -10,10 +10,10 @@ spec:
   groups:
   - name: fluxcd
     rules:
-    - alert: FluxCDHelmReleaseFailed
+    - alert: FluxHelmReleaseFailed
       annotations:
         description: |-
-          {{`FluxCD HelmRelease on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
+          {{`Flux HelmRelease on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
         opsrecipe: fluxcd/failing
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease"}
       for: 10m
@@ -22,10 +22,10 @@ spec:
         severity: page
         team: honeybadger
         topic: releng
-    - alert: FluxCDKustomizationFailed
+    - alert: FluxKustomizationFailed
       annotations:
         description: |-
-          {{`FluxCD Kustomization on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
+          {{`Flux Kustomization on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
         opsrecipe: fluxcd/failing
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization"}
       for: 10m
@@ -34,10 +34,10 @@ spec:
         severity: page
         team: honeybadger
         topic: releng
-    - alert: FluxCDSourceFailed
+    - alert: FluxSourceFailed
       annotations:
         description: |-
-          {{`FluxCD {{ $labels.kind }} on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
+          {{`Flux {{ $labels.kind }} on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing/
       expr: gotk_reconcile_condition{type="Ready", status="False", kind~="GitRepository|HelmRepository|Bucket"}
       for: 10m
@@ -46,10 +46,10 @@ spec:
         severity: page
         team: honeybadger
         topic: releng
-    - alert: FluxCDReconciliationTakingTooLong
+    - alert: FluxReconciliationTakingTooLong
       annotations:
         description: |-
-          {{`FluxCD controller {{ $labels.controller }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is reconciling very slowly.`}}
+          {{`Flux controller {{ $labels.controller }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is reconciling very slowly.`}}
         opsrecipe: fluxcd/slow
       expr: |
         (sum(rate(controller_runtime_reconcile_time_seconds_sum{app=~".*flux.*"}[5m])) by (installation, cluster_id, controller) /

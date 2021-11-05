@@ -19,5 +19,5 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: phoenix
         topic: observability

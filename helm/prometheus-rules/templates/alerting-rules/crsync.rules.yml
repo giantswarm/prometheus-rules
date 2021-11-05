@@ -25,7 +25,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: biscuit
+        team: honeybadger
         topic: releng
     - alert: CrsyncTooManyTagsMissing
       annotations:
@@ -37,6 +37,6 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: biscuit
+        team: honeybadger
         topic: releng
 {{- end }}

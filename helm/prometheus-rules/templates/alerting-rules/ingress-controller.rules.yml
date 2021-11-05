@@ -22,7 +22,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
-        team: batman
+        team: cabbage
         topic: ingress
     - alert: IngressControllerMemoryUsageTooHigh
       annotations:
@@ -33,7 +33,7 @@ spec:
       labels:
         area: managedservices
         severity: notify
-        team: batman
+        team: cabbage
         topic: ingress
     - alert: IngressControllerReplicaSetNumberTooHigh
       annotations:
@@ -44,7 +44,7 @@ spec:
       labels:
         area: managedservices
         severity: notify
-        team: batman
+        team: cabbage
         topic: ingress
     - alert: IngressControllerSSLCertificateWillExpireSoon
       annotations:
@@ -55,7 +55,7 @@ spec:
       labels:
         area: managedservices
         severity: notify
-        team: batman
+        team: cabbage
         topic: ingress
     - alert: IngressControllerServiceHasNoEndpoints
       annotations:
@@ -68,5 +68,5 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         severity: page
-        team: batman
+        team: cabbage
         topic: ingress

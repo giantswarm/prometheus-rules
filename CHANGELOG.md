@@ -11,12 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add FluxCD rules.
 
+## [0.30.0] - 2021-11-05
+
 ### Changed
 
 - Ignore secrets whose name contains `kiam` in `CertificateSecretWillExpireInLessThanTwoWeeks`.
 - Add `KiamCertificateSecretWillExpireInLessThanTwoWeeks` alerting for certificate secrets whose name contain `kiam`.
 - Add `ManagedCertificateCRWillExpireInLessThanTwoWeeks` alerting on cert-manager certificates issued by default giantswarm managed `ClusterIssuer`.
 - Report affected node instead of cert-exporter instance in certificate expiration alerts (WC and MC).
+- Change ownership of rules to match new team structure.
 
 ## [0.29.0] - 2021-10-19
 
@@ -346,7 +349,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.29.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.30.0...HEAD
+[0.30.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.28.0...v0.29.0
 [0.28.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.27.2...v0.28.0
 [0.27.2]: https://github.com/giantswarm/prometheus-rules/compare/v0.27.1...v0.27.2

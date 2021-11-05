@@ -20,5 +20,5 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: ludacris
+        team: honeybadger
         topic: managementcluster

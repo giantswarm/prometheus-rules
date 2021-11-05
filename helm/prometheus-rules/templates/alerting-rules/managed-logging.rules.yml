@@ -20,7 +20,7 @@ spec:
       labels:
         area: managedservices
         severity: notify
-        team: batman
+        team: atlas
         topic: logging
     - alert: ManagedLoggingElasticsearchClusterDown
       annotations:
@@ -31,5 +31,5 @@ spec:
       labels:
         area: managedservices
         severity: notify
-        team: batman
+        team: atlas
         topic: logging

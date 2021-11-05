@@ -19,7 +19,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: managementcluster
     {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: JobHasNotBeenScheduledForTooLong

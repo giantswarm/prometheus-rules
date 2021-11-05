@@ -19,7 +19,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: phoenix
         topic: kubernetes
     - alert: CalicoNodeMemoryHighUtilization
       annotations:
@@ -33,7 +33,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: phoenix
         topic: kubernetes
 {{- if eq .Values.managementCluster.provider.kind "kvm" }}
     - alert: CalicoNodeFailingToSaveIptables

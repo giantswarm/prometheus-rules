@@ -27,7 +27,7 @@ spec:
         {{- if eq .Values.managementCluster.provider.kind "aws" }}
         team: phoenix
         {{- else if eq .Values.managementCluster.provider.kind "azure" }}
-        team: celestial
+        team: phoenix
         {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
         {{- end }}
@@ -44,7 +44,7 @@ spec:
         {{- if eq .Values.managementCluster.provider.kind "aws" }}
         team: phoenix
         {{- else if eq .Values.managementCluster.provider.kind "azure" }}
-        team: celestial
+        team: phoenix
         {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
         {{- end }}
@@ -61,7 +61,7 @@ spec:
         {{- if eq .Values.managementCluster.provider.kind "aws" }}
         team: phoenix
         {{- else if eq .Values.managementCluster.provider.kind "azure" }}
-        team: celestial
+        team: phoenix
         {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
         {{- end }}
@@ -76,7 +76,7 @@ spec:
         {{- if eq .Values.managementCluster.provider.kind "aws" }}
         team: phoenix
         {{- else if eq .Values.managementCluster.provider.kind "azure" }}
-        team: celestial
+        team: phoenix
         {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
         {{- end }}
@@ -93,7 +93,7 @@ spec:
         {{- if eq .Values.managementCluster.provider.kind "aws" }}
         team: phoenix
         {{- else if eq .Values.managementCluster.provider.kind "azure" }}
-        team: celestial
+        team: phoenix
         {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
         {{- end }}

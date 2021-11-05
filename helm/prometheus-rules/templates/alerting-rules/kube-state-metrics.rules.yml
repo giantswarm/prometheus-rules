@@ -19,7 +19,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: atlas
         topic: kubernetes
     - alert: KubeDaemonSetCreatedMetricMissing
       annotations:
@@ -30,7 +30,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: atlas
         topic: kubernetes
     - alert: KubeDeploymentCreatedMetricMissing
       annotations:
@@ -41,7 +41,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: atlas
         topic: kubernetes
     - alert: KubeEndpointCreatedMetricMissing
       annotations:
@@ -52,7 +52,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: atlas
         topic: kubernetes
     - alert: KubeNamespaceCreatedMetricMissing
       annotations:
@@ -63,7 +63,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: atlas
         topic: kubernetes
     - alert: KubeNodeCreatedMetricMissing
       annotations:
@@ -74,7 +74,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: atlas
         topic: kubernetes
     - alert: KubePodCreatedMetricMissing
       annotations:
@@ -85,7 +85,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: atlas
         topic: kubernetes
     - alert: KubeReplicaSetCreatedMetricMissing
       annotations:
@@ -96,7 +96,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: atlas
         topic: kubernetes
     - alert: KubeSecretCreatedMetricMissing
       annotations:
@@ -107,7 +107,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: atlas
         topic: kubernetes
     - alert: KubeServiceCreatedMetricMissing
       annotations:
@@ -118,5 +118,5 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: atlas
         topic: kubernetes

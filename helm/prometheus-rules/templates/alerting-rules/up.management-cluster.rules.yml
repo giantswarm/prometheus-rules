@@ -25,7 +25,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_scrape_timeout: "true"
         severity: page
-        team: batman
+        team: honeybadger
         topic: releng
     - alert: ManagementClusterEtcdDown
       annotations:
@@ -39,7 +39,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
-        team: biscuit
+        team: phoenix
         topic: etcd
     - alert: NoHealthyJumphost
       annotations:
@@ -50,5 +50,5 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: biscuit
+        team: rocket
         topic: managementcluster

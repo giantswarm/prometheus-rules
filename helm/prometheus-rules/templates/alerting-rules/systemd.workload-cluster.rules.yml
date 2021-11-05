@@ -20,7 +20,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: ludacris
+        team: phoenix
         topic: infrastructure
     - alert: WorkloadClusterDisabledSystemdUnitActive
       annotations:
@@ -31,5 +31,5 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: ludacris
+        team: phoenix
         topic: infrastructure

@@ -21,7 +21,7 @@ spec:
       labels:
         area: storage
         severity: page
-        team: biscuit
+        team: phoenix
         topic: managementcluster
     {{- if eq .Values.managementCluster.pipeline "testing" }}
     - alert: TestClusterTooOld

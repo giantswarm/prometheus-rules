@@ -20,7 +20,7 @@ spec:
       labels:
         area: empowerment
         severity: notify
-        team: biscuit
+        team: honeybadger
         topic: releng
     - alert: AppCollectionDeploymentFailed
       annotations:
@@ -32,5 +32,5 @@ spec:
         area: managedservices
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: biscuit
+        team: honeybadger
         topic: releng

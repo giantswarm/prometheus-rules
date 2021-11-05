@@ -22,7 +22,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: celestial
+        team: phoenix
         topic: azure
     - alert: AzureClusterUpgradeFailed
       annotations:
@@ -34,7 +34,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: celestial
+        team: phoenix
         topic: azure
     - alert: AzureDeploymentStatusFailed
       annotations:
@@ -48,7 +48,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: celestial
+        team: phoenix
         topic: azure
     - alert: AzureDeploymentIsRunningForTooLong
       annotations:
@@ -59,7 +59,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: celestial
+        team: phoenix
         topic: azure
     - alert: ClusterWithNoResourceGroup
       annotations:
@@ -69,7 +69,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: celestial
+        team: phoenix
         topic: azure
     - alert: VPNConnectionStatusBad
       annotations:
@@ -82,7 +82,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: celestial
+        team: phoenix
         topic: azure
     - alert: VPNConnectionProvisioningStateBad
       annotations:
@@ -95,7 +95,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: celestial
+        team: phoenix
         topic: azure
     - alert: ReadsRateLimitAlmostReached
       annotations:
@@ -106,7 +106,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: celestial
+        team: phoenix
         topic: azure
     - alert: WritesRateLimitAlmostReached
       annotations:
@@ -117,7 +117,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: celestial
+        team: phoenix
         topic: azure
     - alert: AzureVMSSRateLimit3MinutesAlmostReached
       annotations:
@@ -128,7 +128,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: celestial
+        team: phoenix
         topic: observability
     - alert: AzureVMSSRateLimit30MinutesAlmostReached
       annotations:
@@ -139,7 +139,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: celestial
+        team: phoenix
         topic: observability
     - alert: AzureVMSSRateLimit3MinutesReached
       annotations:
@@ -150,7 +150,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: celestial
+        team: phoenix
         topic: observability
     - alert: AzureVMSSRateLimit30MinutesReached
       annotations:
@@ -161,7 +161,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: celestial
+        team: phoenix
         topic: observability
     - alert: AzureServicePrincipalExpiresInOneMonth
       annotations:
@@ -172,7 +172,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: celestial
+        team: phoenix
         topic: azure
     - alert: AzureServicePrincipalExpiresInOneWeek
       annotations:
@@ -183,7 +183,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: celestial
+        team: phoenix
         topic: azure
     - alert: AzureServicePrincipalExpirationDateUnknown
       annotations:
@@ -194,7 +194,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: celestial
+        team: phoenix
         topic: azure
     - alert: ClusterAutoscalerAppFailedAzure
       annotations:
@@ -207,7 +207,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: celestial
+        team: phoenix
         topic: releng
     - alert: ClusterAutoscalerAppPendingInstallAzure
       annotations:
@@ -220,7 +220,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: celestial
+        team: phoenix
         topic: releng
     - alert: ClusterAutoscalerAppPendingUpgradeAzure
       annotations:
@@ -233,7 +233,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: celestial
+        team: phoenix
         topic: releng
     - alert: ClusterAutoscalerAppNotInstalledAzure
       annotations:
@@ -247,7 +247,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: celestial
+        team: phoenix
         topic: releng
     - alert: AzureQuotaUsageApproachingLimit
       annotations:
@@ -260,7 +260,7 @@ spec:
         severity: notify
         team: se
         topic: azure
-    - alert: ManagementClusterPodPendingCelestial
+    - alert: ManagementClusterPodPendingPhoenix
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
         opsrecipe: pod-stuck-in-pending/
@@ -274,6 +274,6 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: celestial
+        team: phoenix
         topic: managementcluster
 {{- end }}

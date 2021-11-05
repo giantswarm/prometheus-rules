@@ -27,7 +27,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_cluster_with_notready_nodepools: "true"
         severity: notify
-        team: ludacris
+        team: phoenix
         topic: kubernetes
     - alert: WorkloadClusterAPIServerAdmissionWebhookErrors
       annotations:
@@ -38,7 +38,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: ludacris
+        team: phoenix
         topic: kubernetes
     - alert: WorkloadClusterWebhookDurationExceedsTimeout
       annotations:
@@ -49,5 +49,5 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: ludacris
+        team: phoenix
         topic: kubernetes

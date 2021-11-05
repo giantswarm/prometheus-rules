@@ -23,7 +23,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: ludacris
+        team: rocket
         topic: security
     - alert: FalcoMediumAlertFiring
       annotations:
@@ -36,7 +36,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: ludacris
+        team: rocket
         topic: security
     - alert: FalcoInformationalAlert
       annotations:
@@ -49,5 +49,5 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: ludacris
+        team: rocket
         topic: security

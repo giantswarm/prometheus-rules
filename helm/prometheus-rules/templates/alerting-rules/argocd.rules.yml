@@ -21,7 +21,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: biscuit
+        team: honeybadger
         topic: releng
     - alert: ArgoCDApplicationOutOfSync
       annotations:
@@ -34,5 +34,5 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: biscuit
+        team: honeybadger
         topic: releng

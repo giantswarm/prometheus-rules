@@ -26,7 +26,7 @@ spec:
         {{- if eq .Values.managementCluster.provider.kind "aws" }}
         team: phoenix
         {{- else if eq .Values.managementCluster.provider.kind "azure" }}
-        team: celestial
+        team: phoenix
         {{- else }}
         team: rocket
         {{- end }}
@@ -65,7 +65,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: kubernetes
     - alert: NodeHasConstantOOMKills
       annotations:
@@ -78,7 +78,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: kubernetes
     - alert: NodeConnTrackAlmostExhausted
       annotations:
@@ -89,7 +89,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: biscuit
+        team: phoenix
         topic: kubernetes
     - alert: MachineEntropyTooLow
       annotations:
@@ -100,7 +100,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: infrastructure
     - alert: MachineAllocatedFileDescriptorsTooHigh
       annotations:
@@ -111,7 +111,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: infrastructure
     {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: WorkloadClusterNodeUnexpectedTaintNodeWithImpairedVolumes

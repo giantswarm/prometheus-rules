@@ -20,7 +20,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: etcd
     - alert: ManagementClusterEtcdDBSizeTooLarge
       annotations:
@@ -31,7 +31,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: biscuit
+        team: phoenix
         topic: etcd
     - alert: ManagementClusterEtcdNumberOfLeaderChangesTooHigh
       annotations:
@@ -40,7 +40,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: etcd
     - alert: ManagementClusterEtcdHasNoLeader
       annotations:
@@ -51,5 +51,5 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: biscuit
+        team: phoenix
         topic: etcd

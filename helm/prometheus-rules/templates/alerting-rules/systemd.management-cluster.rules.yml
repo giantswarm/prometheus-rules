@@ -20,7 +20,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: biscuit
+        team: phoenix
         topic: infrastructure
     - alert: ManagementClusterDisabledSystemdUnitActive
       annotations:
@@ -31,5 +31,5 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: biscuit
+        team: phoenix
         topic: infrastructure

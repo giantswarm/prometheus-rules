@@ -19,7 +19,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: network
     - alert: Network95thPercentileLatencyTooHigh
       annotations:
@@ -29,7 +29,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: network
     - alert: SYNRetransmissionRateTooHigh
       annotations:
@@ -39,5 +39,5 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: network

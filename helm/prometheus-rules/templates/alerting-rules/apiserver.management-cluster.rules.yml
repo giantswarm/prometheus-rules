@@ -27,7 +27,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_cluster_with_notready_nodepools: "true"
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: managementcluster
     - alert: ManagementClusterAPIServerAdmissionWebhookErrors
       annotations:
@@ -38,7 +38,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: biscuit
+        team: phoenix
         topic: managementcluster
     - alert: ManagementClusterWebhookDurationExceedsTimeout
       annotations:
@@ -49,5 +49,5 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: biscuit
+        team: phoenix
         topic: managementcluster

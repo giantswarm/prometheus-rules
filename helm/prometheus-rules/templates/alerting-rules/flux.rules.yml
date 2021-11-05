@@ -1,0 +1,63 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: fluxcd.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: fluxcd
+    rules:
+    - alert: FluxHelmReleaseFailed
+      annotations:
+        description: |-
+          {{`Flux HelmRelease on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
+        opsrecipe: fluxcd-failing-helmrelease/
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease"}
+      for: 10m
+      labels:
+        area: kaas
+        severity: page
+        team: honeybadger
+        topic: releng
+    - alert: FluxKustomizationFailed
+      annotations:
+        description: |-
+          {{`Flux Kustomization on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
+        opsrecipe: fluxcd-failing-kustomization/
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization"}
+      for: 10m
+      labels:
+        area: kaas
+        severity: page
+        team: honeybadger
+        topic: releng
+    - alert: FluxSourceFailed
+      annotations:
+        description: |-
+          {{`Flux {{ $labels.kind }} on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
+        opsrecipe: fluxcd-failing-source/
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind~="GitRepository|HelmRepository|Bucket"}
+      for: 10m
+      labels:
+        area: kaas
+        severity: page
+        team: honeybadger
+        topic: releng
+    - alert: FluxReconciliationTakingTooLong
+      annotations:
+        description: |-
+          {{`Flux controller {{ $labels.controller }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is reconciling very slowly.`}}
+        opsrecipe: fluxcd-slow-reconciliation/
+      expr: |
+        (sum(rate(controller_runtime_reconcile_time_seconds_sum{app=~".*flux.*"}[5m])) by (installation, cluster_id, controller) /
+        sum(rate(controller_runtime_reconcile_time_seconds_count{app=~".*flux.*"}[5m])) by (installation, cluster_id, controller)) > 60
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: honeybadger
+        topic: releng

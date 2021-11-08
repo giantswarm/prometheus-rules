@@ -40,7 +40,7 @@ spec:
       for: 15m
       labels:
         area: kaas
-        severity: notify
+        severity: page
         {{- if eq .Values.managementCluster.provider.kind "aws" }}
         team: phoenix
         {{- else if eq .Values.managementCluster.provider.kind "azure" }}

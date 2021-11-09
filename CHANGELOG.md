@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Filter phoenix components correctly in `DeploymentNotSatisfiedPhoenix` alert..
+
 ## [0.31.2] - 2021-11-09
 
 ### Fixed

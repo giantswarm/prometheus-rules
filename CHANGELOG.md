@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.3] - 2021-11-09
+
 ### Fixed
 
 - Filter phoenix components correctly in `DeploymentNotSatisfiedPhoenix` alert..
@@ -367,7 +369,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.31.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.31.3...HEAD
+[0.31.3]: https://github.com/giantswarm/prometheus-rules/compare/v0.31.2...v0.31.3
 [0.31.2]: https://github.com/giantswarm/prometheus-rules/compare/v0.31.1...v0.31.2
 [0.31.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.31.0...v0.31.1
 [0.31.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.30.0...v0.31.0

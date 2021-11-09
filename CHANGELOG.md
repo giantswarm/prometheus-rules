@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Add `> 0` to FluxCD rules.
+
 ## [0.31.1] - 2021-11-09
 
 ### Fixed

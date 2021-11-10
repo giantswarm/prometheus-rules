@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change `WorkloadClusterEtcdCommitDurationTooHigh` severity to paging.
+
+
 ## [0.31.3] - 2021-11-09
 
 ### Fixed
@@ -30,10 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add FluxCD rules.
-
-### Changed
-
-- Change `WorkloadClusterEtcdCommitDurationTooHigh` severity to paging.
 
 ## [0.30.0] - 2021-11-05
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Make `CertificateSecretWillExpireInLessThanTwoWeeks` only alert for certificate secrets expriry on management clusters.
+
 ## [0.32.0] - 2021-11-10
 
 ### Changed

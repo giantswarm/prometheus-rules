@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Reduce blackbox exporter SLO from 99.99% to 99.9%.
+
 ## [0.34.0] - 2021-11-12
 
 ### Changed

@@ -146,8 +146,8 @@ spec:
         class: MEDIUM
         service: blackbox-exporter
       record: raw_slo_errors
-      # -- 99.999% availability
-    - expr: "vector((1 - 0.9999))"
+      # -- 99.9% availability
+    - expr: "vector((1 - 0.999))"
       labels:
         area: kaas
         service: blackbox-exporter

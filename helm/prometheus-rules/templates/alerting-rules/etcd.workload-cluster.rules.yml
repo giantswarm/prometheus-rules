@@ -59,6 +59,7 @@ spec:
       labels:
         area: kaas
         severity: page
+        cancel_if_outside_working_hours: "true"
         {{- if eq .Values.managementCluster.provider.kind "aws" }}
         team: phoenix
         {{- else if eq .Values.managementCluster.provider.kind "azure" }}

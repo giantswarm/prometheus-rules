@@ -19,9 +19,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        {{- if eq .Values.managementCluster.provider.kind "aws" }}
-        team: phoenix
-        {{- else if eq .Values.managementCluster.provider.kind "azure" }}
+        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
         team: phoenix
         {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket

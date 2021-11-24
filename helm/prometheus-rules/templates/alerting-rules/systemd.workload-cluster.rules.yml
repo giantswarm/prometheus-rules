@@ -20,7 +20,11 @@ spec:
       labels:
         area: kaas
         severity: page
+        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
         team: phoenix
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        team: rocket
+        {{- end }}
         topic: infrastructure
     - alert: WorkloadClusterDisabledSystemdUnitActive
       annotations:
@@ -31,5 +35,9 @@ spec:
       labels:
         area: kaas
         severity: page
+        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
         team: phoenix
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        team: rocket
+        {{- end }}
         topic: infrastructure

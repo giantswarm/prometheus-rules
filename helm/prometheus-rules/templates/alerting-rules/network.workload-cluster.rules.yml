@@ -19,7 +19,11 @@ spec:
       labels:
         area: kaas
         severity: notify
+        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
         team: phoenix
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        team: rocket
+        {{- end }}
         topic: network
     - alert: Network95thPercentileLatencyTooHigh
       annotations:
@@ -29,7 +33,11 @@ spec:
       labels:
         area: kaas
         severity: notify
+        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
         team: phoenix
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        team: rocket
+        {{- end }}
         topic: network
     - alert: SYNRetransmissionRateTooHigh
       annotations:
@@ -39,5 +47,9 @@ spec:
       labels:
         area: kaas
         severity: notify
+        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
         team: phoenix
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        team: rocket
+        {{- end }}
         topic: network

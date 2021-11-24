@@ -24,7 +24,11 @@ spec:
         cancel_if_instance_state_not_running: "true"
         cancel_if_kubelet_down: "true"
         severity: notify
+        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
         team: phoenix
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        team: rocket
+        {{- end }}
         topic: kubernetes
     - alert: KubeletDockerOperationsErrorsTooHigh
       annotations:
@@ -38,7 +42,11 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_kubelet_down: "true"
         severity: notify
+        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
         team: phoenix
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        team: rocket
+        {{- end }}
         topic: kubernetes
     - alert: KubeletDockerOperationsLatencyTooHigh
       annotations:
@@ -52,7 +60,11 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_kubelet_down: "true"
         severity: notify
+        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
         team: phoenix
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        team: rocket
+        {{- end }}
         topic: kubernetes
     - alert: KubeletPLEGLatencyTooHigh
       annotations:
@@ -66,5 +78,9 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_kubelet_down: "true"
         severity: notify
+        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
         team: phoenix
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        team: rocket
+        {{- end }}
         topic: kubernetes

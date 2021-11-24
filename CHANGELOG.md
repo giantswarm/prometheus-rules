@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Route some alerts based on the provider.
+
 ## [0.35.0] - 2021-11-22
 
 ### Changed

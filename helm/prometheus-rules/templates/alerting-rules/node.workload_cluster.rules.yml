@@ -65,10 +65,10 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: kubernetes
     - alert: NodeHasConstantOOMKills
@@ -82,10 +82,10 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: kubernetes
     - alert: NodeConnTrackAlmostExhausted
@@ -97,10 +97,10 @@ spec:
       labels:
         area: kaas
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: kubernetes
     - alert: MachineEntropyTooLow
@@ -112,10 +112,10 @@ spec:
       labels:
         area: kaas
         severity: notify
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: infrastructure
     - alert: MachineAllocatedFileDescriptorsTooHigh
@@ -127,10 +127,10 @@ spec:
       labels:
         area: kaas
         severity: notify
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: infrastructure
     {{- if eq .Values.managementCluster.provider.kind "aws" }}
@@ -143,10 +143,10 @@ spec:
       labels:
         area: kaas
         severity: notify
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: kubernetes
     {{- end }}

@@ -21,10 +21,10 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: storage
     - alert: EtcdVolumeSpaceTooLow
@@ -36,10 +36,10 @@ spec:
       labels:
         area: kaas
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: storage
     - alert: KubeletVolumeSpaceTooLow
@@ -52,10 +52,10 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: storage
     - alert: LogVolumeSpaceTooLow
@@ -68,10 +68,10 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: storage
     - alert: RootVolumeSpaceTooLow
@@ -84,9 +84,9 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: storage

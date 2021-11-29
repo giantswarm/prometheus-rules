@@ -24,10 +24,10 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_master_node_down: "true"
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: etcd
     - alert: WorkloadClusterEtcdCommitDurationTooHigh
@@ -40,10 +40,10 @@ spec:
         area: kaas
         severity: page
         cancel_if_outside_working_hours: "true"
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: etcd
     - alert: WorkloadClusterEtcdDBSizeTooLarge
@@ -56,10 +56,10 @@ spec:
         area: kaas
         severity: page
         cancel_if_outside_working_hours: "true"
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: etcd
     - alert: WorkloadClusterEtcdNumberOfLeaderChangesTooHigh
@@ -69,10 +69,10 @@ spec:
       labels:
         area: kaas
         severity: notify
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: etcd
     - alert: WorkloadClusterEtcdHasNoLeader
@@ -84,9 +84,9 @@ spec:
       labels:
         area: kaas
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: etcd

@@ -23,10 +23,10 @@ spec:
         cancel_if_cluster_with_notready_nodepools: "true"
         cancel_if_cluster_with_scaling_nodepools: "true"
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: network
     - alert: DNSCheckErrorRateTooHigh
@@ -42,10 +42,10 @@ spec:
         cancel_if_cluster_with_notready_nodepools: "true"
         cancel_if_cluster_with_scaling_nodepools: "true"
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: network
     - alert: NetworkErrorRateTooHigh
@@ -64,10 +64,10 @@ spec:
         cancel_if_cluster_with_scaling_nodepools: "true"
         cancel_if_nodes_down: "true"
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-        team: phoenix
-        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
+        {{- else }}
+        team: phoenix
         {{- end }}
         topic: network
     - alert: HighNumberOfAllocatedSockets

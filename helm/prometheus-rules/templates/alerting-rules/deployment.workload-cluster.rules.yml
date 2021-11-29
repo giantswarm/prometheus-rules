@@ -22,7 +22,7 @@ spec:
         severity: page
         team: honeybadger
         topic: releng
-    - alert: WorkloadClusterDeploymentNotSatisfiedPhoenix
+    - alert: WorkloadClusterDeploymentNotSatisfiedKaas
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: workload-cluster-deployment-not-satisfied/
@@ -31,7 +31,11 @@ spec:
       labels:
         area: kaas
         severity: page
+        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
         team: phoenix
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        team: rocket
+        {{- end }}
         topic: observability
     - alert: WorkloadClusterManagedDeploymentNotSatisfied
       annotations:

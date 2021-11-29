@@ -64,7 +64,7 @@ spec:
         severity: page
         team: honeybadger
         topic: managementcluster
-    - alert: DeploymentNotSatisfiedPhoenix
+    - alert: DeploymentNotSatisfiedKaas
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
@@ -76,9 +76,13 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
+        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
         team: phoenix
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        team: rocket
+        {{- end }}
         topic: managementcluster
-    - alert: DeploymentNotSatisfiedChinaPhoenix
+    - alert: DeploymentNotSatisfiedChinaKaas
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied-china/
@@ -87,7 +91,11 @@ spec:
       labels:
         area: kaas
         severity: page
+        {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
         team: phoenix
+        {{- else if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
+        team: rocket
+        {{- end }}
         topic: managementcluster
     {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: AWSManagementClusterDeploymentScaledDownToZero

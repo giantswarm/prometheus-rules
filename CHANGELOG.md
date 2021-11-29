@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Trigger `FluxSourceFailed` if it has been ongoing for 2h.
+
 ## [0.36.0] - 2021-11-24
 
 ### Changed

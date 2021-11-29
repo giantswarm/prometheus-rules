@@ -40,7 +40,7 @@ spec:
           {{`Flux {{ $labels.kind }} on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-source/
       expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket"} > 0
-      for: 10m
+      for: 2h
       labels:
         area: kaas
         severity: page

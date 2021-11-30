@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Split Flux alerts based on `cluster_type`
+- Extend trigger period for Flux Workload Cluster alerts
+- Prevent Flux Workload Cluster alerts from paging outside business hours
+
 ## [0.38.0] - 2021-11-30
 
 ### Changed

@@ -29,6 +29,17 @@ spec:
         kube_state_metrics_down: "true"
         team: phoenix
         topic: status
+    {{- if eq .Values.managementCluster.provider.kind "azure" }}
+    - alert: InhibitionClusterWithoutWorkerNodes
+      annotations:
+        description: '{{`Cluster ({{ $labels.cluster_id }}) has no worker nodes.`}}'
+      expr: azure_operator_cluster_worker_nodes == 0
+      labels:
+        area: kaas
+        has_worker_nodes: "false"
+        team: phoenix
+        topic: status
+    {{- end }}
     {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: InhibitionKiamErrors
       annotations:

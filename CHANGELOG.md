@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add inhibition when cluster has no workers (AWS and Azure only).
+
 ## [0.39.0] - 2021-11-30
 
 ### Changed

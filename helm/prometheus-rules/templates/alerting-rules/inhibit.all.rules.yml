@@ -29,11 +29,15 @@ spec:
         kube_state_metrics_down: "true"
         team: phoenix
         topic: status
-    {{- if eq .Values.managementCluster.provider.kind "azure" }}
+    {{- if or (eq .Values.managementCluster.provider.kind "azure") (eq .Values.managementCluster.provider.kind "aws") }}
     - alert: InhibitionClusterWithoutWorkerNodes
       annotations:
         description: '{{`Cluster ({{ $labels.cluster_id }}) has no worker nodes.`}}'
+      {{- if eq .Values.managementCluster.provider.kind "azure" }}
       expr: azure_operator_cluster_worker_nodes == 0
+      {{- else if eq .Values.managementCluster.provider.kind "aws" }}
+      expr: sum(aws_operator_asg_desired_count{asg=~".*-tcnp-.*"}) == 0
+      {{- end }}
       labels:
         area: kaas
         has_worker_nodes: "false"

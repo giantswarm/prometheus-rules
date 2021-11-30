@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add inhibition when cluster has no workers.
+- Add inhibition when cluster has no workers (AWS and Azure only).
 
 ## [0.38.0] - 2021-11-30
 

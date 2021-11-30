@@ -65,18 +65,6 @@ spec:
         description: |-
           {{`Flux {{ $labels.kind }} on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-source/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket"} > 0
-      for: 2h
-      labels:
-        area: kaas
-        severity: page
-        team: honeybadger
-        topic: releng
-    - alert: FluxSourceFailed
-      annotations:
-        description: |-
-          {{`Flux {{ $labels.kind }} on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
-        opsrecipe: fluxcd-failing-source/
       expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="management_cluster"} > 0
       for: 2h
       labels:

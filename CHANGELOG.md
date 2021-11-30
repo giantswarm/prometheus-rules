@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.39.0] - 2021-11-30
+
 ### Changed
 
 - Split Flux alerts based on `cluster_type`
@@ -418,7 +420,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.38.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.39.0...HEAD
+[0.39.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.38.0...v0.39.0
 [0.38.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.37.0...v0.38.0
 [0.37.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.36.0...v0.37.0
 [0.36.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.35.0...v0.36.0

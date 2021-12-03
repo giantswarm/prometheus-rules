@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Alerts for EBS CSI.
 
+## [0.40.2] - 2021-12-03
+
+
 ### Fixed
 
 - Consolidate alerts that covered the same issues.
@@ -440,7 +443,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.40.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.40.2...HEAD
+[0.40.2]: https://github.com/giantswarm/prometheus-rules/compare/v0.40.1...v0.40.2
 [0.40.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.40.0...v0.40.1
 [0.40.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.39.0...v0.40.0
 [0.39.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.38.0...v0.39.0

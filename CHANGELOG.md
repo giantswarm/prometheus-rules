@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Alerts for EBS CSI.
 
+### Changed
+
+- Change ManagementClusterHasLessThanThreeNodes alert to use a metrics with reliable `role` label.
+
 ## [0.40.2] - 2021-12-03
 
 

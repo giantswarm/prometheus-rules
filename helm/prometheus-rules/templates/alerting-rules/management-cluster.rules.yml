@@ -38,7 +38,7 @@ spec:
       annotations:
         description: '{{`Management cluster {{ $labels.cluster_id }} has less than 3 nodes.`}}'
         opsrecipe: management-cluster-less-than-three-workers/
-      expr: sum(kube_node_labels{cluster_type="management_cluster", label_role="worker"}) < 3
+      expr: sum(kubelet_node_name{cluster_type="management_cluster", role="worker"}) < 3
       for: 1h
       labels:
         area: kaas

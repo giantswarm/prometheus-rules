@@ -136,7 +136,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.workload_name }} is missing.`}}'
         opsrecipe: management-cluster-deployment-is-missing/
-      expr: absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", workload_name="aws-admission-controller"})
+      expr: absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-admission-controller"})
       for: 5m
       labels:
         area: kaas

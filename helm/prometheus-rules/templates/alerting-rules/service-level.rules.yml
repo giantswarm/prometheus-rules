@@ -31,5 +31,5 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_has_no_workers: "true"
+        cancel_if_cluster_has_no_workers: "true"
         severity: page

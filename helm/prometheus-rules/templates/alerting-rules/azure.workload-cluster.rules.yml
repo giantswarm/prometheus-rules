@@ -56,7 +56,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_has_no_workers: "true"
+        cancel_if_cluster_has_no_workers: "true"
         severity: notify
         team: phoenix
         topic: kubernetes
@@ -85,7 +85,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_has_no_workers: "true"
+        cancel_if_cluster_has_no_workers: "true"
         master_node_down: "true"
         severity: page
         team: phoenix

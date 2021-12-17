@@ -24,7 +24,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
-        cancel_if_has_no_workers: "true"
+        cancel_if_cluster_has_no_workers: "true"
         severity: page
         team: phoenix
         topic: kubernetes
@@ -100,7 +100,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_kube_state_metrics_down: "true"
-        cancel_if_has_no_workers: "true"
+        cancel_if_cluster_has_no_workers: "true"
         severity: page
         team: phoenix
         topic: managementcluster

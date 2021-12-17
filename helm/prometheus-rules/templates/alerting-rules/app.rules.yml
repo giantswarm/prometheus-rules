@@ -142,7 +142,7 @@ spec:
         team: honeybadger
         topic: releng
     # Alert Atlas about EFK deployment failed as detected by app platform.
-    - alert: WorkloadClusterAppFailed
+    - alert: WorkloadClusterAppFailedEFK
       annotations:
         description: '{{`Workload Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
@@ -159,7 +159,7 @@ spec:
         team: atlas
         topic: releng
           # Alert Cabbage about nginx-IC deployment failed as detected by app platform.
-    - alert: WorkloadClusterAppFailed
+    - alert: WorkloadClusterAppFailedNginxIC
       annotations:
         description: '{{`Workload Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/

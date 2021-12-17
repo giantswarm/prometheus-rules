@@ -13,7 +13,7 @@ spec:
     - alert: FluxHelmReleaseFailed
       annotations:
         description: |-
-          {{`Flux HelmRelease on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
+          {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-helmrelease/
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster"} > 0
       for: 10m
@@ -25,7 +25,7 @@ spec:
     - alert: FluxWorkloadClusterHelmReleaseFailed
       annotations:
         description: |-
-          {{`Flux HelmRelease on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
+          {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-helmrelease/
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="workload_cluster"} > 0
       for: 2h
@@ -50,7 +50,7 @@ spec:
     - alert: FluxWorkloadClusterKustomizationFailed
       annotations:
         description: |-
-          {{`Flux Kustomization on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
+          {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-kustomization/
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="workload_cluster"} > 0
       for: 2h
@@ -63,7 +63,7 @@ spec:
     - alert: FluxSourceFailed
       annotations:
         description: |-
-          {{`Flux {{ $labels.kind }} on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
+          {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-source/
       expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="management_cluster"} > 0
       for: 2h
@@ -75,7 +75,7 @@ spec:
     - alert: FluxWorkloadClusterSourceFailed
       annotations:
         description: |-
-          {{`Flux {{ $labels.kind }} on {{ $labels.installation }}/{{ $labels.cluster_id }} in {{ $labels.namespace }}/{{ $labels.name }} is stuck in Failed state.`}}
+          {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-source/
       expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="workload_cluster"} > 0
       for: 2h

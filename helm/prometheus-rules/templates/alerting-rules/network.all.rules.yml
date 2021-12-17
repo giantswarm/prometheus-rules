@@ -22,6 +22,7 @@ spec:
         cancel_if_cluster_with_no_nodepools: "true"
         cancel_if_cluster_with_notready_nodepools: "true"
         cancel_if_cluster_with_scaling_nodepools: "true"
+        cancel_if_has_no_workers: "true"
         severity: page
         {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
@@ -41,6 +42,7 @@ spec:
         cancel_if_cluster_with_no_nodepools: "true"
         cancel_if_cluster_with_notready_nodepools: "true"
         cancel_if_cluster_with_scaling_nodepools: "true"
+        cancel_if_has_no_workers: "true"
         severity: page
         {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
         team: rocket
@@ -62,6 +64,7 @@ spec:
         cancel_if_cluster_with_no_nodepools: "true"
         cancel_if_cluster_with_notready_nodepools: "true"
         cancel_if_cluster_with_scaling_nodepools: "true"
+        cancel_if_has_no_workers: "true"
         cancel_if_nodes_down: "true"
         severity: page
         {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}

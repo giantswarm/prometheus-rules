@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Added per-team ownership (alerts go to relevant teams, not Honeybadger) of efk-stack-app and
+  nginx-ingress-controller-app for the WorkloadClusterAppFailed alert
+
 ## [0.44.0] - 2021-12-17
 
 ### Changed

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.45.0] - 2021-12-22
+
 ### Changed
 
 - Silence `ClusterAutoscalerErrors` if cluster has no workers because `CoreDNS isn't running and that makes the autoscaler fail.
@@ -473,7 +475,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.44.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.45.0...HEAD
+[0.45.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.44.0...v0.45.0
 [0.44.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.43.0...v0.44.0
 [0.43.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.42.0...v0.43.0
 [0.42.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.41.0...v0.42.0

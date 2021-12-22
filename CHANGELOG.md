@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.46.0] - 2021-12-22
+
 ### Changed
 
 - Silence `WorkloadClusterCriticalPodNotRunningAzure` and `WorkloadClusterCriticalPodNotRunningAWS` if `kube-state-metrics` is down.
@@ -479,7 +481,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.45.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.46.0...HEAD
+[0.46.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.45.0...v0.46.0
 [0.45.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.44.0...v0.45.0
 [0.44.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.43.0...v0.44.0
 [0.43.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.42.0...v0.43.0

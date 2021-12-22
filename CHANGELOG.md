@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Silence `ClusterAutoscalerErrors` if cluster has no workers because `CoreDNS isn't running and that makes the autoscaler fail.
+
 ### Fixed
 
 - Fix `aggregation:kubelet:version` and `aggregation:kubernetes:version` not showing kubernetes version.

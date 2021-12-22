@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.44.1] - 2021-12-22
+
 ### Fixed
 
 - Fix `aggregation:kubelet:version` and `aggregation:kubernetes:version` not showing kubernetes version.
@@ -469,7 +471,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.44.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.44.1...HEAD
+[0.44.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.44.0...v0.44.1
 [0.44.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.43.0...v0.44.0
 [0.43.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.42.0...v0.43.0
 [0.42.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.41.0...v0.42.0

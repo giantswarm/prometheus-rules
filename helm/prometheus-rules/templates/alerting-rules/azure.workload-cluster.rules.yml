@@ -31,6 +31,7 @@ spec:
       for: 5m
       labels:
         area: kaas
+        cancel_if_kube_state_metrics_down: "true"
         severity: page
         team: phoenix
         topic: kubernetes

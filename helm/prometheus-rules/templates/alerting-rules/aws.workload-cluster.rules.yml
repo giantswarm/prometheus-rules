@@ -39,6 +39,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
+        cancel_if_kube_state_metrics_down: "true"
         severity: page
         team: phoenix
         topic: kubernetes

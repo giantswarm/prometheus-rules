@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Silence `WorkloadClusterCriticalPodNotRunningAzure` and `WorkloadClusterCriticalPodNotRunningAWS` if `kube-state-metrics` is down.
+
 ## [0.45.0] - 2021-12-22
 
 ### Changed

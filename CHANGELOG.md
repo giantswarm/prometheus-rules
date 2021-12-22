@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `aggregation:kubelet:version` and `aggregation:kubernetes:version` not showing kubernetes version.
+
 ## [0.41.0] - 2021-12-06
 
 ### Added

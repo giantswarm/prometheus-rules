@@ -16,7 +16,7 @@ spec:
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/
-      expr: increase(kube_pod_container_status_restarts_total{container=~"aws-node.*|kiam-.+|cluster-autoscaler.*|ebs-csi-.*"}[1h]) > 10
+      expr: increase(kube_pod_container_status_restarts_total{container=~"aws-node.*|kiam-agent.*|kiam-server.*|cluster-autoscaler.*|ebs-csi-.*"}[1h]) > 10
       for: 10m
       labels:
         area: kaas
@@ -24,6 +24,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_has_no_workers: "true"
         severity: page
         team: phoenix
         topic: kubernetes
@@ -90,7 +91,7 @@ spec:
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
         opsrecipe: pod-stuck-in-pending/
-      expr: kube_pod_status_phase{namespace="kube-system",pod=~"(aws-node.*|kiam.*|cluster-autoscaler.*|ebs-csi-.*)",phase="Pending"} == 1
+      expr: kube_pod_status_phase{namespace="kube-system",pod=~"(aws-node.*|kiam-agent.*|kiam-server.*|cluster-autoscaler.*|ebs-csi-.*)",phase="Pending"} == 1
       for: 15m
       labels:
         area: kaas
@@ -99,6 +100,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_kube_state_metrics_down: "true"
+        cancel_if_cluster_has_no_workers: "true"
         severity: page
         team: phoenix
         topic: managementcluster

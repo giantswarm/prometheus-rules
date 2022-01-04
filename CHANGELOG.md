@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Don't page KaaS with `DeploymentNotSatisfiedKaas` when monitoring deployments are not satisfied on management clusters.
+
 ## [0.46.2] - 2022-01-03
 
 ### Fixed

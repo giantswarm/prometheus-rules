@@ -123,13 +123,13 @@ spec:
         severity: page
         team: honeybadger
         topic: releng
-    ## Workload cluster app rules only available on the management cluster Prometheus because the source is app-exporter
-    ## By default they go to Honeybadger, unless there's an explicit team configured below for specific apps.
+    ## Workload cluster app rules only available on the management cluster Prometheus because the source is app-exporter.
+    ## By default they go to Honeybadger, unless one of the teams below is configured.
     - alert: WorkloadClusterAppFailed
       annotations:
         description: '{{`Workload Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog!~"control-plane-.*", app!~"(efk-stack-app)|(nginx-ingress-controller-app)"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team!~"(?i:(atlas|cabbage|phoenix|rocket))", "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
       for: 30m
       labels:
         area: managedservices
@@ -141,12 +141,11 @@ spec:
         sig: none
         team: honeybadger
         topic: releng
-    # Alert Atlas about EFK deployment failed as detected by app platform.
-    - alert: WorkloadClusterAppFailedEFK
+    - alert: WorkloadClusterAppFailedAtlas
       annotations:
         description: '{{`Workload Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog!~"control-plane-.*", app="efk-stack-app"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="atlas"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
       for: 30m
       labels:
         area: managedservices
@@ -158,12 +157,11 @@ spec:
         sig: none
         team: atlas
         topic: releng
-          # Alert Cabbage about nginx-IC deployment failed as detected by app platform.
-    - alert: WorkloadClusterAppFailedNginxIC
+    - alert: WorkloadClusterAppFailedCabbage
       annotations:
         description: '{{`Workload Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog!~"control-plane-.*", app="nginx-ingress-controller-app"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="cabbage"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
       for: 30m
       labels:
         area: managedservices
@@ -174,6 +172,55 @@ spec:
         severity: page
         sig: none
         team: cabbage
+        topic: releng
+    - alert: WorkloadClusterAppFailedPhoenix
+      annotations:
+        description: '{{`Workload Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        opsrecipe: app-failed/
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="phoenix"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        sig: none
+        team: phoenix
+        topic: releng
+    - alert: WorkloadClusterAppFailedRocket
+      annotations:
+        description: '{{`Workload Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        opsrecipe: app-failed/
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="rocket"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        sig: none
+        team: rocket
+        topic: releng
+    # If apps can't be installed multiple teams could be paged. So we route to honeybadger.
+    - alert: WorkloadClusterAppNotInstalled
+      annotations:
+        description: '{{`Workload Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        opsrecipe: app-failed/
+      expr: label_replace(app_operator_app_info{status="not-installed", catalog!~"control-plane-.*", "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        sig: none
+        team: honeybadger
         topic: releng
     - alert: WorkloadClusterAppPendingUpdate
       annotations:

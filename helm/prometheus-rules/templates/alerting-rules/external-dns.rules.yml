@@ -42,4 +42,19 @@ spec:
         severity: page
         team: cabbage
         topic: external-dns
+    - alert: ExternalDNSDown
+      annotations:
+        description: '{{`external-dns on {{ $labels.installation }})/{{ $labels.cluster_id }} in namespace {{ $labels.namespace }}) is down.`}}'
+        opsrecipe: external-dns-down/
+      expr: up{app="external-dns-app"} == 0
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_kiam_has_errors: "true"
+        severity: page
+        team: cabbage
+        topic: external-dns
 {{- end }}

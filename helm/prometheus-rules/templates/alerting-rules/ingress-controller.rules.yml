@@ -46,17 +46,6 @@ spec:
         severity: notify
         team: cabbage
         topic: ingress
-    - alert: IngressControllerSSLCertificateWillExpireSoon
-      annotations:
-        description: '{{`SSL certificate for {{ $labels.host }} will expire in less than 10 days.`}}'
-        opsrecipe: ic-ssl-is-going-to-expire/
-      expr: avg without(instance) (nginx_ingress_controller_ssl_expire_time_seconds{cluster_type="management_cluster",control_plane!~"(etcd|api).*"}) < (time() + (10 * 24 * 3600))
-      for: 5m
-      labels:
-        area: managedservices
-        severity: notify
-        team: cabbage
-        topic: ingress
     - alert: IngressControllerServiceHasNoEndpoints
       annotations:
         description: '{{`Ingress Controller has no live endpoints.`}}'

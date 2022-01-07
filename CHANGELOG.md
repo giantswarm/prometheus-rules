@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Don't page KaaS with `DeploymentNotSatisfiedKaas` when monitoring deployments are not satisfied on management clusters.
 - Don't page KaaS with `DeploymentNotSatisfiedKaas` when app platform deployments are not satisfied on management clusters.
+- Remove `IngressControllerSSLCertificateWillExpireSoon`. It is covered by alert `CertificateSecretWillExpireInLessThanTwoWeeks`.
 - Route workload cluster app failed alerts to teams.
 
 ## [0.46.2] - 2022-01-03

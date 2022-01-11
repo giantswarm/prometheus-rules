@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+### Fixed
+
+- Fix Kubernetes and kubelet versions in cortex aggregations.
+
 ## [0.47.0] - 2022-01-07
 
 ### Changed

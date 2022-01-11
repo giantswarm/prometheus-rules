@@ -76,7 +76,7 @@ spec:
       record: aggregation:kubelet:running_container_total
     - expr: sum(kubelet_running_pod_count) by (cluster_type, cluster_id)
       record: aggregation:kubelet:running_pod_total
-    - expr: sum(kubernetes_build_info{app="kubelet"}) by (cluster_type, git_version, cluster_id)
+    - expr: sum by(cluster_type, git_version, cluster_id) (label_replace(kubernetes_build_info{app="kubelet"}, "git_version", "$1", "gitVersion", "(.+)"))
       record: aggregation:kubelet:version
     - expr: sum(apiserver_request_total) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:apiserver_request_count
@@ -172,7 +172,7 @@ spec:
       record: aggregation:kubernetes:up
     - expr: sum(up{app="kubernetes"}) by (cluster_type, cluster_id) / count(up{app="kubernetes"}) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:up_bool
-    - expr: sum(kubernetes_build_info{app="kubernetes"}) by (cluster_type, git_version)
+    - expr: sum by(cluster_type, git_version, cluster_id) (label_replace(kubernetes_build_info{app="kubernetes"}, "git_version", "$1", "gitVersion", "(.+)"))
       record: aggregation:kubernetes:version
     - expr: count(node_cpu_seconds_total{mode="idle"}) by (cluster_type, cluster_id)
       record: aggregation:node:cpu_cores_total

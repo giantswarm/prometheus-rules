@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.49.0] - 2022-01-12
 
+### Changed
+
+- Change description of Falco alerts to differentiate between host- and pod-level events.
+
 ### Removed
 
 - Delete unhelpful `HighNumberOfTimeWaitSockets` alert.

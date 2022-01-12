@@ -13,10 +13,9 @@ spec:
     rules:
     - alert: FalcoCriticalAlertFiring
       annotations:
-        description: '{{` \
-            {{ if eq $labels.k8s_pod_name "<NA>" }} The Falco rule {{ $labels.rule }} was triggered on the node {{ $labels.node }}. \
-            {{else}} Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }} on the node {{ $labels.node }}. {{ end }} \
-          `}}'
+        description: |-
+          {{`{{ if eq $labels.k8s_pod_name "<NA>" }} The Falco rule {{ $labels.rule }} was triggered on the node {{ $labels.node }}.
+          {{else}} Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }} on the node {{ $labels.node }}.{{ end }}`}}
         opsrecipe: falco-alerts/
       expr: increase(falco_events{priority=~"0|1|2|3"}[10m] ) > 0
       labels:
@@ -30,10 +29,9 @@ spec:
         topic: security
     - alert: FalcoMediumAlertFiring
       annotations:
-        description: '{{` \
-            {{ if eq $labels.k8s_pod_name "<NA>" }} The Falco rule {{ $labels.rule }} was triggered on the node {{ $labels.node }}. \
-            {{else}} Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }} on the node {{ $labels.node }}. {{ end }} \
-          `}}'
+        description: |-
+          {{`{{ if eq $labels.k8s_pod_name "<NA>" }} The Falco rule {{ $labels.rule }} was triggered on the node {{ $labels.node }}.
+          {{else}} Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }} on the node {{ $labels.node }}.{{ end }}`}}
         opsrecipe: falco-alerts/
       expr: increase(falco_events{priority=~"4|5"}[10m] ) > 0
       labels:
@@ -46,10 +44,9 @@ spec:
         topic: security
     - alert: FalcoInformationalAlert
       annotations:
-        description: '{{` \
-            {{ if eq $labels.k8s_pod_name "<NA>" }} The Falco rule {{ $labels.rule }} was triggered on the node {{ $labels.node }}. \
-            {{else}} Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }} on the node {{ $labels.node }}. {{ end }} \
-          `}}'
+        description: |-
+          {{`{{ if eq $labels.k8s_pod_name "<NA>" }} The Falco rule {{ $labels.rule }} was triggered on the node {{ $labels.node }}.
+          {{else}} Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }} on the node {{ $labels.node }}.{{ end }}`}}
         opsrecipe: falco-alerts/
       expr: increase(falco_events{priority="6"}[10m] ) > 0
       labels:

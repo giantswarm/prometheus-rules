@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.48.0] - 2022-01-11
+### Changed
 
+- Change description of Falco alerts to differentiate between host- and pod-level events.
+
+## [0.48.0] - 2022-01-11
 
 ### Fixed
 

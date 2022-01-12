@@ -99,17 +99,3 @@ spec:
         severity: page
         team: rocket
         topic: network
-    - alert: HighNumberOfTimeWaitSockets
-      annotations:
-        description: '{{`Over 50 percent of available ports are in time wait state on {{ $labels.instance }}.`}}'
-        opsrecipe: high-port-usage/
-      # This threshold value is based off net.ipv4.ip_local_port_range = 32768 60999
-      expr: node_sockstat_TCP_tw > ( 0.5 * ( 60999 - 32768 ) )
-      for: 5m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: rocket
-        topic: network
-

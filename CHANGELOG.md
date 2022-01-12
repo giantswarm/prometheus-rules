@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.48.0] - 2022-01-11
+### Removed
 
+- Delete unhelpful `HighNumberOfTimeWaitSockets` alert.
+
+## [0.48.0] - 2022-01-11
 
 ### Fixed
 

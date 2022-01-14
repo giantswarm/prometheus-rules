@@ -50,6 +50,7 @@ spec:
       for: 15m
       labels:
         area: managedservices
+        cancel_if_outside_working_hours: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"

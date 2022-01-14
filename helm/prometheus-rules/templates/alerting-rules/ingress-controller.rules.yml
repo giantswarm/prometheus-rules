@@ -69,6 +69,7 @@ spec:
         area: managedapps
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
         severity: page
         team: cabbage
         topic: ingress

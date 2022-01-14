@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: dex.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: dex
+    rules:
+    - alert: DexErrorRateHigh
+      annotations:
+        description: '{{`Dex running on {{ $labels.cluster_id }} is reporting an increased error rate.`}}'
+        opsrecipe: dex-error-rate-high/
+      expr: sum(increase(http_requests_total{service="dex", code=~"^[4]..$|[5]..$"}[5m])) by (cluster_id) > 10
+      for: 10m
+      labels:
+        area: managedapps
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: rainbow
+        topic: dex

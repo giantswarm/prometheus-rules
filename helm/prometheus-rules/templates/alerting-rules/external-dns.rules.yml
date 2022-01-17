@@ -46,7 +46,7 @@ spec:
       annotations:
         description: '{{`external-dns on {{ $labels.installation }})/{{ $labels.cluster_id }} in namespace {{ $labels.namespace }}) is down.`}}'
         opsrecipe: external-dns-down/
-      expr: up{app="external-dns-app"} == 0
+      expr: up{app=~"external-dns-(app|monitoring)"} == 0
       for: 15m
       labels:
         area: managedservices

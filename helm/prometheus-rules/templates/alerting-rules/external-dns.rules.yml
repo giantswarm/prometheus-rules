@@ -14,7 +14,7 @@ spec:
     rules:
     - alert: ExternalDNSCantAccessRegistry
       annotations:
-        description: '{{`external-dns on {{ $labels.installation }})/{{ $labels.cluster_id }} in namespace {{ $labels.namespace }}) can''t access registry (cloud service provider DNS service).`}}'
+        description: '{{`external-dns in namespace {{ $labels.namespace }}) can''t access registry (cloud service provider DNS service).`}}'
         opsrecipe: external-dns-cant-access-registry/
       expr: rate(external_dns_registry_errors_total[2m]) > 0
       for: 15m
@@ -29,7 +29,7 @@ spec:
         topic: external-dns
     - alert: ExternalDNSCantAccessSource
       annotations:
-        description: '{{`external-dns on {{ $labels.installation }})/{{ $labels.cluster_id }} in namespace {{ $labels.namespace }}) can''t access source (Service or Ingress resource).`}}'
+        description: '{{`external-dns in namespace {{ $labels.namespace }}) can''t access source (Service or Ingress resource).`}}'
         opsrecipe: external-dns-cant-access-source/
       expr: rate(external_dns_source_errors_total[2m]) > 0
       for: 15m
@@ -44,7 +44,7 @@ spec:
         topic: external-dns
     - alert: ExternalDNSDown
       annotations:
-        description: '{{`external-dns on {{ $labels.installation }})/{{ $labels.cluster_id }} in namespace {{ $labels.namespace }}) is down.`}}'
+        description: '{{`external-dns in namespace {{ $labels.namespace }}) is down.`}}'
         opsrecipe: external-dns-down/
       expr: up{app=~"external-dns-(app|monitoring)"} == 0
       for: 15m

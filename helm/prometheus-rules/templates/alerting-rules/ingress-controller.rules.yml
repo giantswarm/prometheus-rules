@@ -61,7 +61,7 @@ spec:
         topic: ingress
     - alert: NginxIngressDown
       annotations:
-        description: '{{`nginx-ingress-controller-app on {{ $labels.installation }})/{{ $labels.cluster_id }} in namespace {{ $labels.namespace }}) is down.`}}'
+        description: '{{`nginx-ingress-controller-app in namespace {{ $labels.namespace }}) is down.`}}'
         opsrecipe: nginx-ingress-controller-app-down/
       expr: up{app=~".*nginx-ingress-controller-app.*"} == 0
       for: 15m

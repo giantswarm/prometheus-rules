@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.50.0] - 2022-01-13
 
+- Inhibit `MatchingNumberOfPrometheusAndCluster` during cluster creation.
+
+## [0.50.0] - 2022-01-13
 
 ### Added
 

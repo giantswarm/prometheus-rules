@@ -24,3 +24,18 @@ spec:
         severity: notify
         team: cabbage
         topic: observability
+    - alert: CertManagerDown
+      annotations:
+        description: '{{`cert-manager in namespace {{ $labels.namespace }}) is down.`}}'
+        opsrecipe: cert-manager-down/
+      expr: up{app=~"cert-manager-(app|controller)"} == 0
+      for: 15m
+      labels:
+        area: managedapps
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: page
+        team: cabbage
+        topic: cert-manager

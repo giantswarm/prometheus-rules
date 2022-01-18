@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Add `NginxIngressDown`, `ExternalDNSDown` and `CertManagerDown` alerts.
+- Include installaton, cluster and namespace in existing external-dns alerts.
+
+## [0.50.0] - 2022-01-13
+
 - Inhibit `MatchingNumberOfPrometheusAndCluster` during cluster creation.
 
 ## [0.50.0] - 2022-01-13

@@ -7,7 +7,7 @@ workflows:
     jobs:
       - architect/push-to-app-catalog:
           context: "architect"
-          name: app-catalog
+          name: push-to-app-catalog
           app_catalog: "control-plane-catalog"
           app_catalog_test: "control-plane-test-catalog"
           chart: "prometheus-rules"
@@ -18,12 +18,12 @@ workflows:
 
       - architect/push-to-app-collection:
           context: "architect"
-          name: aws-app-collection
+          name: push-to-aws-app-collection
           app_name: "prometheus-rules"
           app_namespace: "monitoring"
           app_collection_repo: "aws-app-collection"
           requires:
-            - app-catalog
+            - push-to-app-catalog
           filters:
             branches:
               ignore: /.*/
@@ -32,12 +32,12 @@ workflows:
 
       - architect/push-to-app-collection:
           context: "architect"
-          name: azure-app-collection
+          name: push-to-azure-app-collection
           app_name: "prometheus-rules"
           app_namespace: "monitoring"
           app_collection_repo: "azure-app-collection"
           requires:
-            - app-catalog
+            - push-to-app-catalog
           filters:
             branches:
               ignore: /.*/
@@ -46,12 +46,12 @@ workflows:
 
       - architect/push-to-app-collection:
           context: "architect"
-          name: kvm-app-collection
+          name: push-to-kvm-app-collection
           app_name: "prometheus-rules"
           app_namespace: "monitoring"
           app_collection_repo: "kvm-app-collection"
           requires:
-            - app-catalog
+            - push-to-app-catalog
           filters:
             branches:
               ignore: /.*/
@@ -60,12 +60,26 @@ workflows:
 
       - architect/push-to-app-collection:
           context: "architect"
-          name: vmware-app-collection
+          name: push-to-openstack-app-collection
+          app_name: "prometheus-rules"
+          app_namespace: "monitoring"
+          app_collection_repo: "openstack-app-collection"
+          requires:
+            - push-to-app-catalog
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-app-collection:
+          context: "architect"
+          name: push-to-vmware-app-collection
           app_name: "prometheus-rules"
           app_namespace: "monitoring"
           app_collection_repo: "vmware-app-collection"
           requires:
-            - app-catalog
+            - push-to-app-catalog
           filters:
             branches:
               ignore: /.*/

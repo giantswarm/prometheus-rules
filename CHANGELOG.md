@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Make `DexErrorRateHigh` alert less sensitive.
 - Add `NginxIngressDown`, `ExternalDNSDown` and `CertManagerDown` alerts.
 - Include installaton, cluster and namespace in existing external-dns alerts.
 

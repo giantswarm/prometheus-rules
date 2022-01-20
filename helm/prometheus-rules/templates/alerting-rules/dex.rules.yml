@@ -16,7 +16,7 @@ spec:
         description: '{{`Dex running on {{ $labels.cluster_id }} is reporting an increased error rate.`}}'
         opsrecipe: dex-error-rate-high/
       expr: sum(increase(http_requests_total{service="dex", code=~"^[4]..$|[5]..$"}[5m])) by (cluster_id) > 10
-      for: 10m
+      for: 30m
       labels:
         area: managedapps
         cancel_if_outside_working_hours: "true"

@@ -153,6 +153,28 @@ spec:
         service: blackbox-exporter
       record: slo_target
 
+      # -- azure-scheduled-events
+      # Number of worker nodes (the app should run on every node)
+    - expr: count(kube_node_role{role="worker", cluster_type="workload_cluster"}) by (cluster_type,cluster_id)
+      labels:
+        class: MEDIUM
+        area: kaas
+        service: azure-scheduled-events
+      record: raw_slo_requests
+      # number of worker nodes - number of "up" azure-scheduled-events = number of nodes without the app up.
+    - expr: count(kube_node_role{role="worker", cluster_type="workload_cluster"}) by (cluster_type,cluster_id) - sum(up{app="azure-scheduled-events"}) by (cluster_type,cluster_id)
+      labels:
+        area: kaas
+        class: MEDIUM
+        service: azure-scheduled-events
+      record: raw_slo_errors
+      # -- 99.999% availability
+    - expr: "vector((1 - 0.9999))"
+      labels:
+        area: kaas
+        service: azure-scheduled-events
+      record: slo_target
+
     # -- managed-apps
     # -- error recording rules
     # record when pods of a daemonset with label "label_giantswarm_io_monitoring_basic_sli" are down

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `aggregation:giantswarm:app_info` cortex record.
+
 ## [0.52.0] - 2022-01-20
 
 ### Added

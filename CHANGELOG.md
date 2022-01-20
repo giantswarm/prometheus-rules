@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added new alert for `azure-scheduled-events` app.
+
 ## [0.51.1] - 2022-01-20
 
 ### Changed

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Make `DexErrorRateHigh` alert less sensitive.
+
 ## [0.51.0] - 2022-01-19
 
 ### Changed

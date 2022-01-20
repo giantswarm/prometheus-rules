@@ -91,4 +91,21 @@ spec:
         severity: page
         team: phoenix
         topic: kubernetes
+
+    - alert: WorkloadClusterAzureScheduledEventsNotRunning
+      annotations:
+        description: '{{`azure-scheduled-events daemonset is not satisfied in {{ $labels.cluster_id }}.`}}'
+        opsrecipe: daemonset-not-satisfied/
+      expr: sum(kube_daemonset_status_number_unavailable{daemonset="azure-scheduled-events"}) by (cluster_type,cluster_id) > 0
+      for: 60m
+      labels:
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_cluster_with_notready_nodepools: "true"
+        cancel_if_outside_working_hours: "true"
+        area: kaas
+        severity: page
+        team: phoenix
+        topic: kubernetes
 {{- end }}

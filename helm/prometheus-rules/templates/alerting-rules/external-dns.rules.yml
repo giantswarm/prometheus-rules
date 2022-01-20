@@ -7,14 +7,14 @@ metadata:
     {{- include "labels.common" . | nindent 4 }}
     cluster_type: "workload_cluster"
   name: external-dns.rules
-  namespace: {{ .Values.namespace  }}
+  namespace: {{ .Values.namespace }}
 spec:
   groups:
   - name: external-dns
     rules:
     - alert: ExternalDNSCantAccessRegistry
       annotations:
-        description: '{{`external-dns can''t access registry (cloud service provider DNS service).`}}'
+        description: '{{`external-dns in namespace {{ $labels.namespace }}) can''t access registry (cloud service provider DNS service).`}}'
         opsrecipe: external-dns-cant-access-registry/
       expr: rate(external_dns_registry_errors_total[2m]) > 0
       for: 15m
@@ -29,12 +29,28 @@ spec:
         topic: external-dns
     - alert: ExternalDNSCantAccessSource
       annotations:
-        description: '{{`external-dns can''t access source (Service or Ingress resource).`}}'
+        description: '{{`external-dns in namespace {{ $labels.namespace }}) can''t access source (Service or Ingress resource).`}}'
         opsrecipe: external-dns-cant-access-source/
       expr: rate(external_dns_source_errors_total[2m]) > 0
       for: 15m
       labels:
         area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_kiam_has_errors: "true"
+        severity: page
+        team: cabbage
+        topic: external-dns
+    - alert: ExternalDNSDown
+      annotations:
+        description: '{{`external-dns in namespace {{ $labels.namespace }}) is down.`}}'
+        opsrecipe: external-dns-down/
+      expr: up{app=~"external-dns-(app|monitoring)"} == 0
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_outside_working_hours: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"

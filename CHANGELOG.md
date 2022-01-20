@@ -11,6 +11,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `aggregation:giantswarm:app_info` cortex record.
 
+## [0.52.0] - 2022-01-20
+
+### Added
+
+- Added new alert for `azure-scheduled-events` app.
+
+## [0.51.1] - 2022-01-20
+
+### Changed
+
+- Make `DexErrorRateHigh` alert less sensitive.
+
+## [0.51.0] - 2022-01-19
+
+### Changed
+
+- Make `DexErrorRateHigh` alert less sensitive.
+- Add `NginxIngressDown`, `ExternalDNSDown` and `CertManagerDown` alerts.
+- Include installaton, cluster and namespace in existing external-dns alerts.
+
+## [0.50.0] - 2022-01-13
+
+- Inhibit `MatchingNumberOfPrometheusAndCluster` during cluster creation.
+
 ## [0.50.0] - 2022-01-13
 
 ### Added
@@ -528,7 +552,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.50.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.52.0...HEAD
+[0.52.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.51.1...v0.52.0
+[0.51.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.51.0...v0.51.1
+[0.51.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.50.0...v0.51.0
 [0.50.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.49.0...v0.50.0
 [0.49.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.48.0...v0.49.0
 [0.48.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.47.0...v0.48.0

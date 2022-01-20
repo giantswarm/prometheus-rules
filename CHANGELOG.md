@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.53.0] - 2022-01-20
+
 ### Added
 
 - Add `aggregation:giantswarm:app_info` cortex record.
@@ -552,7 +554,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.52.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.53.0...HEAD
+[0.53.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.52.0...v0.53.0
 [0.52.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.51.1...v0.52.0
 [0.51.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.51.0...v0.51.1
 [0.51.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.50.0...v0.51.0

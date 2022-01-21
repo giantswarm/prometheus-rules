@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Inhibit `PrometheusCantCommunicateWithKubernetesAPI` during cluster creating and upgrade.
+
 ## [0.54.0] - 2022-01-21
 
 ### Added

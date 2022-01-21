@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added SLO alert for internal API request errors in kube-scheduler and kube-controller-manager.
+- Added SLO alert for cloud (Azure and AWS) API request errors in kube-scheduler and kube-controller-manager.
+
 ## [0.53.0] - 2022-01-20
 
 ### Added

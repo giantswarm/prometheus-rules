@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.55.1] - 2022-01-21
+
 - Removes `aggregation:prometheus:targets_count` recording rule.
 
 ## [0.55.0] - 2022-01-21
@@ -568,7 +570,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.55.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v0.55.1...HEAD
+[0.55.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.55.0...v0.55.1
 [0.55.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.54.0...v0.55.0
 [0.54.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.53.0...v0.54.0
 [0.53.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.52.0...v0.53.0

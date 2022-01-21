@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.55.0] - 2022-01-21
 
 - Inhibit `PrometheusCantCommunicateWithKubernetesAPI` during cluster creating and upgrade.
-- Add `aggregation:prometheus:targets_count` recording rule.
 
 ## [0.54.0] - 2022-01-21
 

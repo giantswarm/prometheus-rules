@@ -205,8 +205,6 @@ spec:
       record: aggregation:prometheus:memory_percentage
     - expr: sum(label_replace(container_memory_working_set_bytes{container='prometheus', namespace=~'.*-prometheus'}, "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)")) by (cluster_type , cluster_id)
       record: aggregation:prometheus:memory_usage
-    - expr: count(up) by (cluster_type, cluster_id)
-      record: aggregation:prometheus:targets_count
     # Managed apps basic SLI metrics
     - expr: sum(monitoring:managed_apps:service_level:primary:error_budget_used) by (cluster_type, cluster_id,workload_name,workload_type) >= 1
       record: aggregation:managed_apps:service_level:basic:error_budget_depleted

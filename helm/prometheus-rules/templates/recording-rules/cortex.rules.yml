@@ -44,6 +44,8 @@ spec:
     # GS Rest API requests
     - expr: sum(rate(nginx_ingress_controller_requests{namespace="giantswarm", ingress="api"}[5m])) by (status)
       record: aggregation:giantswarm:api_requests
+    - expr: app_operator_app_info
+      record: aggregation:giantswarm:app_info
     - expr: count(app_operator_app_info{status="deployed",namespace="giantswarm"}) by (app,name,version,catalog)
       record: aggregation:giantswarm:app_deployed_management_cluster_total
     - expr: count(app_operator_app_info{status=~"deployed|DEPLOYED",namespace!="giantswarm"}) by (app,app_version,name,version,catalog)

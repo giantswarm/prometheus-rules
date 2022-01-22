@@ -10,4 +10,4 @@ managementCluster:
   name: ""
   pipeline: ""
   provider:
-    kind: ""
+    kind: "kvm"

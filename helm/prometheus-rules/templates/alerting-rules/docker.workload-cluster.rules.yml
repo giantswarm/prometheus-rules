@@ -21,9 +21,5 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: observability

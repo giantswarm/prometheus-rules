@@ -258,7 +258,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: se
+        team: phoenix
         topic: azure
     - alert: ManagementClusterPodPendingPhoenix
       annotations:

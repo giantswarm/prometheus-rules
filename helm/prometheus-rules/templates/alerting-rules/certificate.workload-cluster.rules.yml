@@ -21,7 +21,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: se
+        team: {{ include "providerTeam" . }}
         topic: security
     - alert: WorkloadClusterCertificateWillExpireMetricMissing
       annotations:
@@ -31,5 +31,5 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: se
+        team: {{ include "providerTeam" . }}
         topic: security

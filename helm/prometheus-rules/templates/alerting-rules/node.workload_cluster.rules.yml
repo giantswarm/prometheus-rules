@@ -23,13 +23,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        {{- if eq .Values.managementCluster.provider.kind "aws" }}
-        team: phoenix
-        {{- else if eq .Values.managementCluster.provider.kind "azure" }}
-        team: phoenix
-        {{- else }}
-        team: rocket
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: kubernetes
     - alert: AWSWorkloadClusterNodeTooManyAutoTermination
       annotations:
@@ -65,11 +59,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: kubernetes
     - alert: NodeHasConstantOOMKills
       annotations:
@@ -82,11 +72,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: kubernetes
     - alert: NodeConnTrackAlmostExhausted
       annotations:
@@ -97,11 +83,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: kubernetes
     - alert: MachineEntropyTooLow
       annotations:
@@ -112,11 +94,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: infrastructure
     - alert: MachineAllocatedFileDescriptorsTooHigh
       annotations:
@@ -127,11 +105,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: infrastructure
     {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: WorkloadClusterNodeUnexpectedTaintNodeWithImpairedVolumes
@@ -143,10 +117,6 @@ spec:
       labels:
         area: kaas
         severity: notify
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: kubernetes
     {{- end }}

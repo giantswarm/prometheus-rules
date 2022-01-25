@@ -26,3 +26,11 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 helm.sh/chart: {{ include "chart" . | quote }}
 giantswarm.io/service-type: {{ .Values.serviceType }}
 {{- end -}}
+
+{{- define "providerTeam" -}}
+{{- if has .Values.managementCluster.provider.kind (list "kvm" "vsphere" "openstack") -}}
+rocket
+{{- else -}}
+phoenix
+{{- end -}}
+{{- end -}}

@@ -23,7 +23,7 @@ spec:
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: security
-    - alert: WorkloadClusterCertificateWillExpireInLessThanAMonth
+    - alert: WorkloadClusterCertificateWillExpireInLessThanAWeek
       annotations:
         description: '{{`Certificate {{ $labels.path }} on {{ $labels.node }} will expire in less than a week.`}}'
         opsrecipe: renew-certificates/

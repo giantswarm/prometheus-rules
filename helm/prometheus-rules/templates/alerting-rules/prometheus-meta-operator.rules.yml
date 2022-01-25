@@ -37,7 +37,6 @@ spec:
             )
           )
         ) > 0
-      for: 10m
       labels:
         area: "empowerment"
         cancel_if_mc_kube_state_metrics_down: "true"

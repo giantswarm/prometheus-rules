@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Push unique CVE counts to cortex.
+
 ## [0.55.1] - 2022-01-21
 
 - Removes `aggregation:prometheus:targets_count` recording rule.

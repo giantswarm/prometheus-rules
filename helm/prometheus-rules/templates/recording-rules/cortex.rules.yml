@@ -223,5 +223,5 @@ spec:
     - expr: sum(falco_events{priority=~"0|1|2|3|4|5|6|7"}) by (cluster_type, cluster_id, priority, rule)
       record: aggregation:falco_events
     # Starboard unique vulnerability counts by severity
-    - expr: count(count by (vulnerability_id, severity) (starboard_exporter_vulnerabilityreport_image_vulnerability)) by (severity)
+    - expr: count(count by (vulnerability_id, severity, cluster_id, cluster_type) (starboard_exporter_vulnerabilityreport_image_vulnerability)) by (severity, cluster_id, cluster_type)
       record: aggregation:starboard_unique_vulnerability_count

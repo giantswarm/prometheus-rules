@@ -24,11 +24,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_master_node_down: "true"
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: etcd
     - alert: WorkloadClusterEtcdCommitDurationTooHigh
       annotations:
@@ -40,11 +36,7 @@ spec:
         area: kaas
         severity: page
         cancel_if_outside_working_hours: "true"
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: etcd
     - alert: WorkloadClusterEtcdDBSizeTooLarge
       annotations:
@@ -56,11 +48,7 @@ spec:
         area: kaas
         severity: page
         cancel_if_outside_working_hours: "true"
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: etcd
     - alert: WorkloadClusterEtcdNumberOfLeaderChangesTooHigh
       annotations:
@@ -69,11 +57,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: etcd
     - alert: WorkloadClusterEtcdHasNoLeader
       annotations:
@@ -84,9 +68,5 @@ spec:
       labels:
         area: kaas
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: etcd

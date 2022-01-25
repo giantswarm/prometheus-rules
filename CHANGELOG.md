@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Push unique CVE counts to cortex.
 
+### Changed
+
+- Send SE alerts to correct KaaS teams.
+- Use a template definition for KaaS team templating.
+
 ## [0.55.1] - 2022-01-21
 
 - Removes `aggregation:prometheus:targets_count` recording rule.

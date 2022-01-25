@@ -21,11 +21,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: storage
     - alert: EtcdVolumeSpaceTooLow
       annotations:
@@ -36,11 +32,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: storage
     - alert: KubeletVolumeSpaceTooLow
       annotations:
@@ -52,11 +44,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: storage
     - alert: LogVolumeSpaceTooLow
       annotations:
@@ -68,11 +56,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: storage
     - alert: RootVolumeSpaceTooLow
       annotations:
@@ -84,9 +68,5 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        {{- if or (eq .Values.managementCluster.provider.kind "kvm") (eq .Values.managementCluster.provider.kind "vmware") }}
-        team: rocket
-        {{- else }}
-        team: phoenix
-        {{- end }}
+        team: {{ include "providerTeam" . }}
         topic: storage

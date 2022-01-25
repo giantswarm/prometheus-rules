@@ -39,8 +39,6 @@ spec:
         ) > 0
       labels:
         area: "empowerment"
-        cancel_if_mc_kube_state_metrics_down: "true"
-        cancel_if_cluster_status_creating: "true"
         installation: {{ .Values.managementCluster.name }}
         severity: "page"
         team: "atlas"

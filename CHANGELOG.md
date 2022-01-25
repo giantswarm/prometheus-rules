@@ -7,11 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Push unique CVE counts to cortex.
+
 ## [0.56.0] - 2022-01-25
 
 ### Added
 
-- Push unique CVE counts to cortex.
 - Add alert for workload cluster certificates about to expire.
 
 ### Changed

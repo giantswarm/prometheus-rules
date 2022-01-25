@@ -28,9 +28,9 @@ spec:
       # If a prometheus is missing, this alert will fire. This alert will not check if a prometheus is running when it should not (e.g. deleted cluster)
       expr: |
         (
-          sum by(cluster_id) (
+          sum by(cluster_id,installation) (
             {__name__=~"cluster_service_cluster_info|cluster_operator_cluster_status", status!="Deleting"}
-          ) unless sum by(cluster_id) (
+          ) unless sum by(cluster_id,installation) (
             label_replace(
               kube_pod_container_status_running{container="prometheus", namespace!="{{ .Values.managementCluster.name }}-prometheus", namespace=~".*-prometheus"},
               "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)"

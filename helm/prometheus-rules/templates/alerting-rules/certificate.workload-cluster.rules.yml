@@ -23,6 +23,18 @@ spec:
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: security
+    - alert: WorkloadClusterCertificateWillExpireInLessThanAMonth
+      annotations:
+        description: '{{`Certificate {{ $labels.path }} on {{ $labels.node }} will expire in less than a week.`}}'
+        opsrecipe: renew-certificates/
+      expr: (cert_exporter_not_after{cluster_type="workload_cluster", path!="/etc/kubernetes/ssl/service-account-crt.pem"} - time()) < 7 * 24 * 60 * 60
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: security
     - alert: WorkloadClusterCertificateWillExpireMetricMissing
       annotations:
         description: '{{`Certificate metrics are missing for cluster {{ $labels.cluster_id }}.`}}'

@@ -22,7 +22,7 @@ spec:
         description: This alert is used to ensure the entire alerting pipeline is functional.
     - alert: MatchingNumberOfPrometheusAndCluster
       annotations:
-        description: "{{ $labels.installation }}/{{ $labels.cluster_id}} prometheus server is missing."
+        description: "{{`{{ $labels.installation }}/{{ $labels.cluster_id}} prometheus server is missing.`}}"
         opsrecipe: matching-number-of-prometheus-and-cluster/
       # This expression list all the cluster IDs that exist and are not being deleted and compares them (using unless) to the running prometheus pods.
       # If a prometheus is missing, this alert will fire. This alert will not check if a prometheus is running when it should not (e.g. deleted cluster)

@@ -38,3 +38,11 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: PrometheusRuleFailures
+      annotations:
+        description: {{`Prometheus {{$labels.namespace}}/{{$labels.pod}} has failed to evaluate {{ printf "%.0f" $value }} rules.`}}
+        summary: Prometheus is failing rule evaluations.
+      expr: increase(prometheus_rule_evaluation_failures_total[30m]) > 0
+      for: 1h
+      labels:
+        severity: critical

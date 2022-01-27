@@ -50,5 +50,5 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: rocket
+        team: {{ include "providerTeam" . }}
         topic: managementcluster

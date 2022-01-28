@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `PrometheusRuleFailures` alert rule.
 
+### Changed
+
+- Fix `NoHealthyJumphost` alert routing.
+
 ## [0.57.0] - 2022-01-25
 
 ### Added

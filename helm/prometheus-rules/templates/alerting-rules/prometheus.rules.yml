@@ -44,4 +44,8 @@ spec:
         summary: Prometheus is failing rule evaluations.
       expr: increase(prometheus_rule_evaluation_failures_total[30m]) > 0
       labels:
-        severity: critical
+        area: empowerment
+        severity: page
+        team: atlas
+        topic: observability
+        cancel_if_outside_working_hours: "true"

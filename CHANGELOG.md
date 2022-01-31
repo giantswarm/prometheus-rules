@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix `NoHealthyJumphost` alert routing.
 
+### Fixed
+
+- Fix `ServiceLevelBurnRateTooHigh` alert failure : many-to-many matching not allowed.
+
 ## [0.57.0] - 2022-01-25
 
 ### Added

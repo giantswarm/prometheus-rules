@@ -43,6 +43,7 @@ spec:
         description: {{`Prometheus {{$labels.installation}}/{{$labels.cluster_id}} has failed to evaluate rule(s) {{ printf "%.0f" $value }} time(s).`}}
         summary: Prometheus is failing rule evaluations.
       expr: increase(prometheus_rule_evaluation_failures_total[30m]) > 0
+      for: 1h
       labels:
         area: empowerment
         severity: page

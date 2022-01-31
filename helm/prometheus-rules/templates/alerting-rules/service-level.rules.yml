@@ -16,15 +16,15 @@ spec:
         opsrecipe: service-level-burn-rate-too-high/
       expr: |
         (
-          slo_errors_per_request:ratio_rate1h{service!~"efk-.*|.*external-dns.*|kong-.*|.*nginx-.*"} > slo_threshold_high
+          slo_errors_per_request:ratio_rate1h{service!~"efk-.*|.*external-dns.*|kong-.*|.*nginx-.*"} > on (service) slo_threshold_high
         and
-          slo_errors_per_request:ratio_rate5m{service!~"efk-.*|.*external-dns.*|kong-.*|.*nginx-.*"} > slo_threshold_high
+          slo_errors_per_request:ratio_rate5m{service!~"efk-.*|.*external-dns.*|kong-.*|.*nginx-.*"} > on (service) slo_threshold_high
         )
         or
         (
-          slo_errors_per_request:ratio_rate6h{service!~"efk-.*|.*external-dns.*|kong-.*|.*nginx-.*"} > slo_threshold_low
+          slo_errors_per_request:ratio_rate6h{service!~"efk-.*|.*external-dns.*|kong-.*|.*nginx-.*"} > on (service) slo_threshold_low
         and
-          slo_errors_per_request:ratio_rate30m{service!~"efk-.*|.*external-dns.*|kong-.*|.*nginx-.*"} > slo_threshold_low
+          slo_errors_per_request:ratio_rate30m{service!~"efk-.*|.*external-dns.*|kong-.*|.*nginx-.*"} > on (service) slo_threshold_low
         )
       for: 5m
       labels:

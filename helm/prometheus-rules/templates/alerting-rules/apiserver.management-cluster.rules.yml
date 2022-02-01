@@ -18,7 +18,7 @@ spec:
       annotations:
         description: '{{`Kubernetes API Server {{ $labels.verb }} request latency is too high.`}}'
         opsrecipe: apiserver-overloaded/
-      expr: histogram_quantile(0.95, sum(rate(apiserver_request_latencies_bucket{verb=~"CONNECT|DELETE|GET|PATCH|POST|PUT"}[1h])) by (verb, le)) / 1e+06 > 1
+      expr: histogram_quantile(0.95, sum(rate(apiserver_request_duration_seconds_bucket{verb=~"CONNECT|DELETE|GET|PATCH|POST|PUT"}[1h])) by (verb, le)) > 1
       for: 1h
       labels:
         area: kaas
@@ -27,7 +27,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_cluster_with_notready_nodepools: "true"
         severity: notify
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: managementcluster
     - alert: ManagementClusterAPIServerAdmissionWebhookErrors
       annotations:
@@ -38,7 +38,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: managementcluster
     - alert: ManagementClusterWebhookDurationExceedsTimeout
       annotations:
@@ -49,5 +49,5 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: managementcluster

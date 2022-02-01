@@ -238,7 +238,7 @@ spec:
         class: MEDIUM
       record: raw_slo_errors
       # -- 99% availability
-    - expr: "vector((1 - 0.99))"
+    - expr: label_replace(group(rest_client_requests_total{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
       labels:
         area: kaas
       record: slo_target

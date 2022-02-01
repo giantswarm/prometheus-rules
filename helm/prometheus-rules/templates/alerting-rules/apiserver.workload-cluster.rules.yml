@@ -13,11 +13,11 @@ spec:
     rules:
     # expr produces 95th percentile latency for requests to the api server, by request verb.
     # verb WATCH is excluded because it produces a flat line and is not relevant.
-    - alert: WorkloadClusterAPIServerLatencyTooHighCloud
+    - alert: WorkloadClusterAPIServerLatencyTooHigh
       annotations:
         description: '{{`Kubernetes API Server {{ $labels.verb }} request latency is too high.`}}'
         opsrecipe: apiserver-overloaded/
-      expr: histogram_quantile(0.95, sum(rate(apiserver_request_duration_seconds_bucket{verb=~"CONNECT|DELETE|GET|PATCH|POST|PUT", provider=~"aws|azure|google"}[1h])) by (verb, le)) > 1
+      expr: histogram_quantile(0.95, sum(rate(apiserver_request_duration_seconds_bucket{verb=~"CONNECT|DELETE|GET|PATCH|POST|PUT"}[1h])) by (verb, le)) > 1
       for: 1h
       labels:
         area: kaas
@@ -26,64 +26,27 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_cluster_with_notready_nodepools: "true"
         severity: notify
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: kubernetes
-    - alert: WorkloadClusterAPIServerLatencyTooHighOnprem
-      annotations:
-        description: '{{`Kubernetes API Server {{ $labels.verb }} request latency is too high.`}}'
-        opsrecipe: apiserver-overloaded/
-      expr: histogram_quantile(0.95, sum(rate(apiserver_request_duration_seconds_bucket{verb=~"CONNECT|DELETE|GET|PATCH|POST|PUT", provider=~"kvm|openstack|vsphere"}[1h])) by (verb, le)) > 1
-      for: 1h
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_cluster_with_notready_nodepools: "true"
-        severity: notify
-        team: rocket
-        topic: kubernetes
-    - alert: WorkloadClusterAPIServerAdmissionWebhookErrorsCloud
+    - alert: WorkloadClusterAPIServerAdmissionWebhookErrors
       annotations:
         description: '{{`Kubernetes API Server {{ $labels.cluster_id }} having admission webhook errors.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
-      expr: rate(apiserver_admission_webhook_rejection_count{error_type=~"calling_webhook_error|apiserver_internal_error", provider=~"aws|azure|google"}[5m]) > 0
+      expr: rate(apiserver_admission_webhook_rejection_count{error_type=~"calling_webhook_error|apiserver_internal_error"}[5m]) > 0
       for: 5m
       labels:
         area: kaas
         severity: notify
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: kubernetes
-    - alert: WorkloadClusterAPIServerAdmissionWebhookErrorsOnprem
-      annotations:
-        description: '{{`Kubernetes API Server {{ $labels.cluster_id }} having admission webhook errors.`}}'
-        opsrecipe: apiserver-admission-webhook-errors/
-      expr: rate(apiserver_admission_webhook_rejection_count{error_type=~"calling_webhook_error|apiserver_internal_error", provider=~"kvm|openstack|vsphere"}[5m]) > 0
-      for: 5m
-      labels:
-        area: kaas
-        severity: notify
-        team: rocket
-        topic: kubernetes
-    - alert: WorkloadClusterWebhookDurationExceedsTimeoutCloud
+    - alert: WorkloadClusterWebhookDurationExceedsTimeout
       annotations:
         description: '{{`Kubernetes API Server admission webhook for {{ $labels.cluster_id }} is timing out.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
-      expr: rate(apiserver_admission_webhook_admission_duration_seconds_sum{provider=~"aws|azure|google"}[5m]) / rate(apiserver_admission_webhook_admission_duration_seconds_count{provider=~"aws|azure|google"}[5m]) > 8
+      expr: rate(apiserver_admission_webhook_admission_duration_seconds_sum[5m]) / rate(apiserver_admission_webhook_admission_duration_seconds_count[5m]) > 8
       for: 15m
       labels:
         area: kaas
         severity: page
-        team: phoenix
-        topic: kubernetes
-    - alert: WorkloadClusterWebhookDurationExceedsTimeoutOnprem
-      annotations:
-        description: '{{`Kubernetes API Server admission webhook for {{ $labels.cluster_id }} is timing out.`}}'
-        opsrecipe: apiserver-admission-webhook-errors/
-      expr: rate(apiserver_admission_webhook_admission_duration_seconds_sum{provider=~"kvm|openstack|vsphere"}[5m]) / rate(apiserver_admission_webhook_admission_duration_seconds_count{provider=~"kvm|openstack|vsphere"}[5m]) > 8
-      for: 15m
-      labels:
-        area: kaas
-        severity: page
-        team: rocket
+        team: {{ include "providerTeam" . }}
         topic: kubernetes

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.57.1] - 2022-02-01
 
+## [0.57.1] - 2022-02-01
+
 ### Changed
 
 - Fix `NoHealthyJumphost` alert routing.
@@ -596,6 +598,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
 [Unreleased]: https://github.com/giantswarm/giantswarm/compare/v0.57.1...HEAD
+[0.57.1]: https://github.com/giantswarm/giantswarm/compare/v0.57.1...v0.57.1
 [0.57.1]: https://github.com/giantswarm/giantswarm/compare/v0.57.0...v0.57.1
 [0.57.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.56.0...v0.57.0
 [0.56.0]: https://github.com/giantswarm/prometheus-rules/compare/v0.55.1...v0.56.0

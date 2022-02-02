@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove `ChartOrphanSecret` rule that is no longer required.
 
+### Fixed
+
+- Fix `ServiceLevelBurnRateTooHigh` alert failure : many-to-many matching not allowed.
+
 ## [0.57.1] - 2022-02-01
 
 ### Changed
@@ -18,10 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix `NoHealthyJumphost` alert routing.
 - Split apiserver routing for onprem and cloud.
 - Replaced deprecated apiserver latency metric
-
-### Fixed
-
-- Fix `ServiceLevelBurnRateTooHigh` alert failure : many-to-many matching not allowed.
 
 ## [0.57.0] - 2022-01-25
 

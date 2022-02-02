@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Split apiserver routing for onprem and cloud.
 - Replaced deprecated apiserver latency metric
 
+### Fixed
+
+- Fix `ServiceLevelBurnRateTooHigh` alert failure : many-to-many matching not allowed.
+
 ## [0.57.0] - 2022-01-25
 
 ### Added

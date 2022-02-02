@@ -21,14 +21,3 @@ spec:
         severity: notify
         team: honeybadger
         topic: releng
-    - alert: ChartOrphanSecret
-      annotations:
-        description: '{{`Chart secrets have not been deleted.`}}'
-        opsrecipe: chart-orphan-resources/
-      expr: chart_operator_secret_orphan > 0
-      for: 10m
-      labels:
-        area: managedservices
-        severity: notify
-        team: honeybadger
-        topic: releng

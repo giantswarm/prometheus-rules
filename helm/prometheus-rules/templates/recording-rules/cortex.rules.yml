@@ -82,8 +82,8 @@ spec:
       record: aggregation:kubelet:version
     - expr: sum(apiserver_request_total) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:apiserver_request_count
-    - expr: sum(apiserver_request_latencies_bucket) by (le, cluster_type, cluster_id)
-      record: aggregation:kubernetes:apiserver_request_latencies_bucket
+    - expr: sum(apiserver_request_duration_seconds_bucket) by (le, cluster_type, cluster_id)
+      record: aggregation:kubernetes:apiserver_request_duration_seconds_bucket
     - expr: sum(apiserver_audit_event_total) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:audit_event_total
     - expr: count(kube_configmap_created) by (cluster_type, cluster_id)

@@ -39,7 +39,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: etcd
     - alert: NoHealthyJumphost
       annotations:

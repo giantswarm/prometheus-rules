@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `PrometheusRuleFailures` alert rule.
+
 ### Removed
 
 - Remove `ChartOrphanSecret` rule that is no longer required.

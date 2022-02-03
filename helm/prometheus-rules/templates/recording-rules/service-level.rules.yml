@@ -287,6 +287,26 @@ spec:
         provider: aws
       record: slo_target
 
+    # -- Managed Prometheus
+    - expr: up{app="prometheus"}
+      labels:
+        area: managed-apps
+        class: MEDIUM
+        service: managed-prometheus
+      record: raw_slo_requests
+    - expr: absent(up{app="prometheus"})
+      labels:
+        area: managed-apps
+        class: MEDIUM
+        service: managed-prometheus
+      record: raw_slo_errors
+    - expr: "vector((1 - 0.999))"
+      labels:
+        area: managed-apps
+        class: MEDIUM
+        service: managed-prometheus
+      record: slo_target
+
       # -- generic stuff
       # -- standard burnrates based on https://sre.google/workbook/alerting-on-slos/#6-multiwindow-multi-burn-rate-alerts
     - expr: "vector(36)"

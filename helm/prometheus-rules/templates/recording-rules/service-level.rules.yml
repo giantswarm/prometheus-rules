@@ -288,13 +288,13 @@ spec:
       record: slo_target
 
     # -- Managed Prometheus
-    - expr: up{app="prometheus-operator-app-prometheus", container="prometheus"} == 1
+    - expr: up{app="prometheus-operator-app-prometheus", container="prometheus"}
       labels:
         area: managed-apps
         class: MEDIUM
         service: managed-prometheus
       record: raw_slo_requests
-    - expr: absent(up{app="prometheus-operator-app-prometheus", container="prometheus"} == 1)
+    - expr: up{app="prometheus-operator-app-prometheus", container="prometheus"} == 0
       labels:
         area: managed-apps
         class: MEDIUM

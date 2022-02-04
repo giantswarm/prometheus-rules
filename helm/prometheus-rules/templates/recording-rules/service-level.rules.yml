@@ -288,7 +288,7 @@ spec:
       record: slo_target
 
     # -- Managed Prometheus
-    - expr: up{app="prometheus-operator-app-prometheus", container="prometheus"}
+    - expr: (up{app="prometheus-operator-app-prometheus",container="prometheus"}*0)+1
       labels:
         area: managed-apps
         class: MEDIUM

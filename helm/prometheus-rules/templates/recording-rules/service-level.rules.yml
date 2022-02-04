@@ -294,7 +294,7 @@ spec:
         class: MEDIUM
         service: managed-prometheus
       record: raw_slo_requests
-    - expr: up{app="prometheus-operator-app-prometheus", container="prometheus"} == 0
+    - expr: (up{app="prometheus-operator-app-prometheus",container="prometheus"}*-1)+1 == 1
       labels:
         area: managed-apps
         class: MEDIUM

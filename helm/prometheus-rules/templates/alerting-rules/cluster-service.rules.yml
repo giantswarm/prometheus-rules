@@ -21,7 +21,7 @@ spec:
       labels:
         area: storage
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: managementcluster
     {{- if eq .Values.managementCluster.pipeline "testing" }}
     - alert: TestClusterTooOld

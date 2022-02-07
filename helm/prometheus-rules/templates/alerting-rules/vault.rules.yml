@@ -20,7 +20,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: vault
     - alert: VaultIsSealed
       annotations:
@@ -31,7 +31,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: vault
     - alert: ClusterServiceVaultTokenAlmostExpired
       annotations:
@@ -43,7 +43,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: vault
     - alert: ClusterServiceVaultTokenAlmostExpiredMissing
       annotations:
@@ -54,7 +54,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: vault
     - alert: CertOperatorVaultTokenAlmostExpired
       annotations:
@@ -66,7 +66,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: vault
     - alert: CertOperatorVaultTokenAlmostExpiredMissing
       annotations:
@@ -77,5 +77,5 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: vault

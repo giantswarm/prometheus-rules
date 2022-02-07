@@ -281,6 +281,28 @@ spec:
         area: kaas
       record: slo_target
 
+    # -- Managed Prometheus
+    # Set SLO request to always be 1 when a managed prometheus target is present.
+    - expr: (up{app="prometheus-operator-app-prometheus",container="prometheus"}*0)+1
+      labels:
+        area: managed-apps
+        class: MEDIUM
+        service: managed-prometheus
+      record: raw_slo_requests
+    # Set SLO error to be 1 when a managed prometheus is down.
+    - expr: (up{app="prometheus-operator-app-prometheus",container="prometheus"}*-1)+1 == 1
+      labels:
+        area: managed-apps
+        class: MEDIUM
+        service: managed-prometheus
+      record: raw_slo_errors
+    - expr: "vector((1 - 0.999))"
+      labels:
+        area: managed-apps
+        class: MEDIUM
+        service: managed-prometheus
+      record: slo_target
+
       # -- generic stuff
       # -- standard burnrates based on https://sre.google/workbook/alerting-on-slos/#6-multiwindow-multi-burn-rate-alerts
     - expr: "vector(36)"

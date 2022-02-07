@@ -22,5 +22,5 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: phoenix
+        team: atlas
         topic: managementcluster

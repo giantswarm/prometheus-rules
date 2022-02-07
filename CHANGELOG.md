@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update team ownership for KaaS-related alerts to be provider dependent.
+
 ## [1.0.0] - 2022-02-03
 
 ### Added

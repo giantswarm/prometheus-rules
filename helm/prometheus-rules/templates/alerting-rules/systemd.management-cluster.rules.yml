@@ -20,7 +20,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: infrastructure
     - alert: ManagementClusterDisabledSystemdUnitActive
       annotations:
@@ -31,5 +31,5 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: infrastructure

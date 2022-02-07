@@ -249,20 +249,17 @@ spec:
       labels:
         class: MEDIUM
         area: kaas
-        provider: azure
       record: raw_slo_requests
       # record number of errors.
     - expr: label_replace(sum(cloudprovider_azure_api_request_errors{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
       labels:
         area: kaas
         class: MEDIUM
-        provider: azure
       record: raw_slo_errors
       # -- 99% availability
     - expr: label_replace(group(cloudprovider_azure_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
       labels:
         area: kaas
-        provider: azure
       record: slo_target
 
     # core k8s components aws API requests
@@ -271,20 +268,17 @@ spec:
       labels:
         class: MEDIUM
         area: kaas
-        provider: aws
       record: raw_slo_requests
       # record number of errors.
     - expr: label_replace(sum(cloudprovider_aws_api_request_errors{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
       labels:
         area: kaas
         class: MEDIUM
-        provider: aws
       record: raw_slo_errors
       # -- 99% availability
     - expr: label_replace(group(cloudprovider_aws_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
       labels:
         area: kaas
-        provider: aws
       record: slo_target
 
       # -- generic stuff

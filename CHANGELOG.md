@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2022-02-11
+
 ### Added
 
 - Add managed prometheus to `ServiceLevelBurnRateTooHigh` alert.
@@ -620,7 +622,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/giantswarm/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/giantswarm/giantswarm/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/giantswarm/giantswarm/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/giantswarm/giantswarm/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/giantswarm/giantswarm/compare/v0.57.1...v1.0.0
 [0.57.1]: https://github.com/giantswarm/giantswarm/compare/v0.57.0...v0.57.1

@@ -10,5 +10,7 @@ updates:
       interval: weekly
       time: "04:00"
     open-pull-requests-limit: 10
+    reviewers:
+      - giantswarm/team-atlas
     ignore:
       - dependency-name: zricethezav/gitleaks-action

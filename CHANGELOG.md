@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `managed_app_deployment_status_replicas_available` and `managed_app_deployment_status_replicas_unavailable` recording rules in cases where multiple deployments have the same name.
+
 ## [1.2.0] - 2022-02-11
 
 ### Added

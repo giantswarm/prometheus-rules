@@ -108,7 +108,7 @@ spec:
         description: '{{`Critical pod {{ $labels.container }} does not have metrics.`}}'
         opsrecipe: critical-pod-is-not-running/
       expr: absent(kube_pod_container_status_running{container="k8s-api-server"}) == 1 or absent(kube_pod_container_status_running{container="k8s-controller-manager"}) == 1 or absent(kube_pod_container_status_running{container="k8s-scheduler"}) == 1
-      for: 5m
+      for: 25m
       labels:
         area: kaas
         cancel_if_kube_state_metrics_down: "true"

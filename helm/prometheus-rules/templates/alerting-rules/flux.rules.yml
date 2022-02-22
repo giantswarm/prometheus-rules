@@ -114,7 +114,7 @@ spec:
         severity: page
         team: honeybadger
         topic: releng
-    - alert: GSFluxSuspendedForTooLong
+    - alert: FluxSuspendedForTooLong
       annotations:
         description: |-
           {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns giantswarm on {{ $labels.installation }} has been suspended for 24h.`}}
@@ -123,6 +123,6 @@ spec:
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
-        severity: notify
+        severity: page
         team: honeybadger
         topic: releng

@@ -117,7 +117,7 @@ spec:
     - alert: FluxSuspendedForTooLong
       annotations:
         description: |-
-          {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns giantswarm on {{ $labels.installation }} has been suspended for 24h.`}}
+          {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }} has been suspended for 24h.`}}
       expr: gotk_suspend_status{namespace="flux-giantswarm"} > 0
       for: 24h
       labels:

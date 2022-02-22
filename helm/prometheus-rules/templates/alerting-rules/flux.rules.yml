@@ -10,6 +10,20 @@ spec:
   groups:
   - name: fluxcd
     rules:
+    - alert: DeploymentNotSatisfiedFlux
+      annotations:
+        description: '{{`Flux deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        opsrecipe: deployment-not-satisfied/
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", namespace=~"flux-.*"} > 0
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: page
+        team: honeybadger
+        topic: managementcluster
     - alert: FluxHelmReleaseFailed
       annotations:
         description: |-

@@ -114,3 +114,15 @@ spec:
         severity: page
         team: honeybadger
         topic: releng
+    - alert: FluxSuspendedForTooLong
+      annotations:
+        description: |-
+          {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }} has been suspended for 24h.`}}
+      expr: gotk_suspend_status{namespace="flux-giantswarm"} > 0
+      for: 24h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: honeybadger
+        topic: releng

@@ -82,7 +82,7 @@ spec:
     # This alert checks the percentage of the dns requests that are handled by a single pod. The result of the query should always be 0 (that means load is spread evenly between all coredns pods).
     # If it's > 20 for 10 minutes there is something weird happening in the cluster.
     - alert: CoreDNSLoadUnbalanced
-      expr: (sum by (pod) (rate(coredns_dns_requests_total[10m])) / ignoring (pod) group_left sum(rate(coredns_dns_requests_total[10m])) * 100) - ignoring (pod) group_left 100 / sum(kube_deployment_status_replicas{deployment=~"coredns|coredns-cp"}) > 20
+      expr: (sum by(cluster_id,pod) (rate(coredns_dns_requests_total[10m])) / ignoring(pod) group_left sum by (cluster_id) (rate(coredns_dns_requests_total[10m])) * 100) - ignoring(pod) group_left 100 / sum by (cluster_id) (kube_deployment_status_replicas{deployment=~"coredns|coredns-cp"}) > 20
       for: 10m
       labels:
         area: kaas

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.1] - 2022-02-25
+
 ### Fixed
 
 - Fixed query for `CoreDNSLoadUnbalanced` to make it work across all clusters in a MC.
@@ -656,7 +658,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v1.5.1...HEAD
+[1.5.1]: https://github.com/giantswarm/prometheus-rules/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/giantswarm/prometheus-rules/compare/v1.4.1...v1.5.0
 [1.4.1]: https://github.com/giantswarm/prometheus-rules/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/giantswarm/prometheus-rules/compare/v1.3.0...v1.4.0

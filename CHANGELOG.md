@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Split `OperatorkitErrorRateTooHighRocket` out to provider teams.
+
 ## [1.5.1] - 2022-02-25
 
 ### Fixed

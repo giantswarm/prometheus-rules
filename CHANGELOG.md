@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `CoreDNSLoadUnbalanced` alert to check when DNS traffic is served by a subset of the coredns pods.
+
 ## [1.4.1] - 2022-02-23
 
 ### Fixed

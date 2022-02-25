@@ -50,7 +50,7 @@ spec:
     - alert: WorkloadClusterPodLimitAlmostReachedAzure
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} is almost exceeding its pod limit.`}}'
-      expr: (sum(kube_pod_info) by (cluster_id) / sum(kube_node_status_capacity_pods) by (cluster_id)) > 0.8
+      expr: (sum(kube_pod_info) by (cluster_id) / sum(kube_node_status_capacity{resource="pods"}) by (cluster_id)) > 0.8
       for: 5m
       labels:
         area: kaas

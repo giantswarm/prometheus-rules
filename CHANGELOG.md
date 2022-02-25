@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2022-02-25
+
 ### Added
 
 - Add `CoreDNSLoadUnbalanced` alert to check when DNS traffic is served by a subset of the coredns pods.
@@ -650,7 +652,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v1.4.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/giantswarm/prometheus-rules/compare/v1.4.1...v1.5.0
 [1.4.1]: https://github.com/giantswarm/prometheus-rules/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/giantswarm/prometheus-rules/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/giantswarm/prometheus-rules/compare/v1.2.1...v1.3.0

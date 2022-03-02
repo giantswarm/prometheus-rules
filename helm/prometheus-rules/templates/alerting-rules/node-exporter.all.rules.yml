@@ -13,7 +13,7 @@ spec:
     - alert: NodeExporterCollectorFailed
       annotations:
         description: '{{`NodeExporter Collector {{ $labels.collector }} on {{ $labels.instance }} is failed.`}}'
-      expr: node_scrape_collector_success{collector!~"bonding|hwmon|powersupplyclass|mdadm|nfs|nfsd"} == 0
+      expr: node_scrape_collector_success{collector!~"bonding|hwmon|powersupplyclass|mdadm|nfs|nfsd|tapestats|fibrechannel|"} == 0
       for: 5m
       labels:
         area: kaas

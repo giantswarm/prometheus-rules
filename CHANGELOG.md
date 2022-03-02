@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix Division By Zero error in `WorkloadClusterWebhookDurationExceedsTimeout`.
+
 ## [1.5.2] - 2022-02-25
 
 ### Changed

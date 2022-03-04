@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Don't page if Node Exporter does not provide `tapestats` and `fibrechannel` metrics.
+
 ## [1.5.3] - 2022-03-02
 
 ### Fixed

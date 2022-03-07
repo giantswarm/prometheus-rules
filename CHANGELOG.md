@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Check if there is a meaningful number of DNS queries before firing `CoreDNSLoadUnbalanced`.
+
 ## [1.5.4] - 2022-03-04
 
 ### Changed

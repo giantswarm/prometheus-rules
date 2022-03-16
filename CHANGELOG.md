@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Avoid alerting if `nvme` collector in node exporter is down on Azure.
+
 ## [2.10.0] - 2022-03-30
 
 ### Changed
@@ -57,7 +61,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Print `PrometheusRuleFailures` decimals.
-- Restrict `WorkloadClusterEtcdDown` query in order to avoid false alerts.
 
 ## [1.6.0] - 2022-03-07
 
@@ -734,15 +737,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.10.0...HEAD
-[2.10.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.9.0...v2.10.0
-[2.9.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.8.0...v2.9.0
-[2.8.0]: https://github.com/giantswarm/prometheus-rules/compare/v1.9.1...v2.8.0
-[1.9.1]: https://github.com/giantswarm/prometheus-rules/compare/v1.9.0...v1.9.1
-[1.9.0]: https://github.com/giantswarm/prometheus-rules/compare/v1.7.1...v1.9.0
-[1.7.1]: https://github.com/giantswarm/prometheus-rules/compare/v1.7.0...v1.7.1
-[1.7.0]: https://github.com/giantswarm/prometheus-rules/compare/v1.6.1...v1.7.0
-[1.6.1]: https://github.com/giantswarm/prometheus-rules/compare/v1.6.0...v1.6.1
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v1.6.0...HEAD
 [1.6.0]: https://github.com/giantswarm/prometheus-rules/compare/v1.5.4...v1.6.0
 [1.5.4]: https://github.com/giantswarm/prometheus-rules/compare/v1.5.3...v1.5.4
 [1.5.3]: https://github.com/giantswarm/prometheus-rules/compare/v1.5.2...v1.5.3

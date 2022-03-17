@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.1] - 2022-03-17
+
 ### Fixed
 
 - Print `PrometheusRuleFailures` decimals.
@@ -687,7 +689,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v1.6.1...HEAD
+[1.6.1]: https://github.com/giantswarm/prometheus-rules/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/giantswarm/prometheus-rules/compare/v1.5.4...v1.6.0
 [1.5.4]: https://github.com/giantswarm/prometheus-rules/compare/v1.5.3...v1.5.4
 [1.5.3]: https://github.com/giantswarm/prometheus-rules/compare/v1.5.2...v1.5.3

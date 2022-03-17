@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Print `PrometheusRuleFailures` decimals.
+- Restrict `WorkloadClusterEtcdDown` query in order to avoid false alerts.
 
 ## [1.6.0] - 2022-03-07
 

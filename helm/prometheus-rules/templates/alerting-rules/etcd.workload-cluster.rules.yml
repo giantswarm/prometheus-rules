@@ -15,7 +15,7 @@ spec:
       annotations:
         description: '{{`Etcd ({{ $labels.instance }}) on workload cluster {{ $labels.cluster_id }} is down.`}}'
         opsrecipe: etcd-down/
-      expr: up{cluster_type="workload_cluster", app=~"etcd.*"} == 0
+      expr: up{cluster_type="workload_cluster", app="etcd"} == 0
       for: 20m
       labels:
         area: kaas

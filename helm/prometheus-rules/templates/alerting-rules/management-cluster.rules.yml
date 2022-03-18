@@ -12,28 +12,6 @@ spec:
   - name: management-cluster
     rules:
     {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
-    - alert: ManagementClusterPodPendingFor15Min
-      annotations:
-        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
-      expr: (kube_pod_status_phase{cluster_type="management_cluster", phase="Pending",pod!~"(aws-operator.*|azure-operator.*|cluster-operator.*)", namespace!~".*-prometheus"} * on (pod,namespace) group_left(node) kube_pod_info{}) == 1
-      for: 15m
-      labels:
-        area: kaas
-        severity: notify
-        team: phoenix
-        topic: managementcluster
-    - alert: ManagementClusterPodPending
-      annotations:
-        description: '{{`Pod {{ $labels.pod }} is stuck in Pending.`}}'
-        opsrecipe: management-cluster-pod-pending/
-      expr: (kube_pod_status_phase{cluster_type="management_cluster", phase="Pending", pod!~"(aws-operator.*|azure-operator.*|cluster-operator.*)", namespace!~".*-prometheus"} * on (pod,namespace) group_left(node) kube_pod_info{}) == 1
-      for: 1h
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: phoenix
-        topic: managementcluster
     - alert: ManagementClusterHasLessThanThreeNodes
       annotations:
         description: '{{`Management cluster {{ $labels.cluster_id }} has less than 3 nodes.`}}'

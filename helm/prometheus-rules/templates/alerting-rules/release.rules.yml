@@ -19,6 +19,7 @@ spec:
       for: 30m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         severity: page
         team: honeybadger
         topic: managementcluster

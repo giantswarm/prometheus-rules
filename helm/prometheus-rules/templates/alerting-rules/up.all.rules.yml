@@ -24,6 +24,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_scrape_timeout: "true"
         cancel_if_cluster_has_no_workers: "true"
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         severity: notify
         team: honeybadger
         topic: releng
@@ -39,6 +40,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_kubelet_down: "true"
         cancel_if_cluster_has_no_workers: "true"
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         severity: notify
         team: atlas
         topic: observability
@@ -56,6 +58,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_any_kube_state_metrics_down: "true"
         cancel_if_cluster_has_no_workers: "true"
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         severity: page
         team: atlas
         topic: observability
@@ -73,6 +76,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_any_kube_state_metrics_down: "true"
         cancel_if_cluster_has_no_workers: "true"
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         severity: page
         team: atlas
         topic: observability

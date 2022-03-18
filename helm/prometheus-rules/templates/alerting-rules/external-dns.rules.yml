@@ -23,6 +23,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         cancel_if_kiam_has_errors: "true"
         severity: page
         team: cabbage
@@ -38,6 +39,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         cancel_if_kiam_has_errors: "true"
         severity: page
         team: cabbage

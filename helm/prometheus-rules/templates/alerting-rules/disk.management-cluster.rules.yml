@@ -31,6 +31,7 @@ spec:
       for: 10m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         severity: page
         team: {{ include "providerTeam" . }}
         topic: storage

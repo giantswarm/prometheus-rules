@@ -22,6 +22,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         cancel_if_master_node_down: "true"
         severity: page
         team: {{ include "providerTeam" . }}
@@ -67,6 +68,7 @@ spec:
       for: 35m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         severity: page
         team: {{ include "providerTeam" . }}
         topic: etcd

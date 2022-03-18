@@ -34,3 +34,11 @@ rocket
 phoenix
 {{- end -}}
 {{- end -}}
+
+{{- define "hasToBeCancelled" -}}
+{{- if has .Values.managementCluster.provider.kind (list "openstack") -}}
+"true"
+{{- else -}}
+"false"
+{{- end -}}
+{{- end -}}

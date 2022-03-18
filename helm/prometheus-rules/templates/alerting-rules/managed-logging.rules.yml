@@ -19,6 +19,7 @@ spec:
       for: 5m
       labels:
         area: managedservices
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         severity: notify
         team: atlas
         topic: logging
@@ -30,6 +31,7 @@ spec:
       for: 5m
       labels:
         area: managedservices
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         severity: notify
         team: atlas
         topic: logging

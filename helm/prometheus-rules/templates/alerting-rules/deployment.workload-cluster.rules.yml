@@ -19,6 +19,7 @@ spec:
       for: 30m
       labels:
         area: managedservices
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         severity: page
         team: honeybadger
         topic: releng
@@ -30,6 +31,7 @@ spec:
       for: 30m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         severity: page
         team: {{ include "providerTeam" . }}
         topic: observability
@@ -41,6 +43,7 @@ spec:
       for: 30m
       labels:
         area: managedservices
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         severity: page
         team: honeybadger
         topic: releng
@@ -51,6 +54,7 @@ spec:
       for: 4h
       labels:
         area: managedservices
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         severity: notify
         team: honeybadger
         topic: releng

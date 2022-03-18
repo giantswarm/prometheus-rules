@@ -22,6 +22,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_instance_state_not_running: "true"
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         cancel_if_kubelet_down: "true"
         severity: notify
         team: {{ include "providerTeam" . }}
@@ -36,6 +37,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         cancel_if_kubelet_down: "true"
         severity: notify
         team: {{ include "providerTeam" . }}
@@ -50,6 +52,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         cancel_if_kubelet_down: "true"
         severity: notify
         team: {{ include "providerTeam" . }}
@@ -64,6 +67,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
         cancel_if_kubelet_down: "true"
         severity: notify
         team: {{ include "providerTeam" . }}

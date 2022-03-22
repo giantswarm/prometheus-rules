@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: kyverno.management_cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    - name: kyverno
+      rules:
+        - alert: NoKyvernoPodRunning
+          annotations:
+            description: '{{`Scraping of all kyverno pods failed for 5 minutes.`}}'
+            opsrecipe: kyverno-is-not-running/
+          expr: (count(up{service="kyverno-svc-metrics"}) or vector(0)) == 0
+          for: 5m
+          labels:
+            area: kaas
+            severity: page
+            team: honeybadger
+            topic: managementcluster
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"

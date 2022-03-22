@@ -19,7 +19,7 @@ spec:
       for: 15m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: etcd
@@ -31,7 +31,7 @@ spec:
       for: 10m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: {{ include "providerTeam" . }}
         topic: etcd
@@ -41,7 +41,7 @@ spec:
       expr: increase(etcd_server_leader_changes_seen_total{cluster_type="management_cluster"}[1h]) > 8
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: etcd
@@ -53,7 +53,7 @@ spec:
       for: 5m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: {{ include "providerTeam" . }}
         topic: etcd

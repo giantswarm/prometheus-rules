@@ -19,7 +19,7 @@ spec:
       for: 15m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: phoenix
         topic: managementcluster
@@ -43,7 +43,7 @@ spec:
       for: 1h
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: phoenix
         topic: managementcluster
@@ -91,7 +91,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: phoenix
         topic: managementcluster
@@ -115,7 +115,7 @@ spec:
       labels:
         area: kaas
         cancel_if_kube_state_metrics_down: "true"
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: phoenix
         topic: managementcluster
@@ -129,7 +129,7 @@ spec:
       for: 5m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: rocket
         topic: kubernetes

@@ -19,7 +19,7 @@ spec:
       for: 5m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: {{ include "providerTeam" . }}
         topic: vault
@@ -31,7 +31,7 @@ spec:
       for: 5m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: {{ include "providerTeam" . }}
         topic: vault
@@ -55,7 +55,7 @@ spec:
       for: 120m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: {{ include "providerTeam" . }}
         topic: vault
@@ -79,7 +79,7 @@ spec:
       for: 120m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: {{ include "providerTeam" . }}
         topic: vault

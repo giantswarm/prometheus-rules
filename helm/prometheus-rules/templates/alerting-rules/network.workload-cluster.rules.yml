@@ -18,7 +18,7 @@ spec:
       for: 15m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: network
@@ -29,7 +29,7 @@ spec:
       for: 5m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: network
@@ -40,7 +40,7 @@ spec:
       for: 5m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: network

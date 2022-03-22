@@ -21,7 +21,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: honeybadger
         topic: managementcluster
@@ -34,7 +34,7 @@ spec:
       for: 10m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: honeybadger
         topic: releng
@@ -60,7 +60,7 @@ spec:
       for: 10m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: honeybadger
         topic: releng
@@ -86,7 +86,7 @@ spec:
       for: 2h
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "hasToBeCancelled" . }}
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: honeybadger
         topic: releng

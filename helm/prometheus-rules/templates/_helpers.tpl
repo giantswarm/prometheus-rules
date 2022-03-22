@@ -35,7 +35,7 @@ phoenix
 {{- end -}}
 {{- end -}}
 
-{{- define "hasToBeCancelled" -}}
+{{- define "workingHoursOnly" -}}
 {{- if has .Values.managementCluster.provider.kind (list "openstack") -}}
 "true"
 {{- else -}}

@@ -19,6 +19,7 @@ spec:
       for: 5m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: {{ include "providerTeam" . }}
         topic: infrastructure
@@ -30,6 +31,7 @@ spec:
       for: 5m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: {{ include "providerTeam" . }}
         topic: infrastructure

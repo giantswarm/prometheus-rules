@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add a function to cancel alerts for openstack installations.
+
 ## [1.6.1] - 2022-03-17
 
 ### Fixed

@@ -22,6 +22,7 @@ spec:
       for: 5m
       labels:
         area: empowerment
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: atlas
         topic: releng
@@ -36,6 +37,7 @@ spec:
       for: 5m
       labels:
         area: managedservices
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: honeybadger
         topic: releng
@@ -50,6 +52,7 @@ spec:
       for: 5m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: phoenix
         topic: releng
@@ -64,6 +67,7 @@ spec:
       for: 5m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: phoenix
         topic: releng
@@ -78,6 +82,7 @@ spec:
       for: 5m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: rocket
         topic: releng

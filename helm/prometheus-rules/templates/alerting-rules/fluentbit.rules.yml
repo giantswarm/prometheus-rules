@@ -18,6 +18,7 @@ spec:
       for: 10m
       labels:
         area: empowerment
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: atlas
         topic: observability

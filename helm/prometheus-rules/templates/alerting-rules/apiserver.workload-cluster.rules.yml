@@ -25,6 +25,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_cluster_with_notready_nodepools: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: kubernetes
@@ -36,6 +37,7 @@ spec:
       for: 5m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: kubernetes
@@ -47,6 +49,7 @@ spec:
       for: 15m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: {{ include "providerTeam" . }}
         topic: kubernetes

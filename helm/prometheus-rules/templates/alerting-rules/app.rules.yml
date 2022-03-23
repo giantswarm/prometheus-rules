@@ -185,6 +185,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_has_no_workers: "true"
         severity: page
         sig: none
         team: phoenix
@@ -250,6 +251,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: honeybadger
         topic: releng
@@ -261,6 +263,7 @@ spec:
       for: 30m
       labels:
         area: managedservices
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: honeybadger
         topic: releng

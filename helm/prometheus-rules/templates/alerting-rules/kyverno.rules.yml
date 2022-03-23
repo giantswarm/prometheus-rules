@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
     cluster_type: "management_cluster"
-  name: kyverno.management_cluster.rules
+  name: kyverno.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:

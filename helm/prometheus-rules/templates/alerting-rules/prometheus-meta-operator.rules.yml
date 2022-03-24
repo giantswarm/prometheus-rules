@@ -18,6 +18,7 @@ spec:
         team: "atlas"
         topic: "observability"
         type: "heartbeat"
+        namespace: "monitoring" # Needed due to https://github.com/prometheus-operator/prometheus-operator/issues/3737
       annotations:
         description: This alert is used to ensure the entire alerting pipeline is functional.
     - alert: "MatchingNumberOfPrometheusAndCluster"

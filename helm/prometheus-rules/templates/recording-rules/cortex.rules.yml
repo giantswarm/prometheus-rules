@@ -74,9 +74,9 @@ spec:
       record: aggregation:giantswarm:passage_requests
     - expr: sum(rate(nginx_ingress_controller_nginx_process_requests_total[5m])) by (cluster_type, cluster_id)
       record: aggregation:ingress:requests_total
-    - expr: sum(kubelet_running_container_count) by (cluster_type, cluster_id)
+    - expr: sum(kubelet_running_container_count or kubelet_running_containers{container_state="running"}) by (cluster_type, cluster_id)
       record: aggregation:kubelet:running_container_total
-    - expr: sum(kubelet_running_pod_count) by (cluster_type, cluster_id)
+    - expr: sum(kubelet_running_pod_count or kubelet_running_pods) by (cluster_type, cluster_id)
       record: aggregation:kubelet:running_pod_total
     - expr: sum by(cluster_type, git_version, cluster_id) (label_replace(kubernetes_build_info{app="kubelet"}, "git_version", "$1", "gitVersion", "(.+)"))
       record: aggregation:kubelet:version

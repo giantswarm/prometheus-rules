@@ -225,3 +225,8 @@ spec:
     # Starboard unique vulnerability counts by severity
     - expr: count(count by (vulnerability_id, severity) (starboard_exporter_vulnerabilityreport_image_vulnerability)) by (severity)
       record: aggregation:starboard_unique_vulnerability_count
+    # Kong metrics
+    - expr: kong_nginx_http_current_connections
+      record: aggregation:kong:nginx_http_current_connections
+    - expr: container_memory_usage_bytes{namespace=~"kong.*", container=~"proxy|ingress-controller"}
+      record: aggregation:kong:memory_usage_bytes

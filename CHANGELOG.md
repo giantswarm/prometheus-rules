@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.10.0] - 2022-03-30
+
 ### Changed
 
 - Improve `OperatorkitErrorRateTooHighPhoenix` to page only if a meaningful numer of errors is happening.
@@ -732,7 +734,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.9.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.10.0...HEAD
+[2.10.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.9.0...v2.10.0
 [2.9.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.8.0...v2.9.0
 [2.8.0]: https://github.com/giantswarm/prometheus-rules/compare/v1.9.1...v2.8.0
 [1.9.1]: https://github.com/giantswarm/prometheus-rules/compare/v1.9.0...v1.9.1

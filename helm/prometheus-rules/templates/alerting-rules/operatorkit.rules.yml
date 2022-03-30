@@ -36,8 +36,8 @@ spec:
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
         opsrecipe: check-operator-error-rate-high/
-      expr: operatorkit_controller_error_total{app=~"azure-operator.*"} > 5
-      for: 1m
+      expr: rate(operatorkit_controller_error_total{app=~"azure-.*|aws-.*"}[5m]) > 1
+      for: 10m
       labels:
         area: kaas
         severity: page

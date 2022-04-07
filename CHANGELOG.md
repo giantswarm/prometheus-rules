@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Avoid alerting if `nvme` collector in node exporter is down on Azure.
+- Use plain kube-state-metrics metrics for `IngressControllerDeploymentNotSatisfied` until [kube-state-metrics-app v1.9.0](https://github.com/giantswarm/kube-state-metrics-app/releases/tag/v1.9.0) is available in all WCs.
 
 ## [2.10.0] - 2022-03-30
 

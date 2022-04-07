@@ -4,7 +4,7 @@ metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
   name: gs-managed-app-deployment-status.recording.rules
-  namespace: {{ .Values.namespace  }}
+  namespace: {{ .Values.namespace }}
 spec:
   groups:
   - name: gs-managed-app-deployments.recording

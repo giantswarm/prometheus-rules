@@ -14,7 +14,10 @@ spec:
       annotations:
         description: '{{`Ingress Controller Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: ingress-controller-deployment-not-satisfied/
-      expr: managed_app_deployment_status_replicas_available{managed_app="nginx-ingress-controller"} / (managed_app_deployment_status_replicas_available{managed_app="nginx-ingress-controller"} + managed_app_deployment_status_replicas_unavailable{managed_app="nginx-ingress-controller"}) * 100 < 51
+      # Not using the gs-managed-app-deployments.recording rules because we're missing required labels until
+      # kube-state-metrics-app 1.9.0 is rolled out into WCs
+      # check git-blame to find the correct expression
+      expr: kube_deployment_status_replicas_available{deployment=~".*nginx-ingress-controller-app.*"} / (kube_deployment_status_replicas_available{deployment=~".*nginx-ingress-controller-app.*"} + kube_deployment_status_replicas_unavailable{deployment=~".*nginx-ingress-controller-app.*"}) * 100 < 51
       for: 10m
       labels:
         area: managedservices

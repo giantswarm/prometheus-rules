@@ -51,3 +51,15 @@ spec:
         team: atlas
         topic: observability
         cancel_if_outside_working_hours: "true"
+    - alert: PrometheusTargetMissing
+      annotations:
+        description: {{`No targets were found for the job {{$labels.scrape_job}} in prometheus {{$labels.installation}}/{{$labels.cluster_id}}.`}}
+        summary: Targets are missing
+      expr: prometheus_target_metadata_cache_entries == 0
+      for: 1h
+      labels:
+        area: empowerment
+        severity: page
+        team: atlas
+        topic: observability
+        cancel_if_outside_working_hours: "true"

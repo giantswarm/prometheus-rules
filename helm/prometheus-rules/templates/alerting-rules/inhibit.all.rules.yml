@@ -13,7 +13,7 @@ spec:
     - alert: InhibitionOutsideWorkingHours
       annotations:
         description: '{{`Fires outside working hours.`}}'
-      expr: (hour() <= 7 or hour() >= 16) or (day_of_week() > 5 or day_of_week() < 1)
+      expr: (hour() <= 7 or hour() >= 16) or (day_of_week() > 5 or day_of_week() < 1) or (day_of_month() == 18 and month() == 4 and year() == 2022)
       labels:
         area: empowerment
         nodes_down: "true"

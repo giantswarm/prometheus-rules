@@ -42,3 +42,19 @@ phoenix
 "false"
 {{- end -}}
 {{- end -}}
+
+{{- define "isClusterServiceInstalled" -}}
+{{- if has .Values.managementCluster.provider.kind (list "openstack" "vsphere") -}}
+false
+{{- else -}}
+true
+{{- end -}}
+{{- end -}}
+
+{{- define "isVaultBeingMonitored" -}}
+{{- if has .Values.managementCluster.provider.kind (list "openstack" "vsphere") -}}
+false
+{{- else -}}
+true
+{{- end -}}
+{{- end -}}

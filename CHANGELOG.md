@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Opsrecipie link for `KiamSTSIssuingErrors`
+
 ## [2.14.0] - 2022-04-12
 
 ### Changed

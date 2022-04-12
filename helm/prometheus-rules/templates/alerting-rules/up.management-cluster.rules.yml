@@ -43,6 +43,7 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: etcd
+    {{- if eq (include "isBastionBeingMonitored" .) "true" }}
     - alert: NoHealthyJumphost
       annotations:
         description: '{{`There are no healthy jumphosts available.`}}'
@@ -55,3 +56,4 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: managementcluster
+    {{- end }}

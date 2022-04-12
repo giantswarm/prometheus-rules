@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.14.0] - 2022-04-12
+
 ### Changed
 
 - Disable `NoHealthyJumphost` for CAPO and CAPV.
@@ -758,7 +760,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.13.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.14.0...HEAD
+[2.14.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.13.0...v2.14.0
 [2.13.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.12.0...v2.13.0
 [2.12.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.11.0...v2.12.0
 [2.11.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.10.0...v2.11.0

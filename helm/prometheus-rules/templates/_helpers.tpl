@@ -58,3 +58,11 @@ false
 true
 {{- end -}}
 {{- end -}}
+
+{{- define "isBastionBeingMonitored" -}}
+{{- if has .Values.managementCluster.provider.kind (list "openstack" "vsphere") -}}
+false
+{{- else -}}
+true
+{{- end -}}
+{{- end -}}

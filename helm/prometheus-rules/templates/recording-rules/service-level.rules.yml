@@ -78,7 +78,7 @@ spec:
       record: slo_target
 
       # -- kubelet
-    - expr: "kube_node_status_condition{condition='Ready'}"
+    - expr: "kube_node_status_condition{condition='Ready',status='true'}"
       labels:
         class: MEDIUM
         area: kaas

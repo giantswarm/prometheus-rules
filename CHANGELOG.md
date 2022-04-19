@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Remove exception from `InhibitionOutsideWorkingHours` for ascension day 2022.
+
 ### Fixed
 
 - Fixed query for kubelet SLO requests.

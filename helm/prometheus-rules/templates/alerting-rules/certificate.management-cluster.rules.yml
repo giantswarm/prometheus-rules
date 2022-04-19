@@ -11,11 +11,11 @@ spec:
   groups:
   - name: certificate
     rules:
-    - alert: ManagementClusterKVMCertificateWillExpireInLessThanTwoWeeks
+    - alert: ManagementClusterKVMCertificateWillExpireInLessThanOneMonth
       annotations:
-        description: '{{`Certificate {{ $labels.path }} on {{ $labels.node }} will expire in less than two weeks.`}}'
+        description: '{{`Certificate {{ $labels.path }} on {{ $labels.node }} will expire in less than a month.`}}'
         opsrecipe: renew-certificates/
-      expr: (cert_exporter_not_after{cluster_type="management_cluster", provider="kvm", path!="/etc/kubernetes/ssl/service-account-crt.pem"} - time()) < 2 * 7 * 24 * 60 * 60
+      expr: (cert_exporter_not_after{cluster_type="management_cluster", provider="kvm", path!="/etc/kubernetes/ssl/service-account-crt.pem"} - time()) < 4 * 7 * 24 * 60 * 60
       for: 5m
       labels:
         area: kaas

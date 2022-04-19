@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Increase the cert expiration alert to page before a month in KVM installations.
 - Remove exception from `InhibitionOutsideWorkingHours` for ascension day 2022.
 
 ### Fixed

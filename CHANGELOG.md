@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.15.0] - 2022-04-20
+
+### Added
+
+- Add new SLO metric for nodepool-specific node health.
+
 ### Changed
 
 - Increase the cert expiration alert to page before a month in KVM installations.
@@ -775,7 +781,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.14.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.15.0...HEAD
+[2.15.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.14.1...v2.15.0
 [2.14.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.14.0...v2.14.1
 [2.14.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.13.0...v2.14.0
 [2.13.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.12.0...v2.13.0

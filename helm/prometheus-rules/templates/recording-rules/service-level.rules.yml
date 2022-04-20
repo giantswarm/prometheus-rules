@@ -77,7 +77,7 @@ spec:
         area: kaas
       record: slo_target
 
-      # -- kubelet
+      # -- kubelet whole cluster
     - expr: "kube_node_status_condition{condition='Ready',status='true'}"
       labels:
         class: MEDIUM
@@ -102,6 +102,32 @@ spec:
       labels:
         area: kaas
         service: kubelet
+      record: slo_target
+
+    # kubelet - single nodepool
+    - expr: label_replace(kube_node_labels{nodepool=~".+"}, "service", "kubelet nodepool $1", "nodepool", "(.+)")
+      labels:
+        area: kaas
+        class: MEDIUM
+      record: raw_slo_requests
+
+    - expr: |
+        (
+          label_replace((kube_node_status_condition{condition="Ready", status!="true"} * on (node) group_left(nodepool) kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.*)")
+          and
+          on (node) kube_node_spec_unschedulable == 0
+        )
+        and
+        on (node) time() - kube_node_created > 10 * 60
+      labels:
+        area: kaas
+        class: MEDIUM
+      record: raw_slo_errors
+
+    - expr: |
+        label_replace(max by (nodepool) (kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.+)") * (1 - 0.99)
+      labels:
+        area: kaas
       record: slo_target
 
       # -- node-exporter

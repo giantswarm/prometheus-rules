@@ -125,7 +125,7 @@ spec:
       record: raw_slo_errors
 
     - expr: |
-        label_replace(count by (nodepool) (kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.+)") * (1 - 0.99)
+        label_replace(max by (nodepool) (kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.+)") * (1 - 0.99)
       labels:
         area: kaas
       record: slo_target

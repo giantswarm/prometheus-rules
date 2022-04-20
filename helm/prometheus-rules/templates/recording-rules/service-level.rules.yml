@@ -113,7 +113,7 @@ spec:
 
     - expr: |
         (
-          label_replace((kube_node_status_condition{condition="Ready", status!="true"} + on (node) group_left(nodepool) kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.*)")
+          label_replace((kube_node_status_condition{condition="Ready", status!="true"} * on (node) group_left(nodepool) kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.*)")
           and
           on (node) kube_node_spec_unschedulable == 0
         )

@@ -122,7 +122,7 @@ spec:
       labels:
         area: kaas
         class: MEDIUM
-        record: raw_slo_errors
+      record: raw_slo_errors
 
     - expr: |
         label_replace(count by (nodepool) (kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.+)") * (1 - 0.99)

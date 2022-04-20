@@ -128,7 +128,6 @@ spec:
         label_replace(count by (nodepool) (kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.+)") * (1 - 0.99)
       labels:
         area: kaas
-        service: kubelet
       record: slo_target
 
       # -- node-exporter

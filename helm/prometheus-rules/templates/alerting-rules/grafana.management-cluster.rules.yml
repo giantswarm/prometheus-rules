@@ -1,0 +1,50 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: grafana.management-cluster.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+  - name: grafana
+    rules:
+    - alert: GrafanaDown
+      annotations:
+        description: '{{`Grafana ({{ $labels.instance }}) is down.`}}'
+        opsrecipe: grafana-down/
+      expr: up{service="grafana"} == 0
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_scrape_timeout: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: atlas
+        topic: observability
+    - alert: GrafanaFolderPermissionsDown
+      # Monitors that folder permissions have been updated.
+      # We have a cronjob (grafana-permissions) that runs every 20 minutes.
+      # When successfully run, folders permissions successful updates counter increases.  
+      annotations:
+        description: '{{`Grafana Folder not updated for ({{ $labels.instance }}).`}}'
+        opsrecipe: grafana-perms/
+      expr: sum(increase(grafana_http_request_duration_seconds_bucket{handler="/api/folders/:uid/permissions/", le="+Inf", method="POST", namespace="monitoring", service="grafana", status_code="200"}[2h])) < 1 or absent(grafana_http_request_duration_seconds_bucket{handler="/api/folders/:uid/permissions/", le="+Inf", method="POST", namespace="monitoring", service="grafana", status_code="200"})
+      for: 6h
+      labels:
+        area: managedservices
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_scrape_timeout: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: atlas
+        topic: observability

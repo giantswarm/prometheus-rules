@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Rename `ClusterCertificateWillExpireMetricMissing` alert to `ClusterCertificateExpirationMetricsMissing` to avoid being paged for test installations.
+
 ## [2.16.0] - 2022-05-04
 
 ### Added

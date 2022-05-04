@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - new alerts for Grafana
 
+### Fixed
+
+- Disable cert-exporter rules for CAPO and CAPV clusters.
+
 ## [2.15.1] - 2022-05-04
 
 ### Fixed

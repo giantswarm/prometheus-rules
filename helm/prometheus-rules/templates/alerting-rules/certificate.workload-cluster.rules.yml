@@ -1,3 +1,4 @@
+{{- if eq (include "isCertExporterInstalled" .) "true" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -49,3 +50,4 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: security
+{{- end -}}

@@ -35,13 +35,17 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: security
-    - alert: WorkloadClusterCertificateWillExpireMetricMissing
+    - alert: ClusterCertificateWillExpireMetricMissing
       annotations:
         description: '{{`Certificate metrics are missing for cluster {{ $labels.cluster_id }}.`}}'
-      expr: count(up{app="cert-exporter",cluster_type="workload_cluster"} == 1) by (cluster_id) unless count(cert_exporter_not_after{cluster_type="workload_cluster"}) by (cluster_id)
+      expr: max(up{cluster_id!=""}) by (cluster_id) unless on (cluster_id) count (cert_exporter_not_after) by (cluster_id) > 0
       for: 30m
       labels:
         area: kaas
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: page
         team: {{ include "providerTeam" . }}
         topic: security

@@ -36,7 +36,7 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: security
-    - alert: ClusterCertificateWillExpireMetricMissing
+    - alert: ClusterCertificateExpirationMetricsMissing
       annotations:
         description: '{{`Certificate metrics are missing for cluster {{ $labels.cluster_id }}.`}}'
       expr: max(up{cluster_id!=""}) by (cluster_id) unless on (cluster_id) count (cert_exporter_not_after) by (cluster_id) > 0

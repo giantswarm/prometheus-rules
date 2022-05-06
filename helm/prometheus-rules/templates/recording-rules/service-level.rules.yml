@@ -247,7 +247,7 @@ spec:
       record: raw_slo_requests
       # -- 99% availability
       # -- this expression collects all the services from the area managed apps and assigns the same slo target to all of them
-    - expr: sum by (service, area) (raw_slo_errors{area="managed-apps"} - raw_slo_errors{area="managed-apps"}) + 1-0.99
+    - expr: sum by (service, area, class) (raw_slo_errors{area="managed-apps"} - raw_slo_errors{area="managed-apps"}) + 1-0.99
       record: slo_target
 
     # core k8s components internal API requests
@@ -322,12 +322,6 @@ spec:
         class: MEDIUM
         service: managed-prometheus
       record: raw_slo_errors
-    - expr: "vector((1 - 0.999))"
-      labels:
-        area: managed-apps
-        class: MEDIUM
-        service: managed-prometheus
-      record: slo_target
 
       # -- generic stuff
       # -- standard burnrates based on https://sre.google/workbook/alerting-on-slos/#6-multiwindow-multi-burn-rate-alerts

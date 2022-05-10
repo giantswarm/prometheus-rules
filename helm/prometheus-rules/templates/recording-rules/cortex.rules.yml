@@ -233,3 +233,6 @@ spec:
       record: aggregation:kong:nginx_http_current_connections
     - expr: container_memory_usage_bytes{namespace=~"kong.*", container=~"proxy|ingress-controller"}
       record: aggregation:kong:memory_usage_bytes
+    # IAM roles for Service Accounts metrics
+    - expr: sum(irsa_operator_cluster_errors) by (account_id,cluster_id,cluster_namespace,installation)
+      record: aggregation:giantswarm:irsa_operator_cluster_errors

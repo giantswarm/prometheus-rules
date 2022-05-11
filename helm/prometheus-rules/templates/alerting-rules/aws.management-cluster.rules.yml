@@ -148,7 +148,7 @@ spec:
         topic: kubernetes
     - alert: IRSATooManyErros
       annotations:
-        description: '{{`IRSA bootstrap for Cluser {{ $labels.cluster_id }} failed.`}}'
+        description: '{{`IRSA bootstrap for Cluster {{ $labels.cluster_id }} failed.`}}'
         opsrecipe: irsa-operator-error/
       expr: irsa_operator_cluster_errors > 0
       for: 10m

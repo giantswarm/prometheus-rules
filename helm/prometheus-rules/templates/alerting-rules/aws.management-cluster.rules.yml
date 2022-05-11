@@ -146,4 +146,16 @@ spec:
         severity: page
         team: phoenix
         topic: kubernetes
+    - alert: IRSATooManyErros
+      annotations:
+        description: '{{`IRSA bootstrap for Cluser {{ $labels.cluster_id }} failed.`}}'
+        opsrecipe: irsa-operator-error/
+      expr: irsa_operator_cluster_errors > 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: aws
 {{- end }}

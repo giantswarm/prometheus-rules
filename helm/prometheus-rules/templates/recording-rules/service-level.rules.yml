@@ -323,6 +323,22 @@ spec:
         service: managed-prometheus
       record: raw_slo_errors
 
+    # -- Managed Alertmanager
+    # Set SLO request to always be 1 when a managed alertmanager target is present.
+    - expr: (up{app="prometheus-operator-app-alertmanager", container="alertmanager"}*0)+1
+      labels:
+        area: managed-apps
+        class: MEDIUM
+        service: managed-alertmanager
+      record: raw_slo_requests
+    # Set SLO error to be 1 when a managed alertmanager is down.
+    - expr: (up{app="prometheus-operator-app-alertmanager",container="alertmanager"}*-1)+1 == 1
+      labels:
+        area: managed-apps
+        class: MEDIUM
+        service: managed-alertmanager
+      record: raw_slo_errors
+
       # -- generic stuff
       # -- standard burnrates based on https://sre.google/workbook/alerting-on-slos/#6-multiwindow-multi-burn-rate-alerts
     - expr: "vector(36)"

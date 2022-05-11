@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add new alert for irsa-operator erros.
 - Add managed alertmanager to `ServiceLevelBurnRateTooHigh` alert.
 
 ### Fixed

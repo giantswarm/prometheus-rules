@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Improve '*EtcdDBSizeTooLarge' alerts.
+
 ## [2.18.0] - 2022-05-11
 
 ### Added

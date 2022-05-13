@@ -33,7 +33,7 @@ spec:
         description: '{{`Fluentbit ({{ $labels.instance }}) is down.`}}'
         opsrecipe: ''
       expr: sum(up{app="fluent-logshipping-app"}) by (app, cluster_id, cluster_type, installation, job, namespace, provider, node) == 0
-      for: 10m
+      for: 15m
       labels:
         area: empowerment
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}

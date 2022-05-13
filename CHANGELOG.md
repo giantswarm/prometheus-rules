@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.0] - 2022-05-13
+
 ### Changed
 
 - Change `*EtcdDBSizeTooLarge`'s `for` to `7h` to catch when automated defrag is not happening.
@@ -830,7 +832,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.19.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.20.0...HEAD
+[2.20.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.19.0...v2.20.0
 [2.19.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.18.0...v2.19.0
 [2.18.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.17.0...v2.18.0
 [2.17.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.16.1...v2.17.0

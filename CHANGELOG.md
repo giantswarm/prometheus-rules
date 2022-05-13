@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Add kong to `WorkloadClusterManagedDeploymentNotSatisfied` alert.
+- Relax external-dns and cert-manager managed app names in `WorkloadClusterManagedDeploymentNotSatisfied` alert.
+
 ## [2.20.0] - 2022-05-13
 
 ### Changed

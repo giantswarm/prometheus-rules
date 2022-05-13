@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change `*EtcdDBSizeTooLarge`'s `for` to `7h` to catch when automated defrag is not happening.
+
 ## [2.19.0] - 2022-05-12
 
 ### Changed

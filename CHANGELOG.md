@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Alerts for Loki
+- Add support for VCD provider.
 
 ## [2.26.0] - 2022-06-08
 

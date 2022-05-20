@@ -14,7 +14,7 @@ spec:
     - alert: FluentbitTooManyErrors
       annotations:
         description: '{{`Fluentbit ({{ $labels.instance }}) is erroring.`}}'
-        opsrecipe: ''
+        opsrecipe: fluentbit-too-many-erros/
       expr: rate(fluentbit_output_retries_failed_total[10m]) > 0
       for: 10m
       labels:
@@ -31,7 +31,7 @@ spec:
     - alert: FluentbitDown
       annotations:
         description: '{{`Fluentbit ({{ $labels.instance }}) is down.`}}'
-        opsrecipe: ''
+        opsrecipe: fluentbit-down/
       expr: sum(up{app="fluent-logshipping-app"}) by (app, cluster_id, cluster_type, installation, job, namespace, provider, node) == 0
       for: 15m
       labels:

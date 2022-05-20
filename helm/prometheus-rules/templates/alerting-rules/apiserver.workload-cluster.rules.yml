@@ -44,17 +44,17 @@ spec:
 
     # Webhooks that are not explicitely owner by any team (customer owned ones).
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutSolutionEngineers
-        annotations:
-          description: '{{`Kubernetes API Server admission webhook for {{ $labels.cluster_id }} is timing out.`}}'
-          opsrecipe: apiserver-admission-webhook-errors/
-        expr: rate(apiserver_admission_webhook_admission_duration_seconds_count{cluster_type="workload_cluster",name!~".*(prometheus|vpa.k8s.io|linkerd|validate.nginx.ingress.kubernetes.io|kong.konghq.com|cert-manager.io|kyverno|app-admission-controller).*"}[5m]) > 0 AND rate(apiserver_admission_webhook_admission_duration_seconds_sum[5m]) / rate(apiserver_admission_webhook_admission_duration_seconds_count[5m]) > 8
-        for: 15m
-        labels:
-          area: kaas
-          cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-          severity: page
-          team: se
-          topic: kubernetes
+      annotations:
+        description: '{{`Kubernetes API Server admission webhook for {{ $labels.cluster_id }} is timing out.`}}'
+        opsrecipe: apiserver-admission-webhook-errors/
+      expr: rate(apiserver_admission_webhook_admission_duration_seconds_count{cluster_type="workload_cluster",name!~".*(prometheus|vpa.k8s.io|linkerd|validate.nginx.ingress.kubernetes.io|kong.konghq.com|cert-manager.io|kyverno|app-admission-controller).*"}[5m]) > 0 AND rate(apiserver_admission_webhook_admission_duration_seconds_sum[5m]) / rate(apiserver_admission_webhook_admission_duration_seconds_count[5m]) > 8
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: se
+        topic: kubernetes
 
       # Webhooks owned by Honeybadger
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutHoneybadger

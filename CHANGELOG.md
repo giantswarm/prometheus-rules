@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.23.0] - 2022-05-23
+
 ### Changed
 
 - Split `WorkloadClusterWebhookDurationExceedsTimeout` by team owning the component.
@@ -853,7 +855,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.22.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.23.0...HEAD
+[2.23.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.22.0...v2.23.0
 [2.22.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.21.0...v2.22.0
 [2.21.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.20.0...v2.21.0
 [2.20.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.19.0...v2.20.0

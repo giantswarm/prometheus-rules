@@ -19,13 +19,22 @@ To Update `kubernetes-mixin` recording rules:
 
 * Copy the content of `prometheus_rules.yaml` and overwrite `helm/prometheus-rules/recording-rules/kubernetes-mixins.rules.yml` (Make sure to overwrite the groups and not the whole file)
 
-* Go back and Adjust labels
+* Adjust labels
 
 ```
-job="kube-scheduler" => app="kube-scheduler"
+(cluster)                  =>  (cluster_id)
 
-job="node-exporter"  => app="node-exporter"
+job="apiserver"            =>  component="apiserver"
 
-job="kubelet"  => app="kubelet"
+job="cadvisor"             =>  app="cadvisor"
 
+job="kube-state-metrics"   =>  app="kube-state-metrics"
+
+job="kube-scheduler"       =>  app="kube-scheduler"
+
+job="node-exporter"        =>  app="node-exporter"
+
+job="kubelet"              =>  app="kubelet"
 ```
+
+* make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards/tree/master/helm/dashboards/dashboards/mixin)

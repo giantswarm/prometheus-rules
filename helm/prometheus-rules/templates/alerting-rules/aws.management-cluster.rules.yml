@@ -146,7 +146,7 @@ spec:
         severity: page
         team: phoenix
         topic: kubernetes
-    - alert: IRSATooManyErros
+    - alert: IRSATooManyErrors
       annotations:
         description: '{{`IRSA bootstrap for Cluster {{ $labels.cluster_id }} failed.`}}'
         opsrecipe: irsa-operator-error/

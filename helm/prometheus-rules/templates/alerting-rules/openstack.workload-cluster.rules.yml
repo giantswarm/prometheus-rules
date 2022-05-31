@@ -1,0 +1,29 @@
+{{- if eq .Values.managementCluster.provider.kind "openstack" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "workload_cluster"
+  name: openstack.workload-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: openstack
+    rules:
+    - alert: WorkloadClusterKubernetesAPINotReachable
+      annotations:
+        description: '{{`Kubernetes API in {{ $labels.installation }}/{{ $labels.cluster_id }} is down.`}}'
+        opsrecipe: openstack-k8s-api-unreachable/
+      expr: up{app="kubernetes"} == 0
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: page
+        team: rocket
+        topic: kubernetes
+{{- end }}

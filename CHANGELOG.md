@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Introduce Kubernetes API down alert on openstack.
+
 ## [2.25.0] - 2022-05-26
 
 ### Fixed
@@ -171,7 +175,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Removed `ManagementClusterPodPendingFor15Min` and `ManagementClusterPodPending`.
-
 
 ## [1.7.1] - 2022-03-22
 
@@ -437,7 +440,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.40.2] - 2021-12-03
 
-
 ### Fixed
 
 - Consolidate alerts that covered the same issues.
@@ -503,7 +505,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Change `WorkloadClusterEtcdCommitDurationTooHigh` severity to paging.
-
 
 ## [0.31.3] - 2021-11-09
 
@@ -865,7 +866,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
+- Add existing rules from <https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2>
 
 [Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.25.0...HEAD
 [2.25.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.24.0...v2.25.0

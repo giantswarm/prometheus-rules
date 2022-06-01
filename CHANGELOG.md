@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Alert when the silence sync job is not scheduled for more than 2 hours.
+
 ## [2.25.0] - 2022-05-26
 
 ### Fixed
 
-- Fixing mixins prometheus recording rules
+- Fixing mixins prometheus recording rules.
 
 ## [2.24.0] - 2022-05-25
 

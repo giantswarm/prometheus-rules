@@ -22,12 +22,12 @@ spec:
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: managementcluster
-    ## This alert triggers when the silence sync job did not schedule for more than 2 hours.
+    ## This alert triggers when the silence sync job did not schedule for more than 1 day.
     - alert: SilenceJobHasNotBeenScheduledForTooLong
       annotations:
-        description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 2 hours.`}}'
+        description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 1 day.`}}'
         opsrecipe: job-has-not-been-scheduled-for-too-long/
-      expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="silence-operator-sync"} ) > 7200
+      expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="silence-operator-sync"} ) > 86400
       for: 15m
       labels:
         area: kaas

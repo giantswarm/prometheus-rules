@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Alert when the silence sync job is not scheduled for more than 2 hours.
+- Alert when the silence sync job is not scheduled for more than 1 day.
 
 ## [2.25.0] - 2022-05-26
 

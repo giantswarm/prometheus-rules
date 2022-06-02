@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixing mixins prometheus recording rules
+- Use rate instead of the total amount of requests for calculating SLO for kube-scheduler
 
 ## [2.24.0] - 2022-05-25
 

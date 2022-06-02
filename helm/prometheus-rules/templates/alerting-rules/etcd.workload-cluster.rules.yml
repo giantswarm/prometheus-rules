@@ -21,7 +21,6 @@ spec:
         area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         cancel_if_master_node_down: "true"
         severity: page

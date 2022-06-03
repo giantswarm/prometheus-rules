@@ -26,12 +26,9 @@ cd "${TMPDIR}"/mixins
 MIXIN_VER=$(git rev-parse HEAD)
 cd - > /dev/null
 
+RULESFILE="helm/prometheus-rules/templates/recording-rules/kubernetes-mixins.rules.yml"
 
-#CONTENT=$(cat "${TMPDIR}"/mixins/files/prometheus-rules/rules.yml| yq -P .groups)
-
-cp "${TMPDIR}"/mixins/files/prometheus-rules/rules.yml helm/prometheus-rules/templates/recording-rules/kubernetes-mixin-test.yml
-
-CONTENT='apiVersion: monitoring.coreos.com/v1
+PRECONTENT='apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   labels:
@@ -41,52 +38,11 @@ metadata:
 spec:
 '
 
-printf '%s  %s' "${CONTENT}" "$(cat helm/prometheus-rules/templates/recording-rules/kubernetes-mixin-test.yml)" >helm/prometheus-rules/templates/recording-rules/kubernetes-mixin-test.yml
+# copy generated rules file
+cp "${TMPDIR}"/mixins/files/prometheus-rules/rules.yml ${RULESFILE}
 
-
-# cat <<EOF
-# apiVersion: monitoring.coreos.com/v1
-# kind: PrometheusRule
-# metadata:
-#   labels:
-#     {{- include "labels.common" . | nindent 4 }}
-#   name: kube-mixins.recording.rules
-#   namespace: {{ .Values.namespace  }}
-# spec:
-#   groups:
-# EOF helm/prometheus-rules/templates/recording-rules/kubernetes-mixin-test.yml > helm/prometheus-rules/templates/recording-rules/kubernetes-mixin-test2.yml
-
-
-# cat <<EOF >helm/prometheus-rules/templates/recording-rules/kubernetes-mixin.yml
-# apiVersion: monitoring.coreos.com/v1
-# kind: PrometheusRule
-# metadata:
-#   labels:
-#     {{- include "labels.common" . | nindent 4 }}
-#   name: kube-mixins.recording.rules
-#   namespace: {{ .Values.namespace  }}
-# spec:
-#   groups:
-# EOF
-#  > helm/prometheus-rules/templates/recording-rules/kubernetes-mixin-test.yml
-
-# # override current rules file
-# cat <<EOF >helm/prometheus-rules/templates/recording-rules/kubernetes-mixin-test.yml
-# apiVersion: monitoring.coreos.com/v1
-# kind: PrometheusRule
-# metadata:
-#   labels:
-#     {{- include "labels.common" . | nindent 4 }}
-#   name: kube-mixins.recording.rules
-#   namespace: {{ .Values.namespace  }}
-# spec:
-#   groups:
-# EOF
-
-# cat "${TMPDIR}"/mixins/files/prometheus-rules/rules.yml| yq -P --indent  .groups >>helm/prometheus-rules/templates/recording-rules/kubernetes-mixin-test.yml
-
-
-# cp -a "${TMPDIR}"/files/prometheus-rules/rules.yml helm/prometheus-rules/templates/recording-rules/kubernetes-mixins.rules.yml
+# prepend K8s objectmeta to the rules file
+printf '%s  %s' "${PRECONTENT}" "$(cat ${RULESFILE})" >${RULESFILE}
 
 echo -e "\nSynced mixin repo at commit: ${MIXIN_VER}\n"
 

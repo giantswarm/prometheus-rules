@@ -35,7 +35,7 @@ spec:
         severity: page
         team: atlas
         topic: managementcluster
-     - alert: GrafanaPermissionJobHasNotBeenScheduledForTooLong
+    - alert: GrafanaPermissionJobHasNotBeenScheduledForTooLong
       annotations:
         description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 1 day.`}}'
         opsrecipe: job-has-not-been-scheduled-for-too-long/

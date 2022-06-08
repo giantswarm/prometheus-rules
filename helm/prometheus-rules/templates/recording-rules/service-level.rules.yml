@@ -194,11 +194,13 @@ spec:
       record: raw_slo_errors
     # record when pods of a deployment with label "label_giantswarm_io_monitoring_basic_sli" are down
     - expr: |
-        label_replace(
-          kube_deployment_status_replicas_unavailable
-          and on(deployment,cluster_id,cluster_type,namespace, workload_name)
-          kube_deployment_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-        "service", "$1", "workload_name", "(.*)" )
+        kube_deployment_labels * on (deployment, namespace) group_right(label_giantswarm_io_monitoring_team) (
+          label_replace(
+            kube_deployment_status_replicas_unavailable
+            and on(deployment,cluster_id,cluster_type,namespace, workload_name)
+            kube_deployment_labels{label_giantswarm_io_monitoring_basic_sli='true'},
+          "service", "$1", "workload_name", "(.*)" )
+        )
       labels:
         class: MEDIUM
         area: managed-apps
@@ -226,11 +228,13 @@ spec:
         area: managed-apps
       record: raw_slo_requests
     - expr: |
-        label_replace(
-          kube_deployment_status_replicas
-          and on(deployment,cluster_id,cluster_type,namespace, workload_name)
-          kube_deployment_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-        "service", "$1", "workload_name", "(.*)" )
+        kube_deployment_labels * on (deployment, namespace) group_right(label_giantswarm_io_monitoring_team) (
+          label_replace(
+            kube_deployment_status_replicas
+            and on(deployment,cluster_id,cluster_type,namespace, workload_name)
+            kube_deployment_labels{label_giantswarm_io_monitoring_basic_sli='true'},
+          "service", "$1", "workload_name", "(.*)" )
+        )
       labels:
         class: MEDIUM
         area: managed-apps

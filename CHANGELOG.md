@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Route ServiceLevelBurnRateTooHigh alert using giantswarm.io/monitoring_team label.
+
 ## [2.26.0] - 2022-06-08
 
 ### Added

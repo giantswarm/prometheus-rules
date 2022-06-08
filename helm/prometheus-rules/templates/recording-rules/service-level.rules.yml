@@ -183,11 +183,13 @@ spec:
     # -- error recording rules
     # record when pods of a daemonset with label "label_giantswarm_io_monitoring_basic_sli" are down
     - expr: |
-        label_replace(
-          kube_daemonset_status_number_unavailable
-          and on(daemonset,cluster_id,cluster_type,namespace,workload_name)
-          kube_daemonset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-        "service", "$1", "workload_name", "(.*)" )
+        kube_daemonset_labels * on (daemonset, namespace) group_right(label_giantswarm_io_monitoring_team) (
+          label_replace(
+            kube_daemonset_status_number_unavailable
+            and on(daemonset,cluster_id,cluster_type,namespace,workload_name)
+            kube_daemonset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
+          "service", "$1", "workload_name", "(.*)" )
+        )
       labels:
         class: MEDIUM
         area: managed-apps
@@ -207,22 +209,26 @@ spec:
       record: raw_slo_errors
     # record when pods of a statefulset with label "label_giantswarm_io_monitoring_basic_sli" are down
     - expr: |
-        label_replace(
-          kube_statefulset_status_replicas - kube_statefulset_status_replicas_current
-          and on(statefulset,cluster_id,cluster_type,namespace, workload_name)
-          kube_statefulset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-        "service", "$1", "workload_name", "(.*)" )
+        kube_statefulset_labels * on (statefulset, namespace) group_right(label_giantswarm_io_monitoring_team) (
+          label_replace(
+            kube_statefulset_status_replicas - kube_statefulset_status_replicas_current
+            and on(statefulset,cluster_id,cluster_type,namespace, workload_name)
+            kube_statefulset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
+          "service", "$1", "workload_name", "(.*)" )
+        )
       labels:
         class: MEDIUM
         area: managed-apps
       record: raw_slo_errors
     # -- present pods recording rules
     - expr: |
-        label_replace(
-          kube_daemonset_status_desired_number_scheduled
-          and on(daemonset,cluster_id,cluster_type,namespace, workload_name)
-          kube_daemonset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-        "service", "$1", "workload_name", "(.*)" )
+        kube_daemonset_labels * on (daemonset, namespace) group_right(label_giantswarm_io_monitoring_team) (
+          label_replace(
+            kube_daemonset_status_desired_number_scheduled
+            and on(daemonset,cluster_id,cluster_type,namespace, workload_name)
+            kube_daemonset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
+          "service", "$1", "workload_name", "(.*)" )
+        )
       labels:
         class: MEDIUM
         area: managed-apps
@@ -240,11 +246,13 @@ spec:
         area: managed-apps
       record: raw_slo_requests
     - expr: |
-        label_replace(
-          kube_statefulset_status_replicas
-          and on(statefulset,cluster_id,cluster_type,namespace, workload_name)
-          kube_statefulset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-        "service", "$1", "workload_name", "(.*)" )
+        kube_statefulset_labels * on (statefulset, namespace) group_right(label_giantswarm_io_monitoring_team) (
+          label_replace(
+            kube_statefulset_status_replicas
+            and on(statefulset,cluster_id,cluster_type,namespace, workload_name)
+            kube_statefulset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
+          "service", "$1", "workload_name", "(.*)" )
+        )
       labels:
         class: MEDIUM
         area: managed-apps

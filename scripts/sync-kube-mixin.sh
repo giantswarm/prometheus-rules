@@ -5,13 +5,13 @@ set -o nounset
 set -o pipefail
 
 # make a temporary dir to work in
-TMPDIR=$(mktemp -d -t 'tmp.XXXXXXXXXX')
+TMPDIR="$(mktemp -d -t 'tmp.XXXXXXXXXX')"
 trap 'rm -f $TMPDIR' EXIT
 MIXIN_REPO="git@github.com:giantswarm/giantswarm-kubernetes-mixin.git"
-# clone a branch of tag if provided
+# clone a branch or tag if provided
 BRANCH=${1:-""}
 
-if [ -z "${BRANCH}" ]; then
+if [[ -z "${BRANCH}" ]]; then
     # clone the mixins repo
     echo -e "\nCloning master branch:\n"
     git clone --single-branch "${MIXIN_REPO}" "${TMPDIR}"/mixins
@@ -39,10 +39,10 @@ spec:
 '
 
 # copy generated rules file
-cp "${TMPDIR}"/mixins/files/prometheus-rules/rules.yml ${RULESFILE}
+cp "${TMPDIR}"/mixins/files/prometheus-rules/rules.yml "${RULESFILE}"
 
 # prepend K8s objectmeta to the rules file
-printf '%s  %s' "${PRECONTENT}" "$(cat ${RULESFILE})" >${RULESFILE}
+printf '%s  %s' "${PRECONTENT}" "$(cat "${RULESFILE}")" >"${RULESFILE}"
 
 echo -e "\nSynced mixin repo at commit: ${MIXIN_VER}\n"
 

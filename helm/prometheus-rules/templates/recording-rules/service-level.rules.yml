@@ -314,6 +314,7 @@ spec:
         area: managed-apps
         class: MEDIUM
         service: managed-prometheus
+        team: atlas
       record: raw_slo_requests
     # Set SLO error to be 1 when a managed prometheus is down.
     - expr: (up{app="prometheus-operator-app-prometheus",container="prometheus"}*-1)+1 == 1
@@ -321,6 +322,7 @@ spec:
         area: managed-apps
         class: MEDIUM
         service: managed-prometheus
+        team: atlas
       record: raw_slo_errors
 
     # -- Managed Alertmanager
@@ -330,6 +332,7 @@ spec:
         area: managed-apps
         class: MEDIUM
         service: managed-alertmanager
+        team: atlas
       record: raw_slo_requests
     # Set SLO error to be 1 when a managed alertmanager is down.
     - expr: (up{app="prometheus-operator-app-alertmanager",container="alertmanager"}*-1)+1 == 1
@@ -337,6 +340,7 @@ spec:
         area: managed-apps
         class: MEDIUM
         service: managed-alertmanager
+        team: atlas
       record: raw_slo_errors
 
       # -- generic stuff

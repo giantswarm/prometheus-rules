@@ -19,7 +19,7 @@ spec:
           /
         sum(rate(loki_request_duration_seconds_count[1m])) by (namespace, job, route)
           > 10
-      for: 15m
+      for: 120m
       labels:
         area: managedservices
         cancel_if_apiserver_down: "true"

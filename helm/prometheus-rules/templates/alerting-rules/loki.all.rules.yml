@@ -1,0 +1,50 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: grafana.all.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+  - name: loki
+    rules:
+    # Rules inspired from loki-mixins - https://github.com/grafana/loki/blob/main/production/loki-mixin-compiled/alerts.yaml
+    - alert: LokiRequestErrors
+      annotations:
+        description: This alert checks that we have less than 10% errors on Loki requests.
+        opsrecipe: loki
+      expr: |
+        100 * sum(rate(loki_request_duration_seconds_count{status_code=~"5.."}[1m])) by (namespace, job, route)
+          /
+        sum(rate(loki_request_duration_seconds_count[1m])) by (namespace, job, route)
+          > 10
+      for: 120m
+      labels:
+        area: managedservices
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_scrape_timeout: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: atlas
+        topic: observability
+    - alert: LokiRequestPanics
+      annotations:
+        description: This alert checks that we have no panic errors on Loki.
+        opsrecipe: loki
+      expr: |
+        sum(increase(loki_panic_total[10m])) by (namespace, job) > 0
+      labels:
+        area: managedservices
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_scrape_timeout: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: atlas
+        topic: observability

@@ -34,4 +34,4 @@ spec:
         cancel_if_cluster_has_no_workers: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: '{{`{{ $labels.label_giantswarm_io_monitoring_team }}`}}'
+        team: '{{`{{ $labels.label_application_giantswarm_io_team }}`}}'

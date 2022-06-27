@@ -183,7 +183,7 @@ spec:
     # -- error recording rules
     # record when pods of a daemonset with label "label_giantswarm_io_monitoring_basic_sli" are down
     - expr: |
-        kube_daemonset_labels * on (daemonset, namespace) group_right(label_giantswarm_io_monitoring_team) (
+        kube_daemonset_labels * on (daemonset, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_daemonset_status_number_unavailable
             and on(daemonset,cluster_id,cluster_type,namespace,workload_name)
@@ -196,7 +196,7 @@ spec:
       record: raw_slo_errors
     # record when pods of a deployment with label "label_giantswarm_io_monitoring_basic_sli" are down
     - expr: |
-        kube_deployment_labels * on (deployment, namespace) group_right(label_giantswarm_io_monitoring_team) (
+        kube_deployment_labels * on (deployment, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_deployment_status_replicas_unavailable
             and on(deployment,cluster_id,cluster_type,namespace, workload_name)
@@ -209,7 +209,7 @@ spec:
       record: raw_slo_errors
     # record when pods of a statefulset with label "label_giantswarm_io_monitoring_basic_sli" are down
     - expr: |
-        kube_statefulset_labels * on (statefulset, namespace) group_right(label_giantswarm_io_monitoring_team) (
+        kube_statefulset_labels * on (statefulset, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_statefulset_status_replicas - kube_statefulset_status_replicas_current
             and on(statefulset,cluster_id,cluster_type,namespace, workload_name)
@@ -222,7 +222,7 @@ spec:
       record: raw_slo_errors
     # -- present pods recording rules
     - expr: |
-        kube_daemonset_labels * on (daemonset, namespace) group_right(label_giantswarm_io_monitoring_team) (
+        kube_daemonset_labels * on (daemonset, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_daemonset_status_desired_number_scheduled
             and on(daemonset,cluster_id,cluster_type,namespace, workload_name)
@@ -234,7 +234,7 @@ spec:
         area: managed-apps
       record: raw_slo_requests
     - expr: |
-        kube_deployment_labels * on (deployment, namespace) group_right(label_giantswarm_io_monitoring_team) (
+        kube_deployment_labels * on (deployment, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_deployment_status_replicas
             and on(deployment,cluster_id,cluster_type,namespace, workload_name)
@@ -246,7 +246,7 @@ spec:
         area: managed-apps
       record: raw_slo_requests
     - expr: |
-        kube_statefulset_labels * on (statefulset, namespace) group_right(label_giantswarm_io_monitoring_team) (
+        kube_statefulset_labels * on (statefulset, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_statefulset_status_replicas
             and on(statefulset,cluster_id,cluster_type,namespace, workload_name)
@@ -361,19 +361,19 @@ spec:
       record: slo_requests
     - expr: sum(raw_slo_errors) by (service, cluster_type, cluster_id, area)
       record: slo_errors
-    - expr: sum(sum_over_time(raw_slo_errors[5m])) by (cluster_type, cluster_id, service, class, area, label_giantswarm_io_monitoring_team) / sum(sum_over_time(raw_slo_requests[5m])) by (cluster_type, cluster_id, service, class, area, label_giantswarm_io_monitoring_team)
+    - expr: sum(sum_over_time(raw_slo_errors[5m])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[5m])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
       record: slo_errors_per_request:ratio_rate5m
-    - expr: sum(sum_over_time(raw_slo_errors[30m])) by (cluster_type, cluster_id, service, class, area, label_giantswarm_io_monitoring_team) / sum(sum_over_time(raw_slo_requests[30m])) by (cluster_type, cluster_id, service, class, area, label_giantswarm_io_monitoring_team)
+    - expr: sum(sum_over_time(raw_slo_errors[30m])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[30m])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
       record: slo_errors_per_request:ratio_rate30m
-    - expr: sum(sum_over_time(raw_slo_errors[1h])) by (cluster_type, cluster_id, service, class, area, label_giantswarm_io_monitoring_team) / sum(sum_over_time(raw_slo_requests[1h])) by (cluster_type, cluster_id, service, class, area, label_giantswarm_io_monitoring_team)
+    - expr: sum(sum_over_time(raw_slo_errors[1h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[1h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
       record: slo_errors_per_request:ratio_rate1h
-    - expr: sum(sum_over_time(raw_slo_errors[6h])) by (cluster_type, cluster_id, service, class, area, label_giantswarm_io_monitoring_team) / sum(sum_over_time(raw_slo_requests[6h])) by (cluster_type, cluster_id, service, class, area, label_giantswarm_io_monitoring_team)
+    - expr: sum(sum_over_time(raw_slo_errors[6h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[6h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
       record: slo_errors_per_request:ratio_rate6h
-    - expr: sum(sum_over_time(raw_slo_errors[2h])) by (cluster_type, cluster_id, service, class, area, label_giantswarm_io_monitoring_team) / sum(sum_over_time(raw_slo_requests[2h])) by (cluster_type, cluster_id, service, class, area, label_giantswarm_io_monitoring_team)
+    - expr: sum(sum_over_time(raw_slo_errors[2h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[2h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
       record: slo_errors_per_request:ratio_rate2h
-    - expr: sum(sum_over_time(raw_slo_errors[24h])) by (cluster_type, cluster_id, service, class, area, label_giantswarm_io_monitoring_team) / sum(sum_over_time(raw_slo_requests[24h])) by (cluster_type, cluster_id, service, class, area, label_giantswarm_io_monitoring_team)
+    - expr: sum(sum_over_time(raw_slo_errors[24h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[24h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
       record: slo_errors_per_request:ratio_rate24h
-    - expr: sum(sum_over_time(raw_slo_errors[3d])) by (cluster_type, cluster_id, service, class, area, label_giantswarm_io_monitoring_team) / sum(sum_over_time(raw_slo_requests[3d])) by (cluster_type, cluster_id, service, class, area, label_giantswarm_io_monitoring_team)
+    - expr: sum(sum_over_time(raw_slo_errors[3d])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[3d])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
       record: slo_errors_per_request:ratio_rate3d
       # -- We use the `min` function here because we have `slo_burnrate_high` for each installation and cluster_id, even though the metric value is always the same.
     - expr: slo_target*scalar(min(slo_burnrate_high))

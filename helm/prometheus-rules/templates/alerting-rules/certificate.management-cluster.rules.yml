@@ -27,7 +27,7 @@ spec:
       annotations:
         description: '{{`Certificate {{ $labels.path }} on {{ $labels.node }} will expire in less than one month.`}}'
         opsrecipe: renew-certificates/
-      expr: (cert_exporter_not_after{cluster_type="management_cluster", provider="aws", path!="/etc/kubernetes/ssl/service-account-crt.pem"} - time()) < 2 * 7 * 24 * 60 * 60
+      expr: (cert_exporter_not_after{cluster_type="management_cluster", provider="aws", path!="/etc/kubernetes/ssl/service-account-crt.pem"} - time()) < 4 * 7 * 24 * 60 * 60
       for: 5m
       labels:
         area: kaas
@@ -39,7 +39,7 @@ spec:
       annotations:
         description: '{{`Certificate {{ $labels.path }} on {{ $labels.node }} will expire in less than one month.`}}'
         opsrecipe: renew-certificates/
-      expr: (cert_exporter_not_after{cluster_type="management_cluster", provider="azure", path!="/etc/kubernetes/ssl/service-account-crt.pem"} - time()) < 2 * 7 * 24 * 60 * 60
+      expr: (cert_exporter_not_after{cluster_type="management_cluster", provider="azure", path!="/etc/kubernetes/ssl/service-account-crt.pem"} - time()) < 4 * 7 * 24 * 60 * 60
       for: 5m
       labels:
         area: kaas

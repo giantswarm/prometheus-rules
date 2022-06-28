@@ -236,3 +236,10 @@ spec:
     # IAM roles for Service Accounts metrics
     - expr: sum(irsa_operator_cluster_errors) by (account_id,cluster_id,cluster_namespace,installation)
       record: aggregation:giantswarm:irsa_operator_cluster_errors
+    # AWS service quotas metrics
+    - expr: sum(aws_servicequotas_operator_quota_increase_request_errors) by (cluster_id,cluster_namespace,service_name,quota_description,quota_code,quota_value)
+      record: aggregation:giantswarm:aws_servicequotas_operator_cluster_quota_increase_errors
+    - expr: sum(aws_servicequotas_operator_quota_history_request_errors) by (cluster_id,cluster_namespace,service_name,quota_description,quota_code,quota_value)
+      record: aggregation:giantswarm:aws_servicequotas_operator_cluster_quota_history_errors
+    - expr: sum(aws_servicequotas_operator_quota_applied_request_errors) by (cluster_id,cluster_namespace,service_name,quota_description,quota_code,quota_value)
+      record: aggregation:giantswarm:aws_servicequotas_operator_cluster_quota_applied_errors

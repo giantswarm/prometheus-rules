@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Push aws-servicequotas-operator errors to Cortex.
 - Route ServiceLevelBurnRateTooHigh alert using application.giantswarm.io/team label.
 - Alerts for Loki
 - Add support for VCD provider.

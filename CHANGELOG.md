@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.28.0] - 2022-06-30
+
 ### Added
 
 - Add current AWS quota values to Cortex.
@@ -900,7 +902,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.27.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.28.0...HEAD
+[2.28.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.27.0...v2.28.0
 [2.27.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.26.0...v2.27.0
 [2.26.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.25.0...v2.26.0
 [2.25.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.24.0...v2.25.0

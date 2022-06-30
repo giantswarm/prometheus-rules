@@ -243,5 +243,5 @@ spec:
       record: aggregation:giantswarm:aws_servicequotas_operator_quota_history_request_errors
     - expr: sum(aws_servicequotas_operator_quota_applied_request_errors) by (account_id,cluster_id,cluster_namespace,service_name,quota_description,quota_code,quota_value)
       record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_request_errors
-    - expr: count(aws_servicequotas_operator_quota_applied_values) by (account_id,cluster_id,cluster_namespace,service_name,quota_description,quota_code)
+    - expr: sum(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code) / count(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code)
       record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_values

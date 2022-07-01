@@ -41,7 +41,7 @@ spec:
       # -- daemonset
     - expr: |
         label_replace(
-          kube_daemonset_status_desired_number_scheduled{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter"},
+          kube_daemonset_status_desired_number_scheduled{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node"},
         "service", "$1", "workload_name", "(.*)" )
       labels:
         class: MEDIUM

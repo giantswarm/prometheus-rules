@@ -41,7 +41,7 @@ spec:
       # -- daemonset
     - expr: |
         label_replace(
-          kube_daemonset_status_desired_number_scheduled{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter"},
+          kube_daemonset_status_desired_number_scheduled{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node"},
         "service", "$1", "workload_name", "(.*)" )
       labels:
         class: MEDIUM
@@ -54,11 +54,11 @@ spec:
         (
           (
             label_replace(
-              kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter"},
+              kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node"},
               "service", "$1", "workload_name", "(.*)" ) > 0
             and on (daemonset, node)
             label_replace(
-              kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter"} offset 10m,
+              kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node"} offset 10m,
               "service", "$1", "workload_name", "(.*)" ) > 0
           )
           and
@@ -72,7 +72,7 @@ spec:
       record: raw_slo_errors
       # -- 99% availability
       # -- this expression collects all the daemonsets and assigns the same slo target to all of them
-    - expr: sum by (service, area) (raw_slo_errors{area="kaas", service=~"aws-node|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter"} - raw_slo_errors{area="kaas", service=~"aws-node|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter"}) + 1-0.99
+    - expr: sum by (service, area) (raw_slo_errors{area="kaas", service=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node"} - raw_slo_errors{area="kaas", service=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node"}) + 1-0.99
       labels:
         area: kaas
       record: slo_target

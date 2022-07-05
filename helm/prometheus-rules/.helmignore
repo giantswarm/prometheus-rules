@@ -1,0 +1,3 @@
+.gitignore
+alerting-rules-test/*.yml
+alerting-rules-test/rules/*.yml

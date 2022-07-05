@@ -1,0 +1,58 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels: {{- include "labels.common" . | nindent 4}}
+  name: capi.rules
+  namespace: {{.Values.namespace}}
+spec:
+  groups:
+    - name: coredns
+      rules:
+        - alert: MachineUnhealthyPhase
+          annotations:
+            description: "{{`Machine {{ $labels.namespace}}/{{ $labels.name }} stuck in phase {{ $labels.phase }} for more than 15 minutes.`}}"
+          expr: capi_machine_status_phase{phase!~"Running|Provisioning"} > 0
+          for: 15m
+          labels:
+            area: kaas
+            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            severity: notify
+            team: {{include "providerTeam" .}}
+            topic: managementcluster
+
+        - alert: MachineDeploymentReplicasMismatch
+          expr: capi_machinedeployment_spec_replicas{} != capi_machinedeployment_status_available_replicas{}
+          for: 1h
+          labels:
+            area: kaas
+            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            severity: notify
+            team: {{include "providerTeam" .}}
+            topic: managementcluster
+          annotations:
+            description: "{{`The cluster's machinedeployment {{$labels.namespace}}/{{$labels.machinedeployment}} does not match the expected number of replicas for longer than 3h.`}}"
+
+        - alert: KubeadmControlPlaneReplicasMismatch
+          expr: capi_kubeadmcontrolplane_spec_replicas != capi_kubeadmcontrolplane_status_replicas_ready
+          # 90min at max 3 replicas results in maximum of 30 minutes per control-plane machine.
+          for: 90min
+          labels:
+            area: kaas
+            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            severity: notify
+            team: {{include "providerTeam" .}}
+            topic: managementcluster
+          annotations:
+            description: "{{`The kubeadmcontrolplane {{$labels.namespace}}/{{$labels.kubeadmcontrolplane}} does not match the expected number of replicas for longer than 90 minutes.`}}"
+
+        - alert: ClusterUnhealthyPhase
+          expr: capi_cluster_status_phase{phase!="Provisioned"} > 0
+          for: 4h
+          labels:
+            area: kaas
+            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            severity: notify
+            team: {{include "providerTeam" .}}
+            topic: managementcluster
+          annotations:
+            description: "{{`Cluster {{$labels.namespace}}/{{$labels.cluster}} is in a non healthy phase.`}}"

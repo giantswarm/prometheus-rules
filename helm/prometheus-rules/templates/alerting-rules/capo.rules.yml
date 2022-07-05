@@ -1,0 +1,45 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels: {{- include "labels.common" . | nindent 4}}
+  name: capi.rules
+  namespace: {{.Values.namespace}}
+spec:
+  groups:
+    - name: coredns
+      rules:
+        - alert: OpenStackMachineUnexpectedInstanceState
+          expr: capi_openstackmachine_status_instance_state{state!="ACTIVE"} > 0
+          for: 1h
+          labels:
+            area: kaas
+            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            severity: notify
+            team: {{include "providerTeam" .}}
+            topic: managementcluster
+          annotations:
+            description: "{{`OpenStackMachine {{$labels.namespace}}/{{$labels.name}} instance state is {{$labels.state}}.`}}"
+
+        - alert: OpenStackMachineFailure
+          expr: capi_openstackmachine_status_failure{failure!="<nil>"}
+          for: 30m
+          labels:
+            area: kaas
+            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            severity: notify
+            team: {{include "providerTeam" .}}
+            topic: managementcluster
+          annotations:
+            description: "{{`OpenStackMachine {{$labels.namespace}}/{{$labels.name}} failure reason is {{$labels.reason}}.`}}"
+
+        - alert: OpenStackClusterFailure
+          expr: capi_openstackcluster_status_failure{failure!="<nil>"}
+          for: 30m
+          labels:
+            area: kaas
+            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            severity: notify
+            team: {{include "providerTeam" .}}
+            topic: managementcluster
+          annotations:
+            description: "{{`OpenStackCluster {{$labels.namespace}}/{{$labels.name}} failure reason is {{$labels.reason}}.`}}"

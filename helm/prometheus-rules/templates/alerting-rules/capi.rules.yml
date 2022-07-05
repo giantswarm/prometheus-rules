@@ -1,3 +1,4 @@
+{{- if or (eq .Values.managementCluster.provider.kind "openstack") }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -56,3 +57,4 @@ spec:
             topic: managementcluster
           annotations:
             description: "{{`Cluster {{$labels.namespace}}/{{$labels.cluster}} is in a non healthy phase.`}}"
+{{- end }}

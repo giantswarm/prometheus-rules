@@ -1,4 +1,4 @@
-apiVersion: monitoring.coreos.com/v1
+{{- if or (eq .Values.managementCluster.provider.kind "openstack") }}
 kind: PrometheusRule
 metadata:
   labels: {{- include "labels.common" . | nindent 4}}
@@ -43,3 +43,4 @@ spec:
             topic: managementcluster
           annotations:
             description: "{{`OpenStackCluster {{$labels.namespace}}/{{$labels.name}} failure reason is {{$labels.reason}}.`}}"
+{{- end }}

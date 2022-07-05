@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add Rules for Cluster API and Cluster API Openstack for team rocket
 - Add `aws-cloud-controller-manager`, `azure-cloud-controller-manager`, `azure-cloud-node-manager`, `azure-scheduled-events` and `csi-azuredisk-node` to the daemonset SLO query.
 
 ## [2.28.0] - 2022-06-30

@@ -11,10 +11,9 @@ spec:
       rules:
         - alert: MachineUnhealthyPhase
           annotations:
-            description: |-
-              {{`Machine {{ $labels.exported_namespace}}/{{ $labels.name }} stuck in phase {{ $labels.phase }} for more than 30 minutes.`}}
+            description: "{{`Machine {{ $labels.namespace}}/{{ $labels.name }} stuck in phase {{ $labels.phase }} for more than 15 minutes.`}}"
           expr: capi_machine_status_phase{phase!~"Running"} > 0
-          for: 30m
+          for: 15m
           labels:
             area: kaas
             cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
@@ -23,7 +22,7 @@ spec:
             topic: managementcluster
 
         - alert: MachineDeploymentReplicasMismatch
-          expr: capi_machinedeployment_spec_replicas{} != capi_machinedeployment_status_replicas_available{}
+          expr: capi_machinedeployment_spec_replicas{} != capi_machinedeployment_status_available_replicas{}
           for: 1h
           labels:
             area: kaas
@@ -32,8 +31,7 @@ spec:
             team: {{include "providerTeam" .}}
             topic: managementcluster
           annotations:
-            description: |-
-              {{`The clusters {{$labels.cluster_name}} machinedeployment {{$labels.exported_namespace}}/{{$labels.machinedeployment}} does not match the expected number of replicas for longer than 1h.`}}
+            description: "{{`The cluster's machinedeployment {{$labels.namespace}}/{{$labels.machinedeployment}} does not match the expected number of replicas for longer than 1h.`}}"
 
         - alert: KubeadmControlPlaneReplicasMismatch
           expr: capi_kubeadmcontrolplane_spec_replicas != capi_kubeadmcontrolplane_status_replicas_ready
@@ -46,12 +44,11 @@ spec:
             team: {{include "providerTeam" .}}
             topic: managementcluster
           annotations:
-            description: |-
-              {{`The clusters {{$labels.cluster_name}} kubeadmcontrolplane {{$labels.exported_namespace}}/{{$labels.name}} does not match the expected number of replicas for longer than 90 minutes.`}}
+            description: "{{`The kubeadmcontrolplane {{$labels.namespace}}/{{$labels.kubeadmcontrolplane}} does not match the expected number of replicas for longer than 90 minutes.`}}"
 
         - alert: ClusterUnhealthyPhase
           expr: capi_cluster_status_phase{phase!="Provisioned"} > 0
-          for: 1h
+          for: 4h
           labels:
             area: kaas
             cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
@@ -59,6 +56,5 @@ spec:
             team: {{include "providerTeam" .}}
             topic: managementcluster
           annotations:
-            description: |-
-              {{`Cluster {{$labels.exported_namespace}}/{{$labels.cluster_name}} is in a non healthy phase.`}}
+            description: "{{`Cluster {{$labels.namespace}}/{{$labels.cluster}} is in a non healthy phase.`}}"
 {{- end }}

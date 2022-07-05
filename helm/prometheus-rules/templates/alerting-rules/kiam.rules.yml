@@ -27,19 +27,4 @@ spec:
         severity: page
         team: phoenix
         topic: kiam
-    - alert: KiamSTSIssuingErrors
-      annotations:
-        description: '{{`Kiam pod {{ $labels.namespace}}/{{ $labels.pod_name }} on {{ $labels.cluster_id}}/{{ $labels.cluster }} has increased STS issuing errors.`}}'
-        opsrecipe: kiam-sts-issue-errors/
-      expr: rate(kiam_sts_issuing_errors_total[15m]) > 0.10
-      for: 15m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: phoenix
-        topic: kiam
 {{- end }}

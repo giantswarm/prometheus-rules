@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Route `WorkloadClusterCertificateWillExpireInLessThanAMonth` to AEs
+
 ## [2.30.0] - 2022-07-05
 
 ### Removed

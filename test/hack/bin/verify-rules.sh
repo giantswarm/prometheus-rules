@@ -51,8 +51,10 @@ while read -r line || [[ -n "${line}" ]]; do
     providers+=("${line}")
 done < <(cat ${GIT_WORKDIR}/test/hack/allowlist/providers)
 
-for file in "${all_files[@]}"; do
+promtool_check_errors=()
+promtool_test_errors=()
 
+for file in "${all_files[@]}"; do
 	# check if the ${file} is whitelisted via the ${expected_failure_file}
 	array_contains "${file}" "${expected_failure_prefixes[@]}" && whitelisted=$? || whitelisted=$?
 
@@ -68,21 +70,42 @@ for file in "${all_files[@]}"; do
 			# don't run tests if no provider specific tests are defined
 			if [[ -d ${GIT_WORKDIR}/test/providers/${provider} ]]; then
 	        	${HELM} template --set="managementCluster.provider.kind=${provider}" --release-name prometheus-rules --namespace giantswarm ./helm/prometheus-rules -s ${file} | yq '.spec' - > ${GIT_WORKDIR}/test/providers/${provider}/${filename}
-				${PROMTOOL} check rules ${GIT_WORKDIR}/test/providers/${provider}/${filename}
-				#promtool test rules ${GIT_WORKDIR}/test/providers/${provider}/${file}.test
-				# todo:
-				# append file to a list of files with error and print a summary at the end
-				#find ${GIT_WORKDIR}/test/providers/${provider} -name '${file##*/}.test.yml' -print0 | xargs -0 promtool test rules
+
+				${PROMTOOL} check rules ${GIT_WORKDIR}/test/providers/${provider}/${filename} 
+
 				find ${GIT_WORKDIR}/test/providers/${provider} -name ${filename%.yml}.test.yml -print0 | xargs -0 ${PROMTOOL} test rules
+
 			fi
 	    done	
 	fi
 done
 
-#TODO clean git state
-# undo architect modifications
-# git checkout -- helm/prometheus-rules/Chart.yaml
-# git checkout -- helm/prometheus-rules/values.yaml
 
+
+# TODO clean git state
+# - undo architect modifications
+#   - git checkout -- helm/prometheus-rules/Chart.yaml
+#   - git checkout -- helm/prometheus-rules/values.yaml
+# - shfmt + shellcheck
+# - make script output nice
+
+
+# if [[ ${#promtool_test_errors[@]} -eq 0 || ${#promtool_check_errors[@]} -eq 0 ]]; then
+# 	echo "Congratulations!  All prometheus rules have been promtool checked."
+# else
+# 	{
+# 		echo
+# 		echo "Please review the below errors."
+# 		echo
+# 		for err in "${promtool_test_errors[@]}"; do
+# 			echo "  $err"
+# 		done
+# 
+# 		for err in "${promtool_check_errors[@]}"; do
+# 			echo "  $err"
+# 		done
+# 	} >&2
+# 	false
+# fi
 
 echo "$(date '+%H:%M:%S') promtool: end (Elapsed time: $(($(date +%s) - START_TIME))s)"

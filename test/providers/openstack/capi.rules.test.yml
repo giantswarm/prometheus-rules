@@ -7,7 +7,7 @@ tests:
       - series: 'capi_machine_status_phase{cluster="galaxy", name="galaxy-72jq5", namespace="giantswarm", phase="Running"}'
         values: "1+0x10 0+0x20" #machine was in Running for 10 minutes and than in
       - series: 'capi_machine_status_phase{cluster="galaxy", name="galaxy-72jq5", namespace="giantswarm", phase="Failed"}'
-        values: "0+0x10 1+0x20"
+        values: "0+0x10 0+0x20"
     alert_rule_test:
       - alertname: MachineUnhealthyPhase
         eval_time: 30m

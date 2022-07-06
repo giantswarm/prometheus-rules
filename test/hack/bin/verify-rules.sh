@@ -64,13 +64,16 @@ for file in "${all_files[@]}"; do
 
 			filename=${file##*/}
 
-	        helm template --set="managementCluster.provider.kind=${provider}" --release-name prometheus-rules --namespace giantswarm ./helm/prometheus-rules -s ${file} | yq '.spec' - > ${GIT_WORKDIR}/test/providers/${provider}/${filename}
-			promtool check rules ${GIT_WORKDIR}/test/providers/${provider}/${filename}
-			#promtool test rules ${GIT_WORKDIR}/test/providers/${provider}/${file}.test
-			# todo:
-			# append file to a list of files with error and print a summary at the end
-			#find ${GIT_WORKDIR}/test/providers/${provider} -name '${file##*/}.test.yml' -print0 | xargs -0 promtool test rules
-			find ${GIT_WORKDIR}/test/providers/${provider} -name ${filename%.yml}.test.yml -print0 | xargs -0 promtool test rules
+			# don't run tests if no provider specific tests are defined
+			if [[ -d ${GIT_WORKDIR}/test/providers/${provider} ]]; then
+	        	helm template --set="managementCluster.provider.kind=${provider}" --release-name prometheus-rules --namespace giantswarm ./helm/prometheus-rules -s ${file} | yq '.spec' - > ${GIT_WORKDIR}/test/providers/${provider}/${filename}
+				promtool check rules ${GIT_WORKDIR}/test/providers/${provider}/${filename}
+				#promtool test rules ${GIT_WORKDIR}/test/providers/${provider}/${file}.test
+				# todo:
+				# append file to a list of files with error and print a summary at the end
+				#find ${GIT_WORKDIR}/test/providers/${provider} -name '${file##*/}.test.yml' -print0 | xargs -0 promtool test rules
+				find ${GIT_WORKDIR}/test/providers/${provider} -name ${filename%.yml}.test.yml -print0 | xargs -0 promtool test rules
+			fi
 	    done	
 	fi
 done

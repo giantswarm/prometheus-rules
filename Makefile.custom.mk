@@ -1,19 +1,22 @@
 
 .PHONY: test
-test: 
+test: install-tools
+	./test/hack/bin/verify-rules.sh
 	# make target install tools 
 	# do architect generate
 	# helm template --release-name cluster-api-monitoring --namespace giantswarm ./helm/prometheus-rules -s templates/alerting-rules/capi.rules.yml
 	# write 
 
 install-tools:
-	# move download into separate script
-	# download architect (latest stable)
-	# download helm
-	# curl prometheus, extract and only run `promtool`
+	./test/hack/bin/fetch-tools.sh
 
-clean:
+.PHONY: clean-dry-run
+clean-dry-run: ## dry run for `make clean` - print all untracked files
+	@git clean -xnf
+
+
+.PHONY: clean
+clean: ## Clean the git work dir and remove all untracked files
 	# clean stage
+	@git clean -xdf
 
-# test for all providers:
-# "openstack" "vcd" "vsphere" "gcp" "aws"

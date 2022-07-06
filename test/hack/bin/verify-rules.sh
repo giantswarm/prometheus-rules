@@ -7,15 +7,6 @@
 
 set -eu
 
-START_TIME="$(date +%s)"
-echo "$(date '+%H:%M:%S') promtool: start"
-
-GIT_WORKDIR=$(git rev-parse --show-toplevel)
-
-PROMTOOL=test/hack/bin/promtool
-HELM=test/hack/bin/helm
-ARCHITECT=test/hack/bin/architect
-
 array_contains() {
 	local search="$1"
 	local element
@@ -28,6 +19,17 @@ array_contains() {
 	return 1
 }
 
+START_TIME="$(date +%s)"
+echo "$(date '+%H:%M:%S') promtool: start"
+
+GIT_WORKDIR=$(git rev-parse --show-toplevel)
+
+PROMTOOL=test/hack/bin/promtool
+HELM=test/hack/bin/helm
+ARCHITECT=test/hack/bin/architect
+
+# prepare the helm chart
+${ARCHITECT} helm template --dir ${GIT_WORKDIR}/helm/prometheus-rules --dry-run
 
 expected_failure_relative_file="test/hack/allowlist/.promtool_ignore"
 expected_failure_file="${GIT_WORKDIR}/${expected_failure_relative_file}"
@@ -66,13 +68,13 @@ for file in "${all_files[@]}"; do
 
 			# don't run tests if no provider specific tests are defined
 			if [[ -d ${GIT_WORKDIR}/test/providers/${provider} ]]; then
-	        	helm template --set="managementCluster.provider.kind=${provider}" --release-name prometheus-rules --namespace giantswarm ./helm/prometheus-rules -s ${file} | yq '.spec' - > ${GIT_WORKDIR}/test/providers/${provider}/${filename}
-				promtool check rules ${GIT_WORKDIR}/test/providers/${provider}/${filename}
+	        	${HELM} template --set="managementCluster.provider.kind=${provider}" --release-name prometheus-rules --namespace giantswarm ./helm/prometheus-rules -s ${file} | yq '.spec' - > ${GIT_WORKDIR}/test/providers/${provider}/${filename}
+				${PROMTOOL} check rules ${GIT_WORKDIR}/test/providers/${provider}/${filename}
 				#promtool test rules ${GIT_WORKDIR}/test/providers/${provider}/${file}.test
 				# todo:
 				# append file to a list of files with error and print a summary at the end
 				#find ${GIT_WORKDIR}/test/providers/${provider} -name '${file##*/}.test.yml' -print0 | xargs -0 promtool test rules
-				find ${GIT_WORKDIR}/test/providers/${provider} -name ${filename%.yml}.test.yml -print0 | xargs -0 promtool test rules
+				find ${GIT_WORKDIR}/test/providers/${provider} -name ${filename%.yml}.test.yml -print0 | xargs -0 ${PROMTOOL} test rules
 			fi
 	    done	
 	fi

@@ -3,3 +3,4 @@
 # Except the following
 !.gitignore 
 !verify-rules.sh
+!fetch-tools.sh

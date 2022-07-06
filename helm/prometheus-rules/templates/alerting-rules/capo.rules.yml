@@ -6,7 +6,7 @@ metadata:
   namespace: {{.Values.namespace}}
 spec:
   groups:
-    - name: coredns
+    - name: capo
       rules:
         - alert: OpenStackMachineUnexpectedInstanceState
           expr: capi_openstackmachine_status_instance_state{state!="ACTIVE"} > 0

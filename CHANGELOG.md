@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Rename provider `vcd` to `cloud-director`.
+
 ## [2.31.0] - 2022-07-06
 
 ### Added

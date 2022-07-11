@@ -28,7 +28,7 @@ giantswarm.io/service-type: {{ .Values.serviceType }}
 {{- end -}}
 
 {{- define "providerTeam" -}}
-{{- if has .Values.managementCluster.provider.kind (list "kvm" "openstack" "vcd" "vsphere") -}}
+{{- if has .Values.managementCluster.provider.kind (list "kvm" "openstack" "cloud-director" "vsphere") -}}
 rocket
 {{- else -}}
 phoenix
@@ -44,7 +44,7 @@ phoenix
 {{- end -}}
 
 {{- define "isCertExporterInstalled" -}}
-{{- if has .Values.managementCluster.provider.kind (list "openstack" "vcd" "vsphere") -}}
+{{- if has .Values.managementCluster.provider.kind (list "openstack" "cloud-director" "vsphere") -}}
 false
 {{- else -}}
 true
@@ -52,7 +52,7 @@ true
 {{- end -}}
 
 {{- define "isClusterServiceInstalled" -}}
-{{- if has .Values.managementCluster.provider.kind (list "openstack" "vcd" "vsphere") -}}
+{{- if has .Values.managementCluster.provider.kind (list "openstack" "cloud-director" "vsphere") -}}
 false
 {{- else -}}
 true
@@ -60,7 +60,7 @@ true
 {{- end -}}
 
 {{- define "isVaultBeingMonitored" -}}
-{{- if has .Values.managementCluster.provider.kind (list "openstack" "vcd" "vsphere") -}}
+{{- if has .Values.managementCluster.provider.kind (list "openstack" "cloud-director" "vsphere") -}}
 false
 {{- else -}}
 true
@@ -68,7 +68,7 @@ true
 {{- end -}}
 
 {{- define "isBastionBeingMonitored" -}}
-{{- if has .Values.managementCluster.provider.kind (list "openstack" "vcd" "vsphere") -}}
+{{- if has .Values.managementCluster.provider.kind (list "openstack" "cloud-director" "vsphere") -}}
 false
 {{- else -}}
 true

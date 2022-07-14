@@ -11,9 +11,9 @@ spec:
       rules:
         - alert: MachineUnhealthyPhase
           annotations:
-            description: "{{`Machine {{ $labels.exported_namespace}}/{{ $labels.name }} stuck in phase {{ $labels.phase }} for more than 15 minutes.`}}"
+            description: "{{`Machine {{ $labels.exported_namespace}}/{{ $labels.name }} stuck in phase {{ $labels.phase }} for more than 30 minutes.`}}"
           expr: capi_machine_status_phase{phase!~"Running"} > 0
-          for: 15m
+          for: 30m
           labels:
             area: kaas
             cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
@@ -48,7 +48,7 @@ spec:
 
         - alert: ClusterUnhealthyPhase
           expr: capi_cluster_status_phase{phase!="Provisioned"} > 0
-          for: 4h
+          for: 1h
           labels:
             area: kaas
             cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}

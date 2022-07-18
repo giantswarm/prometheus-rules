@@ -11,7 +11,8 @@ spec:
       rules:
         - alert: MachineUnhealthyPhase
           annotations:
-            description: "{{`Machine {{ $labels.exported_namespace}}/{{ $labels.name }} stuck in phase {{ $labels.phase }} for more than 30 minutes.`}}"
+            description: |-
+              {{`Machine {{ $labels.exported_namespace}}/{{ $labels.name }} stuck in phase {{ $labels.phase }} for more than 30 minutes.`}}
           expr: capi_machine_status_phase{phase!~"Running"} > 0
           for: 30m
           labels:
@@ -31,7 +32,8 @@ spec:
             team: {{include "providerTeam" .}}
             topic: managementcluster
           annotations:
-            description: "{{`The clusters {{$labels.cluster_name}} machinedeployment {{$labels.exported_namespace}}/{{$labels.machinedeployment}} does not match the expected number of replicas for longer than 1h.`}}"
+            description: |-
+              {{`The clusters {{$labels.cluster_name}} machinedeployment {{$labels.exported_namespace}}/{{$labels.machinedeployment}} does not match the expected number of replicas for longer than 1h.`}}
 
         - alert: KubeadmControlPlaneReplicasMismatch
           expr: capi_kubeadmcontrolplane_spec_replicas != capi_kubeadmcontrolplane_status_replicas_ready
@@ -44,7 +46,8 @@ spec:
             team: {{include "providerTeam" .}}
             topic: managementcluster
           annotations:
-            description: "{{`The clusters {{$labels.cluster_name}} kubeadmcontrolplane {{$labels.exported_namespace}}/{{$labels.name}} does not match the expected number of replicas for longer than 90 minutes.`}}"
+            description: |-
+              {{`The clusters {{$labels.cluster_name}} kubeadmcontrolplane {{$labels.exported_namespace}}/{{$labels.name}} does not match the expected number of replicas for longer than 90 minutes.`}}
 
         - alert: ClusterUnhealthyPhase
           expr: capi_cluster_status_phase{phase!="Provisioned"} > 0
@@ -56,5 +59,6 @@ spec:
             team: {{include "providerTeam" .}}
             topic: managementcluster
           annotations:
-            description: "{{`Cluster {{$labels.exported_namespace}}/{{$labels.cluster_name}} is in a non healthy phase.`}}"
+            description: |-
+              {{`Cluster {{$labels.exported_namespace}}/{{$labels.cluster_name}} is in a non healthy phase.`}}
 {{- end }}

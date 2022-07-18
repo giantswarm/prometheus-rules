@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Move AzureServicePrincipalExpiresInX alerts to page only in BH
+
 ## [2.32.1] - 2022-07-18
 
 ### Fixed

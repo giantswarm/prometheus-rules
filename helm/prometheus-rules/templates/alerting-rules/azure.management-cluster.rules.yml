@@ -171,6 +171,7 @@ spec:
       for: 10m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: "true"
         severity: notify
         team: phoenix
         topic: azure
@@ -182,6 +183,7 @@ spec:
       for: 10m
       labels:
         area: kaas
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: phoenix
         topic: azure

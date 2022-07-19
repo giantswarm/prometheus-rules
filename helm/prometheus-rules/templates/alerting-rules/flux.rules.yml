@@ -159,7 +159,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         team: honeybadger
         topic: releng
-    - alert: FluxKustomizationFailed
+    - alert: FluxKustomizationFailedCustomer
       annotations:
         description: |-
           {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
@@ -172,7 +172,7 @@ spec:
         severity: notify
         team: honeybadger
         topic: releng
-    - alert: FluxWorkloadClusterKustomizationFailed
+    - alert: FluxWorkloadClusterKustomizationFailedCustomer
       annotations:
         description: |-
           {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
@@ -185,7 +185,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         team: honeybadger
         topic: releng
-    - alert: FluxSourceFailed
+    - alert: FluxSourceFailedCustomer
       annotations:
         description: |-
           {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
@@ -198,7 +198,7 @@ spec:
         severity: notify
         team: honeybadger
         topic: releng
-    - alert: FluxWorkloadClusterSourceFailed
+    - alert: FluxWorkloadClusterSourceFailedCustomer
       annotations:
         description: |-
           {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
@@ -211,7 +211,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         team: honeybadger
         topic: releng
-    - alert: FluxReconciliationTakingTooLong
+    - alert: FluxReconciliationTakingTooLongCustomer
       annotations:
         description: |-
           {{`Flux controller {{ $labels.controller }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is reconciling very slowly.`}}

@@ -30,7 +30,7 @@ spec:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-helmrelease/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster"} > 0
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", namespace=~".*giantswarm.*"} > 0
       for: 10m
       labels:
         area: kaas
@@ -43,7 +43,7 @@ spec:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-helmrelease/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="workload_cluster"} > 0
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="workload_cluster", organization="giantswarm"} > 0
       for: 2h
       labels:
         area: kaas
@@ -56,7 +56,7 @@ spec:
         description: |-
           {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-kustomization/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="management_cluster"} > 0
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="management_cluster", namespace=~".*giantswarm.*"} > 0
       for: 10m
       labels:
         area: kaas
@@ -69,7 +69,7 @@ spec:
         description: |-
           {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-kustomization/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="workload_cluster"} > 0
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="workload_cluster", organization="giantswarm"} > 0
       for: 2h
       labels:
         area: kaas
@@ -82,7 +82,7 @@ spec:
         description: |-
           {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-source/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="management_cluster"} > 0
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="management_cluster", namespace=~".*giantswarm.*"} > 0
       for: 2h
       labels:
         area: kaas
@@ -95,7 +95,7 @@ spec:
         description: |-
           {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-source/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="workload_cluster"} > 0
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="workload_cluster", organization="giantswarm"} > 0
       for: 2h
       labels:
         area: kaas
@@ -109,8 +109,8 @@ spec:
           {{`Flux controller {{ $labels.controller }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is reconciling very slowly.`}}
         opsrecipe: fluxcd-slow-reconciliation/
       expr: |
-        (sum(rate(controller_runtime_reconcile_time_seconds_sum{app=~".*flux.*"}[5m])) by (installation, cluster_id, controller) /
-        sum(rate(controller_runtime_reconcile_time_seconds_count{app=~".*flux.*"}[5m])) by (installation, cluster_id, controller)) > 60
+        (sum(rate(controller_runtime_reconcile_time_seconds_sum{app=~".*flux.*", namespace=~".*giantswarm.*"}[5m])) by (installation, cluster_id, controller) /
+        sum(rate(controller_runtime_reconcile_time_seconds_count{app=~".*flux.*", namespace=~".*giantswarm.*"}[5m])) by (installation, cluster_id, controller)) > 60
       for: 10m
       labels:
         area: kaas
@@ -128,5 +128,101 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
+        team: honeybadger
+        topic: releng
+  # Customer's Alerts
+  - name: fluxcd-customer
+    rules:
+    - alert: FluxHelmReleaseFailedCustomer
+      annotations:
+        description: |-
+          {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
+        opsrecipe: fluxcd-failing-helmrelease/
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", namespace!~".*giantswarm.*"} > 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: honeybadger
+        topic: releng
+    - alert: FluxWorkloadClusterHelmReleaseFailedCustomer
+      annotations:
+        description: |-
+          {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
+        opsrecipe: fluxcd-failing-helmrelease/
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="workload_cluster", organization!="giantswarm"} > 0
+      for: 2h
+      labels:
+        area: kaas
+        severity: notify
+        cancel_if_outside_working_hours: "true"
+        team: honeybadger
+        topic: releng
+    - alert: FluxKustomizationFailed
+      annotations:
+        description: |-
+          {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
+        opsrecipe: fluxcd-failing-kustomization/
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="management_cluster", namespace!~".*giantswarm.*"} > 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: honeybadger
+        topic: releng
+    - alert: FluxWorkloadClusterKustomizationFailed
+      annotations:
+        description: |-
+          {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
+        opsrecipe: fluxcd-failing-kustomization/
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="workload_cluster", organization!="giantswarm"} > 0
+      for: 2h
+      labels:
+        area: kaas
+        severity: notify
+        cancel_if_outside_working_hours: "true"
+        team: honeybadger
+        topic: releng
+    - alert: FluxSourceFailed
+      annotations:
+        description: |-
+          {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
+        opsrecipe: fluxcd-failing-source/
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="management_cluster", namespace!~".*giantswarm.*"} > 0
+      for: 2h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: honeybadger
+        topic: releng
+    - alert: FluxWorkloadClusterSourceFailed
+      annotations:
+        description: |-
+          {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
+        opsrecipe: fluxcd-failing-source/
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="workload_cluster", organization!="giantswarm"} > 0
+      for: 2h
+      labels:
+        area: kaas
+        severity: notify
+        cancel_if_outside_working_hours: "true"
+        team: honeybadger
+        topic: releng
+    - alert: FluxReconciliationTakingTooLong
+      annotations:
+        description: |-
+          {{`Flux controller {{ $labels.controller }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is reconciling very slowly.`}}
+        opsrecipe: fluxcd-slow-reconciliation/
+      expr: |
+        (sum(rate(controller_runtime_reconcile_time_seconds_sum{app=~".*flux.*", namespace!~".*giantswarm.*"}[5m])) by (installation, cluster_id, controller) /
+        sum(rate(controller_runtime_reconcile_time_seconds_count{app=~".*flux.*", namespace!~".*giantswarm.*"}[5m])) by (installation, cluster_id, controller)) > 60
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: notify
         team: honeybadger
         topic: releng

@@ -48,3 +48,19 @@ spec:
         severity: "page"
         team: "atlas"
         topic: "observability"
+    - alert: "RemoteWriteReconcileErrors"
+      annotations:
+        description: 'RemoteWrite controller to many reconcile errors'
+        opsrecipe: ""
+      expr: |
+        increase(operatorkit_controller_errors_total{controller="prometheus-meta-operator-remote-write-controller"}[30m]) > 3
+      for: 30m
+      labels:
+        area: "empowerment"
+        cancel_if_mc_kube_state_metrics_down: "false"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        installation: {{ .Values.managementCluster.name }}
+        severity: "page"
+        team: "atlas"
+        topic: "observability"

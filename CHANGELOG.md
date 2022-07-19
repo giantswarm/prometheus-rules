@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Split Giant Swarm and customer Flux alerts.
+- Switch `severity` of customer's Flux alerts to `notify`.
+
 ## [2.33.0] - 2022-07-18
 
 ### Changed

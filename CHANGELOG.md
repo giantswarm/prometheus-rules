@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Improve `CoreDNSDeploymentNotSatisfied` query.
+- Improve `CoreDNSDeploymentNotSatisfied` query to consider both Coredns deployments (running in masters and workers).
 
 ## [2.34.0] - 2022-07-20
 

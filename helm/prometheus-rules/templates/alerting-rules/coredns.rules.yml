@@ -60,7 +60,7 @@ spec:
       annotations:
         description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: core-dns-deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_available{deployment="coredns"} / (kube_deployment_status_replicas_available{deployment="coredns"} + kube_deployment_status_replicas_unavailable{deployment="coredns"}) * 100 < 51
+      expr: sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) / (sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) + sum(kube_deployment_status_replicas_unavailable{deployment=~"coredns.*"}))* 100 < 51
       for: 10m
       labels:
         area: managedservices

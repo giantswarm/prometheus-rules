@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Split Giant Swarm and customer Flux alerts.
 - Switch `severity` of customer's Flux alerts to `notify`.
+- Make `ClusterAutoscalerFailedScaling` less sensitive.
 
 ## [2.33.0] - 2022-07-18
 

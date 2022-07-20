@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add `remotewrite` reconcile errors alert.
+- Add `pmo` reconcile errors alert.
 
 ## [2.35.0] - 2022-07-20
 

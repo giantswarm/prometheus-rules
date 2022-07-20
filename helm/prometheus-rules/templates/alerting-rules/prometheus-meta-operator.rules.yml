@@ -48,13 +48,13 @@ spec:
         severity: "page"
         team: "atlas"
         topic: "observability"
-    - alert: "RemoteWriteReconcileErrors"
+    - alert: "PrometheusMetaOperatorReconcileErrors"
       annotations:
-        description: 'RemoteWrite controller to many reconcile errors'
-        opsrecipe: ""
+        description: '{{`prometheus-meta-operator controller {{ $labels.controller }} too many reconcile errors.`}}'
+        opsrecipe: "pmo-reconcile-errors/"
       expr: |
-        increase(operatorkit_controller_errors_total{controller="prometheus-meta-operator-remote-write-controller"}[30m]) > 3
-      for: 30m
+        avg_over_time(operatorkit_controller_errors_total[20m]) > 0
+      for: 1h
       labels:
         area: "empowerment"
         cancel_if_mc_kube_state_metrics_down: "false"

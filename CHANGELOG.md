@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Enable api-server SLO alert during upgrades of HA masters clusters.
+
 ## [2.38.0] - 2022-07-21
 
 ### Changed

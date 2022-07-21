@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Inhibit gcp alerts out of business hours.
+- Don't monitor bastions on gcp.
+- Don't monitor vault on gcp.
+- Don't monitor cluster-service on gcp.
+
 ## [2.36.0] - 2022-07-20
 
 ### Added

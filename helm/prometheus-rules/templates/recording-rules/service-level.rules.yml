@@ -17,14 +17,18 @@ spec:
         service: api-server
       record: raw_slo_requests
     # The first statement ensures that an api-server error is counted if the kubernetes api is not up for a specific cluster.
-    # The next statement returns 1 for a cluster with "updated", "created" or unknown (absent) status.
-    # It returns 0 for clusters in "updating", "creating" and "deleting" status. 
-    # By multiplying with this statement we ensure that errors for transitioning clusters are not counted.
+    # The next statement returns 1 in 3 cases:
+    # - for a cluster with "updated", "created" status
+    # - for a cluster with unknown (absent) status.
+    # - for an HA master cluster
+    # It returns 0 otherwise.
+    # We use the second statement to avoid paging for clusters that have one master only which will obviously be down during upgrades.
     - expr: sum((up{app='kubernetes'} * -1) + 1) by (cluster_id, cluster_type) * 
             ignoring (cluster_type) group_left (cluster_id) 
             (
               max(cluster_operator_cluster_status{status=~"Updated|Created"}) by (cluster_id) 
               or absent(cluster_operator_cluster_status)
+              or (count(up{app="kubernetes"}) by (cluster_id)) > 1
             )
       labels:
         class: HIGH

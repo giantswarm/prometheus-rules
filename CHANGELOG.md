@@ -15,7 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Don't monitor bastions on gcp.
 - Don't monitor vault on gcp.
 - Don't monitor cluster-service on gcp.
-- Enable api-server SLO alert during upgrades of HA masters clusters.
 
 ## [2.36.0] - 2022-07-20
 

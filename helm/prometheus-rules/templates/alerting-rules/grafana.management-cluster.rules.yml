@@ -41,7 +41,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_scrape_timeout: "true"
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: notify
         team: atlas
         topic: observability
     - alert: GrafanaFolderPermissionsCronjobFails
@@ -58,6 +58,6 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_scrape_timeout: "true"
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: notify
         team: atlas
         topic: observability

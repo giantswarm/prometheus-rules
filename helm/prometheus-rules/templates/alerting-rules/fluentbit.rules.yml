@@ -19,13 +19,13 @@ spec:
       for: 10m
       labels:
         area: empowerment
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: "true"
         cancel_if_apiserver_down: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_scrape_timeout: "true"
-        severity: notify
+        severity: page
         team: atlas
         topic: observability
     - alert: FluentbitDown
@@ -36,12 +36,12 @@ spec:
       for: 15m
       labels:
         area: empowerment
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: "true"
         cancel_if_apiserver_down: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_scrape_timeout: "true"
-        severity: notify
+        severity: page
         team: atlas
         topic: observability

@@ -39,8 +39,8 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_kubelet_down: "true"
         cancel_if_cluster_has_no_workers: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: observability
     - alert: KubeStateMetricsDown

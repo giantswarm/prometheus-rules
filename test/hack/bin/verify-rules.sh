@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 #
 # This test ensures that all prometheus rules are valid
@@ -6,106 +7,128 @@
 
 set -eu
 
-array_contains() {
-	local search="$1"
-	local element
-	shift
-	for element; do
-		if [[ "${element}" == "${search}" ]]; then
-			return 0
-		fi
-	done
-	return 1
+function array_contains() {
+    local search="$1" && shift
+
+    local element
+    for element; do
+        if [[ "$element" == "$search" ]]; then
+            return 0
+        fi
+    done
+    return 1
 }
 
-START_TIME="$(date +%s)"
-echo "$(date '+%H:%M:%S') promtool: start"
+function main() {
 
-GIT_WORKDIR=$(git rev-parse --show-toplevel)
+    START_TIME="$(date +%s)"
+    echo "$(date '+%H:%M:%S') promtool: start"
 
-PROMTOOL=test/hack/bin/promtool
-HELM=test/hack/bin/helm
-ARCHITECT=test/hack/bin/architect
+    local GIT_WORKDIR
+    GIT_WORKDIR=$(git rev-parse --show-toplevel)
 
-# prepare the helm chart
-${ARCHITECT} helm template --dir ${GIT_WORKDIR}/helm/prometheus-rules --dry-run
+    local PROMTOOL=test/hack/bin/promtool
+    local HELM=test/hack/bin/helm
+    local ARCHITECT=test/hack/bin/architect
 
-expected_failure_relative_file="test/hack/allowlist/.promtool_ignore"
-expected_failure_file="${GIT_WORKDIR}/${expected_failure_relative_file}"
+    # prepare the helm chart
+    echo "### Helm chart preparation"
+    "$GIT_WORKDIR/$ARCHITECT" helm template --dir "$GIT_WORKDIR/helm/prometheus-rules" --dry-run
 
-# Retrieve all files we're going to check
-all_files=()
-while read -r line || [[ -n "${line}" ]]; do
-	all_files+=("${line}")
-done < <(git ls-files | grep "helm/prometheus-rules/templates/alerting-rules" | sed -e 's|^helm/prometheus-rules/||' | grep -Ee '\.(yml)$')
+    expected_failure_relative_file="test/hack/allowlist/.promtool_ignore"
+    expected_failure_file="$GIT_WORKDIR/$expected_failure_relative_file"
 
-# Get prefixes whitelisted via the failure_file
-expected_failure_prefixes=()
-# [[ -n "$line" ]] is used to also read the last line if the file has no trailing new line
-while read -r line || [[ -n "${line}" ]]; do
-	expected_failure_prefixes+=("${line}")
-done < "${expected_failure_file}"
+    # Retrieve all files we're going to check
+    local -a all_files
+    mapfile -t all_files < <(
+        cd "$GIT_WORKDIR" || return 1
+        # filter alerting-rules files, and remove prefix `helm/prometheus-rules/`
+        git ls-files \
+            | sed -En 's_^helm/prometheus-rules/(templates/alerting-rules/.*\.ya?ml)$_\1_p' || echo error
+    )
 
-providers=()
-while read -r line || [[ -n "${line}" ]]; do
-    providers+=("${line}")
-done < <(cat ${GIT_WORKDIR}/test/hack/allowlist/providers)
+    # Get prefixes whitelisted via the failure_file
+    local -a expected_failure_prefixes
+    mapfile -t expected_failure_prefixes <"$expected_failure_file"
 
-promtool_check_errors=()
-promtool_test_errors=()
+    local -a providers
+    mapfile -t providers <"$GIT_WORKDIR/test/hack/allowlist/providers"
 
-for file in "${all_files[@]}"; do
-	# check if the ${file} is whitelisted via the ${expected_failure_file}
-	array_contains "${file}" "${expected_failure_prefixes[@]}" && whitelisted=$? || whitelisted=$?
+    local -a promtool_check_errors=()
+    local -a promtool_test_errors=()
 
-	# if it is not whitelisted add the error to new_shellcheck_errors
-	if [[ "${whitelisted}" -ne "0" ]]; then
-		echo ${file}
-		#new_shellcheck_errors+=("${shellcheck_result_entry}")
-	    for provider in "${providers[@]}"; do
-	        echo ${provider}
+    for file in "${all_files[@]}"; do
 
-			filename=${file##*/}
+        # if the $file is whitelisted via the $expected_failure_file
+        if array_contains "$file" "${expected_failure_prefixes[@]}"; then
+            # don't run tests for it
+            echo "### Skipping $file"
+            continue
+        fi
 
-			# don't run tests if no provider specific tests are defined
-			if [[ -d ${GIT_WORKDIR}/test/providers/${provider} ]]; then
-	        	${HELM} template --set="managementCluster.provider.kind=${provider}" --release-name prometheus-rules --namespace giantswarm ./helm/prometheus-rules -s ${file} | yq '.spec' - > ${GIT_WORKDIR}/test/providers/${provider}/${filename}
+        echo "### Testing $file"
+        for provider in "${providers[@]}"; do
+            echo "###    Provider: $provider"
 
-				${PROMTOOL} check rules ${GIT_WORKDIR}/test/providers/${provider}/${filename} 
+            # retrieve basename in pure bash
+            filename="${file##*/}"
 
-				find ${GIT_WORKDIR}/test/providers/${provider} -name ${filename%.yml}.test.yml -print0 | xargs -0 ${PROMTOOL} test rules
+            # don't run tests if no provider specific tests are defined
+            if [[ ! -d "$GIT_WORKDIR/test/providers/$provider" ]]; then
+                echo "###   No tests for proviter $provider - skipping"
+                continue
+            fi
 
-			fi
-	    done	
-	fi
-done
+            echo "###    extracting $GIT_WORKDIR/test/providers/$provider/$filename"
+            "$GIT_WORKDIR/$HELM" template \
+                --set="managementCluster.provider.kind=$provider" \
+                --release-name prometheus-rules \
+                --namespace giantswarm "$GIT_WORKDIR"/helm/prometheus-rules \
+                -s "$file" \
+                | yq '.spec' - > "$GIT_WORKDIR/test/providers/$provider/$filename"
 
+            echo "###    promtool check rules $GIT_WORKDIR/test/providers/$provider/$filename"
+            local promtool_check_output
+            promtool_check_output="$("$GIT_WORKDIR/$PROMTOOL" check rules "$GIT_WORKDIR/test/providers/$provider/$filename" 2>&1)" \
+                || promtool_check_errors+=("$promtool_check_output")
 
+            local promtool_test_output
+            local testfile="$GIT_WORKDIR/test/providers/$provider/${filename%.yml}.test.yml"
+            if [[ ! -f "$testfile" ]]; then
+                echo "###    testfile $testfile not found, skipping promtool test"
+            fi
+            echo "###    promtool test rules ${filename%.yml}.test.yml"
+            promtool_test_output="$("$GIT_WORKDIR/$PROMTOOL" test rules "$testfile" 2>&1)" \
+                || promtool_test_errors+=("$promtool_test_output")
 
-# TODO clean git state
-# - undo architect modifications
-#   - git checkout -- helm/prometheus-rules/Chart.yaml
-#   - git checkout -- helm/prometheus-rules/values.yaml
-# - shfmt + shellcheck
-# - make script output nice
+        done
+    done
 
+    # Cleanup
+    git checkout -- "$GIT_WORKDIR/helm/prometheus-rules/Chart.yaml"
+    git checkout -- "$GIT_WORKDIR/helm/prometheus-rules/values.yaml"
 
-# if [[ ${#promtool_test_errors[@]} -eq 0 || ${#promtool_check_errors[@]} -eq 0 ]]; then
-# 	echo "Congratulations!  All prometheus rules have been promtool checked."
-# else
-# 	{
-# 		echo
-# 		echo "Please review the below errors."
-# 		echo
-# 		for err in "${promtool_test_errors[@]}"; do
-# 			echo "  $err"
-# 		done
-# 
-# 		for err in "${promtool_check_errors[@]}"; do
-# 			echo "  $err"
-# 		done
-# 	} >&2
-# 	false
-# fi
+    # Job is done, print end time
+    echo "$(date '+%H:%M:%S') promtool: end (Elapsed time: $(($(date +%s) - START_TIME))s)"
 
-echo "$(date '+%H:%M:%S') promtool: end (Elapsed time: $(($(date +%s) - START_TIME))s)"
+    # Final output
+    if [[ ${#promtool_test_errors[@]} -eq 0 && ${#promtool_check_errors[@]} -eq 0 ]]; then
+        echo "Congratulations!  All prometheus rules have been promtool checked."
+    else
+        {
+            echo
+            echo "Please review the below errors."
+            echo
+            for err in "${promtool_test_errors[@]}"; do
+                echo "  $err"
+            done
+
+            for err in "${promtool_check_errors[@]}"; do
+                echo "  $err"
+            done
+        } >&2
+        false
+    fi
+}
+
+main "$@"

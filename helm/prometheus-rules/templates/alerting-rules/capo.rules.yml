@@ -1,8 +1,9 @@
 {{- if or (eq .Values.managementCluster.provider.kind "openstack") }}
+apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   labels: {{- include "labels.common" . | nindent 4}}
-  name: capi.rules
+  name: capo.rules
   namespace: {{.Values.namespace}}
 spec:
   groups:
@@ -18,10 +19,11 @@ spec:
             team: {{include "providerTeam" .}}
             topic: managementcluster
           annotations:
-            description: "{{`OpenStackMachine {{$labels.namespace}}/{{$labels.name}} instance state is {{$labels.state}}.`}}"
+            description: |-
+              {{`OpenStackMachine {{$labels.exported_namespace}}/{{$labels.name}} instance state is {{$labels.state}}.`}}
 
         - alert: OpenStackMachineFailure
-          expr: capi_openstackmachine_status_failure{failure!="<nil>"}
+          expr: capi_openstackmachine_status_failure{reason!=""}
           for: 30m
           labels:
             area: kaas
@@ -30,10 +32,12 @@ spec:
             team: {{include "providerTeam" .}}
             topic: managementcluster
           annotations:
-            description: "{{`OpenStackMachine {{$labels.namespace}}/{{$labels.name}} failure reason is {{$labels.reason}}.`}}"
+            description: |-
+              {{`OpenStackMachine {{$labels.exported_namespace}}/{{$labels.name}} failure reason is {{$labels.reason}}.`}}
+            opsrecipe: remove-errors-from-capi-capo-crs/
 
         - alert: OpenStackClusterFailure
-          expr: capi_openstackcluster_status_failure{failure!="<nil>"}
+          expr: capi_openstackcluster_status_failure{reason!=""}
           for: 30m
           labels:
             area: kaas
@@ -42,5 +46,7 @@ spec:
             team: {{include "providerTeam" .}}
             topic: managementcluster
           annotations:
-            description: "{{`OpenStackCluster {{$labels.namespace}}/{{$labels.name}} failure reason is {{$labels.reason}}.`}}"
+            description: |-
+              {{`OpenStackCluster {{$labels.exported_namespace}}/{{$labels.name}} failure reason is {{$labels.reason}}.`}}
+            opsrecipe: remove-errors-from-capi-capo-crs/
 {{- end }}

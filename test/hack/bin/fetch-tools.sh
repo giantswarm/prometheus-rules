@@ -5,6 +5,7 @@ set -euo pipefail
 ARCHITECT_VERSION="6.5.0"
 PROMETHEUS_VERSION="2.36.2"
 HELM_VERSION="3.9.0"
+YQ_VERSION="4.26.1"
 
 GIT_WORKDIR=$(git rev-parse --show-toplevel)
 
@@ -14,12 +15,16 @@ Linux*)
     export PROMETHEUS_SOURCE="https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz"
     export HELM_SOURCE="https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz"
     export ARCHITECT_SOURCE="https://github.com/giantswarm/architect/releases/download/v${ARCHITECT_VERSION}/architect-v${ARCHITECT_VERSION}-linux-amd64.tar.gz"
+    export YQ_SOURCE="https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64.tar.gz"
+    export YQ_BIN_FILE="yq_linux_amd64"
     ;;
 
 Darwin*)
     export PROMETHEUS_SOURCE="https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.darwin-amd64.tar.gz"
     export HELM_SOURCE="https://get.helm.sh/helm-v${HELM_VERSION}-darwin-amd64.tar.gz"
     export ARCHITECT_SOURCE="https://github.com/giantswarm/architect/releases/download/v${ARCHITECT_VERSION}/architect-v${ARCHITECT_VERSION}-darwin-amd64.tar.gz"
+    export YQ_SOURCE="https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_darwin_arm64.tar.gz"
+    export YQ_BIN_FILE="yq_darwin_arm64"
     ;;
 
 *)
@@ -28,7 +33,7 @@ Darwin*)
 
 esac
 
-function download() {
+download() {
     local sourcefile="$1" && shift
     local destfile="$1" && shift
 
@@ -44,7 +49,7 @@ function download() {
     fi
 }
 
-function extract() {
+extract() {
     local binfile="$1" && shift
     local tarfile="$1" && shift
     local sourceurl="$1" && shift
@@ -72,7 +77,7 @@ function extract() {
     fi
 }
 
-function main() {
+main() {
     extract \
         "${GIT_WORKDIR}/test/hack/bin/promtool" \
         "$GIT_WORKDIR/test/hack/bin/prometheus-$PROMETHEUS_VERSION.tar.gz" \
@@ -88,6 +93,14 @@ function main() {
         "${GIT_WORKDIR}/test/hack/bin/architect-${ARCHITECT_VERSION}.tar.gz" \
         "$ARCHITECT_SOURCE" \
         "architect-v${ARCHITECT_VERSION}-*/architect"
+    extract \
+        "${GIT_WORKDIR}/test/hack/bin/${YQ_BIN_FILE}" \
+        "${GIT_WORKDIR}/test/hack/bin/yq-${YQ_VERSION}.tar.gz" \
+        "$YQ_SOURCE" \
+        "*/yq_*"
+    if [[ ! -f "${GIT_WORKDIR}/test/hack/bin/yq" ]]; then
+        ln -s "${GIT_WORKDIR}/test/hack/bin/${YQ_BIN_FILE}" "${GIT_WORKDIR}/test/hack/bin/yq"
+    fi
 }
 
 main "$@"

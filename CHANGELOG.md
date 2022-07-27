@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.39.2] - 2022-07-27
+
 ### Changed
 
 - NodeExporterCollectorFailed does not page anymore
@@ -1000,7 +1002,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.39.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.39.2...HEAD
+[2.39.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.39.1...v2.39.2
 [2.39.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.39.0...v2.39.1
 [2.39.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.38.0...v2.39.0
 [2.38.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.37.0...v2.38.0

@@ -7,6 +7,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- alert "GrafanaFolderPermissionsCronjobFails"
+- alert "FluentbitDropRatio"
+- Alerting documentation
+
+### Changed
+
+- Atlas alerts that did not page now do, at least during workhours
+
+## [2.38.0] - 2022-07-21
+
+### Changed
+- Revert enable api-server SLO alert during upgrades of HA masters clusters.
+
+## [2.37.0] - 2022-07-21
+
+### Changed
+
+- Inhibit gcp alerts out of business hours.
+- Don't monitor bastions on gcp.
+- Don't monitor vault on gcp.
+- Don't monitor cluster-service on gcp.
+- Enable api-server SLO alert during upgrades of HA masters clusters.
+
+## [2.36.0] - 2022-07-20
+
+### Added
+
+- Add `pmo` reconcile errors alert.
+
+## [2.35.0] - 2022-07-20
+
+### Changed
+
+- Improve `CoreDNSDeploymentNotSatisfied` query to consider both Coredns deployments (running in masters and workers).
+
+## [2.34.0] - 2022-07-20
+
+### Changed
+
+- Split Giant Swarm and customer Flux alerts.
+- Switch `severity` of customer's Flux alerts to `notify`.
+- Make `ClusterAutoscalerFailedScaling` less sensitive.
+
+## [2.33.0] - 2022-07-18
+
+### Changed
+- Move AzureServicePrincipalExpiresInX alerts to page only in BH
+
+## [2.32.1] - 2022-07-18
+
+### Fixed
+
+- Fixing `capi` and `capo` template rendering
+
+## [2.32.0] - 2022-07-14
+
 ### Changed
 
 - Rename provider `vcd` to `cloud-director`.
@@ -31,6 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add Rules for Cluster API and Cluster API Openstack for team rocket
 - Add `aws-cloud-controller-manager`, `azure-cloud-controller-manager`, `azure-cloud-node-manager`, `azure-scheduled-events` and `csi-azuredisk-node` to the daemonset SLO query.
 
 ## [2.28.0] - 2022-06-30
@@ -928,7 +987,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.31.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.38.0...HEAD
+[2.38.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.37.0...v2.38.0
+[2.37.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.36.0...v2.37.0
+[2.36.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.35.0...v2.36.0
+[2.35.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.34.0...v2.35.0
+[2.34.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.33.0...v2.34.0
+[2.33.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.32.1...v2.33.0
+[2.32.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.32.0...v2.32.1
+[2.32.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.31.0...v2.32.0
 [2.31.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.30.0...v2.31.0
 [2.30.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.29.0...v2.30.0
 [2.29.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.28.0...v2.29.0

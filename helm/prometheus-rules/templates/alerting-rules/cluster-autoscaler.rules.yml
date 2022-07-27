@@ -32,7 +32,7 @@ spec:
       annotations:
         description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has failed scaling up.`}}'
         opsrecipe: cluster-autoscaler-scaling/
-      expr: increase(cluster_autoscaler_failed_scale_ups_total[1h]) > 0
+      expr: increase(cluster_autoscaler_failed_scale_ups_total[5m]) > 1
       for: 15m
       labels:
         area: managedservices

@@ -18,8 +18,8 @@ spec:
       for: 30m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: managementcluster
     # We split up the alerts for unsatisfied daemon sets because of network
@@ -32,7 +32,7 @@ spec:
       for: 3h
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: managementcluster

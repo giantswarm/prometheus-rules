@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - alert "GrafanaFolderPermissionsCronjobFails"
 - alert "FluentbitDropRatio"
 
+### Changed
+
+- Atlas alerts that did not page now do, at least during workhours
+
 ## [2.38.0] - 2022-07-21
 
 ### Changed

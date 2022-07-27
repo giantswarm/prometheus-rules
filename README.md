@@ -17,7 +17,7 @@ By running `make test` in your local environment, all required binaries will be 
 #### Writing new tests
 
 1. remove the rules file you would like to test from `test/conf/promtool_ignore`
-1. create a new test file in [unit testing rules] format for each provider in `test/conf/providers` in `test/tests/providers/<providers>/`
+1. create a new test file in [unit testing rules] format either globally in `test/conf/providers/global/` or provider-specific in `test/tests/providers/<provider>/`
 1. by running `make test` you can validate the your testing rules.
    Output should look like the follows:
 
@@ -40,6 +40,11 @@ By running `make test` in your local environment, all required binaries will be 
    09:06:29 promtool: end (Elapsed time: 1s)
    Congratulations!  All prometheus rules have been promtool checked.
    ```
+
+#### Test exceptions
+
+* Rule files that can't be tested are listed in `test/conf/promtool_ignore`.
+* Rule files that can't be tested with a specific provider are listed in `test/conf/promtool_ignore_<provider>`.
 
 #### Limitation
 

@@ -21,7 +21,7 @@ spec:
       for: 5m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: managementcluster

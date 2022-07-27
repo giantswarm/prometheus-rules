@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### fixed
+
+- GrafanaFolderPermissionsCronjobFails alert
+
 ## [2.39.0] - 2022-07-27
 
 ### Added

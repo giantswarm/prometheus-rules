@@ -24,7 +24,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_scrape_timeout: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        severity: page
         team: atlas
         topic: observability
     - alert: GrafanaFolderPermissionsDown
@@ -44,6 +44,30 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_scrape_timeout: "true"
         cancel_if_outside_working_hours: "true"
-        severity: notify
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: GrafanaFolderPermissionsCronjobFails
+      # Monitors that folder permissions job has run successfully.
+      # We have a cronjob (grafana-permissions) that runs every 20 minutes.
+      # Here we check the kubernetes job status
+      annotations:
+        description: '{{`Grafana permissions updates cronjob failed for ({{ $labels.job_name }}).`}}'
+        opsrecipe: grafana-perms/
+      # expression explanation:
+      # - we create cronjob label from cron name (label_replace)
+      # - we sum number of failed to have one global value
+      # - we avg_over_time to avoid 0 value when a cron was skipped for whatever reason
+      expr: sum(label_replace(avg_over_time(kube_job_status_failed{job_name=~"grafana-permissions.*"}[60m]), "cronjob", "$1", "job_name", "(grafana-permissions)-.*")) by (cronjob) > 0
+      for: 6h
+      labels:
+        area: managedservices
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_scrape_timeout: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: observability

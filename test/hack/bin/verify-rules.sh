@@ -35,8 +35,8 @@ main() {
     echo "### Helm chart preparation"
     "$GIT_WORKDIR/$ARCHITECT" helm template --dir "$GIT_WORKDIR/helm/prometheus-rules" --dry-run
 
-    expected_failure_relative_file="test/conf/promtool_ignore"
-    expected_failure_file="$GIT_WORKDIR/$expected_failure_relative_file"
+    expected_failure_relative_file_global="test/conf/promtool_ignore"
+    expected_failure_file_global="$GIT_WORKDIR/$expected_failure_relative_file_global"
 
     # Retrieve all files we're going to check
     local -a all_files
@@ -48,8 +48,9 @@ main() {
     )
 
     # Get prefixes whitelisted via the failure_file
-    local -a expected_failure_prefixes
-    mapfile -t expected_failure_prefixes <"$expected_failure_file"
+    local -a expected_failure_prefixes_global=()
+    [[ -f "$expected_failure_file_global" ]] \
+        && mapfile -t expected_failure_prefixes_global <"$expected_failure_file_global"
 
     local -a providers
     mapfile -t providers <"$GIT_WORKDIR/test/conf/providers"
@@ -57,18 +58,32 @@ main() {
     local -a promtool_check_errors=()
     local -a promtool_test_errors=()
 
-    for file in "${all_files[@]}"; do
+    for provider in "${providers[@]}"; do
+        echo "### Running tests for provider: $provider"
 
-        # if the $file is whitelisted via the $expected_failure_file
-        if array_contains "$file" "${expected_failure_prefixes[@]}"; then
-            # don't run tests for it
-            echo "### Skipping $file"
-            continue
-        fi
+        # Get the list of whitelisted files for this provider
+        local expected_failure_relative_file_provider="test/conf/promtool_ignore_$provider"
+        local expected_failure_file_provider="$GIT_WORKDIR/$expected_failure_relative_file_provider"
+        local -a expected_failure_prefixes_provider=()
+        [[ -f "$expected_failure_file_provider" ]] \
+            && mapfile -t expected_failure_prefixes_provider <"$expected_failure_file_provider"
 
-        echo "### Testing $file"
-        for provider in "${providers[@]}"; do
-            echo "###    Provider: $provider"
+        for file in "${all_files[@]}"; do
+
+            # if the file is whitelisted via the global ignore file
+            if array_contains "$file" "${expected_failure_prefixes_global[@]}"; then
+                # don't run tests for it
+                echo "###  Skipping $file: listed in $expected_failure_relative_file_global"
+                continue
+            fi
+            # if the file is whitelisted via the provider ignore file
+            if array_contains "$file" "${expected_failure_prefixes_provider[@]}"; then
+                # don't run tests for it
+                echo "###  Skipping $file: listed in $expected_failure_relative_file_provider"
+                continue
+            fi
+
+            echo "###  Testing $file"
 
             # retrieve basename in pure bash
             filename="${file##*/}"
@@ -85,21 +100,38 @@ main() {
                 --release-name prometheus-rules \
                 --namespace giantswarm "$GIT_WORKDIR"/helm/prometheus-rules \
                 -s "$file" |
-                $YQ '.spec' - >"$GIT_WORKDIR/test/tests/providers/$provider/$filename"
+                "$GIT_WORKDIR/$YQ" '.spec' - >"$GIT_WORKDIR/test/tests/providers/$provider/$filename"
 
             echo "###    promtool check rules $GIT_WORKDIR/test/tests/providers/$provider/$filename"
             local promtool_check_output
             promtool_check_output="$("$GIT_WORKDIR/$PROMTOOL" check rules "$GIT_WORKDIR/test/tests/providers/$provider/$filename" 2>&1)" ||
                 promtool_check_errors+=("$promtool_check_output")
 
-            local promtool_test_output
-            local testfile="$GIT_WORKDIR/test/tests/providers/$provider/${filename%.yml}.test.yml"
-            if [[ ! -f "$testfile" ]]; then
-                echo "###    testfile $testfile not found, skipping promtool test"
+            local global_testfile="$GIT_WORKDIR/test/tests/providers/global/${filename%.yml}.test.yml"
+            local provider_testfile="$GIT_WORKDIR/test/tests/providers/$provider/${filename%.yml}.test.yml"
+
+            # Fail if no testfile found
+            if [[ ! -f "$global_testfile" ]] \
+                && [[ ! -f "$provider_testfile" ]]
+            then
+                echo "### No testfile found for $filename - error"
+                promtool_test_errors+=("NO TEST FILE for $filename")
+                continue
             fi
-            echo "###    promtool test rules ${filename%.yml}.test.yml"
-            promtool_test_output="$("$GIT_WORKDIR/$PROMTOOL" test rules "$testfile" 2>&1)" ||
-                promtool_test_errors+=("$promtool_test_output")
+
+            local promtool_test_output
+
+            if [[ -f "$global_testfile" ]]; then
+                echo "###    promtool test rules ${filename%.yml}.test.yml - global"
+                promtool_test_output="$("$GIT_WORKDIR/$PROMTOOL" test rules "$global_testfile" 2>&1)" ||
+                    promtool_test_errors+=("$promtool_test_output")
+            fi
+
+            if [[ -f "$provider_testfile" ]]; then
+                echo "###    promtool test rules ${filename%.yml}.test.yml - $provider"
+                promtool_test_output="$("$GIT_WORKDIR/$PROMTOOL" test rules "$provider_testfile" 2>&1)" ||
+                    promtool_test_errors+=("$promtool_test_output")
+            fi
 
         done
     done

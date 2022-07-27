@@ -56,15 +56,31 @@ Any Alert includes:
 #### Routing
 
 Alertmanager does the routing based on the labels menitoned above.
+You can see the routing rules in alertmanager's config (opsctl open `alertmanager`, then go to `Status`), section `route:`.
 
-* `severity=page` is sent to opsgenie
+* are sent to opsgenie:
+  * all `severity=page` alerts
+* are sent to slack team-specific channels:
+  * `severity=page` or `severity=notify`
+  * `team` defines which channel to route to.
+
 
 ##### Opsgenie routing
 
-Opsgenie routing is defined in the `Teams` section.
+Opsgenie routing is defined in the `Teams` section of the Opsgenie application.
 
 Opsgenie route alerts based on the `team` label.
 
+
+#### Inhibitions
+
+The "cancel_if" labels are used for inhibitions.
+You can see the inhibition rules in alertmanager's config (opsctl open `alertmanager`, then go to `Status`), section `inhibit_rules:`.
+
+Official documentation for inhibit rules can be found here: https://www.prometheus.io/docs/alerting/latest/configuration/#inhibit_rule
+
+The base principle of an `source_matcher` inhibit_rule is:
+> if an alert is currently firing with a `source_matcher` label, then inhibit all alerts that hate a `target_matcher` label
 
 
 

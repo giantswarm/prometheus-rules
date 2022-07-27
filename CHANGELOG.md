@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- NodeExporterCollectorFailed does not page anymore
 - GrafanaDown does not page anymore
 
 ## [2.39.1] - 2022-07-27

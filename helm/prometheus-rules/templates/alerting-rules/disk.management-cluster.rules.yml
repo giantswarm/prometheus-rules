@@ -95,3 +95,27 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: DataDiskPersistentVolumeSpaceTooLow10Percent
+      annotations:
+        description: '{{`The free space on the Data Disk for instance: {{ $labels.instance }} and PVC: {{ $labels.persistentvolumeclaim}} was below 10 percent for longer than 1 hour (current value {{ $value | printf "%.2f" }}).`}}'
+        opsrecipe: low-disk-space/#persistent-volume
+      expr: kubelet_volume_stats_available_bytes/kubelet_volume_stats_capacity_bytes < 0.10
+      for: 1h
+      labels:
+        area: empowerment
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: DataDiskPersistentVolumeSpaceTooLow20Percent
+      annotations:
+        description: '{{`The free space on the Data Disk for instance: {{ $labels.instance }} and PVC: {{ $labels.persistentvolumeclaim}} was below 20 percent for longer than 1 hour (current value {{ $value | printf "%.2f" }}).`}}'
+        opsrecipe: low-disk-space/#persistent-volume
+      expr: kubelet_volume_stats_available_bytes/kubelet_volume_stats_capacity_bytes < 0.20
+      for: 1h
+      labels:
+        area: empowerment
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability

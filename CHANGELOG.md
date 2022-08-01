@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
 ## [2.40.0] - 2022-08-01
+
+### Added
+
+- DataDiskPersistentVolumeSpaceTooLow for 10% threshold.
 
 ## [2.39.2] - 2022-07-27
 

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- DataDiskPersistentVolumeSpaceTooLow for 20% and 10% threshold.
+- DataDiskPersistentVolumeSpaceTooLow for 10% threshold.
 
 ## [2.39.2] - 2022-07-27
 

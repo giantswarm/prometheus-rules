@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Make InhibitionClusterStatusCreating last longer.
 
 ## [2.40.0] - 2022-08-01
 

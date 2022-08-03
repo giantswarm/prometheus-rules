@@ -32,7 +32,6 @@ spec:
       annotations:
         description: '{{`Cadvisor ({{ $labels.ip }}) is down.`}}'
       expr: up{app="cadvisor"} == 0
-      for: 15m
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"

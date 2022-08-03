@@ -13,8 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changed
 
-- Inhibit CadvisorDown with InhibitionKubeletDown
-- Extend delay CadvisorDown to 1h
+- Inhibit CadvisorDown with InhibitionKubeletDown.
+- Extend delay CadvisorDown to 1h.
+- CadvisorDown only triggered during working hours.
 
 ## [2.41.0] - 2022-08-02
 

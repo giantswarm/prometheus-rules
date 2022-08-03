@@ -30,7 +30,7 @@ spec:
         topic: releng
     - alert: CadvisorDown
       annotations:
-        description: '{{`Cadvisor ({{ $labels.ip }}) is down.`}}'
+        description: '{{`Cadvisor ({{ $labels.instance }}) is down.`}}'
       expr: up{app="cadvisor"} == 0
       labels:
         area: kaas

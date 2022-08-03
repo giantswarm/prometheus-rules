@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Added
+
+- Add InhibitionKubeletDown to bring back kubelet down inhibition.
+
+## Changed
+
+- Inhibit CadvisorDown with InhibitionKubeletDown
+- Extend delay CadvisorDown to 1h
+
 ## [2.41.0] - 2022-08-02
 
 ### Changed

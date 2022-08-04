@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.42.2] - 2022-08-04
+
 ## Fixed
 
 - Fix CadvisorDown for 1h.
@@ -1036,7 +1038,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.42.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.42.2...HEAD
+[2.42.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.42.1...v2.42.2
 [2.42.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.42.0...v2.42.1
 [2.42.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.41.0...v2.42.0
 [2.41.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.40.0...v2.41.0

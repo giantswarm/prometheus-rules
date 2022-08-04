@@ -33,6 +33,7 @@ spec:
         description: '{{`Cadvisor ({{ $labels.instance }}) is down.`}}'
         opsrecipe: kubelet-is-down/
       expr: up{app="cadvisor"} == 0
+      for: 1h
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"

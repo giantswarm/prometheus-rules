@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Fixed
+
+- Fix description and add opsrecipe for CadvisorDown.
+
 ## [2.42.0] - 2022-08-03
 
 ## Added

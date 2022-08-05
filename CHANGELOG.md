@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add ops-recipe for prometheus rule failures.
+
 ## [2.42.2] - 2022-08-04
 
 ## Fixed

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add ops-recipe for prometheus rule failures.
 
+### Changed
+
+- GrafanaDown page again
+
 ## [2.42.2] - 2022-08-04
 
 ## Fixed

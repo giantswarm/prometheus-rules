@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.44.0] - 2022-08-12
+
 ### Changed
 
 - prometheus-meta-operator reconcile errors alert are now limited to prometheus-meta-operator
@@ -1052,7 +1054,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.43.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.44.0...HEAD
+[2.44.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.43.0...v2.44.0
 [2.43.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.42.2...v2.43.0
 [2.42.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.42.1...v2.42.2
 [2.42.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.42.0...v2.42.1

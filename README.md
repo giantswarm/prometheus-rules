@@ -14,7 +14,11 @@ Unit tests are executed via `promtool` (part of `prometheus`).
 
 By running `make test` in your local environment, all required binaries will be downloaded and tests will be executed.
 
-#### Writing new tests
+There are 2 kinds of tests on rules:
+- syntax check (promtool check) - run on all files that can be generated from helm, nothing specific to do
+- unit tests (promtool test) - you have to write some unit tests, or add your rules files to the `promtool_ignore` file.
+
+#### Writing new unit tests
 
 1. remove the rules file you would like to test from `test/conf/promtool_ignore`
 1. create a new test file in [unit testing rules] format either globally in `test/conf/providers/global/` or provider-specific in `test/tests/providers/<provider>/`
@@ -51,6 +55,24 @@ By running `make test` in your local environment, all required binaries will be 
 The current implementation only renders alerting rules for different providers via the helm value `managementCluster.provider.kind`.
 Any other decision in the current helm chart is ignored for now (e.g. `helm/prometheus-rules/templates/alerting-rules/alertmanager-dashboard.rules.yml`)
 
+#### A word on the testing logic
+
+Here is a simplistic pseudocode view of the generate&test loop:
+```
+for each file:
+  for each provider:
+    generate the rules from helm
+    if generation fails:
+      we will try with next provider
+    else:
+      check rules syntax
+      keep track that this file's syntax has been tested
+
+    if no ignore on the file:
+      run unit tests
+
+Show a summary of encountered errors
+```
 
 [unit testing rules]: https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/
 

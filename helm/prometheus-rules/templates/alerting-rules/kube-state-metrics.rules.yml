@@ -18,8 +18,8 @@ spec:
       for: 30m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: kubernetes
     - alert: KubeDaemonSetCreatedMetricMissing
@@ -30,8 +30,8 @@ spec:
       for: 30m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: kubernetes
     - alert: KubeDeploymentCreatedMetricMissing
@@ -42,8 +42,8 @@ spec:
       for: 30m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: kubernetes
     - alert: KubeEndpointCreatedMetricMissing
@@ -54,8 +54,8 @@ spec:
       for: 30m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: kubernetes
     - alert: KubeNamespaceCreatedMetricMissing
@@ -66,8 +66,8 @@ spec:
       for: 30m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: kubernetes
     - alert: KubeNodeCreatedMetricMissing
@@ -78,8 +78,8 @@ spec:
       for: 30m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: kubernetes
     - alert: KubePodCreatedMetricMissing
@@ -90,8 +90,8 @@ spec:
       for: 30m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: kubernetes
     - alert: KubeReplicaSetCreatedMetricMissing
@@ -102,8 +102,8 @@ spec:
       for: 30m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: kubernetes
     - alert: KubeSecretCreatedMetricMissing
@@ -114,8 +114,8 @@ spec:
       for: 30m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: kubernetes
     - alert: KubeServiceCreatedMetricMissing
@@ -126,7 +126,7 @@ spec:
       for: 30m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: atlas
         topic: kubernetes

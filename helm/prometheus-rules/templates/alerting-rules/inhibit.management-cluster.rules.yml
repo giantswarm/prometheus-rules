@@ -14,7 +14,7 @@ spec:
     - alert: InhibitionClusterStatusCreating
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} has status condition ''Creating''.`}}'
-      expr: statusresource_cluster_status{status="Creating"} == 1 or cluster_operator_cluster_status{status="Creating"} == 1
+      expr: max_over_time(statusresource_cluster_status{status="Creating"}[30m]) == 1 or max_over_time(cluster_operator_cluster_status{status="Creating"}[30m]) == 1
       labels:
         area: kaas
         cluster_status_creating: "true"

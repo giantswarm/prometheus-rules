@@ -57,6 +57,8 @@ main() {
 
     local -a promtool_check_errors=()
     local -a promtool_test_errors=()
+    local -a failing_extraction=()
+    local -a checked_files=()
 
     for provider in "${providers[@]}"; do
         echo "### Running tests for provider: $provider"
@@ -68,7 +70,51 @@ main() {
         [[ -f "$expected_failure_file_provider" ]] \
             && mapfile -t expected_failure_prefixes_provider <"$expected_failure_file_provider"
 
+        # Reset counter of files that failed extraction from helm
+        failing_extraction=()
         for file in "${all_files[@]}"; do
+
+
+            echo "###  Testing $file"
+
+            # retrieve basename in pure bash
+            local filename="${file##*/}"
+
+
+            # Extract rules file from helm template
+            echo "###    extracting $GIT_WORKDIR/test/providers/$provider/$filename"
+            if ! "$GIT_WORKDIR/$HELM" template \
+                --set="managementCluster.provider.kind=$provider" \
+                --release-name prometheus-rules \
+                --namespace giantswarm "$GIT_WORKDIR"/helm/prometheus-rules \
+                -s "$file" |
+                "$GIT_WORKDIR/$YQ" '.spec' - >"$GIT_WORKDIR/test/tests/providers/$provider/$filename"
+            then
+                echo "###   Failed extracting rules file $file"
+                # Add to list only if it has not already been checked
+                # and go to next file - no tests will do anyway
+                if ! array_contains "$file" "${checked_files[@]}"; then
+                  failing_extraction+=("$file")
+                  continue
+                fi
+            fi
+
+            # Syntax check of rules file
+            echo "###    promtool check rules $GIT_WORKDIR/test/tests/providers/$provider/$filename"
+            local promtool_check_output
+            if ! promtool_check_output="$("$GIT_WORKDIR/$PROMTOOL" check rules "$GIT_WORKDIR/test/tests/providers/$provider/$filename" 2>&1)";
+            then
+                echo "###   Syntax check failing for $file:"
+                echo "$promtool_check_output"
+                promtool_check_errors+=("$promtool_check_output")
+                continue
+            fi
+            checked_files+=("$file")
+
+
+            local global_testfile="$GIT_WORKDIR/test/tests/providers/global/${filename%.yml}.test.yml"
+            local provider_testfile="$GIT_WORKDIR/test/tests/providers/$provider/${filename%.yml}.test.yml"
+
 
             # if the file is whitelisted via the global ignore file
             if array_contains "$file" "${expected_failure_prefixes_global[@]}"; then
@@ -83,32 +129,11 @@ main() {
                 continue
             fi
 
-            echo "###  Testing $file"
-
-            # retrieve basename in pure bash
-            filename="${file##*/}"
-
             # don't run tests if no provider specific tests are defined
             if [[ ! -d "$GIT_WORKDIR/test/tests/providers/$provider" ]]; then
                 echo "###   No tests for proviter $provider - skipping"
                 continue
             fi
-
-            echo "###    extracting $GIT_WORKDIR/test/providers/$provider/$filename"
-            "$GIT_WORKDIR/$HELM" template \
-                --set="managementCluster.provider.kind=$provider" \
-                --release-name prometheus-rules \
-                --namespace giantswarm "$GIT_WORKDIR"/helm/prometheus-rules \
-                -s "$file" |
-                "$GIT_WORKDIR/$YQ" '.spec' - >"$GIT_WORKDIR/test/tests/providers/$provider/$filename"
-
-            echo "###    promtool check rules $GIT_WORKDIR/test/tests/providers/$provider/$filename"
-            local promtool_check_output
-            promtool_check_output="$("$GIT_WORKDIR/$PROMTOOL" check rules "$GIT_WORKDIR/test/tests/providers/$provider/$filename" 2>&1)" ||
-                promtool_check_errors+=("$promtool_check_output")
-
-            local global_testfile="$GIT_WORKDIR/test/tests/providers/global/${filename%.yml}.test.yml"
-            local provider_testfile="$GIT_WORKDIR/test/tests/providers/$provider/${filename%.yml}.test.yml"
 
             # Fail if no testfile found
             if [[ ! -f "$global_testfile" ]] \
@@ -144,8 +169,17 @@ main() {
     echo "$(date '+%H:%M:%S') promtool: end (Elapsed time: $(($(date +%s) - START_TIME))s)"
 
     # Final output
+    # Bypassed checks
+    echo
+    echo "Warning: some files could not be generated:"
+    for file in "${failing_extraction[@]}"; do
+        echo " - $file"
+    done
+    echo
+
+    # Test results
     if [[ ${#promtool_test_errors[@]} -eq 0 && ${#promtool_check_errors[@]} -eq 0 ]]; then
-        echo "Congratulations!  All prometheus rules have been promtool checked."
+        echo "Congratulations!  Prometheus rules have been promtool checked and tested"
     else
         {
             echo

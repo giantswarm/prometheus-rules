@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- prometheus-meta-operator reconcile errors alert are now limited to prometheus-meta-operator
+
 ## [2.43.0] - 2022-08-11
 
 ### Added

@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - GrafanaDown page again
 
+### Fixed
+
+- Fix `cluster_id` in `InhibitionClusterStatus*` inhibition alerts.
+
 ## [2.42.2] - 2022-08-04
 
 ## Fixed

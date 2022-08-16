@@ -10,6 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add ops-recipe for prometheus rule failures.
+- Add ManagementClusterAppFailedHydra (Team Hydra alert for GCP). 
+- Add WorkloadClusterAppFailedHydra (Team Hydra alert for GCP). 
+- Add ManagementClusterPodPendingGCP (Team Hydra alert for GCP). 
+- Add ManagementClusterContainerIsRestartingTooFrequentlyGCP (Team Hydra alert for GCP). 
+- Add ManagementClusterDeploymentMissingGCP (Team Hydra alert for GCP).
+- Add WorkloadClusterContainerIsRestartingTooFrequentlyGCP (Team Hydra alert for GCP).
+- Add WorkloadClusterCriticalPodNotRunningGCP (Team Hydra alert for GCP).
+- Add WorkloadClusterPodPendingGCP (Team Hydra alert for GCP).
+- Enable CAPI alerts (MachineUnhealthyPhase, MachineDeploymentReplicasMismatch, KubeadmControlPlaneReplicasMismatch, ClusterUnhealthyPhase) for GCP.
 
 ### Changed
 

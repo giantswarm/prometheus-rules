@@ -53,7 +53,7 @@ spec:
         description: '{{`prometheus-meta-operator controller {{ $labels.controller }} too many reconcile errors.`}}'
         opsrecipe: "pmo-reconcile-errors/"
       expr: |
-        avg_over_time(operatorkit_controller_errors_total[20m]) > 0
+        avg_over_time(operatorkit_controller_errors_total{app="prometheus-meta-operator"}[20m]) > 0
       for: 1h
       labels:
         area: "empowerment"

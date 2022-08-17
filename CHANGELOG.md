@@ -10,6 +10,118 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Extending time period for AWS cluster updates.
 
+## [2.44.0] - 2022-08-12
+
+### Changed
+
+- prometheus-meta-operator reconcile errors alert are now limited to prometheus-meta-operator
+
+## [2.43.0] - 2022-08-11
+
+### Added
+
+- Add ops-recipe for prometheus rule failures.
+
+### Changed
+
+- GrafanaDown page again
+
+## [2.42.2] - 2022-08-04
+
+## Fixed
+
+- Fix CadvisorDown for 1h.
+
+## [2.42.1] - 2022-08-04
+
+## Fixed
+
+- Fix description and add opsrecipe for CadvisorDown.
+
+## [2.42.0] - 2022-08-03
+
+## Added
+
+- Add InhibitionKubeletDown to bring back kubelet down inhibition.
+
+## Changed
+
+- Inhibit CadvisorDown with InhibitionKubeletDown.
+- Extend delay CadvisorDown to 1h.
+- CadvisorDown only triggered during working hours.
+
+## [2.41.0] - 2022-08-02
+
+### Changed
+
+- Make InhibitionClusterStatusCreating last longer.
+
+## [2.40.0] - 2022-08-01
+
+### Added
+
+- DataDiskPersistentVolumeSpaceTooLow for 10% threshold.
+
+## [2.39.2] - 2022-07-27
+
+### Changed
+
+- NodeExporterCollectorFailed does not page anymore
+- GrafanaDown does not page anymore
+
+## [2.39.1] - 2022-07-27
+
+### fixed
+
+- GrafanaFolderPermissionsCronjobFails alert
+
+## [2.39.0] - 2022-07-27
+
+### Added
+
+- alert "GrafanaFolderPermissionsCronjobFails"
+- alert "FluentbitDropRatio"
+- Alerting documentation
+
+### Changed
+
+- Atlas alerts that did not page now do, at least during workhours
+
+## [2.38.0] - 2022-07-21
+
+### Changed
+- Revert enable api-server SLO alert during upgrades of HA masters clusters.
+
+## [2.37.0] - 2022-07-21
+
+### Changed
+
+- Inhibit gcp alerts out of business hours.
+- Don't monitor bastions on gcp.
+- Don't monitor vault on gcp.
+- Don't monitor cluster-service on gcp.
+- Enable api-server SLO alert during upgrades of HA masters clusters.
+
+## [2.36.0] - 2022-07-20
+
+### Added
+
+- Add `pmo` reconcile errors alert.
+
+## [2.35.0] - 2022-07-20
+
+### Changed
+
+- Improve `CoreDNSDeploymentNotSatisfied` query to consider both Coredns deployments (running in masters and workers).
+
+## [2.34.0] - 2022-07-20
+
+### Changed
+
+- Split Giant Swarm and customer Flux alerts.
+- Switch `severity` of customer's Flux alerts to `notify`.
+- Make `ClusterAutoscalerFailedScaling` less sensitive.
+
 ## [2.33.0] - 2022-07-18
 
 ### Changed
@@ -945,7 +1057,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.33.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.44.0...HEAD
+[2.44.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.43.0...v2.44.0
+[2.43.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.42.2...v2.43.0
+[2.42.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.42.1...v2.42.2
+[2.42.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.42.0...v2.42.1
+[2.42.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.41.0...v2.42.0
+[2.41.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.40.0...v2.41.0
+[2.40.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.39.2...v2.40.0
+[2.39.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.39.1...v2.39.2
+[2.39.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.39.0...v2.39.1
+[2.39.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.38.0...v2.39.0
+[2.38.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.37.0...v2.38.0
+[2.37.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.36.0...v2.37.0
+[2.36.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.35.0...v2.36.0
+[2.35.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.34.0...v2.35.0
+[2.34.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.33.0...v2.34.0
 [2.33.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.32.1...v2.33.0
 [2.32.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.32.0...v2.32.1
 [2.32.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.31.0...v2.32.0

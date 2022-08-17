@@ -20,6 +20,14 @@ spec:
         outside_working_hours: "true"
         team: phoenix
         topic: monitoring
+    - alert: InhibitionKubeletDown
+      expr: up{app="kubelet"} == 0
+      labels:
+        kubelet_down: true
+        area: kaas
+        topic: kubernetes
+      annotations:
+        description: '{{`Kubelet ({{ $labels.instance }}) is down.`}}'
     - alert: InhibitionKubeStateMetricsDown
       annotations:
         description: '{{`KubeStateMetrics ({{ $labels.instance }}) is down.`}}'

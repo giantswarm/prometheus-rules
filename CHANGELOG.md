@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Extending time period for AWS cluster updates.
+
 ## [2.33.0] - 2022-07-18
 
 ### Changed

@@ -30,7 +30,7 @@ spec:
         description: '{{`Cluster {{ $labels.cluster_id }} update is taking longer than expected.`}}'
         opsrecipe: cluster-update-failed/
       expr: (statusresource_cluster_status{app=~"aws-operator.*", status="Updating"} == 1 or cluster_operator_cluster_status{app=~"cluster-operator.*", status="Updating", provider="aws"} == 1)
-      for: 2h
+      for: 3h
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"

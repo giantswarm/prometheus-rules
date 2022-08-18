@@ -1,0 +1,63 @@
+{{- if eq .Values.managementCluster.provider.kind "gcp" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "workload_cluster"
+  name: gcp.workload-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: gcp
+    rules:
+    - alert: WorkloadClusterContainerIsRestartingTooFrequentlyGCP
+      annotations:
+        description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
+        opsrecipe: container-is-restarting-too-often/
+      expr: increase(kube_pod_container_status_restarts_total{container=~"cilium.*|csi-gce-pd-controller.*|csi-gce-pd-node.*|.*workload-identity-operator-gcp.*"}[1h]) > 10
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        severity: page
+        team: hydra
+        topic: kubernetes
+    - alert: WorkloadClusterCriticalPodNotRunningGCP
+      annotations:
+        description: '{{`Critical pod {{ $labels.namespace }}/{{ $labels.pod }} is not running.`}}'
+        opsrecipe: critical-pod-is-not-running/
+      expr: kube_pod_container_status_running{container=~"(kube-apiserver|kube-controller-manager|kube-scheduler)"} != 1 or label_replace(absent(kube_pod_container_status_running{container="kube-apiserver"}), "pod", "$1", "container", "(.+)") == 1 or label_replace(absent(kube_pod_container_status_running{container="kube-controller-manager"}), "pod", "$1", "container", "(.+)") == 1 or label_replace(absent(kube_pod_container_status_running{container="kube-scheduler"}), "pod", "$1", "container", "(.+)") == 1
+      for: 1h
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: hydra
+        topic: kubernetes
+    - alert: WorkloadClusterPodPendingGCP
+      annotations:
+        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
+        opsrecipe: pod-stuck-in-pending/
+      expr: kube_pod_status_phase{namespace=~"giantswarm|kube-system",pod=~"(cilium.*|csi-gce-pd-controller.*|csi-gce-pd-node.*|.*workload-identity-operator-gcp.*)",phase="Pending"} == 1
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        severity: page
+        team: hydra
+        topic: kubernetes
+{{- end }}

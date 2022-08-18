@@ -75,6 +75,22 @@ spec:
         sig: none
         team: phoenix
         topic: releng
+    - alert: ManagementClusterAppFailedHydra
+      annotations:
+        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        opsrecipe: app-failed/
+      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team=~"hydra"}
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        sig: none
+        team: hydra
+        topic: releng
     - alert: ManagementClusterAppFailedRainbow
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
@@ -129,7 +145,7 @@ spec:
       annotations:
         description: '{{`Workload Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team!~"(?i:(atlas|cabbage|phoenix|rocket))"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team!~"(?i:(atlas|cabbage|phoenix|hydra|rocket))"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
       for: 30m
       labels:
         area: managedservices
@@ -189,6 +205,23 @@ spec:
         severity: page
         sig: none
         team: phoenix
+        topic: releng
+    - alert: WorkloadClusterAppFailedHydra
+      annotations:
+        description: '{{`Workload Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        opsrecipe: app-failed/
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="hydra"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        severity: page
+        sig: none
+        team: hydra
         topic: releng
     - alert: WorkloadClusterAppFailedRocket
       annotations:

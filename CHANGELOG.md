@@ -7,8 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add ManagementClusterAppFailedHydra (Team Hydra alert for GCP).
+- Add WorkloadClusterAppFailedHydra (Team Hydra alert for GCP).
+- Add ManagementClusterPodPendingGCP (Team Hydra alert for GCP).
+- Add ManagementClusterContainerIsRestartingTooFrequentlyGCP (Team Hydra alert for GCP).
+- Add ManagementClusterDeploymentMissingGCP (Team Hydra alert for GCP).
+- Add WorkloadClusterContainerIsRestartingTooFrequentlyGCP (Team Hydra alert for GCP).
+- Add WorkloadClusterCriticalPodNotRunningGCP (Team Hydra alert for GCP).
+- Add WorkloadClusterPodPendingGCP (Team Hydra alert for GCP).
+- Enable CAPI alerts (MachineUnhealthyPhase, MachineDeploymentReplicasMismatch, KubeadmControlPlaneReplicasMismatch, ClusterUnhealthyPhase) for GCP.
+
 ### Changed
 
+- Extending time period for AWS cluster updates.
 - Add `$labels.name` to team `WorkloadClusterWebhookDurationExceedsTimeout` alerts.
 
 ## [2.44.0] - 2022-08-12
@@ -26,6 +39,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - GrafanaDown page again
+
+### Fixed
+
+- Fix `cluster_id` in `InhibitionClusterStatus*` inhibition alerts.
 
 ## [2.42.2] - 2022-08-04
 

@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Extending time period for AWS cluster updates.
 - Add `$labels.name` to team `WorkloadClusterWebhookDurationExceedsTimeout` alerts.
+- Increase timeout for `VaultIsDown` to 15 minutes.
 
 ## [2.44.0] - 2022-08-12
 

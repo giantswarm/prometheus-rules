@@ -32,7 +32,7 @@ spec:
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/
-      expr: increase(kube_pod_container_status_restarts_total{container=~"capi-controller-manager.*|capg-controller-manager.*|capi-kubeadm-bootstrap-controller-manager.*|capi-kubeadm-control-plane-controller-manager.*|cilium.*|csi-gce-pd-node.*"|dns-operator-gcp.*|.*workload-identity-operator-gcp.*}[1h]) > 6
+      expr: increase(kube_pod_container_status_restarts_total{container=~"capi-controller-manager.*|capg-controller-manager.*|capi-kubeadm-bootstrap-controller-manager.*|capi-kubeadm-control-plane-controller-manager.*|cilium.*|csi-gce-pd-node.*|dns-operator-gcp.*|.*workload-identity-operator-gcp.*"}[1h]) > 6
       for: 5m
       labels:
         area: kaas

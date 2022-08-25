@@ -43,7 +43,7 @@ spec:
       annotations:
         description: '{{`There are too many CertificateRequests in cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: cert-requests-too-many/
-      expr: sum by (cluster_id) (etcd_kubernetes_resources_count{kind="certificaterequests.cert-manager.io"}) > 5000
+      expr: sum by (cluster_id) (etcd_kubernetes_resources_count{kind="certificaterequests.cert-manager.io"}) > 10000
       for: 15m
       labels:
         area: managedapps

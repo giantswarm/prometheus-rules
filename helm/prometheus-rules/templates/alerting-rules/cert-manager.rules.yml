@@ -39,3 +39,15 @@ spec:
         severity: page
         team: cabbage
         topic: cert-manager
+    - alert: CertManagerTooManyCertificateRequests
+      annotations:
+        description: '{{`There are too many CertificateRequests in cluster {{ $labels.cluster_id }}.`}}'
+        opsrecipe: cert-requests-too-many/
+      expr: sum by (cluster_id) (etcd_kubernetes_resources_count{kind="certificaterequests.cert-manager.io"}) > 5000
+      for: 15m
+      labels:
+        area: managedapps
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: cabbage
+        topic: cert-manager

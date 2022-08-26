@@ -3,7 +3,7 @@ set -euo pipefail
 
 # let's have reproducable tests - pin to specific versions
 ARCHITECT_VERSION="6.5.0"
-PROMETHEUS_VERSION="2.36.2"
+PROMETHEUS_VERSION="2.28.1"
 HELM_VERSION="3.9.0"
 YQ_VERSION="4.26.1"
 
@@ -29,6 +29,7 @@ Darwin*)
 
 *)
     echo "${OS_BASE} not supported - if needed, please implement by your own."
+    exit 1
     ;;
 
 esac

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `FluxImageAutomationControllerStuck` alert for stuck Flux Image Automation Controller.
+
 ## [2.45.1] - 2022-08-23
 
 ### Changed

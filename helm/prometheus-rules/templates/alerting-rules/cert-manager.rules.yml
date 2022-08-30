@@ -46,7 +46,7 @@ spec:
       expr: sum by (cluster_id) (etcd_kubernetes_resources_count{kind="certificaterequests.cert-manager.io"}) > 10000
       for: 15m
       labels:
-        area: managedapps
+        area: managedservices
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: cabbage

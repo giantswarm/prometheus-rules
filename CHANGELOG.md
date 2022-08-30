@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Include namespace in `WorkloadClusterAppFailed` alert's description.
+
 ## [2.46.0] - 2022-08-26
 
 ### Added

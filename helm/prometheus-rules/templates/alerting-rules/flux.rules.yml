@@ -130,6 +130,20 @@ spec:
         severity: page
         team: honeybadger
         topic: releng
+    - alert: FluxImageAutomationControllerStuck
+      annotations:
+        description: |-
+          {{`Flux Image Automation Controller on {{ $labels.installation }} seems stuck.`}}
+        opsrecipe: flux-image-automation-stuck/
+      expr: |
+        sum(irate(workqueue_unfinished_work_seconds{name="imageupdateautomation",cluster_type="management_cluster",namespace="flux-system"}[15m])) > 0
+      for: 30m
+      labels:
+        area: empowerment
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: honeybadger
+        topic: releng
   # Customer's Alerts
   - name: fluxcd-customer
     rules:

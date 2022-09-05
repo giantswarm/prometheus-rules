@@ -1,0 +1,61 @@
+{{- if eq .Values.managementCluster.provider.kind "gcp" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+      {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: gcp.management-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: gcp
+    rules:
+    - alert: ManagementClusterPodPendingGCP
+      annotations:
+        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
+        opsrecipe: pod-stuck-in-pending/
+      expr: kube_pod_status_phase{namespace=~"giantswarm|kube-system",pod=~"(capi-controller-manager.*|capg-controller-manager.*|capi-kubeadm-bootstrap-controller-manager.*|capi-kubeadm-control-plane-controller-manager.*|cilium.*|csi-gce-pd-node.*|dns-operator-gcp.*|.*workload-identity-operator-gcp.*)",phase="Pending"} == 1
+      for: 25m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        severity: page
+        team: hydra
+        topic: managementcluster
+    - alert: ManagementClusterContainerIsRestartingTooFrequentlyGCP
+      annotations:
+        description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
+        opsrecipe: container-is-restarting-too-often/
+      expr: increase(kube_pod_container_status_restarts_total{container=~"capi-controller-manager.*|capg-controller-manager.*|capi-kubeadm-bootstrap-controller-manager.*|capi-kubeadm-control-plane-controller-manager.*|cilium.*|csi-gce-pd-node.*|dns-operator-gcp.*|.*workload-identity-operator-gcp.*"}[1h]) > 6
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: hydra
+        topic: kubernetes
+    - alert: ManagementClusterDeploymentMissingGCP
+      annotations:
+        description: '{{`Deployment {{ $labels.workload_name }} is missing.`}}'
+        opsrecipe: management-cluster-deployment-is-missing/
+      expr: absent(kube_deployment_status_condition{namespace=~"giantswarm|kube-system", condition="Available", deployment=~"capi-controller-manager.*|capg-controller-manager.*|capi-kubeadm-bootstrap-controller-manager.*|capi-kubeadm-control-plane-controller-manager.*|dns-operator-gcp.*|.*workload-identity-operator-gcp.*"})
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: hydra
+        topic: kubernetes
+{{- end }}

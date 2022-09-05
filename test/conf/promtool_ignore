@@ -3,7 +3,6 @@ templates/alerting-rules/alertmanager-dashboard.rules.yml
 templates/alerting-rules/alertmanager.rules.yml
 templates/alerting-rules/apiserver.management-cluster.rules.yml
 templates/alerting-rules/apiserver.workload-cluster.rules.yml
-templates/alerting-rules/app.rules.yml
 templates/alerting-rules/argocd.rules.yml
 templates/alerting-rules/aws.management-cluster.rules.yml
 templates/alerting-rules/aws.workload-cluster.rules.yml
@@ -40,7 +39,6 @@ templates/alerting-rules/falco.rules.yml
 templates/alerting-rules/fluentbit.rules.yml
 templates/alerting-rules/fluentd.rules.yml
 templates/alerting-rules/flux.rules.yml
-templates/alerting-rules/grafana.management-cluster.rules.yml
 templates/alerting-rules/helm.rules.yml
 templates/alerting-rules/ingress-controller.rules.yml
 templates/alerting-rules/inhibit.all.rules.yml

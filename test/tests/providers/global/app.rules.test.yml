@@ -1,0 +1,49 @@
+---
+rule_files:
+  - app.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'app_operator_app_info{app="cilium", app_version="1.11.2", catalog="default", cluster_id="gauss", cluster_missing="false", cluster_type="management_cluster", customer="giantswarm", deployed_version="0.2.6", installation="gauss", instance="100.64.2.221:8000", job="gauss-prometheus/app-exporter-gauss/0", name="cilium", namespace="giantswarm", node="ip-10-0-5-93.eu-west-1.compute.internal", organization="giantswarm", pod="app-exporter-7f8c5d7dd5-9dh4r", provider="aws", service_priority="highest", status="pending-upgrade", team="honeybadger", upgrade_available="false", version="0.2.6", version_mismatch="false"}'
+        values: "0+0x20 1+0x100"
+    alert_rule_test:
+      - alertname: WorkloadClusterAppFailed
+        eval_time: 90m
+        exp_alerts:
+          - exp_labels:
+              alertname: WorkloadClusterAppFailed
+              app: cilium
+              app_version: 1.11.2
+              area: managedservices
+              cancel_if_cluster_status_creating: true
+              cancel_if_cluster_status_deleting: true
+              cancel_if_cluster_status_updating: true
+              cancel_if_outside_working_hours: true
+              catalog: default
+              cluster_id: gauss
+              cluster_missing: false
+              cluster_type: management_cluster
+              customer: giantswarm
+              deployed_version: 0.2.6
+              installation: gauss
+              instance: 100.64.2.221:8000
+              job: gauss-prometheus/app-exporter-gauss/0
+              name: cilium
+              namespace: giantswarm
+              node: ip-10-0-5-93.eu-west-1.compute.internal
+              organization: giantswarm
+              pod: app-exporter-7f8c5d7dd5-9dh4r
+              provider: aws
+              service_priority: highest
+              severity: page
+              sig: none
+              status: pending-upgrade
+              team: honeybadger
+              topic: releng
+              upgrade_available: false
+              version: 0.2.6
+              version_mismatch: false
+            exp_annotations:
+              description: "Workload Cluster App cilium, version 0.2.6 is  in pending-upgrade state. "
+              opsrecipe: app-failed/

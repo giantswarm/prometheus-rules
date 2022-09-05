@@ -148,7 +148,8 @@ main() {
 
             if [[ -f "$global_testfile" ]]; then
                 echo "###    promtool test rules ${filename%.yml}.test.yml - global"
-                promtool_test_output="$("$GIT_WORKDIR/$PROMTOOL" test rules "$global_testfile" 2>&1)" ||
+                cp "$global_testfile" "$provider_testfile"_global
+                promtool_test_output="$("$GIT_WORKDIR/$PROMTOOL" test rules "$provider_testfile"_global 2>&1)" ||
                     promtool_test_errors+=("$promtool_test_output")
             fi
 

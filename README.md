@@ -21,7 +21,7 @@ There are 2 kinds of tests on rules:
 #### Writing new unit tests
 
 1. remove the rules file you would like to test from `test/conf/promtool_ignore`
-1. create a new test file in [unit testing rules] format either globally in `test/conf/providers/global/` or provider-specific in `test/tests/providers/<provider>/`
+1. create a new test file in [unit testing rules] format either globally in `test/tests/providers/global/` or provider-specific in `test/tests/providers/<provider>/`
 1. by running `make test` you can validate the your testing rules.
    Output should look like the follows:
 

@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Enable alerts for dex in workload clusters with "highest" service priority.
 
+## [2.47.0] - 2022-09-06
+
 ### Added
 
 - Add CertManagerTooManyCertificateRequests (Team Cabbage).
@@ -1098,7 +1100,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.46.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.47.0...HEAD
+[2.47.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.46.0...v2.47.0
 [2.46.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.45.1...v2.46.0
 [2.45.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.45.0...v2.45.1
 [2.45.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.44.0...v2.45.0

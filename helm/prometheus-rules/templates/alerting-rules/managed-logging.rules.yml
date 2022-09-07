@@ -16,7 +16,7 @@ spec:
         description: '{{`Number of data nodes of Elastic Search on {{ $labels.cluster_id }} is not satified.`}}'
         opsrecipe: managed-logging-create/
       expr: sum(elasticsearch_cluster_health_number_of_data_nodes) by (cluster_id) < 3
-      for: 5m
+      for: 15m
       labels:
         area: managedservices
         cancel_if_outside_working_hours: "true"

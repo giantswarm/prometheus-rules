@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Lowered `ManagedLoggingElasticsearchDataNodesNotSatisfied` alert sensitivity - now triggers after 15min to avoid triggering on pod restarts.
+
 ## [2.47.1] - 2022-09-06
 
 ### Changed

@@ -12,7 +12,7 @@ spec:
     rules:
     - alert: FlowcontrolRejectedRequests
       annotations:
-        description: '{{`Cluster {{ $labels.cluster_id }} .`}}'
+        description: '{{`Cluster {{ $labels.installation }}/{{ $labels.cluster_id }}: k8s API fairness is rejecting calls in flow schema {{ $labels.flow_schema }}.`}}'
         opsrecipe: flowcontrol-rejected-requests/
       expr: (increase(apiserver_flowcontrol_rejected_requests_total[1m]) > 0)
       for: 5m

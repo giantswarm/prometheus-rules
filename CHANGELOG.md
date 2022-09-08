@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `aggregation:giantswarm:cluster_release_version` query for Azure cluster.
+
 ## [2.48.0] - 2022-09-08
 
 ### Added

@@ -13,7 +13,7 @@ spec:
     - alert: LokiRequestErrors
       annotations:
         description: This alert checks that we have less than 10% errors on Loki requests.
-        opsrecipe: loki
+        opsrecipe: loki/
       expr: |
         100 * sum(rate(loki_request_duration_seconds_count{status_code=~"5.."}[1m])) by (namespace, job, route)
           /
@@ -34,7 +34,7 @@ spec:
     - alert: LokiRequestPanics
       annotations:
         description: This alert checks that we have no panic errors on Loki.
-        opsrecipe: loki
+        opsrecipe: loki/
       expr: |
         sum(increase(loki_panic_total[10m])) by (namespace, job) > 0
       labels:

@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: fairness.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: fairness
+    rules:
+    - alert: FlowcontrolRejectedRequests
+      annotations:
+        description: '{{`Cluster {{ $labels.installation }}/{{ $labels.cluster_id }}: k8s API fairness is rejecting calls in flow schema {{ $labels.flow_schema }}.`}}'
+        opsrecipe: flowcontrol-rejected-requests/
+      expr: (increase(apiserver_flowcontrol_rejected_requests_total[1m]) > 0)
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: {{include "providerTeam" .}}
+        topic: kubernetes

@@ -54,7 +54,7 @@ spec:
     - alert: IngressControllerServiceHasNoEndpoints
       annotations:
         description: '{{`Ingress Controller has no live endpoints.`}}'
-        opsrecipe: ingress-controller-no-live-endpoints.md
+        opsrecipe: ingress-controller-no-live-endpoints/
       expr: count by (cluster_id) (kube_endpoint_address_available{endpoint="nginx-ingress-controller"}) == 0
       for: 2m
       labels:

@@ -29,7 +29,7 @@ spec:
     - alert: WorkloadClusterEtcdCommitDurationTooHigh
       annotations:
         description: '{{`Etcd ({{ $labels.instance }}) has a too high commit duration.`}}'
-        opsrecipe: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/etcd-high-commit-duration/
+        opsrecipe: etcd-high-commit-duration/
       expr: histogram_quantile(0.95, rate(etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="workload_cluster"}[5m])) > 1.0
       for: 15m
       labels:

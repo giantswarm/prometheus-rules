@@ -1,0 +1,45 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: kong.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: kong
+    rules:
+    # Kong uses either an internal (memory) or external (postgres) datastore to store internal state.
+    # In case the datastore is not reachable, new pods cannot restore previous state.
+    - alert: KongDatastoreNotReachable
+      annotations:
+        description: '{{`Datastore of Kong in namespace {{ $labels.namespace }} is not reachable.`}}'
+        opsrecipe: kong-datastore-not-reachable/
+      expr: kong_datastore_reachable == 0
+      for: 10m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: cabbage
+        topic: kong
+    # Kong Ingress controller translates kubernetes resources into kong internal state. State is pushed
+    # through an internal API to the proxy containers, if this fails, changes to kubernetes resources
+    # are not reflected in kong proxy configuration.
+    - alert: KongIngressControllerConfigurationPushErrorCountTooHigh
+      annotations:
+        description: '{{`Kong Ingress Controller in namespace {{ $labels.namespace }} has problems pushing configuration.`}}'
+        opsrecipe: kong-ingress-controller-configuration-push-error-count-too-high/
+      expr: ingress_controller_configuration_push_count{success="false"} > 1
+      for: 10m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: cabbage
+        topic: kong

@@ -15,7 +15,7 @@ spec:
     - alert: KongDatastoreNotReachable
       annotations:
         description: '{{`Datastore of Kong in namespace {{ $labels.namespace }} is not reachable.`}}'
-        opsrecipe: kong-datastore-not-reachable/
+        opsrecipe: managed-app-kong/#kong-datastore-not-reachable
       expr: kong_datastore_reachable == 0
       for: 10m
       labels:
@@ -32,7 +32,7 @@ spec:
     - alert: KongIngressControllerConfigurationPushErrorCountTooHigh
       annotations:
         description: '{{`Kong Ingress Controller in namespace {{ $labels.namespace }} has problems pushing configuration.`}}'
-        opsrecipe: kong-ingress-controller-configuration-push-error-count-too-high/
+        opsrecipe: managed-app-kong/#kong-ingress-controller-configuration-push-error-count-too-high
       expr: increase(ingress_controller_configuration_push_count{success="false"}[10m])> 1
       for: 5m
       labels:

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `KongDatastoreNotReachable` alerting rule.
+- Add `KongIngressControllerConfigurationPushErrorCountTooHigh` alerting rule.
+
 ## [2.48.2] - 2022-09-16
 
 ### Changed

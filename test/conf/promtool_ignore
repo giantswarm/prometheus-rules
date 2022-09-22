@@ -35,6 +35,7 @@ templates/alerting-rules/etcd.management-cluster.rules.yml
 templates/alerting-rules/etcd.workload-cluster.rules.yml
 templates/alerting-rules/etcdbackup.rules.yml
 templates/alerting-rules/external-dns.rules.yml
+templates/alerting-rules/fairness.rules.yml
 templates/alerting-rules/falco.rules.yml
 templates/alerting-rules/fluentbit.rules.yml
 templates/alerting-rules/fluentd.rules.yml
@@ -45,6 +46,7 @@ templates/alerting-rules/inhibit.all.rules.yml
 templates/alerting-rules/inhibit.management-cluster.rules.yml
 templates/alerting-rules/job.rules.yml
 templates/alerting-rules/kiam.rules.yml
+templates/alerting-rules/kong.rules.yml
 templates/alerting-rules/kube-state-metrics.rules.yml
 templates/alerting-rules/kubelet.management-cluster.rules.yml
 templates/alerting-rules/kubelet.workload-cluster.rules.yml
@@ -61,7 +63,7 @@ templates/alerting-rules/network.all.rules.yml
 templates/alerting-rules/network.management-cluster.rules.yml
 templates/alerting-rules/network.workload-cluster.rules.yml
 templates/alerting-rules/node-exporter.all.rules.yml
-templates/alerting-rules/node.management_cluster.rules .yml
+templates/alerting-rules/node.management_cluster.rules.yml
 templates/alerting-rules/node.workload_cluster.rules.yml
 templates/alerting-rules/operatorkit.rules.yml
 templates/alerting-rules/prometheus-meta-operator.rules.yml

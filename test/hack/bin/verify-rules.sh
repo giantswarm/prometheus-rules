@@ -87,7 +87,7 @@ main() {
                 -s "$file" |
                 "$GIT_WORKDIR/$YQ" '.spec' - >"$GIT_WORKDIR/test/tests/providers/$provider/$filename"
             then
-                echo "###   Failed extracting rules file $file"
+                echo "###    Failed extracting rules file $file"
                 failing_extraction+=("$provider:$file")
                 continue
             fi
@@ -110,13 +110,13 @@ main() {
             # if the file is whitelisted via the global ignore file
             if array_contains "$file" "${expected_failure_prefixes_global[@]}"; then
                 # don't run tests for it
-                echo "###  Skipping $file: listed in $expected_failure_relative_file_global"
+                echo "###    Skipping $file: listed in $expected_failure_relative_file_global"
                 continue
             fi
             # if the file is whitelisted via the provider ignore file
             if array_contains "$file" "${expected_failure_prefixes_provider[@]}"; then
                 # don't run tests for it
-                echo "###  Skipping $file: listed in $expected_failure_relative_file_provider"
+                echo "###    Skipping $file: listed in $expected_failure_relative_file_provider"
                 continue
             fi
 

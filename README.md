@@ -132,7 +132,7 @@ There are 2 kinds of tests on rules:
    ### Skipping templates/alerting-rules/certificate.all.rules.yml
    [...]
    09:06:29 promtool: end (Elapsed time: 1s)
-   Congratulations!  All prometheus rules have been promtool checked.
+   Congratulations!  Prometheus rules have been promtool checked and tested
    ```
 
 #### Test exceptions

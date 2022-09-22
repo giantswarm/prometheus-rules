@@ -130,7 +130,7 @@ main() {
             if [[ ! -f "$global_testfile" ]] \
                 && [[ ! -f "$provider_testfile" ]]
             then
-                echo "### No testfile found for $filename - error"
+                echo "###  No testfile found for $filename - error"
                 promtool_test_errors+=("NO TEST FILE for $filename")
                 continue
             fi

@@ -162,15 +162,18 @@ main() {
 
     # Final output
     # Bypassed checks
-    echo
-    echo "Warning: some files could not be generated:"
-    for file in "${failing_extraction[@]}"; do
-        echo " - $file"
-    done
-    echo
+    if [[ ${#failing_extraction[@]} -gt 0 ]]; then
+        echo
+        echo "Warning: some files could not be generated:"
+        for file in "${failing_extraction[@]}"; do
+            echo " - $file"
+        done
+        echo
+    fi
 
     # Test results
     if [[ ${#promtool_test_errors[@]} -eq 0 && ${#promtool_check_errors[@]} -eq 0 ]]; then
+        echo
         echo "Congratulations!  Prometheus rules have been promtool checked and tested"
     else
         {

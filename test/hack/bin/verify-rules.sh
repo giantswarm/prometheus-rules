@@ -153,10 +153,6 @@ main() {
         done
     done
 
-    # Cleanup
-    git checkout -- "$GIT_WORKDIR/helm/prometheus-rules/Chart.yaml"
-    git checkout -- "$GIT_WORKDIR/helm/prometheus-rules/values.yaml"
-
     # Job is done, print end time
     echo "$(date '+%H:%M:%S') promtool: end (Elapsed time: $(($(date +%s) - START_TIME))s)"
 

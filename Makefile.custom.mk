@@ -5,7 +5,9 @@ clean-dry-run: ## dry run for `make clean` - print all untracked files
 .PHONY: clean
 clean: ## Clean the git work dir and remove all untracked files
 	# clean stage
-	@git clean -xdf
+	git clean -xdf -- test/
+	git checkout -- helm/prometheus-rules/Chart.yaml
+	git checkout -- helm/prometheus-rules/values.yaml
 
 ##@ Testing
 

@@ -182,10 +182,12 @@ main() {
             echo
             for err in "${promtool_test_errors[@]}"; do
                 echo "  $err"
+                echo
             done
 
             for err in "${promtool_check_errors[@]}"; do
                 echo "  $err"
+                echo
             done
         } >&2
         false

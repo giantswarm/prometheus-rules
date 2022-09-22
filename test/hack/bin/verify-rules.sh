@@ -58,7 +58,6 @@ main() {
     local -a promtool_check_errors=()
     local -a promtool_test_errors=()
     local -a failing_extraction=()
-    local -a checked_files=()
 
     for provider in "${providers[@]}"; do
         echo "### Running tests for provider: $provider"
@@ -70,8 +69,6 @@ main() {
         [[ -f "$expected_failure_file_provider" ]] \
             && mapfile -t expected_failure_prefixes_provider <"$expected_failure_file_provider"
 
-        # Reset counter of files that failed extraction from helm
-        failing_extraction=()
         for file in "${all_files[@]}"; do
 
 
@@ -91,12 +88,8 @@ main() {
                 "$GIT_WORKDIR/$YQ" '.spec' - >"$GIT_WORKDIR/test/tests/providers/$provider/$filename"
             then
                 echo "###   Failed extracting rules file $file"
-                # Add to list only if it has not already been checked
-                # and go to next file - no tests will do anyway
-                if ! array_contains "$file" "${checked_files[@]}"; then
-                  failing_extraction+=("$file")
-                  continue
-                fi
+                failing_extraction+=("$provider:$file")
+                continue
             fi
 
             # Syntax check of rules file
@@ -109,8 +102,6 @@ main() {
                 promtool_check_errors+=("$promtool_check_output")
                 continue
             fi
-            checked_files+=("$file")
-
 
             local global_testfile="$GIT_WORKDIR/test/tests/providers/global/${filename%.yml}.test.yml"
             local provider_testfile="$GIT_WORKDIR/test/tests/providers/$provider/${filename%.yml}.test.yml"

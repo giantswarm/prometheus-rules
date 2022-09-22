@@ -1,2 +1,4 @@
 **/*.rules.yml
 **/*.rules.yaml
+**/*.rules.test.yml_global
+**/*.rules.test.yaml_global

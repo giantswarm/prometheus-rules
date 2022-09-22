@@ -176,21 +176,19 @@ main() {
         echo
         echo "Congratulations!  Prometheus rules have been promtool checked and tested"
     else
-        {
+        echo
+        echo "Please review the below errors."
+        echo
+        for err in "${promtool_test_errors[@]}"; do
+            echo "  $err"
             echo
-            echo "Please review the below errors."
-            echo
-            for err in "${promtool_test_errors[@]}"; do
-                echo "  $err"
-                echo
-            done
+        done
 
-            for err in "${promtool_check_errors[@]}"; do
-                echo "  $err"
-                echo
-            done
-        } >&2
-        false
+        for err in "${promtool_check_errors[@]}"; do
+            echo "  $err"
+            echo
+        done
+        return 1
     fi
 }
 

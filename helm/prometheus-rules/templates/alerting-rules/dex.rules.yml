@@ -4,7 +4,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    cluster_type: "management_cluster"
   name: dex.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -15,7 +14,7 @@ spec:
       annotations:
         description: '{{`Dex running on {{ $labels.cluster_id }} is reporting an increased error rate.`}}'
         opsrecipe: dex-error-rate-high/
-      expr: sum(increase(http_requests_total{service="dex", code=~"^[4]..$|[5]..$"}[5m])) by (cluster_id) > 10
+      expr: sum(increase(http_requests_total{app="dex", code=~"^[4]..$|[5]..$"}[5m])) by (cluster_id) > 10
       for: 30m
       labels:
         area: managedapps

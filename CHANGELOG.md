@@ -7,9 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.49.0] - 2022-09-20
+
+### Added
+
+- Add `KongDatastoreNotReachable` alerting rule.
+- Add `KongIngressControllerConfigurationPushErrorCountTooHigh` alerting rule.
+
+## [2.48.2] - 2022-09-16
+
+### Changed
+
+- Include namespace in `WorkloadClusterAppFailed` alert's description.
+
+### Added
+
+- Add `PrometheusJobScrapingFailure` alerting rule.
+
+## [2.48.1] - 2022-09-08
+
+### Fixed
+
+- Fix `aggregation:giantswarm:cluster_release_version` query for Azure cluster.
+
+## [2.48.0] - 2022-09-08
+
+### Added
+
+- Add `FlowcontrolRejectedRequests` to alert when k8s API Server's fairness is rejecting API calls.
+
+### Changed
+
+- Lowered `ManagedLoggingElasticsearchDataNodesNotSatisfied` alert sensitivity - now triggers after 15min to avoid triggering on pod restarts.
+
+## [2.47.1] - 2022-09-06
+
+### Changed
+
+- Enable alerts for dex in workload clusters.
+
+## [2.47.0] - 2022-09-06
+
 ### Added
 
 - Add CertManagerTooManyCertificateRequests (Team Cabbage).
+>>>>>>> master
 
 ## [2.46.0] - 2022-08-26
 
@@ -1094,7 +1136,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.46.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.49.0...HEAD
+[2.49.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.48.2...v2.49.0
+[2.48.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.48.1...v2.48.2
+[2.48.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.48.0...v2.48.1
+[2.48.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.47.1...v2.48.0
+[2.47.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.47.0...v2.47.1
+[2.47.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.46.0...v2.47.0
 [2.46.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.45.1...v2.46.0
 [2.45.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.45.0...v2.45.1
 [2.45.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.44.0...v2.45.0

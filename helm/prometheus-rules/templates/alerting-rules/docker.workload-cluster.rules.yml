@@ -14,7 +14,7 @@ spec:
     - alert: DockerMemoryUsageTooHigh
       annotations:
         description: '{{`Docker memory usage on {{ $labels.instance }} is too high.`}}'
-        opsrecipe: docker-memory-usage-high
+        opsrecipe: docker-memory-usage-high/
       expr: process_resident_memory_bytes{app="docker", cluster_type="workload_cluster"} > (5 * 1024 * 1024 * 1024)
       for: 15m
       labels:

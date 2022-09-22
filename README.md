@@ -149,9 +149,9 @@ Any other decision in the current helm chart is ignored for now (e.g. `helm/prom
 
 Here is a simplistic pseudocode view of the generate&test loop:
 ```
-for each file:
-  for each provider:
-    generate the rules from helm
+for each provider from test/conf/providers:
+  for each file in helm/prometheus-rules/templates/alerting-rules:
+    generate the rule using helm template
     if generation fails:
       we will try with next provider
     else:
@@ -162,6 +162,7 @@ for each file:
       run unit tests
 
 Show a summary of encountered errors
+Show success
 ```
 
 [unit testing rules]: https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/

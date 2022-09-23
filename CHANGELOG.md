@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Change `OperatorNotReconcilingRocket` to page excluding cert operator.
+
 ## [2.49.0] - 2022-09-20
 
 ### Added

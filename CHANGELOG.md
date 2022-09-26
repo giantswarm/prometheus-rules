@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Change `NodeHasConstantOOMKills` to consider only pods managed by us.
+- Stop Rocket being alerted for AWS and GCP clusters.
 
 ## [2.49.0] - 2022-09-20
 

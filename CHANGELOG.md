@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Change `OperatorNotReconcilingRocket` to page excluding cert operator.
+
 ## [2.50.0] - 2022-09-26
 
 ### Added
@@ -61,7 +65,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add CertManagerTooManyCertificateRequests (Team Cabbage).
->>>>>>> master
 
 ## [2.46.0] - 2022-08-26
 

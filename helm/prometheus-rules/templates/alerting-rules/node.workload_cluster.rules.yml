@@ -62,9 +62,11 @@ spec:
         team: {{ include "providerTeam" . }}
         topic: kubernetes
     - alert: NodeHasConstantOOMKills
+      # Check if a core component is restarted because memory reasons
+      # in the last hour.
       annotations:
         description: '{{`Node {{ $labels.ip }} has constant OOM kills.`}}'
-      expr: kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset 1h >= 1 AND ignoring(reason) kube_pod_container_status_last_terminated_reason{reason='OOMKilled'} > 0
+      expr: kube_pod_container_status_restarts_total{namespace=~"(giantswarm|kube-system)"} - kube_pod_container_status_restarts_total offset 1h >= 1 AND ignoring(reason) kube_pod_container_status_last_terminated_reason{reason='OOMKilled'} > 0
       for: 10m
       labels:
         area: kaas

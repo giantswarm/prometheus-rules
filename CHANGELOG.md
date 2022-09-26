@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Change `OperatorNotReconcilingRocket` to page excluding cert operator.
 
+### Changed
+
+- Change `NodeHasConstantOOMKills` to consider only pods managed by us.
+
 ## [2.49.0] - 2022-09-20
 
 ### Added
@@ -55,7 +59,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add CertManagerTooManyCertificateRequests (Team Cabbage).
->>>>>>> master
 
 ## [2.46.0] - 2022-08-26
 

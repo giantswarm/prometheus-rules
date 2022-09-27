@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Change `OperatorNotReconcilingRocket` to page excluding cert operator.
+- new loki alert: `LokiRingUnhealthy`
 
 ## [2.50.0] - 2022-09-26
 

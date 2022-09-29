@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change `OperatorNotReconcilingRocket` to page excluding cert operator.
 - new loki alert: `LokiRingUnhealthy`
 - PR template now asks to add unit tests
+- Add `FlowcontrolTooManyRequests` when one fairness bucket is being hit too hard.
 
 ## [2.50.0] - 2022-09-26
 

@@ -53,7 +53,6 @@ templates/alerting-rules/kubelet.workload-cluster.rules.yml
 templates/alerting-rules/kvm.management-cluster.rules.yml
 templates/alerting-rules/kvm.workload-cluster.rules.yml
 templates/alerting-rules/kyverno.rules.yml
-templates/alerting-rules/loki.all.rules.yml
 templates/alerting-rules/managed-logging.rules.yml
 templates/alerting-rules/management-cluster.rules.yml
 templates/alerting-rules/microendpoint.rules.yml

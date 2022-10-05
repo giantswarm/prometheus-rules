@@ -45,7 +45,7 @@ spec:
         area: managedservices
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: honeybadger
+        team: cabbage
         topic: releng
     - alert: WorkloadClusterDeploymentScaledDownToZero
       annotations:

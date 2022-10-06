@@ -35,17 +35,29 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: observability
-    - alert: WorkloadClusterManagedDeploymentNotSatisfied
+    - alert: WorkloadClusterManagedDeploymentNotSatisfiedCabbage
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: workload-cluster-managed-deployment-not-satisfied/
-      expr: managed_app_deployment_status_replicas_unavailable{cluster_type="workload_cluster", managed_app=~"cert-manager.*|external-dns.*|kong.*"} > 0
+      expr: managed_app_deployment_status_replicas_unavailable{cluster_type="workload_cluster", managed_app=~"external-dns.*|kong.*"} > 0
       for: 30m
       labels:
         area: managedservices
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: cabbage
+        topic: releng
+    - alert: WorkloadClusterManagedDeploymentNotSatisfiedHydra
+      annotations:
+        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        opsrecipe: workload-cluster-managed-deployment-not-satisfied/
+      expr: managed_app_deployment_status_replicas_unavailable{cluster_type="workload_cluster", managed_app=~"cert-manager.*"} > 0
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: hydra
         topic: releng
     - alert: WorkloadClusterDeploymentScaledDownToZero
       annotations:

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fixes ownership of kong and external-dns from team-honeybadger to team-cabbage
 - fixes ownership of cert-manager from team-honeybadger to team-hydra
+- Fix `AppExporterDown` rule to take endpoints defined by ServiceMonitors into consideration.
 
 ## [2.51.0] - 2022-09-29
 

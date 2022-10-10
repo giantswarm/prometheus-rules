@@ -25,7 +25,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         severity: page
         sig: none
-        team: atlas
+        team: atlas   # <-- why we don't just leave the team label and stop the per=team alerting rules?
         topic: releng
     - alert: ManagementClusterAppFailedCabbage
       annotations:
@@ -141,11 +141,28 @@ spec:
         topic: releng
     ## Workload cluster app rules only available on the management cluster Prometheus because the source is app-exporter.
     ## By default they go to Honeybadger, unless one of the teams below is configured.
-    - alert: WorkloadClusterAppFailed
+    - alert: WorkloadClusterAppFailedHoneybadger
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{catalog=~"giantswarm-.*|default",catalog!~"giantswarm-playground-.*|.*-test",status!~"(?i:(deployed|cordoned|not-installed))",team!~"(?i:(atlas|cabbage|phoenix|hydra|rocket))"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog="giantswarm", team="honeybadger"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        sig: none
+        team: honeybadger
+        topic: releng
+    # temporarly assigned to honeybadger - can we already move it to shield?
+    - alert: WorkloadClusterAppFailedShield
+      annotations:
+        description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        opsrecipe: app-failed/
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog="giantswarm", team="shield"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
       for: 30m
       labels:
         area: managedservices
@@ -161,7 +178,7 @@ spec:
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="atlas"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog="giantswarm", team="atlas"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
       for: 30m
       labels:
         area: managedservices
@@ -177,7 +194,7 @@ spec:
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="cabbage"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog="giantswarm", team="cabbage"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
       for: 30m
       labels:
         area: managedservices
@@ -193,7 +210,7 @@ spec:
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="phoenix"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog="giantswarm", team="phoenix"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
       for: 30m
       labels:
         area: managedservices
@@ -210,7 +227,7 @@ spec:
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="hydra"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog="giantswarm", team="hydra"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
       for: 30m
       labels:
         area: managedservices
@@ -227,7 +244,7 @@ spec:
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="rocket"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog="giantswarm", team="rocket"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
       for: 30m
       labels:
         area: managedservices
@@ -245,7 +262,7 @@ spec:
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status="not-installed", catalog="giantswarm"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      expr: label_replace(app_operator_app_info{status="not-installed", catalog="giantswarm", team=~".+"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
       for: 30m
       labels:
         area: managedservices
@@ -255,13 +272,13 @@ spec:
         cancel_if_outside_working_hours: "true"
         severity: page
         sig: none
-        team: honeybadger
+        # team: honeybadger <-- don't overwrite the team, leave as it was, so it will go to the already labeled team
         topic: releng
     - alert: WorkloadClusterAppPendingUpdate
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
         opsrecipe: app-pending-update/
-      expr: label_replace(app_operator_app_info{catalog!~"control-plane-.*|giantswarm-playground.*|.*-test", deployed_version!="", status="deployed", version_mismatch="true"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      expr: label_replace(app_operator_app_info{catalog="giantswarm", deployed_version!="", status="deployed", version_mismatch="true"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
       for: 40m
       labels:
         area: managedservices
@@ -271,13 +288,13 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: honeybadger
+        # team: honeybadger <-- don't overwrite the team, leave as it was, so it will go to the already labeled team
         topic: releng
     - alert: AppWithoutTeamLabel
       annotations:
         description: '{{`App {{ $labels.name }} has no team label.`}}'
         opsrecipe: app-without-team-label/
-      expr: label_replace(app_operator_app_info{team=""}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      expr: label_replace(app_operator_app_info{team=""}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
       for: 40m
       labels:
         area: managedservices
@@ -299,7 +316,7 @@ spec:
         area: managedservices
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: honeybadger
+        # team: honeybadger <-- don't overwrite the team, leave as it was, so it will go to the already labeled team
         topic: releng
     - alert: AppOperatorNotReady
       annotations:

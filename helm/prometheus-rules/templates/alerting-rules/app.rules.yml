@@ -137,7 +137,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: honeybadger
+        # team: honeybadger <-- don't overwrite the team, leave as it was, so it will go to the already labeled team
         topic: releng
     ## Workload cluster app rules only available on the management cluster Prometheus because the source is app-exporter.
     ## By default they go to Honeybadger, unless one of the teams below is configured.

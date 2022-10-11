@@ -15,7 +15,7 @@ spec:
       annotations:
         description: '{{`App-exporter ({{ $labels.instance }}) is down.`}}'
         opsrecipe: app-exporter-down/
-      expr: up{app="app-exporter"} == 0
+      expr: (up{app="app-exporter"} == 0) and (up{service="app-exporter"} == 0)
       for: 15m
       labels:
         area: managedservices

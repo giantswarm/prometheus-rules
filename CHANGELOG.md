@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Limit `WorkloadClusterAppFailed` alert to specific catalogs.
 - Limit `WorkloadClusterAppPendingUpdate` alert to specific catalogs.
 - Remove old, unused ArgoCD alerts pointing to team-honeybadger.
+- Fix `AppExporterDown` rule to take endpoints defined by ServiceMonitors into consideration.
 
 ## [2.51.0] - 2022-09-29
 

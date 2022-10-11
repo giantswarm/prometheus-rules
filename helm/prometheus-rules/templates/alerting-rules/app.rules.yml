@@ -16,7 +16,7 @@ spec:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
       expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team=~".+"}
-      for: 30m
+      for: 1m
       labels:
         area: managedservices
         cancel_if_cluster_status_creating: "true"
@@ -31,7 +31,7 @@ spec:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
         opsrecipe: app-pending-update/
       expr: app_operator_app_info{catalog=~"control-plane-.*", deployed_version!="", status="deployed", version_mismatch="true" ,team=~".+"}
-      for: 40m
+      for: 1m
       labels:
         area: managedservices
         cancel_if_apiserver_down: "true"
@@ -46,7 +46,7 @@ spec:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
       expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog="giantswarm", team=~".+"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
-      for: 30m
+      for: 1m
       labels:
         area: managedservices
         cancel_if_cluster_status_creating: "true"
@@ -62,7 +62,7 @@ spec:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
       expr: label_replace(app_operator_app_info{status="not-installed", catalog="giantswarm", team=~".+"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
-      for: 30m
+      for: 1m
       labels:
         area: managedservices
         cancel_if_cluster_status_creating: "true"
@@ -77,7 +77,7 @@ spec:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
         opsrecipe: app-pending-update/
       expr: label_replace(app_operator_app_info{catalog="giantswarm", deployed_version!="", status="deployed", version_mismatch="true" ,team=~".+"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
-      for: 40m
+      for: 1m
       labels:
         area: managedservices
         cancel_if_apiserver_down: "true"
@@ -92,7 +92,7 @@ spec:
         description: '{{`App {{ $labels.name }} has no team label.`}}'
         opsrecipe: app-without-team-label/
       expr: label_replace(app_operator_app_info{team=""}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
-      for: 40m
+      for: 1m
       labels:
         area: managedservices
         cancel_if_apiserver_down: "true"
@@ -108,7 +108,7 @@ spec:
         description: '{{`Cordoned app {{ $labels.name }} in {{ $labels.namespace}} is expired.`}}'
         opsrecipe: expired-cordon-charts/
       expr: (app_operator_app_cordon_expire_time_seconds - time()) < 0
-      for: 30m
+      for: 1m
       labels:
         area: managedservices
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}

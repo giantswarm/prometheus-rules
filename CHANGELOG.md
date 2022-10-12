@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Move `node-operator` NotReconciling alert to the provider team.
+
 ## [2.52.0] - 2022-10-11
 
 ### Fixed

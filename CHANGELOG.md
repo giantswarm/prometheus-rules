@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - App CR related (coming from app-exporter) alerting rules are changed:
   - Per-team duplicated rules are removed and only one rule per alert type is kept. It doesn't overwrite the
     incoming `team` label, so alerts are always routed according to the `team` label value coming from `app-exporter`
-- eye-bleeding regexp for "not `giantswarm` namespace was replaced with readable negative lookahead
 - unassigned team is now detect using empty or 'noteam' value of the `team` label
 
 ## [2.53.0] - 2022-10-12

@@ -45,7 +45,8 @@ spec:
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog="giantswarm", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
+      # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog="giantswarm", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
       for: 30m
       labels:
         area: managedservices
@@ -61,7 +62,8 @@ spec:
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status="not-installed", catalog="giantswarm", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
+      # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
+      expr: label_replace(app_operator_app_info{status="not-installed", catalog="giantswarm", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
       for: 30m
       labels:
         area: managedservices
@@ -76,7 +78,8 @@ spec:
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
         opsrecipe: app-pending-update/
-      expr: label_replace(app_operator_app_info{catalog="giantswarm", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
+      # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
+      expr: label_replace(app_operator_app_info{catalog="giantswarm", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
       for: 40m
       labels:
         area: managedservices
@@ -91,7 +94,8 @@ spec:
       annotations:
         description: '{{`App {{ $labels.name }} has no team label.`}}'
         opsrecipe: app-without-team-label/
-      expr: label_replace(app_operator_app_info{team=~"^$|noteam"}, "cluster_id", "$1", "namespace", "^(?!giantswarm$).*") == 1
+      # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
+      expr: label_replace(app_operator_app_info{team=~"^$|noteam"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
       for: 40m
       labels:
         area: managedservices

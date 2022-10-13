@@ -3,8 +3,8 @@ namespace: monitoring
 serviceType: managed
 
 project:
-  branch: "honeybadger-alert-improvements-p2"
-  commit: "298537289fa9dc5119de3c6ea0014d2844c769bb"
+  branch: "[[ .Branch ]]"
+  commit: "[[ .SHA ]]"
 
 managementCluster:
   name: ""

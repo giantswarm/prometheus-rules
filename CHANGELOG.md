@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Drop `blackbox-exporter` alerts for KVM clusters.
+
 ## [2.53.0] - 2022-10-12
 
 ### Changed

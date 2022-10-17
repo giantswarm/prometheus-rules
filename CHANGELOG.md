@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.54.0] - 2022-10-17
+
 ### Changed
 
 - App CR related (coming from app-exporter) alerting rules are changed:
@@ -1184,7 +1186,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.53.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.54.0...HEAD
+[2.54.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.53.0...v2.54.0
 [2.53.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.52.0...v2.53.0
 [2.52.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.51.0...v2.52.0
 [2.51.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.50.0...v2.51.0

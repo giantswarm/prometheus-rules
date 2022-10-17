@@ -11,11 +11,11 @@ spec:
   groups:
   - name: app
     rules:
-    - alert: ManagementClusterAppFailedAtlas
+    - alert: ManagementClusterAppFailed
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="atlas"}
+      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team!~"^$|noteam"}
       for: 30m
       labels:
         area: managedservices
@@ -25,109 +25,12 @@ spec:
         cancel_if_outside_working_hours: "true"
         severity: page
         sig: none
-        team: atlas
-        topic: releng
-    - alert: ManagementClusterAppFailedCabbage
-      annotations:
-        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team=~"cabbage"}
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        sig: none
-        team: cabbage
-        topic: releng
-    - alert: ManagementClusterAppFailedHoneybadger
-      annotations:
-        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team=~"honeybadger"}
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        sig: none
-        team: honeybadger
-        topic: releng
-    - alert: ManagementClusterAppFailedPhoenix
-      annotations:
-        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team=~"phoenix"}
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        sig: none
-        team: phoenix
-        topic: releng
-    - alert: ManagementClusterAppFailedHydra
-      annotations:
-        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team=~"hydra"}
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        sig: none
-        team: hydra
-        topic: releng
-    - alert: ManagementClusterAppFailedRainbow
-      annotations:
-        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="rainbow"}
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        sig: none
-        team: rainbow
-        topic: releng
-    - alert: ManagementClusterAppFailedRocket
-      annotations:
-        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="rocket"}
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        sig: none
-        team: rocket
         topic: releng
     - alert: ManagementClusterAppPendingUpdate
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
         opsrecipe: app-pending-update/
-      expr: app_operator_app_info{catalog=~"control-plane-.*", deployed_version!="", status="deployed", version_mismatch="true"}
+      expr: app_operator_app_info{catalog=~"control-plane-.*", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}
       for: 40m
       labels:
         area: managedservices
@@ -137,15 +40,13 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: honeybadger
         topic: releng
-    ## Workload cluster app rules only available on the management cluster Prometheus because the source is app-exporter.
-    ## By default they go to Honeybadger, unless one of the teams below is configured.
     - alert: WorkloadClusterAppFailed
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{catalog=~"giantswarm-.*|default",catalog!~"giantswarm-playground-.*|.*-test",status!~"(?i:(deployed|cordoned|not-installed))",team!~"(?i:(atlas|cabbage|phoenix|hydra|rocket))"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog="giantswarm", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
       for: 30m
       labels:
         area: managedservices
@@ -155,97 +56,14 @@ spec:
         cancel_if_outside_working_hours: "true"
         severity: page
         sig: none
-        team: honeybadger
         topic: releng
-    - alert: WorkloadClusterAppFailedAtlas
-      annotations:
-        description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="atlas"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        sig: none
-        team: atlas
-        topic: releng
-    - alert: WorkloadClusterAppFailedCabbage
-      annotations:
-        description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="cabbage"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        sig: none
-        team: cabbage
-        topic: releng
-    - alert: WorkloadClusterAppFailedPhoenix
-      annotations:
-        description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="phoenix"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        cancel_if_cluster_has_no_workers: "true"
-        severity: page
-        sig: none
-        team: phoenix
-        topic: releng
-    - alert: WorkloadClusterAppFailedHydra
-      annotations:
-        description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="hydra"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        cancel_if_cluster_has_no_workers: "true"
-        severity: page
-        sig: none
-        team: hydra
-        topic: releng
-    - alert: WorkloadClusterAppFailedRocket
-      annotations:
-        description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog!~"control-plane-.*", team="rocket"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
-      for: 30m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        sig: none
-        team: rocket
-        topic: releng
-    # If apps can't be installed multiple teams could be paged. So we route to honeybadger. Only for supported apps
-    # (coming from `giantswarm` catalog)
+    # If apps can't be installed - only for supported apps (coming from `giantswarm` catalog)
     - alert: WorkloadClusterAppNotInstalled
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: label_replace(app_operator_app_info{status="not-installed", catalog="giantswarm"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
+      expr: label_replace(app_operator_app_info{status="not-installed", catalog="giantswarm", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
       for: 30m
       labels:
         area: managedservices
@@ -255,13 +73,13 @@ spec:
         cancel_if_outside_working_hours: "true"
         severity: page
         sig: none
-        team: honeybadger
         topic: releng
     - alert: WorkloadClusterAppPendingUpdate
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
         opsrecipe: app-pending-update/
-      expr: label_replace(app_operator_app_info{catalog!~"control-plane-.*|giantswarm-playground.*|.*-test", deployed_version!="", status="deployed", version_mismatch="true"}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
+      expr: label_replace(app_operator_app_info{catalog="giantswarm", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
       for: 40m
       labels:
         area: managedservices
@@ -271,13 +89,13 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: honeybadger
         topic: releng
     - alert: AppWithoutTeamLabel
       annotations:
         description: '{{`App {{ $labels.name }} has no team label.`}}'
         opsrecipe: app-without-team-label/
-      expr: label_replace(app_operator_app_info{team=""}, "cluster_id", "$1", "namespace", "(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)") == 1
+      # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
+      expr: label_replace(app_operator_app_info{team=~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
       for: 40m
       labels:
         area: managedservices
@@ -287,7 +105,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: honeybadger
+        team: atlas
         topic: releng
     - alert: CordonedAppExpired
       annotations:
@@ -299,7 +117,6 @@ spec:
         area: managedservices
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: honeybadger
         topic: releng
     - alert: AppOperatorNotReady
       annotations:

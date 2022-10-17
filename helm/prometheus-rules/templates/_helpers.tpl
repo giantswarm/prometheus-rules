@@ -76,3 +76,7 @@ false
 true
 {{- end -}}
 {{- end -}}
+
+{{- define "namespaceNotGiantswarm" -}}
+"(([^g]|g[^i]|gi[^a]|gia[^n]|gian[^t]|giant[^s]|giants[^w]|giantsw[^a]|giantswa[^r]|giantswar[^m])*)"
+{{- end -}}

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Move `KongIngressControllerConfigurationPushErrorCountTooHigh` alerting rule to business hours only.
+
 ### Removed
 
 - Drop `blackbox-exporter` alerts for KVM clusters.

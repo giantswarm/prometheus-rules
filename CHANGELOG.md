@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- App CR related (coming from app-exporter) alerting rules are changed:
+  - Per-team duplicated rules are removed and only one rule per alert type is kept. It doesn't overwrite the
+    incoming `team` label, so alerts are always routed according to the `team` label value coming from `app-exporter`
+- unassigned team is now detected using empty or 'noteam' value of the `team` label (alert routed to 'atlas')
 - Move `KongIngressControllerConfigurationPushErrorCountTooHigh` alerting rule to business hours only.
 
 ### Removed

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add SLO alert for Cilium Agent.
+
 ## [2.54.0] - 2022-10-17
 
 ### Changed

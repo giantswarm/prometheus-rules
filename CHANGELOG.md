@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.55.0] - 2022-10-24
+
 ### Removed
 
 - `KongIngressControllerConfigurationPushErrorCountTooHigh`
@@ -1190,7 +1192,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.54.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.55.0...HEAD
+[2.55.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.54.0...v2.55.0
 [2.54.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.53.0...v2.54.0
 [2.53.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.52.0...v2.53.0
 [2.52.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.51.0...v2.52.0

@@ -26,20 +26,3 @@ spec:
         severity: page
         team: cabbage
         topic: kong
-    # Kong Ingress controller translates kubernetes resources into kong internal state. State is pushed
-    # through an internal API to the proxy containers, if this fails, changes to kubernetes resources
-    # are not reflected in kong proxy configuration.
-    - alert: KongIngressControllerConfigurationPushErrorCountTooHigh
-      annotations:
-        description: '{{`Kong Ingress Controller in namespace {{ $labels.namespace }} has problems pushing configuration.`}}'
-        opsrecipe: managed-app-kong/#kong-ingress-controller-configuration-push-error-count-too-high
-      expr: increase(ingress_controller_configuration_push_count{success="false"}[10m])> 1
-      for: 5m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: cabbage
-        topic: kong

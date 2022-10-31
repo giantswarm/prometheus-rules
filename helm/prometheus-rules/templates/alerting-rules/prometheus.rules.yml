@@ -31,7 +31,7 @@ spec:
       annotations:
         description: '{{`Prometheus can''t communicate with Remote Storage API at {{ $labels.url }}.`}}'
         opsrecipe: prometheus-cant-communicate-with-remote-storage-api/
-      expr: rate(prometheus_remote_storage_samples_failed_total[1h]) > 0.10 or rate(prometheus_remote_storage_samples_total[1h]) == 0 or rate(prometheus_remote_storage_metadata_retried_total[5m]) > 0
+      expr: rate(prometheus_remote_storage_samples_failed_total{instance!="prometheus-agent"}[1h]) > 0.1 or rate(prometheus_remote_storage_samples_total{instance!="prometheus-agent"}[1h]) == 0 or rate(prometheus_remote_storage_metadata_retried_total{instance!="prometheus-agent"}[5m]) > 0
       for: 1h
       labels:
         area: empowerment
@@ -68,10 +68,10 @@ spec:
     ## Page Atlas if prometheus agent fails to send samples to MC prometheus.
     - alert: PrometheusAgentRemoteWriteNotWorking
       annotations:
-        description: {{`Prometheus agent {{$labels.installation}}/{{$labels.cluster_id}} remote write is failing.`}}
+        description: '{{`Prometheus agent remote write is failing.`}}'
         summary: Prometheus agent fails to send samples to remote write endpoint.
         opsrecipe: prometheus-agent-remote-write-failed/
-      expr: absent(sum(prometheus_remote_storage_samples_failed_total{instance="prometheus-agent"}) by (installation, cluster_id, instance, url)) > 0
+      expr: absent_over_time(up{instance="prometheus-agent"}[10m])
       for: 10m
       labels:
         area: empowerment

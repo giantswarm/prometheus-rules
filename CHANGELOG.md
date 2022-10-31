@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change ownership of Cert-manager related alerts
+
 ## [2.55.0] - 2022-10-24
 
 ### Removed

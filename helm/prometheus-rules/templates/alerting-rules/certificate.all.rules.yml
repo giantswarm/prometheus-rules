@@ -17,10 +17,10 @@ spec:
       expr: (cert_exporter_secret_not_after{name=~"kiam.*"} - time()) < 2 * 7 * 24 * 60 * 60
       for: 5m
       labels:
-        area: managedapps
+        area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: cabbage
+        team: phoenix
         topic: cert-manager
     - alert: CertificateSecretWillExpireInLessThanTwoWeeks
       annotations:
@@ -29,10 +29,10 @@ spec:
       expr: (cert_exporter_secret_not_after{name!~"kiam.*",cluster_type="management_cluster"} - time()) < 2 * 7 * 24 * 60 * 60
       for: 5m
       labels:
-        area: managedapps
+        area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: cabbage
+        team: phoenix
         topic: cert-manager
     - alert: ManagedCertificateCRWillExpireInLessThanTwoWeeks
       annotations:
@@ -41,8 +41,8 @@ spec:
       expr: (cert_exporter_certificate_cr_not_after{managed_issuer="true"} - time()) < 2 * 7 * 24 * 60 * 60
       for: 15m
       labels:
-        area: managedapps
+        area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: cabbage
+        team: phoenix
         topic: cert-manager

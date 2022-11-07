@@ -65,17 +65,3 @@ spec:
         team: atlas
         topic: observability
         cancel_if_outside_working_hours: "true"
-    ## Page Atlas if prometheus agent fails to send samples to MC prometheus.
-    - alert: PrometheusAgentRemoteWriteNotWorking
-      annotations:
-        description: '{{`Prometheus agent remote write is failing.`}}'
-        summary: Prometheus agent fails to send samples to remote write endpoint.
-        opsrecipe: prometheus-agent-remote-write-failed/
-      expr: absent_over_time(up{instance="prometheus-agent"}[10m])
-      for: 10m
-      labels:
-        area: empowerment
-        severity: page
-        team: atlas
-        topic: observability
-        cancel_if_outside_working_hours: "true"

@@ -240,3 +240,17 @@ spec:
         severity: notify
         team: honeybadger
         topic: releng
+    - alert: FluxWorkqueueTooLong
+      annotations:
+        description: |-
+          {{`Flux artifacts are stuck in work queue for over 30 minutes and are not being reconciled.`}}
+        opsrecipe: fluxcd-workqueue-too-long/
+      expr: |
+        sum by (name, namespace) (workqueue_unfinished_work_seconds{namespace=~"flux-giantswarm|flux-system"}) > 1800.0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: honeybadger
+        topic: releng

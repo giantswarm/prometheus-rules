@@ -19,7 +19,7 @@ spec:
       for: 10m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: "true"
+        cancel_if_outside_working_hours: "false"
         severity: page
         team: {{ include "providerTeam" . }}
         topic: storage
@@ -43,7 +43,7 @@ spec:
       for: 10m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: "true"
+        cancel_if_outside_working_hours: "false"
         severity: page
         team: {{ include "providerTeam" . }}
         topic: storage
@@ -55,7 +55,7 @@ spec:
       for: 30m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: "true"
+        cancel_if_outside_working_hours: "false"
         severity: page
         team: {{ include "providerTeam" . }}
         topic: storage
@@ -67,7 +67,7 @@ spec:
       for: 10m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: "true"
+        cancel_if_outside_working_hours: "false"
         severity: page
         team: {{ include "providerTeam" . }}
         topic: storage

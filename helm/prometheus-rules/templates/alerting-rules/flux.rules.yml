@@ -103,14 +103,16 @@ spec:
         cancel_if_outside_working_hours: "true"
         team: honeybadger
         topic: releng
-    - alert: FluxReconciliationTakingTooLong
+    - alert: FluxReconciliationLongErrorBudgetLow
       annotations:
         description: |-
           {{`Flux controller {{ $labels.controller }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is reconciling very slowly.`}}
         opsrecipe: fluxcd-slow-reconciliation/
       expr: |
-        (sum(rate(controller_runtime_reconcile_time_seconds_sum{app=~".*flux.*", namespace=~".*giantswarm.*"}[5m])) by (installation, cluster_id, controller) /
-        sum(rate(controller_runtime_reconcile_time_seconds_count{app=~".*flux.*", namespace=~".*giantswarm.*"}[5m])) by (installation, cluster_id, controller)) > 60
+        1.0 -
+sum_over_time(sum by (kind,name) (rate(gotk_reconcile_duration_seconds_sum{app="flux-giantswarm-monitoring",namespace="flux-giantswarm",kind="GitRepository"}[10m]) >bool 0.05)[30d:10m])
+/
+43200
       for: 10m
       labels:
         area: kaas

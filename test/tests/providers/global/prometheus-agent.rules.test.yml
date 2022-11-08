@@ -8,23 +8,17 @@ tests:
       - series: 'up{instance="localhost:9090",cluster_type="workload_cluster", cluster_id="gauss", installation="gauss"}'
         values: "1+0x20 0+0x100"
     alert_rule_test:
-      - alertname: PrometheusAgentRemoteWriteNotWorking
+      - alertname: PrometheusAgentFailing
         eval_time: 30m
         exp_alerts:
           - exp_labels:
               area: empowerment
-              cancel_if_apiserver_down: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
-              cancel_if_scrape_timeout: "true"
-              cancel_if_outside_working_hours: "true"
-              cluster_id: "gauss"
-              installation: "gauss"
+              cluster_type: "workload_cluster"
               instance: "prometheus-agent"
               severity: page
               team: atlas
               topic: observability
             exp_annotations:
-              description: "Prometheus agent remote write is failing.."
+              description: "Prometheus agent remote write is failing."
               opsrecipe: "prometheus-agent-remote-write-failed/"
+              summary: "Prometheus agent fails to send samples to remote write endpoint."

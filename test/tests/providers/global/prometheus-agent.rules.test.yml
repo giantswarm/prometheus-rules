@@ -5,14 +5,14 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'up{instance="prometheus-agent",cluster_type="workload_cluster", cluster_id="gauss", installation="gauss"}'
+      - series: 'up{instance="localhost:9090",cluster_type="workload_cluster", cluster_id="gauss", installation="gauss"}'
         values: "1+0x20 0+0x100"
     alert_rule_test:
       - alertname: PrometheusAgentRemoteWriteNotWorking
         eval_time: 30m
         exp_alerts:
           - exp_labels:
-              area: managedservices
+              area: empowerment
               cancel_if_apiserver_down: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
@@ -21,6 +21,7 @@ tests:
               cancel_if_outside_working_hours: "true"
               cluster_id: "gauss"
               installation: "gauss"
+              instance: "prometheus-agent"
               severity: page
               team: atlas
               topic: observability

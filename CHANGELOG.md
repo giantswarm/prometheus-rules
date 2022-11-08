@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.57.0] - 2022-11-08
+
 ### Added
 
 - Add `FluxWorkqueueTooLong` alert.
@@ -1213,7 +1215,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.56.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.57.0...HEAD
+[2.57.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.56.0...v2.57.0
 [2.56.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.55.1...v2.56.0
 [2.55.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.55.0...v2.55.1
 [2.55.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.54.0...v2.55.0

@@ -351,7 +351,7 @@ spec:
 
     # -- VPA
     # Amount of request for VPA
-    - expr: "count(up{app=~"vertical-pod-autoscaler.*"}) by (cluster_type,cluster_id)"
+    - expr: "count(up{app=~'vertical-pod-autoscaler.*'}) by (cluster_type,cluster_id)"
       labels:
         class: MEDIUM
         area: platform
@@ -359,7 +359,7 @@ spec:
       record: raw_slo_requests
 
     # Amout of errors for VPA
-    - expr: "sum((up{app=~"vertical-pod-autoscaler.*"} * -1) + 1) by (cluster_id, cluster_type)"
+    - expr: "sum((up{app=~'vertical-pod-autoscaler.*'} * -1) + 1) by (cluster_id, cluster_type)"
       labels:
         class: MEDIUM
         area: platform

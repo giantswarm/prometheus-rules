@@ -358,7 +358,12 @@ spec:
         service: vertical-pod-autoscaler
       record: raw_slo_requests
 
-    # Amout of errors for VPA
+    # Amount of errors for VPA
+    # Up metric is set to 1 for each succesful scrape and set to 0 otherwise.
+    # If up made a succesful scrape, there is no error. Up returns 1, multiplied by -1
+    # and summed with 1 so the final result is 0 : no error recorded.
+    # If up was unsuccessful, there is an error. Up returns 0, multiplied by -1 and summed
+    # with 1 so the final result is 1 : 1 error is recorded .
     - expr: "sum((up{app=~'vertical-pod-autoscaler.*'} * -1) + 1) by (cluster_id, cluster_type)"
       labels:
         class: MEDIUM

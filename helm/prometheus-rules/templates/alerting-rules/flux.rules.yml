@@ -110,14 +110,14 @@ spec:
           {{`Flux object {{ $labels.kind }}/{{ $labels.name }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is below the error threshold of its error budget.`}}
         opsrecipe: fluxcd-slow-reconciliation/
       expr: |
-        1 - sum_over_time(
+        sum_over_time(
         (
           (
           sum(increase(gotk_reconcile_duration_seconds_sum{app="flux-giantswarm-monitoring",namespace="flux-giantswarm",kind=~"Kustomization|HelmRelease"}[10m])) by (kind,name,cluster_id,installation)
           /
           sum(increase(gotk_reconcile_duration_seconds_count{app="flux-giantswarm-monitoring",namespace="flux-giantswarm",kind=~"Kustomization|HelmRelease"}[10m])) by (kind,name,cluster_id,installation)
           ) 
-        >bool 360)[30d:10m])
+        <=bool 360)[30d:10m])
         / (30*24*6)
       for: 10m
       labels:

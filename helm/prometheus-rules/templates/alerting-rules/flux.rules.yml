@@ -117,8 +117,8 @@ spec:
           /
           sum(increase(gotk_reconcile_duration_seconds_count{app="flux-giantswarm-monitoring",namespace="flux-giantswarm",kind=~"Kustomization|HelmRelease"}[10m])) by (kind,name,cluster_id,installation)
           ) 
-        <=bool 360)[30d:10m])
-        / (30*24*6)
+        <=bool 360)[7d:10m])
+        / (7*24*6) < 0.97
       for: 10m
       labels:
         area: kaas

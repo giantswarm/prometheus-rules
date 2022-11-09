@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- FluxKustomizationFailed "stuck" time increased from 10m to 20m
+
 ## [2.57.0] - 2022-11-08
 
 ### Added

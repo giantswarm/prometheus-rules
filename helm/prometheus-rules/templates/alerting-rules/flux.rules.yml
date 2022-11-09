@@ -57,7 +57,7 @@ spec:
           {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-kustomization/
       expr: gotk_reconcile_condition{app="flux-giantswarm-monitoring", type="Ready", status="False", kind="Kustomization", cluster_type="management_cluster", namespace=~".*giantswarm.*"} > 0
-      for: 10m
+      for: 20m
       labels:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}

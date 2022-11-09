@@ -106,13 +106,18 @@ spec:
     - alert: FluxReconciliationLongErrorBudgetLow
       annotations:
         description: |-
-          {{`Flux controller {{ $labels.controller }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is reconciling very slowly.`}}
+          {{`Flux object {{ $labels.kind }}/{{ $labels.name }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is below the error threshold of its error budget.`}}
         opsrecipe: fluxcd-slow-reconciliation/
       expr: |
-        1.0 -
-sum_over_time(sum by (kind,name) (rate(gotk_reconcile_duration_seconds_sum{app="flux-giantswarm-monitoring",namespace="flux-giantswarm",kind="GitRepository"}[10m]) >bool 0.05)[30d:10m])
-/
-43200
+        1 - sum_over_time(
+(
+  (
+  sum(increase(gotk_reconcile_duration_seconds_sum{app="flux-giantswarm-monitoring",namespace="flux-giantswarm",kind=~"Kustomization|HelmRelease"}[10m])) by (kind,name,cluster_id,installation)
+  /
+  sum(increase(gotk_reconcile_duration_seconds_count{app="flux-giantswarm-monitoring",namespace="flux-giantswarm",kind=~"Kustomization|HelmRelease"}[10m])) by (kind,name,cluster_id,installation)
+  ) 
+>bool 360)[30d:10m])
+/ (30*24*6)
       for: 10m
       labels:
         area: kaas

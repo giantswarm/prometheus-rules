@@ -173,8 +173,8 @@ Show success
 In order to incorporate the SLO Framework in the Prometheus rules, several rules need to be implemented :
 * One which will record the amount of requests for the designated target
 * One recording the amount of errors for the same target
-* One recording the targeted availibility (for exemple 99.9% availibilty)
-  * For more information concerning the SLO target availibity and corresponding uptime : https://uptime.is/99.9
+* One recording the targeted availability (for exemple 99.9% availability)
+  * For more information concerning the SLO target availabity and corresponding uptime : https://uptime.is/99.9
 
 Those rules can be written according to this template :
 ```

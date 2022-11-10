@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
 ### Changed
 
 - Flux slow reconciliation switched to error budget alert
+
+### Added
+
+- Add VPA SLO alert.
 
 ## [2.57.0] - 2022-11-08
 

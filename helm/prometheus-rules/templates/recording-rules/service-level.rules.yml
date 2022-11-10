@@ -359,8 +359,8 @@ spec:
       record: raw_slo_requests
 
     # Amount of errors for VPA
-    # Up metric is set to 1 for each succesful scrape and set to 0 otherwise.
-    # If up made a succesful scrape, there is no error. Up returns 1, multiplied by -1
+    # Up metric is set to 1 for each successful scrape and set to 0 otherwise.
+    # If up made a successful scrape, there is no error. Up returns 1, multiplied by -1
     # and summed with 1 so the final result is 0 : no error recorded.
     # If up was unsuccessful, there is an error. Up returns 0, multiplied by -1 and summed
     # with 1 so the final result is 1 : 1 error is recorded .

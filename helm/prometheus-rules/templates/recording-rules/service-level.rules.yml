@@ -349,6 +349,35 @@ spec:
         service: cilium-agent
       record: slo_target
 
+    # -- VPA
+    # Amount of requests for VPA
+    - expr: "count(up{app=~'vertical-pod-autoscaler.*'}) by (cluster_type,cluster_id)"
+      labels:
+        class: MEDIUM
+        area: platform
+        service: vertical-pod-autoscaler
+      record: raw_slo_requests
+
+    # Amount of errors for VPA
+    # Up metric is set to 1 for each successful scrape and set to 0 otherwise.
+    # If up made a successful scrape, there is no error. Up returns 1, multiplied by -1
+    # and summed with 1 so the final result is 0 : no error recorded.
+    # If up was unsuccessful, there is an error. Up returns 0, multiplied by -1 and summed
+    # with 1 so the final result is 1 : 1 error is recorded .
+    - expr: "sum((up{app=~'vertical-pod-autoscaler.*'} * -1) + 1) by (cluster_id, cluster_type)"
+      labels:
+        class: MEDIUM
+        area: platform
+        service: vertical-pod-autoscaler
+      record: raw_slo_errors
+
+    # SLO targets for VPA -- 99,9% availability
+    - expr: "vector((1 - 0.999))"
+      labels:
+        area: platform
+        service: vertical-pod-autoscaler
+      record: slo_target
+
       # -- generic stuff
       # -- standard burnrates based on https://sre.google/workbook/alerting-on-slos/#6-multiwindow-multi-burn-rate-alerts
     - expr: "vector(36)"

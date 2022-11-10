@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.58.0] - 2022-11-10
 
+### Added
+
+- Add VPA SLO alert.
+
 ## [2.57.0] - 2022-11-08
 
 ### Added

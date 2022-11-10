@@ -168,3 +168,42 @@ Show success
 
 [unit testing rules]: https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/
 
+### SLO Framework integration
+
+In order to incorporate the SLO Framework in the Prometheus rules, several rules need to be implemented :
+* One which will record the amount of requests for the designated target
+* One recording the amount of errors for the same target
+* One recording the targeted availability (for exemple 99.9% availability)
+  * For more information concerning the SLO target availabity and corresponding uptime : https://uptime.is/99.9
+
+Those rules can be written according to this template :
+```
+# Amout of requests for VPA
+- expr: "count(up{app=~'vertical-pod-autoscaler.*'}) by (cluster_type,cluster_id)"
+  labels:
+    class: MEDIUM
+    area: platform
+    service: vertical-pod-autoscaler
+  record: raw_slo_requests
+
+# Amout of errors for VPA
+# Up metric is set to 1 for each successful scrape and set to 0 otherwise.
+# If up made a successful scrape, there is no error. Up returns 1, multiplied by -1
+# and summed with 1 so the final result is 0 : no error recorded.
+# If up was unsuccessful, there is an error. Up returns 0, multiplied by -1 and summed
+# with 1 so the final result is 1 : 1 error is recorded .
+- expr: "sum((up{app=~'vertical-pod-autoscaler.*'} * -1) + 1) by (cluster_id, cluster_type)"
+  labels:
+    class: MEDIUM
+    area: platform
+    service: vertical-pod-autoscaler
+  record: raw_slo_errors
+
+# SLO targets -- 99,9% availability
+- expr: "vector((1 - 0.999))"
+  labels:
+    area: platform
+    service: vertical-pod-autoscaler
+  record: slo_target
+```
+

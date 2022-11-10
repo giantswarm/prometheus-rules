@@ -350,7 +350,7 @@ spec:
       record: slo_target
 
     # -- VPA
-    # Amount of request for VPA
+    # Amount of requests for VPA
     - expr: "count(up{app=~'vertical-pod-autoscaler.*'}) by (cluster_type,cluster_id)"
       labels:
         class: MEDIUM

@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Disable `cancel_if_outside_working_hours` for `disk.workload-cluster.rules`
+- FluxKustomizationFailed "stuck" time increased from 10m to 20m
+- Flux slow reconciliation switched to error budget alert
 
 ## [2.58.0] - 2022-11-10
 

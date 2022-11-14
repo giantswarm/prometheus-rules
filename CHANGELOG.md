@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Inhibit `WorkloadClusterAppNotInstalled` when there are no workers.
 
+### Fixed
+
+- Fix `FluentBitDown` alert description.
+
 ## [2.59.0] - 2022-11-14
 
 ### Changed

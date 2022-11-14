@@ -11,16 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Inhibit `WorkloadClusterAppNotInstalled` when there are no workers.
 
+### Fixed
+
+- Fix `FluentBitDown` alert description.
+
 ## [2.59.0] - 2022-11-14
 
 ### Changed
 
 - FluxKustomizationFailed "stuck" time increased from 10m to 20m
 - Flux slow reconciliation switched to error budget alert
-
-### Fixed
-
-- Fix `FluentBitDown` alert description.
 
 ## [2.58.0] - 2022-11-10
 

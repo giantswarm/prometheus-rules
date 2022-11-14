@@ -47,11 +47,12 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    # This alert ensures our fluent-bit daemon sets are running on the management clusters for customers that configured it.
     - alert: FluentbitDown
       annotations:
         description: '{{`Fluentbit ({{ $labels.instance }}) is down.`}}'
         opsrecipe: fluentbit-down/
-      expr: sum(up{app="fluent-logshipping-app"}) by (app, cluster_id, cluster_type, installation, job, namespace, provider, node) == 0
+      expr: sum(up{app="fluent-logshipping-app"}) by (app, cluster_id, cluster_type, installation, job, namespace, provider, instance, node) == 0
       for: 15m
       labels:
         area: empowerment

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.60.1] - 2022-11-14
+
 ### Changed
 
 - Disable `cancel_if_outside_working_hours` for `disk.workload-cluster.rules`
@@ -1247,7 +1249,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.60.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.60.1...HEAD
+[2.60.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.60.0...v2.60.1
 [2.60.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.59.0...v2.60.0
 [2.59.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.58.0...v2.59.0
 [2.58.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.57.0...v2.58.0

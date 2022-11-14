@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Disable `cancel_if_outside_working_hours` for `disk.workload-cluster.rules`
 
+### Fixed 
+
+- Flux slow reconciliation error budget was counting periods with suspended reconciliation as failures
+
 ## [2.60.0] - 2022-11-14
 
 ### Changed

@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Adds PrometheusAgentFailing alert
+- Add PrometheusAgentFailing alert.
+- Add InhibitionVintageClusterReleaseBeforeV19 
 ### Fixed
 
 - Fix `make test` on macos

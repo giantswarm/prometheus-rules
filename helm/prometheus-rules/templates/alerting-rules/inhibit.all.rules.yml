@@ -68,7 +68,7 @@ spec:
         description: '{{`Cluster ({{ $labels.cluster_id }}) using Release ({{ $labels.release_version }}).`}}'
       expr: aggregation:giantswarm:cluster_release_version{release_version!~"^(1[9]|[2-9]\\d+|[1-9]\\d{2,})\\.[0-9]{1,2}\\.[0-9]{1,2}.*$"}
       labels:
-        release_before_v19: "true"
+        vintage_cluster_release_before_v19: "true"
         area: empowerment
         team: atlas
         topic: monitoring

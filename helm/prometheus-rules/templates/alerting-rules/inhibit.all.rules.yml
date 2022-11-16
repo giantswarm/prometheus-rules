@@ -63,3 +63,11 @@ spec:
         team: phoenix
         topic: kiam
     {{- end }}
+    - alert: InhibitionClusterReleaseBeforeV19
+      annotations:
+        description: '{{`Cluster ({{ $labels.cluster_id }}) using Release ({{ $labels.release_version }}).`}}'
+      expr: aggregation:giantswarm:cluster_release_version{release_version=~"^(1[9]|[2-9]\\d+|[1-9]\\d{2,})\\.[0-9]{1,2}\\.[0-9]{1,2}.*$"}
+      labels:
+        area: empowerment
+        team: atlas
+        topic: monitoring

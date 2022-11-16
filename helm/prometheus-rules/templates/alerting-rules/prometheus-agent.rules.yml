@@ -24,4 +24,4 @@ spec:
         severity: page
         team: atlas
         topic: observability
-        cancel_if_cluster_release_before_v19: "true"
+        cancel_if_vintage_cluster_release_before_v19: "true"

@@ -18,6 +18,7 @@ tests:
               severity: page
               team: atlas
               topic: observability
+              cancel_if_vintage_cluster_release_before_v19: "true"
             exp_annotations:
               description: "Prometheus agent remote write is failing."
               opsrecipe: "prometheus-agent-remote-write-failed/"

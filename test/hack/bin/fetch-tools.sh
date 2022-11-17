@@ -10,6 +10,7 @@ YQ_VERSION="4.26.1"
 GIT_WORKDIR=$(git rev-parse --show-toplevel)
 
 OS_BASE="$(uname -s)"
+TAR_CMD="tar"
 case "${OS_BASE}" in
 Linux*)
     export PROMETHEUS_SOURCE="https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz"
@@ -23,8 +24,9 @@ Darwin*)
     export PROMETHEUS_SOURCE="https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.darwin-amd64.tar.gz"
     export HELM_SOURCE="https://get.helm.sh/helm-v${HELM_VERSION}-darwin-amd64.tar.gz"
     export ARCHITECT_SOURCE="https://github.com/giantswarm/architect/releases/download/v${ARCHITECT_VERSION}/architect-v${ARCHITECT_VERSION}-darwin-amd64.tar.gz"
-    export YQ_SOURCE="https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_darwin_arm64.tar.gz"
-    export YQ_BIN_FILE="yq_darwin_arm64"
+    export YQ_SOURCE="https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_darwin_amd64.tar.gz"
+    export YQ_BIN_FILE="yq_darwin_amd64"
+    TAR_CMD="gtar"
     ;;
 
 *)
@@ -63,10 +65,10 @@ extract() {
 
         echo ""
         echo "## Contents for $tarfile:"
-        tar -tzvf "$tarfile"
+        "$TAR_CMD" -tzvf "$tarfile"
 
         echo "## Extracted files:"
-        tar -xvf "$tarfile" \
+        "$TAR_CMD" -xvf "$tarfile" \
             -C "$GIT_WORKDIR/test/hack/bin/" \
             --strip-components=1 \
             --wildcards "$wildcards"

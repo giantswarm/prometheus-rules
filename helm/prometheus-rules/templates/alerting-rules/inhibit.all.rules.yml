@@ -72,3 +72,12 @@ spec:
         area: empowerment
         team: atlas
         topic: monitoring
+    - alert: InhibitionCAPIClusterDefaultApps
+      annotations:
+        description: '{{`Cluster ({{ $labels.cluster_id }}) using ({{ $labels.app }}) ({{ $labels.version }}).`}}'
+      exp: label_replace(app_operator_app_info{app="observability-bundle",status="deployed",name=~".+-observability-bundle"} , "cluster_id", "$1", "name", "(.+)-observability-bundle")
+      labels:
+        capi_cluster_prometheus_agent: "true"
+        area: empowerment
+        team: atlas
+        topic: monitoring

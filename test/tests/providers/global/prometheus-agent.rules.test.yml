@@ -13,7 +13,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: empowerment
-              cluster_type: "workload_cluster"
               instance: "prometheus-agent"
               severity: page
               team: atlas

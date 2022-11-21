@@ -10,21 +10,12 @@ spec:
   groups:
   - name: inhibit.prometheus-agent
     rules:
-    - alert: InhibitionVintageClusterReleaseBeforeV19
+    - alert: InhibitionClusterIsNotRunningPrometheusAgent
       annotations:
-        description: '{{`Cluster ({{ $labels.cluster_id }}) using Release ({{ $labels.release_version }}).`}}'
-      expr: aggregation:giantswarm:cluster_release_version{release_version!~"^(1[9]|[2-9]\\d+|[1-9]\\d{2,})\\.[0-9]+\\.[0-9]+.*$"}
+        description: '{{`Cluster ({{ $labels.cluster_id }}) is not running Prometheus Agent.`}}'
+      expr: count(label_replace(kube_namespace_created{namespace=~".+-prometheus"}, "cluster_id", "$1", "namespace", "(.+)-prometheus") ) by (cluster_id) unless count(label_replace(app_operator_app_info{app="observability-bundle",status="deployed",name=~".+-observability-bundle"},"cluster_id", "$1", "name", "(.+)-observability-bundle")) by (cluster_id)
       labels:
-        vintage_cluster_release_before_v19: "true"
-        area: empowerment
-        team: atlas
-        topic: monitoring
-    - alert: InhibitionCAPIClusterIsNotRunningPrometheusAgent
-      annotations:
-        description: '{{`Cluster ({{ $labels.cluster_id }}) using ({{ $labels.app }}) ({{ $labels.version }}).`}}'
-      expr: label_replace(app_operator_app_info{app="observability-bundle",status="deployed",name=~".+-observability-bundle"} , "cluster_id", "$1", "name", "(.+)-observability-bundle")
-      labels:
-        capi_cluster_not_running_prometheus_agent: "true"
+        cluster_not_running_prometheus_agent: "true"
         area: empowerment
         team: atlas
         topic: monitoring

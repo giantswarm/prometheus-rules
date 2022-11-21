@@ -4,7 +4,6 @@ serviceType: managed
 project:
   branch: '[[ .Branch ]]'
   commit: '[[ .SHA ]]'
-
 managementCluster:
   name: ""
   pipeline: ""

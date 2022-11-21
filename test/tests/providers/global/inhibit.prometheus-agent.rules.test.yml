@@ -7,7 +7,7 @@ tests:
     input_series:
       - series: 'app_operator_app_info{app="observability-bundle",status="deployed",name="test2-observability-bundle",cluster_id="gauss",version="1.1.0"}'
         values: "1+0x20 0+0x100"
-      - series: 'kube_statefulset_created{namespace="test1-prometheus",name="prometheus-test1"}'
+      - series: 'kube_namespace_created{namespace="test1-prometheus",name="prometheus-test1"}'
         values: "1+0x20 0+0x100"
     alert_rule_test:
       - alertname: InhibitionClusterIsNotRunningPrometheusAgent

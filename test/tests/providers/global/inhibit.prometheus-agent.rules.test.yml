@@ -22,14 +22,14 @@ tests:
               cluster_id: "test1"
             exp_annotations:
               description: "Cluster (test1) using Release (18.0.2)."
-      - alertname: InhibitionCAPIClusterDefaultApps
+      - alertname: InhibitionCAPIClusterIsNotRunningPrometheusAgent
         eval_time: 1m
         exp_alerts:
           - exp_labels:
               area: empowerment
               team: atlas
               topic: monitoring
-              capi_cluster_prometheus_agent: "true"
+              capi_cluster_not_running_prometheus_agent: "true"
               app: "observability-bundle"
               status: "deployed"
               name: "test1-observability-bundle"

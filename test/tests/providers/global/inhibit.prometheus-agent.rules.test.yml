@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'aggregation:giantswarm:cluster_release_version{release_version="19.0.2",cluster_id="test1"}'
+      - series: 'aggregation:giantswarm:cluster_release_version{release_version="18.0.2",cluster_id="test1"}'
         values: "1+0x20 0+0x100"
       - series: 'app_operator_app_info{app="observability-bundle",status="deployed",name="test1-observability-bundle",cluster_id="gauss",version="1.1.0"}'
         values: "1+0x20 0+0x100"
@@ -18,8 +18,10 @@ tests:
               team: atlas
               topic: monitoring
               vintage_cluster_release_before_v19: "true"
+              release_version: "18.0.2"
+              cluster_id: "test1"
             exp_annotations:
-              description: "Cluster (test1) using Release (19.0.2)."
+              description: "Cluster (test1) using Release (18.0.2)."
       - alertname: InhibitionCAPIClusterDefaultApps
         eval_time: 1m
         exp_alerts:
@@ -28,5 +30,10 @@ tests:
               team: atlas
               topic: monitoring
               capi_cluster_prometheus_agent: "true"
+              app: "observability-bundle"
+              status: "deployed"
+              name: "test1-observability-bundle"
+              cluster_id: "test1"
+              version: "1.1.0"
             exp_annotations:
               description: "Cluster (test1) using (observability-bundle) (1.1.0)."

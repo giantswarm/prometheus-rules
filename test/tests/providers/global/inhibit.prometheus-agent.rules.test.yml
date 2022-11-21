@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'aggregation:giantswarm:cluster_release_version{release_version="19.0.2" cluster_id="test1"}'
+      - series: 'aggregation:giantswarm:cluster_release_version{release_version="19.0.2",cluster_id="test1"}'
         values: "1+0x20 0+0x100"
       - series: 'app_operator_app_info{app="observability-bundle",status="deployed",name="test1-observability-bundle",cluster_id="gauss",version="1.1.0"}'
         values: "1+0x20 0+0x100"

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Setting `label_application_giantswarm_io_team` label to `atlas` for vpa slo recording rules
 - Fix `make test` on macos
 
 ## [2.60.1] - 2022-11-14

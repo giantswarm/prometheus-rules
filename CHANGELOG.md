@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.60.2] - 2022-11-22
 
+### Changed
+
+- Disable 'cluster-service' and vault rules for CAPA
+
 ### Fixed
 
 - Setting `label_application_giantswarm_io_team` label to `atlas` for vpa slo recording rules
@@ -19,7 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Disable `cancel_if_outside_working_hours` for `disk.workload-cluster.rules`
-- Disable 'cluster-service' and vault rules for CAPA
 
 ### Fixed 
 

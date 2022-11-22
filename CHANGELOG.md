@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.60.2] - 2022-11-22
+
+### Changed
+
+- Disable 'cluster-service' and vault rules for CAPA
+
 ### Fixed
 
 - Setting `label_application_giantswarm_io_team` label to `atlas` for vpa slo recording rules
@@ -17,7 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Disable `cancel_if_outside_working_hours` for `disk.workload-cluster.rules`
-- Disable 'cluster-service' and vault rules for CAPA
 
 ### Fixed 
 
@@ -1255,7 +1260,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.60.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.60.2...HEAD
+[2.60.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.60.1...v2.60.2
 [2.60.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.60.0...v2.60.1
 [2.60.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.59.0...v2.60.0
 [2.59.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.58.0...v2.59.0

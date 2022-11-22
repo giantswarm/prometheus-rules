@@ -15,7 +15,7 @@ spec:
         description: '{{`Cluster ({{ $labels.cluster_id }}) is not running Prometheus Agent.`}}'
       expr: count(label_replace(kube_namespace_created{namespace=~".+-prometheus"}, "cluster_id", "$1", "namespace", "(.+)-prometheus") ) by (cluster_id) unless count(label_replace(app_operator_app_info{app="observability-bundle",status="deployed",name=~".+-observability-bundle"},"cluster_id", "$1", "name", "(.+)-observability-bundle")) by (cluster_id)
       labels:
-        cluster_not_running_prometheus_agent: "true"
+        cluster_is_not_running_prometheus_agent: "true"
         area: empowerment
         team: atlas
         topic: monitoring

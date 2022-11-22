@@ -46,7 +46,7 @@ phoenix
 {{- end -}}
 
 {{- define "isCertExporterInstalled" -}}
-{{- if has .Values.managementCluster.provider.kind (list "openstack" "cloud-director" "vsphere") -}}
+{{- if has .Values.managementCluster.provider.kind (list "openstack" "cloud-director" "vsphere" "capa") -}}
 false
 {{- else -}}
 true
@@ -54,7 +54,7 @@ true
 {{- end -}}
 
 {{- define "isClusterServiceInstalled" -}}
-{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere") -}}
+{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa") -}}
 false
 {{- else -}}
 true
@@ -62,7 +62,7 @@ true
 {{- end -}}
 
 {{- define "isVaultBeingMonitored" -}}
-{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere") -}}
+{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa") -}}
 false
 {{- else -}}
 true

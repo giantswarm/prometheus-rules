@@ -70,7 +70,7 @@ true
 {{- end -}}
 
 {{- define "isBastionBeingMonitored" -}}
-{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere") -}}
+{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa") -}}
 false
 {{- else -}}
 true

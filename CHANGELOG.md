@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add alert to page when `Cluster` is stuck on deletion.
+
 ## [2.60.2] - 2022-11-22
 
 ### Changed

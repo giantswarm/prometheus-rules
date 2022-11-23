@@ -39,7 +39,7 @@ spec:
     - alert: AzureClusterDeletionFailed
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} deletion is taking longer than expected.`}}'
-        opsrecipe: cluster-update-failed/
+        opsrecipe: cluster-deletion-failed/
       expr: azure_operator_cluster_status{status="Deleting"} == 1
       for: 2h
       labels:

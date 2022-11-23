@@ -36,6 +36,18 @@ spec:
         severity: page
         team: phoenix
         topic: azure
+    - alert: AzureClusterDeletionFailed
+      annotations:
+        description: '{{`Cluster {{ $labels.cluster_id }} deletion is taking longer than expected.`}}'
+        opsrecipe: cluster-update-failed/
+      expr: azure_operator_cluster_status{status="Deleting"} == 1
+      for: 2h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: azure
     - alert: AzureDeploymentStatusFailed
       annotations:
         description: '{{`Azure deployment {{ $labels.deployment_name }} in cluster {{ $labels.cluster_id }} has status "Failed".`}}'

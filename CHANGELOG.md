@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.61.0] - 2022-11-24
+
 ### Added
 
 - Add alert to page when `Cluster` is stuck on deletion.
@@ -1268,7 +1270,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.60.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.61.0...HEAD
+[2.61.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.60.2...v2.61.0
 [2.60.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.60.1...v2.60.2
 [2.60.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.60.0...v2.60.1
 [2.60.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.59.0...v2.60.0

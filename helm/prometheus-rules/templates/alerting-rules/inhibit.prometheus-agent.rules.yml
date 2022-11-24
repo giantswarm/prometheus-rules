@@ -10,6 +10,10 @@ spec:
   groups:
   - name: inhibit.prometheus-agent
     rules:
+    # this inhibition is firing once a cluster is not running prometheus-agent.
+    # we use `kube_namespace_created` to get the list of prometheus namespaces, and we extract the clusterID
+    # then we compare the list given from prometheuses namespaces with the `app_operator_app_info` 
+    # which is a metric for app deployment with filtering of  deployed observability-bundle.
     - alert: InhibitionClusterIsNotRunningPrometheusAgent
       annotations:
         description: '{{`Cluster ({{ $labels.cluster_id }}) is not running Prometheus Agent.`}}'

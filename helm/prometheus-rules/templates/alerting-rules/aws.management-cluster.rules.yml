@@ -38,6 +38,18 @@ spec:
         severity: page
         team: phoenix
         topic: aws
+    - alert: AWSClusterDeletionFailed
+      annotations:
+        description: '{{`Cluster {{ $labels.cluster_id }} deletion is taking longer than expected.`}}'
+        opsrecipe: cluster-deletion-failed/
+      expr: (statusresource_cluster_status{app=~"aws-operator.*", status="Deleting"} == 1 or cluster_operator_cluster_status{app=~"cluster-operator.*", status="Deleting", provider="aws"} == 1)
+      for: 1h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: aws
     - alert: CloudFormationStackFailed
       annotations:
         description: '{{`CloudFormation Stack "{{ $labels.stack_type }}" for {{ $labels.installation }}/{{ $labels.cluster_id }}, id "{{ $labels.id }}" remains in {{$labels.state }} state.`}}'

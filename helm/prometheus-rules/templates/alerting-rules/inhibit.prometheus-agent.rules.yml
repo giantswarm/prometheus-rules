@@ -13,6 +13,9 @@ spec:
     # this inhibition fires when a cluster is not running prometheus-agent.
     # we retrieve the list of existing cluster IDs from `kube_namespace_created`
     # then compare it with the list of deployed observability-bundles from `app_operator_app_info`
+    # 
+    # Will only produce data (and inhibitions) on MC because it's where app_operator is running
+    # but that's enough to have the inhibitions on the installation-global alertmanager
     - alert: InhibitionClusterIsNotRunningPrometheusAgent
       annotations:
         description: '{{`Cluster ({{ $labels.cluster_id }}) is not running Prometheus Agent.`}}'

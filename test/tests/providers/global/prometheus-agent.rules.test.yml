@@ -1,0 +1,24 @@
+---
+rule_files:
+  - prometheus-agent.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'up{instance="localhost:9090",cluster_type="workload_cluster", cluster_id="gauss", installation="gauss"}'
+        values: "1+0x20 0+0x100"
+    alert_rule_test:
+      - alertname: PrometheusAgentFailing
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              area: empowerment
+              instance: "prometheus-agent"
+              severity: page
+              team: atlas
+              topic: observability
+              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+            exp_annotations:
+              description: "Prometheus agent remote write is failing."
+              opsrecipe: "prometheus-agent-remote-write-failed/"
+              summary: "Prometheus agent fails to send samples to remote write endpoint."

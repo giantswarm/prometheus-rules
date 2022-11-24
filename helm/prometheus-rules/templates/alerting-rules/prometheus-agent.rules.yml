@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    cluster_type: "workload_cluster"
+    {{- include "labels.common" . | nindent 4 }}
+  name: prometheus-agent.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: prometheus-agent
+    rules:
+    ## Page Atlas if prometheus agent fails to send samples to MC prometheus.
+    - alert: PrometheusAgentFailing
+      annotations:
+        description: '{{`Prometheus agent remote write is failing.`}}'
+        summary: Prometheus agent fails to send samples to remote write endpoint.
+        opsrecipe: prometheus-agent-remote-write-failed/
+      expr: absent_over_time(up{instance="prometheus-agent"}[10m])
+      for: 10m
+      labels:
+        area: empowerment
+        severity: page
+        team: atlas
+        topic: observability
+        cancel_if_cluster_is_not_running_prometheus_agent: "true"

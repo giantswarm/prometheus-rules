@@ -79,7 +79,7 @@ You can see the inhibition rules in alertmanager's config (opsctl open `alertman
 Official documentation for inhibit rules can be found here: https://www.prometheus.io/docs/alerting/latest/configuration/#inhibit_rule
 
 The base principle of an `source_matcher` inhibit_rule is:
-> if an alert is currently firing with a `source_matcher` label, then inhibit all alerts that hate a `target_matcher` label
+> if an alert is currently firing with a `source_matcher` label, then inhibit all alerts that have a `target_matcher` label
 
 
 

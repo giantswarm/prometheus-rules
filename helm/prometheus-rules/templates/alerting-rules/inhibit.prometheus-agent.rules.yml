@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: inhibit.prometheus-agent.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: inhibit.prometheus-agent
+    rules:
+    # this inhibition fires when a cluster is not running prometheus-agent.
+    # we retrieve the list of existing cluster IDs from `kube_namespace_created`
+    # then compare it with the list of deployed observability-bundles from `app_operator_app_info`
+    # 
+    # Will only produce data (and inhibitions) on MC because it's where app_operator is running
+    # but that's enough to have the inhibitions on the installation-global alertmanager
+    - alert: InhibitionClusterIsNotRunningPrometheusAgent
+      annotations:
+        description: '{{`Cluster ({{ $labels.cluster_id }}) is not running Prometheus Agent.`}}'
+      expr: count(label_replace(kube_namespace_created{namespace=~".+-prometheus"}, "cluster_id", "$1", "namespace", "(.+)-prometheus") ) by (cluster_id) unless count(label_replace(app_operator_app_info{app="observability-bundle",status="deployed",name=~".+-observability-bundle"},"cluster_id", "$1", "name", "(.+)-observability-bundle")) by (cluster_id)
+      labels:
+        cluster_is_not_running_prometheus_agent: "true"
+        area: empowerment
+        team: atlas
+        topic: monitoring

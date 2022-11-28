@@ -20,6 +20,7 @@ templates/alerting-rules/configmap.management-cluster.rules.yml
 templates/alerting-rules/configmap.workload-cluster.rules.yml
 templates/alerting-rules/coredns.rules.yml
 templates/alerting-rules/credentiald.rules.yml
+templates/alerting-rules/crossplane.rules.yml
 templates/alerting-rules/crsync.rules.yml
 templates/alerting-rules/daemonset.management-cluster.rules.yml
 templates/alerting-rules/deployment.management-cluster.rules.yml

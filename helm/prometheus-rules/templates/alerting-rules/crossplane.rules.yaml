@@ -1,0 +1,39 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: crossplane.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: crossplane
+    rules:
+    - alert: DeploymentNotSatisfiedCrossplane
+      annotations:
+        description: '{{`Crossplane related deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        opsrecipe: deployment-not-satisfied/
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", namespace="crossplane"} > 0
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: honeybadger
+        topic: managementcluster
+    - alert: CrossplaneHelmReleaseFailed
+      annotations:
+        description: |-
+          {{`Crossplane HelmRelease {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
+        opsrecipe: fluxcd-failing-helmrelease/
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", namespace=~".*giantswarm.*", name="crossplane"} > 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: honeybadger
+        topic: releng

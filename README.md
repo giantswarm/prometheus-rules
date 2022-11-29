@@ -166,6 +166,14 @@ Show a summary of encountered errors
 Show success
 ```
 
+#### Hints
+
+You can filter which rules files you will test with a regular expression:
+```
+make test test_filter=grafana
+make test test_filter=gr.*na
+```
+
 [unit testing rules]: https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/
 
 ### SLO Framework integration

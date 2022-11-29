@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- unit tests: you can run tests against a specific file
+
 ## [2.62.1] - 2022-11-29
 
 - Update 'vpa' slo availability to 99%

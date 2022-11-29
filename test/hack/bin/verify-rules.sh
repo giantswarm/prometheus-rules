@@ -19,6 +19,8 @@ array_contains() {
 }
 
 main() {
+    # Filter (grep) rules files to test
+    filter="${1:-}"
 
     START_TIME="$(date +%s)"
     echo "$(date '+%H:%M:%S') promtool: start"
@@ -71,6 +73,7 @@ main() {
 
         for file in "${all_files[@]}"; do
 
+            [[ ! "$file" =~ .*$filter.* ]] && continue
 
             echo "###  Testing $file"
 

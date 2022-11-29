@@ -1,0 +1,117 @@
+---
+rule_files:
+  - crossplane.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'kube_deployment_status_replicas_unavailable{app="kube-state-metrics", cluster_id="gauss", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="crossplane", installation="gauss", instance="100.64.5.122:8080", job="gauss-prometheus/workload-gauss/0", namespace="crossplane", node="ip-10-0-5-119.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-95bbb4bd7-v6hvh", provider="aws", service_priority="highest", workload_name="crossplane", workload_type="deployment"}'
+        values: "0+0x20 1+0x100"
+    alert_rule_test:
+      - alertname: DeploymentNotSatisfiedCrossplane
+        eval_time: 60m
+        exp_alerts:
+          - exp_labels:
+              alertname: DeploymentNotSatisfiedCrossplane
+              app: kube-state-metrics
+              area: managedservices
+              cancel_if_cluster_status_creating: true
+              cancel_if_cluster_status_deleting: true
+              cancel_if_cluster_status_updating: true
+              cancel_if_outside_working_hours: true
+              cluster_id: gauss
+              cluster_type: management_cluster
+              container: kube-state-metrics
+              customer: giantswarm
+              deployment: crossplane
+              installation: gauss
+              instance: 100.64.5.122:8080
+              job: gauss-prometheus/workload-gauss/0
+              namespace: crossplane
+              node: ip-10-0-5-119.eu-west-1.compute.internal
+              organization: giantswarm
+              pod: kube-state-metrics-95bbb4bd7-v6hvh
+              provider: aws
+              service_priority: highest
+              severity: page
+              team: honeybadger
+              topic: managementcluster
+              workload_name: crossplane
+              workload_type: deployment
+            exp_annotations:
+              description: "Crossplane related deployment crossplane/crossplane is not satisfied."
+              opsrecipe: "deployment-not-satisfied/"
+  - interval: 1m
+    input_series:
+      - series: 'kube_deployment_status_replicas_unavailable{app="kube-state-metrics", cluster_id="gauss", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="caicloud-event-exporter", installation="gauss", instance="100.64.5.122:8080", job="gauss-prometheus/workload-gauss/0", namespace="crossplane", node="ip-10-0-5-119.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-95bbb4bd7-v6hvh", provider="aws", service_priority="highest", workload_name="caicloud-event-exporter", workload_type="deployment"}'
+        values: "0+0x20 1+0x100"
+    alert_rule_test:
+      - alertname: DeploymentNotSatisfiedCrossplane
+        eval_time: 51m
+        exp_alerts:
+          - exp_labels:
+              alertname: DeploymentNotSatisfiedCrossplane
+              app: kube-state-metrics
+              area: managedservices
+              cancel_if_cluster_status_creating: true
+              cancel_if_cluster_status_deleting: true
+              cancel_if_cluster_status_updating: true
+              cancel_if_outside_working_hours: true
+              cluster_id: gauss
+              cluster_type: management_cluster
+              container: kube-state-metrics
+              customer: giantswarm
+              deployment: caicloud-event-exporter
+              installation: gauss
+              instance: 100.64.5.122:8080
+              job: gauss-prometheus/workload-gauss/0
+              namespace: crossplane
+              node: ip-10-0-5-119.eu-west-1.compute.internal
+              organization: giantswarm
+              pod: kube-state-metrics-95bbb4bd7-v6hvh
+              provider: aws
+              service_priority: highest
+              severity: page
+              team: honeybadger
+              topic: managementcluster
+              workload_name: caicloud-event-exporter
+              workload_type: deployment
+            exp_annotations:
+              description: "Crossplane related deployment crossplane/caicloud-event-exporter is not satisfied."
+              opsrecipe: "deployment-not-satisfied/"
+  - interval: 1m
+    input_series:
+      - series: 'gotk_reconcile_condition{app="customer-flux-monitoring", cluster_id="gauss", cluster_type="management_cluster", container="manager", customer="giantswarm", installation="gauss", instance="100.64.4.137:8080", job="gauss-prometheus/workload-gauss/0", kind="HelmRelease", name="crossplane", namespace="flux-giantswarm", node="ip-10-0-5-152.eu-west-1.compute.internal", organization="giantswarm", pod="helm-controller-8cf7d5bb4-gshxz", provider="aws", service_priority="highest", status="False", type="Ready"}'
+        values: "0+0x20 1+0x20"
+    alert_rule_test:
+      - alertname: CrossplaneHelmReleaseFailed
+        eval_time: 32m
+        exp_alerts:
+          - exp_labels:
+              alertname: CrossplaneHelmReleaseFailed
+              app: customer-flux-monitoring
+              area: kaas
+              cancel_if_outside_working_hours: true
+              cluster_id: gauss
+              cluster_type: management_cluster
+              container: manager
+              customer: giantswarm
+              installation: gauss
+              instance: 100.64.4.137:8080
+              job: gauss-prometheus/workload-gauss/0
+              kind: HelmRelease
+              name: crossplane
+              namespace: flux-giantswarm
+              node: ip-10-0-5-152.eu-west-1.compute.internal
+              organization: giantswarm
+              pod: helm-controller-8cf7d5bb4-gshxz
+              provider: aws
+              service_priority: highest
+              severity: page
+              status: False
+              team: honeybadger
+              topic: releng
+              type: Ready
+            exp_annotations:
+              description: "Crossplane HelmRelease crossplane in ns flux-giantswarm on gauss/gauss is stuck in Failed state."
+              opsrecipe: "fluxcd-failing-helmrelease/"

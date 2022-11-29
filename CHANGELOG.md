@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Update 'vpa' slo availability to 99%
+
 ## [2.62.0] - 2022-11-25
 
 ### Added

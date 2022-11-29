@@ -371,8 +371,8 @@ spec:
         service: vertical-pod-autoscaler
       record: raw_slo_errors
 
-    # SLO targets for VPA -- 99,9% availability
-    - expr: "vector((1 - 0.999))"
+    # SLO targets for VPA -- 99% availability
+    - expr: "vector((1 - 0.99))"
       labels:
         area: platform
         service: vertical-pod-autoscaler

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Silence some Flux alerts outside of business hours.
+
 ## [2.63.1] - 2022-11-30
 
 ### Changed
@@ -62,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Disable `cancel_if_outside_working_hours` for `disk.workload-cluster.rules`
 
-### Fixed 
+### Fixed
 
 - Flux slow reconciliation error budget was counting periods with suspended reconciliation as failures
 

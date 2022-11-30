@@ -34,7 +34,7 @@ spec:
       for: 10m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: honeybadger
         topic: releng
@@ -60,7 +60,7 @@ spec:
       for: 20m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: honeybadger
         topic: releng
@@ -86,7 +86,7 @@ spec:
       for: 2h
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: honeybadger
         topic: releng

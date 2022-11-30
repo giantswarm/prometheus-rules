@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- unit tests: you can run tests against a specific file
+
 ## [2.63.0] - 2022-11-30
 
 ### Added

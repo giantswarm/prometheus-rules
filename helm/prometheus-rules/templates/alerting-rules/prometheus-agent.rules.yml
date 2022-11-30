@@ -3,7 +3,6 @@ kind: PrometheusRule
 metadata:
   creationTimestamp: null
   labels:
-    cluster_type: "workload_cluster"
     {{- include "labels.common" . | nindent 4 }}
   name: prometheus-agent.rules
   namespace: {{ .Values.namespace  }}

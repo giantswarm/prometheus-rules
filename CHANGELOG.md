@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add basic rules for Crossplane: deployment not satisfied in `crossplane` namespace and crossplane `HelmRelease` failed
 
+## [2.62.1] - 2022-11-29
+
+- Update 'vpa' slo availability to 99%
+
 ## [2.62.0] - 2022-11-25
 
 ### Added
@@ -1281,7 +1285,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.62.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.62.1...HEAD
+[2.62.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.62.0...v2.62.1
 [2.62.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.61.0...v2.62.0
 [2.61.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.60.2...v2.61.0
 [2.60.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.60.1...v2.60.2

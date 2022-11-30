@@ -20,7 +20,7 @@ spec:
           labels:
             area: kaas
             severity: page
-            team: '{{`{{ $labels.label_application_giantswarm_io_team }}`}}'
+            team: shield
             topic: managementcluster
             cancel_if_cluster_status_creating: "true"
             cancel_if_cluster_status_deleting: "true"

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - unit tests: you can run tests against a specific file
 
+### Fixed
+
+- Set `label_application_giantswarm_io_team=atlas` label for `prometheus-operator-app-prometheus` SLO query.
+
 ## [2.63.0] - 2022-11-30
 
 ### Added

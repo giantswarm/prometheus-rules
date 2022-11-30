@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.63.1] - 2022-11-30
+
+### Changed
+
+- Change PrometheusAgentFailing alert to also being on MC
+
 ### Added
 
 - unit tests: you can run tests against a specific file
@@ -1292,7 +1298,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.63.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.63.1...HEAD
+[2.63.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.63.0...v2.63.1
 [2.63.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.62.1...v2.63.0
 [2.62.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.62.0...v2.62.1
 [2.62.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.61.0...v2.62.0

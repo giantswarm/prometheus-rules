@@ -170,6 +170,7 @@ Show success
 
 You can filter which rules files you will test with a regular expression:
 ```
+make test test_filter=grafana.management-cluster.rules.yml
 make test test_filter=grafana
 make test test_filter=gr.*na
 ```

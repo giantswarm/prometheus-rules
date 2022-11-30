@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Route `NoKyvernoPodRunning` alert with team label. 
 - Silence some Flux alerts outside of business hours.
 
 ## [2.63.1] - 2022-11-30

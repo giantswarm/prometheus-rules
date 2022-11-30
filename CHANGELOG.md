@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change PrometheusAgentFailing alert to also being on MC
+
 ### Added
 
 - unit tests: you can run tests against a specific file

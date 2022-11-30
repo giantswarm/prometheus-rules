@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add basic rules for Crossplane: deployment not satisfied in `crossplane` namespace and crossplane `HelmRelease` failed
+
 ## [2.62.1] - 2022-11-29
 
 - Update 'vpa' slo availability to 99%

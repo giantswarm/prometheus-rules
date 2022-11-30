@@ -13,7 +13,7 @@ clean: ## Clean the git work dir and remove all untracked files
 
 .PHONY: test
 test: install-tools ## run unit tests for alerting rules
-	bash test/hack/bin/verify-rules.sh
+	bash test/hack/bin/verify-rules.sh "$(test_filter)"
 
 install-tools:
 	./test/hack/bin/fetch-tools.sh

@@ -33,6 +33,7 @@ rocket
 {{- else if has .Values.managementCluster.provider.kind (list "gcp" "capa") -}}
 hydra
 {{- else if eq .Values.managementCluster.provider.kind "capz" -}}
+clippy
 {{- else -}}
 phoenix
 {{- end -}}

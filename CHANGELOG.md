@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Increase cilium SLO alert request count (based on daemonset replicas count) to 300/minute.
+
 ## [2.64.0] - 2022-11-30
 
 ### Changed

@@ -6,20 +6,21 @@ tests:
   - interval: 1m
     input_series:
       - series: 'prometheus_build_info{app="prometheus",cluster_id="gauss",instance="localhost:9090"}'
-        values: "1+0x20 0+0x100"
-      - series: 'prometheus_build_info{app="prometheus",cluster_id="test1",instance="localhost:9090"}'
-        values: "1+0x20 0+0x100"
-      - series: 'prometheus_build_info{app="prometheus",cluster_id="gauss",instance="prometheus-agent"}'
-        values: "1+0x20 0+0x100"
+        values: "1+0x40"
+      - series: 'kube_statefulset_created{namespace="kube-system",cluster_id="gauss",statefulset="prometheus-prometheus-agent"}'
+        values: "1+0x20 0+0x20"
     alert_rule_test:
       - alertname: InhibitionClusterIsNotRunningPrometheusAgent
         eval_time: 1m
+      - alertname: InhibitionClusterIsNotRunningPrometheusAgent
+        eval_time: 22m
         exp_alerts:
           - exp_labels:
               area: empowerment
               team: atlas
               topic: monitoring
               cluster_is_not_running_prometheus_agent: "true"
-              cluster_id: "test1"
+              cluster_id: "gauss"
             exp_annotations:
-              description: "Cluster (test1) is not running Prometheus Agent."
+              description: "Cluster (gauss) is not running Prometheus Agent."
+

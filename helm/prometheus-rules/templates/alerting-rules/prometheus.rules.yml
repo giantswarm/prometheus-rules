@@ -57,8 +57,22 @@ spec:
         description: {{`Prometheus {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}
         summary: Prometheus fails to scrape all targets in a job.
         opsrecipe: prometheus-job-scraping-failure/
+      expr: (count(up == 0) BY (job, installation, cluster_id) / count(up) BY (job, installation, cluster_id)) == 1
+      for: 1h # increase this value when changing severity to page
+      labels:
+        area: empowerment
+        severity: notify
+        team: atlas
+        topic: observability
+        cancel_if_outside_working_hours: "true"
+
+    - alert: PrometheusCriticalJobScrapingFailure
+      annotations:
+        description: {{`Prometheus {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}
+        summary: Prometheus fails to scrape all targets in a job.
+        opsrecipe: prometheus-job-scraping-failure/
       expr: (count(up{app=~"kubernetes|kube-controller-manager|kube-scheduler|kubelet|node-exporter|kube-state-metrics"} == 0) BY (app,job, installation, cluster_id) / count(up{app=~"kubernetes|kube-controller-manager|kube-scheduler|kubelet|node-exporter|kube-state-metrics"}) BY (app, job, installation, cluster_id)) == 1
-      for: 3d # increase this value when changing severity to page
+      for: 3d
       labels:
         area: empowerment
         severity: page

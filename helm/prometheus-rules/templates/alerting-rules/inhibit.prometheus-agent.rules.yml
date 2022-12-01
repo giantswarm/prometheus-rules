@@ -11,8 +11,8 @@ spec:
   - name: inhibit.prometheus-agent
     rules:
     # this inhibition fires when a cluster is not running prometheus-agent.
-    # we retrieve the list of existing cluster IDs from `prometheus_build_info` with app="prometheus"
-    # then compare it with the list of `prometheus_build_info` with instance="prometheus-agent"
+    # If we have prometheus-agent statefulset, it means prometheus-agent is installed on this cluster
+    # so, raise an inhibition unless prometheus-agent runs on the cluster 
     # 
     # Will produce data (and inhibitions) on MC/WC.
     - alert: InhibitionClusterIsNotRunningPrometheusAgent

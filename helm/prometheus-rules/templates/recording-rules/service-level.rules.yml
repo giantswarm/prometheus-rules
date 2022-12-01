@@ -331,7 +331,7 @@ spec:
 
     # -- Cilium
     # We assume one request/second for each cilium-agent replica
-    - expr: label_replace(count(cilium_version) * 60, "service", "cilium-agent", "", "")
+    - expr: label_replace(count(cilium_version) * 300, "service", "cilium-agent", "", "")
       labels:
         class: MEDIUM
         area: kaas

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Improve InhibitionClusterIsNotRunningPrometheusAgent to fire on each cluster.
+
 ## [2.64.0] - 2022-11-30
 
 ### Changed

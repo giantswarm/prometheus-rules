@@ -9,9 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- unit tests: you can run tests against a specific file
 - Push to capz-app-collection.
 - Send CAPZ alerts to clippy.
+
+## [2.64.0] - 2022-11-30
+
+### Changed
+
+- Route `NoKyvernoPodRunning` alert with team label. 
+- Silence some Flux alerts outside of business hours.
+
+## [2.63.1] - 2022-11-30
+
+### Changed
+
+- Change PrometheusAgentFailing alert to also being on MC
+
+### Added
+
+- unit tests: you can run tests against a specific file
+- Add monitoring for `aws-pod-identity-webhook` deployment (IRSA).
 
 ## [2.63.0] - 2022-11-30
 
@@ -57,7 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Disable `cancel_if_outside_working_hours` for `disk.workload-cluster.rules`
 
-### Fixed 
+### Fixed
 
 - Flux slow reconciliation error budget was counting periods with suspended reconciliation as failures
 
@@ -1293,7 +1310,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.63.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.64.0...HEAD
+[2.64.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.63.1...v2.64.0
+[2.63.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.63.0...v2.63.1
 [2.63.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.62.1...v2.63.0
 [2.62.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.62.0...v2.62.1
 [2.62.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.61.0...v2.62.0

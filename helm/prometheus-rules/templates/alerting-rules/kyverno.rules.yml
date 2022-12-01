@@ -20,7 +20,7 @@ spec:
           labels:
             area: kaas
             severity: page
-            team: honeybadger
+            team: shield
             topic: managementcluster
             cancel_if_cluster_status_creating: "true"
             cancel_if_cluster_status_deleting: "true"

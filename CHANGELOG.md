@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - unit tests: you can run tests against a specific file
+- Push to capz-app-collection.
+- Send CAPZ alerts to clippy.
 
 ## [2.63.0] - 2022-11-30
 

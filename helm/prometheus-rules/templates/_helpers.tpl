@@ -30,8 +30,9 @@ giantswarm.io/service-type: {{ .Values.serviceType }}
 {{- define "providerTeam" -}}
 {{- if has .Values.managementCluster.provider.kind (list "kvm" "openstack" "cloud-director" "vsphere") -}}
 rocket
-{{- else if has .Values.managementCluster.provider.kind (list "gcp" "capa" "capz") -}}
+{{- else if has .Values.managementCluster.provider.kind (list "gcp" "capa") -}}
 hydra
+{{- else if eq .Values.managementCluster.provider.kind "capz" -}}
 {{- else -}}
 phoenix
 {{- end -}}
@@ -54,7 +55,7 @@ true
 {{- end -}}
 
 {{- define "isClusterServiceInstalled" -}}
-{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa") -}}
+{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa" "capz") -}}
 false
 {{- else -}}
 true
@@ -62,7 +63,7 @@ true
 {{- end -}}
 
 {{- define "isVaultBeingMonitored" -}}
-{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa") -}}
+{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa" "capz") -}}
 false
 {{- else -}}
 true
@@ -70,7 +71,7 @@ true
 {{- end -}}
 
 {{- define "isBastionBeingMonitored" -}}
-{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa") -}}
+{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa" "capz") -}}
 false
 {{- else -}}
 true

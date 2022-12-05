@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Change `Hearteat` alert to ignore prometheus-agent.
 - Improve InhibitionClusterIsNotRunningPrometheusAgent to fire on each cluster.
 - Raise `PrometheusJobScrapingFailure` duration from 1h to 1d.
 

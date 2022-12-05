@@ -34,7 +34,7 @@ tests:
         eval_time: 4d
       # This alert fires for both critical and non-critical targets
       - alertname: PrometheusJobScrapingFailure
-        eval_time: 6d
+        eval_time: 7d
         exp_alerts:
           - exp_labels:
               area: empowerment

@@ -10,7 +10,7 @@ spec:
   groups:
     - name: promtail
       rules:
-        - alert: NoPromtailPodRunning
+        - alert: PromtailDown
           annotations:
             description: '{{`Scraping of all promtail pods to check if one failed every 5 minutes.`}}'
             opsrecipe: promtail-is-not-running/

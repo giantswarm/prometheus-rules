@@ -2,8 +2,8 @@ name: prometheus-rules
 namespace: monitoring
 serviceType: managed
 project:
-  branch: '[[ .Branch ]]'
-  commit: '[[ .SHA ]]'
+  branch: 'addPromtailRules'
+  commit: '07f7fdbd3a4ed33fcd452d1b352a085d47018389'
 managementCluster:
   name: ""
   pipeline: ""

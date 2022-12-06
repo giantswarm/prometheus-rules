@@ -1,0 +1,85 @@
+---
+rule_files:
+  - prometheus.rules.yml
+
+# Setting evaluation interval to 1h
+# to make it faster on long test duration.
+evaluation_interval: 1h
+
+tests:
+  - interval: 1h
+    input_series:
+      - series: 'up{app="kubernetes",installation="gauss",cluster_id="gauss",job="gauss-prometheus/kubernetes-apiserver-gauss/0"}'
+        values: "1+0x240"
+      # critcal target up for 5d and down for 5d
+      - series: 'up{app="kube-controller-manager",installation="gauss",cluster_id="gauss",job="gauss-prometheus/kubernetes-controller-manager-gauss/0"}'
+        values: "1+0x120 0+0x120"
+      - series: 'up{app="kube-scheduler",installation="gauss",cluster_id="gauss",job="gauss-prometheus/kubernetes-scheduler-gauss/0"}'
+        values: "1+0x240"
+      - series: 'up{app="kubelet",installation="gauss",cluster_id="gauss",job="gauss-prometheus/kubernetes-kubelet-gauss/0"}'
+        values: "1+0x240"
+      - series: 'up{app="node-exporter",installation="gauss",cluster_id="gauss",job="gauss-prometheus/node-exporter-gauss/0"}'
+        values: "1+0x240"
+      - series: 'up{app="kube-state-metrics",installation="gauss",cluster_id="gauss",job="gauss-prometheus/kube-state-metrics-gauss/0"}'
+        values: "1+0x240"
+      # non-critcal target up for 5d and down for 5d
+      - series: 'up{app="app-exporter",installation="gauss",cluster_id="gauss",job="gauss-prometheus/app-exporter-gauss/0"}'
+        values: "1+0x120 0+0x120"
+    alert_rule_test:
+      - alertname: PrometheusCriticalJobScrapingFailure
+        eval_time: 30m
+      - alertname: PrometheusJobScrapingFailure
+        eval_time: 1d
+      - alertname: PrometheusCriticalJobScrapingFailure
+        eval_time: 4d
+      # This alert fires for both critical and non-critical targets
+      - alertname: PrometheusJobScrapingFailure
+        eval_time: 7d
+        exp_alerts:
+          - exp_labels:
+              area: empowerment
+              severity: notify
+              team: atlas
+              topic: observability
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "gauss"
+              installation: "gauss"
+              job: "gauss-prometheus/kubernetes-controller-manager-gauss/0"
+            exp_annotations:
+              opsrecipe: "prometheus-job-scraping-failure/"
+              summary: "Prometheus fails to scrape all targets in a job."
+              description: "Prometheus gauss/gauss has failed to scrape all targets in gauss-prometheus/kubernetes-controller-manager-gauss/0 job."
+          - exp_labels:
+              area: empowerment
+              severity: notify
+              team: atlas
+              topic: observability
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "gauss"
+              installation: "gauss"
+              job: "gauss-prometheus/app-exporter-gauss/0"
+            exp_annotations:
+              opsrecipe: "prometheus-job-scraping-failure/"
+              summary: "Prometheus fails to scrape all targets in a job."
+              description: "Prometheus gauss/gauss has failed to scrape all targets in gauss-prometheus/app-exporter-gauss/0 job."
+
+      # This fires only for critical target down.
+      - alertname: PrometheusCriticalJobScrapingFailure
+        eval_time: 9d
+        exp_alerts:
+          - exp_labels:
+              area: empowerment
+              severity: page
+              team: atlas
+              topic: observability
+              app: "kube-controller-manager"
+              cluster_id: "gauss"
+              installation: "gauss"
+              job: "gauss-prometheus/kubernetes-controller-manager-gauss/0"
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: true
+              cancel_if_cluster_status_deleting: true
+            exp_annotations:
+              opsrecipe: "prometheus-job-scraping-failure/"
+              summary: "Prometheus fails to scrape all targets in a job."
+              description: "Prometheus gauss/gauss has failed to scrape all targets in gauss-prometheus/kubernetes-controller-manager-gauss/0 job."

@@ -10,7 +10,7 @@ spec:
   - name: observability
     rules:
     - alert: "Heartbeat"
-      expr: up{app="prometheus"}
+      expr: up{app="prometheus",instance!="prometheus-agent"}
       for: 10m
       labels:
         area: "empowerment"

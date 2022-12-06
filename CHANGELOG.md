@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Add `PrometheusCriticalJobScrapingFailure` to page once critical prometheus target is down.
+- Change `Heartbeat` alert to ignore prometheus-agent.
 - Improve InhibitionClusterIsNotRunningPrometheusAgent to fire on each cluster.
 - Raise `PrometheusJobScrapingFailure` duration from 1h to 1d.
 

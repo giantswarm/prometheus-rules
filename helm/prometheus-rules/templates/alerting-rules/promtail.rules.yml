@@ -1,0 +1,44 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: promtail.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    - name: promtail
+      rules:
+        - alert: NoPromtailPodRunning
+          annotations:
+            description: '{{`Scraping of all promtail pods to check if one failed every 5 minutes.`}}'
+            opsrecipe: promtail-is-not-running/
+          expr: count(up{app="promtail"} == 0) > 0
+          for: 5m
+          labels:
+            area: "empowerment"
+            severity: page
+            team: "atlas"
+            topic: "observability"
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_cluster_status_updating: "true"
+        # Not tested
+        - alert: PromtailRequestsErrors
+          annotations: 
+            description: This alert checks if that the amount of failed requests is below 10% for promtail
+          expr: |
+            100 * sum(rate(promtail_request_duration_seconds_count{status_code=~"5..|failed"}[1m])) by (namespace, job, route, instance)
+                /
+            sum(rate(promtail_request_duration_seconds_count[1m])) by (namespace, job, route, instance)
+                > 10
+          for: 15m
+          labels:
+            area: "empowerment"
+            severity: page
+            team: "atlas"
+            topic: "observability"
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_cluster_status_updating: "true"

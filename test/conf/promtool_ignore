@@ -67,7 +67,6 @@ templates/alerting-rules/node.workload_cluster.rules.yml
 templates/alerting-rules/operatorkit.rules.yml
 templates/alerting-rules/prometheus-meta-operator.rules.yml
 templates/alerting-rules/prometheus-operator.rules.yml
-templates/alerting-rules/prometheus.rules.yml
 templates/alerting-rules/release.rules.yml
 templates/alerting-rules/secret.rules.yml
 templates/alerting-rules/service-level.rules.yml

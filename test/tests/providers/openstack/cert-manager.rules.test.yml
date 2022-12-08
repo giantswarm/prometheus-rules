@@ -35,5 +35,5 @@ tests:
               team: rocket
               topic: cert-manager
             exp_annotations:
-              description: "cert-manager in namespace kube-system) is down"
+              description: "cert-manager in namespace kube-system is down."
               opsrecipe: "cert-manager-down/"

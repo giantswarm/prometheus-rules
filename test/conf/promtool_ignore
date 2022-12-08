@@ -9,7 +9,6 @@ templates/alerting-rules/aws.workload-cluster.rules.yml
 templates/alerting-rules/azure.management-cluster.rules.yml
 templates/alerting-rules/azure.workload-cluster.rules.yml
 templates/alerting-rules/calico.rules.yml
-templates/alerting-rules/certificate.all.rules.yml
 templates/alerting-rules/certificate.management-cluster.rules.yml
 templates/alerting-rules/certificate.workload-cluster.rules.yml
 templates/alerting-rules/chart.rules.yml

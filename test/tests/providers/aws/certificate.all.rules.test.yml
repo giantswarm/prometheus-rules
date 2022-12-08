@@ -1,0 +1,39 @@
+---
+rule_files:
+  - certificate.all.rules.yml
+
+tests:
+  - interval: 1d
+    input_series:
+      - series: '{app="cert-exporter-deployment", cluster_id="gollem", cluster_type="management_cluster", container="cert-exporter", customer="giantswarm", installation="gollem", instance="10.0.0.0:1234", job="gollem-prometheus/workload-gollem/0", name="athena-certs-secret", namespace="giantswarm", node="192.168.170.106", organization="giantswarm", pod="cert-exporter-deployment-5c47b4c55c-49wt9", provider="aws", secretkey="tls.crt", service_priority="highest"}'
+        values: "2678400x60"
+    alert_rule_test:
+      - alertname: CertificateSecretWillExpireInLessThanTwoWeeks
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              alertname: CertificateSecretWillExpireInLessThanTwoWeeks
+              app: cert-exporter-deployment
+              area: kaas
+              cancel_if_outside_working_hours: true
+              cluster_id: gollem
+              cluster_type: management_cluster
+              container: cert-exporter
+              customer: giantswarm
+              instance: 10.0.0.0:1234
+              job: gollem-prometheus/workload-gollem/0
+              namespace: kube-system
+              node: ip-10-0-0-0.eu-central-1.compute.internal
+              organization: giantswarm
+              pod: cert-manager-controller-7fcc585578-gnprd
+              provider: aws
+              name: athena-certs-secret
+              installation: gollem
+              service_priority: highest
+              severity: page
+              secretkey: tls.crt
+              team: phoenix
+              topic: cert-manager
+            exp_annotations:
+              description: "Certificate stored in Secret giantswarm/athena-certs-secret on gollem will expire in less than two weeks."
+              opsrecipe: "managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/"

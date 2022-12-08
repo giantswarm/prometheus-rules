@@ -2,8 +2,8 @@ name: prometheus-rules
 namespace: monitoring
 serviceType: managed
 project:
-  branch: '[[ .Branch ]]'
-  commit: '[[ .SHA ]]'
+  branch: 'cert-manager-split'
+  commit: 'b55df96be65b6b756f8efafed867dffbb2afc5bf'
 managementCluster:
   name: ""
   pipeline: ""

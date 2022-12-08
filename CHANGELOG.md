@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Added Promtail alerting rule
+
 ### Added
 
 - Push to capz-app-collection.
@@ -20,7 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change `Heartbeat` alert to ignore prometheus-agent.
 - Improve InhibitionClusterIsNotRunningPrometheusAgent to fire on each cluster.
 - Raise `PrometheusJobScrapingFailure` duration from 1h to 1d.
-- Added Promtail alerting rule
 
 ## [2.64.0] - 2022-11-30
 

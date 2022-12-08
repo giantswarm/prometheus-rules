@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- updated README with doc about the UT syntax
+
 ## [2.67.0] - 2022-12-08
 
 ### Changed

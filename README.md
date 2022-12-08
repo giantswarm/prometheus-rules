@@ -139,7 +139,7 @@ There are 2 kinds of tests on rules:
 
 When writing unit tests, the first thing to do is to "feed" the testing tool with input series. Unfortunately, the official documentation does not give a lot of information about the tests syntax, especially for the `input_series`.
 
-For each `input_series`, one has to provide a prometheus query as well as its values over time :
+For each `input_series`, one has to provide a prometheus timeseries as well as its values over time :
 
 ```
 [...]

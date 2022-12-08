@@ -9,9 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Split cert-manager & cert expiring alerts per provider
+
+## [2.67.0] - 2022-12-08
+
+### Changed
+
+- Handle `aws-pod-identity-webhook` with optional prefix.
+
+## [2.66.0] - 2022-12-08
+
+### Added
+
 - Push to capz-app-collection.
 - Send CAPZ alerts to clippy.
-- Split cert-manager & cert expiring alerts per provider
+- Added Promtail alerting rule
 
 ## [2.65.0] - 2022-12-06
 
@@ -26,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Route `NoKyvernoPodRunning` alert with team label. 
+- Route `NoKyvernoPodRunning` alert with team label.
 - Silence some Flux alerts outside of business hours.
 
 ## [2.63.1] - 2022-11-30
@@ -1320,7 +1332,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.65.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.67.0...HEAD
+[2.67.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.66.0...v2.67.0
+[2.66.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.65.0...v2.66.0
 [2.65.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.64.0...v2.65.0
 [2.64.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.63.1...v2.64.0
 [2.63.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.63.0...v2.63.1

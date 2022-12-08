@@ -32,7 +32,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: cert-manager
     - alert: ManagedCertificateCRWillExpireInLessThanTwoWeeks
       annotations:
@@ -44,5 +44,5 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: cert-manager

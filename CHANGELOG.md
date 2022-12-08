@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Push to capz-app-collection.
 - Send CAPZ alerts to clippy.
+- Added Promtail alerting rule
 
 ## [2.65.0] - 2022-12-06
 

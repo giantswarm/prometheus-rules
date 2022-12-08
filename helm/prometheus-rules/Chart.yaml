@@ -4,8 +4,8 @@ engine: gotpl
 home: https://github.com/giantswarm/prometheus-rules
 icon: https://s.giantswarm.io/app-icons/1/png/default-app-light.png
 name: prometheus-rules
-appVersion: '2.65.0-b55df96be65b6b756f8efafed867dffbb2afc5bf'
-version: '2.65.0-b55df96be65b6b756f8efafed867dffbb2afc5bf'
+appVersion: '[[ .AppVersion ]]'
+version: '[[ .Version ]]'
 annotations:
   application.giantswarm.io/team: "atlas"
   config.giantswarm.io/version: 1.x.x

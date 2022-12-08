@@ -139,24 +139,24 @@ There are 2 kinds of tests on rules:
 
 When writing unit tests, the first thing to do is to "feed" the testing tool with input series. Unfortunately, the official documentation does not give a lot of information about the tests syntax, especially for the `input_series`.
 
-For each `input_series`, one has to provide a prometheus query as well as its values over time :
+For each `input_series`, one has to provide a prometheus timeseries as well as its values over time :
 
 ```
 [...]
 tests:
   - interval: 1m
     input_series:
-      - series: '<prometheus_query>'
+      - series: '<prometheus_timeseries>'
         values: "_x20 1+0x20 0+0x20" 
-      - series: '<prometheus_query>'
+      - series: '<prometheus_timeseries>'
         values: "0+600x40 24000+400x40" 
 [...]
 ```
 
 Let's breakdown the above example:
-* For the first input series, the prometheus query returns an `empty query result` for 20 minutes (20*interval), then it is returning the value `1` for 20 minutes. Finally, it is returning the value `0` for 20 minutes.
+* For the first input series, the prometheus timesies returns an `empty query result` for 20 minutes (20*interval), then it is returning the value `1` for 20 minutes. Finally, it is returning the value `0` for 20 minutes.
 This is a good example of an input series for testing an `up` query.
-* The second series introduce a query which first returns a `0` value and which adds `600` every minutes (=interval) for 40 minutes. After 40 minutes it has reached a value of `24000` (600x40) and goes on by adding `400` every minutes for 40 more minutes.
+* The second series introduce a timeseries which first returns a `0` value and which adds `600` every minutes (=interval) for 40 minutes. After 40 minutes it has reached a value of `24000` (600x40) and goes on by adding `400` every minutes for 40 more minutes.
 This is a good example of an input series for testing a `range` query.
 
 #### Test exceptions

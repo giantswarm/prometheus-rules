@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Handle `aws-pod-identity-webhook` with optional prefix.
+
 ## [2.66.0] - 2022-12-08
 
 ### Added
@@ -28,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Route `NoKyvernoPodRunning` alert with team label. 
+- Route `NoKyvernoPodRunning` alert with team label.
 - Silence some Flux alerts outside of business hours.
 
 ## [2.63.1] - 2022-11-30

@@ -81,8 +81,6 @@ Official documentation for inhibit rules can be found here: https://www.promethe
 The base principle of an `source_matcher` inhibit_rule is:
 > if an alert is currently firing with a `source_matcher` label, then inhibit all alerts that have a `target_matcher` label
 
-
-
 ### Recording rules
 
 The recording rules are located `helm/prometheus-rules/templates/recording-rules`

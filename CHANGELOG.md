@@ -7,9 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- unit tests for AWS
+- added values schema
+- README: test hints
+
+### Changed
+
+- removed "workingHoursOnly" template from loki and crossplane tests
+- upgraded Promtool and Architect for tests
+- removed inhibition of GCP alerts from outside working hours
+
 ### Fixed
 
-- Fix `PrometheusCriticalJobScrapingFailure` alert by ignoring bastion node exporters and add the prometheus-agent not running inhibition because we know targets prior to that will have k8s component scraping failing.
+- fix `kubelet_down` inhibition alert.
+- fix `PrometheusCriticalJobScrapingFailure` alert by ignoring bastion node exporters and add the prometheus-agent not running inhibition because we know targets prior to that will have k8s component scraping failing.
 
 ## [2.68.0] - 2022-12-12
 

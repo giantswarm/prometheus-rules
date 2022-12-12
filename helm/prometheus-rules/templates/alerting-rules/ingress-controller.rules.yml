@@ -69,13 +69,14 @@ spec:
       annotations:
         description: '{{`nginx-ingress-controller-app in namespace {{ $labels.namespace }}) is down.`}}'
         opsrecipe: nginx-ingress-controller-app-down/
-      expr: up{app=~".*nginx-ingress-controller-app.*"} == 0
+      expr: label_replace(up{app=~".*nginx-ingress-controller-app.*"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:
         area: managedapps
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_kubelet_down: "true"
         severity: page
         team: cabbage
         topic: ingress

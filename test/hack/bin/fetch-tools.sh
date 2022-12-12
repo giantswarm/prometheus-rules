@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # let's have reproducable tests - pin to specific versions
-ARCHITECT_VERSION="6.5.0"
-PROMETHEUS_VERSION="2.28.1"
+ARCHITECT_VERSION="6.8.0"
+PROMETHEUS_VERSION="2.39.1"
 HELM_VERSION="3.9.0"
 YQ_VERSION="4.26.1"
 

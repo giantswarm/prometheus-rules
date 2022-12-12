@@ -1,3 +1,4 @@
+{{- if ne .Values.managementCluster.provider.kind "kvm" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -26,3 +27,4 @@ spec:
         cancel_if_cluster_is_not_running_prometheus_agent: "true"
         cancel_if_cluster_status_creating: true
         cancel_if_cluster_status_deleting: true
+{{- end }}

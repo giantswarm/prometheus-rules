@@ -188,7 +188,9 @@ Show a summary of encountered errors
 Show success
 ```
 
-#### Hints
+#### Hints & tips
+
+##### Run selected tests
 
 You can filter which rules files you will test with a regular expression:
 ```
@@ -197,7 +199,16 @@ make test test_filter=grafana
 make test test_filter=gr.*na
 ```
 
-[unit testing rules]: https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/
+#### Test "no data" case
+
+* It can be nice to test what happens when serie does not exist.
+* For instance, You can have your first 60 iterations with no data like this: `_x60`
+
+#### Useful links
+
+* PromQL cheatsheet: https://promlabs.com/promql-cheat-sheet/
+* Promlens - explain promql queries: https://demo.promlens.com/
+* Awesome prometheus alerts - library of queries: https://awesome-prometheus-alerts.grep.to/
 
 ### SLO Framework integration
 
@@ -238,3 +249,4 @@ Those rules can be written according to this template :
   record: slo_target
 ```
 
+[unit testing rules]: https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/

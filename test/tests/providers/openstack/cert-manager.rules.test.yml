@@ -17,12 +17,14 @@ tests:
               area: kaas
               cancel_if_cluster_status_creating: true
               cancel_if_cluster_status_deleting: true
+              cancel_if_kubelet_down: true
               cancel_if_outside_working_hours: true
               cluster_id: 12345
               cluster_type: workload_cluster
               container: cert-manager
               customer: giantswarm
               instance: 10.0.0.0:1234
+              ip: 10.0.0.0
               job: 12345-prometheus/workload-12345/0
               namespace: kube-system
               node: ip-10-0-0-0.eu-central-1.compute.internal

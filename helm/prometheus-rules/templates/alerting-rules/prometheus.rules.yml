@@ -71,7 +71,22 @@ spec:
         summary: Prometheus fails to scrape all targets in a job.
         opsrecipe: prometheus-job-scraping-failure/
       ## We ignore bastion hosts node exporters
-      expr: (count(up{app=~"kubernetes|kube-controller-manager|kube-scheduler|kubelet|node-exporter|kube-state-metrics", job!~".*bastions.*"} == 0) BY (app,job, installation, cluster_id) / count(up{app=~"kubernetes|kube-controller-manager|kube-scheduler|kubelet|node-exporter|kube-state-metrics", job!~".*bastions.*"}) BY (app, job, installation, cluster_id)) == 1
+      expr: |-
+        (
+          count(
+            up{
+              app=~"kubernetes|kube-controller-manager|kube-scheduler|kubelet|node-exporter|kube-state-metrics",
+              job!~".*bastions.*"
+            } == 0
+          ) BY (app,job, installation, cluster_id)
+          /
+          count(
+            up{
+              app=~"kubernetes|kube-controller-manager|kube-scheduler|kubelet|node-exporter|kube-state-metrics",
+              job!~".*bastions.*"
+            }
+          ) BY (app, job, installation, cluster_id)
+        ) == 1
       for: 3d
       labels:
         area: empowerment

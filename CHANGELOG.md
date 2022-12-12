@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - removed "workingHoursOnly" template from loki and crossplane tests
+- upgraded Promtool and Architect for tests
 
 ### Fixed
 

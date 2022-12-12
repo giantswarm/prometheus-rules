@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix fluentbit down alert.
 - Ensure Prometheus Agent alerts are not running on `kvm` installations.
+- Fix `PrometheusCriticalJobScrapingFailure` alert by ignoring bastion node exporters and add the prometheus-agent not running inhibition because we know targets prior to that will have k8s component scraping failing.
 
 ## [2.67.0] - 2022-12-08
 

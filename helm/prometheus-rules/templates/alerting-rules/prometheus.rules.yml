@@ -65,13 +65,13 @@ spec:
         team: atlas
         topic: observability
         cancel_if_outside_working_hours: "true"
-
     - alert: PrometheusCriticalJobScrapingFailure
       annotations:
         description: {{`Prometheus {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}
         summary: Prometheus fails to scrape all targets in a job.
         opsrecipe: prometheus-job-scraping-failure/
-      expr: (count(up{app=~"kubernetes|kube-controller-manager|kube-scheduler|kubelet|node-exporter|kube-state-metrics"} == 0) BY (app,job, installation, cluster_id) / count(up{app=~"kubernetes|kube-controller-manager|kube-scheduler|kubelet|node-exporter|kube-state-metrics"}) BY (app, job, installation, cluster_id)) == 1
+      ## We ignore bastion hosts node exporters
+      expr: (count(up{app=~"kubernetes|kube-controller-manager|kube-scheduler|kubelet|node-exporter|kube-state-metrics", job!~".*bastions.*"} == 0) BY (app,job, installation, cluster_id) / count(up{app=~"kubernetes|kube-controller-manager|kube-scheduler|kubelet|node-exporter|kube-state-metrics", job!~".*bastions.*"}) BY (app, job, installation, cluster_id)) == 1
       for: 3d
       labels:
         area: empowerment
@@ -79,5 +79,6 @@ spec:
         team: atlas
         topic: observability
         cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_is_not_running_prometheus_agent: "true"
         cancel_if_cluster_status_creating: true
         cancel_if_cluster_status_deleting: true

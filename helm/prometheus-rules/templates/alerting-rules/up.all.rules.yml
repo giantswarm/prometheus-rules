@@ -14,7 +14,7 @@ spec:
       annotations:
         description: '{{`ChartOperator ({{ $labels.instance }}) is down.`}}'
         opsrecipe: chart-operator-down/
-      expr: up{app=~"chart-operator.*"} == 0
+      expr: label_replace(up{app=~"chart-operator.*"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:
         area: managedservices
@@ -22,7 +22,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_scrape_timeout: "true"
+        cancel_if_kubelet_down: "true"
         cancel_if_cluster_has_no_workers: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
@@ -32,7 +32,7 @@ spec:
       annotations:
         description: '{{`Cadvisor ({{ $labels.instance }}) is down.`}}'
         opsrecipe: kubelet-is-down/
-      expr: up{app="cadvisor"} == 0
+      expr: label_replace(up{app="cadvisor"}, "ip", "$1", "instance", "(.+):\\d+") == 0
       for: 1h
       labels:
         area: kaas
@@ -48,7 +48,7 @@ spec:
       annotations:
         description: '{{`KubeStateMetrics ({{ $labels.instance }}) is down.`}}'
         opsrecipe: kube-state-metrics-down/
-      expr: up{app="kube-state-metrics"} == 0
+      expr: label_replace(up{app="kube-state-metrics"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:
         area: kaas
@@ -57,6 +57,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_any_kube_state_metrics_down: "true"
         cancel_if_cluster_has_no_workers: "true"
+        cancel_if_kubelet_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: atlas

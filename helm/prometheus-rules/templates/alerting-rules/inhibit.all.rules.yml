@@ -21,7 +21,7 @@ spec:
         team: phoenix
         topic: monitoring
     - alert: InhibitionKubeletDown
-      expr: up{app="kubelet"} == 0
+      expr: label_replace(up{app="kubelet"}, "ip", "$1", "instance", "(.+):\\d+") == 0
       labels:
         kubelet_down: true
         area: kaas

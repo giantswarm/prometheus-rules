@@ -29,13 +29,14 @@ spec:
       annotations:
         description: '{{`cert-manager in namespace {{ $labels.namespace }} is down.`}}'
         opsrecipe: cert-manager-down/
-      expr: up{app=~"cert-manager-(app|controller)"} == 0
+      expr: label_replace(up{app=~"cert-manager-(app|controller)"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
+        cancel_if_kubelet_down: "true"
         severity: page
         team: {{ include "providerTeam" . }}
         topic: cert-manager

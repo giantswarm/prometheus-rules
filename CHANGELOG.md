@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.68.0] - 2022-12-12
+
 ### Added
 
 - Split cert-manager & cert expiring alerts per provider.
@@ -1345,7 +1347,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.67.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.68.0...HEAD
+[2.68.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.67.0...v2.68.0
 [2.67.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.66.0...v2.67.0
 [2.66.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.65.0...v2.66.0
 [2.65.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.64.0...v2.65.0

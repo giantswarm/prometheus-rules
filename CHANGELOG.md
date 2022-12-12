@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `kubelet_down` inhibition alert.
+
 ## [2.68.0] - 2022-12-12
 
 ### Added
@@ -21,10 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix fluentbit down alert.
 - Ensure Prometheus Agent alerts are not running on `kvm` installations.
-
-### Fixed
-
-- Fix `kubelet_down` inhibition alert.
 
 ## [2.67.0] - 2022-12-08
 

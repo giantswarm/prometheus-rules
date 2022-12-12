@@ -9,11 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Split cert-manager & cert expiring alerts per provider
+- Split cert-manager & cert expiring alerts per provider.
 
 ### Changed
 
-- updated README with doc about the UT syntax
+- updated README with doc about the UT syntax.
+
+### Fixed
+
+- Fix fluentbit down alert.
 
 ## [2.67.0] - 2022-12-08
 

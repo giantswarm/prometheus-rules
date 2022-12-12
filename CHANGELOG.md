@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- unit tests for AWS
+- added values schema
+
+### Changed
+
+- removed "workingHoursOnly" template from loki and crossplane tests
+
 ### Fixed
 
 - Fix `kubelet_down` inhibition alert.

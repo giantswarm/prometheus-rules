@@ -22,6 +22,9 @@ tests:
         values: "1+0x240"
       - series: 'up{app="kube-state-metrics",installation="gauss",cluster_id="gauss",job="gauss-prometheus/kube-state-metrics-gauss/0"}'
         values: "1+0x240"
+      # Add bastion host test to ensure we do not page
+      - series: 'up{app="node-exporter",installation="gauss",cluster_id="gauss",job="gauss-prometheus/bastions/0"}'
+        values: "1+0x240"
       # non-critcal target up for 5d and down for 5d
       - series: 'up{app="app-exporter",installation="gauss",cluster_id="gauss",job="gauss-prometheus/app-exporter-gauss/0"}'
         values: "1+0x120 0+0x120"

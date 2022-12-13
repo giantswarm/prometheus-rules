@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- fix `PrometheusCriticalJobScrapingFailure` alert by ignoring bastion node exporters and add the prometheus-agent not running inhibition because we know targets prior to that will have k8s component scraping failing.
+
 ## [2.69.0] - 2022-12-13
 
 ### Added
@@ -23,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix `kubelet_down` inhibition alert.
+- fix `kubelet_down` inhibition alert.
 
 ## [2.68.0] - 2022-12-12
 

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.70.0] - 2022-12-14
+
 ### Fixed
 
 - fix `PrometheusCriticalJobScrapingFailure` alert by ignoring bastion node exporters and add the prometheus-agent not running inhibition because we know targets prior to that will have k8s component scraping failing.
@@ -1369,7 +1371,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.69.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.0...HEAD
+[2.70.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.69.0...v2.70.0
 [2.69.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.68.0...v2.69.0
 [2.68.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.67.0...v2.68.0
 [2.67.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.66.0...v2.67.0

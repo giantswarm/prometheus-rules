@@ -29,3 +29,4 @@ tests:
             exp_annotations:
               description: "Grafana (grafana) is down."
               opsrecipe: "grafana-down/"
+              dashboard: "qRQXmRnik/Grafana"

@@ -25,6 +25,7 @@ here is an example:
         annotations:
             description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
             opsrecipe: app-failed/
+            dashboard: UniqueID/app-failed
         expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="atlas"}
         for: 30m
         labels:
@@ -40,8 +41,13 @@ here is an example:
 
 Any Alert includes:
 
-* A description
-* An [opsrecipe](https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/) 
+* Mandatory annotations:
+  - `description`
+
+* Recommended annotations:
+  - [opsrecipe](https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/)
+  - `dashboard` reference, built from `uid`/`title` in dashboard definition or copied from existing link
+
 * Mandatory labels:
    - `area`
    - `team`

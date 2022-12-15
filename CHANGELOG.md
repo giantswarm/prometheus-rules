@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* small tool to look for / filter alerts
+
 ## [2.70.2] - 2022-12-15
 
 ### Fixed

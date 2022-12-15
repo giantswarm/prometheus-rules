@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Revert previous fix.
+- Ensure `PrometheusCriticalJobScrapingFailure` does not page on kvm.
+
 ## [2.70.1] - 2022-12-15
 
 ### Fixed

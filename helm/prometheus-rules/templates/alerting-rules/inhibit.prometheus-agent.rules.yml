@@ -1,3 +1,4 @@
+{{- if ne .Values.managementCluster.provider.kind "kvm" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -24,3 +25,4 @@ spec:
         area: empowerment
         team: atlas
         topic: monitoring
+{{- end }}

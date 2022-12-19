@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * small tool to look for / filter alerts
 
+### Fixed
+
+- Fix `MatchingNumberOfPrometheusAndCluster` for CAPI clusters.
+
 ## [2.70.2] - 2022-12-15
 
 ### Fixed

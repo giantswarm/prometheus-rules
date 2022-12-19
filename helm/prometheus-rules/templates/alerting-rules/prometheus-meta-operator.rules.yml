@@ -39,7 +39,7 @@ spec:
           )
         ) + (
           sum by (cluster_name) (
-            {__name__=~"capi_cluster_status_phase",phase!="Deleting"}
+            capi_cluster_status_phase{phase!="Deleting"}
           ) unless sum by (cluster_name) (
             label_replace(kube_pod_container_status_running{container="prometheus",namespace=~".*-prometheus"}, 
             "cluster_name", "$2", "pod", "(prometheus-)(.+)(-.+)"

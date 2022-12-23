@@ -1,0 +1,33 @@
+---
+# Source: prometheus-rules/templates/alerting-rules/dex.rules.yml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: "prometheus-rules"
+    app.kubernetes.io/instance: "RELEASE-NAME"
+    app.giantswarm.io/branch: "[[ -Branch ]]"
+    app.giantswarm.io/commit: "[[ .SHA ]]"
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "[[ .AppVersion ]]"
+    helm.sh/chart: "prometheus-rules-2.1.1"
+    giantswarm.io/service-type: managed
+  name: dex.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: dex
+    rules:
+    - alert: DexErrorRateHigh
+      annotations:
+        description: 'Dex running on {{ $labels.cluster_id }} is reporting an increased error rate.'
+        opsrecipe: dex-error-rate-high/
+      expr: sum(increase(http_requests_total{app="dex", code=~"^[4]..$|[5]..$"}[5m])) by (cluster_id) > 10
+      for: 30m
+      labels:
+        area: managedapps
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: rainbow
+        topic: dex

@@ -1,0 +1,139 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"strings"
+)
+
+func addLabels(matcher string, labels []string, usage int) []string {
+	current_dir, err := os.Getwd()
+	if err != nil {
+		fmt.Sprintln(err.Error())
+	}
+	fmt.Println(current_dir)
+	//TODO change way of getting dir
+	target_dir := strings.Trim(current_dir, "/hack/checkLabels") + "/helm/prometheus-rules/templates/alerting-rules"
+	fmt.Println(target_dir)
+
+	// One iterates over all the content of the alerting-rules directory
+	items, _ := ioutil.ReadDir(target_dir)
+	for _, item := range items {
+		if !item.IsDir() {
+			// If the current item is a file, one opens it
+			f, err := os.Open(target_dir + "/" + item.Name())
+			if err != nil {
+				fmt.Sprintln(err.Error())
+			}
+
+			// Splits on newlines by default.
+			scanner := bufio.NewScanner(f)
+
+			// One iterates over each line of the file
+			for scanner.Scan() {
+				if strings.Contains(scanner.Text(), matcher) {
+					var label string
+
+					if usage == 0 {
+						// If the line contains one of the targetted labels, one retrieves it
+						label = (strings.Split(strings.TrimSpace(scanner.Text()), ":"))[0]
+					} else if usage == 1 {
+						if strings.Compare((strings.Split(strings.TrimSpace(scanner.Text()), ":"))[0], matcher) == 0 {
+							label = matcher
+						} else {
+							label = ""
+						}
+					} else {
+						fmt.Println("Error with function usage")
+					}
+
+					// If the array has not been filled yet, one adds the first encountered label
+					if len(labels) <= 1 {
+						labels = append(labels, label)
+					} else {
+						var i = 0
+
+						// One checksif the current label has already been added to the array
+						for _, currentLabel := range labels {
+							if strings.Compare(currentLabel, label) == 0 {
+								i++
+							}
+						}
+
+						// If the current label is not in the array, one adds it
+						if i == 0 {
+							labels = append(labels, label)
+						}
+					}
+				}
+			}
+
+			if err := scanner.Err(); err != nil {
+				fmt.Sprintln(err.Error())
+			}
+
+			f.Close()
+		}
+	}
+
+	if usage == 0 {
+		return labels[1:]
+	} else {
+		return labels
+	}
+}
+
+func getLabels() []string {
+	var labelsList []string
+
+	labelsList = addLabels("cancel_if_", labelsList, 0)
+
+	return labelsList
+}
+
+func checkLabelDef(labels []string) []string {
+	var presentOrigins []string
+	var expectedOrigins []string
+	var missingLabels []string
+
+	for _, label := range labels {
+		originLabel := (strings.Split(label, "cancel_if_"))[1]
+
+		/* For each label, one fills the expectedOrigin array with the corresponding origin label
+		* (for example scrape_timeout is the origin label from cancel_if_scrape_timeout)
+		* One also fills the presentOrigins array with the actual origin labels found in the files
+		 */
+		presentOrigins = addLabels(originLabel, presentOrigins, 1)
+		expectedOrigins = append(expectedOrigins, (strings.Split(label, "cancel_if_"))[1])
+	}
+	fmt.Println("PRESENT")
+	fmt.Println(presentOrigins)
+	fmt.Println("EXPECTED")
+	fmt.Println(expectedOrigins)
+
+	for _, expected := range expectedOrigins {
+		var i = 0
+
+		for _, present := range presentOrigins {
+			if strings.Compare(expected, present) == 0 {
+				i++
+			}
+		}
+
+		// One compares the expected labels with the actual one and adds each missing label to the missingLables array
+		if i == 0 {
+			missingLabels = append(missingLabels, expected)
+		}
+	}
+
+	return missingLabels
+}
+
+func main() {
+	labels := getLabels()
+	missingLabels := checkLabelDef(labels)
+	fmt.Println("MISSING")
+	fmt.Println(missingLabels)
+}

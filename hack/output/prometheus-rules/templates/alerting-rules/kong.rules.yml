@@ -1,0 +1,37 @@
+---
+# Source: prometheus-rules/templates/alerting-rules/kong.rules.yml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: "prometheus-rules"
+    app.kubernetes.io/instance: "RELEASE-NAME"
+    app.giantswarm.io/branch: "[[ -Branch ]]"
+    app.giantswarm.io/commit: "[[ .SHA ]]"
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "[[ .AppVersion ]]"
+    helm.sh/chart: "prometheus-rules-2.1.1"
+    giantswarm.io/service-type: managed
+  name: kong.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: kong
+    rules:
+    # Kong uses either an internal (memory) or external (postgres) datastore to store internal state.
+    # In case the datastore is not reachable, new pods cannot restore previous state.
+    - alert: KongDatastoreNotReachable
+      annotations:
+        description: 'Datastore of Kong in namespace {{ $labels.namespace }} is not reachable.'
+        opsrecipe: managed-app-kong/#kong-datastore-not-reachable
+      expr: kong_datastore_reachable == 0
+      for: 10m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "false"
+        severity: page
+        team: cabbage
+        topic: kong

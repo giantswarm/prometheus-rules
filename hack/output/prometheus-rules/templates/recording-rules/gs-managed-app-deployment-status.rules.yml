@@ -1,0 +1,32 @@
+---
+# Source: prometheus-rules/templates/recording-rules/gs-managed-app-deployment-status.rules.yml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    app.kubernetes.io/name: "prometheus-rules"
+    app.kubernetes.io/instance: "RELEASE-NAME"
+    app.giantswarm.io/branch: "[[ -Branch ]]"
+    app.giantswarm.io/commit: "[[ .SHA ]]"
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "[[ .AppVersion ]]"
+    helm.sh/chart: "prometheus-rules-2.1.1"
+    giantswarm.io/service-type: managed
+  name: gs-managed-app-deployment-status.recording.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: gs-managed-app-deployments.recording
+    rules:
+    - expr: label_replace(
+              kube_deployment_status_replicas_available *
+              on (namespace, deployment) group_left(label_app_kubernetes_io_name)
+              kube_deployment_labels{label_giantswarm_io_service_type="managed"},
+            "managed_app", "$1", "label_app_kubernetes_io_name", "(.*)" )
+      record: managed_app_deployment_status_replicas_available
+    - expr: label_replace(
+              kube_deployment_status_replicas_unavailable *
+              on (namespace, deployment) group_left(label_app_kubernetes_io_name)
+              kube_deployment_labels{label_giantswarm_io_service_type="managed"},
+            "managed_app", "$1", "label_app_kubernetes_io_name", "(.*)" )
+      record: managed_app_deployment_status_replicas_unavailable

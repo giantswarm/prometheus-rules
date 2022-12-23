@@ -1,0 +1,48 @@
+---
+# Source: prometheus-rules/templates/alerting-rules/inhibit.all.rules.yml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: "prometheus-rules"
+    app.kubernetes.io/instance: "RELEASE-NAME"
+    app.giantswarm.io/branch: "[[ -Branch ]]"
+    app.giantswarm.io/commit: "[[ .SHA ]]"
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "[[ .AppVersion ]]"
+    helm.sh/chart: "prometheus-rules-2.1.1"
+    giantswarm.io/service-type: managed
+  name: inhibit.all.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: inhibit
+    rules:
+    - alert: InhibitionOutsideWorkingHours
+      annotations:
+        description: 'Fires outside working hours.'
+      expr: (hour() <= 7 or hour() >= 16) or (day_of_week() > 5 or day_of_week() < 1)
+      labels:
+        area: empowerment
+        nodes_down: "true"
+        outside_working_hours: "true"
+        team: phoenix
+        topic: monitoring
+    - alert: InhibitionKubeletDown
+      expr: label_replace(up{app="kubelet"}, "ip", "$1", "instance", "(.+):\\d+") == 0
+      labels:
+        kubelet_down: true
+        area: kaas
+        topic: kubernetes
+      annotations:
+        description: 'Kubelet ({{ $labels.instance }}) is down.'
+    - alert: InhibitionKubeStateMetricsDown
+      annotations:
+        description: 'KubeStateMetrics ({{ $labels.instance }}) is down.'
+      expr: up{app="kube-state-metrics"} == 0 or absent(up{app="kube-state-metrics"} == 1)
+      labels:
+        area: kaas
+        kube_state_metrics_down: "true"
+        team: phoenix
+        topic: status

@@ -1,0 +1,91 @@
+---
+# Source: prometheus-rules/templates/alerting-rules/ingress-controller.rules.yml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: "prometheus-rules"
+    app.kubernetes.io/instance: "RELEASE-NAME"
+    app.giantswarm.io/branch: "[[ -Branch ]]"
+    app.giantswarm.io/commit: "[[ .SHA ]]"
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "[[ .AppVersion ]]"
+    helm.sh/chart: "prometheus-rules-2.1.1"
+    giantswarm.io/service-type: managed
+  name: ingress-controller.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: ingress-controller
+    rules:
+    - alert: IngressControllerDeploymentNotSatisfied
+      annotations:
+        description: 'Ingress Controller Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.'
+        opsrecipe: ingress-controller-deployment-not-satisfied/
+      # Not using the gs-managed-app-deployments.recording rules because we're missing required labels until
+      # kube-state-metrics-app 1.9.0 is rolled out into WCs
+      # check git-blame to find the correct expression
+      expr: kube_deployment_status_replicas_available{deployment=~".*nginx-ingress-controller-app.*"} / (kube_deployment_status_replicas_available{deployment=~".*nginx-ingress-controller-app.*"} + kube_deployment_status_replicas_unavailable{deployment=~".*nginx-ingress-controller-app.*"}) * 100 < 51
+      for: 10m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "false"
+        severity: page
+        team: cabbage
+        topic: ingress
+    - alert: IngressControllerMemoryUsageTooHigh
+      annotations:
+        description: 'Ingress Controller {{ $labels.pod }} memory usage is too high.'
+        opsrecipe: ic-memory-too-high/
+      expr: sum by (node, pod, cluster_id) (container_memory_usage_bytes{pod=~"^nginx.*", container=""}) / ignoring (pod) group_left sum (node_memory_MemTotal_bytes) by (node, cluster_id) * 100 > 33
+      for: 3m
+      labels:
+        area: managedservices
+        cancel_if_outside_working_hours: "false"
+        severity: notify
+        team: cabbage
+        topic: ingress
+    - alert: IngressControllerReplicaSetNumberTooHigh
+      annotations:
+        description: 'Ingress Controller ReplicaSet in namespace {{ $labels.namespace}} has {{ $value }} pods.'
+        opsrecipe: high-number-replicasets/
+      expr: count(kube_replicaset_spec_replicas{replicaset=~"nginx-ingress-controller-[a-z0-9]{10}"}) by (cluster_id, namespace) > 15
+      for: 2m
+      labels:
+        area: managedservices
+        cancel_if_outside_working_hours: "false"
+        severity: notify
+        team: cabbage
+        topic: ingress
+    - alert: IngressControllerServiceHasNoEndpoints
+      annotations:
+        description: 'Ingress Controller has no live endpoints.'
+        opsrecipe: ingress-controller-no-live-endpoints/
+      expr: count by (cluster_id) (kube_endpoint_address_available{endpoint="nginx-ingress-controller"}) == 0
+      for: 2m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "false"
+        severity: page
+        team: cabbage
+        topic: ingress
+    - alert: NginxIngressDown
+      annotations:
+        description: 'nginx-ingress-controller-app in namespace {{ $labels.namespace }}) is down.'
+        opsrecipe: nginx-ingress-controller-app-down/
+      expr: label_replace(up{app=~".*nginx-ingress-controller-app.*"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
+      for: 15m
+      labels:
+        area: managedapps
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "false"
+        cancel_if_kubelet_down: "true"
+        severity: page
+        team: cabbage
+        topic: ingress

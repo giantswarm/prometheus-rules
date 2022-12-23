@@ -1,0 +1,47 @@
+---
+# Source: prometheus-rules/templates/alerting-rules/daemonset.management-cluster.rules.yml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: "prometheus-rules"
+    app.kubernetes.io/instance: "RELEASE-NAME"
+    app.giantswarm.io/branch: "[[ -Branch ]]"
+    app.giantswarm.io/commit: "[[ .SHA ]]"
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "[[ .AppVersion ]]"
+    helm.sh/chart: "prometheus-rules-2.1.1"
+    giantswarm.io/service-type: managed
+    cluster_type: "management_cluster"
+  name: daemonset.management-cluster.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: daemonset
+    rules:
+    - alert: ManagementClusterDaemonSetNotSatisfiedAtlas
+      annotations:
+        description: 'Daemonset {{ $labels.namespace}}/{{ $labels.daemonset }} is not satisfied.'
+      expr: kube_daemonset_status_number_unavailable{cluster_type="management_cluster", cluster_id!="argali|giraffe", daemonset=~"fluentbit"} > 0
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: managementcluster
+    # We split up the alerts for unsatisfied daemon sets because of network
+    # bandwidth issues in China. The alert here is for all CHINA installations
+    # with relaxed rules.
+    - alert: ManagementClusterDaemonSetNotSatisfiedChinaAtlas
+      annotations:
+        description: 'Daemonset {{ $labels.namespace}}/{{ $labels.daemonset }} is not satisfied.'
+      expr: kube_daemonset_status_number_unavailable{cluster_type="management_cluster", cluster_id="argali|giraffe", daemonset=~"fluentbit"} > 0
+      for: 3h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: managementcluster

@@ -1,0 +1,418 @@
+---
+# Source: prometheus-rules/templates/recording-rules/service-level.rules.yml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    app.kubernetes.io/name: "prometheus-rules"
+    app.kubernetes.io/instance: "RELEASE-NAME"
+    app.giantswarm.io/branch: "[[ -Branch ]]"
+    app.giantswarm.io/commit: "[[ .SHA ]]"
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "[[ .AppVersion ]]"
+    helm.sh/chart: "prometheus-rules-2.1.1"
+    giantswarm.io/service-type: managed
+  name: service-level.recording.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: service-level.recording
+    rules:
+      # -- api-server
+    - expr: "count(up{app='kubernetes'}) by (cluster_type,cluster_id)"
+      labels:
+        class: HIGH
+        area: kaas
+        service: api-server
+      record: raw_slo_requests
+    # The first statement ensures that an api-server error is counted if the kubernetes api is not up for a specific cluster.
+    # The next statement returns 1 for a cluster with "updated", "created" or unknown (absent) status.
+    # It returns 0 for clusters in "updating", "creating" and "deleting" status. 
+    # By multiplying with this statement we ensure that errors for transitioning clusters are not counted.
+    - expr: sum((up{app='kubernetes'} * -1) + 1) by (cluster_id, cluster_type) * 
+            ignoring (cluster_type) group_left (cluster_id) 
+            (
+              max(cluster_operator_cluster_status{status=~"Updated|Created"}) by (cluster_id) 
+              or absent(cluster_operator_cluster_status)
+            )
+      labels:
+        class: HIGH
+        area: kaas
+        service: api-server
+      record: raw_slo_errors
+      # -- 99,9% availability
+    - expr: "vector((1 - 0.999))"
+      labels:
+        area: kaas
+        service: api-server
+      record: slo_target
+
+      # -- daemonset
+    - expr: |
+        label_replace(
+          kube_daemonset_status_desired_number_scheduled{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"},
+        "service", "$1", "workload_name", "(.*)" )
+      labels:
+        class: MEDIUM
+        area: kaas
+      record: raw_slo_requests
+      # -- the errors are counted as follows: 
+      # -- pods in a daemonset that are UNAVAILABLE NOW and have been UNAVAILABLE 10 MINUTES AGO 
+      # -- which are on a SCHEDULABLE node that was CREATED AT LEAST 10 MINUTES AGO
+    - expr: |
+        (
+          (
+            label_replace(
+              kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"},
+              "service", "$1", "workload_name", "(.*)" ) > 0
+            and on (daemonset, node)
+            label_replace(
+              kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"} offset 10m,
+              "service", "$1", "workload_name", "(.*)" ) > 0
+          )
+          and
+          on (node) kube_node_spec_unschedulable == 0
+        )
+        and
+        on (node) time() - kube_node_created > 10 * 60
+      labels:
+        class: MEDIUM
+        area: kaas
+      record: raw_slo_errors
+      # -- 99% availability
+      # -- this expression collects all the daemonsets and assigns the same slo target to all of them
+    - expr: sum by (service, area) (raw_slo_errors{area="kaas", service=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"} - raw_slo_errors{area="kaas", service=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"}) + 1-0.99
+      labels:
+        area: kaas
+      record: slo_target
+
+      # -- kubelet whole cluster
+    - expr: "kube_node_status_condition{condition='Ready',status='true'}"
+      labels:
+        class: MEDIUM
+        area: kaas
+        service: kubelet
+      record: raw_slo_requests
+    - expr: |
+        (
+          kube_node_status_condition{condition="Ready", status!="true"}
+          and
+          on (node) kube_node_spec_unschedulable == 0
+        )
+        and
+        on (node) time() - kube_node_created > 10 * 60
+      labels:
+        area: kaas
+        class: MEDIUM
+        service: kubelet
+      record: raw_slo_errors
+      # -- 99% availability
+    - expr: "vector((1 - 0.99))"
+      labels:
+        area: kaas
+        service: kubelet
+      record: slo_target
+
+    # kubelet - single nodepool
+    - expr: label_replace(kube_node_labels{nodepool=~".+"}, "service", "kubelet nodepool $1", "nodepool", "(.+)")
+      labels:
+        area: kaas
+        class: MEDIUM
+      record: raw_slo_requests
+
+    - expr: |
+        (
+          label_replace((kube_node_status_condition{condition="Ready", status!="true"} * on (node) group_left(nodepool) kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.*)")
+          and
+          on (node) kube_node_spec_unschedulable == 0
+        )
+        and
+        on (node) time() - kube_node_created > 10 * 60
+      labels:
+        area: kaas
+        class: MEDIUM
+      record: raw_slo_errors
+
+    - expr: |
+        label_replace(max by (nodepool) (kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.+)") * (1 - 0.99)
+      labels:
+        area: kaas
+      record: slo_target
+
+      # -- node-exporter
+      # record of number of node-exporters.
+    - expr: count(up{app="node-exporter", role!="bastion"}) by (cluster_type, cluster_id)
+      labels:
+        class: MEDIUM
+        area: kaas
+        service: node-exporter
+      record: raw_slo_requests
+      # record of number of node-exporters that are down.
+      # up == 1 when node-exporters are up, and up == 0 when node-exporters are down -
+      # to get a count of the number of node-exporters that are down,
+      # multiply by -1 to get -1 for node-exporters that are up, and 0 for node-exporters that are down,
+      # then add 1 to get 0 for node-exporters that are up, and 1 for node-exporters that are down,
+      # then sum.
+    - expr: sum((up{app='node-exporter', role!="bastion"} * -1) + 1) by (cluster_type, cluster_id)
+      labels:
+        area: kaas
+        class: MEDIUM
+        service: node-exporter
+      record: raw_slo_errors
+      # -- 99% availability
+    - expr: "vector((1 - 0.99))"
+      labels:
+        area: kaas
+        service: node-exporter
+      record: slo_target
+
+    # -- managed-apps
+    # -- error recording rules
+    # record when pods of a daemonset with label "label_giantswarm_io_monitoring_basic_sli" are down
+    - expr: |
+        kube_daemonset_labels * on (daemonset, namespace) group_right(label_application_giantswarm_io_team) (
+          label_replace(
+            kube_daemonset_status_number_unavailable
+            and on(daemonset,cluster_id,cluster_type,namespace,workload_name)
+            kube_daemonset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
+          "service", "$1", "workload_name", "(.*)" )
+        )
+      labels:
+        class: MEDIUM
+        area: managed-apps
+      record: raw_slo_errors
+    # record when pods of a deployment with label "label_giantswarm_io_monitoring_basic_sli" are down
+    - expr: |
+        kube_deployment_labels * on (deployment, namespace) group_right(label_application_giantswarm_io_team) (
+          label_replace(
+            kube_deployment_status_replicas_unavailable
+            and on(deployment,cluster_id,cluster_type,namespace, workload_name)
+            kube_deployment_labels{label_giantswarm_io_monitoring_basic_sli='true'},
+          "service", "$1", "workload_name", "(.*)" )
+        )
+      labels:
+        class: MEDIUM
+        area: managed-apps
+      record: raw_slo_errors
+    # record when pods of a statefulset with label "label_giantswarm_io_monitoring_basic_sli" are down
+    - expr: |
+        kube_statefulset_labels * on (statefulset, namespace) group_right(label_application_giantswarm_io_team) (
+          label_replace(
+            kube_statefulset_status_replicas - kube_statefulset_status_replicas_current
+            and on(statefulset,cluster_id,cluster_type,namespace, workload_name)
+            kube_statefulset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
+          "service", "$1", "workload_name", "(.*)" )
+        )
+      labels:
+        class: MEDIUM
+        area: managed-apps
+      record: raw_slo_errors
+    # -- present pods recording rules
+    - expr: |
+        kube_daemonset_labels * on (daemonset, namespace) group_right(label_application_giantswarm_io_team) (
+          label_replace(
+            kube_daemonset_status_desired_number_scheduled
+            and on(daemonset,cluster_id,cluster_type,namespace, workload_name)
+            kube_daemonset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
+          "service", "$1", "workload_name", "(.*)" )
+        )
+      labels:
+        class: MEDIUM
+        area: managed-apps
+      record: raw_slo_requests
+    - expr: |
+        kube_deployment_labels * on (deployment, namespace) group_right(label_application_giantswarm_io_team) (
+          label_replace(
+            kube_deployment_status_replicas
+            and on(deployment,cluster_id,cluster_type,namespace, workload_name)
+            kube_deployment_labels{label_giantswarm_io_monitoring_basic_sli='true'},
+          "service", "$1", "workload_name", "(.*)" )
+        )
+      labels:
+        class: MEDIUM
+        area: managed-apps
+      record: raw_slo_requests
+    - expr: |
+        kube_statefulset_labels * on (statefulset, namespace) group_right(label_application_giantswarm_io_team) (
+          label_replace(
+            kube_statefulset_status_replicas
+            and on(statefulset,cluster_id,cluster_type,namespace, workload_name)
+            kube_statefulset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
+          "service", "$1", "workload_name", "(.*)" )
+        )
+      labels:
+        class: MEDIUM
+        area: managed-apps
+      record: raw_slo_requests
+      # -- 99% availability
+      # -- this expression collects all the services from the area managed apps and assigns the same slo target to all of them
+    - expr: sum by (service, area, class) (raw_slo_errors{area="managed-apps"} - raw_slo_errors{area="managed-apps"}) + 1-0.99
+      record: slo_target
+
+    # core k8s components internal API requests
+    # record number of requests.
+    - expr: label_replace(sum(rest_client_requests_total{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
+      labels:
+        class: MEDIUM
+        area: kaas
+      record: raw_slo_requests
+      # record number of errors.
+    - expr: label_replace(sum(rest_client_requests_total{app=~"kube-controller-manager|kube-scheduler", code=~"5..|<error>"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
+      labels:
+        area: kaas
+        class: MEDIUM
+      record: raw_slo_errors
+      # -- 99% availability
+    - expr: label_replace(group(rest_client_requests_total{app=~"kube-controller-manager|kube-scheduler"}) by (app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
+      labels:
+        area: kaas
+      record: slo_target
+
+    # core k8s components azure API requests
+    # record number of requests.
+    - expr: label_replace(sum(cloudprovider_azure_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
+      labels:
+        class: MEDIUM
+        area: kaas
+      record: raw_slo_requests
+      # record number of errors.
+    - expr: label_replace(sum(cloudprovider_azure_api_request_errors{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
+      labels:
+        area: kaas
+        class: MEDIUM
+      record: raw_slo_errors
+      # -- 99% availability
+    - expr: label_replace(group(cloudprovider_azure_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
+      labels:
+        area: kaas
+      record: slo_target
+
+    # core k8s components aws API requests
+    # record number of requests.
+    - expr: label_replace(sum(cloudprovider_aws_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
+      labels:
+        class: MEDIUM
+        area: kaas
+      record: raw_slo_requests
+      # record number of errors.
+    - expr: label_replace(sum(cloudprovider_aws_api_request_errors{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
+      labels:
+        area: kaas
+        class: MEDIUM
+      record: raw_slo_errors
+      # -- 99% availability
+    - expr: label_replace(group(cloudprovider_aws_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
+      labels:
+        area: kaas
+      record: slo_target
+
+    # -- Managed Prometheus
+    # Set SLO request to always be 1 when a managed prometheus target is present.
+    - expr: (up{app="prometheus-operator-app-prometheus",container="prometheus"}*0)+1
+      labels:
+        area: managed-apps
+        class: MEDIUM
+        service: managed-prometheus
+      record: raw_slo_requests
+    # Set SLO error to be 1 when a managed prometheus is down.
+    - expr: (up{app="prometheus-operator-app-prometheus",container="prometheus"}*-1)+1 == 1
+      labels:
+        area: managed-apps
+        class: MEDIUM
+        service: managed-prometheus
+      record: raw_slo_errors
+
+    # -- Managed Alertmanager
+    # Set SLO request to always be 1 when a managed alertmanager target is present.
+    - expr: (up{app="prometheus-operator-app-alertmanager", container="alertmanager"}*0)+1
+      labels:
+        area: managed-apps
+        class: MEDIUM
+        service: managed-alertmanager
+      record: raw_slo_requests
+    # Set SLO error to be 1 when a managed alertmanager is down.
+    - expr: (up{app="prometheus-operator-app-alertmanager",container="alertmanager"}*-1)+1 == 1
+      labels:
+        area: managed-apps
+        class: MEDIUM
+        service: managed-alertmanager
+      record: raw_slo_errors
+
+    # -- Cilium
+    # We assume one request/second for each cilium-agent replica
+    - expr: label_replace(count(cilium_version) * 60, "service", "cilium-agent", "", "")
+      labels:
+        class: MEDIUM
+        area: kaas
+      record: raw_slo_requests
+      # record number of errors.
+    - expr: label_replace(sum(cilium_errors_warnings_total{app="cilium-agent",level="error"}), "service", "cilium-agent", "", "")
+      labels:
+        area: kaas
+        class: MEDIUM
+      record: raw_slo_errors
+      # -- 99% availability
+    - expr: "vector((1 - 0.99))"
+      labels:
+        area: kaas
+        service: cilium-agent
+      record: slo_target
+
+    # -- VPA
+    # Amount of requests for VPA
+    - expr: label_replace(count(up{app=~'vertical-pod-autoscaler.*'}) by (cluster_type,cluster_id), "label_application_giantswarm_io_team", "atlas", "", "")
+      labels:
+        class: MEDIUM
+        area: platform
+        service: vertical-pod-autoscaler
+      record: raw_slo_requests
+
+    # Amount of errors for VPA
+    # Up metric is set to 1 for each successful scrape and set to 0 otherwise.
+    # If up made a successful scrape, there is no error. Up returns 1, multiplied by -1
+    # and summed with 1 so the final result is 0 : no error recorded.
+    # If up was unsuccessful, there is an error. Up returns 0, multiplied by -1 and summed
+    # with 1 so the final result is 1 : 1 error is recorded .
+    - expr: label_replace(sum((up{app=~'vertical-pod-autoscaler.*'} * -1) + 1) by (cluster_id, cluster_type), "label_application_giantswarm_io_team", "atlas", "", "")
+      labels:
+        class: MEDIUM
+        area: platform
+        service: vertical-pod-autoscaler
+      record: raw_slo_errors
+
+    # SLO targets for VPA -- 99% availability
+    - expr: "vector((1 - 0.99))"
+      labels:
+        area: platform
+        service: vertical-pod-autoscaler
+      record: slo_target
+
+      # -- generic stuff
+      # -- standard burnrates based on https://sre.google/workbook/alerting-on-slos/#6-multiwindow-multi-burn-rate-alerts
+    - expr: "vector(36)"
+      record: slo_burnrate_high
+    - expr: "vector(12)"
+      record: slo_burnrate_low
+    - expr: sum(raw_slo_requests) by (service, cluster_type, cluster_id, area)
+      record: slo_requests
+    - expr: sum(raw_slo_errors) by (service, cluster_type, cluster_id, area)
+      record: slo_errors
+    - expr: sum(sum_over_time(raw_slo_errors[5m])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[5m])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
+      record: slo_errors_per_request:ratio_rate5m
+    - expr: sum(sum_over_time(raw_slo_errors[30m])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[30m])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
+      record: slo_errors_per_request:ratio_rate30m
+    - expr: sum(sum_over_time(raw_slo_errors[1h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[1h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
+      record: slo_errors_per_request:ratio_rate1h
+    - expr: sum(sum_over_time(raw_slo_errors[6h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[6h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
+      record: slo_errors_per_request:ratio_rate6h
+    - expr: sum(sum_over_time(raw_slo_errors[2h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[2h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
+      record: slo_errors_per_request:ratio_rate2h
+    - expr: sum(sum_over_time(raw_slo_errors[24h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[24h])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
+      record: slo_errors_per_request:ratio_rate24h
+    - expr: sum(sum_over_time(raw_slo_errors[3d])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[3d])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
+      record: slo_errors_per_request:ratio_rate3d
+      # -- We use the `min` function here because we have `slo_burnrate_high` for each installation and cluster_id, even though the metric value is always the same.
+    - expr: slo_target*scalar(min(slo_burnrate_high))
+      record: slo_threshold_high
+    - expr: slo_target*scalar(min(slo_burnrate_low))
+      record: slo_threshold_low

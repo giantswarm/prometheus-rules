@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Go and bash scripts to check for potential missing labels in alerting rules
+
 ## [2.70.3] - 2022-12-19
 
 ### Added

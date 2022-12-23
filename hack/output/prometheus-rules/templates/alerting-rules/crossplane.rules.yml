@@ -1,0 +1,51 @@
+---
+# Source: prometheus-rules/templates/alerting-rules/crossplane.rules.yml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    app.kubernetes.io/name: "prometheus-rules"
+    app.kubernetes.io/instance: "RELEASE-NAME"
+    app.giantswarm.io/branch: "[[ -Branch ]]"
+    app.giantswarm.io/commit: "[[ .SHA ]]"
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "[[ .AppVersion ]]"
+    helm.sh/chart: "prometheus-rules-2.1.1"
+    giantswarm.io/service-type: managed
+  name: crossplane.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: crossplane
+    rules:
+    # This alert is for any deployment being in failed status in the `crossplane` namespace.
+    # This usually includes Crossplane core components themselves, installed provider(s) and the metrics exporter.
+    - alert: DeploymentNotSatisfiedCrossplane
+      annotations:
+        description: 'Crossplane related deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.'
+        opsrecipe: deployment-not-satisfied/
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", namespace="crossplane"} > 0
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: true
+        severity: page
+        team: honeybadger
+        topic: managementcluster
+    # This triggers if the HelmRelease fails for Crossplane itself. Could come up when rolling out an upgrade to Crossplane.
+    - alert: CrossplaneHelmReleaseFailed
+      annotations:
+        description: |-
+          Crossplane HelmRelease {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.
+        opsrecipe: fluxcd-failing-helmrelease/
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", namespace=~".*giantswarm.*", name="crossplane"} > 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: true
+        severity: page
+        team: honeybadger
+        topic: releng

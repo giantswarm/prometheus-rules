@@ -1,0 +1,78 @@
+---
+# Source: prometheus-rules/templates/alerting-rules/disk.workload-cluster.rules.yml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: "prometheus-rules"
+    app.kubernetes.io/instance: "RELEASE-NAME"
+    app.giantswarm.io/branch: "[[ -Branch ]]"
+    app.giantswarm.io/commit: "[[ .SHA ]]"
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "[[ .AppVersion ]]"
+    helm.sh/chart: "prometheus-rules-2.1.1"
+    giantswarm.io/service-type: managed
+    cluster_type: "workload_cluster"
+  name: disk.workload-cluster.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: disk
+    rules:
+    - alert: DockerVolumeSpaceTooLow
+      annotations:
+        description: 'Docker volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.'
+        opsrecipe: low-disk-space/#docker-volume
+      expr: node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/docker"} < (2 * 1024 * 1024 * 1024)
+      for: 10m
+      labels:
+        area: kaas
+        severity: page
+        team: phoenix
+        topic: storage
+    - alert: EtcdVolumeSpaceTooLow
+      annotations:
+        description: 'Etcd volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.'
+        opsrecipe: low-disk-space/#etcd-volume
+      expr: 100 * node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/etcd"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/lib/etcd"} < 10
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "false"
+        severity: page
+        team: phoenix
+        topic: storage
+    - alert: KubeletVolumeSpaceTooLow
+      annotations:
+        description: 'Kubelet volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.'
+        opsrecipe: low-disk-space/#root-volume
+      expr: node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet"} < (2 * 1024 * 1024 * 1024)
+      for: 10m
+      labels:
+        area: kaas
+        severity: page
+        team: phoenix
+        topic: storage
+    - alert: LogVolumeSpaceTooLow
+      annotations:
+        description: 'Log volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.'
+        opsrecipe: low-disk-space/#root-volume
+      expr: 100 * node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/log"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/log"} < 20
+      for: 30m
+      labels:
+        area: kaas
+        severity: page
+        team: phoenix
+        topic: storage
+    - alert: RootVolumeSpaceTooLow
+      annotations:
+        description: 'Root volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.'
+        opsrecipe: low-disk-space/#root-volume
+      expr: 100 * node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/"} < 10
+      for: 10m
+      labels:
+        area: kaas
+        severity: page
+        team: phoenix
+        topic: storage

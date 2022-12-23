@@ -1,0 +1,259 @@
+---
+# Source: prometheus-rules/templates/recording-rules/cortex.rules.yml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    app.kubernetes.io/name: "prometheus-rules"
+    app.kubernetes.io/instance: "RELEASE-NAME"
+    app.giantswarm.io/branch: "[[ -Branch ]]"
+    app.giantswarm.io/commit: "[[ .SHA ]]"
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "[[ .AppVersion ]]"
+    helm.sh/chart: "prometheus-rules-2.1.1"
+    giantswarm.io/service-type: managed
+  name: cortex.recording.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: cortex.recording
+    rules:
+    - expr: sum(alertmanager_alerts{state="active"})
+      record: aggregation:alertmanager:alerts_active_total
+    - expr: sum(alertmanager_alerts{state="suppressed"})
+      record: aggregation:alertmanager:alerts_suppressed_total
+    - expr: sum(alertmanager_silences{state="active"})
+      record: aggregation:alertmanager:silences_active_total
+    - expr: sum(alertmanager_silences{state="expired"})
+      record: aggregation:alertmanager:silences_expired_total
+    - expr: sum(alertmanager_silences{state="pending"})
+      record: aggregation:alertmanager:silences_pending_total
+    # Instance types used
+    - expr: count(sum(aws_operator_ec2_instance_status) by (ec2_instance, instance_type)) by (instance_type)
+      record: aggregation:aws:instance_types
+    # Available IPs
+    - expr: min(aws_operator_subnet_available_ips_percentage{subnet_type="aws-cni"}) by (cluster_type, cluster_id, availability_zone)
+      record: aggregation:aws:available_ip_percentage
+    - expr: min(aws_operator_subnet_available_ips{subnet_type="aws-cni"}) by (cluster_type, cluster_id, availability_zone)
+      record: aggregation:aws:available_ip_count
+    # Spot Instances being used
+    - expr: count(sum(aws_operator_ec2_instance_status{lifecycle != ""}) by (ec2_instance, lifecycle)) by  (lifecycle)
+      record: aggregation:aws:instance_lifecycle
+    - expr: sum(engine_daemon_image_actions_seconds_count) by (cluster_id, cluster_type, action)
+      record: aggregation:docker:action_count
+    # REST API usage: authentications successful via the "giantswarm" token method
+    - expr: sum(rate(api_service_authentication_giantswarm_successful_attempts_total[5m]))
+      record: aggregation:giantswarm:api_auth_giantswarm_successful_attempts_total
+    # REST API usage: authentication fails via the "giantswarm" token method
+    - expr: sum(rate(api_service_authentication_giantswarm_failed_attempts_total[5m]))
+      record: aggregation:giantswarm:api_auth_giantswarm_failed_attempts_total
+    # API usage: authentication fails via the "Bearer" auth method (SSO)
+    - expr: sum(rate(api_service_authentication_jwt_failed_attempts_total[5m]))
+      record: aggregation:giantswarm:api_auth_jwt_failed_attempts_total
+    # GS Rest API requests
+    - expr: sum(rate(nginx_ingress_controller_requests{namespace="giantswarm", ingress="api"}[5m])) by (status)
+      record: aggregation:giantswarm:api_requests
+    - expr: app_operator_app_info
+      record: aggregation:giantswarm:app_info
+    - expr: count(app_operator_app_info{status="deployed",namespace="giantswarm"}) by (app,name,version,catalog)
+      record: aggregation:giantswarm:app_deployed_management_cluster_total
+    - expr: count(app_operator_app_info{status=~"deployed|DEPLOYED",namespace!="giantswarm"}) by (app,app_version,name,version,catalog)
+      record: aggregation:giantswarm:app_deployed_workload_cluster_total
+    - expr: count(app_operator_app_info{upgrade_available="true",namespace!="giantswarm"}) by (app,catalog,latest_version,namespace,version)
+      record: aggregation:giantswarm:app_upgrade_available
+    - expr: min(cert_exporter_not_after) by (cluster_id, cluster_type)
+      record: aggregation:giantswarm:cluster_certificate_not_after_seconds
+    - expr: sum(label_replace(azure_operator_cluster_release{release_version!=""}, "cluster_id", "$1", "exported_cluster_id", "(.*)")) by (release_version, cluster_id) or sum(cluster_service_cluster_info) by (release_version, cluster_id) / 2 or sum(cluster_operator_cluster_status{release_version!=""}) by (release_version, cluster_id)
+      record: aggregation:giantswarm:cluster_release_version
+    - expr: avg_over_time(cluster_operator_cluster_create_transition[1w]) or avg_over_time(azure_operator_cluster_create_transition[1w])
+      record: aggregation:giantswarm:cluster_transition_create
+    - expr: avg_over_time(cluster_operator_cluster_update_transition[1w])
+      record: aggregation:giantswarm:cluster_transition_update
+    # Scheduled cluster upgrade times
+    - expr: upgrade_schedule_operator_cluster_scheduled_upgrades_time
+      record: aggregation:giantswarm:cluster_scheduled_upgrades_time
+    # Happa requests
+    - expr: sum(rate(nginx_ingress_controller_requests{namespace="giantswarm", ingress="happa"}[5m])) by (status)
+      record: aggregation:giantswarm:happa_requests
+    - expr: sum(cluster_operator_node_pool_count)
+      record: aggregation:giantswarm:node_pool_total
+    - expr: sum(cluster_operator_node_pool_ready_workers)
+      record: aggregation:giantswarm:node_pool_worker_ready_total
+    - expr: sum(rate(nginx_ingress_controller_requests{namespace="giantswarm", ingress="passage"}[5m])) by (status)
+      record: aggregation:giantswarm:passage_requests
+    - expr: sum(rate(nginx_ingress_controller_nginx_process_requests_total[5m])) by (cluster_type, cluster_id)
+      record: aggregation:ingress:requests_total
+    - expr: sum(kubelet_running_container_count or kubelet_running_containers{container_state="running"}) by (cluster_type, cluster_id)
+      record: aggregation:kubelet:running_container_total
+    - expr: sum(kubelet_running_pod_count or kubelet_running_pods) by (cluster_type, cluster_id)
+      record: aggregation:kubelet:running_pod_total
+    - expr: sum by(cluster_type, git_version, cluster_id) (label_replace(kubernetes_build_info{app="kubelet"}, "git_version", "$1", "gitVersion", "(.+)"))
+      record: aggregation:kubelet:version
+    - expr: sum(apiserver_request_total) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:apiserver_request_count
+    - expr: sum(apiserver_request_duration_seconds_bucket) by (le, cluster_type, cluster_id)
+      record: aggregation:kubernetes:apiserver_request_duration_seconds_bucket
+    - expr: sum(apiserver_audit_event_total) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:audit_event_total
+    - expr: count(kube_configmap_created) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:configmap_total
+    - expr: count(kube_cronjob_created) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:cronjob_total
+    - expr: sum(kube_daemonset_status_number_ready) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:daemonset_ready
+    - expr: count(kube_daemonset_created) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:daemonset_total
+    - expr: sum(kube_deployment_status_replicas_available) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:deployment_replicas_available
+    - expr: sum(kube_deployment_spec_replicas) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:deployment_replicas_desired
+    - expr: count(kube_deployment_created) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:deployment_total
+    - expr: count(kube_endpoint_created) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:endpoint_total
+    - expr: count(kube_ingress_created) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:ingress_total
+    - expr: sum(kube_job_status_active) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:job_active
+    - expr: sum(kube_job_complete) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:job_complete
+    - expr: count(kube_job_created) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:job_total
+    - expr: min((kube_node_created) and on (node) (label_replace(kube_pod_created{instance=~".*master.*", pod=~"k8s-api-server.*"}, "node", "$1", "pod", "k8s-api-server-(.*)"))) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:master_node_created
+    - expr: count(kube_namespace_created) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:namespace_total
+    - expr: sum(kube_node_status_allocatable_cpu_cores) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:node_allocatable_cpu_cores_total
+    - expr: sum(kube_node_status_allocatable_memory_bytes) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:node_allocatable_memory_bytes
+    - expr: sum(kube_node_status_allocatable_pods) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:node_allocatable_pods_total
+    - expr: sum(kube_node_status_condition{condition="DiskPressure", status="true"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:node_disk_pressure_total
+    - expr: sum(kube_node_status_condition{condition="MemoryPressure", status="true"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:node_memory_pressure_total
+    - expr: sum(kube_node_status_condition{condition="Ready", status="false"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:node_not_ready_total
+    - expr: sum(kube_node_status_condition{condition="PIDPressure", status="true"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:node_pid_pressure_total
+    - expr: sum(kube_node_role) by (cluster_type, role, cluster_id)
+      record: aggregation:kubernetes:node_total
+    - expr: sum(kube_persistentvolume_capacity_bytes) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:persistentvolume_capacity_bytes
+    - expr: count(kube_persistentvolume_info) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:persistentvolume_total
+    - expr: sum(kube_persistentvolumeclaim_resource_requests_storage_bytes) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:persistentvolumeclaim_resource_requests_storage_bytes
+    - expr: count(kube_persistentvolumeclaim_info) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:persistentvolumeclaim_total
+    - expr: sum(kube_pod_container_resource_limits_cpu_cores) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:pod_resource_limits_cpu_cores
+    - expr: sum(kube_pod_container_resource_limits_memory_bytes) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:pod_resource_limits_memory_bytes
+    - expr: sum(kube_pod_container_resource_requests_cpu_cores) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:pod_resource_requests_cpu_cores
+    - expr: topk(10, sum(kube_pod_container_resource_requests_cpu_cores) by (cluster_type, cluster_id, pod)) by (cluster_id)
+      record: aggregation:kubernetes:top10_pod_resource_requests_cpu_cores
+    - expr: sum(kube_pod_container_resource_requests_memory_bytes) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:pod_resource_requests_memory_bytes
+    - expr: topk(10, sum(kube_pod_container_resource_requests_memory_bytes) by (cluster_type, cluster_id, pod)) by (cluster_id)
+      record: aggregation:kubernetes:top10_pod_resource_requests_memory_bytes
+    - expr: count(kube_pod_created) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:pod_total
+    - expr: sum(kube_pod_status_ready{condition="false"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:pod_status_not_ready_total
+    - expr: sum(kube_pod_status_ready{condition="true"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:pod_status_ready_total
+    - expr: sum(kube_replicaset_spec_replicas) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:replicaset_replicas_desired
+    - expr: sum(kube_replicaset_status_ready_replicas) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:replicaset_replicas_ready
+    - expr: count(kube_replicaset_created) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:replicaset_total
+    - expr: count(kube_secret_created) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:secret_total
+    - expr: count(kube_service_created) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:service_total
+    - expr: count(kube_service_spec_type{type="LoadBalancer"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:service_type_loadbalancer
+    - expr: count(kube_storageclass_created) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:storageclass_total
+    - expr: sum(up{app="kubernetes"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:up
+    - expr: sum(up{app="kubernetes"}) by (cluster_type, cluster_id) / count(up{app="kubernetes"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:up_bool
+    - expr: sum by(cluster_type, git_version, cluster_id) (label_replace(kubernetes_build_info{app="kubernetes"}, "git_version", "$1", "gitVersion", "(.+)"))
+      record: aggregation:kubernetes:version
+    - expr: count(node_cpu_seconds_total{mode="idle"}) by (cluster_type, cluster_id)
+      record: aggregation:node:cpu_cores_total
+    - expr: 100 - (avg by (cluster_id, cluster_type) (irate(node_cpu_seconds_total{app="node-exporter", mode="idle"}[5m])) * 100)
+      record: aggregation:node:cpu_utilization_percentage
+    - expr: sum(node_filesystem_avail_bytes) by (cluster_type, cluster_id)
+      record: aggregation:node:filesystem_avail_bytes_total
+    - expr: sum(node_filesystem_size_bytes) by (cluster_type, cluster_id)
+      record: aggregation:node:filesystem_size_bytes_total
+    - expr: sum(node_uname_info) by (cluster_type, release, cluster_id)
+      record: aggregation:node:kernel_version
+    - expr: sum(node_memory_MemAvailable_bytes) by (cluster_type, cluster_id)
+      record: aggregation:node:memory_memavailable_bytes_total
+    - expr: sum(node_memory_MemFree_bytes) by (cluster_type, cluster_id)
+      record: aggregation:node:memory_memfree_bytes_total
+    - expr: sum(node_memory_MemTotal_bytes) by (cluster_type, cluster_id)
+      record: aggregation:node:memory_memtotal_bytes_total
+    - expr: sum(rate(node_network_receive_bytes_total[5m])) by (cluster_type, cluster_id)
+      record: aggregation:node:network_receive_bytes_total
+    - expr: sum(rate(node_network_transmit_bytes_total[5m])) by (cluster_type, cluster_id)
+      record: aggregation:node:network_transmit_bytes_total
+    - expr: sum(ALERTS{alertstate="firing"}) by (alertname, cluster_id, area, severity, team, topic)
+      record: aggregation:prometheus:alerts
+    # Metric container_memory_working_set_bytes comes from the cAdvisor component scraped on management clusters which is then scraped by the management cluster prometheus.
+    # This means the cluster_id label on this metric will be the cluster_id of the management cluster for all the series, not the workload cluster id.
+    # As we want to record the memory usage of the prometheis per cluster, we need to extract the cluster id from the prometheus pod name (i.e. pod=prometheus-xyz-ordinal => cluster_id=xyz).
+    - expr: sum(label_replace(container_memory_working_set_bytes{container='prometheus', namespace=~'.*-prometheus'}, "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)") / on(node) group_left node_memory_MemTotal_bytes{role!="bastion"}) by (cluster_type, cluster_id, node) * 100
+      record: aggregation:prometheus:memory_percentage
+    - expr: sum(label_replace(container_memory_working_set_bytes{container='prometheus', namespace=~'.*-prometheus'}, "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)")) by (cluster_type , cluster_id)
+      record: aggregation:prometheus:memory_usage
+    # Managed apps basic SLI metrics
+    - expr: sum(monitoring:managed_apps:service_level:primary:error_budget_used) by (cluster_type, cluster_id,workload_name,workload_type) >= 1
+      record: aggregation:managed_apps:service_level:basic:error_budget_depleted
+    - expr: sum(monitoring:managed_apps:service_level:primary:error_budget_used) by (cluster_type, cluster_id,workload_name,workload_type) >= 0.75
+      record: aggregation:managed_apps:service_level:basic:error_budget_low
+    # Dex activity and status based on ingress controller data
+    - expr: sum(nginx_ingress_controller_requests{namespace="giantswarm",ingress="dex",status=~"5.."})
+      record: aggregation:dex_requests_status_5xx
+    - expr: sum(nginx_ingress_controller_requests{namespace="giantswarm",ingress="dex",status=~"4.."})
+      record: aggregation:dex_requests_status_4xx
+    - expr: sum(nginx_ingress_controller_requests{namespace="giantswarm",ingress="dex",status=~"[23].."})
+      record: aggregation:dex_requests_status_ok
+    - expr: sum(increase(grafana_analytics_sessions_total[60s]) / (132 / 99)) without (user_email, user_name)
+      record: aggregation:grafana_analytics_sessions_total
+    # Requests to the deprecated k8s authenticator. TODO: Get rid of this recording rule when the component is no longer used.
+    - expr: nginx_ingress_controller_requests{ingress="dex-k8s-authenticator"}
+      record: aggregation:dex_k8s_authenticator_requests
+    # Falco event counts
+    - expr: sum(falco_events{priority=~"0|1|2|3|4|5|6|7"}) by (cluster_type, cluster_id, priority, rule)
+      record: aggregation:falco_events
+    # Kyverno failing policies
+    - expr: sum(kyverno_policy_results_total{rule_result="fail"}) by (policy_type, policy_name)
+      record: aggregation:kyverno_policy_failures
+    # Starboard unique vulnerability counts by severity
+    - expr: count(count by (vulnerability_id, severity) (starboard_exporter_vulnerabilityreport_image_vulnerability)) by (severity)
+      record: aggregation:starboard_unique_vulnerability_count
+    # Kong metrics
+    - expr: kong_nginx_http_current_connections
+      record: aggregation:kong:nginx_http_current_connections
+    - expr: container_memory_usage_bytes{namespace=~"kong.*", container=~"proxy|ingress-controller"}
+      record: aggregation:kong:memory_usage_bytes
+    # IAM roles for Service Accounts metrics
+    - expr: sum(irsa_operator_cluster_errors) by (account_id,cluster_id,cluster_namespace,installation)
+      record: aggregation:giantswarm:irsa_operator_cluster_errors
+    # AWS service quotas metrics
+    - expr: sum(aws_servicequotas_operator_quota_increase_request_errors) by (account_id,cluster_id,cluster_namespace,service_name,quota_description,quota_code,quota_value)
+      record: aggregation:giantswarm:aws_servicequotas_operator_quota_increase_request_errors
+    - expr: sum(aws_servicequotas_operator_quota_history_request_errors) by (account_id,cluster_id,cluster_namespace,service_name,quota_description,quota_code,quota_value)
+      record: aggregation:giantswarm:aws_servicequotas_operator_quota_history_request_errors
+    - expr: sum(aws_servicequotas_operator_quota_applied_request_errors) by (account_id,cluster_id,cluster_namespace,service_name,quota_description,quota_code,quota_value)
+      record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_request_errors
+    - expr: sum(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code) / count(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code)
+      record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_values

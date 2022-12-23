@@ -1,0 +1,43 @@
+---
+# Source: prometheus-rules/templates/alerting-rules/node-exporter.all.rules.yml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: "prometheus-rules"
+    app.kubernetes.io/instance: "RELEASE-NAME"
+    app.giantswarm.io/branch: "[[ -Branch ]]"
+    app.giantswarm.io/commit: "[[ .SHA ]]"
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "[[ .AppVersion ]]"
+    helm.sh/chart: "prometheus-rules-2.1.1"
+    giantswarm.io/service-type: managed
+  name: node-exporter.workload-cluster.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: node-exporter
+    rules:
+    - alert: NodeExporterCollectorFailed
+      annotations:
+        description: 'NodeExporter Collector {{ $labels.collector }} on {{ $labels.instance }} is failed.'
+      expr: node_scrape_collector_success{collector!~"bonding|hwmon|powersupplyclass|mdadm|nfs|nfsd|tapestats|fibrechannel"} == 0
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: atlas
+        topic: observability
+    - alert: NodeExporterDeviceError
+      annotations:
+        description: 'NodeExporter Mountpoint {{ $labels.mountpoint }} on device {{ $labels.device }} on {{ $labels.instance }} is erroring.'
+      expr: node_filesystem_device_error == 1
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability

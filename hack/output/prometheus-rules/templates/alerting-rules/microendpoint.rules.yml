@@ -1,0 +1,97 @@
+---
+# Source: prometheus-rules/templates/alerting-rules/microendpoint.rules.yml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: "prometheus-rules"
+    app.kubernetes.io/instance: "RELEASE-NAME"
+    app.giantswarm.io/branch: "[[ -Branch ]]"
+    app.giantswarm.io/commit: "[[ .SHA ]]"
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "[[ .AppVersion ]]"
+    helm.sh/chart: "prometheus-rules-2.1.1"
+    giantswarm.io/service-type: managed
+    cluster_type: "management_cluster"
+  name: microendpoint.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: microendpoint
+    rules:
+    # replacing `version` with `reconciled_version` is only done if the latter
+    # is non-empty and is done to work with old operator versions using
+    # microendpoint < 0.1.0 (i.e. before VOO)
+    - alert: CollidingOperatorsAtlas
+      annotations:
+        description: 'CR version {{ $labels.version }} in cluster {{ $labels.cluster_id }} is reconciled by multiple apps including {{ $labels.app }}.'
+        opsrecipe: multiple-operators-running-same-version/
+      expr: sum(label_replace(giantswarm_build_info{app=~"prometheus-meta-operator.*"}, "version", "$1", "reconciled_version", "(.+)")) by (app, cluster_id, version) > 1
+      for: 5m
+      labels:
+        area: empowerment
+        cancel_if_outside_working_hours: "false"
+        severity: page
+        team: atlas
+        topic: releng
+    # replacing `version` with `reconciled_version` is only done if the latter
+    # is non-empty and is done to work with old operator versions using
+    # microendpoint < 0.1.0 (i.e. before VOO)
+    - alert: CollidingOperatorsHoneybadger
+      annotations:
+        description: 'CR version {{ $labels.version }} in cluster {{ $labels.cluster_id }} is reconciled by multiple apps including {{ $labels.app }}.'
+        opsrecipe: multiple-operators-running-same-version/
+      expr: sum(label_replace(giantswarm_build_info{app=~"app-operator.*|chart-operator.*"}, "version", "$1", "reconciled_version", "(.+)")) by (app, cluster_id, version) > 1
+      for: 5m
+      labels:
+        area: managedservices
+        cancel_if_outside_working_hours: "false"
+        severity: page
+        team: honeybadger
+        topic: releng
+    # replacing `version` with `reconciled_version` is only done if the latter
+    # is non-empty and is done to work with old operator versions using
+    # microendpoint < 0.1.0 (i.e. before VOO)
+    - alert: CollidingOperatorsPhoenix
+      annotations:
+        description: 'CR version {{ $labels.version }} in cluster {{ $labels.cluster_id }} is reconciled by multiple apps including {{ $labels.app }}.'
+        opsrecipe: multiple-operators-running-same-version/
+      expr: sum(label_replace(giantswarm_build_info{app=~"azure-operator.*"}, "version", "$1", "reconciled_version", "(.+)")) by (app, cluster_id, version) > 1
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "false"
+        severity: page
+        team: phoenix
+        topic: releng
+    # replacing `version` with `reconciled_version` is only done if the latter
+    # is non-empty and is done to work with old operator versions using
+    # microendpoint < 0.1.0 (i.e. before VOO)
+    - alert: CollidingOperatorsAWS
+      annotations:
+        description: 'CR version {{ $labels.version }} in cluster {{ $labels.cluster_id }} is reconciled by multiple apps including {{ $labels.app }}.'
+        opsrecipe: multiple-operators-running-same-version/
+      expr: sum(label_replace(giantswarm_build_info{app=~"aws-operator.*|cluster-operator.*"}, "version", "$1", "reconciled_version", "(.+)")) by (app, cluster_id, version) > 1
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "false"
+        severity: page
+        team: phoenix
+        topic: releng
+    # replacing `version` with `reconciled_version` is only done if the latter
+    # is non-empty and is done to work with old operator versions using
+    # microendpoint < 0.1.0 (i.e. before VOO)
+    - alert: CollidingOperatorsRocket
+      annotations:
+        description: 'CR version {{ $labels.version }} in cluster {{ $labels.cluster_id }} is reconciled by multiple apps including {{ $labels.app }}.'
+        opsrecipe: multiple-operators-running-same-version/
+      expr: sum(label_replace(giantswarm_build_info{app=~"kvm-operator|ignition-operator|cert-operator|node-operator"}, "version", "$1", "reconciled_version", "(.+)")) by (app, cluster_id, version) > 1
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "false"
+        severity: page
+        team: rocket
+        topic: releng

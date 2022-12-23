@@ -1,0 +1,33 @@
+---
+# Source: prometheus-rules/templates/alerting-rules/timesync.rules.yml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: "prometheus-rules"
+    app.kubernetes.io/instance: "RELEASE-NAME"
+    app.giantswarm.io/branch: "[[ -Branch ]]"
+    app.giantswarm.io/commit: "[[ .SHA ]]"
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "[[ .AppVersion ]]"
+    helm.sh/chart: "prometheus-rules-2.1.1"
+    giantswarm.io/service-type: managed
+  name: timesync.rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: timesync
+    rules:
+    - alert: ClockOutOfSync
+      annotations:
+        description: 'Clock is out of sync on {{ $labels.instance }}.'
+        opsrecipe: clock-out-of-sync/
+      expr: timestamp(node_time_seconds) - node_time_seconds > 60
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "false"
+        severity: page
+        team: phoenix
+        topic: infrastructure

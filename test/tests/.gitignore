@@ -2,5 +2,3 @@
 **/*.rules.yaml
 **/*.rules.test.yml_global
 **/*.rules.test.yaml_global
-hack/output/prometheus-rules/templates/alerting-rules/*.yml
-hack/output/prometheus-rules/templates/recording-rules/*.yml

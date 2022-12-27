@@ -112,7 +112,7 @@ func getMissingLabels() []string {
 				log.Fatal(err)
 			}
 
-			// .. And adds the result to the prometheus-rules list
+			// .. And adds the resulting rule to the prometheus-rules list
 			rulesList = append(rulesList, p)
 
 		}

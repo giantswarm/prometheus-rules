@@ -32,8 +32,8 @@ github.com/modern-go/reflect2 v1.0.2/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjY
 github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e/go.mod h1:pJLUxLENpZxwdsKMEsNbx1VGcRFpLqf3715MtcvvzbA=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.61.1 h1:ViIkBYnAUumtx9D7PiVPc1n8kNvwm+WMepDZWTZCBPc=
-github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.61.1/go.mod h1:j51242bf6LQwvJ1JPKWApzTnifmCwcQq0i1p29ylWiM=
+github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.54.0 h1:PxyMq+M0WaPMyHFWU+Jk/rVrm+11vOVvCH3q0m31F8E=
+github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.54.0/go.mod h1:/xf16Bu3krDP6G5WhrJL9avDnLW/AN0g7hAIK63mbes=
 github.com/rogpeppe/go-internal v1.6.1/go.mod h1:xXDCJY+GAPziupqXw64V24skbSoqbTEfhy4qGm1nDQc=
 github.com/rogpeppe/go-internal v1.8.0 h1:FCbCCtXNOY3UtUuHUYaghJg4y7Fd14rXifAYUAtL9R8=
 github.com/rogpeppe/go-internal v1.8.0/go.mod h1:WmiCO8CzOY8rg0OYDC4/i/2WRWAB6poM+XZ2dLUbcbE=

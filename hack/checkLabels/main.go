@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	promv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
-	"gopkg.in/yaml.v2"
+	"sigs.k8s.io/yaml"
 )
 
 func parseYaml(data []byte) (promv1.PrometheusRule, error) {
@@ -103,8 +103,6 @@ func getMissingLabels() []string {
 			if err != nil {
 				log.Fatal(err)
 			}
-
-			fmt.Println(target_dir + "/" + item.Name())
 
 			// Parse the file content...
 			p, err := parseYaml(f)

@@ -14,9 +14,6 @@ clean: ## Clean the git work dir and remove all untracked files
 .PHONY: test
 test: install-tools ## run unit tests for alerting rules
 	bash test/hack/bin/verify-rules.sh "$(test_filter)"
-	./hack/bin/template-chart.sh
-	go run hack/checkLabels/main.go
-	rm -R ./hack/output/prometheus-rules
 
 install-tools:
 	./test/hack/bin/fetch-tools.sh

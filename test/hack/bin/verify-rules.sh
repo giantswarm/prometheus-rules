@@ -184,13 +184,6 @@ main() {
         done
         return 1
     fi
-
-    ## Revert Chart version
-    yq e -i '.version = "[[ .Version ]]"' helm/prometheus-rules/Chart.yaml
-    yq e -i '.appVersion = "[[ .AppVersion ]]"' helm/prometheus-rules/Chart.yaml
-
-    yq e -i '.project.branch = "[[ .Branch ]]"' helm/prometheus-rules/values.yaml
-    yq e -i '.project.commit = "[[ .SHA ]]"' helm/prometheus-rules/values.yaml
 }
 
 main "$@"

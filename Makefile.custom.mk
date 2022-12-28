@@ -12,7 +12,7 @@ clean: ## Clean the git work dir and remove all untracked files
 ##@ Testing
 
 .PHONY: test
-test: install-tools template-chart test-rules test-inhibitions
+test: install-tools template-chart test-rules test-inhibitions restore-chart
 
 test-rules: install-tools template-chart
 	# run unit tests for alerting rules
@@ -29,3 +29,10 @@ test-inhibitions: install-tools template-chart
 	# test whether inhibition labels are well defined
 	test/hack/bin/helm template helm/prometheus-rules --output-dir hack/output
 	cd hack/checkLabels; go run main.go
+
+restore-chart:
+	@## Revert Chart version
+	@yq e -i '.version = "[[ .Version ]]"' helm/prometheus-rules/Chart.yaml
+	@yq e -i '.appVersion = "[[ .AppVersion ]]"' helm/prometheus-rules/Chart.yaml
+	@yq e -i '.project.branch = "[[ .Branch ]]"' helm/prometheus-rules/values.yaml
+	@yq e -i '.project.commit = "[[ .SHA ]]"' helm/prometheus-rules/values.yaml

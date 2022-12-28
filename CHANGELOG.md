@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - alert AppWithoutTeamAnnotation opsrecipe
 - unit tests for AppWithoutTeamAnnotation
 - AppWithoutTeamAnnotation fires only during working hours
+- Custom makefile which executes the go script to check inhibition labels
 
 ## [2.70.3] - 2022-12-19
 

@@ -12,45 +12,42 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
+const target = "../output/prometheus-rules/templates/alerting-rules"
+
 func parseYaml(data []byte) (promv1.PrometheusRule, error) {
 	var p promv1.PrometheusRule
 
 	err := yaml.Unmarshal(data, &p)
 	if err != nil {
-		log.Fatal(err)
+		return promv1.PrometheusRule{}, err
 	}
 
-	return p, err
+	return p, nil
 }
 
 func addIfNotPresent(array []string, newValue string) []string {
-	var i = 0
-
 	for _, label := range array {
-		if strings.Compare(label, newValue) == 0 {
-			i++
+		if label == newValue {
+			return array
 		}
 	}
 
-	// Checks if the newValue  is already in the array and if not, adds it
-	if i == 0 {
-		array = append(array, newValue)
-	}
+	array = append(array, newValue)
 
 	return array
 }
 
 func getLabels(ruleList []promv1.PrometheusRule, matcher string) []string {
-	var labelList = make([]string, 0)
+	var labelList []string
 
 	for _, p := range ruleList {
 		for _, group := range p.Spec.Groups {
 			for _, rule := range group.Rules {
 				for key, _ := range rule.Labels {
 					// When the targetted label is found, adds it to the list if not already present in it
-					if matcher == "cancel_if_" && strings.Contains(key, matcher) {
+					if matcher == "cancel_if_" && strings.HasPrefix(key, matcher) {
 						labelList = addIfNotPresent(labelList, key)
-					} else if strings.Compare(key, matcher) == 0 {
+					} else if key == matcher {
 						labelList = addIfNotPresent(labelList, matcher)
 					}
 				}
@@ -61,38 +58,14 @@ func getLabels(ruleList []promv1.PrometheusRule, matcher string) []string {
 	return labelList
 }
 
-func findMissingLabels(cancelLabels []string, presentOriginLabels []string) []string {
-	var expectedOriginLabels = make([]string, 0)
-	var missingLabels = make([]string, 0)
-
-	// Add the expected labels to the list : labels corresponding to the "cancel_if_" prefix ones without this prefix
-	for _, cancelLabel := range cancelLabels {
-		expectedOriginLabels = append(expectedOriginLabels, strings.Split(cancelLabel, "cancel_if_")[1])
+func getMissingLabels() ([]string, error) {
+	target_dir, err := filepath.Abs(target)
+	if err != nil {
+		return nil, err
 	}
 
-	for _, expected := range expectedOriginLabels {
-		var i = 0
-
-		for _, present := range presentOriginLabels {
-			if strings.Compare(expected, present) == 0 {
-				i++
-			}
-		}
-
-		// One compares the expected labels with the actual one and adds each missing label to the missingLables array
-		if i == 0 {
-			missingLabels = append(missingLabels, expected)
-		}
-	}
-
-	return missingLabels
-}
-
-func getMissingLabels() []string {
-	target_dir, _ := filepath.Abs("../output/prometheus-rules/templates/alerting-rules")
-
-	var rulesList = make([]promv1.PrometheusRule, 0)
-	var presentOriginLabels = make([]string, 0)
+	var rulesList []promv1.PrometheusRule
+	var missingLabels []string
 
 	// One iterates over all the content of the alerting-rules directory
 	items, _ := ioutil.ReadDir(target_dir)
@@ -101,13 +74,13 @@ func getMissingLabels() []string {
 			// If the current item is a file, read its content
 			f, err := os.ReadFile(target_dir + "/" + item.Name())
 			if err != nil {
-				log.Fatal(err)
+				return nil, err
 			}
 
 			// Parse the file content...
 			p, err := parseYaml(f)
 			if err != nil {
-				log.Fatal(err)
+				return nil, err
 			}
 
 			// .. And adds the resulting rule to the prometheus-rules list
@@ -120,22 +93,30 @@ func getMissingLabels() []string {
 	cancelLabels := getLabels(rulesList, "cancel_if_")
 
 	for _, cancelLabel := range cancelLabels {
-		var originLabel = getLabels(rulesList, (strings.Split(cancelLabel, "cancel_if_"))[1])
+		var originLabel = strings.Split(cancelLabel, "cancel_if_")
+		if len(originLabel) < 2 {
+			return nil, fmt.Errorf("No origin label found in %q", cancelLabel)
+		}
 
-		// If a label corresponding to the "cancel_if_" prefixed one was found, one can add it to the list of found origin labels
-		if len(originLabel) > 0 {
-			presentOriginLabels = append(presentOriginLabels, originLabel[0])
+		var originLabelList = getLabels(rulesList, originLabel[1])
+
+		// If a label corresponding to the "cancel_if_" prefixed one was not found, one can add it to the list of missing origin labels
+		if len(originLabelList) == 0 {
+			missingLabels = append(missingLabels, originLabel[1])
 		}
 	}
 
-	// Creates and returns the list of missing labels
-	var missingLabels = findMissingLabels(getLabels(rulesList, "cancel_if_"), presentOriginLabels)
-
-	return missingLabels
+	return missingLabels, nil
 }
 
 func main() {
-	missingLabels := getMissingLabels()
-	fmt.Println("MISSING")
-	fmt.Println(missingLabels)
+	missingLabels, err := getMissingLabels()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("MISSING LABELS:")
+	for _, label := range missingLabels {
+		fmt.Println(label)
+	}
 }

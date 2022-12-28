@@ -1,10 +1,6 @@
-This PR:
+Towards: https://github.com/giantswarm/...
 
-- adds/changes/removes etc
-
-<!--
-Changelog must always be updated.
--->
+This PR ...
 
 ### Checklist
 

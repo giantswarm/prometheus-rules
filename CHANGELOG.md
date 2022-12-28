@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Go and bash scripts to check for potential missing labels in alerting rules
 
+### Changed
+
+- alert AppWithoutTeamLabel renamed to AppWithoutTeamAnnotation
+- alert AppWithoutTeamAnnotation opsrecipe
+- unit tests for AppWithoutTeamAnnotation
+- AppWithoutTeamAnnotation fires only during working hours
+
 ## [2.70.3] - 2022-12-19
 
 ### Added

@@ -12,7 +12,10 @@ clean: ## Clean the git work dir and remove all untracked files
 ##@ Testing
 
 .PHONY: test
-test: install-tools ## run unit tests for alerting rules
+test: install-tools
+	# prepare the helm chart
+	test/hack/bin/architect helm template --dir helm/prometheus-rules --dry-run
+	# run unit tests for alerting rules
 	bash test/hack/bin/verify-rules.sh "$(test_filter)"
 
 install-tools:

@@ -91,10 +91,10 @@ spec:
         cancel_if_outside_working_hours: "true"
         severity: page
         topic: releng
-    - alert: AppWithoutTeamLabel
+    - alert: AppWithoutTeamAnnotation
       annotations:
         description: '{{`App {{ $labels.name }} has no team label.`}}'
-        opsrecipe: app-without-team-label/
+        opsrecipe: app-without-team-annotation/
       # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
       expr: label_replace(app_operator_app_info{team=~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
       for: 40m
@@ -104,7 +104,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: true
         severity: notify
         team: atlas
         topic: releng

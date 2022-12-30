@@ -17,7 +17,7 @@ spec:
         description: '{{`Vault is down.`}}'
         opsrecipe: vault-is-down/
       expr: vault_up == 0
-      for: 15m
+      for: 20m
       labels:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}

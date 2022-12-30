@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.70.5] - 2022-12-30
+
 ### Changed
 
 - Increase time for VaultIsDown from 15 to 20 minutes.
@@ -1408,7 +1410,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.4...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.5...HEAD
+[2.70.5]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.4...v2.70.5
 [2.70.4]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.3...v2.70.4
 [2.70.3]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.2...v2.70.3
 [2.70.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.1...v2.70.2

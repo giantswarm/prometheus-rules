@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Go and bash scripts to check for potential missing labels in alerting rules
+
+### Changed
+
+- Custom makefile which executes the go script to check inhibition labels
+
 ## [2.70.5] - 2022-12-30
 
 ### Changed

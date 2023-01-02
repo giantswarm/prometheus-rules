@@ -5,7 +5,7 @@ clean-dry-run: ## dry run for `make clean` - print all untracked files
 .PHONY: clean
 clean: ## Clean the git work dir and remove all untracked files
 	# clean stage
-	git clean -xdf -- test/ hack/output/prometheus-rules
+	git clean -xdf -- test/hack/bin
 	git checkout -- helm/prometheus-rules/Chart.yaml
 	git checkout -- helm/prometheus-rules/values.yaml
 
@@ -27,8 +27,8 @@ template-chart: install-tools
 
 test-inhibitions: install-tools template-chart
 	# test whether inhibition labels are well defined
-	test/hack/bin/helm template helm/prometheus-rules --output-dir hack/output
-	cd hack/checkLabels; go run main.go
+	test/hack/bin/helm template helm/prometheus-rules --output-dir test/hack/output
+	cd test/hack/checkLabels; go run main.go
 
 restore-chart:
 	@## Revert Chart version

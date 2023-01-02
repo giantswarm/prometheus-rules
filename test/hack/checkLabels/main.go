@@ -12,7 +12,8 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-const target = "../output/prometheus-rules/templates/alerting-rules"
+const output = "../output"
+const target = "prometheus-rules/templates/alerting-rules"
 
 func parseYaml(data []byte) (promv1.PrometheusRule, error) {
 	var p promv1.PrometheusRule
@@ -59,33 +60,43 @@ func getLabels(ruleList []promv1.PrometheusRule, matcher string) []string {
 }
 
 func getMissingLabels() ([]string, error) {
-	target_dir, err := filepath.Abs(target)
+	var rulesList []promv1.PrometheusRule
+	var missingLabels []string
+
+	target_output, err := filepath.Abs(output)
 	if err != nil {
 		return nil, err
 	}
 
-	var rulesList []promv1.PrometheusRule
-	var missingLabels []string
-
-	// One iterates over all the content of the alerting-rules directory
-	items, _ := ioutil.ReadDir(target_dir)
-	for _, item := range items {
-		if !item.IsDir() {
-			// If the current item is a file, read its content
-			f, err := os.ReadFile(target_dir + "/" + item.Name())
+	dirs, _ := ioutil.ReadDir(target_output)
+	for _, dir := range dirs {
+		if dir.IsDir() {
+			target_dir, err := filepath.Abs(output + "/" + dir.Name() + "/" + target)
 			if err != nil {
 				return nil, err
 			}
 
-			// Parse the file content...
-			p, err := parseYaml(f)
-			if err != nil {
-				return nil, err
+			// One iterates over all the content of the alerting-rules directory
+			items, _ := ioutil.ReadDir(target_dir)
+			for _, item := range items {
+				if !item.IsDir() {
+					// If the current item is a file, read its content
+					f, err := os.ReadFile(target_dir + "/" + item.Name())
+					if err != nil {
+						return nil, err
+					}
+
+					// Parse the file content...
+					p, err := parseYaml(f)
+					if err != nil {
+						return nil, err
+					}
+
+					// .. And adds the resulting rule to the prometheus-rules list
+					rulesList = append(rulesList, p)
+
+				}
 			}
-
-			// .. And adds the resulting rule to the prometheus-rules list
-			rulesList = append(rulesList, p)
-
 		}
 	}
 

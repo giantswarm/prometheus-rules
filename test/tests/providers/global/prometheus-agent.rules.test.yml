@@ -21,7 +21,7 @@ tests:
               cancel_if_cluster_status_creating: true
               cancel_if_cluster_status_deleting: true
             exp_annotations:
-              dashboard: "BG-1wO5Vk/prometheus-remote-write"
+              dashboard: "promRW001/prometheus-remote-write"
               description: "Prometheus agent remote write is failing."
               opsrecipe: "prometheus-agent-remote-write-failed/"
               summary: "Prometheus agent fails to send samples to remote write endpoint."

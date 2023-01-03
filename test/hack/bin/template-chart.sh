@@ -1,7 +1,7 @@
 #!/bin/bash
 
 local GIT_WORKDIR
-GIT_WORKDIR=$(git rev-parse --show-toplevel)
+GIT_WORKDIR="$(git rev-parse --show-toplevel)"
 
 local -a providers
 mapfile -t providers <"$GIT_WORKDIR/test/conf/providers"

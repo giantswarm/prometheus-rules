@@ -4,3 +4,4 @@
 !.gitignore
 !verify-rules.sh
 !fetch-tools.sh
+!template-chart.sh

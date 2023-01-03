@@ -11,7 +11,7 @@ spec:
     rules:
     - alert: InstanceDown
       annotations:
-        description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+        description: '{{` {{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes.`}}'
         summary: "Instance {{ $labels.instance }} down"
       expr: harbor_up == 0
       for: 5m
@@ -20,7 +20,7 @@ spec:
         app: harbor
     - alert: HarborUnhealthy
       annotations:
-        description: "{{ $labels.instance }} is unhealthy."
+        description: '{{` {{ $labels.instance }} is unhealthy.`}}'
         summary: "Habor cluster is unhealthy."
       expr: harbor_health == 0
       for: 5m
@@ -33,4 +33,4 @@ spec:
     labels:
       severity: critical
     annotations:
-      summary: The quota of the repository {{ $labels.repo_name }} is getting close to the limit
+      summary: The quota of the repository '{{` {{ $labels.repo_name }} is getting close to the limit. `}}'

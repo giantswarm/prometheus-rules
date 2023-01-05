@@ -30,12 +30,7 @@ main() {
 
     local PROMTOOL=test/hack/bin/promtool
     local HELM=test/hack/bin/helm
-    local ARCHITECT=test/hack/bin/architect
     local YQ=test/hack/bin/yq
-
-    # prepare the helm chart
-    echo "### Helm chart preparation"
-    "$GIT_WORKDIR/$ARCHITECT" helm template --dir "$GIT_WORKDIR/helm/prometheus-rules" --dry-run
 
     expected_failure_relative_file_global="test/conf/promtool_ignore"
     expected_failure_file_global="$GIT_WORKDIR/$expected_failure_relative_file_global"
@@ -189,13 +184,6 @@ main() {
         done
         return 1
     fi
-
-    ## Revert Chart version
-    yq e -i '.version = "[[ .Version ]]"' helm/prometheus-rules/Chart.yaml
-    yq e -i '.appVersion = "[[ .AppVersion ]]"' helm/prometheus-rules/Chart.yaml
-
-    yq e -i '.project.branch = "[[ .Branch ]]"' helm/prometheus-rules/values.yaml
-    yq e -i '.project.commit = "[[ .SHA ]]"' helm/prometheus-rules/values.yaml
 }
 
 main "$@"

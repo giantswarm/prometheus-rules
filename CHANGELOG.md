@@ -9,11 +9,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Move `NodeExporter*` alert ownership to provider team
+
+## [2.71.0] - 2023-01-05
+
+### Added
+
+- Go and bash scripts to check for potential missing labels in alerting rules for each provider
+- Add alert to check IRSA certificate expiration.
+
+### Changed
+
+- Custom makefile which executes the go script to check inhibition labels
+- prometheus-agent alerts delay increased from 10m to 30m
+
+## [2.70.5] - 2022-12-30
+
+### Changed
+
+- Increase time for VaultIsDown from 15 to 20 minutes.
+
+## [2.70.4] - 2022-12-29
+
+### Changed
+
 - alert AppWithoutTeamLabel renamed to AppWithoutTeamAnnotation
 - alert AppWithoutTeamAnnotation opsrecipe
 - unit tests for AppWithoutTeamAnnotation
 - AppWithoutTeamAnnotation fires only during working hours
-- Move `NodeExporter*` alert ownership to provider team
+- Combine `KubeStateMetricsDown` and `KubeStateMetricsMissing` and fix inhibtion.
 
 ## [2.70.3] - 2022-12-19
 
@@ -1402,7 +1426,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.3...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.71.0...HEAD
+[2.71.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.5...v2.71.0
+[2.70.5]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.4...v2.70.5
+[2.70.4]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.3...v2.70.4
 [2.70.3]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.2...v2.70.3
 [2.70.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.1...v2.70.2
 [2.70.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.0...v2.70.1

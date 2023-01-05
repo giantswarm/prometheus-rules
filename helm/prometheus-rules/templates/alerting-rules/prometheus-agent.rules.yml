@@ -18,7 +18,7 @@ spec:
         summary: Prometheus agent fails to send samples to remote write endpoint.
         opsrecipe: prometheus-agent-remote-write-failed/
         dashboard: promRW001/prometheus-remote-write
-      expr: absent_over_time(up{instance="prometheus-agent"}[10m])
+      expr: absent_over_time(up{instance="prometheus-agent"}[30m])
       for: 10m
       labels:
         area: empowerment

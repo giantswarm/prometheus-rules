@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Go and bash scripts to check for potential missing labels in alerting rules for each provider
+- Add alert to check IRSA certificate expiration.
 
 ### Changed
 

@@ -1,6 +1,6 @@
 ---
 rule_files:
-  - harbor.all.rules.test.yml
+  - harbor.all.rules.yml
 
 tests:
   - interval: 1m

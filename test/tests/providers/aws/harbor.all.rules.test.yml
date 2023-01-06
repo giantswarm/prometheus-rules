@@ -1,0 +1,23 @@
+---
+rule_files:
+  - harbor.all.rules.test.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'up{service="harbor", cluster_id="ginger", installation="ginger", instance="harbor"}'
+        values: "_x20 1+0x20 0+0x20"
+    alert_rule_test:
+      - alertname: HarborDown
+        eval_time: 90m
+        exp_alerts:
+          - exp_labels:
+              severity: critical
+              app: harbor
+              service: "harbor"
+              cluster_id: "ginger"
+              installation: "ginger"
+              instance: "harbor"
+            exp_annotations:
+              description: '{{` harbor of job {{ $labels.job }} has been down for more than 5 minutes.`}}'
+              summary: '{{` Instance harbor down.`}}'

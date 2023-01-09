@@ -172,18 +172,6 @@ func getMissingLabels() ([]string, []string, error) {
 }
 
 func main() {
-	/* alertConf, _ := parseInhibitionFile("alertmanager.yaml")
-	targetLabels, sourceLabels := getTargets(alertConf)
-
-	fmt.Println("source")
-	for _, source := range sourceLabels {
-		fmt.Println(source)
-	}
-	fmt.Println("target")
-	for _, target := range targetLabels {
-		fmt.Println(target)
-	} */
-
 	missingTargetLabels, missingCancelLabels, err := getMissingLabels()
 	if err != nil {
 		log.Fatal(err)
@@ -199,13 +187,13 @@ func main() {
 		fmt.Println(label)
 	}
 
-	// file, fileError := filepath.Abs("alertmanager.yaml")
-	// if fileError != nil {
-	// 	fmt.Errorf("Error when trying to locate alertmanager.yaml: %v", fileError)
-	// }
+	file, fileError := filepath.Abs("alertmanager.yaml")
+	if fileError != nil {
+		fmt.Errorf("Error when trying to locate alertmanager.yaml: %v", fileError)
+	}
 
-	// delete := os.Remove(file)
-	// if delete != nil {
-	// 	fmt.Errorf("Error when trying to delete alertmanager.yaml: %v", delete)
-	// }
+	delete := os.Remove(file)
+	if delete != nil {
+		fmt.Errorf("Error when trying to delete alertmanager.yaml: %v", delete)
+	}
 }

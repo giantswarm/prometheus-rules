@@ -1,4 +1,3 @@
----
 rule_files:
   - harbor.all.rules.yml
 tests:

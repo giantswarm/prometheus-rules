@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Custom makefile which executes the go script to check inhibition labels
+- prometheus-agent rule: add dashboard link (prometheus remote-write)
 - prometheus-agent alerts delay increased from 10m to 30m
 
 ## [2.70.5] - 2022-12-30

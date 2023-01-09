@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.71.1] - 2023-01-09
+
 ### Fixed
 
 - Use `pod` label rather than `container` label to match for critical pods in `ManagementClusterCriticalPodNotRunning`.
@@ -1426,7 +1428,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.71.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.71.1...HEAD
+[2.71.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.71.0...v2.71.1
 [2.71.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.5...v2.71.0
 [2.70.5]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.4...v2.70.5
 [2.70.4]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.3...v2.70.4

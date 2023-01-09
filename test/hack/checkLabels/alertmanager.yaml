@@ -1,0 +1,147 @@
+inhibit_rules:
+- source_matchers:
+  - kube_state_metrics_down=true
+  target_matchers:
+  - cancel_if_kube_state_metrics_down=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - kube_state_metrics_down=true
+  - cluster_id=[[ .Installation ]]
+  target_matchers:
+  - cancel_if_mc_kube_state_metrics_down=true
+
+- source_matchers:
+  - kube_state_metrics_down=true
+  target_matchers:
+  - cancel_if_any_kube_state_metrics_down=true
+
+- source_matchers:
+  - cluster_status_creating=true
+  target_matchers:
+  - cancel_if_cluster_status_creating=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - cluster_status_created=true
+  target_matchers:
+  - cancel_if_cluster_status_created=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - cluster_status_updating=true
+  target_matchers:
+  - cancel_if_cluster_status_updating=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - cluster_status_updated=true
+  target_matchers:
+  - cancel_if_cluster_status_updated=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - cluster_status_deleting=true
+  target_matchers:
+  - cancel_if_cluster_status_deleting=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - cluster_with_no_nodepools=true
+  target_matchers:
+  - cancel_if_cluster_with_no_nodepools=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - cluster_with_scaling_nodepools=true
+  target_matchers:
+  - cancel_if_cluster_with_scaling_nodepools=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - cluster_with_notready_nodepools=true
+  target_matchers:
+  - cancel_if_cluster_with_notready_nodepools=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - instance_state_not_running=true
+  target_matchers:
+  - cancel_if_instance_state_not_running=true
+  equal: [node]
+
+- source_matchers:
+  - kiam_has_errors=true
+  target_matchers:
+  - cancel_if_kiam_has_errors=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - kubelet_down=true
+  target_matchers:
+  - cancel_if_kubelet_down=true
+  equal: [cluster_id, ip]
+
+- source_matchers:
+  - kubelet_down=true
+  target_matchers:
+  - cancel_if_any_kubelet_down=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - kubelet_not_ready=true
+  target_matchers:
+  - cancel_if_kubelet_not_ready=true
+  equal: [cluster_id, ip]
+
+- source_matchers:
+  - kubelet_not_ready=true
+  target_matchers:
+  - cancel_if_any_kubelet_not_ready=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - nodes_down=true
+  target_matchers:
+  - cancel_if_nodes_down=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - scrape_timeout=true
+  target_matchers:
+  - cancel_if_scrape_timeout=true
+  equal: [cluster_id, instance]
+
+- source_matchers:
+  - master_node_down=true
+  target_matchers:
+  - cancel_if_master_node_down=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - apiserver_down=true
+  target_matchers:
+  - cancel_if_apiserver_down=true
+  equal: [cluster_id]
+
+- source_matchers:
+  - apiserver_down=true
+  target_matchers:
+  - cancel_if_any_apiserver_down=true
+
+- source_matchers:
+  - outside_working_hours=true
+  target_matchers:
+  - cancel_if_outside_working_hours=true
+
+- source_matchers:
+  - has_worker_nodes=false
+  target_matchers:
+  - cancel_if_cluster_has_no_workers=true
+  equal: [cluster_id]
+
+- source_matchers:
+    - cluster_is_not_running_prometheus_agent=true
+  target_matchers:
+    - cancel_if_cluster_is_not_running_prometheus_agent=true
+  equal: [cluster_id]

@@ -27,6 +27,7 @@ template-chart: install-tools
 
 test-inhibitions: install-tools template-chart
 	# test whether inhibition labels are well defined
+	./test/hack/bin/get-inhibition.sh
 	./test/hack/bin/template-chart.sh
 	cd test/hack/checkLabels; go run main.go
 

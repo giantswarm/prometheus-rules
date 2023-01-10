@@ -130,8 +130,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if len(missingLabels) == 0 {
+		os.Exit(0)
+	}
+
 	fmt.Println("MISSING LABELS:")
 	for _, label := range missingLabels {
 		fmt.Println(label)
 	}
+	os.Exit(1)
 }

@@ -69,7 +69,10 @@ func getMissingLabels() ([]string, error) {
 	}
 
 	// One iterates over all the different providers' directories
-	dirs, _ := ioutil.ReadDir(target_output)
+	dirs, err := ioutil.ReadDir(target_output)
+	if err != nil {
+		return nil, err
+	}
 	for _, dir := range dirs {
 		if dir.IsDir() {
 			target_dir, err := filepath.Abs(output + "/" + dir.Name() + "/" + target)

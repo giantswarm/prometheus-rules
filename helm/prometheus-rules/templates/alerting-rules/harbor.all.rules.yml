@@ -11,9 +11,9 @@ spec:
     rules:
     - alert: HarborDown
       annotations:
-        description: '{{`{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes.`}}'
+        description: '{{`{{ $labels.instance }} (components) {{ $labels.component }} has been down for more than 5 minutes.`}}'
         summary: '{{` Instance {{ $labels.instance }} down.`}}'
-      expr: harbor_up == 0 OR on() vector(0)
+      expr: harbor_up == 0
       for: 5m
       labels:
         severity: critical
@@ -26,7 +26,7 @@ spec:
         cancel_if_outside_working_hours: "true"
     - alert: HarborUnhealthy
       annotations:
-        description: '{{` {{ $labels.instance }} is unhealthy.`}}'
+        description: '{{`{{ $labels.instance }} is unhealthy.`}}'
         summary: "Habor cluster is unhealthy."
       expr: harbor_health == 0
       for: 5m
@@ -41,8 +41,8 @@ spec:
         cancel_if_outside_working_hours: "true"
     - alert: ProjectQuotaIsRaisingTheLimit
       annotations:
-        summary: The quota of the repository '{{` {{ $labels.repo_name }} is getting close to the limit. `}}'
-      expr: harbor_quotas_size_bytes{type="used"} / ignoring(type) harbor_quotas_size_bytes{type="hard"} > 0.95
+        summary: The quota of the '{{`{{ $labels.project_name }} is getting close to the limit. `}}'
+      expr: (harbor_project_quota_usage_byte) / (harbor_project_quota_byte) > 0.8
       for: 5m
       labels:
         severity: critical
@@ -53,4 +53,19 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_scrape_timeout: "true"
         cancel_if_outside_working_hours: "true"
-
+    - alert: harborPodPhaseStatus
+      annotations:
+        description: '{{`{{ $labels.pod }} is an {{ $labels.phase }} phase.`}}'
+        summary: "Pods are not in a succeeded phase."
+      expr: kube_pod_status_phase{pod=~"^.*harbor.*$", phase=~"Failed|Pending|Unknown"} == 0
+      for: 5m
+      labels:
+        severity: critical
+        app: harbor
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_scrape_timeout: "true"
+        cancel_if_outside_working_hours: "true"
+  

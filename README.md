@@ -46,7 +46,9 @@ Any Alert includes:
 
 * Recommended annotations:
   - [opsrecipe](https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/)
-  - `dashboard` reference, built from `uid`/`title` in dashboard definition or copied from existing link
+  - `dashboard` reference, built from `uid`/`title` in dashboard definition or copied from existing link.
+      - If you dashboard has no `uid` make sure to update it with one, otherwise `uid` will differ between installations.
+      - Title is not used as-is: punctuation, spaces, upper case letters are changed. Look at the name in the dashboard URL on a grafana instance to check the right syntax.
 
 * Mandatory labels:
    - `area`

@@ -177,7 +177,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("MISSING TARGET LABELS:")
+	fmt.Println("MISSING TARGET LABELS IN ALERTMANAGER INHIBITIONS DEFINITIONS:")
 	for _, label := range missingCancelLabels {
 		fmt.Println(label)
 	}

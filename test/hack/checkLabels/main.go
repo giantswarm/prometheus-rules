@@ -44,7 +44,7 @@ func getLabels(ruleList []promv1.PrometheusRule, matcher string) []string {
 	for _, p := range ruleList {
 		for _, group := range p.Spec.Groups {
 			for _, rule := range group.Rules {
-				for key, _ := range rule.Labels {
+				for key := range rule.Labels {
 					// When the targetted label is found, adds it to the list if not already present in it
 					if matcher == "cancel_if_" && strings.HasPrefix(key, matcher) {
 						labelList = addIfNotPresent(labelList, key)

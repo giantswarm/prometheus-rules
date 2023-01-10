@@ -134,7 +134,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	fmt.Println("MISSING LABELS:")
+	fmt.Printf("## Found %d missing labels\n## Those labels should be defined by an alert in %q\n", len(missingLabels), target)
 	for _, label := range missingLabels {
 		fmt.Println(label)
 	}

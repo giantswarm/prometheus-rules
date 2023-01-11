@@ -16,10 +16,10 @@ import (
 const output = "../output"
 const target = "prometheus-rules/templates/alerting-rules"
 
+// Parse the alertmanager config file
 func parseInhibitionFile(fileName string) (alertConfig.Config, error) {
 	var inhibitions alertConfig.Config
 
-	// Then one parses the file
 	f, err := os.ReadFile(fileName)
 	if err != nil {
 		return alertConfig.Config{}, err
@@ -33,6 +33,7 @@ func parseInhibitionFile(fileName string) (alertConfig.Config, error) {
 	return inhibitions, nil
 }
 
+// Return the list of target and source labels from the alertmanager config file
 func getTargets(config alertConfig.Config) ([]string, []string) {
 	var targetMatchers []string
 	var sourceMatchers []string
@@ -43,7 +44,10 @@ func getTargets(config alertConfig.Config) ([]string, []string) {
 		}
 
 		for _, source := range match.SourceMatchers {
-			sourceMatchers = addIfNotPresent(sourceMatchers, source.Name)
+			// Checking if the label value is a boolean (can't use TypeOf as value is interpreted as string)
+			if source.Value == "true" || source.Value == "false" {
+				sourceMatchers = addIfNotPresent(sourceMatchers, source.Name)
+			}
 		}
 	}
 
@@ -151,6 +155,7 @@ func getMissingLabels() ([]string, []string, error) {
 		for _, targetLabel := range targetLabels {
 			if cancelLabel == targetLabel {
 				i++
+				break
 			}
 		}
 
@@ -185,15 +190,5 @@ func main() {
 	fmt.Println("\nMISSING SOURCE LABELS:")
 	for _, label := range missingTargetLabels {
 		fmt.Println(label)
-	}
-
-	file, fileError := filepath.Abs("alertmanager.yaml")
-	if fileError != nil {
-		fmt.Errorf("Error when trying to locate alertmanager.yaml: %v", fileError)
-	}
-
-	delete := os.Remove(file)
-	if delete != nil {
-		fmt.Errorf("Error when trying to delete alertmanager.yaml: %v", delete)
 	}
 }

@@ -9,11 +9,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Go and bash scripts to check for potential missing labels in alerting rules
+- Initial version of `CAPZ` related alerting rules
+
+### Changed
+
+- Move `NodeExporter*` alert ownership to provider team
+
+## [2.72.0] - 2023-01-09
+
+### Added
+
+- Add recording rule for expiry time of identity provider oauth app secrets managed by dex operator. 
+
+## [2.71.1] - 2023-01-09
+
+### Fixed
+
+- Use `pod` label rather than `container` label to match for critical pods in `ManagementClusterCriticalPodNotRunning`.
+
+## [2.71.0] - 2023-01-05
+
+### Added
+
+- Go and bash scripts to check for potential missing labels in alerting rules for each provider
+- Add alert to check IRSA certificate expiration.
 
 ### Changed
 
 - Custom makefile which executes the go script to check inhibition labels
+- prometheus-agent rule: add dashboard link (prometheus remote-write)
+- prometheus-agent alerts delay increased from 10m to 30m
 
 ## [2.70.5] - 2022-12-30
 
@@ -1418,7 +1443,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.5...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.72.0...HEAD
+[2.72.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.71.1...v2.72.0
+[2.71.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.71.0...v2.71.1
+[2.71.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.5...v2.71.0
 [2.70.5]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.4...v2.70.5
 [2.70.4]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.3...v2.70.4
 [2.70.3]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.2...v2.70.3

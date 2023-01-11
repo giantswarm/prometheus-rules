@@ -5,9 +5,13 @@ tests:
     input_series:
       - series: 'harbor_up{instance="harbor", component="trivy"}'
         values: "0+0x10"
+      - series: 'harbor_up{instance="harbor", component="trivy"}'
+        values: "_x10 0+0x10 1+0x10"
     alert_rule_test:
       - alertname: HarborDown
         eval_time: 10m
+      - alertname: HarborDown
+        eval_time: 20m
         exp_alerts:
           - exp_labels:
               severity: critical
@@ -22,7 +26,9 @@ tests:
               component: trivy
             exp_annotations:
               description: "harbor (components) trivy has been down for more than 5 minutes."
-              summary: " Instance harbor down."
+              summary: "Instance harbor down."
+      - alertname: HarborDown
+        eval_time: 30m
   - interval: 1m
     input_series:
       - series: 'harbor_health{instance="harbor"}'

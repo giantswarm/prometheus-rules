@@ -12,7 +12,7 @@ spec:
     - alert: HarborDown
       annotations:
         description: '{{`{{ $labels.instance }} (components) {{ $labels.component }} has been down for more than 5 minutes.`}}'
-        summary: '{{` Instance {{ $labels.instance }} down.`}}'
+        summary: '{{`Instance {{ $labels.instance }} down.`}}'
       expr: harbor_up == 0
       for: 5m
       labels:

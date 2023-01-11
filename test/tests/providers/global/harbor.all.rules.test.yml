@@ -32,10 +32,12 @@ tests:
   - interval: 1m
     input_series:
       - series: 'harbor_health{instance="harbor"}'
-        values: "0+0x10"
+        values: "_x10 0+0x10 1+0x10"
     alert_rule_test:
       - alertname: HarborUnhealthy
         eval_time: 10m
+      - alertname: HarborUnhealthy
+        eval_time: 20m
         exp_alerts:
           - exp_labels:
               severity: critical
@@ -50,6 +52,8 @@ tests:
             exp_annotations:
               description: "harbor is unhealthy."
               summary: "Habor cluster is unhealthy."
+      - alertname: HarborUnhealthy
+        eval_time: 30m
   - interval: 1m
     input_series:
       - series: harbor_project_quota_usage_byte
@@ -64,10 +68,12 @@ tests:
   - interval: 1m
     input_series:
       - series: 'kube_pod_status_phase{pod="harbor-exporter", phase="Unknown"}'
-        values: "0+0x10"
+        values: "_x10 0+0x10 1+0x10"
     alert_rule_test:
       - alertname: harborPodPhaseStatus
         eval_time: 10m
+      - alertname: harborPodPhaseStatus
+        eval_time: 20m
         exp_alerts:
           - exp_labels:
               severity: critical
@@ -83,4 +89,6 @@ tests:
             exp_annotations:
               description: "harbor-exporter is an Unknown phase."
               summary: "Pods are not in a succeeded phase."
+      - alertname: harborPodPhaseStatus
+        eval_time: 30m
   

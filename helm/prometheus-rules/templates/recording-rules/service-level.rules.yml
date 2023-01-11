@@ -329,26 +329,6 @@ spec:
         service: managed-alertmanager
       record: raw_slo_errors
 
-    # -- Cilium
-    # We assume one request/second for each cilium-agent replica
-    - expr: label_replace(count(cilium_version) * 60, "service", "cilium-agent", "", "")
-      labels:
-        class: MEDIUM
-        area: kaas
-      record: raw_slo_requests
-      # record number of errors.
-    - expr: label_replace(sum(cilium_errors_warnings_total{app="cilium-agent",level="error"}), "service", "cilium-agent", "", "")
-      labels:
-        area: kaas
-        class: MEDIUM
-      record: raw_slo_errors
-      # -- 99% availability
-    - expr: "vector((1 - 0.99))"
-      labels:
-        area: kaas
-        service: cilium-agent
-      record: slo_target
-
     # -- VPA
     # Amount of requests for VPA
     - expr: label_replace(count(up{app=~'vertical-pod-autoscaler.*'}) by (cluster_type,cluster_id), "label_application_giantswarm_io_team", "atlas", "", "")

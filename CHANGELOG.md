@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial version of `CAPZ` related alerting rules
 
+### Changed
+
+- Removed Cilium alerts as those were for tests only
+- Move `NodeExporter*` alert ownership to provider team
+
 ## [2.72.0] - 2023-01-09
 
 ### Added

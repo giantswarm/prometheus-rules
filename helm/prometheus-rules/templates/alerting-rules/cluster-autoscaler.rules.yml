@@ -28,6 +28,38 @@ spec:
         severity: page
         team: phoenix
         topic: cluster-autoscaler
+    - alert: ClusterAutoscalerUnschedulablePods
+      annotations:
+        description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has unschedulable pods.`}}'
+        opsrecipe: cluster-autoscaler-scaling/
+      expr: cluster_autoscaler_unschedulable_pods_count > 0
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        severity: page
+        team: phoenix
+        topic: cluster-autoscaler
+    - alert: ClusterAutoscalerUnneededNodes
+      annotations:
+        description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has unneeded nodes.`}}'
+        opsrecipe: cluster-autoscaler-scaling/
+      expr: cluster_autoscaler_unneeded_nodes_count > 0
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        severity: page
+        team: phoenix
+        topic: cluster-autoscaler
     - alert: ClusterAutoscalerFailedScaling
       annotations:
         description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has failed scaling up.`}}'

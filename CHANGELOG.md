@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial version of `CAPZ` related alerting rules
+- Add `ClusterAutoscalerUnneededNodes` and `ClusterAutoscalerUnschedulablePods`
 
 ### Changed
 
@@ -22,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - NodeExporter: Disabled nvme collector checks - were too unreliable
 - NodeExporter: Disabled pressure collector for kvm
 - NodeExporter: page again
+- Remove `ClusterAutoScalerErrors`
 
 ## [2.72.0] - 2023-01-09
 

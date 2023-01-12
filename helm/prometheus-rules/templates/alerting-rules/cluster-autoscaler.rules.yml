@@ -12,22 +12,6 @@ spec:
   groups:
   - name: cluster-autoscaler
     rules:
-    - alert: ClusterAutoscalerErrors
-      annotations:
-        description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has increased errors.`}}'
-        opsrecipe: cluster-autoscaler-scaling/
-      expr: increase(cluster_autoscaler_errors_total{type="cloudProviderError"}[10m]) > 0
-      for: 15m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        cancel_if_cluster_has_no_workers: "true"
-        severity: page
-        team: phoenix
-        topic: cluster-autoscaler
     - alert: ClusterAutoscalerUnschedulablePods
       annotations:
         description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has unschedulable pods.`}}'

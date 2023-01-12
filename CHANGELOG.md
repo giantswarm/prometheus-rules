@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Removed Cilium alerts as those were for tests only
 - Move `NodeExporter*` alert ownership to provider team
-- Check `ClusterScalerErrors` for `cloudProviderErrors` only
+- Remove `ClusterAutoScalerErrors`
 
 ## [2.72.0] - 2023-01-09
 

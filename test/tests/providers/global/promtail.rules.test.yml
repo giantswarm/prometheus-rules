@@ -26,9 +26,9 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              cancel_if_cluster_status_creating: true
-              cancel_if_cluster_status_deleting: true
-              cancel_if_cluster_status_updating: true
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 5 minutes."
               opsrecipe: "promtail-is-not-running/"
@@ -41,9 +41,9 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              cancel_if_cluster_status_creating: true
-              cancel_if_cluster_status_deleting: true
-              cancel_if_cluster_status_updating: true
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 5 minutes."
               opsrecipe: "promtail-is-not-running/"
@@ -57,9 +57,9 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              cancel_if_cluster_status_creating: true
-              cancel_if_cluster_status_deleting: true
-              cancel_if_cluster_status_updating: true
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 5 minutes."
               opsrecipe: "promtail-is-not-running/"
@@ -87,9 +87,9 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              cancel_if_cluster_status_creating: true
-              cancel_if_cluster_status_deleting: true
-              cancel_if_cluster_status_updating: true
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
             exp_annotations:
               description: "This alert checks if that the amount of failed requests is below 10% for promtail"
               opsrecipe: "promtail-requests-are-failing/"
@@ -101,9 +101,9 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              cancel_if_cluster_status_creating: true
-              cancel_if_cluster_status_deleting: true
-              cancel_if_cluster_status_updating: true
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
             exp_annotations:
               description: "This alert checks if that the amount of failed requests is below 10% for promtail"
               opsrecipe: "promtail-requests-are-failing/"

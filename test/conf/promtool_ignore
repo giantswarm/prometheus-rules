@@ -59,7 +59,6 @@ templates/alerting-rules/net-exporter.workload-cluster.rules.yml
 templates/alerting-rules/network.all.rules.yml
 templates/alerting-rules/network.management-cluster.rules.yml
 templates/alerting-rules/network.workload-cluster.rules.yml
-templates/alerting-rules/node-exporter.all.rules.yml
 templates/alerting-rules/node.management_cluster.rules.yml
 templates/alerting-rules/node.workload_cluster.rules.yml
 templates/alerting-rules/operatorkit.rules.yml

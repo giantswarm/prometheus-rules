@@ -15,10 +15,10 @@ tests:
               alertname: CertManagerDown
               app: cert-manager-app
               area: kaas
-              cancel_if_cluster_status_creating: true
-              cancel_if_cluster_status_deleting: true
-              cancel_if_kubelet_down: true
-              cancel_if_outside_working_hours: true
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_kubelet_down: "true"
+              cancel_if_outside_working_hours: "true"
               cluster_id: 12345
               cluster_type: workload_cluster
               container: cert-manager

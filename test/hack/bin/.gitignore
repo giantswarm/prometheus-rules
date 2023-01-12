@@ -5,3 +5,4 @@
 !verify-rules.sh
 !fetch-tools.sh
 !template-chart.sh
+!get-inhibition.sh

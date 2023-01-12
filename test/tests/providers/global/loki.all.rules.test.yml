@@ -23,12 +23,12 @@ tests:
         exp_alerts:
           - exp_labels:
               area: managedservices
-              cancel_if_apiserver_down: true
-              cancel_if_cluster_status_creating: true
-              cancel_if_cluster_status_deleting: true
-              cancel_if_cluster_status_updating: true
-              cancel_if_outside_working_hours: false
-              cancel_if_scrape_timeout: true
+              cancel_if_apiserver_down: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "false"
+              cancel_if_scrape_timeout: "true"
               job: zj88t-prometheus/workload-zj88t/0
               namespace: loki
               severity: page
@@ -49,12 +49,12 @@ tests:
         exp_alerts:
           - exp_labels:
               area: managedservices
-              cancel_if_apiserver_down: true
-              cancel_if_cluster_status_creating: true
-              cancel_if_cluster_status_deleting: true
-              cancel_if_cluster_status_updating: true
-              cancel_if_outside_working_hours: false
-              cancel_if_scrape_timeout: true
+              cancel_if_apiserver_down: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "false"
+              cancel_if_scrape_timeout: "true"
               job: zj88t-prometheus/workload-zj88t/0
               namespace: loki
               route: loki_api_v1_push

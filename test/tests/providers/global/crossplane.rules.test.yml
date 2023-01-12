@@ -15,10 +15,10 @@ tests:
               alertname: DeploymentNotSatisfiedCrossplane
               app: kube-state-metrics
               area: managedservices
-              cancel_if_cluster_status_creating: true
-              cancel_if_cluster_status_deleting: true
-              cancel_if_cluster_status_updating: true
-              cancel_if_outside_working_hours: true
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
               cluster_id: gauss
               cluster_type: management_cluster
               container: kube-state-metrics
@@ -53,10 +53,10 @@ tests:
               alertname: DeploymentNotSatisfiedCrossplane
               app: kube-state-metrics
               area: managedservices
-              cancel_if_cluster_status_creating: true
-              cancel_if_cluster_status_deleting: true
-              cancel_if_cluster_status_updating: true
-              cancel_if_outside_working_hours: true
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
               cluster_id: gauss
               cluster_type: management_cluster
               container: kube-state-metrics
@@ -91,7 +91,7 @@ tests:
               alertname: CrossplaneHelmReleaseFailed
               app: customer-flux-monitoring
               area: kaas
-              cancel_if_outside_working_hours: true
+              cancel_if_outside_working_hours: "true"
               cluster_id: gauss
               cluster_type: management_cluster
               container: manager

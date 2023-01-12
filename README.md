@@ -46,7 +46,9 @@ Any Alert includes:
 
 * Recommended annotations:
   - [opsrecipe](https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/)
-  - `dashboard` reference, built from `uid`/`title` in dashboard definition or copied from existing link
+  - `dashboard` reference, built from `uid`/`title` in dashboard definition or copied from existing link.
+      - If you dashboard has no `uid` make sure to update it with one, otherwise `uid` will differ between installations.
+      - Title is not used as-is: punctuation, spaces, upper case letters are changed. Look at the name in the dashboard URL on a grafana instance to check the right syntax.
 
 * Mandatory labels:
    - `area`
@@ -167,6 +169,17 @@ This is a good example of an input series for testing a `range` query.
 
 * Rule files that can't be tested are listed in `test/conf/promtool_ignore`.
 * Rule files that can't be tested with a specific provider are listed in `test/conf/promtool_ignore_<provider>`.
+
+### Test inhibition labels
+
+One can check whether inhibition labels (mostly "cancel_if_" prefixed ones) are well defined and triggered by a corresponding label in the alerting rules by running the `make test-inhibitions` command at the projet's root directory.
+
+This command will output the list of missing labels. Each of them will need to be defined in the alerting rules. 
+If there is no labels outputed, this means test did not find missing inhibition labels.
+
+Warning: the tool may output false alerts or miss some alerts because of the following limitations.
+- it does not check for rules that are only defined on some specific environments (like aws-specific rules)
+- it tries to guess source labels rather than relying actual alertmanager inhibition, so may be wrong with some alerts  
 
 #### Limitation
 

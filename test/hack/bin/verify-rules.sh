@@ -29,7 +29,6 @@ main() {
     GIT_WORKDIR=$(git rev-parse --show-toplevel)
 
     local PROMTOOL=test/hack/bin/promtool
-    local HELM=test/hack/bin/helm
     local YQ=test/hack/bin/yq
 
     expected_failure_relative_file_global="test/conf/promtool_ignore"
@@ -77,14 +76,11 @@ main() {
 
 
             # Extract rules file from helm template
-            echo "###    extracting $GIT_WORKDIR/test/providers/$provider/$filename"
-            if ! "$GIT_WORKDIR/$HELM" template \
-                --set="managementCluster.provider.kind=$provider" \
-                --release-name prometheus-rules \
-                --namespace giantswarm "$GIT_WORKDIR"/helm/prometheus-rules \
-                -s "$file" |
-                "$GIT_WORKDIR/$YQ" '.spec' - >"$GIT_WORKDIR/test/tests/providers/$provider/$filename"
+            echo "###    extracting $GIT_WORKDIR/test/tests/providers/$provider/$filename"
+            if [[ -f "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/alerting-rules/$filename" ]]
             then
+                "$GIT_WORKDIR/$YQ" '.spec' "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/alerting-rules/$filename" > "$GIT_WORKDIR/test/tests/providers/$provider/$filename"
+            else
                 echo "###    Failed extracting rules file $file"
                 failing_extraction+=("$provider:$file")
                 continue

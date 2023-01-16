@@ -232,7 +232,23 @@ spec:
     - expr: sum(kyverno_policy_results_total{rule_result="fail"}) by (policy_type, policy_name)
       record: aggregation:kyverno_policy_failures
     # Kyverno policy status by team
-    - expr: sum(label_join(policy_report_result{policy!="check-deprecated-apis-1-25", kind="Deployment"}, "deployment", ",", "name")) by (deployment, policy, status) * on(deployment) group_left(team, app) sum(sum(label_join(kube_deployment_labels{}, "app", ",", "label_app_kubernetes_io_name")) by (deployment, app) * on(app) group_left(team) sum(app_operator_app_info{team!="noteam"}) by (app, team)) by (team, deployment, app)
+    - expr: |-
+        sum(
+          label_join(policy_report_result{
+            policy!="check-deprecated-apis-1-25",
+            kind="Deployment"
+            }, "deployment", ",", "name")
+        ) by (deployment, policy, status) 
+        * on(deployment) group_left(team, app) 
+        sum(
+          sum(
+            label_join(kube_deployment_labels{}, "app", ",", "label_app_kubernetes_io_name")
+          ) by (deployment, app) 
+          * on(app) group_left(team) 
+          sum(
+            app_operator_app_info{team!="noteam"}
+          ) by (app, team)
+        ) by (team, deployment, app)
       record: aggregation:kyverno_policy_status_team
     # Starboard unique vulnerability counts by severity
     - expr: count(count by (vulnerability_id, severity) (starboard_exporter_vulnerabilityreport_image_vulnerability)) by (severity)

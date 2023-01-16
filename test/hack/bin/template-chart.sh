@@ -1,12 +1,14 @@
 #!/bin/bash
 
-local GIT_WORKDIR
-GIT_WORKDIR="$(git rev-parse --show-toplevel)"
+main() {
 
-local -a providers
-mapfile -t providers <"$GIT_WORKDIR/test/conf/providers"
+  local GIT_WORKDIR
+  GIT_WORKDIR="$(git rev-parse --show-toplevel)"
 
-for provider in "${providers[@]}"; do
+  local -a providers
+  mapfile -t providers <"$GIT_WORKDIR/test/conf/providers"
+
+  for provider in "${providers[@]}"; do
     echo "Templating chart for provider: $provider"
 
     helm template \
@@ -14,4 +16,7 @@ for provider in "${providers[@]}"; do
     --set="managementCluster.provider.kind=$provider" \
     --output-dir "$GIT_WORKDIR"/test/hack/output/"$provider"
 
-done
+  done
+}
+
+main "$@"

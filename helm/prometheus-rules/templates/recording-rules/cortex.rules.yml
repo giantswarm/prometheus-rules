@@ -238,7 +238,7 @@ spec:
             policy!="check-deprecated-apis-1-25",
             kind="Deployment"
             }, "deployment", ",", "name")
-        ) by (deployment, policy, status) 
+        ) by (deployment, category, policy, status) 
         * on(deployment) group_left(team, app) 
         sum(
           sum(

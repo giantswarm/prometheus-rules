@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update prometheus tool to `2.41.0` and Fix bash in chart-template target.
+
 ### Added
 
 - Ship per-team Kyverno policy information to Grafana cloud.

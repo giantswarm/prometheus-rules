@@ -25,7 +25,7 @@ spec:
     - alert: DexSecretExpired
       annotations:
         description: '{{`Dex operator running on {{ $labels.installation }} failed to renew secret of {{ $labels.app_registration_name }} for {{ $labels.app_owner }} on provider {{ $labels.provider_type }}.`}}'
-        opsrecipe: dex-secret-expired/
+        opsrecipe: dex-operator/
       expr: min by(app_registration_name, app_owner, app_namespace, provider_name, provider_type, installation) (aggregation:dex_operator_idp_secret_expiry_time) - time() < 60*60*12
       for: 30m
       labels:
@@ -37,7 +37,7 @@ spec:
     - alert: ManagementClusterDexAppMissing
       annotations:
         description: '{{`Dex operator did not register a dex-app in {{ $labels.app_namespace }} namespace on {{ $labels.installation }}.`}}'
-        opsrecipe: dex-app-missing/
+        opsrecipe: dex-operator/
       expr: absent(dex_operator_idp_secret_expiry_time{app_namespace="giantswarm"}) == 1
       for: 30m
       labels:

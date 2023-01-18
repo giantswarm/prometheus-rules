@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Raise `ClusterAutoscalerUnneededNodes` alert threshold to 4 hours.
+
+### Removed
+
+- Remove `ClusterAutoscalerUnschedulablePods` alert as it is too unreliable.
+
 ## [2.73.2] - 2023-01-18
 
 ### Changed

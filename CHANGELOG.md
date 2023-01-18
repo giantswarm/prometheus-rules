@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Ship per-team Kyverno policy information to Grafana cloud.
+- Dummy inhibition alerting rules to make ci happy.
 
 ## [2.73.0] - 2023-01-16
 

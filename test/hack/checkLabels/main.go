@@ -185,18 +185,33 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if len(missingCancelLabels) == 0 && len(missingTargetLabels) == 0 {
+	if len(missingCancelLabels) > 0 && len(missingTargetLabels) > 0 {
+		fmt.Println("## Found %d missing cancel labels\n## Those labels should be define in alertmanager config inhibitions.", len(missingCancelLabels))
+		for _, label := range missingCancelLabels {
+			fmt.Println(label)
+		}
+
+		fmt.Printf("## Found %d missing target labels\n## Those labels should be defined by an alert in %q\n", len(missingTargetLabels), target)
+		for _, label := range missingTargetLabels {
+			fmt.Println(label)
+		}
+
+		os.Exit(1)
+	} else if len(missingCancelLabels) > 0 && len(missingTargetLabels) == 0 {
+		fmt.Println("## Found %d missing cancel labels\n## Those labels should be define in alertmanager config inhibitions.", len(missingCancelLabels))
+		for _, label := range missingCancelLabels {
+			fmt.Println(label)
+		}
+
+		os.Exit(1)
+	} else if len(missingCancelLabels) == 0 && len(missingTargetLabels) > 0 {
+		fmt.Printf("## Found %d missing target labels\n## Those labels should be defined by an alert in %q\n", len(missingTargetLabels), target)
+		for _, label := range missingTargetLabels {
+			fmt.Println(label)
+		}
+
+		os.Exit(1)
+	} else {
 		os.Exit(0)
 	}
-
-	fmt.Println("## Found %d missing cancel labels\n## Those labels should be define in alertmanager config inhibitions.", len(missingCancelLabels))
-	for _, label := range missingCancelLabels {
-		fmt.Println(label)
-	}
-
-	fmt.Printf("## Found %d missing target labels\n## Those labels should be defined by an alert in %q\n", len(missingTargetLabels), target)
-	for _, label := range missingTargetLabels {
-		fmt.Println(label)
-	}
-	os.Exit(1)
 }

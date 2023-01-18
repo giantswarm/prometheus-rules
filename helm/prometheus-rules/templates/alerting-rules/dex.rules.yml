@@ -36,7 +36,7 @@ spec:
         topic: dex
     - alert: ManagementClusterDexAppMissing
       annotations:
-        description: '{{`Dex operator did not register a dex-app in {{ $labels.app_namespace }} namespace on {{ $labels.installation }}.`}}'
+        description: '{{`dex-operator did not register a dex-app in {{ $labels.app_namespace }} namespace on {{ $labels.installation }}.`}}'
         opsrecipe: dex-operator/
       expr: absent(dex_operator_idp_secret_expiry_time{app_namespace="giantswarm"}) == 1
       for: 30m

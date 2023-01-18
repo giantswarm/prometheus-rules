@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Raise `ClusterAutoscalerUnneededNodes` alert threshould to 4 hours.
+- Raise `ClusterAutoscalerUnneededNodes` alert threshold to 4 hours.
 
 ### Removed
 

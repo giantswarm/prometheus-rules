@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Alert for `dex` only in management clusters.
+
 ## [2.73.1] - 2023-01-18
 
 ### Changed

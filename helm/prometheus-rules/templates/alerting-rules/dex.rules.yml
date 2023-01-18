@@ -24,7 +24,7 @@ spec:
         topic: dex
     - alert: DexSecretExpired
       annotations:
-        description: '{{`Dex operator running on {{ $labels.installation }} failed to renew secret of {{ $labels.app_registration_name }} for {{ $labels.app_owner }} on provider {{ $labels.provider_type }}.`}}'
+        description: '{{`dex-operator running on {{ $labels.installation }} failed to renew secret of {{ $labels.app_registration_name }} for {{ $labels.app_owner }} on provider {{ $labels.provider_type }}.`}}'
         opsrecipe: dex-operator/
       expr: min by(app_registration_name, app_owner, app_namespace, provider_name, provider_type, installation) (aggregation:dex_operator_idp_secret_expiry_time) - time() < 60*60*12
       for: 30m

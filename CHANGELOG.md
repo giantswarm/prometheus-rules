@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.73.2] - 2023-01-18
+
+### Changed
+
+- Alert for `dex` only in management clusters.
+
+## [2.73.1] - 2023-01-18
+
+### Changed
+
+- Update prometheus tool to `2.41.0` and Fix bash in chart-template target.
+
 ### Added
 
 - Ship per-team Kyverno policy information to Grafana cloud.
@@ -15,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Remove `CrossplaneHelmReleaseFailed` alert because `FluxHelmReleaseFailed` triggers for the same thing. As long as the releases are stored in `flux-giantswarm`, but they have to be kept there because of our multi-tenant flux setup.
+
+### Changed
+
+- Improve `PrometheusAgentFailing` to ignore
 
 ## [2.73.0] - 2023-01-16
 
@@ -26,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial version of `CAPZ` related alerting rules
 - Add `ClusterAutoscalerUnneededNodes` and `ClusterAutoscalerUnschedulablePods`
+- Add `DexSecretExpired` and `ManagementClusterDexAppMissing` alerts in working hours.
 
 ### Changed
 
@@ -1462,7 +1479,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.73.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.73.2...HEAD
+[2.73.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.73.1...v2.73.2
+[2.73.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.73.0...v2.73.1
 [2.73.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.72.0...v2.73.0
 [2.72.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.71.1...v2.72.0
 [2.71.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.71.0...v2.71.1

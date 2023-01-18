@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial version of `CAPZ` related alerting rules
 - Add `ClusterAutoscalerUnneededNodes` and `ClusterAutoscalerUnschedulablePods`
+- Add `DexSecretExpired` and `ManagementClusterDexAppMissing` alerts in working hours.
 
 ### Changed
 

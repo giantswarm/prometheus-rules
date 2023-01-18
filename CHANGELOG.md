@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Ship per-team Kyverno policy information to Grafana cloud.
 
+### Changed
+
+- Improve `PrometheusAgentFailing` to ignore
+
 ## [2.73.0] - 2023-01-16
 
 ### Fixed

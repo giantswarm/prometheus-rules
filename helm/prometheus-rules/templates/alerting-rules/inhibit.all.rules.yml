@@ -37,6 +37,26 @@ spec:
         kube_state_metrics_down: "true"
         team: phoenix
         topic: status
+    # TODO: fix with real expr 
+    - alert: ScrapeTimeout
+      annotations:
+        description: '{{`Never fires (dummy alert).`}}'
+      expr: vector(0)
+      labels:
+        area: empowerment
+        scrape_timeout: "true"
+        team: phoenix
+        topic: monitoring
+    # TODO: fix with real expr
+    - alert: ApiServerDown
+      annotations:
+        description: '{{`Never fires (dummy alert).`}}'
+      expr: vector(0)
+      labels:
+        area: empowerment
+        apiserver_down: "true"
+        team: phoenix
+        topic: monitoring
     {{- if or (eq .Values.managementCluster.provider.kind "azure") (eq .Values.managementCluster.provider.kind "aws") }}
     - alert: InhibitionClusterWithoutWorkerNodes
       annotations:

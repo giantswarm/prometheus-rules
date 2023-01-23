@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Turn `AzureClusterCreationFailed`'s severity from `notify` to page.
+
 ## [2.75.0] - 2023-01-23
 
 ### Added

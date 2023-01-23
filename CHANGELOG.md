@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `AzureServicePrincipalExpirationMetricsMissing` firing on `gollum` only to catch when the service principal expiration metrics are missing.
+
 ## [2.74.0] - 2023-01-18
 
 ### Changed

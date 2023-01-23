@@ -175,6 +175,17 @@ spec:
         severity: notify
         team: phoenix
         topic: observability
+    - alert: AzureServicePrincipalExpirationMetricsMissing
+      annotations:
+        description: '{{`Service Principal expiration metrics are missing on gollum.`}}'
+      expr: absent(azure_operator_service_principal_token_expiration) AND on () up{cluster_id="gollum"}
+      for: 4h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: azure
     - alert: AzureServicePrincipalExpiresInOneMonth
       annotations:
         description: '{{`Azure service principal for app {{ $labels.application_name }} in subscription {{ $labels.subscription_id }} will expire in less than one month.`}}'

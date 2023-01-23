@@ -24,7 +24,7 @@ install-tools:
 template-chart: install-tools
 	# prepare the helm chart
 	test/hack/bin/architect helm template --dir helm/prometheus-rules --dry-run
-	./test/hack/bin/template-chart.sh
+	bash ./test/hack/bin/template-chart.sh
 
 test-inhibitions: install-tools template-chart
 	# test whether inhibition labels are well defined

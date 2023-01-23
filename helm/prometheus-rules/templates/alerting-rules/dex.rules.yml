@@ -4,6 +4,7 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
   name: dex.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -18,6 +19,30 @@ spec:
       for: 30m
       labels:
         area: managedapps
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: rainbow
+        topic: dex
+    - alert: DexSecretExpired
+      annotations:
+        description: '{{`dex-operator failed to renew secret of {{ $labels.app_registration_name }} for {{ $labels.app_owner }} on provider {{ $labels.provider_type }}.`}}'
+        opsrecipe: dex-operator/
+      expr: min by(app_registration_name, app_owner, app_namespace, provider_name, provider_type, installation) (aggregation:dex_operator_idp_secret_expiry_time) - time() < 60*60*12
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: rainbow
+        topic: dex
+    - alert: ManagementClusterDexAppMissing
+      annotations:
+        description: '{{`dex-operator did not register a dex-app in giantswarm namespace.`}}'
+        opsrecipe: dex-operator/
+      expr: absent(dex_operator_idp_secret_expiry_time{app_namespace="giantswarm"}) == 1
+      for: 30m
+      labels:
+        area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
         team: rainbow

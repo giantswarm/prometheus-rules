@@ -51,7 +51,9 @@ func getTargetsAndSources(config alertConfig.Config, target string) ([]string, s
 				targetMatchers = addIfNotPresent(targetMatchers, targetLabel.Name)
 			} else if targetLabel.Name == target {
 				for _, source := range match.SourceMatchers {
-					sourceMatchers = append(sourceMatchers, source.Name)
+					if source.Value == "true" || source.Value == "false" {
+						sourceMatchers = append(sourceMatchers, source.Name)
+					}
 				}
 			} else {
 				break

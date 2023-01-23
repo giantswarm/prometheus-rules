@@ -32,6 +32,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Ship per-team Kyverno policy information to Grafana cloud.
+- Add basic rule that checks for deployments of `external-secrets` on MCs during business hours.
+
+### Removed
+
+- Remove `CrossplaneHelmReleaseFailed` alert because `FluxHelmReleaseFailed` triggers for the same thing. As long as the releases are stored in `flux-giantswarm`, but they have to be kept there because of our multi-tenant flux setup.
 
 ### Changed
 

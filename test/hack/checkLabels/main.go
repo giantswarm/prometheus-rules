@@ -15,7 +15,8 @@ import (
 
 /*
 * GLOSSARY
-* sourceMatchers and targetMatchers are the labels defined in the alertmanager config file
+* https://github.com/giantswarm/prometheus-rules/#inhibitions
+* am_sourceMatchers and am_targetMatchers are the labels defined in the alertmanager config file
 * sourceLabels are the labels defined in the alerting rules from which originate the inhibitions
 * 	--> For example, 'scrape_timeout' is the source label for the 'cancel_if_scrape_timeout' inhibition label
 * cancelLabels is another name for the inhibition labels (for example : 'cancel_if_scrape_timeout')
@@ -42,17 +43,17 @@ func parseInhibitionFile(fileName string) (alertConfig.Config, error) {
 
 // Return either the list of target or a specific source label from the alertmanager config file
 func getTargetsAndSources(config alertConfig.Config, target string) ([]string, string) {
-	var targetMatchers []string
-	var sourceMatchers []string
+	var am_targetMatchers []string
+	var am_sourceMatchers []string
 
 	for _, match := range config.InhibitRules {
 		for _, targetLabel := range match.TargetMatchers {
 			if target == "" {
-				targetMatchers = addIfNotPresent(targetMatchers, targetLabel.Name)
+				am_targetMatchers = addIfNotPresent(am_targetMatchers, targetLabel.Name)
 			} else if targetLabel.Name == target {
 				for _, source := range match.SourceMatchers {
 					if source.Value == "true" || source.Value == "false" {
-						sourceMatchers = append(sourceMatchers, source.Name)
+						am_sourceMatchers = append(am_sourceMatchers, source.Name)
 					}
 				}
 			} else {
@@ -62,12 +63,12 @@ func getTargetsAndSources(config alertConfig.Config, target string) ([]string, s
 	}
 
 	// To avoid go panicking
-	if len(sourceMatchers) == 0 {
-		sourceMatchers = append(sourceMatchers, "")
+	if len(am_sourceMatchers) == 0 {
+		am_sourceMatchers = append(am_sourceMatchers, "")
 	}
 
-	// return targetMatchers, sourceMatchers
-	return targetMatchers, sourceMatchers[0]
+	// return am_targetMatchers, am_sourceMatchers
+	return am_targetMatchers, am_sourceMatchers[0]
 }
 
 func parseYaml(data []byte) (promv1.PrometheusRule, error) {

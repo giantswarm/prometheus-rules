@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Turn `AzureClusterCreationFailed`'s severity from `notify` to page.
+- Split `ManagedCertificateCRWillExpireInLessThanTwoWeeks` alert between giantswarm and customer secrets.
 
 ### Added
 

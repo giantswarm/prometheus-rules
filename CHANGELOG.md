@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Fix cortex recording rules for requests and limits
+
 ## [2.76.0] - 2023-02-01
 
 ### Changed

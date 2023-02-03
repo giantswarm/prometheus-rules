@@ -181,17 +181,6 @@ This is a good example of an input series for testing a `range` query.
 * Rule files that can't be tested are listed in `test/conf/promtool_ignore`.
 * Rule files that can't be tested with a specific provider are listed in `test/conf/promtool_ignore_<provider>`.
 
-### Test inhibition labels
-
-One can check whether inhibition labels (mostly "cancel_if_" prefixed ones) are well defined and triggered by a corresponding label in the alerting rules by running the `make test-inhibitions` command at the projet's root directory.
-
-This command will output the list of missing labels. Each of them will need to be defined in the alerting rules. 
-If there is no labels outputed, this means test did not find missing inhibition labels.
-
-Warning: the tool may output false alerts or miss some alerts because of the following limitations.
-- it does not check for rules that are only defined on some specific environments (like aws-specific rules)
-- it tries to guess source labels rather than relying actual alertmanager inhibition, so may be wrong with some alerts  
-
 #### Limitation
 
 * The current implementation only renders alerting rules for different providers via the helm value `managementCluster.provider.kind`.
@@ -280,3 +269,21 @@ Those rules can be written according to this template :
 ```
 
 [unit testing rules]: https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/
+
+## Alertmanager inhibition dependency check
+
+In order for Alertmanager inhibition to work we need 3 elements:
+  - an Alert rule with some source labels
+  - an Inhibition definition mapping source labels to target labels
+  - an Alert rule with some target labels
+
+This is what we call the inhibition dependency chain.
+
+One can check whether inhibition labels (mostly "cancel_if_" prefixed ones) are well defined and triggered by a corresponding label in the alerting rules by running the `make test-inhibitions` command at the projet's root directory.
+
+This command will output the list of missing labels. Each of them will need to be defined in the alerting rules.
+If there is no labels outputed, this means tests passed and did not find missing inhibition labels.
+
+Warning: the tool may output false alerts or miss some alerts because of the following limitations.
+- it does not check for rules that are only defined on some specific environments (like aws-specific rules)
+- it tries to guess source labels rather than relying actual alertmanager inhibition, so may be wrong with some alerts

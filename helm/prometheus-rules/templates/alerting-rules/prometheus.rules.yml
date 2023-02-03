@@ -27,6 +27,18 @@ spec:
         team: atlas
         topic: observability
     ## Pages Atlas when prometheus fails to send samples to cortex
+    - alert: PrometheusMissingGrafanaCloud
+      annotations:
+        description: '{{`Prometheus is not sending data to Grafana Cloud.`}}'
+        opsrecipe: prometheus-missing-grafana-cloud/
+      expr: absent(prometheus_remote_storage_samples_total{remote_name="grafana-cloud"})
+      for: 1h
+      labels:
+        area: empowerment
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
     - alert: PrometheusFailsToCommunicateWithRemoteStorageAPI
       annotations:
         description: '{{`Prometheus can''t communicate with Remote Storage API at {{ $labels.url }}.`}}'

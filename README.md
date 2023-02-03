@@ -119,17 +119,17 @@ There are 2 different types tests implemented:
 By creating unit tests for Alerting rules it's possible to get early feedback about possible misbehavior in alerting rules.
 Unit tests are executed via `promtool` (part of `prometheus`).
 
-By running `make test` in your local environment, all required binaries will be downloaded and tests will be executed.
+By running `make test-rules` in your local environment, all required binaries will be downloaded and tests will be executed.
 
 There are 2 kinds of tests on rules:
 - syntax check (promtool check) - run on all files that can be generated from helm, nothing specific to do
 - unit tests (promtool test) - you have to write some unit tests, or add your rules files to the `promtool_ignore` file.
 
-#### Writing new unit tests
+#### Writing new Alerting rules unit tests
 
 1. remove the rules file you would like to test from `test/conf/promtool_ignore`
 1. create a new test file in [unit testing rules] format either globally in `test/tests/providers/global/` or provider-specific in `test/tests/providers/<provider>/`
-1. by running `make test` you can validate the your testing rules.
+1. by running `make test-rules` you can validate the your testing rules.
    Output should look like the follows:
 
    ```
@@ -224,9 +224,9 @@ Show success
 
 You can filter which rules files you will test with a regular expression:
 ```
-make test test_filter=grafana.management-cluster.rules.yml
-make test test_filter=grafana
-make test test_filter=gr.*na
+make test-rules test_filter=grafana.management-cluster.rules.yml
+make test-rules test_filter=grafana
+make test-rules test_filter=gr.*na
 ```
 
 #### Test "no data" case

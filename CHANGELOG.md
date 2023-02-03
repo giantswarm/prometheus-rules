@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.77.0] - 2023-02-03
+
 ### Added
 
 - Add `PrometheusMissingGrafanaCloud` alert.
@@ -1516,7 +1518,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.76.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.77.0...HEAD
+[2.77.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.76.1...v2.77.0
 [2.76.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.76.0...v2.76.1
 [2.76.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.75.0...v2.76.0
 [2.75.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.74.0...v2.75.0

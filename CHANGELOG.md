@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.76.1] - 2023-02-03
+
 ### Fixed
 
 - Avoid `scan-vulnerabilityreport` pods to fire `WorkloadClusterCriticalPodNotRunningAWS` alerts.
@@ -1510,7 +1512,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.76.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.76.1...HEAD
+[2.76.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.76.0...v2.76.1
 [2.76.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.75.0...v2.76.0
 [2.75.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.74.0...v2.75.0
 [2.74.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.73.2...v2.74.0

@@ -105,6 +105,17 @@ To Update `kubernetes-mixin` recording rules:
 
 ### Testing
 
+You can run all tests by running `make test`.
+
+There are 2 different types tests implemented:
+
+- [Prometheus rules unit tests](#prometheus-rules-unit-tests)
+- [Alertmanager inhibition dependency check](#alertmanager-inhibition-dependency-check)
+
+---
+
+### Prometheus rules unit tests
+
 By creating unit tests for Alerting rules it's possible to get early feedback about possible misbehavior in alerting rules.
 Unit tests are executed via `promtool` (part of `prometheus`).
 

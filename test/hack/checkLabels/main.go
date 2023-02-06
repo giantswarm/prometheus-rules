@@ -13,8 +13,31 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
+/*
+* This program detects errors in inhibitions configuration.
+* It verifies and reports any missing elements from the following:
+* - target labels (`cancel_if_*`) are actually defined in some `target_matchers` Inhibition definition
+* - source labels from `source_matchers` Inhibition definition are defined by some Alerts
+*
+* In order for an alert to be inhibited we need 3 elements :
+* - an Alert with some source labels
+* - an Inhibition definition mapping source labels to target labels
+* - an Alert with some target labels
+*
+* example:
+* - Alert `ScrapeTimeout` has label `scrape_timeout=true`
+* - Inhibition definition says `source_matchers: [scrape_timeout=true], target_matchers: [cancel_if_scrape_timeout=true]` (leaving out the equal part to simplify)
+* - Alert `MyAlert` has label `cancel_if_scrape_timeout=true`
+*
+* GLOSSARY
+* https://github.com/giantswarm/prometheus-rules/#inhibitions
+* am_sourceMatchers and am_targetMatchers are the labels defined in the alertmanager config file
+* sourceLabels are the labels defined in the alerting rules from which originate the inhibitions
+* 	--> For example, 'scrape_timeout' is the source label for the 'cancel_if_scrape_timeout' inhibition label
+* cancelLabels is another name for the inhibition labels (for example : 'cancel_if_scrape_timeout')
+**/
 const output = "../output"
-const target = "prometheus-rules/templates/alerting-rules"
+const alertRulesPath = "prometheus-rules/templates/alerting-rules"
 
 // Parse the alertmanager config file
 func parseInhibitionFile(fileName string) (alertConfig.Config, error) {
@@ -33,25 +56,34 @@ func parseInhibitionFile(fileName string) (alertConfig.Config, error) {
 	return inhibitions, nil
 }
 
-// Return the list of target and source labels from the alertmanager config file
-func getTargets(config alertConfig.Config) ([]string, []string) {
-	var targetMatchers []string
-	var sourceMatchers []string
+// Return either the list of target or a specific source label from the alertmanager config file
+// If no target is specified in the function's parameters, the function will return the targetMatchers list from the config and an empty list of sourceMatchers
+func getTargetsAndSources(config alertConfig.Config, target string) ([]string, string) {
+	var am_targetMatchers []string
+	var am_sourceMatchers []string
 
 	for _, match := range config.InhibitRules {
-		for _, target := range match.TargetMatchers {
-			targetMatchers = addIfNotPresent(targetMatchers, target.Name)
-		}
-
-		for _, source := range match.SourceMatchers {
-			// Checking if the label value is a boolean (can't use TypeOf as value is interpreted as string)
-			if source.Value == "true" || source.Value == "false" {
-				sourceMatchers = addIfNotPresent(sourceMatchers, source.Name)
+		for _, targetLabel := range match.TargetMatchers {
+			if target == "" {
+				am_targetMatchers = addIfNotPresent(am_targetMatchers, targetLabel.Name)
+			} else if targetLabel.Name == target {
+				for _, source := range match.SourceMatchers {
+					// Checking the source's value as all inhibition labels are booleans but not all sourceMatchers are (clusterid for example)
+					if source.Value == "true" || source.Value == "false" {
+						am_sourceMatchers = append(am_sourceMatchers, source.Name)
+					}
+				}
 			}
 		}
 	}
 
-	return targetMatchers, sourceMatchers
+	// To avoid go panicking
+	if len(am_sourceMatchers) == 0 {
+		return am_targetMatchers, ""
+	}
+
+	// return am_targetMatchers, am_sourceMatchers
+	return am_targetMatchers, am_sourceMatchers[0]
 }
 
 func parseYaml(data []byte) (promv1.PrometheusRule, error) {
@@ -83,7 +115,7 @@ func getLabels(ruleList []promv1.PrometheusRule, matcher string) []string {
 	for _, p := range ruleList {
 		for _, group := range p.Spec.Groups {
 			for _, rule := range group.Rules {
-				for key, _ := range rule.Labels {
+				for key := range rule.Labels {
 					// When the targetted label is found, adds it to the list if not already present in it
 					if matcher == "cancel_if_" && strings.HasPrefix(key, matcher) {
 						labelList = addIfNotPresent(labelList, key)
@@ -100,8 +132,8 @@ func getLabels(ruleList []promv1.PrometheusRule, matcher string) []string {
 
 func getMissingLabels() ([]string, []string, error) {
 	var rulesList []promv1.PrometheusRule
-	var missingLabels []string
-	var missingCancelLabels []string
+	var missingSourceLabels []string
+	var missingTargetMatchers []string
 	alertConf, err := parseInhibitionFile("alertmanager.yaml")
 	if err != nil {
 		return nil, nil, err
@@ -113,10 +145,13 @@ func getMissingLabels() ([]string, []string, error) {
 	}
 
 	// One iterates over all the different providers' directories
-	dirs, _ := ioutil.ReadDir(target_output)
+	dirs, err := ioutil.ReadDir(target_output)
+	if err != nil {
+		return nil, nil, err
+	}
 	for _, dir := range dirs {
 		if dir.IsDir() {
-			target_dir, err := filepath.Abs(output + "/" + dir.Name() + "/" + target)
+			target_dir, err := filepath.Abs(output + "/" + dir.Name() + "/" + alertRulesPath)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -147,7 +182,7 @@ func getMissingLabels() ([]string, []string, error) {
 
 	// Get the list of labels with prefix "cancel_if_"
 	cancelLabels := getLabels(rulesList, "cancel_if_")
-	targetLabels, sourceLabels := getTargets(alertConf)
+	targetLabels, _ := getTargetsAndSources(alertConf, "")
 
 	for _, cancelLabel := range cancelLabels {
 		var i = 0
@@ -155,40 +190,48 @@ func getMissingLabels() ([]string, []string, error) {
 		for _, targetLabel := range targetLabels {
 			if cancelLabel == targetLabel {
 				i++
+
+				// Limitation: we check the first source matchers found as we expect at least one source matcher for each target matcher. But there could be multiple and this part could be improved.
+				_, source := getTargetsAndSources(alertConf, cancelLabel)
+				var originLabelList = getLabels(rulesList, source)
+
+				if len(originLabelList) == 0 {
+					missingSourceLabels = addIfNotPresent(missingSourceLabels, source)
+				}
 				break
 			}
 		}
 
 		if i == 0 {
-			missingCancelLabels = append(missingCancelLabels, cancelLabel)
+			missingTargetMatchers = append(missingTargetMatchers, cancelLabel)
 		}
 	}
 
-	for _, source := range sourceLabels {
-		var originLabelList = getLabels(rulesList, source)
-
-		// If a label corresponding to source one was not found, one can add it to the list of missing origin labels
-		if len(originLabelList) == 0 {
-			missingLabels = append(missingLabels, source)
-		}
-	}
-
-	return missingLabels, missingCancelLabels, nil
+	return missingSourceLabels, missingTargetMatchers, nil
 }
 
 func main() {
-	missingTargetLabels, missingCancelLabels, err := getMissingLabels()
+	missingSourceLabel, missingTargetMatchers, err := getMissingLabels()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("MISSING TARGET LABELS IN ALERTMANAGER INHIBITIONS DEFINITIONS:")
-	for _, label := range missingCancelLabels {
-		fmt.Println(label)
-	}
+	if len(missingTargetMatchers) > 0 || len(missingSourceLabel) > 0 {
+		if len(missingTargetMatchers) > 0 {
+			fmt.Println("## Found %d missing target labels\n## Those labels should be defined in source_matchers field in alertmanager's inhibit_rule config.", len(missingTargetMatchers))
+			for _, label := range missingTargetMatchers {
+				fmt.Println(label)
+			}
+		}
+		if len(missingSourceLabel) > 0 {
+			fmt.Printf("## Found %d missing source labels\n## Those labels should be defined by an alert in %q\n", len(missingSourceLabel), alertRulesPath)
+			for _, label := range missingSourceLabel {
+				fmt.Println(label)
+			}
+		}
 
-	fmt.Println("\nMISSING SOURCE LABELS:")
-	for _, label := range missingTargetLabels {
-		fmt.Println(label)
+		os.Exit(1)
+	} else {
+		os.Exit(0)
 	}
 }

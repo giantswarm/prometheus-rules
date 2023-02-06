@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GIT_WORKDIR="$(git rev-parse --show-toplevel)"
-REPO_VERSION="$(curl -s https://api.github.com/repos/giantswarm/prometheus-meta-operator/releases/latest | jq -r .name)"
+REPO_VERSION="$(curl -s https://api.github.com/repos/giantswarm/prometheus-meta-operator/releases/latest | ./test/hack/bin/yq -r .name)"
 
 curl -s https://raw.githubusercontent.com/giantswarm/prometheus-meta-operator/"$REPO_VERSION"/files/templates/alertmanager/alertmanager.yaml > "$GIT_WORKDIR"/test/hack/checkLabels/alertmanager.yaml
 

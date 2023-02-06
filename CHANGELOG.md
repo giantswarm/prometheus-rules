@@ -9,7 +9,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- rename github workflow based unit tests
+
+### Fixed
+
+- fix ManagedCertificateCRWillExpireInLessThanTwoWeeks unit tests
+
+## [2.78.0] - 2023-02-06
+
+### Changed
+
+- Fix cortex recording rules for requests and limits
+- Upgrade inhibition labels checking script
+- inhibition script now throwing error in github-action if missing labels are detected
+
+## [2.77.0] - 2023-02-03
+
+### Added
+
+- Add `PrometheusMissingGrafanaCloud` alert.
+
+## [2.76.1] - 2023-02-03
+
+### Fixed
+
+- Avoid `scan-vulnerabilityreport` pods to fire `WorkloadClusterCriticalPodNotRunningAWS` alerts.
+
+## [2.76.0] - 2023-02-01
+
+### Changed
+
 - Turn `AzureClusterCreationFailed`'s severity from `notify` to page.
+- Split `ManagedCertificateCRWillExpireInLessThanTwoWeeks` alert between giantswarm and customer secrets.
 
 ### Added
 
@@ -1503,7 +1534,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.75.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.78.0...HEAD
+[2.78.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.77.0...v2.78.0
+[2.77.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.76.1...v2.77.0
+[2.76.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.76.0...v2.76.1
+[2.76.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.75.0...v2.76.0
 [2.75.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.74.0...v2.75.0
 [2.74.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.73.2...v2.74.0
 [2.73.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.73.1...v2.73.2

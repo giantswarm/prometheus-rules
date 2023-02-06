@@ -5,22 +5,25 @@ go 1.19
 require (
 	// Try to keep version in sync with our prometheus rule CRD version.
 	// see https://github.com/giantswarm/prometheus-operator-crd/blob/master/helm/prometheus-operator-crd/Chart.yaml#L11
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.54.0
+	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.62.0
 	sigs.k8s.io/yaml v1.3.0
 )
 
-require github.com/prometheus/alertmanager v0.22.2
+require github.com/prometheus/alertmanager v0.25.0
 
 require (
+	github.com/aws/aws-sdk-go v1.44.156 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/go-kit/kit v0.10.0 // indirect
+	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jpillora/backoff v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
@@ -32,6 +35,7 @@ require (
 	github.com/prometheus/client_golang v1.14.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.38.0 // indirect
+	github.com/prometheus/common/sigv4 v0.1.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	golang.org/x/net v0.4.0 // indirect

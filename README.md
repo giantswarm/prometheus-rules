@@ -81,13 +81,11 @@ Opsgenie route alerts based on the `team` label.
 
 #### Inhibitions
 
-The "cancel_if" labels are used for inhibitions.
-You can see the inhibition rules in alertmanager's config (opsctl open `alertmanager`, then go to `Status`), section `inhibit_rules:`.
+The `cancel_if_*` labels are used to inhibit alerts, they are defined in [Alertmanager's config](https://github.com/giantswarm/prometheus-meta-operator/blob/master/files/templates/alertmanager/alertmanager.yaml#L341).
+
+The base principle is: if an alert is currently firing with a `source_matcher` label, then all alerts that have a `target_matcher` label are inhibited (or muted).
 
 Official documentation for inhibit rules can be found here: https://www.prometheus.io/docs/alerting/latest/configuration/#inhibit_rule
-
-The base principle of an `source_matcher` inhibit_rule is:
-> if an alert is currently firing with a `source_matcher` label, then inhibit all alerts that have a `target_matcher` label
 
 ### Recording rules
 

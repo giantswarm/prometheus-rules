@@ -22,7 +22,7 @@ import (
 * cancelLabels is another name for the inhibition labels (for example : 'cancel_if_scrape_timeout')
 **/
 const output = "../output"
-const target = "prometheus-rules/templates/alerting-rules"
+const alertRulesPath = "prometheus-rules/templates/alerting-rules"
 
 // Parse the alertmanager config file
 func parseInhibitionFile(fileName string) (alertConfig.Config, error) {
@@ -136,7 +136,7 @@ func getMissingLabels() ([]string, []string, error) {
 	}
 	for _, dir := range dirs {
 		if dir.IsDir() {
-			target_dir, err := filepath.Abs(output + "/" + dir.Name() + "/" + target)
+			target_dir, err := filepath.Abs(output + "/" + dir.Name() + "/" + alertRulesPath)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -176,6 +176,7 @@ func getMissingLabels() ([]string, []string, error) {
 			if cancelLabel == targetLabel {
 				i++
 
+				// Limitation: we check the first source matchers found as we expect at least one source matcher for each target matcher. But there could be multiple and this part could be improved.
 				_, source := getTargetsAndSources(alertConf, cancelLabel)
 				var originLabelList = getLabels(rulesList, source)
 
@@ -200,29 +201,18 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if len(missingTargetMatchers) > 0 && len(missingSourceLabel) > 0 {
-		fmt.Println("## Found %d missing cancel labels\n## Those labels should be define in alertmanager config inhibitions.", len(missingTargetMatchers))
-		for _, label := range missingTargetMatchers {
-			fmt.Println(label)
+	if len(missingTargetMatchers) > 0 || len(missingSourceLabel) > 0 {
+		if len(missingTargetMatchers) > 0 {
+			fmt.Println("## Found %d missing target labels\n## Those labels should be defined in source_matchers field in alertmanager's inhibit_rule config.", len(missingTargetMatchers))
+			for _, label := range missingTargetMatchers {
+				fmt.Println(label)
+			}
 		}
-
-		fmt.Printf("## Found %d missing target labels\n## Those labels should be defined by an alert in %q\n", len(missingSourceLabel), target)
-		for _, label := range missingSourceLabel {
-			fmt.Println(label)
-		}
-
-		os.Exit(1)
-	} else if len(missingTargetMatchers) > 0 && len(missingSourceLabel) == 0 {
-		fmt.Println("## Found %d missing cancel labels\n## Those labels should be define in alertmanager config inhibitions.", len(missingTargetMatchers))
-		for _, label := range missingTargetMatchers {
-			fmt.Println(label)
-		}
-
-		os.Exit(1)
-	} else if len(missingTargetMatchers) == 0 && len(missingSourceLabel) > 0 {
-		fmt.Printf("## Found %d missing target labels\n## Those labels should be defined by an alert in %q\n", len(missingSourceLabel), target)
-		for _, label := range missingSourceLabel {
-			fmt.Println(label)
+		if len(missingSourceLabel) > 0 {
+			fmt.Printf("## Found %d missing source labels\n## Those labels should be defined by an alert in %q\n", len(missingSourceLabel), alertRulesPath)
+			for _, label := range missingSourceLabel {
+				fmt.Println(label)
+			}
 		}
 
 		os.Exit(1)

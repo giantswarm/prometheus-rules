@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Fix cortex recording rules for requests and limits
+- Upgrade inhibition labels checking script
+- inhibition script now throwing error in github-action if missing labels are detected
 
 ## [2.77.0] - 2023-02-03
 

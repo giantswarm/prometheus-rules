@@ -129,7 +129,7 @@ spec:
       annotations:
         description: '{{`Machine {{ $labels.instance }} memory usage is too high (less than 10% and 2G of allocatable memory).`}}'
       expr: ((((node_memory_MemTotal_bytes{cluster_type="workload_cluster"} - node_memory_MemFree_bytes{cluster_type="workload_cluster"} - node_memory_Cached_bytes{cluster_type="workload_cluster"}) / (node_memory_MemTotal_bytes{cluster_type="workload_cluster"}) * 100)) > 90 and (node_memory_MemFree_bytes{cluster_type="workload_cluster"} + node_memory_Cached_bytes{cluster_type="workload_cluster"}) < 2147483648) and on (node) kube_node_role{role="master"}
-      for: 5m
+      for: 60m
       labels:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}

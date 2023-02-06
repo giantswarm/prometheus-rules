@@ -14,6 +14,21 @@ import (
 )
 
 /*
+* This program detects errors in inhibitions configuration.
+* It verifies and reports any missing elements from the following:
+* - target labels (`cancel_if_*`) are actually defined in some `target_matchers` Inhibition definition
+* - source labels from `source_matchers` Inhibition definition are defined by some Alerts
+*
+* In order for an alert to be inhibited we need 3 elements :
+* - an Alert with some source labels
+* - an Inhibition definition mapping source labels to target labels
+* - an Alert with some target labels
+*
+* example:
+* - Alert `ScrapeTimeout` has label `scrape_timeout=true`
+* - Inhibition definition says `source_matchers: [scrape_timeout=true], target_matchers: [cancel_if_scrape_timeout=true]` (leaving out the equal part to simplify)
+* - Alert `MyAlert` has label `cancel_if_scrape_timeout=true`
+*
 * GLOSSARY
 * https://github.com/giantswarm/prometheus-rules/#inhibitions
 * am_sourceMatchers and am_targetMatchers are the labels defined in the alertmanager config file
@@ -42,6 +57,7 @@ func parseInhibitionFile(fileName string) (alertConfig.Config, error) {
 }
 
 // Return either the list of target or a specific source label from the alertmanager config file
+// If no target is specified in the function's parameters, the function will return the targetMatchers list from the config and an empty list of sourceMatchers
 func getTargetsAndSources(config alertConfig.Config, target string) ([]string, string) {
 	var am_targetMatchers []string
 	var am_sourceMatchers []string
@@ -52,19 +68,18 @@ func getTargetsAndSources(config alertConfig.Config, target string) ([]string, s
 				am_targetMatchers = addIfNotPresent(am_targetMatchers, targetLabel.Name)
 			} else if targetLabel.Name == target {
 				for _, source := range match.SourceMatchers {
+					// Checking the source's value as all inhibition labels are booleans but not all sourceMatchers are (clusterid for example)
 					if source.Value == "true" || source.Value == "false" {
 						am_sourceMatchers = append(am_sourceMatchers, source.Name)
 					}
 				}
-			} else {
-				break
 			}
 		}
 	}
 
 	// To avoid go panicking
 	if len(am_sourceMatchers) == 0 {
-		am_sourceMatchers = append(am_sourceMatchers, "")
+		return am_targetMatchers, ""
 	}
 
 	// return am_targetMatchers, am_sourceMatchers

@@ -140,11 +140,11 @@ spec:
       record: aggregation:kubernetes:persistentvolumeclaim_total
     - expr: sum(kube_pod_container_resource_limits{resource="cpu", unit="core", organization="giantswarm"}) by (cluster_type, cluster_id, container)
       record: aggregation:kubernetes:pod_resource_limits_cpu_cores
-    - expr: sum(kube_pod_container_resource_limits{resource="memory", unit="bytes", organization="giantswarm"}) by (cluster_type, cluster_id, container)
+    - expr: sum(kube_pod_container_resource_limits{resource="memory", unit="byte", organization="giantswarm"}) by (cluster_type, cluster_id, container)
       record: aggregation:kubernetes:pod_resource_limits_memory_bytes
     - expr: sum(kube_pod_container_resource_requests{resource="cpu", unit="core", organization="giantswarm"}) by (cluster_type, cluster_id, container)
       record: aggregation:kubernetes:pod_resource_requests_cpu_cores
-    - expr: sum(kube_pod_container_resource_requests{resource="memory", unit="bytes", organization="giantswarm"}) by (cluster_type, cluster_id, container)
+    - expr: sum(kube_pod_container_resource_requests{resource="memory", unit="byte", organization="giantswarm"}) by (cluster_type, cluster_id, container)
       record: aggregation:kubernetes:pod_resource_requests_memory_bytes
     - expr: count(kube_pod_created) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:pod_total

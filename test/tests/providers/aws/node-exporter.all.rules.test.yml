@@ -31,6 +31,7 @@ tests:
               topic: "observability"
             exp_annotations:
               description: "NodeExporter Collector cpu on 10.0.5.111:10300 is failed."
+              opsrecipe: "node-exporter-device-failed/"
       - alertname: NodeExporterCollectorFailed
         eval_time: 70m
 

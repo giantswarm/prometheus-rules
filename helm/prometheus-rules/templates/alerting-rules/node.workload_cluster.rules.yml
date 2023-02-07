@@ -146,7 +146,7 @@ spec:
       for: 60m
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: true
         severity: page
         team: se
         topic: infrastructure

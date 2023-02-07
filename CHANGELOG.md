@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - rename github workflow based unit tests
+- fix node_status metrics for cortex
 
 ### Fixed
 

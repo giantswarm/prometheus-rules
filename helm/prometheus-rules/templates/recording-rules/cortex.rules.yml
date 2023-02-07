@@ -114,12 +114,18 @@ spec:
       record: aggregation:kubernetes:master_node_created
     - expr: count(kube_namespace_created) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:namespace_total
-    - expr: sum(kube_node_status_allocatable_cpu_cores) by (cluster_type, cluster_id)
+    - expr: sum(kube_node_status_allocatable{resource="cpu", unit="core"}) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:node_allocatable_cpu_cores_total
-    - expr: sum(kube_node_status_allocatable_memory_bytes) by (cluster_type, cluster_id)
+    - expr: sum(kube_node_status_allocatable{resource="memory", unit="byte"}) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:node_allocatable_memory_bytes
-    - expr: sum(kube_node_status_allocatable_pods) by (cluster_type, cluster_id)
+    - expr: sum(kube_node_status_allocatable{resource="pods", unit="integer"}) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:node_allocatable_pods_total
+    - expr: sum(kube_node_status_capacity{resource="cpu", unit="core"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:node_capacity_cpu_cores_total
+    - expr: sum(kube_node_status_capacity{resource="memory", unit="byte"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:node_capacity_memory_bytes
+    - expr: sum(kube_node_status_capacity{resource="pods", unit="integer"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:node_capacity_pods_total
     - expr: sum(kube_node_status_condition{condition="DiskPressure", status="true"}) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:node_disk_pressure_total
     - expr: sum(kube_node_status_condition{condition="MemoryPressure", status="true"}) by (cluster_type, cluster_id)

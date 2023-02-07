@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "config:base",
+    ":reviewer(team:team-atlas)"
+  ],
+  "labels": ["dependencies", "renovate"],
+  "dependencyDashboard": true,
+  "ignorePaths": [
+    ".github/workflows/zz_generated.*",
+    ".github/workflows/codeql-analysis.yml"
+  ],
+  "ignoreDeps": [
+    "architect",
+    "zricethezav/gitleaks-action",
+    "actions/setup-go"
+  ],
+  "schedule": [ "after 6am on thursday" ]
+}

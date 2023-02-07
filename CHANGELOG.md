@@ -7,6 +7,88 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- rename github workflow based unit tests
+
+### Fixed
+
+- fix ManagedCertificateCRWillExpireInLessThanTwoWeeks unit tests
+
+## [2.78.0] - 2023-02-06
+
+### Changed
+
+- Fix cortex recording rules for requests and limits
+- Upgrade inhibition labels checking script
+- inhibition script now throwing error in github-action if missing labels are detected
+
+## [2.77.0] - 2023-02-03
+
+### Added
+
+- Add `PrometheusMissingGrafanaCloud` alert.
+
+## [2.76.1] - 2023-02-03
+
+### Fixed
+
+- Avoid `scan-vulnerabilityreport` pods to fire `WorkloadClusterCriticalPodNotRunningAWS` alerts.
+
+## [2.76.0] - 2023-02-01
+
+### Changed
+
+- Turn `AzureClusterCreationFailed`'s severity from `notify` to page.
+- Split `ManagedCertificateCRWillExpireInLessThanTwoWeeks` alert between giantswarm and customer secrets.
+
+### Added
+
+- Dummy inhibition alerting rules to make ci happy.
+
+## [2.75.0] - 2023-01-23
+
+### Added
+
+- Add `AzureServicePrincipalExpirationMetricsMissing` firing on `gollum` only to catch when the service principal expiration metrics are missing.
+
+## [2.74.0] - 2023-01-18
+
+### Changed
+
+- Raise `ClusterAutoscalerUnneededNodes` alert threshold to 4 hours.
+
+### Removed
+
+- Remove `ClusterAutoscalerUnschedulablePods` alert as it is too unreliable.
+
+## [2.73.2] - 2023-01-18
+
+### Changed
+
+- Alert for `dex` only in management clusters.
+
+## [2.73.1] - 2023-01-18
+
+### Changed
+
+- Update prometheus tool to `2.41.0` and Fix bash in chart-template target.
+
+### Added
+
+- Ship per-team Kyverno policy information to Grafana cloud.
+- Add basic rule that checks for deployments of `external-secrets` on MCs during business hours.
+
+### Removed
+
+- Remove `CrossplaneHelmReleaseFailed` alert because `FluxHelmReleaseFailed` triggers for the same thing. As long as the releases are stored in `flux-giantswarm`, but they have to be kept there because of our multi-tenant flux setup.
+
+### Changed
+
+- Improve `PrometheusAgentFailing` to ignore
+
+## [2.73.0] - 2023-01-16
+
 ### Fixed
 
 - Fix boolean in rules.
@@ -15,6 +97,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial version of `CAPZ` related alerting rules
 - Add `ClusterAutoscalerUnneededNodes` and `ClusterAutoscalerUnschedulablePods`
+- Add `DexSecretExpired` and `ManagementClusterDexAppMissing` alerts in working hours.
 
 ### Changed
 
@@ -24,6 +107,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - NodeExporter: Disabled pressure collector for kvm
 - NodeExporter: page again
 - Remove `ClusterAutoScalerErrors`
+- rework tests to generate helm templating only once
 
 ## [2.72.0] - 2023-01-09
 
@@ -1453,7 +1537,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.72.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.78.0...HEAD
+[2.78.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.77.0...v2.78.0
+[2.77.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.76.1...v2.77.0
+[2.76.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.76.0...v2.76.1
+[2.76.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.75.0...v2.76.0
+[2.75.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.74.0...v2.75.0
+[2.74.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.73.2...v2.74.0
+[2.73.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.73.1...v2.73.2
+[2.73.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.73.0...v2.73.1
+[2.73.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.72.0...v2.73.0
 [2.72.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.71.1...v2.72.0
 [2.71.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.71.0...v2.71.1
 [2.71.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.5...v2.71.0

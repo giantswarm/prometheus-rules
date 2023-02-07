@@ -13,12 +13,13 @@ spec:
     - alert: NodeExporterCollectorFailed
       annotations:
         description: '{{`NodeExporter Collector {{ $labels.collector }} on {{ $labels.instance }} is failed.`}}'
-      expr: node_scrape_collector_success{collector!~"bonding|hwmon|powersupplyclass|mdadm|nfs|nfsd|tapestats|fibrechannel{{ if eq .Values.managementCluster.provider.kind "azure" }}|nvme{{ end }}"} == 0
+        opsrecipe: node-exporter-device-failed/
+      expr: node_scrape_collector_success{collector!~"conntrack|bonding|hwmon|powersupplyclass|mdadm|nfs|nfsd|tapestats|fibrechannel|nvme{{ if eq .Values.managementCluster.provider.kind "kvm" }}|pressure{{ end }}"} == 0
       for: 5m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
-        severity: notify
+        severity: page
         team: {{ include "providerTeam" . }}
         topic: observability
     - alert: NodeExporterDeviceError

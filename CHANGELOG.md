@@ -86,6 +86,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Improve `PrometheusAgentFailing` to ignore
+- NodeExporter: Disabled nvme collector checks - were too unreliable
+- NodeExporter: Disabled pressure collector for kvm
+- NodeExporter: page again
 
 ## [2.73.0] - 2023-01-16
 

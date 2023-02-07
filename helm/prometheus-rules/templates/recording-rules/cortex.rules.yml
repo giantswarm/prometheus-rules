@@ -266,3 +266,8 @@ spec:
       record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_request_errors
     - expr: sum(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code) / count(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code)
       record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_values
+    # Management Cluster Usage
+    - expr: sum(container_memory_usage_bytes{cluster_type="management_cluster"}) by (container)
+      record: aggregation:container:memory_usage_bytes
+    - expr: sum(rate(container_cpu_usage_seconds_total{cluster_type="management_cluster"}[2m])) by (container)
+      record: aggregation:container:cpu_usage_cores

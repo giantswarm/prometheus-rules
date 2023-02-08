@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rename github workflow based unit tests
 - fix node_status metrics for cortex
 - fix typo in memory request/limit recording rule
+- add container memory/cpu usage for MCs to cortex
 
 ### Fixed
 

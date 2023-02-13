@@ -1,13 +1,22 @@
-name: test
+name: alert-test
+run-name: run unit and conformance tests
 
 on: [pull_request]
 
 jobs:
-  gitleaks:
+  promtool-unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: "0"
-      - name: run tests
-        run: make test
+      - name: run promtool unit tests
+        run: make test-rules
+  inhibition-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
+      - name: run inhibition tests
+        run: make test-inhibitions

@@ -11,9 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `WorkloadClusterMasterMemoryUsageTooHigh` alert.
 
+## [2.80.0] - 2023-02-13
+
+### Added
+
+- Add `WorkloadClusterAWSCNIIpExhausted` and `WorkloadClusterAWSCNIIpAlmostExhausted` alerts.
+
+## [2.79.0] - 2023-02-09
+
 ### Changed
 
 - rename github workflow based unit tests
+- fix node_status metrics for cortex
+- fix typo in memory request/limit recording rule
+- add container memory/cpu usage for MCs to cortex
 
 ### Fixed
 
@@ -26,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix cortex recording rules for requests and limits
 - Upgrade inhibition labels checking script
 - inhibition script now throwing error in github-action if missing labels are detected
+
 
 ## [2.77.0] - 2023-02-03
 
@@ -90,6 +102,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Improve `PrometheusAgentFailing` to ignore
+- NodeExporter: Disabled nvme collector checks - were too unreliable
+- NodeExporter: Disabled pressure collector for kvm
+- NodeExporter: page again
 
 ## [2.73.0] - 2023-01-16
 
@@ -1538,7 +1553,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.78.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.80.0...HEAD
+[2.80.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.79.0...v2.80.0
+[2.79.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.78.0...v2.79.0
 [2.78.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.77.0...v2.78.0
 [2.77.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.76.1...v2.77.0
 [2.76.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.76.0...v2.76.1
@@ -1733,3 +1750,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.2]: https://github.com/giantswarm/prometheus-rules/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/giantswarm/prometheus-rules/releases/tag/v0.1.0
+

@@ -101,5 +101,27 @@ spec:
         cancel_if_cluster_has_no_workers: "true"
         severity: page
         team: phoenix
-        topic: managementcluster
+    - alert: WorkloadClusterAWSCNIIpAlmostExhausted
+      annotations:
+        description: '{{`IPs exhausted for aws-cni subnet {{ $labels.id }} in AZ {{ $labels.availabvility_zone }}.`}}'
+        opsrecipe: aws-ips-exhausted/
+      expr: min(aws_operator_subnet_available_ips_percentage{subnet_type="aws-cni"}) by (account, availability_zone, cluster_id, id) < 0.1
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: se
+        topic: workloadcluster
+    - alert: WorkloadClusterAWSCNIIpExhausted
+      annotations:
+        description: '{{`IPs exhausted for aws-cni subnet {{ $labels.id }} in AZ {{ $labels.availabvility_zone }}.`}}'
+        opsrecipe: aws-ips-exhausted/
+      expr: sum(aws_operator_subnet_available_ips{subnet_type="aws-cni"}) by (account, availability_zone, cluster_id, id) == 0
+      for: 5m
+      labels:
+        area: kaas
+        severity: page
+        team: phoenix
+        topic: workloadcluster
 {{- end }}

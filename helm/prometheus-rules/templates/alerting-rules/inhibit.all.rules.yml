@@ -41,7 +41,7 @@ spec:
     - alert: ScrapeTimeout
       annotations:
         description: '{{`Never fires (dummy alert).`}}'
-      expr: vector(0)
+      expr: vector(0) > 1
       labels:
         area: empowerment
         scrape_timeout: "true"
@@ -51,7 +51,7 @@ spec:
     - alert: ApiServerDown
       annotations:
         description: '{{`Never fires (dummy alert).`}}'
-      expr: vector(0)
+      expr: vector(0) > 1
       labels:
         area: empowerment
         apiserver_down: "true"

@@ -44,7 +44,6 @@ templates/alerting-rules/inhibit.all.rules.yml
 templates/alerting-rules/inhibit.management-cluster.rules.yml
 templates/alerting-rules/job.rules.yml
 templates/alerting-rules/kiam.rules.yml
-templates/alerting-rules/kong.rules.yml
 templates/alerting-rules/kube-state-metrics.rules.yml
 templates/alerting-rules/kubelet.management-cluster.rules.yml
 templates/alerting-rules/kubelet.workload-cluster.rules.yml

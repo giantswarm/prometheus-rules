@@ -5,8 +5,8 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'up{job="kong_datastore_reachable", namespace="giantswarm"}'
-        values: '0+0x10 '
+      - series: 'kong_datastore_reachable{namespace="giantswarm"}'
+        values: '0+0x20 1+0x20 _x20'
     alert_rule_test:
       - alertname: KongDatastoreNotReachable
         eval_time: 10m
@@ -17,7 +17,6 @@ tests:
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "false"
-              job: kong_datastore_reachable
               namespace: giantswarm
               severity: page
               team: cabbage

@@ -38,7 +38,7 @@ tests:
   # NodeExporterDeviceError tests
   - interval: 1m
     input_series:
-      - series: 'node_filesystem_device_error{device="/dev/mapper/usr", fstype="ext4", instance="10.0.5.111:10300", mountpoint="/var/lib/kubelet"}'
+      - series: 'node_filesystem_device_error{device="/dev/mapper/usr", fstype="ext4", instance="10.0.5.111:10300", mountpoint="/var/lib/kubelet",cluster_type="workload_cluster"}'
         values: "_x20 1+0x20 0+0x20"
     alert_rule_test:
       - alertname: NodeExporterDeviceError
@@ -61,6 +61,7 @@ tests:
               severity: "page"
               team: "rocket"
               topic: "observability"
+              cluster_type: "workload_cluster"
             exp_annotations:
               description: "NodeExporter Mountpoint /var/lib/kubelet on device /dev/mapper/usr on 10.0.5.111:10300 is erroring."
               opsrecipe: "node-exporter-device-error/"

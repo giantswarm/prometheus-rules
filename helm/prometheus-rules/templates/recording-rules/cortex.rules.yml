@@ -114,12 +114,18 @@ spec:
       record: aggregation:kubernetes:master_node_created
     - expr: count(kube_namespace_created) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:namespace_total
-    - expr: sum(kube_node_status_allocatable_cpu_cores) by (cluster_type, cluster_id)
+    - expr: sum(kube_node_status_allocatable{resource="cpu", unit="core"}) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:node_allocatable_cpu_cores_total
-    - expr: sum(kube_node_status_allocatable_memory_bytes) by (cluster_type, cluster_id)
+    - expr: sum(kube_node_status_allocatable{resource="memory", unit="byte"}) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:node_allocatable_memory_bytes
-    - expr: sum(kube_node_status_allocatable_pods) by (cluster_type, cluster_id)
+    - expr: sum(kube_node_status_allocatable{resource="pods", unit="integer"}) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:node_allocatable_pods_total
+    - expr: sum(kube_node_status_capacity{resource="cpu", unit="core"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:node_capacity_cpu_cores_total
+    - expr: sum(kube_node_status_capacity{resource="memory", unit="byte"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:node_capacity_memory_bytes
+    - expr: sum(kube_node_status_capacity{resource="pods", unit="integer"}) by (cluster_type, cluster_id)
+      record: aggregation:kubernetes:node_capacity_pods_total
     - expr: sum(kube_node_status_condition{condition="DiskPressure", status="true"}) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:node_disk_pressure_total
     - expr: sum(kube_node_status_condition{condition="MemoryPressure", status="true"}) by (cluster_type, cluster_id)
@@ -140,11 +146,11 @@ spec:
       record: aggregation:kubernetes:persistentvolumeclaim_total
     - expr: sum(kube_pod_container_resource_limits{resource="cpu", unit="core", organization="giantswarm"}) by (cluster_type, cluster_id, container)
       record: aggregation:kubernetes:pod_resource_limits_cpu_cores
-    - expr: sum(kube_pod_container_resource_limits{resource="memory", unit="bytes", organization="giantswarm"}) by (cluster_type, cluster_id, container)
+    - expr: sum(kube_pod_container_resource_limits{resource="memory", unit="byte", organization="giantswarm"}) by (cluster_type, cluster_id, container)
       record: aggregation:kubernetes:pod_resource_limits_memory_bytes
     - expr: sum(kube_pod_container_resource_requests{resource="cpu", unit="core", organization="giantswarm"}) by (cluster_type, cluster_id, container)
       record: aggregation:kubernetes:pod_resource_requests_cpu_cores
-    - expr: sum(kube_pod_container_resource_requests{resource="memory", unit="bytes", organization="giantswarm"}) by (cluster_type, cluster_id, container)
+    - expr: sum(kube_pod_container_resource_requests{resource="memory", unit="byte", organization="giantswarm"}) by (cluster_type, cluster_id, container)
       record: aggregation:kubernetes:pod_resource_requests_memory_bytes
     - expr: count(kube_pod_created) by (cluster_type, cluster_id)
       record: aggregation:kubernetes:pod_total
@@ -266,3 +272,8 @@ spec:
       record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_request_errors
     - expr: sum(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code) / count(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code)
       record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_values
+    # Management Cluster Usage
+    - expr: sum(container_memory_usage_bytes{cluster_type="management_cluster"}) by (container)
+      record: aggregation:container:memory_usage_bytes
+    - expr: sum(rate(container_cpu_usage_seconds_total{cluster_type="management_cluster"}[2m])) by (container)
+      record: aggregation:container:cpu_usage_cores

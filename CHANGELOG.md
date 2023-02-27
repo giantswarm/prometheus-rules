@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Make `NodeExporterDeviceError` only if relevant disk scraping fails.
+- Split Calico notify alerts per provider team
 
 ## [2.80.1] - 2023-02-14
 

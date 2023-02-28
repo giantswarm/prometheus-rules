@@ -20,7 +20,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: kubernetes
     - alert: CalicoNodeMemoryHighUtilization
       annotations:
@@ -35,7 +35,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: kubernetes
 {{- if eq .Values.managementCluster.provider.kind "kvm" }}
     - alert: CalicoNodeFailingToSaveIptables
@@ -51,7 +51,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: rocket
+        team: {{ include "providerTeam" . }}
         topic: kubernetes
     - alert: CalicoNodeFailingToRestoreIptables
       annotations:
@@ -66,6 +66,6 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: rocket
+        team: {{ include "providerTeam" . }}
         topic: kubernetes
 {{- end }}

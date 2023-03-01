@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Splits `kyverno` certificate expiry & created `KyvernoCertificateSecretWillExpireInLessThanTwoDays` alert.
+
 ## [2.82.0] - 2023-02-28
 
 ### Changed

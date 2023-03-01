@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Add `app` differentiator to the `FluxSourceFailed` alert.
+
 ## [2.82.0] - 2023-02-28
 
 ### Changed
@@ -139,7 +143,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add recording rule for expiry time of identity provider oauth app secrets managed by dex operator. 
+- Add recording rule for expiry time of identity provider oauth app secrets managed by dex operator.
 
 ## [2.71.1] - 2023-01-09
 
@@ -1762,4 +1766,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.2]: https://github.com/giantswarm/prometheus-rules/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/giantswarm/prometheus-rules/releases/tag/v0.1.0
-

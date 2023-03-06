@@ -9,7 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Splits `kyverno` certificate expiry & created `KyvernoCertificateSecretWillExpireInLessThanTwoDays` alert.
+- Splits `kyverno` certificate expiry alert & created `KyvernoCertificateSecretWillExpireInLessThanTwoDays`.
+
+## [2.82.2] - 2023-03-03
+
+### Fixed
+
+- fix ClusterEtcdDBSizeTooLarge alerts.
+
+## [2.82.1] - 2023-03-01
+
+### Fixed
+
+- Add `app` differentiator to the `FluxSourceFailed` alert.
 
 ## [2.82.0] - 2023-02-28
 
@@ -143,7 +155,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add recording rule for expiry time of identity provider oauth app secrets managed by dex operator. 
+- Add recording rule for expiry time of identity provider oauth app secrets managed by dex operator.
 
 ## [2.71.1] - 2023-01-09
 
@@ -1567,7 +1579,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.2...HEAD
+[2.82.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.1...v2.82.2
+[2.82.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.0...v2.82.1
 [2.82.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.80.1...v2.82.0
 [2.80.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.80.0...v2.80.1
 [2.80.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.79.0...v2.80.0
@@ -1766,4 +1780,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.2]: https://github.com/giantswarm/prometheus-rules/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/giantswarm/prometheus-rules/releases/tag/v0.1.0
-

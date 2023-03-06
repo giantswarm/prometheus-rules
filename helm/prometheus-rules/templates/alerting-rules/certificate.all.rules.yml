@@ -42,9 +42,9 @@ spec:
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: notify
         team: shield
-        topic: cert-manager
+        topic: kyverno
     - alert: CertificateSecretWillExpireInLessThanTwoWeeks
       annotations:
         description: '{{`Certificate stored in Secret {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'

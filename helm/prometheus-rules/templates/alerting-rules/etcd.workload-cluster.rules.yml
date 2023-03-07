@@ -48,7 +48,6 @@ spec:
       labels:
         area: kaas
         severity: page
-        cancel_if_outside_working_hours: "false"
         team: {{ include "providerTeam" . }}
         topic: etcd
     - alert: WorkloadClusterEtcdNumberOfLeaderChangesTooHigh

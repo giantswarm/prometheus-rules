@@ -13,7 +13,7 @@ spec:
           annotations:
             description: |-
               {{`Machine {{ $labels.exported_namespace}}/{{ $labels.name }} stuck in phase {{ $labels.phase }} for more than 30 minutes.`}}
-          expr: capi_machine_status_phase{phase!~"Running"} > 0
+          expr: capi_machine_status_phase{phase!~"Running", name!~".*bastion.*"} > 0
           for: 30m
           labels:
             area: kaas

@@ -47,7 +47,7 @@ tests:
                 cluster_name: clippaxy
                 name: clippaxy-def99
                 exported_namespace: giantswarm
-                exp_annotations:
+              exp_annotations:
                 description: "The clusters clippaxy machinedeployment giantswarm/clippaxy-def99 does not match the expected number of replicas for longer than 1h."
   - interval: 1m
     input_series:

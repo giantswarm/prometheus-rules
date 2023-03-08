@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Fix `MachineUnhealthyPhase` rule to exclude bastion nodes
+- Fix `MachineDeploymentReplicasMismatch` rule to exclude bastion nodes and fix description
+
 ## [2.82.3] - 2023-03-07
 
 ### Changed

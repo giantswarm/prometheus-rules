@@ -26,13 +26,13 @@ tests:
               description: "Machine giantswarm/galaxy-72jq5 stuck in phase Failed for more than 30 minutes."
   - interval: 1m
     input_series:
-      - series: 'capi_machinedeployment_spec_replicas{cluster_name="galaxy", machinedeployment="galaxy-72jq5", exported_namespace="giantswarm"}'
+      - series: 'capi_machinedeployment_spec_replicas{cluster_name="galaxy", name="galaxy-72jq5", exported_namespace="giantswarm"}'
         values: "0+3x75"
-      - series: 'capi_machinedeployment_status_replicas_available{cluster_name="galaxy", machinedeployment="galaxy-72jq5", exported_namespace="giantswarm"}'
+      - series: 'capi_machinedeployment_status_replicas_available{cluster_name="galaxy", name="galaxy-72jq5", exported_namespace="giantswarm"}'
         values: "0+3x75"
-      - series: 'capi_machinedeployment_spec_replicas{cluster_name="galaxy", machinedeployment="galaxy-72jzy", exported_namespace="giantswarm"}'
+      - series: 'capi_machinedeployment_spec_replicas{cluster_name="galaxy", name="galaxy-72jzy", exported_namespace="giantswarm"}'
         values: "0+3x75"
-      - series: 'capi_machinedeployment_status_replicas_available{cluster_name="galaxy", machinedeployment="galaxy-72jzy", exported_namespace="giantswarm"}'
+      - series: 'capi_machinedeployment_status_replicas_available{cluster_name="galaxy", name="galaxy-72jzy", exported_namespace="giantswarm"}'
         values: "0+2x75"
     alert_rule_test:
       - alertname: MachineDeploymentReplicasMismatch

@@ -82,7 +82,7 @@ spec:
         description: |-
           {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-source/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="management_cluster", namespace=~".*giantswarm.*"} > 0
+      expr: gotk_reconcile_condition{app="flux-giantswarm-monitoring", type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="management_cluster", namespace=~".*giantswarm.*"} > 0
       for: 2h
       labels:
         area: kaas
@@ -116,7 +116,7 @@ spec:
           sum(increase(gotk_reconcile_duration_seconds_sum{app="flux-giantswarm-monitoring",namespace="flux-giantswarm",kind=~"Kustomization|HelmRelease"}[10m])) by (kind,name,cluster_id,installation)
           /
           sum(increase(gotk_reconcile_duration_seconds_count{app="flux-giantswarm-monitoring",namespace="flux-giantswarm",kind=~"Kustomization|HelmRelease"}[10m])) by (kind,name,cluster_id,installation)
-          ) 
+          )
         >bool 360)[7d:10m])
         / (7*24*6) < 0.97
       for: 10m

@@ -43,8 +43,8 @@ spec:
       annotations:
         description: '{{`Etcd ({{ $labels.instance }}) has a too large database.`}}'
         opsrecipe: etcd-db-size-too-large/
-      expr: (etcd_debugging_mvcc_db_total_size_in_bytes{cluster_type="workload_cluster"} - etcd_mvcc_db_total_size_in_use_in_bytes{cluster_type="workload_cluster"}) / etcd_mvcc_db_total_size_in_use_in_bytes{cluster_type="workload_cluster"} > 0.5
-      for: 24h
+      expr: (etcd_mvcc_db_total_size_in_bytes{cluster_type="workload_cluster"} / etcd_server_quota_backend_bytes{cluster_type="workload_cluster"}) * 100 > 80
+      for: 15m
       labels:
         area: kaas
         severity: page

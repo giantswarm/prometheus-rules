@@ -271,17 +271,29 @@ Those rules can be written according to this template :
 ## Alertmanager inhibition dependency check
 
 In order for Alertmanager inhibition to work we need 3 elements:
-  - an Alert rule with some source labels
-  - an Inhibition definition mapping source labels to target labels
+  - an Alerting rule with some source labels
+  - an Inhibition definition mapping source labels to target labels in the alertmanager config file
   - an Alert rule with some target labels
+
+An alert having a target label will be inhibited whenever the condition specified in the target label's name is fulfilled. This is why target labels' names are most of the time prefixed by "cancel_if_" (e.g "cancel_if_scrape_timeout").
+
+An alert with a source label will define the conditions under which the target label is effective. For example, if an alert with the "scrape_timeout" label were to fire, all other alerts having the corresponding target label, i.e "cancel_if_scrape_timeout" would be inhibited.
+
+This is possible thanks to the alertmanager config file stored in the Prometheus-Meta-operator which defines the target/source labels coupling.
 
 This is what we call the inhibition dependency chain.
 
 One can check whether inhibition labels (mostly "cancel_if_" prefixed ones) are well defined and triggered by a corresponding label in the alerting rules by running the `make test-inhibitions` command at the projet's root directory.
 
-This command will output the list of missing labels. Each of them will need to be defined in the alerting rules.
+This command will output the list of missing labels. Each of them will need to be defined in either the alerting rules or the alertmanager config file depending on its nature : either an inhibition label or its source label.
 If there is no labels outputed, this means tests passed and did not find missing inhibition labels.
 
-Warning: the tool may output false alerts or miss some alerts because of the following limitations.
-- it does not check for rules that are only defined on some specific environments (like aws-specific rules)
-- it tries to guess source labels rather than relying actual alertmanager inhibition, so may be wrong with some alerts
+![inhibition-graph](assets/inhibition-graph.png)
+
+The inhibition labels checking script is also run automatically at PR's creation and will block merging when it fails.
+
+### Limitations
+
+- Does not trigger at PR's creation : stuck in `pending` state. Must push empty commit to trigger it
+- When ran for the first time in a PR (after empty commit) usually fails to retrieve the alertmanager config file's data and thus fires error stating that all labels are missing.
+- Must manually re-run the action for it to pass

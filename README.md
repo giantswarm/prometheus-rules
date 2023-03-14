@@ -292,8 +292,8 @@ If there is no labels outputed, this means tests passed and did not find missing
 
 The inhibition labels checking script is also run automatically at PR's creation and will block merging when it fails.
 
-### Limitations
+### Limitations (might happen)
 
-- Does not trigger at PR's creation : stuck in `pending` state. Must push empty commit to trigger it
+- Inhibition checking script does not trigger at PR's creation : stuck in `pending` state. Must push empty commit to trigger it
 - When ran for the first time in a PR (after empty commit) usually fails to retrieve the alertmanager config file's data and thus fires error stating that all labels are missing.
 - Must manually re-run the action for it to pass

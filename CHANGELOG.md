@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Unit test for kong rules
+
+## [2.82.4] - 2023-03-14
+
 ### Changed
 
 - Fix `MachineUnhealthyPhase` rule to exclude bastion nodes
@@ -1587,7 +1593,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.3...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.4...HEAD
+[2.82.4]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.3...v2.82.4
 [2.82.3]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.2...v2.82.3
 [2.82.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.1...v2.82.2
 [2.82.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.0...v2.82.1

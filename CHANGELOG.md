@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Unit test for kong rules
 - Add `cluster-autoscaler` among deployments paging if unsatisfied.
+- Add `DeploymentNotSatisfiedShield` alert for Kyverno and remove Kyverno from Honeybadger.
 
 ## [2.82.4] - 2023-03-14
 

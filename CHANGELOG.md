@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `cluster-autoscaler` among deployments paging if unsatisfied.
 - Add `DeploymentNotSatisfiedShield` alert for Kyverno and remove Kyverno from Honeybadger.
 
+### Changed
+
+- Prevent the PrometheusAgent from paging outside of business hours.
+
 ## [2.82.4] - 2023-03-14
 
 ### Changed

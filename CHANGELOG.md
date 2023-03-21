@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `PersistentVolumeSpaceTooLow` alert.
+
 ### Changed
 
 - Silence `IRSATooManyErrors` during cluster creation and deletion.

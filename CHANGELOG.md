@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.84.0] - 2023-03-21
+
 ### Fixed
 
 - Fix `PersistentVolumeSpaceTooLow` alert.
@@ -1609,7 +1611,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.83.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.84.0...HEAD
+[2.84.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.83.0...v2.84.0
 [2.83.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.4...v2.83.0
 [2.82.4]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.3...v2.82.4
 [2.82.3]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.2...v2.82.3

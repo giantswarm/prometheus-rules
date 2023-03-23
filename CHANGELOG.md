@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Ship Kyverno-related resource counts to Grafana Cloud.
+
 ## [2.84.0] - 2023-03-21
 
 ### Fixed

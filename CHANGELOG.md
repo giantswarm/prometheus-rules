@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Page when the agent cannot send data to Prometheus.
+
 ## [2.85.0] - 2023-03-24
 
 ### Added

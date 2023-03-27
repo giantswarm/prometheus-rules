@@ -43,7 +43,7 @@ spec:
       annotations:
         description: '{{`Prometheus can''t communicate with Remote Storage API at {{ $labels.url }}.`}}'
         opsrecipe: prometheus-cant-communicate-with-remote-storage-api/
-      expr: rate(prometheus_remote_storage_samples_failed_total{instance!="prometheus-agent"}[1h]) > 0.1 or rate(prometheus_remote_storage_samples_total{instance!="prometheus-agent"}[1h]) == 0 or rate(prometheus_remote_storage_metadata_retried_total{instance!="prometheus-agent"}[5m]) > 0
+      expr: rate(prometheus_remote_storage_samples_failed_total[1h]) > 0.1 or rate(prometheus_remote_storage_samples_total[1h]) == 0 or rate(prometheus_remote_storage_metadata_retried_total[5m]) > 0
       for: 1h
       labels:
         area: empowerment

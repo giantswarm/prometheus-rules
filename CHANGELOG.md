@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Alert `LinkerdDeploymentNotSatisfied` for managed Linkerd deployments.
+- New `make test-opsrecipes` target
 
 ## [2.87.0] - 2023-04-06
 

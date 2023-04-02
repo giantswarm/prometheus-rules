@@ -31,6 +31,10 @@ test-inhibitions: install-tools template-chart
 	./test/hack/bin/get-inhibition.sh
 	cd test/hack/checkLabels; go run main.go
 
+test-opsrecipes: install-tools template-chart
+    # Check if opsrecipes are valid
+	./test/hack/bin/check-opsrecipes.sh
+
 restore-chart:
 	@## Revert Chart version
 	@yq e -i '.version = "[[ .Version ]]"' helm/prometheus-rules/Chart.yaml

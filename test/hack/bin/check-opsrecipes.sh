@@ -69,7 +69,10 @@ main() {
         isInArray "$prettyRulesFilename" "${checkedRules[@]}" \
             && continue
 
-        while read -r alertname opsrecipe overflow ; do
+        while read -r alertname opsrecipe severity overflow ; do
+
+            # Discard non-paging alerts
+            [[ "$severity" != "page" ]] && continue
 
             # Get rid of anchors
             opsrecipe="${opsrecipe%%#*}"
@@ -97,7 +100,7 @@ main() {
             if [[ "$DEBUG_MODE" != "false" ]]; then
                 echo "file $prettyRulesFilename / alert: $alertname / recipe: $opsrecipe - OK"
             fi
-        done < <(yq -o json "$rulesFile" | jq -j '.spec.groups[].rules[] | .alert, " ", .annotations.opsrecipe, "\n"')
+        done < <(yq -o json "$rulesFile" | jq -j '.spec.groups[].rules[] | .alert, " ", .annotations.opsrecipe, " ", .labels.severity, "\n"')
 
         checkedRules+=("$prettyRulesFilename")
     done

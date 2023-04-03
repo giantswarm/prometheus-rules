@@ -31,7 +31,8 @@ listOpsRecipes () {
     # find list of opsrecipes from git repo
     tmpDir="$(mktemp -d)"
     git clone --depth 1 --single-branch -b main -q git@github.com:giantswarm/giantswarm.git "$tmpDir"
-    find "$tmpDir"/content/docs/support-and-ops/ops-recipes -name \*.md \
+    # find all ops-recipes ".md" files, and keep only the opsrecipe name (may contain a path, like "rolling-nodes/rolling-nodes")
+    find "$tmpDir"/content/docs/support-and-ops/ops-recipes -type f -name \*.md \
         | sed -n 's_'"$tmpDir"'/content/docs/support-and-ops/ops-recipes/\(.*\).md_\1_p'
     rm -rf "$tmpDir"
 
@@ -76,13 +77,12 @@ main() {
 
             # Get rid of anchors
             opsrecipe="${opsrecipe%%#*}"
-            # Opsrecipes in alerts have a trailing slash that we want to get rid of
+            # Get rid of trailing slash
             opsrecipe="${opsrecipe%/}"
 
             if [[ "$overflow" != "" ]]; then
                 local message="file: $prettyRulesFilename / alert \"$alertname\" / recipe \"$opsrecipe\": extra data \"$overflow\""
                 E_extradata+=("$message")
-                #echo "ERROR: $message"
                 continue
             fi
             if [[ "$opsrecipe" == "null" ]]; then
@@ -100,6 +100,7 @@ main() {
             if [[ "$DEBUG_MODE" != "false" ]]; then
                 echo "file $prettyRulesFilename / alert: $alertname / recipe: $opsrecipe - OK"
             fi
+        # parse rules yaml files, and for each rule found output alertname, opsrecipe, and severity, space-separated, on one line.
         done < <(yq -o json "$rulesFile" | jq -j '.spec.groups[].rules[] | .alert, " ", .annotations.opsrecipe, " ", .labels.severity, "\n"')
 
         checkedRules+=("$prettyRulesFilename")

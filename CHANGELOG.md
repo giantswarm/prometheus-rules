@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - added dashboard to `PrometheusFailsToCommunicateWithRemoteStorageAPI` alert
 - updated kube mixins to 0.12
+- `PrometheusCantCommunicateWithKubernetesAPI` : added `cancel_if_cluster_has_no_workers`
 
 ## [2.86.1] - 2023-03-28
 

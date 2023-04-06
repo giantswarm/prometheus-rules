@@ -1,0 +1,34 @@
+---
+rule_files:
+  - linkerd.deployment.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'kong_datastore_reachable{cluster_id="deu01", installation="anteater", instance="localhost:8080", namespace="kong-internal", pod="kong-app-internal"}'
+        values: '_x20 1+0x10 0+0x20'
+      - series: 'managed_app_deployment_status_replicas_unavailable{deployment="linkerd-destination", managed_app="destination", namespace="linkerd"}'
+        values: '_x5 0+0x10 1+0x20'
+    alert_rule_test:
+      - alertname: LinkerdDeploymentNotSatisfied
+        eval_time: 5m
+      - alertname: LinkerdDeploymentNotSatisfied
+        eval_time: 15m
+      - alertname: LinkerdDeploymentNotSatisfied
+        eval_time: 25m
+        exp_alerts:
+          - exp_labels:
+              alertname: LinkerdDeploymentNotSatisfied
+              area: managedservices
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_outside_working_hours: "false"
+              namespace: linkerd
+              deployment: linkerd-destination
+              pod: kong-app-internal
+              severity: page
+              team: cabbage
+              topic: linkerd
+            exp_annotations:
+              description: "Linkerd Deployment linkerd/linkerd-destination is not satisfied."
+              opsrecipe: managed-app-linkerd/

@@ -5,8 +5,6 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'kong_datastore_reachable{cluster_id="deu01", installation="anteater", instance="localhost:8080", namespace="kong-internal", pod="kong-app-internal"}'
-        values: '_x20 1+0x10 0+0x20'
       - series: 'managed_app_deployment_status_replicas_unavailable{deployment="linkerd-destination", managed_app="destination", namespace="linkerd"}'
         values: '_x5 0+0x10 1+0x20'
     alert_rule_test:

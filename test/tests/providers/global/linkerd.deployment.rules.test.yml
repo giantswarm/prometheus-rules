@@ -25,7 +25,6 @@ tests:
               cancel_if_outside_working_hours: "false"
               namespace: linkerd
               deployment: linkerd-destination
-              pod: kong-app-internal
               severity: page
               team: cabbage
               topic: linkerd

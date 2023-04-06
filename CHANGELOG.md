@@ -7,12 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Alert `LinkerdDeploymentNotSatisfied` for managed Linkerd deployments.
+
 ## [2.87.0] - 2023-04-06
 
 ### Added
 
 - Alert for `etcd-kubernetes-resources-count-exporter`.
-- Alert `LinkerdDeploymentNotSatisfied` for managed LinkerD deployments.
 
 ### Fixed
 

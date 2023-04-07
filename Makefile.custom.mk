@@ -32,7 +32,7 @@ test-inhibitions: install-tools template-chart
 	cd test/hack/checkLabels; go run main.go
 
 test-opsrecipes: install-tools template-chart
-    # Check if opsrecipes are valid
+	# Check if opsrecipes are valid
 	./test/hack/bin/check-opsrecipes.sh
 
 restore-chart:

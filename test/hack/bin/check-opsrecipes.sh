@@ -6,7 +6,7 @@ RULES_FILES=(./test/hack/output/*/prometheus-rules/templates/alerting-rules/*)
 #RULES_FILES=(./test/hack/output/*/prometheus-rules/templates/alerting-rules/up*)
 
 DEBUG_MODE=false
-CHECK_EXTRADATA_ERRORS=false
+CHECK_EXTRADATA_ERRORS=true
 CHECK_NORECIPE_ERRORS=true
 CHECK_UNEXISTINGRECIPE_ERRORS=true
 
@@ -27,6 +27,7 @@ isInArray () {
     return 1
 }
 
+
 listOpsRecipes () {
     # find list of opsrecipes from git repo
     tmpDir="$(mktemp -d)"
@@ -43,13 +44,17 @@ listOpsRecipes () {
     echo "deployment-not-satisfied-china"
 }
 
+
 main() {
-    local -a checkedRules
-    local -a opsRecipes
-    local -a E_extradata
-    local -a E_norecipe
-    local -a E_unexistingrecipe
+    local -a checkedRules=()
+    local -a opsRecipes=()
+    local -a E_extradata=()
+    local -a E_norecipe=()
+    local -a E_unexistingrecipe=()
     local returncode=0
+
+    # Investigation section
+    ########################
 
     # Retrieve list of opsrecipes
     mapfile -t opsRecipes < <(listOpsRecipes)
@@ -80,17 +85,22 @@ main() {
             # Get rid of trailing slash
             opsrecipe="${opsrecipe%/}"
 
+            # There should be no data in $overflow
+            # If there is, it means something went wrong with the parsing
             if [[ "$overflow" != "" ]]; then
                 local message="file: $prettyRulesFilename / alert \"$alertname\" / recipe \"$opsrecipe\": extra data \"$overflow\""
                 E_extradata+=("$message")
                 continue
             fi
+
+            # When there is no opsrecipe annotation, yq outputs "null"
             if [[ "$opsrecipe" == "null" ]]; then
                 local message="file $prettyRulesFilename / alert \"$alertname\" has no opsrecipe"
                 E_norecipe+=("$message")
                 continue
             fi
 
+            # Let's check if the opsrecipe is in our list of existing opsrecipes
             if ! isInArray "$opsrecipe" "${opsRecipes[@]}"; then
                 local message="file $prettyRulesFilename / alert \"$alertname\" links to unexisting opsrecipe (\"$opsrecipe\")"
                 E_unexistingrecipe+=("$message")
@@ -105,6 +115,9 @@ main() {
 
         checkedRules+=("$prettyRulesFilename")
     done
+
+    # Output section - let's write down our findings
+    #################################################
 
     if [[ "$CHECK_EXTRADATA_ERRORS" != "false" ]]; then
         if [[ "${#E_extradata[@]}" -gt 0 ]]; then

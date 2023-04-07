@@ -105,10 +105,11 @@ To Update `kubernetes-mixin` recording rules:
 
 You can run all tests by running `make test`.
 
-There are 2 different types tests implemented:
+There are 3 different types tests implemented:
 
 - [Prometheus rules unit tests](#prometheus-rules-unit-tests)
 - [Alertmanager inhibition dependency check](#alertmanager-inhibition-dependency-check)
+- [Opsrecipe check](#opsrecipe-check)
 
 ---
 
@@ -297,3 +298,9 @@ The inhibition labels checking script is also run automatically at PR's creation
 - Inhibition checking script does not trigger at PR's creation : stuck in `pending` state. Must push empty commit to trigger it
 - When ran for the first time in a PR (after empty commit) usually fails to retrieve the alertmanager config file's data and thus fires error stating that all labels are missing.
 - Must manually re-run the action for it to pass
+
+## Opsrecipe check
+
+You can run `make test-opsrecipes` to check if linked opsrecipes are valid.
+
+This check is not part of the global `make test` command until we fix all missing / wrong opsrecipes.

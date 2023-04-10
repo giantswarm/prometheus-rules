@@ -11,7 +11,7 @@ spec:
     rules:
     - alert: SlothDown
       annotations:
-        description: '{{`Sloth on {{ $labels.instance }} is down.`}}'
+        description: 'Sloth is down.'
       expr: count(up{app="sloth"} == 0) > 0
       for: 5m
       labels:

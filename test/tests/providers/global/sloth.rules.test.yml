@@ -28,4 +28,4 @@ tests:
               cancel_if_scrape_timeout: "true"
               cancel_if_outside_working_hours: "false"
             exp_annotations:
-              description: "Sloth on gauss is down."
+              description: "Sloth is down."

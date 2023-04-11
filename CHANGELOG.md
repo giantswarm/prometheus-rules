@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `make test-opsrecipes` target
 - Alert `SlothDown` for Sloth app
 
+### Changed
+
+- Change all `hydra` alerts to point to team `phoenix` since we merge the business hours on-call
+
 ## [2.87.0] - 2023-04-06
 
 ### Added
@@ -81,7 +85,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Splits `kyverno` certificate expiry alert & created `KyvernoCertificateSecretWillExpireInLessThanTwoDays`.
-- Tweak ETCD DB Too Large alert 
+- Tweak ETCD DB Too Large alert
 
 ## [2.82.2] - 2023-03-03
 

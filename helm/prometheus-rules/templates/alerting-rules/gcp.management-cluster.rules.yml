@@ -26,7 +26,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: hydra
+        team: phoenix
         topic: managementcluster
     - alert: ManagementClusterContainerIsRestartingTooFrequentlyGCP
       annotations:
@@ -41,7 +41,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: hydra
+        team: phoenix
         topic: kubernetes
     - alert: ManagementClusterDeploymentMissingGCP
       annotations:
@@ -56,6 +56,6 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: hydra
+        team: phoenix
         topic: kubernetes
 {{- end }}

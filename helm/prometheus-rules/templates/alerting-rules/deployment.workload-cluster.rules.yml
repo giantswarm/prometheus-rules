@@ -35,7 +35,7 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: observability
-    - alert: WorkloadClusterManagedDeploymentNotSatisfiedHydra
+    - alert: WorkloadClusterManagedDeploymentNotSatisfiedPhoenix
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: workload-cluster-managed-deployment-not-satisfied/
@@ -45,7 +45,7 @@ spec:
         area: managedservices
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: hydra
+        team: phoenix
         topic: releng
     - alert: WorkloadClusterDeploymentScaledDownToZero
       annotations:

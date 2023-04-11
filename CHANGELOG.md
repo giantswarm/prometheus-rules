@@ -22,7 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Alert `LinkerdDeploymentNotSatisfied` for managed Linkerd deployments.
 - New `make test-opsrecipes` target
 - Alert `SlothDown` for Sloth app
-- Alert `KongDeploymentNotSatisfied` for managed kong deployments.
 
 ### Changed
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Only page during business hours if `etcd-kubernetes-resources-count-exporter` deployment is not satisfied.
+
 ## [2.88.0] - 2023-04-11
 
 ### Added

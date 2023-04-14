@@ -8,7 +8,7 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: network
+  - name: network.all
     rules:
     - alert: DNSErrorRateTooHigh
       annotations:

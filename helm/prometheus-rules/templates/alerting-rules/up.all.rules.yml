@@ -8,7 +8,7 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: up
+  - name: up.all
     rules:
     - alert: ChartOperatorDown
       annotations:

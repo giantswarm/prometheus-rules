@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Decrease severity for PrometheusJobScrapingFailure alerts, so they don't show in Slack.
+
 ## [2.89.0] - 2023-04-12
 
 ### Changed

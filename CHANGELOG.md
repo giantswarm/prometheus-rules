@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Alert `WorkloadClusterManagedDeploymentNotSatisfiedCabbage`
+- Do not inhibit azure clusters without worker nodes because the source metric is missing and the inhibition is preventing real alerts to go through.
+
 ### Changed
 
 - Decrease severity for PrometheusJobScrapingFailure alerts, so they don't show in Slack.

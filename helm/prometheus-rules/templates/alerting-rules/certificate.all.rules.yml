@@ -60,7 +60,7 @@ spec:
       annotations:
         description: '{{`Certificate CR {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
         opsrecipe: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
-      expr: (cert_exporter_certificate_cr_not_after{managed_issuer="true",cluster_type="workload_cluster",namespace=~"kube-system|giantswarm|monitoring"} - time()) < 2 * 7 * 24 * 60 * 60
+      expr: (cert_exporter_certificate_cr_not_after{managed_issuer="true",namespace=~"kube-system|giantswarm|monitoring"} - time()) < 2 * 7 * 24 * 60 * 60
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"

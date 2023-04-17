@@ -13,11 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Alert `WorkloadClusterManagedDeploymentNotSatisfiedCabbage`
+- Alert `WorkloadClusterManagedDeploymentNotSatisfiedCabbage`.
+
 ### Changed
 
 - Decrease severity for PrometheusJobScrapingFailure alerts, so they don't show in Slack.
-- set unique names for alert groups
+- set unique names for alert groups.
+- Changed `GiantswarmManagedCertificateCRWillExpireInLessThanTwoWeeks` alert to work for both workload clusters and management clusters.
 
 ## [2.89.0] - 2023-04-12
 

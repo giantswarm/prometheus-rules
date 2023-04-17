@@ -14,6 +14,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Alert `WorkloadClusterManagedDeploymentNotSatisfiedCabbage`
+### Changed
+
+- Decrease severity for PrometheusJobScrapingFailure alerts, so they don't show in Slack.
+- set unique names for alert groups
+
+## [2.89.0] - 2023-04-12
+
+### Changed
+
+- Only page during business hours if `etcd-kubernetes-resources-count-exporter` deployment is not satisfied.
 
 ## [2.88.0] - 2023-04-11
 
@@ -1665,7 +1675,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.88.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.89.0...HEAD
+[2.89.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.88.0...v2.89.0
 [2.88.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.87.0...v2.88.0
 [2.87.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.86.1...v2.87.0
 [2.86.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.86.0...v2.86.1

@@ -41,7 +41,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: empowerment
-              severity: notify
+              severity: none
               team: atlas
               topic: observability
               cancel_if_outside_working_hours: "true"
@@ -54,7 +54,7 @@ tests:
               description: "Prometheus gauss/gauss has failed to scrape all targets in gauss-prometheus/kubernetes-controller-manager-gauss/0 job."
           - exp_labels:
               area: empowerment
-              severity: notify
+              severity: none
               team: atlas
               topic: observability
               cancel_if_outside_working_hours: "true"

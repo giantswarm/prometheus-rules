@@ -10,7 +10,7 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: certificate
+  - name: certificate.workload-cluster
     rules:
     - alert: WorkloadClusterCertificateWillExpireInLessThanAMonth
       annotations:

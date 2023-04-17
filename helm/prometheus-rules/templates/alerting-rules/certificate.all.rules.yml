@@ -8,7 +8,7 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: certificate
+  - name: certificate.all
     rules:
     - alert: KiamCertificateSecretWillExpireInLessThanTwoWeeks
       annotations:

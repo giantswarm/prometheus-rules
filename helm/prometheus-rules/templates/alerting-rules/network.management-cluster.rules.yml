@@ -9,7 +9,7 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: network
+  - name: network.management-cluster
     rules:
     - alert: NetworkCheckErrorRateTooHigh
       annotations:

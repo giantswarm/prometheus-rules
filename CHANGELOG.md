@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Alert `KongDeploymentNotSatisfied` for managed kong deployments.
+
+### Removed
+
+- Alert `WorkloadClusterManagedDeploymentNotSatisfiedCabbage`
 ### Changed
 
 - Decrease severity for PrometheusJobScrapingFailure alerts, so they don't show in Slack.

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Changed `GiantswarmManagedCertificateCRWillExpireInLessThanTwoWeeks` alert to work for both workload clusters and management clusters.
+
 ## [2.90.0] - 2023-04-17
 
 ### Added
@@ -15,13 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Alert `WorkloadClusterManagedDeploymentNotSatisfiedCabbage`
+- Alert `WorkloadClusterManagedDeploymentNotSatisfiedCabbage`.
 - Do not inhibit azure clusters without worker nodes because the source metric is missing and the inhibition is preventing real alerts to go through.
 
 ### Changed
 
 - Decrease severity for PrometheusJobScrapingFailure alerts, so they don't show in Slack.
-- set unique names for alert groups
+- set unique names for alert groups.
 
 ## [2.89.0] - 2023-04-12
 

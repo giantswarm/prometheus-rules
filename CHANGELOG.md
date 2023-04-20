@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Alert `ClusterDNSZoneMissing` added for `dns-operator-azure`
 
+### Changed
+
+- Forward WorkloadClusterCertificateExpiring to team-teddyfriends on Slack
+
+## [2.92.0] - 2023-04-19
+
+### Added
+
+- Revert: Do not inhibit azure clusters without worker nodes because the source metric is missing and the inhibition is preventing real alerts to go through.
+
 ## [2.91.0] - 2023-04-18
 
 ### Changed
@@ -1693,7 +1703,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.91.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.92.0...HEAD
+[2.92.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.91.0...v2.92.0
 [2.91.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.90.0...v2.91.0
 [2.90.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.89.0...v2.90.0
 [2.89.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.88.0...v2.89.0

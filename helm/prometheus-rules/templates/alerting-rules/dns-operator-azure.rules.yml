@@ -25,4 +25,18 @@ spec:
             severity: notify
             team: {{include "providerTeam" .}}
             topic: managementcluster
+        - alert: AzureDNSOperatorAPIErrorRate
+          annotations:
+            description: |-
+              {{`Error rate for {{ $labels.method }} is high. Check dns-operator-azure logs in installation/{{ $labels.installation }}.`}}
+            opsrecipe: dns-operator-azure/
+          expr: |-
+            sum by (method,installation) (rate(dns_operator_azure_api_request_errors_total[5m])) > 0
+          for: 15m
+          labels:
+            area: kaas
+            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            severity: notify
+            team: {{include "providerTeam" .}}
+            topic: managementcluster
 {{- end }}

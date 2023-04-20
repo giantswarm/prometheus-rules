@@ -10,10 +10,10 @@ tests:
         values: "1+0x60"
       - series: 'capi_cluster_status_phase{name="8e8225b5", exported_namespace="org-31f75bf9", phase="Provisioned", installation="puppy"}'
         values: "1+0x60"
-      - series: 'dns_operator_azure_api_request_errors_total{controller="dns-operator-azure",method="recordSets.CreateOrUpdate"}'
-        values: "0+0x10 1+1x50"
-      - series: 'dns_operator_azure_api_request_errors_total{controller="dns-operator-azure",method="zones.Get"}'
-        values: "0+0x10 1+1x50"
+      - series: 'dns_operator_azure_api_request_errors_total{controller="dns-operator-azure",method="recordSets.CreateOrUpdate",installation="puppy"}'
+        values: "0+0x10 1+1x20"
+      - series: 'dns_operator_azure_api_request_errors_total{controller="dns-operator-azure",method="zones.Get",installation="puppy"}'
+        values: "0+0x10 1+1x10 0+0x10"
     alert_rule_test:
       - alertname: ClusterDNSZoneMissing
         eval_time: 30m
@@ -30,4 +30,18 @@ tests:
               name: 8e8225b5
             exp_annotations:
               description: "No DNS-zone for cluster org-31f75bf9/8e8225b5 got created yet. Check dns-operator-azure logs in installation/puppy."
+              opsrecipe: dns-operator-azure/
+      - alertname: AzureDNSOperatorAPIErrorRate
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              severity: notify
+              team: clippy
+              topic: managementcluster
+              installation: puppy
+              method: recordSets.CreateOrUpdate
+            exp_annotations:
+              description: "Error rate for recordSets.CreateOrUpdate is high. Check dns-operator-azure logs in installation/puppy."
               opsrecipe: dns-operator-azure/

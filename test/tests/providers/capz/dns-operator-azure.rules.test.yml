@@ -1,0 +1,33 @@
+rule_files:
+  - dns-operator-azure.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'dns_operator_azure_zone_info{controller="dns-operator-azure",resource_group="425bdf54",subscription_id="09be0ac8-38d9-4fe1-aa72-4ce2e8a084d2",tenant_id="4e4e320b-cf45-4fd4-9dd3-ec0046779035",zone="425bdf54.azuretest.gigantic.io",installation="puppy"}'
+        values: "1+0x60"
+      - series: 'capi_cluster_status_phase{name="425bdf54", exported_namespace="org-83dd715d", phase="Provisioned", installation="puppy"}'
+        values: "1+0x60"
+      - series: 'capi_cluster_status_phase{name="8e8225b5", exported_namespace="org-31f75bf9", phase="Provisioned", installation="puppy"}'
+        values: "1+0x60"
+      - series: 'dns_operator_azure_api_request_errors_total{controller="dns-operator-azure",method="recordSets.CreateOrUpdate"}'
+        values: "0+0x10 1+1x50"
+      - series: 'dns_operator_azure_api_request_errors_total{controller="dns-operator-azure",method="zones.Get"}'
+        values: "0+0x10 1+1x50"
+    alert_rule_test:
+      - alertname: ClusterDNSZoneMissing
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              severity: notify
+              team: clippy
+              topic: managementcluster
+              phase: Provisioned
+              exported_namespace: org-31f75bf9
+              installation: puppy
+              name: 8e8225b5
+            exp_annotations:
+              description: "No DNS-zone for cluster org-31f75bf9/8e8225b5 got created yet. Check dns-operator-azure logs in installation/puppy."
+              opsrecipe: dns-operator-azure/

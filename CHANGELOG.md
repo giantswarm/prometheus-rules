@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `make help` shows test targets again
+
+### Added
+
+- Alert `ClusterDNSZoneMissing` added for `dns-operator-azure`
+
 ## [2.91.0] - 2023-04-18
 
 ### Changed

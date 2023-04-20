@@ -1,0 +1,42 @@
+{{- if (eq .Values.managementCluster.provider.kind "capz") }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels: {{- include "labels.common" . | nindent 4}}
+  name: dns-operator-azure.rules
+  namespace: {{.Values.namespace}}
+spec:
+  groups:
+    - name: dns-operator-azure
+      rules:
+        - alert: ClusterDNSZoneMissing
+          annotations:
+            description: |-
+              {{`No DNS-zone for cluster {{ $labels.exported_namespace}}/{{ $labels.name }} got created yet. Check dns-operator-azure logs in installation/{{ $labels.installation}}.`}}
+            opsrecipe: dns-operator-azure/
+          expr: |-
+            capi_cluster_status_phase{phase="Provisioned"}
+            unless on (name)
+            label_replace(dns_operator_azure_zone_info, "name", "$1", "resource_group", "(.+)")
+          for: 30m
+          labels:
+            area: kaas
+            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            severity: notify
+            team: {{include "providerTeam" .}}
+            topic: managementcluster
+        - alert: AzureDNSOperatorAPIErrorRate
+          annotations:
+            description: |-
+              {{`Error rate for {{ $labels.method }} is high. Check dns-operator-azure logs in installation/{{ $labels.installation }}.`}}
+            opsrecipe: dns-operator-azure/
+          expr: |-
+            sum by (method,installation) (rate(dns_operator_azure_api_request_errors_total[5m])) > 0
+          for: 15m
+          labels:
+            area: kaas
+            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            severity: notify
+            team: {{include "providerTeam" .}}
+            topic: managementcluster
+{{- end }}

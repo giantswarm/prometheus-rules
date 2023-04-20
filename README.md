@@ -94,12 +94,17 @@ The recording rules are located `helm/prometheus-rules/templates/recording-rules
 
 ### Mixin
 
-To Update `kubernetes-mixin` recording rules:
+#### kubermetes-mixins
+
+To Update `kubernetes-mixins` recording rules:
 
 * Follow the instructions in [giantswarm-kubernetes-mixin](https://github.com/giantswarm/giantswarm-kubernetes-mixin)
 * Run `./scripts/sync-kube-mixin.sh (?my-fancy-branch-or-tag)` to updated the `helm/prometheus-rules/templates/recording-rules/kubernetes-mixins.rules.yml` folder.
 * make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards/tree/master/helm/dashboards/dashboards/mixin)
 
+#### mimir-mixins
+
+Come as-is from https://github.com/grafana/mimir/tree/main/operations/mimir-mixin-compiled ; just added helm headers (metadata, spec...)
 
 ### Testing
 

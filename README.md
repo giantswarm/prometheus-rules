@@ -85,6 +85,10 @@ The `cancel_if_*` labels are used to inhibit alerts, they are defined in [Alertm
 
 The base principle is: if an alert is currently firing with a `source_matcher` label, then all alerts that have a `target_matcher` label are inhibited (or muted).
 
+To make inhibitions easier to read, let's try to follow this naming convention inhibition-related labels:
+* `inhibit_[something]` for `source` matchers
+* `cancel_if_[something]` for `target` matchers
+
 Official documentation for inhibit rules can be found here: https://www.prometheus.io/docs/alerting/latest/configuration/#inhibit_rule
 
 ### Recording rules

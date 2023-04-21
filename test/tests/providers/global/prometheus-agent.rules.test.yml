@@ -6,20 +6,21 @@ tests:
   - interval: 1m
     input_series:
       - series: 'up{instance="prometheus-agent",cluster_type="workload_cluster",cluster_id="gauss",installation="gauss"}'
-        values: "_x30  _x30  0+0x100 1+0x100"
+        values: "_x10  _x20  0+0x100 1+0x100"
       - series: 'kube_statefulset_created{namespace="kube-system",statefulset="prometheus-prometheus-agent",cluster_id="gauss",installation="gauss"}'
-        values: "_x30 0+0x30 1+0x100 1+0x100"
+        values: "_x10 0+0x20 1+0x100 1+0x100"
     alert_rule_test:
       - alertname: PrometheusAgentFailing
-        eval_time: 15m
+        eval_time: 10m
       - alertname: PrometheusAgentFailing
-        eval_time: 40m
+        eval_time: 25m
         exp_alerts:
           - exp_labels:
               area: empowerment
               severity: page
               team: atlas
               topic: observability
+              inhibition_prometheus_agent_down: "true"
               cancel_if_cluster_is_not_running_prometheus_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"

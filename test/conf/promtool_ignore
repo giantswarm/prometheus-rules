@@ -80,3 +80,4 @@ templates/recording-rules/helm-operations.rules.yml
 templates/recording-rules/kube-prometheus-mixins.rules.yml
 templates/recording-rules/kubernetes-mixins.rules.yml
 templates/recording-rules/service-level.rules.yml
+templates/recording-rules/mimir-mixins.rules.yml

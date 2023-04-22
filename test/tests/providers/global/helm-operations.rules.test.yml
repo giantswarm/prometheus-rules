@@ -1,0 +1,15 @@
+---
+rule_files:
+  - helm-operations.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'helmclient_library_event_total{app="chart-operator", cluster_id="gauss", container="chart-operator", event="update_release_from_tarball", namespace="giantswarm", pod="chart-operator-5c7b6f8867-pr44n", release="cilium"}'
+        values: "0+1x20"
+    promql_expr_test:
+      - expr: monitoring:helm:number_of_operations_on_release
+        eval_time: 10m
+        exp_samples:
+          - labels: 'monitoring:helm:number_of_operations_on_release{cluster_id="gauss", event="update_release_from_tarball", release="cilium"}'
+            value: 10

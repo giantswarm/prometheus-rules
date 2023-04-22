@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Alert `ClusterDNSZoneMissing` added for `dns-operator-azure`
 - Alert `AzureDNSOperatorAPIErrorRate` added for `dns-operator-azure`
 - Test recording rules
+- Added unit test for recording rule `helm-operations`
 
 ### Changed
 

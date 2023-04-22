@@ -100,6 +100,9 @@ To Update `kubernetes-mixin` recording rules:
 * Run `./scripts/sync-kube-mixin.sh (?my-fancy-branch-or-tag)` to updated the `helm/prometheus-rules/templates/recording-rules/kubernetes-mixins.rules.yml` folder.
 * make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards/tree/master/helm/dashboards/dashboards/mixin)
 
+#### loki-mixins
+
+Come as-is from https://github.com/grafana/loki/tree/main/production/loki-mixin-compiled-ssd ; just added helm headers (metadata, spec...)
 
 ### Testing
 
@@ -163,9 +166,9 @@ tests:
   - interval: 1m
     input_series:
       - series: '<prometheus_timeseries>'
-        values: "_x20 1+0x20 0+0x20" 
+        values: "_x20 1+0x20 0+0x20"
       - series: '<prometheus_timeseries>'
-        values: "0+600x40 24000+400x40" 
+        values: "0+600x40 24000+400x40"
 [...]
 ```
 

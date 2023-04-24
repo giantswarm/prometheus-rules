@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Alert `MimirComponentDown` for Mimir app
+- A lot of alerts for Mimir app coming from the mixins
 
 ## [2.93.0] - 2023-04-24
 

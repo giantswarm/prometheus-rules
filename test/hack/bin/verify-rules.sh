@@ -40,7 +40,7 @@ main() {
         cd "$GIT_WORKDIR" || return 1
         # filter alerting-rules files, and remove prefix `helm/prometheus-rules/`
         git ls-files |
-            sed -En 's_^helm/prometheus-rules/(templates/alerting-rules/.*\.ya?ml)$_\1_p' || echo error
+            sed -En 's_^helm/prometheus-rules/(templates/(alerting|recording)-rules/.*\.ya?ml)$_\1_p' || echo error
     )
 
     # Get prefixes whitelisted via the failure_file
@@ -80,6 +80,9 @@ main() {
             if [[ -f "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/alerting-rules/$filename" ]]
             then
                 "$GIT_WORKDIR/$YQ" '.spec' "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/alerting-rules/$filename" > "$GIT_WORKDIR/test/tests/providers/$provider/$filename"
+            elif [[ -f "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/recording-rules/$filename" ]]
+            then
+                "$GIT_WORKDIR/$YQ" '.spec' "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/recording-rules/$filename" > "$GIT_WORKDIR/test/tests/providers/$provider/$filename"
             else
                 echo "###    Failed extracting rules file $file"
                 failing_extraction+=("$provider:$file")

@@ -76,7 +76,6 @@ templates/alerting-rules/up.management-cluster.rules.yml
 templates/alerting-rules/vault.rules.yml
 templates/recording-rules/cortex.rules.yml
 templates/recording-rules/gs-managed-app-deployment-status.rules.yml
-templates/recording-rules/helm-operations.rules.yml
 templates/recording-rules/kube-prometheus-mixins.rules.yml
 templates/recording-rules/kubernetes-mixins.rules.yml
 templates/recording-rules/service-level.rules.yml

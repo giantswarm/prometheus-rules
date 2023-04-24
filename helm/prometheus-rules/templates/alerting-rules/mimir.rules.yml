@@ -11,7 +11,7 @@ spec:
     rules:
     - alert: MimirComponentDown
       annotations:
-        description: 'A Mimir component is down.'
+        description: '{{`Mimir component : {{ $labels.service }} is down.`}}'
       expr: count(up{app="mimir"} == 0) by (service) > 0
       for: 5m
       labels:

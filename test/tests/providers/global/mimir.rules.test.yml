@@ -29,4 +29,4 @@ tests:
               cancel_if_scrape_timeout: "true"
               cancel_if_outside_working_hours: "false"
             exp_annotations:
-              description: "A Mimir component is down."
+              description: "Mimir component : mimir-ingester is down."

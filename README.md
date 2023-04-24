@@ -106,6 +106,10 @@ To Update `kubernetes-mixins` recording rules:
 
 Come as-is from https://github.com/grafana/mimir/tree/main/operations/mimir-mixin-compiled ; just added helm headers (metadata, spec...)
 
+#### loki-mixins
+
+Come as-is from https://github.com/grafana/loki/tree/main/production/loki-mixin-compiled-ssd ; just added helm headers (metadata, spec...)
+
 ### Testing
 
 You can run all tests by running `make test`.
@@ -168,9 +172,9 @@ tests:
   - interval: 1m
     input_series:
       - series: '<prometheus_timeseries>'
-        values: "_x20 1+0x20 0+0x20" 
+        values: "_x20 1+0x20 0+0x20"
       - series: '<prometheus_timeseries>'
-        values: "0+600x40 24000+400x40" 
+        values: "0+600x40 24000+400x40"
 [...]
 ```
 
@@ -187,9 +191,8 @@ This is a good example of an input series for testing a `range` query.
 
 #### Limitation
 
-* The current implementation only renders alerting rules for different providers via the helm value `managementCluster.provider.kind`.
+* The current implementation only renders rules for different providers via the helm value `managementCluster.provider.kind`.
 Any other decision in the current helm chart is ignored for now (e.g. `helm/prometheus-rules/templates/alerting-rules/alertmanager-dashboard.rules.yml`)
-* Only alerting-rules are being tested, other folders (recording rules) are ignored.
 
 #### A word on the testing logic
 

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.93.0] - 2023-04-24
+
 ### Fixed
 
 - `make help` shows test targets again
@@ -1710,7 +1712,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.92.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.93.0...HEAD
+[2.93.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.92.0...v2.93.0
 [2.92.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.91.0...v2.92.0
 [2.91.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.90.0...v2.91.0
 [2.90.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.89.0...v2.90.0

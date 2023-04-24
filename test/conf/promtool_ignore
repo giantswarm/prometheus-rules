@@ -79,3 +79,4 @@ templates/recording-rules/gs-managed-app-deployment-status.rules.yml
 templates/recording-rules/kube-prometheus-mixins.rules.yml
 templates/recording-rules/kubernetes-mixins.rules.yml
 templates/recording-rules/service-level.rules.yml
+templates/recording-rules/loki-mixins.rules.yml

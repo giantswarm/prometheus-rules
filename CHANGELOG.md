@@ -15,9 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Alert `ClusterDNSZoneMissing` added for `dns-operator-azure`
 - Alert `AzureDNSOperatorAPIErrorRate` added for `dns-operator-azure`
-- Add label to trigger inhibition when prometheus-agent down
+- Recording rules for Loki
+- Label to trigger inhibition when prometheus-agent is down
 - Test recording rules
-- Added unit test for recording rule `helm-operations`
+- Unit test for recording rule `helm-operations`
 
 ### Changed
 

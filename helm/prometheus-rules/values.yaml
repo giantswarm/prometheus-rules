@@ -2,8 +2,8 @@ name: prometheus-rules
 namespace: monitoring
 serviceType: managed
 project:
-  branch: '[[ .Branch ]]'
-  commit: '[[ .SHA ]]'
+  branch: 'add-capi-app-failed-rule'
+  commit: '827df304fd9607f863269da93fe2f085c59241b9'
 managementCluster:
   name: ""
   pipeline: ""

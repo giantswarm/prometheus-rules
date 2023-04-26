@@ -99,7 +99,7 @@ spec:
       expr: label_replace(app_operator_app_info{app=~"cluster-.+", status!~"(?i:(deployed|cordoned|not-installed))", catalog="cluster", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
       for: 30m
       labels:
-        area: managedservices
+        area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"

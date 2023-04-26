@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Alert `MimirComponentDown` for Mimir app
-- Alert `ClusterCapiAppFailed` for Detecting failing `cluster-XXX` apps for CAPI Clusters
+- Alert `ClusterCapiAppFailed` for detecting failing `cluster-XXX` apps representing CAPI workload clusters.
 
 ### Fixed
 

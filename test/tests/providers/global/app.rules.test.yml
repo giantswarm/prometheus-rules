@@ -138,7 +138,7 @@ tests:
               version: 0.0.15
               version_mismatch: "false"
             exp_annotations:
-              description: "Cluster CAPI App org-giantswarm/glippy, version 0.0.15 is  in failed state. "
+              description: "Cluster CAPI App org-giantswarm/glippy, version 0.0.15 is in failed state. "
               opsrecipe: app-failed/
 
 

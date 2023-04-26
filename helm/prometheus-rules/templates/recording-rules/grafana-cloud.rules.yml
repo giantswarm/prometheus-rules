@@ -7,9 +7,8 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: cortex.recording
+  - name: grafana-cloud.recording
     rules:
-    # Fix me
     - expr: sum(alertmanager_alerts{state="active"})
       record: aggregation:alertmanager:alerts_active_total
     - expr: sum(alertmanager_alerts{state="suppressed"})

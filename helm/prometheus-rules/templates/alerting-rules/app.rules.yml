@@ -93,7 +93,7 @@ spec:
         topic: releng
     - alert: ClusterCapiAppFailed
       annotations:
-        description: '{{`Cluster CAPI App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is in {{ $labels.status }} state.{{end}}`}}'
+        description: '{{`Cluster CAPI App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is in {{ $labels.status }} state.`}}'
         opsrecipe: app-failed/
       # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
       expr: label_replace(app_operator_app_info{app=~"cluster-.+", status!~"(?i:(deployed|cordoned|not-installed))", catalog="cluster", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1

@@ -91,6 +91,22 @@ spec:
         cancel_if_outside_working_hours: "true"
         severity: page
         topic: releng
+    - alert: ClusterCapiAppFailed
+      annotations:
+        description: '{{`Cluster CAPI App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        opsrecipe: app-failed/
+      # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
+      expr: label_replace(app_operator_app_info{app=~"cluster-.+", status!~"(?i:(deployed|cordoned|not-installed))", catalog="cluster", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        sig: none
+        topic: releng
     - alert: AppWithoutTeamAnnotation
       annotations:
         description: '{{`App {{ $labels.name }} has no team label.`}}'

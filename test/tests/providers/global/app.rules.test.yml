@@ -100,3 +100,45 @@ tests:
             exp_annotations:
               description: App userd has no team label.
               opsrecipe: app-without-team-annotation/
+
+  # ClusterCapiAppFailed tests
+  - interval: 1m
+    input_series:
+      - series: 'app_operator_app_info{app="cluster-azure", catalog="cluster", cluster_missing="true", deployed_version="0.0.15", endpoint="web", instance="192.168.11.76:8000", job="app-exporter", latest_version="0.0.19", name="glippy", namespace="org-giantswarm", pod="app-exporter-9c644b64f-fl7xt", service="app-exporter", status="failed", team="clippy", upgrade_available="true", version="0.0.15", version_mismatch="false"}'
+        values: "0+0x20 1+0x100"
+    alert_rule_test:
+      - alertname: ClusterCapiAppFailed
+        eval_time: 90m
+        exp_alerts:
+          - exp_labels:
+              alertname: ClusterCapiAppFailed
+              app: cluster-azure
+              area: managedservices
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              catalog: cluster
+              cluster_missing: "true"
+              deployed_version: 0.0.15
+              endpoint: web
+              instance: 192.168.11.76:8000
+              job: app-exporter
+              latest_version: 0.0.19
+              name: glippy
+              namespace: org-giantswarm
+              pod: app-exporter-9c644b64f-fl7xt
+              service: app-exporter
+              severity: page
+              sig: none
+              status: failed
+              team: clippy
+              topic: releng
+              upgrade_available: "true"
+              version: 0.0.15
+              version_mismatch: "false"
+            exp_annotations:
+              description: "Cluster CAPI App org-giantswarm/glippy, version 0.0.15 is  in failed state. "
+              opsrecipe: app-failed/
+
+

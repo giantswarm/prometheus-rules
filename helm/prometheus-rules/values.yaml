@@ -9,3 +9,4 @@ managementCluster:
   pipeline: ""
   provider:
     kind: ""
+    flavor: ""

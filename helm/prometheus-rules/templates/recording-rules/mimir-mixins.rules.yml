@@ -3,7 +3,7 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: cortex.recording.rules
+  name: mimir.recording.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:

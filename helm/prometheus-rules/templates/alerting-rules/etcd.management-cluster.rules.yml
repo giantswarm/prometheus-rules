@@ -49,7 +49,7 @@ spec:
       annotations:
         description: '{{`Etcd has no leader.`}}'
         opsrecipe: etcd-has-no-leader/
-      expr: etcd_server_has_leader{role="control-plane", cluster_type="management_cluster"} == 0
+      expr: etcd_server_has_leader{role=~"master|control-plane", cluster_type="management_cluster"} == 0
       for: 5m
       labels:
         area: kaas

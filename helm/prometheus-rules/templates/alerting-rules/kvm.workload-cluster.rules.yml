@@ -55,7 +55,7 @@ spec:
     #     kubernetes_build_info{app="kubelet"} gives us a vector of all the
     #     kubelets.
     #
-    #     kubernetes_build_info{app="kubelet", role="control-plane"} gives us a vector
+    #     kubernetes_build_info{app="kubelet", role=~"master|control-plane"} gives us a vector
     #     of all control plane node kubelets.
     #
     #     `unless` results in a vector consisting of the control planes for which
@@ -66,7 +66,7 @@ spec:
       annotations:
         description: '{{`Control plane node is missing.`}}'
         opsrecipe: master-node-missing/
-      expr: kubernetes_build_info{app="kubelet"} unless on(cluster_id) kubernetes_build_info{app="kubelet", role="control-plane"}
+      expr: kubernetes_build_info{app="kubelet"} unless on(cluster_id) kubernetes_build_info{app="kubelet", role=~"master|control-plane"}
       for: 10m
       labels:
         area: kaas

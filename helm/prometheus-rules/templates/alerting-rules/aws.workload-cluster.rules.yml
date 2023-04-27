@@ -49,7 +49,7 @@ spec:
     #     kubernetes_build_info{app="kubelet"} gives us a vector of all the
     #     kubelet.
     #
-    #     kubernetes_build_info{app="kubelet", role="control-plane"} gives us a vector
+    #     kubernetes_build_info{app="kubelet", role=~"master|control-plane"} gives us a vector
     #     of all control plane node kubelets.
     #
     #     `unless` results in a vector consisting of the control planes for which
@@ -60,7 +60,7 @@ spec:
       annotations:
         description: '{{`Control plane node is missing.`}}'
         opsrecipe: master-node-missing/
-      expr: kubernetes_build_info{app="kubelet"} unless on(cluster_id) kubernetes_build_info{app="kubelet", role="control-plane"}
+      expr: kubernetes_build_info{app="kubelet"} unless on(cluster_id) kubernetes_build_info{app="kubelet", role=~"master|control-plane"}
       for: 10m
       labels:
         area: kaas
@@ -74,7 +74,7 @@ spec:
       annotations:
         description: '{{`Control plane node in HA setup is down for a long time.`}}'
         opsrecipe: master-node-missing/
-      expr: kubernetes_build_info{app="kubelet"} and on(cluster_id) sum(kubernetes_build_info{app="kubelet",role="control-plane"}) by (cluster_id) == 2
+      expr: kubernetes_build_info{app="kubelet"} and on(cluster_id) sum(kubernetes_build_info{app="kubelet",role=~"master|control-plane"}) by (cluster_id) == 2
       for: 30m
       labels:
         area: kaas

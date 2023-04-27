@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix AppFailed alerts on CAPI clusters.
 
+## [2.95.1] - 2023-04-27
+
+### Fixed
+
+- Fix control-plane-node-down inhibition.
+
 ## [2.95.0] - 2023-04-27
 
 ### Changed
@@ -1732,7 +1738,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.1...HEAD
+[2.95.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.0...v2.95.1
 [2.95.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.94.0...v2.95.0
 [2.94.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.93.0...v2.94.0
 [2.93.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.92.0...v2.93.0

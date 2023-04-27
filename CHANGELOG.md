@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Deprecate `role=master` in favor of `role=control-plane`.
+- Rename alerts containing `Master` with `ControlPlane`
+
 ## [2.94.0] - 2023-04-26
 
 ### Added
@@ -861,7 +866,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Split mixin recording rules into 2 files (kubernetes, kube-prometheus).
 
-
 ## [2.25.0] - 2022-05-26
 
 ### Fixed
@@ -1291,7 +1295,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change ManagementClusterHasLessThanThreeNodes alert to use a metrics with reliable `role` label.
 
 ## [0.40.2] - 2021-12-03
-
 
 ### Fixed
 

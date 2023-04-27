@@ -58,18 +58,18 @@ spec:
         severity: notify
         team: rocket
         topic: kubernetes
-    - alert: ManagementClusterMasterNodeMissingRocket
+    - alert: ManagementClusterControlPlaneNodeMissingRocket
       annotations:
-        description: '{{`Master node is missing.`}}'
+        description: '{{`Control plane node is missing.`}}'
         opsrecipe: master-node-missing/
-      expr: kubernetes_build_info{app="kubelet"} unless on(cluster_id) kubernetes_build_info{app="kubelet", role="master"}
+      expr: kubernetes_build_info{app="kubelet"} unless on(cluster_id) kubernetes_build_info{app="kubelet", role="control-plane"}
       for: 10m
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        master_node_down: "true"
+        control_plane_node_down: "true"
         severity: page
         team: rocket
         topic: kubernetes

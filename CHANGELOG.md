@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Deprecate `role=master` in favor of `role=control-plane`.
 - Rename alerts containing `Master` with `ControlPlane`
+- Added "cancel_if_prometheus_agent_down" for phoenix alerts ManagementClusterCriticalPodMetricMissing, ManagementClusterDeploymentMissingAWS, WorkloadClusterNonCriticalDeploymentNotSatisfiedKaas
 
 ## [2.94.0] - 2023-04-26
 

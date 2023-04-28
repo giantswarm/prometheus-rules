@@ -77,7 +77,7 @@ spec:
         description: '{{`Etcd metrics missing for {{ $labels.cluster_id }}.`}}'
         opsrecipe: etcd-metrics-missing/
       expr: count(up{cluster_type="workload_cluster"}) by (cluster_id) unless count(etcd_server_id) by (cluster_id)
-      for: 5m
+      for: 1h
       labels:
         area: kaas
         cancel_if_outside_working_hours: true

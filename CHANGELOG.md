@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add an alert that pages if etcd metrics are missing.
+
 ## [2.95.2] - 2023-04-28
 
 ### Fixed

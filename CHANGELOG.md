@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.95.2] - 2023-04-28
+
 ### Fixed
 
 - Fix `WorkloadClusterControlPlaneNodeMissing` alerts for all providers. 
@@ -1738,7 +1740,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.2...HEAD
+[2.95.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.1...v2.95.2
 [2.95.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.0...v2.95.1
 [2.95.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.94.0...v2.95.0
 [2.94.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.93.0...v2.94.0

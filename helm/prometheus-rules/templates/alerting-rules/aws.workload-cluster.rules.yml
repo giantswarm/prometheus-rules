@@ -42,25 +42,11 @@ spec:
         severity: page
         team: phoenix
         topic: kubernetes
-    # WorkloadClusterControlPlaneNodeMissingAWS in this file is AWS specific and thus
-    # assigned to Team Phoenix. The alert is also defined for all the other
-    # providers with other team assignments.
-    #
-    #     kubernetes_build_info{app="kubelet"} gives us a vector of all the
-    #     kubelet.
-    #
-    #     kubernetes_build_info{app="kubelet", role=~"master|control-plane"} gives us a vector
-    #     of all control plane node kubelets.
-    #
-    #     `unless` results in a vector consisting of the control planes for which
-    #     there are no kubelets, which we can then alert on. See
-    #     https://prometheus.io/docs/prometheus/latest/querying/operators.
-    #
     - alert: WorkloadClusterControlPlaneNodeMissingAWS
       annotations:
         description: '{{`Control plane node is missing.`}}'
         opsrecipe: master-node-missing/
-      expr: kubernetes_build_info{app="kubelet"} unless on(cluster_id) kubernetes_build_info{app="kubelet", role=~"master|control-plane"}
+      expr: kubernetes_build_info{app="kubelet"} unless on (node) kube_node_role{role!~"control-plane|master"}
       for: 10m
       labels:
         area: kaas
@@ -74,7 +60,7 @@ spec:
       annotations:
         description: '{{`Control plane node in HA setup is down for a long time.`}}'
         opsrecipe: master-node-missing/
-      expr: kubernetes_build_info{app="kubelet"} and on(cluster_id) sum(kubernetes_build_info{app="kubelet",role=~"master|control-plane"}) by (cluster_id) == 2
+      expr: sum(kubernetes_build_info{app="kubelet"} unless on (node) kube_node_role{role!~"control-plane|master"}) by (cluster_id) == 2
       for: 30m
       labels:
         area: kaas

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix `WorkloadClusterControlPlaneNodeMissing` alerts for all providers (previous fix was not working)
 
+### Changed
+
+- Reduced delay for heartbeats from 10m to none
+
 ## [2.96.0] - 2023-04-28
 
 ### Added

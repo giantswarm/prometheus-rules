@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `WorkloadClusterControlPlaneNodeMissing` alerts for all providers (previous fix was not working)
+
 ## [2.96.0] - 2023-04-28
 
 ### Added

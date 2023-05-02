@@ -11,6 +11,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix AppFailed alerts on CAPI clusters.
 
+## [2.96.2] - 2023-05-02
+
+### Fixed
+
+- Fix KubeStateMetricsDown inhibition.
+
+## [2.96.1] - 2023-05-02
+
+### Fixed
+
+- Fix `WorkloadClusterControlPlaneNodeMissing` alerts for all providers (previous fix was not working)
+
+### Changed
+
+- Reduced delay for heartbeats from 10m to none
+
+### Added
+
+- added `PrometheusAvailabilityRatio` alert
+
+## [2.96.0] - 2023-04-28
+
+### Added
+
+- Add an alert that pages if etcd metrics are missing.
+
+## [2.95.2] - 2023-04-28
+
+### Fixed
+
+- Fix `WorkloadClusterControlPlaneNodeMissing` alerts for all providers. 
+
 ## [2.95.1] - 2023-04-27
 
 ### Fixed
@@ -1738,7 +1770,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.2...HEAD
+[2.96.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.1...v2.96.2
+[2.96.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.0...v2.96.1
+[2.96.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.2...v2.96.0
+[2.95.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.1...v2.95.2
 [2.95.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.0...v2.95.1
 [2.95.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.94.0...v2.95.0
 [2.94.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.93.0...v2.94.0

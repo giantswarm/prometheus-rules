@@ -62,7 +62,7 @@ spec:
       annotations:
         description: '{{`Control plane node is missing.`}}'
         opsrecipe: master-node-missing/
-      expr: kubernetes_build_info{app="kubelet"} unless on(cluster_id) kubernetes_build_info{app="kubelet", role=~"master|control-plane"}
+      expr: count(kubernetes_build_info{app="kubelet"} unless on (node) kube_node_role{role!~"control-plane|master"}) == 0
       for: 10m
       labels:
         area: kaas

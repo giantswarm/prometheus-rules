@@ -14,11 +14,12 @@ spec:
       annotations:
         description: '{{`kube_configmap_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-steate-metrics-metrics-missing/
-      expr: (count(up{app="kube-state-metrics"} == 1) by (cluster_id)) unless (count(kube_configmap_created{}) by (cluster_id))
+      expr: absent(kube_configmap_created{})
       for: 30m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
         severity: page
         team: atlas
         topic: kubernetes
@@ -26,11 +27,12 @@ spec:
       annotations:
         description: '{{`kube_daemonset_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-steate-metrics-metrics-missing/
-      expr: (count(up{app="kube-state-metrics"} == 1) by (cluster_id)) unless (count(kube_daemonset_created{}) by (cluster_id))
+      expr: absent(kube_daemonset_created{})
       for: 30m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
         severity: page
         team: atlas
         topic: kubernetes
@@ -38,11 +40,12 @@ spec:
       annotations:
         description: '{{`kube_deployment_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-steate-metrics-metrics-missing/
-      expr: (count(up{app="kube-state-metrics"} == 1) by (cluster_id)) unless (count(kube_deployment_created{}) by (cluster_id))
+      expr: absent(kube_deployment_created{})
       for: 30m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
         severity: page
         team: atlas
         topic: kubernetes
@@ -50,11 +53,12 @@ spec:
       annotations:
         description: '{{`kube_endpoint_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-steate-metrics-metrics-missing/
-      expr: (count(up{app="kube-state-metrics"} == 1) by (cluster_id)) unless (count(kube_endpoint_created{}) by (cluster_id))
+      expr: absent(kube_endpoint_created{})
       for: 30m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
         severity: page
         team: atlas
         topic: kubernetes
@@ -62,11 +66,12 @@ spec:
       annotations:
         description: '{{`kube_namespace_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-steate-metrics-metrics-missing/
-      expr: (count(up{app="kube-state-metrics"} == 1) by (cluster_id)) unless (count(kube_namespace_created{}) by (cluster_id))
+      expr: absent(kube_namespace_created{})
       for: 30m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
         severity: page
         team: atlas
         topic: kubernetes
@@ -74,11 +79,12 @@ spec:
       annotations:
         description: '{{`kube_node_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-steate-metrics-metrics-missing/
-      expr: (count(up{app="kube-state-metrics"} == 1) by (cluster_id)) unless (count(kube_node_created{}) by (cluster_id))
+      expr: absent(kube_node_created{})
       for: 30m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
         severity: page
         team: atlas
         topic: kubernetes
@@ -86,11 +92,12 @@ spec:
       annotations:
         description: '{{`kube_pod_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-steate-metrics-metrics-missing/
-      expr: (count(up{app="kube-state-metrics"} == 1) by (cluster_id)) unless (count(kube_pod_created{}) by (cluster_id))
+      expr: absent(kube_pod_created{})
       for: 30m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
         severity: page
         team: atlas
         topic: kubernetes
@@ -98,11 +105,12 @@ spec:
       annotations:
         description: '{{`kube_replicaset_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-steate-metrics-metrics-missing/
-      expr: (count(up{app="kube-state-metrics"} == 1) by (cluster_id)) unless (count(kube_replicaset_created{}) by (cluster_id))
+      expr: absent(kube_replicaset_created{})
       for: 30m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
         severity: page
         team: atlas
         topic: kubernetes
@@ -110,11 +118,12 @@ spec:
       annotations:
         description: '{{`kube_secret_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-steate-metrics-metrics-missing/
-      expr: (count(up{app="kube-state-metrics"} == 1) by (cluster_id)) unless (count(kube_secret_created{}) by (cluster_id))
+      expr: absent(kube_secret_created{})
       for: 30m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
         severity: page
         team: atlas
         topic: kubernetes
@@ -122,11 +131,12 @@ spec:
       annotations:
         description: '{{`kube_service_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-steate-metrics-metrics-missing/
-      expr: (count(up{app="kube-state-metrics"} == 1) by (cluster_id)) unless (count(kube_service_created{}) by (cluster_id))
+      expr: absent(kube_service_created{})
       for: 30m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
         severity: page
         team: atlas
         topic: kubernetes

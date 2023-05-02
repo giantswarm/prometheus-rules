@@ -56,6 +56,8 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_has_no_workers: "true"
+        kube_state_metrics_down: "true"
+        inhibit_kube_state_metrics_down: "true"
         cancel_if_kubelet_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page

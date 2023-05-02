@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.96.2] - 2023-05-02
+
 ### Fixed
 
 - Fix KubeStateMetricsDown inhibition.
@@ -1764,7 +1766,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.2...HEAD
+[2.96.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.1...v2.96.2
 [2.96.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.0...v2.96.1
 [2.96.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.2...v2.96.0
 [2.95.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.1...v2.95.2

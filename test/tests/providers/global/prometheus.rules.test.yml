@@ -7,6 +7,77 @@ rule_files:
 evaluation_interval: 1h
 
 tests:
+  # Test PrometheusAvailabilityRatio
+  - interval: 1m
+    input_series:
+      # This prometheus is up foreve - generates no alert
+      - series: 'kube_pod_status_ready{app="kube-state-metrics", condition="true", container="kube-state-metrics", namespace="install-prometheus", pod="prometheus-install-0"}'
+        values: "1+0x600"
+      # This prometheus starts at h+2, and takes 15min to get ready - generates no alert
+      - series: 'kube_pod_status_ready{app="kube-state-metrics", condition="true", container="kube-state-metrics", namespace="wcok-prometheus", pod="prometheus-wcok-0"}'
+        values: "_x120 0+0x15 1+0x600"
+      # This promteheus is down - generates alerts
+      - series: 'kube_pod_status_ready{app="kube-state-metrics", condition="true", container="kube-state-metrics", namespace="wcbad-prometheus", pod="prometheus-wcbad-0"}'
+        values: "0+0x600"
+    alert_rule_test:
+      - alertname: PrometheusAvailabilityRatio
+        eval_time: 135m
+        exp_alerts:
+          - exp_labels:
+              area: empowerment
+              severity: page
+              team: atlas
+              topic: observability
+              cancel_if_any_apiserver_down: "true"
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              dashboard: "promavailability/prometheus-availability"
+              pod: "prometheus-wcbad-0"
+            exp_annotations:
+              description: "Prometheus prometheus-wcbad-0 has availability ratio of 0.00 (min 0.8) over the last 10 hours."
+              opsrecipe: "prometheus-resource-limit-reached/"
+      - alertname: PrometheusAvailabilityRatio
+        eval_time: 4h
+        exp_alerts:
+          - exp_labels:
+              area: empowerment
+              severity: page
+              team: atlas
+              topic: observability
+              cancel_if_any_apiserver_down: "true"
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              dashboard: "promavailability/prometheus-availability"
+              pod: "prometheus-wcbad-0"
+            exp_annotations:
+              description: "Prometheus prometheus-wcbad-0 has availability ratio of 0.00 (min 0.8) over the last 10 hours."
+              opsrecipe: "prometheus-resource-limit-reached/"
+      - alertname: PrometheusAvailabilityRatio
+        eval_time: 15h
+        exp_alerts:
+          - exp_labels:
+              area: empowerment
+              severity: page
+              team: atlas
+              topic: observability
+              cancel_if_any_apiserver_down: "true"
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              dashboard: "promavailability/prometheus-availability"
+              pod: "prometheus-wcbad-0"
+            exp_annotations:
+              description: "Prometheus prometheus-wcbad-0 has availability ratio of 0.00 (min 0.8) over the last 10 hours."
+              opsrecipe: "prometheus-resource-limit-reached/"
+  # Test PrometheusJobScrapingFailure and PrometheusCriticalJobScrapingFailure
   - interval: 1h
     input_series:
       - series: 'up{app="kubernetes",installation="gauss",cluster_id="gauss",job="gauss-prometheus/kubernetes-apiserver-gauss/0"}'

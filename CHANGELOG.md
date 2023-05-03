@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix AppFailed alerts on CAPI clusters.
+
 ## [2.96.3] - 2023-05-03
 
 ### Fixed

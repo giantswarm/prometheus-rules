@@ -1,4 +1,4 @@
-{{- if or (eq .Values.managementCluster.provider.kind "openstack") (eq .Values.managementCluster.provider.kind "gcp") (eq .Values.managementCluster.provider.kind "capz") }}
+{{- if eq .Values.managementCluster.provider.flavor "capi" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:

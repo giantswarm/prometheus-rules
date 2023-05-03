@@ -58,27 +58,15 @@ true
 {{- end -}}
 
 {{- define "isClusterServiceInstalled" -}}
-{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa" "capz") -}}
-false
-{{- else -}}
-true
-{{- end -}}
+{{ not (eq .Values.managementCluster.provider.flavor "capi") }}
 {{- end -}}
 
 {{- define "isVaultBeingMonitored" -}}
-{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa" "capz") -}}
-false
-{{- else -}}
-true
-{{- end -}}
+{{ not (eq .Values.managementCluster.provider.flavor "capi") }}
 {{- end -}}
 
 {{- define "isBastionBeingMonitored" -}}
-{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa" "capz") -}}
-false
-{{- else -}}
-true
-{{- end -}}
+{{ not (eq .Values.managementCluster.provider.flavor "capi") }}
 {{- end -}}
 
 {{- define "namespaceNotGiantswarm" -}}

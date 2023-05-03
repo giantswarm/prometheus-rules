@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.96.6] - 2023-05-03
+
 ### Fixed
 
 - Fix typo in AppFailed alerts on CAPI clusters.
@@ -1790,7 +1792,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.5...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.6...HEAD
+[2.96.6]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.5...v2.96.6
 [2.96.5]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.4...v2.96.5
 [2.96.4]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.3...v2.96.4
 [2.96.3]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.2...v2.96.3

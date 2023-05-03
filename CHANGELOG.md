@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix AppFailed alerts on CAPI clusters.
+- Fix `WorkloadClusterHAControlPlaneDownForTooLong` alert to ensure it only pages if there are exclusively 2 `control-plane` or `master` nodes.
 
 ## [2.96.3] - 2023-05-03
 

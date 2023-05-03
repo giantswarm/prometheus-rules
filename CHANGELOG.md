@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fix dashboard links for prometheus-availability and prometheus-remote-write.
 - Fix `WorkloadClusterHAControlPlaneDownForTooLong` alert.
 
 ## [2.96.2] - 2023-05-02

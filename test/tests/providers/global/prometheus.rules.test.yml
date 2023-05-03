@@ -34,11 +34,11 @@ tests:
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
-              dashboard: "promavailability/prometheus-availability"
               pod: "prometheus-wcbad-0"
             exp_annotations:
               description: "Prometheus prometheus-wcbad-0 has availability ratio of 0.00 (min 0.8) over the last 10 hours."
               opsrecipe: "prometheus-resource-limit-reached/"
+              dashboard: "promavailability/prometheus-availability"
       - alertname: PrometheusAvailabilityRatio
         eval_time: 4h
         exp_alerts:
@@ -53,11 +53,11 @@ tests:
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
-              dashboard: "promavailability/prometheus-availability"
               pod: "prometheus-wcbad-0"
             exp_annotations:
               description: "Prometheus prometheus-wcbad-0 has availability ratio of 0.00 (min 0.8) over the last 10 hours."
               opsrecipe: "prometheus-resource-limit-reached/"
+              dashboard: "promavailability/prometheus-availability"
       - alertname: PrometheusAvailabilityRatio
         eval_time: 15h
         exp_alerts:
@@ -72,11 +72,11 @@ tests:
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
-              dashboard: "promavailability/prometheus-availability"
               pod: "prometheus-wcbad-0"
             exp_annotations:
               description: "Prometheus prometheus-wcbad-0 has availability ratio of 0.00 (min 0.8) over the last 10 hours."
               opsrecipe: "prometheus-resource-limit-reached/"
+              dashboard: "promavailability/prometheus-availability"
   # Test PrometheusJobScrapingFailure and PrometheusCriticalJobScrapingFailure
   - interval: 1h
     input_series:

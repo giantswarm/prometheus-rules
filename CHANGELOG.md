@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- updated `PrometheusAvailabilityRatio` alert to set window to 1h rather than 10h.
+
 ## [2.96.6] - 2023-05-03
 
 ### Fixed

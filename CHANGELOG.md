@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.97.0] - 2023-05-04
+
 ### Changed
 
 - updated `PrometheusAvailabilityRatio` alert to set window to 1h rather than 10h.
@@ -1796,7 +1798,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.6...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.97.0...HEAD
+[2.97.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.6...v2.97.0
 [2.96.6]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.5...v2.96.6
 [2.96.5]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.4...v2.96.5
 [2.96.4]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.3...v2.96.4

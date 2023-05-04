@@ -11,6 +11,251 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `WorkloadClusterMasterMemoryUsageTooHigh` alert.
 
+## [2.96.6] - 2023-05-03
+
+### Fixed
+
+- Fix typo in AppFailed alerts on CAPI clusters.
+
+## [2.96.5] - 2023-05-03
+
+### Fixed
+
+- Fix missing quotes on boolean.
+
+## [2.96.4] - 2023-05-03
+
+### Fixed
+
+- Fix AppFailed alerts on CAPI clusters.
+- Fix `WorkloadClusterHAControlPlaneDownForTooLong` alert to ensure it only pages if there are exclusively 2 `control-plane` or `master` nodes.
+
+## [2.96.3] - 2023-05-03
+
+### Fixed
+
+- Fix dashboard links for prometheus-availability and prometheus-remote-write.
+- Fix `WorkloadClusterHAControlPlaneDownForTooLong` alert.
+
+## [2.96.2] - 2023-05-02
+
+### Fixed
+
+- Fix KubeStateMetricsDown inhibition.
+
+## [2.96.1] - 2023-05-02
+
+### Fixed
+
+- Fix `WorkloadClusterControlPlaneNodeMissing` alerts for all providers (previous fix was not working)
+
+### Changed
+
+- Reduced delay for heartbeats from 10m to none
+
+### Added
+
+- added `PrometheusAvailabilityRatio` alert
+
+## [2.96.0] - 2023-04-28
+
+### Added
+
+- Add an alert that pages if etcd metrics are missing.
+
+## [2.95.2] - 2023-04-28
+
+### Fixed
+
+- Fix `WorkloadClusterControlPlaneNodeMissing` alerts for all providers. 
+
+## [2.95.1] - 2023-04-27
+
+### Fixed
+
+- Fix control-plane-node-down inhibition.
+
+## [2.95.0] - 2023-04-27
+
+### Changed
+
+- Deprecate `role=master` in favor of `role=control-plane`.
+- Rename alerts containing `Master` with `ControlPlane`
+- Added "cancel_if_prometheus_agent_down" for phoenix alerts ManagementClusterCriticalPodMetricMissing, ManagementClusterDeploymentMissingAWS, WorkloadClusterNonCriticalDeploymentNotSatisfiedKaas
+
+## [2.94.0] - 2023-04-26
+
+### Added
+
+- Alert `MimirComponentDown` for Mimir app
+
+### Fixed
+
+- Fix colliding resources names in recording rules
+
+## [2.93.0] - 2023-04-24
+
+### Fixed
+
+- `make help` shows test targets again
+
+### Added
+
+- Alert `ClusterDNSZoneMissing` added for `dns-operator-azure`
+- Alert `AzureDNSOperatorAPIErrorRate` added for `dns-operator-azure`
+- Recording rules for Mimir
+- Recording rules for Loki
+- Label to trigger inhibition when prometheus-agent is down
+- Test recording rules
+- Unit test for recording rule `helm-operations`
+
+### Changed
+
+- Forward WorkloadClusterCertificateExpiring to team-teddyfriends on Slack
+- README: naming convention for inhibition labels
+
+## [2.92.0] - 2023-04-19
+
+### Added
+
+- Revert: Do not inhibit azure clusters without worker nodes because the source metric is missing and the inhibition is preventing real alerts to go through.
+
+## [2.91.0] - 2023-04-18
+
+### Changed
+
+- Changed `GiantswarmManagedCertificateCRWillExpireInLessThanTwoWeeks` alert to work for both workload clusters and management clusters.
+
+## [2.90.0] - 2023-04-17
+
+### Added
+
+- Alert `KongDeploymentNotSatisfied` for managed kong deployments.
+
+### Removed
+
+- Alert `WorkloadClusterManagedDeploymentNotSatisfiedCabbage`.
+- Do not inhibit azure clusters without worker nodes because the source metric is missing and the inhibition is preventing real alerts to go through.
+
+### Changed
+
+- Decrease severity for PrometheusJobScrapingFailure alerts, so they don't show in Slack.
+- set unique names for alert groups.
+
+## [2.89.0] - 2023-04-12
+
+### Changed
+
+- Only page during business hours if `etcd-kubernetes-resources-count-exporter` deployment is not satisfied.
+
+## [2.88.0] - 2023-04-11
+
+### Added
+
+- Alert `LinkerdDeploymentNotSatisfied` for managed Linkerd deployments.
+- New `make test-opsrecipes` target
+- Alert `SlothDown` for Sloth app
+
+### Changed
+
+- Change all `hydra` alerts to point to team `phoenix` since we merge the business hours on-call
+
+## [2.87.0] - 2023-04-06
+
+### Added
+
+- Alert for `etcd-kubernetes-resources-count-exporter`.
+
+### Fixed
+
+- some broken opsrecipe links
+
+### Changed
+
+- added dashboard to `PrometheusFailsToCommunicateWithRemoteStorageAPI` alert
+- updated kube mixins to 0.12
+- `PrometheusCantCommunicateWithKubernetesAPI` : added `cancel_if_cluster_has_no_workers`
+
+## [2.86.1] - 2023-03-28
+
+### Changed
+
+- Tuned prometheus-cant-communicate-with-remote-storage-api alert
+
+## [2.86.0] - 2023-03-27
+
+### Fixed
+
+- Page when the agent cannot send data to Prometheus.
+
+## [2.85.0] - 2023-03-24
+
+### Added
+
+- Ship Kyverno-related resource counts to Grafana Cloud.
+
+## [2.84.0] - 2023-03-21
+
+### Fixed
+
+- Fix `PersistentVolumeSpaceTooLow` alert.
+
+### Changed
+
+- Silence `IRSATooManyErrors` during cluster creation and deletion.
+
+## [2.83.0] - 2023-03-16
+
+### Added
+
+- Unit test for kong rules
+- Add `cluster-autoscaler` among deployments paging if unsatisfied.
+- Add `DeploymentNotSatisfiedShield` alert for Kyverno and remove Kyverno from Honeybadger.
+
+### Changed
+
+- Prevent the PrometheusAgent from paging outside of business hours.
+
+## [2.82.4] - 2023-03-14
+
+### Changed
+
+- Fix `MachineUnhealthyPhase` rule to exclude bastion nodes
+- Fix `MachineDeploymentReplicasMismatch` rule to exclude bastion nodes and fix description
+
+## [2.82.3] - 2023-03-07
+
+### Changed
+
+- Splits `kyverno` certificate expiry alert & created `KyvernoCertificateSecretWillExpireInLessThanTwoDays`.
+- Tweak ETCD DB Too Large alert
+
+## [2.82.2] - 2023-03-03
+
+### Fixed
+
+- fix ClusterEtcdDBSizeTooLarge alerts.
+
+## [2.82.1] - 2023-03-01
+
+### Fixed
+
+- Add `app` differentiator to the `FluxSourceFailed` alert.
+
+## [2.82.0] - 2023-02-28
+
+### Changed
+
+- Make `NodeExporterDeviceError` only if relevant disk scraping fails.
+- Add team labels to prometheus rules for https://github.com/giantswarm/prometheus-meta-operator/pull/1181
+- Split Calico notify alerts per provider team
+
+## [2.80.1] - 2023-02-14
+
+### Changed
+
+- Update dummy inhibitions' expressions
+
 ## [2.80.0] - 2023-02-13
 
 ### Added
@@ -129,7 +374,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add recording rule for expiry time of identity provider oauth app secrets managed by dex operator. 
+- Add recording rule for expiry time of identity provider oauth app secrets managed by dex operator.
 
 ## [2.71.1] - 2023-01-09
 
@@ -692,7 +937,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Split mixin recording rules into 2 files (kubernetes, kube-prometheus).
 
-
 ## [2.25.0] - 2022-05-26
 
 ### Fixed
@@ -1123,7 +1367,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.40.2] - 2021-12-03
 
-
 ### Fixed
 
 - Consolidate alerts that covered the same issues.
@@ -1553,7 +1796,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.80.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.6...HEAD
+[2.96.6]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.5...v2.96.6
+[2.96.5]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.4...v2.96.5
+[2.96.4]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.3...v2.96.4
+[2.96.3]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.2...v2.96.3
+[2.96.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.1...v2.96.2
+[2.96.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.0...v2.96.1
+[2.96.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.2...v2.96.0
+[2.95.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.1...v2.95.2
+[2.95.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.95.0...v2.95.1
+[2.95.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.94.0...v2.95.0
+[2.94.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.93.0...v2.94.0
+[2.93.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.92.0...v2.93.0
+[2.92.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.91.0...v2.92.0
+[2.91.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.90.0...v2.91.0
+[2.90.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.89.0...v2.90.0
+[2.89.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.88.0...v2.89.0
+[2.88.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.87.0...v2.88.0
+[2.87.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.86.1...v2.87.0
+[2.86.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.86.0...v2.86.1
+[2.86.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.85.0...v2.86.0
+[2.85.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.84.0...v2.85.0
+[2.84.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.83.0...v2.84.0
+[2.83.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.4...v2.83.0
+[2.82.4]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.3...v2.82.4
+[2.82.3]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.2...v2.82.3
+[2.82.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.1...v2.82.2
+[2.82.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.82.0...v2.82.1
+[2.82.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.80.1...v2.82.0
+[2.80.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.80.0...v2.80.1
 [2.80.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.79.0...v2.80.0
 [2.79.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.78.0...v2.79.0
 [2.78.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.77.0...v2.78.0
@@ -1750,4 +2022,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.2]: https://github.com/giantswarm/prometheus-rules/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/giantswarm/prometheus-rules/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/giantswarm/prometheus-rules/releases/tag/v0.1.0
-

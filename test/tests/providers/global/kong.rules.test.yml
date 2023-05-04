@@ -1,0 +1,34 @@
+---
+rule_files:
+  - kong.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'kong_datastore_reachable{cluster_id="deu01", installation="anteater", instance="localhost:8080", namespace="kong-internal", pod="kong-app-internal"}'
+        values: '_x20 1+0x10 0+0x20'
+    alert_rule_test:
+      - alertname: KongDatastoreNotReachable
+        eval_time: 20m
+      - alertname: KongDatastoreNotReachable
+        eval_time: 30m
+      - alertname: KongDatastoreNotReachable
+        eval_time: 50m
+        exp_alerts:
+          - exp_labels:
+              alertname: KongDatastoreNotReachable
+              area: managedservices
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_outside_working_hours: "false"
+              cluster_id: deu01
+              installation: anteater
+              instance: localhost:8080
+              namespace: kong-internal
+              pod: kong-app-internal
+              severity: page
+              team: cabbage
+              topic: kong
+            exp_annotations:
+              description: "Datastore of Kong in namespace kong-internal is not reachable."
+              opsrecipe: managed-app-kong/#kong-datastore-not-reachable

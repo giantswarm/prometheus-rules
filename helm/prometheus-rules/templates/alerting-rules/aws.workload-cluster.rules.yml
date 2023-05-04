@@ -16,7 +16,7 @@ spec:
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/
-      expr: increase(kube_pod_container_status_restarts_total{container=~"aws-node.*|kiam-agent.*|kiam-server.*|cluster-autoscaler.*|ebs-csi-.*|aws-pod-identity-webhook.*"}[1h]) > 10
+      expr: increase(kube_pod_container_status_restarts_total{container=~"aws-node.*|kiam-agent.*|kiam-server.*|cluster-autoscaler.*|ebs-csi-.*|aws-pod-identity-webhook.*|etcd-kubernetes-resources-count-exporter.*"}[1h]) > 10
       for: 10m
       labels:
         area: kaas
@@ -42,46 +42,32 @@ spec:
         severity: page
         team: phoenix
         topic: kubernetes
-    # WorkloadClusterMasterNodeMissingAWS in this file is AWS specific and thus
-    # assigned to Team Phoenix. The alert is also defined for all the other
-    # providers with other team assignments.
-    #
-    #     kubernetes_build_info{app="kubelet"} gives us a vector of all the
-    #     kubelet.
-    #
-    #     kubernetes_build_info{app="kubelet", role="master"} gives us a vector
-    #     of all master node kubelets.
-    #
-    #     `unless` results in a vector consisting of the masters for which
-    #     there are no kubelets, which we can then alert on. See
-    #     https://prometheus.io/docs/prometheus/latest/querying/operators.
-    #
-    - alert: WorkloadClusterMasterNodeMissingAWS
+    - alert: WorkloadClusterControlPlaneNodeMissingAWS
       annotations:
-        description: '{{`Master node is missing.`}}'
+        description: '{{`Control plane node is missing.`}}'
         opsrecipe: master-node-missing/
-      expr: kubernetes_build_info{app="kubelet"} unless on(cluster_id) kubernetes_build_info{app="kubelet", role="master"}
+      expr: count(kubernetes_build_info{app="kubelet"} unless on (node) kube_node_role{role!~"control-plane|master"}) == 0
       for: 10m
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
-        master_node_down: "true"
+        control_plane_node_down: "true"
         severity: page
         team: phoenix
         topic: kubernetes
-    - alert: WorkloadClusterHAMasterDownForTooLong
+    - alert: WorkloadClusterHAControlPlaneDownForTooLong
       annotations:
-        description: '{{`Master node in HA setup is down for a long time.`}}'
+        description: '{{`Control plane node in HA setup is down for a long time.`}}'
         opsrecipe: master-node-missing/
-      expr: kubernetes_build_info{app="kubelet"} and on(cluster_id) sum(kubernetes_build_info{app="kubelet", role="master"}) by (cluster_id) == 2
+      expr: sum by (cluster_id) (kubernetes_build_info{app="kubelet"} * on (node) kube_node_role{role="control-plane"}) == 2 or sum by (cluster_id) (kubernetes_build_info{app="kubelet"} * on (node) kube_node_role{role="master"}) == 2
       for: 30m
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"
-        master_node_down: "true"
+        control_plane_node_down: "true"
         severity: page
         team: phoenix
         topic: kubernetes

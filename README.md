@@ -85,6 +85,10 @@ The `cancel_if_*` labels are used to inhibit alerts, they are defined in [Alertm
 
 The base principle is: if an alert is currently firing with a `source_matcher` label, then all alerts that have a `target_matcher` label are inhibited (or muted).
 
+To make inhibitions easier to read, let's try to follow this naming convention inhibition-related labels:
+* `inhibit_[something]` for `source` matchers
+* `cancel_if_[something]` for `target` matchers
+
 Official documentation for inhibit rules can be found here: https://www.prometheus.io/docs/alerting/latest/configuration/#inhibit_rule
 
 ### Recording rules
@@ -94,29 +98,50 @@ The recording rules are located `helm/prometheus-rules/templates/recording-rules
 
 ### Mixin
 
-To Update `kubernetes-mixin` recording rules:
+#### kubermetes-mixins
+
+To Update `kubernetes-mixins` recording rules:
 
 * Follow the instructions in [giantswarm-kubernetes-mixin](https://github.com/giantswarm/giantswarm-kubernetes-mixin)
 * Run `./scripts/sync-kube-mixin.sh (?my-fancy-branch-or-tag)` to updated the `helm/prometheus-rules/templates/recording-rules/kubernetes-mixins.rules.yml` folder.
 * make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards/tree/master/helm/dashboards/dashboards/mixin)
 
+#### mimir-mixins
+
+Come as-is from https://github.com/grafana/mimir/tree/main/operations/mimir-mixin-compiled ; just added helm headers (metadata, spec...)
+
+#### loki-mixins
+
+Come as-is from https://github.com/grafana/loki/tree/main/production/loki-mixin-compiled-ssd ; just added helm headers (metadata, spec...)
 
 ### Testing
+
+You can run all tests by running `make test`.
+
+There are 3 different types tests implemented:
+
+- [Prometheus rules unit tests](#prometheus-rules-unit-tests)
+- [Alertmanager inhibition dependency check](#alertmanager-inhibition-dependency-check)
+- [Opsrecipe check](#opsrecipe-check)
+
+---
+
+### Prometheus rules unit tests
 
 By creating unit tests for Alerting rules it's possible to get early feedback about possible misbehavior in alerting rules.
 Unit tests are executed via `promtool` (part of `prometheus`).
 
-By running `make test` in your local environment, all required binaries will be downloaded and tests will be executed.
+By running `make test-rules` in your local environment, all required binaries will be downloaded and tests will be executed.
 
 There are 2 kinds of tests on rules:
 - syntax check (promtool check) - run on all files that can be generated from helm, nothing specific to do
 - unit tests (promtool test) - you have to write some unit tests, or add your rules files to the `promtool_ignore` file.
 
-#### Writing new unit tests
+#### Writing new Alerting rules unit tests
 
 1. remove the rules file you would like to test from `test/conf/promtool_ignore`
 1. create a new test file in [unit testing rules] format either globally in `test/tests/providers/global/` or provider-specific in `test/tests/providers/<provider>/`
-1. by running `make test` you can validate the your testing rules.
+1. by running `make test-rules` you can validate your testing rules.
    Output should look like the follows:
 
    ```
@@ -151,9 +176,9 @@ tests:
   - interval: 1m
     input_series:
       - series: '<prometheus_timeseries>'
-        values: "_x20 1+0x20 0+0x20" 
+        values: "_x20 1+0x20 0+0x20"
       - series: '<prometheus_timeseries>'
-        values: "0+600x40 24000+400x40" 
+        values: "0+600x40 24000+400x40"
 [...]
 ```
 
@@ -168,22 +193,10 @@ This is a good example of an input series for testing a `range` query.
 * Rule files that can't be tested are listed in `test/conf/promtool_ignore`.
 * Rule files that can't be tested with a specific provider are listed in `test/conf/promtool_ignore_<provider>`.
 
-### Test inhibition labels
-
-One can check whether inhibition labels (mostly "cancel_if_" prefixed ones) are well defined and triggered by a corresponding label in the alerting rules by running the `make test-inhibitions` command at the projet's root directory.
-
-This command will output the list of missing labels. Each of them will need to be defined in the alerting rules. 
-If there is no labels outputed, this means test did not find missing inhibition labels.
-
-Warning: the tool may output false alerts or miss some alerts because of the following limitations.
-- it does not check for rules that are only defined on some specific environments (like aws-specific rules)
-- it tries to guess source labels rather than relying actual alertmanager inhibition, so may be wrong with some alerts  
-
 #### Limitation
 
-* The current implementation only renders alerting rules for different providers via the helm value `managementCluster.provider.kind`.
+* The current implementation only renders rules for different providers via the helm value `managementCluster.provider.kind`.
 Any other decision in the current helm chart is ignored for now (e.g. `helm/prometheus-rules/templates/alerting-rules/alertmanager-dashboard.rules.yml`)
-* Only alerting-rules are being tested, other folders (recording rules) are ignored.
 
 #### A word on the testing logic
 
@@ -211,9 +224,9 @@ Show success
 
 You can filter which rules files you will test with a regular expression:
 ```
-make test test_filter=grafana.management-cluster.rules.yml
-make test test_filter=grafana
-make test test_filter=gr.*na
+make test-rules test_filter=grafana.management-cluster.rules.yml
+make test-rules test_filter=grafana
+make test-rules test_filter=gr.*na
 ```
 
 #### Test "no data" case
@@ -267,3 +280,39 @@ Those rules can be written according to this template :
 ```
 
 [unit testing rules]: https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/
+
+## Alertmanager inhibition dependency check
+
+In order for Alertmanager inhibition to work we need 3 elements:
+  - an Alerting rule with some source labels
+  - an Inhibition definition mapping source labels to target labels in the alertmanager config file
+  - an Alert rule with some target labels
+
+An alert having a target label will be inhibited whenever the condition specified in the target label's name is fulfilled. This is why target labels' names are most of the time prefixed by "cancel_if_" (e.g "cancel_if_scrape_timeout").
+
+An alert with a source label will define the conditions under which the target label is effective. For example, if an alert with the "scrape_timeout" label were to fire, all other alerts having the corresponding target label, i.e "cancel_if_scrape_timeout" would be inhibited.
+
+This is possible thanks to the alertmanager config file stored in the Prometheus-Meta-operator which defines the target/source labels coupling.
+
+This is what we call the inhibition dependency chain.
+
+One can check whether inhibition labels (mostly "cancel_if_" prefixed ones) are well defined and triggered by a corresponding label in the alerting rules by running the `make test-inhibitions` command at the projet's root directory.
+
+This command will output the list of missing labels. Each of them will need to be defined in either the alerting rules or the alertmanager config file depending on its nature : either an inhibition label or its source label.
+If there is no labels outputed, this means tests passed and did not find missing inhibition labels.
+
+![inhibition-graph](assets/inhibition-graph.png)
+
+The inhibition labels checking script is also run automatically at PR's creation and will block merging when it fails.
+
+### Limitations (might happen)
+
+- Inhibition checking script does not trigger at PR's creation : stuck in `pending` state. Must push empty commit to trigger it
+- When ran for the first time in a PR (after empty commit) usually fails to retrieve the alertmanager config file's data and thus fires error stating that all labels are missing.
+- Must manually re-run the action for it to pass
+
+## Opsrecipe check
+
+You can run `make test-opsrecipes` to check if linked opsrecipes are valid.
+
+This check is not part of the global `make test` command until we fix all missing / wrong opsrecipes.

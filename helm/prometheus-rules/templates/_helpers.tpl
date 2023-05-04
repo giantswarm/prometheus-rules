@@ -23,6 +23,7 @@ app.giantswarm.io/branch: {{ .Values.project.branch | replace "#" "-" | replace 
 app.giantswarm.io/commit: {{ .Values.project.commit | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantswarm.io/team" | default "atlas" | quote }}
 helm.sh/chart: {{ include "chart" . | quote }}
 giantswarm.io/service-type: {{ .Values.serviceType }}
 {{- end -}}
@@ -31,7 +32,8 @@ giantswarm.io/service-type: {{ .Values.serviceType }}
 {{- if has .Values.managementCluster.provider.kind (list "kvm" "openstack" "cloud-director" "vsphere") -}}
 rocket
 {{- else if has .Values.managementCluster.provider.kind (list "gcp" "capa") -}}
-hydra
+{{- /* hydra alerts merged into phoenix business hours on-call */ -}}
+phoenix
 {{- else if eq .Values.managementCluster.provider.kind "capz" -}}
 clippy
 {{- else -}}
@@ -56,27 +58,15 @@ true
 {{- end -}}
 
 {{- define "isClusterServiceInstalled" -}}
-{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa" "capz") -}}
-false
-{{- else -}}
-true
-{{- end -}}
+{{ not (eq .Values.managementCluster.provider.flavor "capi") }}
 {{- end -}}
 
 {{- define "isVaultBeingMonitored" -}}
-{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa" "capz") -}}
-false
-{{- else -}}
-true
-{{- end -}}
+{{ not (eq .Values.managementCluster.provider.flavor "capi") }}
 {{- end -}}
 
 {{- define "isBastionBeingMonitored" -}}
-{{- if has .Values.managementCluster.provider.kind (list "gcp" "openstack" "cloud-director" "vsphere" "capa" "capz") -}}
-false
-{{- else -}}
-true
-{{- end -}}
+{{ not (eq .Values.managementCluster.provider.flavor "capi") }}
 {{- end -}}
 
 {{- define "namespaceNotGiantswarm" -}}

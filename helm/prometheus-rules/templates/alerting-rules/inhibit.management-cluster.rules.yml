@@ -9,7 +9,7 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: inhibit
+  - name: inhibit.management-cluster
     rules:
     - alert: InhibitionClusterStatusCreating
       annotations:

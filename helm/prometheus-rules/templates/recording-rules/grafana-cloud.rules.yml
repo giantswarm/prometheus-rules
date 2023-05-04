@@ -3,11 +3,11 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: cortex.recording.rules
+  name: grafana-cloud.recording.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: cortex.recording
+  - name: grafana-cloud.recording
     rules:
     - expr: sum(alertmanager_alerts{state="active"})
       record: aggregation:alertmanager:alerts_active_total
@@ -233,6 +233,9 @@ spec:
     # Kyverno failing policies
     - expr: sum(kyverno_policy_results_total{rule_result="fail"}) by (policy_type, policy_name)
       record: aggregation:kyverno_policy_failures
+    # Kyverno-related resource counts by kind
+    - expr: sum(etcd_kubernetes_resources_count{kind=~".*.kyverno.io|clusterpolicyreports.wgpolicyk8s.io|policyreports.wgpolicyk8s.io"}) by (cluster_id, kind)
+      record: aggregation:kyverno_resource_counts
     # Kyverno policy status by team
     - expr: |-
         sum(

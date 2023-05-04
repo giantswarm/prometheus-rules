@@ -63,7 +63,7 @@ spec:
       annotations:
         description: '{{`Persistent volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
         opsrecipe: low-disk-space/#persistent-volume
-      expr: 100 * ((node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*"}) * on (pod_id) group_left label_replace(kube_pod_info{priority_class!="prometheus"}, "pod_id", "$1", "uid", "(.*)")) < 10
+      expr: 100 * ((node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*"}) * on (pod) group_left kube_pod_info{priority_class!="prometheus"}) < 10
       for: 10m
       labels:
         area: kaas

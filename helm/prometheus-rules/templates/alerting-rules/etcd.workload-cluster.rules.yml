@@ -22,7 +22,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        cancel_if_master_node_down: "true"
+        cancel_if_control_plane_node_down: "true"
         cancel_if_kubelet_down: "true"
         severity: page
         team: {{ include "providerTeam" . }}
@@ -43,8 +43,8 @@ spec:
       annotations:
         description: '{{`Etcd ({{ $labels.instance }}) has a too large database.`}}'
         opsrecipe: etcd-db-size-too-large/
-      expr: (etcd_debugging_mvcc_db_total_size_in_bytes{cluster_type="workload_cluster"} - etcd_mvcc_db_total_size_in_use_in_bytes{cluster_type="workload_cluster"}) / etcd_mvcc_db_total_size_in_use_in_bytes{cluster_type="workload_cluster"} > 0.5
-      for: 24h
+      expr: (etcd_mvcc_db_total_size_in_bytes{cluster_type="workload_cluster"} / etcd_server_quota_backend_bytes{cluster_type="workload_cluster"}) * 100 > 80
+      for: 15m
       labels:
         area: kaas
         severity: page
@@ -69,6 +69,18 @@ spec:
       labels:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: etcd
+    - alert: WorkloadClusterEtcdMetricsMissing
+      annotations:
+        description: '{{`Etcd metrics missing for {{ $labels.cluster_id }}.`}}'
+        opsrecipe: etcd-metrics-missing/
+      expr: count(up{cluster_type="workload_cluster"}) by (cluster_id) unless count(etcd_server_id) by (cluster_id)
+      for: 1h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: true
         severity: page
         team: {{ include "providerTeam" . }}
         topic: etcd

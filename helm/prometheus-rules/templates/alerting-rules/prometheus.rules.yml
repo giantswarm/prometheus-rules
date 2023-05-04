@@ -10,6 +10,25 @@ spec:
   groups:
   - name: prometheus
     rules:
+    - alert: PrometheusAvailabilityRatio
+      annotations:
+        description: '{{`Prometheus {{$labels.pod}} has availability ratio of {{ printf "%.2f" $value }} (min 0.8) over the last 10 hours.`}}'
+        opsrecipe: prometheus-resource-limit-reached/
+        dashboard: promavailability/prometheus-availability
+      expr: avg(avg_over_time(kube_pod_status_ready{namespace=~"(.*)-prometheus", condition="true"}[10h])) by (pod) < 0.8
+      # At startup, availability starts at 0 for a few minutes. So ratio grows slowly from 0.
+      for: 30m
+      labels:
+        area: empowerment
+        cancel_if_any_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
     - alert: PrometheusCantCommunicateWithKubernetesAPI
       annotations:
         description: '{{`Prometheus can''t communicate with Kubernetes API.`}}'
@@ -22,7 +41,8 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_cluster_status_deleting: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_cluster_has_no_workers: "true"
+        cancel_if_outside_working_hours: "false"
         severity: page
         team: atlas
         topic: observability
@@ -43,7 +63,8 @@ spec:
       annotations:
         description: '{{`Prometheus can''t communicate with Remote Storage API at {{ $labels.url }}.`}}'
         opsrecipe: prometheus-cant-communicate-with-remote-storage-api/
-      expr: rate(prometheus_remote_storage_samples_failed_total{instance!="prometheus-agent"}[1h]) > 0.1 or rate(prometheus_remote_storage_samples_total{instance!="prometheus-agent"}[1h]) == 0 or rate(prometheus_remote_storage_metadata_retried_total{instance!="prometheus-agent"}[5m]) > 0
+        dashboard: promRW001/prometheus-remote-write
+      expr: rate(prometheus_remote_storage_samples_failed_total[10m]) > 0.1 or rate(prometheus_remote_storage_samples_total[10m]) == 0 or rate(prometheus_remote_storage_metadata_retried_total[10m]) > 0
       for: 1h
       labels:
         area: empowerment
@@ -73,7 +94,7 @@ spec:
       for: 1d
       labels:
         area: empowerment
-        severity: notify
+        severity: none
         team: atlas
         topic: observability
         cancel_if_outside_working_hours: "true"

@@ -27,8 +27,8 @@ spec:
       annotations:
         description: '{{`Etcd ({{ $labels.instance }}) has a too large database.`}}'
         opsrecipe: etcd-db-size-too-large/
-      expr: (etcd_debugging_mvcc_db_total_size_in_bytes{cluster_type="management_cluster"} - etcd_mvcc_db_total_size_in_use_in_bytes{cluster_type="management_cluster"}) / etcd_mvcc_db_total_size_in_use_in_bytes{cluster_type="management_cluster"} > 0.5
-      for: 24h
+      expr: (etcd_mvcc_db_total_size_in_bytes{cluster_type="management_cluster"} / etcd_server_quota_backend_bytes{cluster_type="management_cluster"}) * 100 > 80
+      for: 90m
       labels:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
@@ -49,7 +49,7 @@ spec:
       annotations:
         description: '{{`Etcd has no leader.`}}'
         opsrecipe: etcd-has-no-leader/
-      expr: etcd_server_has_leader{role="master", cluster_type="management_cluster"} == 0
+      expr: etcd_server_has_leader{role=~"master|control-plane", cluster_type="management_cluster"} == 0
       for: 5m
       labels:
         area: kaas
@@ -57,3 +57,16 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: etcd
+    - alert: ManagementClusterEtcdMetricsMissing
+      annotations:
+        description: '{{`Etcd metrics missing for {{ $labels.cluster_id }}.`}}'
+        opsrecipe: etcd-metrics-missing/
+      expr: count(up{cluster_type="management_cluster"}) by (cluster_id) unless count(etcd_server_id) by (cluster_id)
+      for: 1h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: true
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: etcd
+

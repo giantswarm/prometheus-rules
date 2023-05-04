@@ -44,7 +44,6 @@ templates/alerting-rules/inhibit.all.rules.yml
 templates/alerting-rules/inhibit.management-cluster.rules.yml
 templates/alerting-rules/job.rules.yml
 templates/alerting-rules/kiam.rules.yml
-templates/alerting-rules/kong.rules.yml
 templates/alerting-rules/kube-state-metrics.rules.yml
 templates/alerting-rules/kubelet.management-cluster.rules.yml
 templates/alerting-rules/kubelet.workload-cluster.rules.yml
@@ -75,9 +74,10 @@ templates/alerting-rules/timesync.rules.yml
 templates/alerting-rules/up.all.rules.yml
 templates/alerting-rules/up.management-cluster.rules.yml
 templates/alerting-rules/vault.rules.yml
-templates/recording-rules/cortex.rules.yml
+templates/recording-rules/grafana-cloud.rules.yml
 templates/recording-rules/gs-managed-app-deployment-status.rules.yml
-templates/recording-rules/helm-operations.rules.yml
 templates/recording-rules/kube-prometheus-mixins.rules.yml
 templates/recording-rules/kubernetes-mixins.rules.yml
 templates/recording-rules/service-level.rules.yml
+templates/recording-rules/mimir-mixins.rules.yml
+templates/recording-rules/loki-mixins.rules.yml

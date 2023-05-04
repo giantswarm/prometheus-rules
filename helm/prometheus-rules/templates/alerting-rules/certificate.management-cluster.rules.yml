@@ -9,7 +9,7 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: certificate
+  - name: certificate.management-cluster
     rules:
     - alert: ManagementClusterKVMCertificateWillExpireInLessThanOneMonth
       annotations:

@@ -8,7 +8,7 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: inhibit
+  - name: inhibit.all
     rules:
     - alert: InhibitionOutsideWorkingHours
       annotations:
@@ -28,20 +28,11 @@ spec:
         topic: kubernetes
       annotations:
         description: '{{`Kubelet ({{ $labels.instance }}) is down.`}}'
-    - alert: InhibitionKubeStateMetricsDown
-      annotations:
-        description: '{{`KubeStateMetrics ({{ $labels.instance }}) is down.`}}'
-      expr: up{app="kube-state-metrics"} == 0 or absent(up{app="kube-state-metrics"} == 1)
-      labels:
-        area: kaas
-        kube_state_metrics_down: "true"
-        team: phoenix
-        topic: status
     # TODO: fix with real expr 
     - alert: ScrapeTimeout
       annotations:
         description: '{{`Never fires (dummy alert).`}}'
-      expr: vector(0)
+      expr: vector(0) > 1
       labels:
         area: empowerment
         scrape_timeout: "true"
@@ -51,7 +42,7 @@ spec:
     - alert: ApiServerDown
       annotations:
         description: '{{`Never fires (dummy alert).`}}'
-      expr: vector(0)
+      expr: vector(0) > 1
       labels:
         area: empowerment
         apiserver_down: "true"

@@ -22,7 +22,21 @@ spec:
         area: managedservices
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: "false"
+        severity: page
+        team: cabbage
+        topic: kong
+    - alert: KongDeploymentNotSatisfied
+      annotations:
+        description: '{{`Kong Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        opsrecipe: workload-cluster-managed-deployment-not-satisfied/
+      expr: managed_app_deployment_status_replicas_available{managed_app=~"kong.*"} / managed_app_deployment_status_replicas_available{managed_app=~"kong.*"} < 0.9
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "false"
         severity: page
         team: cabbage
         topic: kong

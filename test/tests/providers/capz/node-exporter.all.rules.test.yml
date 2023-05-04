@@ -38,7 +38,7 @@ tests:
   # NodeExporterDeviceError tests
   - interval: 1m
     input_series:
-      - series: 'node_filesystem_device_error{device="/dev/mapper/usr", fstype="ext4", instance="10.0.5.111:10300", mountpoint="/usr"}'
+      - series: 'node_filesystem_device_error{device="/dev/mapper/usr", fstype="ext4", instance="10.0.5.111:10300", mountpoint="/var/lib/kubelet", cluster_type="workload_cluster"}'
         values: "_x20 1+0x20 0+0x20"
     alert_rule_test:
       - alertname: NodeExporterDeviceError
@@ -54,13 +54,14 @@ tests:
               alertname: NodeExporterDeviceError
               area: "kaas"
               cancel_if_outside_working_hours: "true"
+              cluster_type: "workload_cluster"
               device: "/dev/mapper/usr"
               fstype: "ext4"
               instance: "10.0.5.111:10300"
-              mountpoint: "/usr"
+              mountpoint: "/var/lib/kubelet"
               severity: "page"
               team: "clippy"
               topic: "observability"
             exp_annotations:
-              description: "NodeExporter Mountpoint /usr on device /dev/mapper/usr on 10.0.5.111:10300 is erroring."
+              description: "NodeExporter Mountpoint /var/lib/kubelet on device /dev/mapper/usr on 10.0.5.111:10300 is erroring."
               opsrecipe: "node-exporter-device-error/"

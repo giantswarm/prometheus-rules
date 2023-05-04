@@ -9,428 +9,349 @@ spec:
   groups:
   - name: kube-apiserver-burnrate.rules
     rules:
-      - expr: >
+      - expr: |
           (
             (
               # too slow
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{component="apiserver",verb=~"LIST|GET"}[1d]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[1d]))
               -
               (
                 (
-                  sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope=~"resource|",le="1"}[1d]))
+                  sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le="1"}[1d]))
                   or
                   vector(0)
                 )
                 +
-                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope="namespace",le="5"}[1d]))
+                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le="5"}[1d]))
                 +
-                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope="cluster",le="30"}[1d]))
+                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le="30"}[1d]))
               )
             )
             +
             # errors
-            sum by (cluster_id) (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET",code=~"5.."}[1d]))
+            sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[1d]))
           )
-
           /
-
-          sum by (cluster_id)
-          (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET"}[1d]))
+          sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[1d]))
         labels:
           verb: read
-        record: 'apiserver_request:burnrate1d'
-      - expr: >
+        record: apiserver_request:burnrate1d
+      - expr: |
           (
             (
               # too slow
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{component="apiserver",verb=~"LIST|GET"}[1h]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[1h]))
               -
               (
                 (
-                  sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope=~"resource|",le="1"}[1h]))
+                  sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le="1"}[1h]))
                   or
                   vector(0)
                 )
                 +
-                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope="namespace",le="5"}[1h]))
+                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le="5"}[1h]))
                 +
-                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope="cluster",le="30"}[1h]))
+                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le="30"}[1h]))
               )
             )
             +
             # errors
-            sum by (cluster_id) (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET",code=~"5.."}[1h]))
+            sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[1h]))
           )
-
           /
-
-          sum by (cluster_id)
-          (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET"}[1h]))
+          sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[1h]))
         labels:
           verb: read
-        record: 'apiserver_request:burnrate1h'
-      - expr: >
+        record: apiserver_request:burnrate1h
+      - expr: |
           (
             (
               # too slow
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{component="apiserver",verb=~"LIST|GET"}[2h]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[2h]))
               -
               (
                 (
-                  sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope=~"resource|",le="1"}[2h]))
+                  sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le="1"}[2h]))
                   or
                   vector(0)
                 )
                 +
-                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope="namespace",le="5"}[2h]))
+                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le="5"}[2h]))
                 +
-                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope="cluster",le="30"}[2h]))
+                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le="30"}[2h]))
               )
             )
             +
             # errors
-            sum by (cluster_id) (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET",code=~"5.."}[2h]))
+            sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[2h]))
           )
-
           /
-
-          sum by (cluster_id)
-          (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET"}[2h]))
+          sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[2h]))
         labels:
           verb: read
-        record: 'apiserver_request:burnrate2h'
-      - expr: >
+        record: apiserver_request:burnrate2h
+      - expr: |
           (
             (
               # too slow
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{component="apiserver",verb=~"LIST|GET"}[30m]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[30m]))
               -
               (
                 (
-                  sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope=~"resource|",le="1"}[30m]))
+                  sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le="1"}[30m]))
                   or
                   vector(0)
                 )
                 +
-                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope="namespace",le="5"}[30m]))
+                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le="5"}[30m]))
                 +
-                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope="cluster",le="30"}[30m]))
+                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le="30"}[30m]))
               )
             )
             +
             # errors
-            sum by (cluster_id) (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET",code=~"5.."}[30m]))
+            sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[30m]))
           )
-
           /
-
-          sum by (cluster_id)
-          (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET"}[30m]))
+          sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[30m]))
         labels:
           verb: read
-        record: 'apiserver_request:burnrate30m'
-      - expr: >
+        record: apiserver_request:burnrate30m
+      - expr: |
           (
             (
               # too slow
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{component="apiserver",verb=~"LIST|GET"}[3d]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[3d]))
               -
               (
                 (
-                  sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope=~"resource|",le="1"}[3d]))
+                  sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le="1"}[3d]))
                   or
                   vector(0)
                 )
                 +
-                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope="namespace",le="5"}[3d]))
+                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le="5"}[3d]))
                 +
-                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope="cluster",le="30"}[3d]))
+                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le="30"}[3d]))
               )
             )
             +
             # errors
-            sum by (cluster_id) (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET",code=~"5.."}[3d]))
+            sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[3d]))
           )
-
           /
-
-          sum by (cluster_id)
-          (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET"}[3d]))
+          sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[3d]))
         labels:
           verb: read
-        record: 'apiserver_request:burnrate3d'
-      - expr: >
+        record: apiserver_request:burnrate3d
+      - expr: |
           (
             (
               # too slow
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{component="apiserver",verb=~"LIST|GET"}[5m]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[5m]))
               -
               (
                 (
-                  sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope=~"resource|",le="1"}[5m]))
+                  sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le="1"}[5m]))
                   or
                   vector(0)
                 )
                 +
-                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope="namespace",le="5"}[5m]))
+                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le="5"}[5m]))
                 +
-                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope="cluster",le="30"}[5m]))
+                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le="30"}[5m]))
               )
             )
             +
             # errors
-            sum by (cluster_id) (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET",code=~"5.."}[5m]))
+            sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[5m]))
           )
-
           /
-
-          sum by (cluster_id)
-          (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET"}[5m]))
+          sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[5m]))
         labels:
           verb: read
-        record: 'apiserver_request:burnrate5m'
-      - expr: >
+        record: apiserver_request:burnrate5m
+      - expr: |
           (
             (
               # too slow
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{component="apiserver",verb=~"LIST|GET"}[6h]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[6h]))
               -
               (
                 (
-                  sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope=~"resource|",le="1"}[6h]))
+                  sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le="1"}[6h]))
                   or
                   vector(0)
                 )
                 +
-                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope="namespace",le="5"}[6h]))
+                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le="5"}[6h]))
                 +
-                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET",scope="cluster",le="30"}[6h]))
+                sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le="30"}[6h]))
               )
             )
             +
             # errors
-            sum by (cluster_id) (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET",code=~"5.."}[6h]))
+            sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[6h]))
           )
-
           /
-
-          sum by (cluster_id)
-          (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET"}[6h]))
+          sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[6h]))
         labels:
           verb: read
-        record: 'apiserver_request:burnrate6h'
-      - expr: >
+        record: apiserver_request:burnrate6h
+      - expr: |
           (
             (
               # too slow
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[1d]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[1d]))
               -
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"POST|PUT|PATCH|DELETE",le="1"}[1d]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le="1"}[1d]))
             )
             +
-            sum by (cluster_id) (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[1d]))
+            sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[1d]))
           )
-
           /
-
-          sum by (cluster_id)
-          (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[1d]))
+          sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[1d]))
         labels:
           verb: write
-        record: 'apiserver_request:burnrate1d'
-      - expr: >
+        record: apiserver_request:burnrate1d
+      - expr: |
           (
             (
               # too slow
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[1h]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[1h]))
               -
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"POST|PUT|PATCH|DELETE",le="1"}[1h]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le="1"}[1h]))
             )
             +
-            sum by (cluster_id) (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[1h]))
+            sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[1h]))
           )
-
           /
-
-          sum by (cluster_id)
-          (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[1h]))
+          sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[1h]))
         labels:
           verb: write
-        record: 'apiserver_request:burnrate1h'
-      - expr: >
+        record: apiserver_request:burnrate1h
+      - expr: |
           (
             (
               # too slow
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[2h]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[2h]))
               -
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"POST|PUT|PATCH|DELETE",le="1"}[2h]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le="1"}[2h]))
             )
             +
-            sum by (cluster_id) (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[2h]))
+            sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[2h]))
           )
-
           /
-
-          sum by (cluster_id)
-          (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[2h]))
+          sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[2h]))
         labels:
           verb: write
-        record: 'apiserver_request:burnrate2h'
-      - expr: >
+        record: apiserver_request:burnrate2h
+      - expr: |
           (
             (
               # too slow
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[30m]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[30m]))
               -
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"POST|PUT|PATCH|DELETE",le="1"}[30m]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le="1"}[30m]))
             )
             +
-            sum by (cluster_id) (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[30m]))
+            sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[30m]))
           )
-
           /
-
-          sum by (cluster_id)
-          (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[30m]))
+          sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[30m]))
         labels:
           verb: write
-        record: 'apiserver_request:burnrate30m'
-      - expr: >
+        record: apiserver_request:burnrate30m
+      - expr: |
           (
             (
               # too slow
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[3d]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[3d]))
               -
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"POST|PUT|PATCH|DELETE",le="1"}[3d]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le="1"}[3d]))
             )
             +
-            sum by (cluster_id) (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[3d]))
+            sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[3d]))
           )
-
           /
-
-          sum by (cluster_id)
-          (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[3d]))
+          sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[3d]))
         labels:
           verb: write
-        record: 'apiserver_request:burnrate3d'
-      - expr: >
+        record: apiserver_request:burnrate3d
+      - expr: |
           (
             (
               # too slow
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[5m]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[5m]))
               -
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"POST|PUT|PATCH|DELETE",le="1"}[5m]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le="1"}[5m]))
             )
             +
-            sum by (cluster_id) (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[5m]))
+            sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[5m]))
           )
-
           /
-
-          sum by (cluster_id)
-          (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[5m]))
+          sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[5m]))
         labels:
           verb: write
-        record: 'apiserver_request:burnrate5m'
-      - expr: >
+        record: apiserver_request:burnrate5m
+      - expr: |
           (
             (
               # too slow
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[6h]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[6h]))
               -
-              sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"POST|PUT|PATCH|DELETE",le="1"}[6h]))
+              sum by (cluster_id) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le="1"}[6h]))
             )
             +
-            sum by (cluster_id) (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[6h]))
+            sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[6h]))
           )
-
           /
-
-          sum by (cluster_id)
-          (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[6h]))
+          sum by (cluster_id) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[6h]))
         labels:
           verb: write
-        record: 'apiserver_request:burnrate6h'
+        record: apiserver_request:burnrate6h
   - name: kube-apiserver-histogram.rules
     rules:
-      - expr: >
-          histogram_quantile(0.99, sum by (cluster_id, le, resource)
-          (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"LIST|GET"}[5m])))
-          > 0
+      - expr: |
+          histogram_quantile(0.99, sum by (cluster_id, le, resource) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[5m]))) > 0
         labels:
-          quantile: '0.99'
+          quantile: "0.99"
           verb: read
-        record: 'cluster_quantile:apiserver_request_duration_seconds:histogram_quantile'
-      - expr: >
-          histogram_quantile(0.99, sum by (cluster_id, le, resource)
-          (rate(apiserver_request_duration_seconds_bucket{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[5m])))
-          > 0
+        record: cluster_quantile:apiserver_request_duration_seconds:histogram_quantile
+      - expr: |
+          histogram_quantile(0.99, sum by (cluster_id, le, resource) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[5m]))) > 0
         labels:
-          quantile: '0.99'
+          quantile: "0.99"
           verb: write
-        record: 'cluster_quantile:apiserver_request_duration_seconds:histogram_quantile'
-      - expr: >
-          histogram_quantile(0.99,
-          sum(rate(apiserver_request_duration_seconds_bucket{component="apiserver",subresource!="log",verb!~"LIST|WATCH|WATCHLIST|DELETECOLLECTION|PROXY|CONNECT"}[5m]))
-          without(instance, pod))
-        labels:
-          quantile: '0.99'
-        record: 'cluster_quantile:apiserver_request_duration_seconds:histogram_quantile'
-      - expr: >
-          histogram_quantile(0.9,
-          sum(rate(apiserver_request_duration_seconds_bucket{component="apiserver",subresource!="log",verb!~"LIST|WATCH|WATCHLIST|DELETECOLLECTION|PROXY|CONNECT"}[5m]))
-          without(instance, pod))
-        labels:
-          quantile: '0.9'
-        record: 'cluster_quantile:apiserver_request_duration_seconds:histogram_quantile'
-      - expr: >
-          histogram_quantile(0.5,
-          sum(rate(apiserver_request_duration_seconds_bucket{component="apiserver",subresource!="log",verb!~"LIST|WATCH|WATCHLIST|DELETECOLLECTION|PROXY|CONNECT"}[5m]))
-          without(instance, pod))
-        labels:
-          quantile: '0.5'
-        record: 'cluster_quantile:apiserver_request_duration_seconds:histogram_quantile'
+        record: cluster_quantile:apiserver_request_duration_seconds:histogram_quantile
   - interval: 3m
     name: kube-apiserver-availability.rules
     rules:
-      - expr: >
-          avg_over_time(code_verb:apiserver_request_total:increase1h[30d]) * 24
-          * 30
-        record: 'code_verb:apiserver_request_total:increase30d'
-      - expr: >
-          sum by (cluster_id, code)
-          (code_verb:apiserver_request_total:increase30d{verb=~"LIST|GET"})
+      - expr: |
+          avg_over_time(code_verb:apiserver_request_total:increase1h[30d]) * 24 * 30
+        record: code_verb:apiserver_request_total:increase30d
+      - expr: |
+          sum by (cluster_id, code) (code_verb:apiserver_request_total:increase30d{verb=~"LIST|GET"})
         labels:
           verb: read
-        record: 'code:apiserver_request_total:increase30d'
-      - expr: >
-          sum by (cluster_id, code)
-          (code_verb:apiserver_request_total:increase30d{verb=~"POST|PUT|PATCH|DELETE"})
+        record: code:apiserver_request_total:increase30d
+      - expr: |
+          sum by (cluster_id, code) (code_verb:apiserver_request_total:increase30d{verb=~"POST|PUT|PATCH|DELETE"})
         labels:
           verb: write
-        record: 'code:apiserver_request_total:increase30d'
-      - expr: >
-          sum by (cluster_id, verb, scope)
-          (increase(apiserver_request_duration_seconds_count[1h]))
-        record: 'cluster_verb_scope:apiserver_request_duration_seconds_count:increase1h'
-      - expr: >
-          sum by (cluster_id, verb, scope)
-          (avg_over_time(cluster_verb_scope:apiserver_request_duration_seconds_count:increase1h[30d])
-          * 24 * 30)
-        record: >-
-          cluster_verb_scope:apiserver_request_duration_seconds_count:increase30d
-      - expr: >
-          sum by (cluster_id, verb, scope, le)
-          (increase(apiserver_request_duration_seconds_bucket[1h]))
-        record: >-
-          cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase1h
-      - expr: >
-          sum by (cluster_id, verb, scope, le)
-          (avg_over_time(cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase1h[30d])
-          * 24 * 30)
-        record: >-
-          cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d
+        record: code:apiserver_request_total:increase30d
+      - expr: |
+          sum by (cluster_id, verb, scope) (increase(apiserver_request_duration_seconds_count[1h]))
+        record: cluster_verb_scope:apiserver_request_duration_seconds_count:increase1h
+      - expr: |
+          sum by (cluster_id, verb, scope) (avg_over_time(cluster_verb_scope:apiserver_request_duration_seconds_count:increase1h[30d]) * 24 * 30)
+        record: cluster_verb_scope:apiserver_request_duration_seconds_count:increase30d
+      - expr: |
+          sum by (cluster_id, verb, scope, le) (increase(apiserver_request_duration_seconds_bucket[1h]))
+        record: cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase1h
+      - expr: |
+          sum by (cluster_id, verb, scope, le) (avg_over_time(cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase1h[30d]) * 24 * 30)
+        record: cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d
       - expr: |
           1 - (
             (
@@ -462,8 +383,8 @@ spec:
           sum by (cluster_id) (code:apiserver_request_total:increase30d)
         labels:
           verb: all
-        record: 'apiserver_request:availability30d'
-      - expr: >
+        record: apiserver_request:availability30d
+      - expr: |
           1 - (
             sum by (cluster_id) (cluster_verb_scope:apiserver_request_duration_seconds_count:increase30d{verb=~"LIST|GET"})
             -
@@ -483,15 +404,12 @@ spec:
             # errors
             sum by (cluster_id) (code:apiserver_request_total:increase30d{verb="read",code=~"5.."} or vector(0))
           )
-
           /
-
-          sum by (cluster_id)
-          (code:apiserver_request_total:increase30d{verb="read"})
+          sum by (cluster_id) (code:apiserver_request_total:increase30d{verb="read"})
         labels:
           verb: read
-        record: 'apiserver_request:availability30d'
-      - expr: >
+        record: apiserver_request:availability30d
+      - expr: |
           1 - (
             (
               # too slow
@@ -503,86 +421,72 @@ spec:
             # errors
             sum by (cluster_id) (code:apiserver_request_total:increase30d{verb="write",code=~"5.."} or vector(0))
           )
-
           /
-
-          sum by (cluster_id)
-          (code:apiserver_request_total:increase30d{verb="write"})
+          sum by (cluster_id) (code:apiserver_request_total:increase30d{verb="write"})
         labels:
           verb: write
-        record: 'apiserver_request:availability30d'
-      - expr: >
-          sum by (cluster_id,code,resource)
-          (rate(apiserver_request_total{component="apiserver",verb=~"LIST|GET"}[5m]))
+        record: apiserver_request:availability30d
+      - expr: |
+          sum by (cluster_id,code,resource) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[5m]))
         labels:
           verb: read
-        record: 'code_resource:apiserver_request_total:rate5m'
-      - expr: >
-          sum by (cluster_id,code,resource)
-          (rate(apiserver_request_total{component="apiserver",verb=~"POST|PUT|PATCH|DELETE"}[5m]))
+        record: code_resource:apiserver_request_total:rate5m
+      - expr: |
+          sum by (cluster_id,code,resource) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[5m]))
         labels:
           verb: write
-        record: 'code_resource:apiserver_request_total:rate5m'
-      - expr: >
-          sum by (cluster_id, code, verb)
-          (increase(apiserver_request_total{component="apiserver",verb=~"LIST|GET|POST|PUT|PATCH|DELETE",code=~"2.."}[1h]))
-        record: 'code_verb:apiserver_request_total:increase1h'
-      - expr: >
-          sum by (cluster_id, code, verb)
-          (increase(apiserver_request_total{component="apiserver",verb=~"LIST|GET|POST|PUT|PATCH|DELETE",code=~"3.."}[1h]))
-        record: 'code_verb:apiserver_request_total:increase1h'
-      - expr: >
-          sum by (cluster_id, code, verb)
-          (increase(apiserver_request_total{component="apiserver",verb=~"LIST|GET|POST|PUT|PATCH|DELETE",code=~"4.."}[1h]))
-        record: 'code_verb:apiserver_request_total:increase1h'
-      - expr: >
-          sum by (cluster_id, code, verb)
-          (increase(apiserver_request_total{component="apiserver",verb=~"LIST|GET|POST|PUT|PATCH|DELETE",code=~"5.."}[1h]))
-        record: 'code_verb:apiserver_request_total:increase1h'
+        record: code_resource:apiserver_request_total:rate5m
+      - expr: |
+          sum by (cluster_id, code, verb) (increase(apiserver_request_total{app="kubernetes",verb=~"LIST|GET|POST|PUT|PATCH|DELETE",code=~"2.."}[1h]))
+        record: code_verb:apiserver_request_total:increase1h
+      - expr: |
+          sum by (cluster_id, code, verb) (increase(apiserver_request_total{app="kubernetes",verb=~"LIST|GET|POST|PUT|PATCH|DELETE",code=~"3.."}[1h]))
+        record: code_verb:apiserver_request_total:increase1h
+      - expr: |
+          sum by (cluster_id, code, verb) (increase(apiserver_request_total{app="kubernetes",verb=~"LIST|GET|POST|PUT|PATCH|DELETE",code=~"4.."}[1h]))
+        record: code_verb:apiserver_request_total:increase1h
+      - expr: |
+          sum by (cluster_id, code, verb) (increase(apiserver_request_total{app="kubernetes",verb=~"LIST|GET|POST|PUT|PATCH|DELETE",code=~"5.."}[1h]))
+        record: code_verb:apiserver_request_total:increase1h
   - name: k8s.rules
     rules:
-      - expr: >
+      - expr: |
           sum by (cluster_id, namespace, pod, container) (
             irate(container_cpu_usage_seconds_total{app="cadvisor", image!=""}[5m])
-          ) * on (cluster_id, namespace, pod) group_left(node) topk by (cluster_id,
-          namespace, pod) (
+          ) * on (cluster_id, namespace, pod) group_left(node) topk by (cluster_id, namespace, pod) (
             1, max by(cluster_id, namespace, pod, node) (kube_pod_info{node!=""})
           )
-        record: >-
-          node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate
+        record: node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate
       - expr: |
           container_memory_working_set_bytes{app="cadvisor", image!=""}
           * on (namespace, pod) group_left(node) topk by(namespace, pod) (1,
             max by(namespace, pod, node) (kube_pod_info{node!=""})
           )
-        record: 'node_namespace_pod_container:container_memory_working_set_bytes'
+        record: node_namespace_pod_container:container_memory_working_set_bytes
       - expr: |
           container_memory_rss{app="cadvisor", image!=""}
           * on (namespace, pod) group_left(node) topk by(namespace, pod) (1,
             max by(namespace, pod, node) (kube_pod_info{node!=""})
           )
-        record: 'node_namespace_pod_container:container_memory_rss'
+        record: node_namespace_pod_container:container_memory_rss
       - expr: |
           container_memory_cache{app="cadvisor", image!=""}
           * on (namespace, pod) group_left(node) topk by(namespace, pod) (1,
             max by(namespace, pod, node) (kube_pod_info{node!=""})
           )
-        record: 'node_namespace_pod_container:container_memory_cache'
+        record: node_namespace_pod_container:container_memory_cache
       - expr: |
           container_memory_swap{app="cadvisor", image!=""}
           * on (namespace, pod) group_left(node) topk by(namespace, pod) (1,
             max by(namespace, pod, node) (kube_pod_info{node!=""})
           )
-        record: 'node_namespace_pod_container:container_memory_swap'
-      - expr: >
-          kube_pod_container_resource_requests{resource="memory",app="kube-state-metrics"} 
-          * on (namespace, pod, cluster)
-
-          group_left() max by (namespace, pod, cluster) (
+        record: node_namespace_pod_container:container_memory_swap
+      - expr: |
+          kube_pod_container_resource_requests{resource="memory",app="kube-state-metrics"}  * on (namespace, pod, cluster_id)
+          group_left() max by (namespace, pod, cluster_id) (
             (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
           )
-        record: >-
-          cluster:namespace:pod_memory:active:kube_pod_container_resource_requests
+        record: cluster:namespace:pod_memory:active:kube_pod_container_resource_requests
       - expr: |
           sum by (namespace, cluster_id) (
               sum by (namespace, pod, cluster_id) (
@@ -593,15 +497,13 @@ spec:
                   )
               )
           )
-        record: 'namespace_memory:kube_pod_container_resource_requests:sum'
-      - expr: >
-          kube_pod_container_resource_requests{resource="cpu",app="kube-state-metrics"} 
-          * on (namespace, pod, cluster_id)
-
+        record: namespace_memory:kube_pod_container_resource_requests:sum
+      - expr: |
+          kube_pod_container_resource_requests{resource="cpu",app="kube-state-metrics"}  * on (namespace, pod, cluster_id)
           group_left() max by (namespace, pod, cluster_id) (
             (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
           )
-        record: 'cluster:namespace:pod_cpu:active:kube_pod_container_resource_requests'
+        record: cluster:namespace:pod_cpu:active:kube_pod_container_resource_requests
       - expr: |
           sum by (namespace, cluster_id) (
               sum by (namespace, pod, cluster_id) (
@@ -612,15 +514,13 @@ spec:
                   )
               )
           )
-        record: 'namespace_cpu:kube_pod_container_resource_requests:sum'
-      - expr: >
-          kube_pod_container_resource_limits{resource="memory",app="kube-state-metrics"} 
-          * on (namespace, pod, cluster_id)
-
+        record: namespace_cpu:kube_pod_container_resource_requests:sum
+      - expr: |
+          kube_pod_container_resource_limits{resource="memory",app="kube-state-metrics"}  * on (namespace, pod, cluster_id)
           group_left() max by (namespace, pod, cluster_id) (
             (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
           )
-        record: 'cluster:namespace:pod_memory:active:kube_pod_container_resource_limits'
+        record: cluster:namespace:pod_memory:active:kube_pod_container_resource_limits
       - expr: |
           sum by (namespace, cluster_id) (
               sum by (namespace, pod, cluster_id) (
@@ -631,15 +531,13 @@ spec:
                   )
               )
           )
-        record: 'namespace_memory:kube_pod_container_resource_limits:sum'
-      - expr: >
-          kube_pod_container_resource_limits{resource="cpu",app="kube-state-metrics"} 
-          * on (namespace, pod, cluster_id)
-
+        record: namespace_memory:kube_pod_container_resource_limits:sum
+      - expr: |
+          kube_pod_container_resource_limits{resource="cpu",app="kube-state-metrics"}  * on (namespace, pod, cluster_id)
           group_left() max by (namespace, pod, cluster_id) (
            (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
            )
-        record: 'cluster:namespace:pod_cpu:active:kube_pod_container_resource_limits'
+        record: cluster:namespace:pod_cpu:active:kube_pod_container_resource_limits
       - expr: |
           sum by (namespace, cluster_id) (
               sum by (namespace, pod, cluster_id) (
@@ -650,7 +548,7 @@ spec:
                   )
               )
           )
-        record: 'namespace_cpu:kube_pod_container_resource_limits:sum'
+        record: namespace_cpu:kube_pod_container_resource_limits:sum
       - expr: |
           max by (cluster_id, namespace, workload, pod) (
             label_replace(
@@ -667,7 +565,7 @@ spec:
           )
         labels:
           workload_type: deployment
-        record: 'namespace_workload_pod:kube_pod_owner:relabel'
+        record: namespace_workload_pod:kube_pod_owner:relabel
       - expr: |
           max by (cluster_id, namespace, workload, pod) (
             label_replace(
@@ -677,7 +575,7 @@ spec:
           )
         labels:
           workload_type: daemonset
-        record: 'namespace_workload_pod:kube_pod_owner:relabel'
+        record: namespace_workload_pod:kube_pod_owner:relabel
       - expr: |
           max by (cluster_id, namespace, workload, pod) (
             label_replace(
@@ -687,93 +585,79 @@ spec:
           )
         labels:
           workload_type: statefulset
-        record: 'namespace_workload_pod:kube_pod_owner:relabel'
+        record: namespace_workload_pod:kube_pod_owner:relabel
+      - expr: |
+          max by (cluster_id, namespace, workload, pod) (
+            label_replace(
+              kube_pod_owner{app="kube-state-metrics", owner_kind="Job"},
+              "workload", "$1", "owner_name", "(.*)"
+            )
+          )
+        labels:
+          workload_type: job
+        record: namespace_workload_pod:kube_pod_owner:relabel
   - name: kube-scheduler.rules
     rules:
-      - expr: >
-          histogram_quantile(0.99,
-          sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{app="kube-scheduler"}[5m]))
-          without(instance, pod))
+      - expr: |
+          histogram_quantile(0.99, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
-          quantile: '0.99'
-        record: >-
-          cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
-      - expr: >
-          histogram_quantile(0.99,
-          sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{app="kube-scheduler"}[5m]))
-          without(instance, pod))
+          quantile: "0.99"
+        record: cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
+      - expr: |
+          histogram_quantile(0.99, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
-          quantile: '0.99'
-        record: >-
-          cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
-      - expr: >
-          histogram_quantile(0.99,
-          sum(rate(scheduler_binding_duration_seconds_bucket{app="kube-scheduler"}[5m]))
-          without(instance, pod))
+          quantile: "0.99"
+        record: cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
+      - expr: |
+          histogram_quantile(0.99, sum(rate(scheduler_binding_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
-          quantile: '0.99'
-        record: 'cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile'
-      - expr: >
-          histogram_quantile(0.9,
-          sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{app="kube-scheduler"}[5m]))
-          without(instance, pod))
+          quantile: "0.99"
+        record: cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
+      - expr: |
+          histogram_quantile(0.9, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
-          quantile: '0.9'
-        record: >-
-          cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
-      - expr: >
-          histogram_quantile(0.9,
-          sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{app="kube-scheduler"}[5m]))
-          without(instance, pod))
+          quantile: "0.9"
+        record: cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
+      - expr: |
+          histogram_quantile(0.9, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
-          quantile: '0.9'
-        record: >-
-          cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
-      - expr: >
-          histogram_quantile(0.9,
-          sum(rate(scheduler_binding_duration_seconds_bucket{app="kube-scheduler"}[5m]))
-          without(instance, pod))
+          quantile: "0.9"
+        record: cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
+      - expr: |
+          histogram_quantile(0.9, sum(rate(scheduler_binding_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
-          quantile: '0.9'
-        record: 'cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile'
-      - expr: >
-          histogram_quantile(0.5,
-          sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{app="kube-scheduler"}[5m]))
-          without(instance, pod))
+          quantile: "0.9"
+        record: cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
+      - expr: |
+          histogram_quantile(0.5, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
-          quantile: '0.5'
-        record: >-
-          cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
-      - expr: >
-          histogram_quantile(0.5,
-          sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{app="kube-scheduler"}[5m]))
-          without(instance, pod))
+          quantile: "0.5"
+        record: cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
+      - expr: |
+          histogram_quantile(0.5, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
-          quantile: '0.5'
-        record: >-
-          cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
-      - expr: >
-          histogram_quantile(0.5,
-          sum(rate(scheduler_binding_duration_seconds_bucket{app="kube-scheduler"}[5m]))
-          without(instance, pod))
+          quantile: "0.5"
+        record: cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
+      - expr: |
+          histogram_quantile(0.5, sum(rate(scheduler_binding_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
-          quantile: '0.5'
-        record: 'cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile'
+          quantile: "0.5"
+        record: cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
   - name: node.rules
     rules:
       - expr: |
-          topk by(namespace, pod) (1,
-            max by (node, namespace, pod) (
+          topk by(cluster_id, namespace, pod) (1,
+            max by (cluster_id, node, namespace, pod) (
               label_replace(kube_pod_info{app="kube-state-metrics",node!=""}, "pod", "$1", "pod", "(.*)")
           ))
         record: 'node_namespace_pod:kube_pod_info:'
       - expr: |
-          count by (cluster_id, node) (sum by (node, cpu) (
-            node_cpu_seconds_total{app="node-exporter"}
-          * on (namespace, pod) group_left(node)
+          count by (cluster_id, node) (
+            node_cpu_seconds_total{mode="idle",app="node-exporter"}
+            * on (namespace, pod) group_left(node)
             topk by(namespace, pod) (1, node_namespace_pod:kube_pod_info:)
-          ))
-        record: 'node:node_num_cpu:sum'
+          )
+        record: node:node_num_cpu:sum
       - expr: |
           sum(
             node_memory_MemAvailable_bytes{app="node-exporter"} or
@@ -784,33 +668,33 @@ spec:
               node_memory_Slab_bytes{app="node-exporter"}
             )
           ) by (cluster_id)
-        record: ':node_memory_MemAvailable_bytes:sum'
+        record: :node_memory_MemAvailable_bytes:sum
+      - expr: |
+          avg by (cluster_id, node) (
+            sum without (mode) (
+              rate(node_cpu_seconds_total{mode!="idle",mode!="iowait",mode!="steal",app="node-exporter"}[5m])
+            )
+          )
+        record: node:node_cpu_utilization:ratio_rate5m
+      - expr: |
+          avg by (cluster_id) (
+            node:node_cpu_utilization:ratio_rate5m
+          )
+        record: cluster:node_cpu:ratio_rate5m
   - name: kubelet.rules
     rules:
-      - expr: >
-          histogram_quantile(0.99,
-          sum(rate(kubelet_pleg_relist_duration_seconds_bucket[5m])) by
-          (instance, le) * on(instance) group_left(node)
-          kubelet_node_name{app="kubelet"})
+      - expr: |
+          histogram_quantile(0.99, sum(rate(kubelet_pleg_relist_duration_seconds_bucket[5m])) by (cluster_id, instance, le) * on(cluster_id, instance) group_left(node) kubelet_node_name{app="kubelet"})
         labels:
-          quantile: '0.99'
-        record: 'node_quantile:kubelet_pleg_relist_duration_seconds:histogram_quantile'
-      - expr: >
-          histogram_quantile(0.9,
-          sum(rate(kubelet_pleg_relist_duration_seconds_bucket[5m])) by
-          (instance, le) * on(instance) group_left(node)
-          kubelet_node_name{app="kubelet"})
+          quantile: "0.99"
+        record: node_quantile:kubelet_pleg_relist_duration_seconds:histogram_quantile
+      - expr: |
+          histogram_quantile(0.9, sum(rate(kubelet_pleg_relist_duration_seconds_bucket[5m])) by (cluster_id, instance, le) * on(cluster_id, instance) group_left(node) kubelet_node_name{app="kubelet"})
         labels:
-          quantile: '0.9'
-        record: 'node_quantile:kubelet_pleg_relist_duration_seconds:histogram_quantile'
-      - expr: >
-          histogram_quantile(0.5,
-          sum(rate(kubelet_pleg_relist_duration_seconds_bucket[5m])) by
-          (instance, le) * on(instance) group_left(node)
-          kubelet_node_name{app="kubelet"})
+          quantile: "0.9"
+        record: node_quantile:kubelet_pleg_relist_duration_seconds:histogram_quantile
+      - expr: |
+          histogram_quantile(0.5, sum(rate(kubelet_pleg_relist_duration_seconds_bucket[5m])) by (cluster_id, instance, le) * on(cluster_id, instance) group_left(node) kubelet_node_name{app="kubelet"})
         labels:
-          quantile: '0.5'
-        record: 'node_quantile:kubelet_pleg_relist_duration_seconds:histogram_quantile'
-
-
-
+          quantile: "0.5"
+        record: node_quantile:kubelet_pleg_relist_duration_seconds:histogram_quantile

@@ -45,8 +45,11 @@ spec:
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
+      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog=~"giantswarm|cluster", team!~"^$|noteam"}, "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*") == 1
+      {{- else }}
       expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog="giantswarm", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
+      {{- end }}
       for: 30m
       labels:
         area: managedservices
@@ -57,13 +60,16 @@ spec:
         severity: page
         sig: none
         topic: releng
-    # If apps can't be installed - only for supported apps (coming from `giantswarm` catalog)
+    # If apps can't be installed - only for supported apps
     - alert: WorkloadClusterAppNotInstalled
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
+      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+      expr: label_replace(app_operator_app_info{status="not-installed", catalog=~"giantswarm|cluster", team!~"^$|noteam"}, "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*") == 1
+      {{- else }}
       expr: label_replace(app_operator_app_info{status="not-installed", catalog="giantswarm", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
+      {{- end }}
       for: 30m
       labels:
         area: managedservices
@@ -79,8 +85,11 @@ spec:
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
         opsrecipe: app-pending-update/
-      # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
+      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+      expr: label_replace(app_operator_app_info{catalog=~"giantswarm|cluster", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}, "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*") == 1
+      {{- else }}
       expr: label_replace(app_operator_app_info{catalog="giantswarm", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
+      {{- end }}
       for: 40m
       labels:
         area: managedservices
@@ -95,8 +104,11 @@ spec:
       annotations:
         description: '{{`App {{ $labels.name }} has no team label.`}}'
         opsrecipe: app-without-team-annotation/
-      # we have this Frankenstein for namespace checks because go (and prometheus) don't support negative lookaheads in regex
+      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+      expr: label_replace(app_operator_app_info{team=~"^$|noteam"}, "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*") == 1
+      {{- else }}
       expr: label_replace(app_operator_app_info{team=~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
+      {{- end }}
       for: 40m
       labels:
         area: managedservices
@@ -104,7 +116,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: true
+        cancel_if_outside_working_hours: "true"
         severity: notify
         team: atlas
         topic: releng

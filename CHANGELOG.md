@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Stop pushing to `openstack-app-collection`.
+
 ### Changed
 
 - Update Flux work queue limit to 1h from previous 30 min.

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated `PrometheusAvailabilityRatio` to handle only our prometheis hosted on the management cluster.
+- Updated `PrometheusAvailabilityRatio` to be executed only on MC prometheus.
 
 ## [2.97.0] - 2023-05-04
 

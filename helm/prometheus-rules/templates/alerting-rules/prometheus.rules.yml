@@ -10,25 +10,6 @@ spec:
   groups:
   - name: prometheus
     rules:
-    - alert: PrometheusAvailabilityRatio
-      annotations:
-        description: '{{`Prometheus {{$labels.pod}} has availability ratio of {{ printf "%.2f" $value }} (min 0.8) over the last hour.`}}'
-        opsrecipe: prometheus-resource-limit-reached/
-        dashboard: promavailability/prometheus-availability
-      expr: avg(avg_over_time(kube_pod_status_ready{namespace=~"(.*)-prometheus", condition="true"}[1h])) by (pod) < 0.8
-      # At startup, availability starts at 0 for a few minutes. So ratio grows slowly from 0.
-      for: 30m
-      labels:
-        area: empowerment
-        cancel_if_any_apiserver_down: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_has_no_workers: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
     - alert: PrometheusCantCommunicateWithKubernetesAPI
       annotations:
         description: '{{`Prometheus can''t communicate with Kubernetes API.`}}'

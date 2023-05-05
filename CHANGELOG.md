@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update Flux work queue limit to 1h from previous 30 min.
+
 ## [2.97.1] - 2023-05-05
 
 ### Changed
@@ -75,7 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix `WorkloadClusterControlPlaneNodeMissing` alerts for all providers. 
+- Fix `WorkloadClusterControlPlaneNodeMissing` alerts for all providers.
 
 ## [2.95.1] - 2023-04-27
 

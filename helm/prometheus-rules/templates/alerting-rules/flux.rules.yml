@@ -251,7 +251,7 @@ spec:
     - alert: FluxWorkqueueTooLong
       annotations:
         description: |-
-          {{`Flux artifacts are stuck in work queue for over 30 minutes and are not being reconciled.`}}
+          {{`Flux artifacts are stuck in work queue for over 1 hour and are not being reconciled.`}}
         opsrecipe: fluxcd-workqueue-too-long/
       expr: |
         sum by (name, namespace) (workqueue_unfinished_work_seconds{namespace=~"flux-giantswarm|flux-system"}) > 3600.0

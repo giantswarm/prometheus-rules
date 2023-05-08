@@ -277,6 +277,7 @@ spec:
             ) by (app, team)
           ) by (team, daemonset, app),
         "name", ",", "daemonset")
+      record: aggregation:kyverno_policy_daemonset_status_team
     # Kyverno policy status by team - StatefulSets
     - expr: |-
         label_join(

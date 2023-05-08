@@ -236,13 +236,13 @@ spec:
     # Kyverno-related resource counts by kind
     - expr: sum(etcd_kubernetes_resources_count{kind=~".*.kyverno.io|clusterpolicyreports.wgpolicyk8s.io|policyreports.wgpolicyk8s.io"}) by (cluster_id, kind)
       record: aggregation:kyverno_resource_counts
-    # Kyverno policy status by team
+    # Kyverno policy status by team - Deployments
     - expr: |-
         sum(
           label_join(policy_report_result{
             policy!="check-deprecated-apis-1-25",
             cluster_type="management_cluster",
-            kind=~"Deployment|StatefulSet|DaemonSet|Job|CronJob"
+            kind=~"Deployment"
             }, "deployment", ",", "name")
         ) by (deployment, category, policy, status) 
         * on(deployment) group_left(team, app) 
@@ -255,7 +255,94 @@ spec:
             app_operator_app_info{team!="noteam"}
           ) by (app, team)
         ) by (team, deployment, app)
-      record: aggregation:kyverno_policy_status_team
+      record: aggregation:kyverno_policy_deployment_status_team
+    # Kyverno policy status by team - DaemonSets
+    - expr: |-
+        label_join(
+          sum(
+            label_join(policy_report_result{
+              policy!="check-deprecated-apis-1-25",
+              cluster_type="management_cluster",
+              kind=~"DaemonSet"
+              }, "daemonset", ",", "name")
+          ) by (daemonset, category, policy, status) 
+          * on(daemonset) group_left(team, app) 
+          sum(
+            sum(
+              label_join(kube_daemonset_labels{}, "app", ",", "label_app_kubernetes_io_name")
+            ) by (daemonset, app) 
+            * on(app) group_left(team) 
+            sum(
+              app_operator_app_info{team!="noteam"}
+            ) by (app, team)
+          ) by (team, daemonset, app),
+        "name", ",", "daemonset")
+    # Kyverno policy status by team - StatefulSets
+    - expr: |-
+        label_join(
+          sum(
+            label_join(policy_report_result{
+              policy!="check-deprecated-apis-1-25",
+              cluster_type="management_cluster",
+              kind=~"StatefulSet"
+              }, "statefulset", ",", "name")
+          ) by (statefulset, category, policy, status) 
+          * on(statefulset) group_left(team, app) 
+          sum(
+            sum(
+              label_join(kube_statefulset_labels{}, "app", ",", "label_app_kubernetes_io_name")
+            ) by (statefulset, app) 
+            * on(app) group_left(team) 
+            sum(
+              app_operator_app_info{team!="noteam"}
+            ) by (app, team)
+          ) by (team, statefulset, app),
+        "name", ",", "statefulset")
+      record: aggregation:kyverno_policy_statefulset_status_team
+    # Kyverno policy status by team - Job
+    - expr: |-
+        label_join(
+          sum(
+            label_join(policy_report_result{
+              policy!="check-deprecated-apis-1-25",
+              cluster_type="management_cluster",
+              kind=~"Job"
+              }, "job", ",", "name")
+          ) by (job, category, policy, status) 
+          * on(job) group_left(team, app) 
+          sum(
+            sum(
+              label_join(kube_job_labels{}, "app", ",", "label_app_kubernetes_io_name")
+            ) by (job, app) 
+            * on(app) group_left(team) 
+            sum(
+              app_operator_app_info{team!="noteam"}
+            ) by (app, team)
+          ) by (team, job, app),
+        "name", ",", "job")
+      record: aggregation:kyverno_policy_job_status_team
+    # Kyverno policy status by team - CronJob
+    - expr: |-
+        label_join(
+          sum(
+            label_join(policy_report_result{
+              policy!="check-deprecated-apis-1-25",
+              cluster_type="management_cluster",
+              kind=~"CronJob"
+              }, "cronjob", ",", "name")
+          ) by (cronjob, category, policy, status) 
+          * on(cronjob) group_left(team, app) 
+          sum(
+            sum(
+              label_join(kube_cronjob_labels{}, "app", ",", "label_app_kubernetes_io_name")
+            ) by (cronjob, app) 
+            * on(app) group_left(team) 
+            sum(
+              app_operator_app_info{team!="noteam"}
+            ) by (app, team)
+          ) by (team, cronjob, app),
+        "name", ",", "cronjob")
+      record: aggregation:kyverno_policy_cronjob_status_team
     # Starboard unique vulnerability counts by severity
     - expr: count(count by (vulnerability_id, severity) (starboard_exporter_vulnerabilityreport_image_vulnerability)) by (severity)
       record: aggregation:starboard_unique_vulnerability_count

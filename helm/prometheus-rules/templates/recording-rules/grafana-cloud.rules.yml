@@ -255,7 +255,7 @@ spec:
             sum(
               app_operator_app_info{team!="noteam"}
             ) by (app, team)
-          ) by (team, deployment, app)
+          ) by (team, deployment, app),
         "name", ",", "deployment")
       record: aggregation:kyverno_policy_deployment_status_team
     # Kyverno policy status by team - DaemonSets

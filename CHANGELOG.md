@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update Flux work queue limit to 1h from previous 30 min.
+- Update Grafana Cloud push rules for Kyverno to include more pod controller types.
 
 ## [2.97.1] - 2023-05-05
 

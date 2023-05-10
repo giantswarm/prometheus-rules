@@ -7,9 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
 ### Added
 
 - Add `WorkloadClusterMasterMemoryUsageTooHigh` alert.
+
+### Changed
+
+- Update Grafana Cloud push rules for Kyverno to include more pod controller types.
+
+## [2.97.2] - 2023-05-09
+
+### Removed
+
+- Stop pushing to `openstack-app-collection`.
+
+### Changed
+
+- Update Flux work queue limit to 1h from previous 30 min.
+
+## [2.97.1] - 2023-05-05
+
+### Changed
+
+- Updated `PrometheusAvailabilityRatio` to be executed only on MC prometheus.
+
+## [2.97.0] - 2023-05-04
+
+### Changed
+
+- updated `PrometheusAvailabilityRatio` alert to set window to 1h rather than 10h.
 
 ## [2.96.6] - 2023-05-03
 
@@ -67,7 +94,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix `WorkloadClusterControlPlaneNodeMissing` alerts for all providers. 
+- Fix `WorkloadClusterControlPlaneNodeMissing` alerts for all providers.
 
 ## [2.95.1] - 2023-04-27
 
@@ -1796,7 +1823,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.6...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.97.2...HEAD
+[2.97.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.97.1...v2.97.2
+[2.97.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.97.0...v2.97.1
+[2.97.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.6...v2.97.0
 [2.96.6]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.5...v2.96.6
 [2.96.5]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.4...v2.96.5
 [2.96.4]: https://github.com/giantswarm/prometheus-rules/compare/v2.96.3...v2.96.4

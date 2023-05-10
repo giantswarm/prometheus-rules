@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+### Added
+
+- Add `WorkloadClusterMasterMemoryUsageTooHigh` alert.
+
 ### Changed
 
 - Update Grafana Cloud push rules for Kyverno to include more pod controller types.

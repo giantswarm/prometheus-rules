@@ -238,23 +238,25 @@ spec:
       record: aggregation:kyverno_resource_counts
     # Kyverno policy status by team - Deployments
     - expr: |-
-        sum(
-          label_join(policy_report_result{
-            policy!="check-deprecated-apis-1-25",
-            cluster_type="management_cluster",
-            kind=~"Deployment"
-            }, "deployment", ",", "name")
-        ) by (deployment, category, policy, status) 
-        * on(deployment) group_left(team, app) 
-        sum(
+        label_join(
           sum(
-            label_join(kube_deployment_labels{}, "app", ",", "label_app_kubernetes_io_name")
-          ) by (deployment, app) 
-          * on(app) group_left(team) 
+            label_join(policy_report_result{
+              policy!="check-deprecated-apis-1-25",
+              cluster_type="management_cluster",
+              kind=~"Deployment"
+              }, "deployment", ",", "name")
+          ) by (deployment, category, policy, status) 
+          * on(deployment) group_left(team, app) 
           sum(
-            app_operator_app_info{team!="noteam"}
-          ) by (app, team)
-        ) by (team, deployment, app)
+            sum(
+              label_join(kube_deployment_labels{}, "app", ",", "label_app_kubernetes_io_name")
+            ) by (deployment, app) 
+            * on(app) group_left(team) 
+            sum(
+              app_operator_app_info{team!="noteam"}
+            ) by (app, team)
+          ) by (team, deployment, app),
+        "name", ",", "deployment")
       record: aggregation:kyverno_policy_deployment_status_team
     # Kyverno policy status by team - DaemonSets
     - expr: |-

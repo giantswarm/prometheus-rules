@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Reduce PrometheusRuleFailures interval to 5m
+
 ## [2.98.0] - 2023-05-10
 
 

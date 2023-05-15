@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: vpa-recommender.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+  - name: vpa-recommender
+    rules:
+    - alert: VpaRecommenderTooManyRestarts
+      annotations:
+        description: 'The vpa's recommender has restarted several times in the last 30min'
+      expr: sum(changes(kube_pod_container_status_restarts_total{container="recommender"}[30min])) by (container) > 3
+      labels:
+        area: managedservices
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_scrape_timeout: "true"
+        cancel_if_outside_working_hours: "false"
+        severity: page
+        team: atlas
+        topic: observability

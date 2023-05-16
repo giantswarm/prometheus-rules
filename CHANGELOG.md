@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.98.1] - 2023-05-16
+
 ### Changed
 
 - Exclude `/token` handler from `DexErrorRateHigh` alert.
@@ -1833,7 +1835,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.98.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.98.1...HEAD
+[2.98.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.98.0...v2.98.1
 [2.98.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.97.2...v2.98.0
 [2.97.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.97.1...v2.97.2
 [2.97.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.97.0...v2.97.1

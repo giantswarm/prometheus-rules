@@ -11,7 +11,7 @@ spec:
     rules:
     - alert: VpaRecommenderTooManyRestarts
       annotations:
-        description: 'The vpa's recommender has restarted several times in the last 30min'
+        description: "The vpa's recommender has restarted several times in the last 30min"
       expr: sum(changes(kube_pod_container_status_restarts_total{container="recommender"}[30min])) by (container) > 3
       labels:
         area: managedservices

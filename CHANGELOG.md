@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Exclude `/token` handler from `DexErrorRateHigh` alert.
 - Reduce PrometheusRuleFailures interval to 5m
 - Reduce CertificateWillExpireInLessThanTwoWeeks period from 14 days to 13
   days. This accounts for a [bug in cert-manager](https://github.com/cert-manager/cert-manager/issues/5851) and gives

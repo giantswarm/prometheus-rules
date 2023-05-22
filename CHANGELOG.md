@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Send `DeploymentNotSatisfiedKaas` for `nginx-ingress-controller` to cabbage.
+
 ## [2.98.1] - 2023-05-16
 
 ### Changed

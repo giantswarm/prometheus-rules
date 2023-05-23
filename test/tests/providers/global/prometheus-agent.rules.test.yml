@@ -13,7 +13,7 @@ tests:
       - alertname: PrometheusAgentFailing
         eval_time: 10m
       - alertname: PrometheusAgentFailing
-        eval_time: 25m
+        eval_time: 25ms
         exp_alerts:
           - exp_labels:
               area: empowerment

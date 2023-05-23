@@ -19,7 +19,7 @@ spec:
     - alert: InhibitionClusterIsNotRunningPrometheusAgent
       annotations:
         description: '{{`Cluster ({{ $labels.cluster_id }}) is not running Prometheus Agent.`}}'
-      expr: (count by (cluster_id) (prometheus_build_info{app="prometheus"}) unless count by (cluster_id) (kube_statefulset_created{namespace="kube-system",statefulset="prometheus-prometheus-agent"}  > 0))
+      expr: (count by (cluster_id) (prometheus_build_info{app="prometheus"}) unless count by (cluster_id) (kube_statefulset_created{namespace="kube-system",statefulset=~"prometheus-prometheus-agent.*"}  > 0))
       labels:
         cluster_is_not_running_prometheus_agent: "true"
         area: empowerment

@@ -9,6 +9,8 @@ tests:
         values: "1+0x40"
       - series: 'kube_statefulset_created{namespace="kube-system",cluster_id="gauss",statefulset="prometheus-prometheus-agent"}'
         values: "1+0x20 0+0x20"
+      - series: 'kube_statefulset_created{namespace="kube-system",cluster_id="gauss",statefulset="prometheus-prometheus-agent-shard-1"}'
+        values: "1+0x20 0+0x20"
     alert_rule_test:
       - alertname: InhibitionClusterIsNotRunningPrometheusAgent
         eval_time: 1m

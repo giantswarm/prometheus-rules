@@ -1,3 +1,3 @@
-openstack
-aws
-capz
+vintage/aws
+capi/openstack
+capi/capz

@@ -21,7 +21,7 @@ spec:
         area: managedapps
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: rainbow
+        team: bigmac
         topic: dex
     - alert: DexSecretExpired
       annotations:
@@ -33,7 +33,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: rainbow
+        team: bigmac
         topic: dex
     - alert: ManagementClusterDexAppMissing
       annotations:
@@ -45,5 +45,5 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: rainbow
+        team: bigmac
         topic: dex

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Send `dex` alerts to team bigmac.
+
 ### Fixed
 
 - Fix Prometheus Agent alerts for sharded agents.

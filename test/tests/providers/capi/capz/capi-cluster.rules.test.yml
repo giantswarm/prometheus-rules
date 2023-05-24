@@ -1,0 +1,63 @@
+rule_files:
+  - capi-cluster.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_phase{name="clippaxy", exported_namespace="giantswarm", phase="Provisioned"}'
+        values: "1+0x75"
+      - series: 'capi_cluster_status_phase{name="clippaxy", exported_namespace="giantswarm", phase="Pending"}'
+        values: "1+0x75"
+      - series: 'capi_cluster_status_condition{status="False", type="Ready", cluster_name="grumpy", exported_namespace="giantswarm"}'
+        values: "0+0x10 0+1x65"
+      - series: 'capi_cluster_status_condition{status="True", type="Ready", cluster_name="grumpy", exported_namespace="giantswarm"}'
+        values: "0+1x10 0+0x65"
+      - series: 'capi_cluster_annotation_paused{paused_value="true",cluster_name="grumpy", exported_namespace="giantswarm"}'
+        values: "0+1x75"
+    alert_rule_test:
+      - alertname: ClusterUnhealthyPhase
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              severity: notify
+              team: clippy
+              topic: managementcluster
+              name: clippaxy
+              exported_namespace: giantswarm
+              phase: Pending
+            exp_annotations:
+              description: "Cluster giantswarm/clippaxy stuck in Pending phase."
+              opsrecipe: capi-cluster/
+      - alertname: ClusterStatusNotReady
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              severity: notify
+              team: clippy
+              topic: managementcluster
+              cluster_name: grumpy
+              exported_namespace: giantswarm
+              status: "False"
+              type: Ready
+            exp_annotations:
+              description: "Cluster giantswarm/grumpy is not ready."
+              opsrecipe: capi-cluster/
+      - alertname: ClusterPaused
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              severity: notify
+              team: clippy
+              topic: managementcluster
+              cluster_name: grumpy
+              exported_namespace: giantswarm
+              paused_value: true
+            exp_annotations:
+              description: "The cluster grumpy is paused."
+              opsrecipe: capi-cluster/

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add non-paging alerts for `paused` CAPI CRs.
+
+### Changed
+
+- Split all CAPI CR based alerts into a rule file per CR.
+- Differentiate between CAPI and vintage during `promtool` based unit tests.
+
 ## [2.98.3] - 2023-05-24
 
 ### Changed

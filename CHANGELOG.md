@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Split `AzureServicePrincipalExpires` alert to page team bigmac in case of dex related service principals.
 
+### Fixed
+
+- Fix query for `WorkloadClusterControlPlaneNodeMissingAWS`.
+
 ## [2.98.3] - 2023-05-24
 
 ### Changed

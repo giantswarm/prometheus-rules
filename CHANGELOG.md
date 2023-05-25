@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.99.0] - 2023-05-25
+
 ### Added
 
 - Add new alert on Silence operator reconciliation errors.
@@ -1865,7 +1867,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.98.4...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.99.0...HEAD
+[2.99.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.98.4...v2.99.0
 [2.98.4]: https://github.com/giantswarm/prometheus-rules/compare/v2.98.3...v2.98.4
 [2.98.3]: https://github.com/giantswarm/prometheus-rules/compare/v2.98.2...v2.98.3
 [2.98.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.98.1...v2.98.2

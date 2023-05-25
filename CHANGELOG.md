@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add new alert on Silence operator reconciliation errors.
+
 ## [2.98.4] - 2023-05-25
 
 ### Changed

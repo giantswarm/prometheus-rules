@@ -13,8 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Split `AzureServicePrincipalExpires` alert to page team bigmac in case of dex related service principals.
 - Split all CAPI CR based alerts into a rule file per CR.
 - Differentiate between CAPI and vintage during `promtool` based unit tests.
+
+### Fixed
+
+- Fix query for `WorkloadClusterControlPlaneNodeMissingAWS`.
 
 ## [2.98.3] - 2023-05-24
 

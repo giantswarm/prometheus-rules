@@ -4,7 +4,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'dns_operator_azure_zone_info{controller="dns-operator-azure",resource_group="425bdf54",subscription_id="09be0ac8-38d9-4fe1-aa72-4ce2e8a084d2",tenant_id="4e4e320b-cf45-4fd4-9dd3-ec0046779035",zone="425bdf54.azuretest.gigantic.io",installation="puppy"}'
+      - series: 'dns_operator_azure_zone_info{controller="dns-operator-azure",resource_group="425bdf54",subscription_id="09be0ac8-38d9-4fe1-aa72-4ce2e8a084d2",tenant_id="4e4e320b-cf45-4fd4-9dd3-ec0046779035",zone="425bdf54.azuretest.gigantic.io",installation="puppy",type="public"}'
         values: "1+0x60"
       - series: 'capi_cluster_status_phase{name="425bdf54", exported_namespace="org-83dd715d", phase="Provisioned", installation="puppy"}'
         values: "1+0x60"

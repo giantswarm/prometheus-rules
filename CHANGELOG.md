@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add new `PrometheusAgentShardsMissing` alert.
+- Add non-paging alerts for `paused` CAPI CRs.
 
 ## [2.99.0] - 2023-05-25
 
@@ -22,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Split `AzureServicePrincipalExpires` alert to page team bigmac in case of dex related service principals.
+- Split all CAPI CR based alerts into a rule file per CR.
+- Differentiate between CAPI and vintage during `promtool` based unit tests.
 
 ### Fixed
 

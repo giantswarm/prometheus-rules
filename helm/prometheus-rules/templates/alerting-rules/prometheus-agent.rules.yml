@@ -50,7 +50,7 @@ spec:
             prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
           )
         )
-      for: 10m
+      for: 30m
       labels:
         area: empowerment
         severity: page

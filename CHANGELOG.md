@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add new `PrometheusAgentShardsMissing` alert.
+
 ## [2.99.0] - 2023-05-25
 
 ### Added

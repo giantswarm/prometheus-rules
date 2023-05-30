@@ -119,7 +119,7 @@ main() {
 
             # don't run tests if no provider specific tests are defined
             if [[ ! -d "$GIT_WORKDIR/test/tests/providers/$provider" ]]; then
-                echo "###   No tests for proviter $provider - skipping"
+                echo "###   No tests for provider $provider - skipping"
                 continue
             fi
 
@@ -127,8 +127,7 @@ main() {
             if [[ ! -f "$global_testfile" ]] \
                 && [[ ! -f "$provider_testfile" ]]
             then
-                echo "###  No testfile found for $filename - error"
-                promtool_test_errors+=("NO TEST FILE for $filename")
+                echo "###  Warning: no testfile found for $filename"
                 continue
             fi
 

@@ -1,0 +1,28 @@
+---
+rule_files:
+- silence-operator.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'operatorkit_controller_errors_total{app="silence-operator", controller="silence-controller"}'
+        values: "0x30 1+0x20 20x45 20-1x20 0x100"
+    alert_rule_test:
+      - alertname: SilenceOperatorReconcileErrors
+        eval_time: 60m
+      - alertname: SilenceOperatorReconcileErrors
+        eval_time: 95m
+        exp_alerts:
+          - exp_labels:
+              app: silence-operator
+              area: "empowerment"
+              cancel_if_outside_working_hours: "true"
+              controller: silence-controller
+              severity: "page"
+              team: "atlas"
+              topic: "observability"
+            exp_annotations:
+              description: "silence-operator controller silence-controller too many reconcile errors."
+              opsrecipe: "silence-operator-reconcile-errors/"
+      - alertname: SilenceOperatorReconcileErrors
+        eval_time: 215m

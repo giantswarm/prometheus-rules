@@ -5,7 +5,7 @@ go 1.19
 require (
 	// Try to keep version in sync with our prometheus rule CRD version.
 	// see https://github.com/giantswarm/prometheus-operator-crd/blob/master/helm/prometheus-operator-crd/Chart.yaml#L11
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.65.1
+	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.65.2
 	sigs.k8s.io/yaml v1.3.0
 )
 

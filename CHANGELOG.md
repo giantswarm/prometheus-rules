@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add new `PrometheusAgentShardsMissing` alert.
 - Add non-paging alerts for `paused` CAPI CRs.
-- 
+
 ## [2.99.0] - 2023-05-25
 
 ### Added

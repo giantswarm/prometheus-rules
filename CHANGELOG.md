@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.100.1] - 2023-06-06
+
+### Fixed
+
+- Fix PrometheusAgentShardsMissing because it should not use a `count`.
+
 ## [2.100.0] - 2023-06-06
 
 ### Added
@@ -1876,7 +1882,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.100.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.100.1...HEAD
+[2.100.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.100.0...v2.100.1
 [2.100.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.99.0...v2.100.0
 [2.99.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.98.4...v2.99.0
 [2.98.4]: https://github.com/giantswarm/prometheus-rules/compare/v2.98.3...v2.98.4

@@ -40,7 +40,7 @@ spec:
         count(
           ## number of remotes that are not mimir or grafana-cloud
           prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir"}
-        ) != count(
+        ) != (
           ## number of shards defined in the Prometheus CR
           prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"}
           or (

@@ -371,3 +371,6 @@ spec:
       record: aggregation:container:memory_usage_bytes
     - expr: sum(rate(container_cpu_usage_seconds_total{cluster_type="management_cluster"}[2m])) by (container)
       record: aggregation:container:cpu_usage_cores
+    # PSP Aggregation for monitoring which APPS are using PSP ( exclude some pods that do not have the app.kubernetes.io/name label)
+    - expr: sum by (annotation_kubernetes_io_psp,label_app_kubernetes_io_name, namespace) (kube_pod_annotations{annotation_kubernetes_io_psp=~".+", pod!~"(etcd|kube-apiserver|kube-controller-manager|kube-scheduler|prometheus-operator-app-operator).+"} * on(pod) group_left(label_app_kubernetes_io_name) kube_pod_labels{})
+      record: aggregation:kubernetes:pods_with_psp_annotation

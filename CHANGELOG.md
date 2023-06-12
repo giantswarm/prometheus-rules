@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add new `aggregated metric` to list apps for which pods are annotated with a PSP , this will help us build a list of APPs that need fixing for 1.24 -> 1.25 upgrade
+
 ## [2.100.1] - 2023-06-06
 
 ### Fixed

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove `KiamDaemonsetNotCleanedUp`.
+
 ## [2.101.0] - 2023-06-12
 
 ### Added

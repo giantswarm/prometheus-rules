@@ -27,19 +27,4 @@ spec:
         severity: page
         team: phoenix
         topic: kiam
-    - alert: KiamDaemonsetNotCleanedUp
-      annotations:
-        description: '{{`Kiam daemonset kube-system/{{ $labels.daemonset }} on {{ $labels.installation}}/{{ $labels.cluster_id }} was not deleted after app was removed.`}}'
-        opsrecipe: kiam-daemonset-not-cleaned-up/
-      expr: count(kube_daemonset_created{daemonset=~"kiam-agent|kiam-server|kiam-watchdog"})  by (cluster_id,daemonset,installation) unless on (installation,cluster_id) label_replace(aggregation:giantswarm:app_info{name=~"kiam|kiam-app"}, "cluster_id", "$1", "namespace", "(.*)")
-      for: 60m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: phoenix
-        topic: kiam
 {{- end }}

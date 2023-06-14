@@ -39,7 +39,7 @@ tests:
               severity: notify
               team: clippy
               topic: managementcluster
-              cluster_name: grumpy
+              name: grumpy
               exported_namespace: giantswarm
               status: "False"
               type: Ready

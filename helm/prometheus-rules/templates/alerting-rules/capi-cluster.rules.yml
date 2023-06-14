@@ -34,7 +34,7 @@ spec:
             topic: managementcluster
           annotations:
             description: |-
-              {{`Cluster {{$labels.exported_namespace}}/{{$labels.cluster_name}} is not ready.`}}
+              {{`Cluster {{$labels.exported_namespace}}/{{$labels.name}} is not ready.`}}
             opsrecipe: capi-cluster/
 
         - alert: ClusterPaused

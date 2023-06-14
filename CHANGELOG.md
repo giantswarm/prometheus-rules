@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.103.0] - 2023-06-14
+
 ### Added
 
 - Add Container Disk Usage too low.
@@ -1898,7 +1900,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.102.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.103.0...HEAD
+[2.103.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.102.0...v2.103.0
 [2.102.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.101.0...v2.102.0
 [2.101.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.100.1...v2.101.0
 [2.100.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.100.0...v2.100.1

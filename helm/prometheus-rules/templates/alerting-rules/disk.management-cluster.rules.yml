@@ -27,7 +27,7 @@ spec:
       annotations:
         description: '{{`Containerd volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
         opsrecipe: low-disk-space/#containerd-volume
-      expr: node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/containerd"} < (10 * 1024 * 1024 * 1024)
+      expr: 100 * node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/containerd"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/lib/containerd"} < 10
       for: 10m
       labels:
         area: kaas

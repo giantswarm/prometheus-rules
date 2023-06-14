@@ -23,6 +23,18 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: storage
+    - alert: ContainerdVolumeSpaceTooLow
+      annotations:
+        description: '{{`Containerd volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
+        opsrecipe: low-disk-space/#containerd-volume
+      expr: node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/containerd"} < (10 * 1024 * 1024 * 1024)
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: storage
     - alert: EtcdVolumeSpaceTooLow
       annotations:
         description: '{{`Etcd volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'

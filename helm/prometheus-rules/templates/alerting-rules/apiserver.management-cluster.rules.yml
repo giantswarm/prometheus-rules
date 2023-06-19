@@ -28,7 +28,7 @@ spec:
         cancel_if_cluster_with_notready_nodepools: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: managementcluster
     - alert: ManagementClusterAPIServerAdmissionWebhookErrors
       annotations:
@@ -40,7 +40,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: managementcluster
     - alert: ManagementClusterWebhookDurationExceedsTimeout
       annotations:
@@ -52,5 +52,5 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: managementcluster

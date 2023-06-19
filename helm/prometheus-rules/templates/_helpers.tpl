@@ -39,6 +39,10 @@ phoenix
 {{- end -}}
 {{- end -}}
 
+{{- define "lifecycleTeam" -}}
+turtles
+{{- end -}}
+
 {{- define "workingHoursOnly" -}}
 {{- if has .Values.managementCluster.provider.kind (list "openstack" "capz") -}}
 "true"

@@ -40,7 +40,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: phoenix
+        team: {{ include "lifecycleTeam" . }}
         topic: kubernetes
     - alert: WorkloadClusterControlPlaneNodeMissingAWS
       annotations:
@@ -54,7 +54,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         control_plane_node_down: "true"
         severity: page
-        team: phoenix
+        team: {{ include "lifecycleTeam" . }}
         topic: kubernetes
     - alert: WorkloadClusterHAControlPlaneDownForTooLong
       annotations:
@@ -69,7 +69,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         control_plane_node_down: "true"
         severity: page
-        team: phoenix
+        team: {{ include "lifecycleTeam" . }}
         topic: kubernetes
     - alert: WorkloadClusterPodPendingAWS
       annotations:

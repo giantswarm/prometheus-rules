@@ -21,7 +21,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: phoenix
+        team: {{ include "lifecycleTeam" . }}
         topic: kubernetes
     - alert: WorkloadClusterCriticalPodNotRunningAzure
       annotations:
@@ -33,7 +33,7 @@ spec:
         area: kaas
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: phoenix
+        team: {{ include "lifecycleTeam" . }}
         topic: kubernetes
     - alert: WorkloadClusterCriticalPodMetricMissingAzure
       annotations:
@@ -45,7 +45,7 @@ spec:
         area: kaas
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: phoenix
+        team: {{ include "lifecycleTeam" . }}
         topic: kubernetes
     - alert: WorkloadClusterPodLimitAlmostReachedAzure
       annotations:
@@ -75,7 +75,7 @@ spec:
         cancel_if_cluster_has_no_workers: "true"
         control_plane_node_down: "true"
         severity: page
-        team: phoenix
+        team: {{ include "lifecycleTeam" . }}
         topic: kubernetes
 
     - alert: WorkloadClusterAzureScheduledEventsNotRunning

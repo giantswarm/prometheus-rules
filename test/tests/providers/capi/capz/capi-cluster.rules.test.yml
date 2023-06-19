@@ -8,11 +8,11 @@ tests:
         values: "1+0x75"
       - series: 'capi_cluster_status_phase{name="clippaxy", exported_namespace="giantswarm", phase="Pending"}'
         values: "1+0x75"
-      - series: 'capi_cluster_status_condition{status="False", type="Ready", cluster_name="grumpy", exported_namespace="giantswarm"}'
+      - series: 'capi_cluster_status_condition{name="grumpy", exported_namespace="giantswarm", status="False", type="Ready"}'
         values: "0+0x10 0+1x65"
-      - series: 'capi_cluster_status_condition{status="True", type="Ready", cluster_name="grumpy", exported_namespace="giantswarm"}'
+      - series: 'capi_cluster_status_condition{name="grumpy", exported_namespace="giantswarm", status="True", type="Ready"}'
         values: "0+1x10 0+0x65"
-      - series: 'capi_cluster_annotation_paused{paused_value="true",cluster_name="grumpy", exported_namespace="giantswarm"}'
+      - series: 'capi_cluster_annotation_paused{name="grumpy", exported_namespace="giantswarm", paused_value="true"}'
         values: "0+1x75"
     alert_rule_test:
       - alertname: ClusterUnhealthyPhase
@@ -55,7 +55,7 @@ tests:
               severity: notify
               team: clippy
               topic: managementcluster
-              cluster_name: grumpy
+              name: grumpy
               exported_namespace: giantswarm
               paused_value: true
             exp_annotations:

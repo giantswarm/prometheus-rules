@@ -65,7 +65,7 @@ spec:
     - alert: IngressControllerDown
       annotations:
         description: '{{`Ingress Controller in namespace {{ $labels.namespace }}) is down.`}}'
-        opsrecipe: nginx-ingress-controller-app-down/
+        opsrecipe: ingress-controller-down/
       expr: label_replace(up{app=~".*(ingress-nginx|nginx-ingress-controller).*"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:

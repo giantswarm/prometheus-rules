@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `ClusterStatusNotRead` description is missing the cluster name
 
+### Changed
+
+- Ingress Controller: Rename `IngressControllerDown` recipe. ([#793](https://github.com/giantswarm/prometheus-rules/pull/793))
+
 ## [2.103.0] - 2023-06-14
 
 ### Added

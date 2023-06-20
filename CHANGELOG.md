@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Rules: Add `ingress-nginx`. ([#791](https://github.com/giantswarm/prometheus-rules/pull/791))
+
 ### Fixed
 
 - `ClusterStatusNotRead` description is missing the cluster name

@@ -48,6 +48,6 @@ spec:
             topic: managementcluster
           annotations:
             description: |-
-              {{`The cluster {{$labels.cluster_name}} is paused.`}}
+              {{`The cluster {{$labels.name}} is paused.`}}
             opsrecipe: capi-cluster/
 {{- end }}

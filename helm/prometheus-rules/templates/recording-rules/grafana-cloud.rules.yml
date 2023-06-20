@@ -72,6 +72,8 @@ spec:
       record: aggregation:giantswarm:node_pool_worker_ready_total
     - expr: sum(rate(nginx_ingress_controller_requests{namespace="giantswarm", ingress="passage"}[5m])) by (status)
       record: aggregation:giantswarm:passage_requests
+    - expr: kube_deployment_status_replicas{deployment="nginx-ingress-controller-app", cluster_type="management_cluster"}
+      record: aggregation:ingress:management_cluster_replicas
     - expr: sum(rate(nginx_ingress_controller_nginx_process_requests_total[5m])) by (cluster_type, cluster_id)
       record: aggregation:ingress:requests_total
     - expr: sum(kubelet_running_container_count or kubelet_running_containers{container_state="running"}) by (cluster_type, cluster_id)

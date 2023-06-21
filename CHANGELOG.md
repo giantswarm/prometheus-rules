@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Rules: Add `ingress-nginx`. ([#791](https://github.com/giantswarm/prometheus-rules/pull/791))
+- Push number of replicas for nginx-ingress-controller-app deployment to Grafana Cloud.
 
 ### Fixed
 

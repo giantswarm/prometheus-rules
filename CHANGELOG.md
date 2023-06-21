@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Respect also `apiserver_flowcontrol_request_concurrency_limit_overwrite` metric for `FlowcontrolTooManyRequests` alerts.
+
 ## [2.72.0] - 2023-01-09
 
 ### Added

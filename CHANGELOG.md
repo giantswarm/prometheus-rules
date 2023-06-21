@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Ingress Controller: Rename `IngressControllerDown` recipe. ([#793](https://github.com/giantswarm/prometheus-rules/pull/793))
+- Respect also `apiserver_flowcontrol_request_concurrency_limit_overwrite` metric for `FlowcontrolTooManyRequests` alerts.
 
 ## [2.103.0] - 2023-06-14
 

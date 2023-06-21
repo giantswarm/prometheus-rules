@@ -46,7 +46,7 @@ spec:
       labels:
         area: empowerment
         apiserver_down: "true"
-        team: phoenix
+        team: {{ include "lifecycleTeam" . }}
         topic: monitoring
     {{- if or (eq .Values.managementCluster.provider.kind "azure") (eq .Values.managementCluster.provider.kind "aws") }}
     - alert: InhibitionClusterWithoutWorkerNodes

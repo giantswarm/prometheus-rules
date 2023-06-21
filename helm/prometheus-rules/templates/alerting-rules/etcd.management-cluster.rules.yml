@@ -21,7 +21,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: etcd
     - alert: ManagementClusterEtcdDBSizeTooLarge
       annotations:
@@ -33,7 +33,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: etcd
     - alert: ManagementClusterEtcdNumberOfLeaderChangesTooHigh
       annotations:
@@ -43,7 +43,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: etcd
     - alert: ManagementClusterEtcdHasNoLeader
       annotations:
@@ -55,7 +55,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: etcd
     - alert: ManagementClusterEtcdMetricsMissing
       annotations:
@@ -67,6 +67,6 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: true
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: etcd
 

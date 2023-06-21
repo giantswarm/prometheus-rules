@@ -32,7 +32,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: kubernetes
     - alert: NodeHasConstantOOMKills
       annotations:
@@ -46,7 +46,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: kubernetes
     - alert: NodeConnTrackAlmostExhausted
       annotations:
@@ -58,7 +58,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: kubernetes
     - alert: MachineEntropyTooLow
       annotations:
@@ -70,7 +70,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: infrastructure
     - alert: MachineAllocatedFileDescriptorsTooHigh
       annotations:
@@ -82,7 +82,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: infrastructure
     # Alert if load average is 2 times the number of CPUs.
     - alert: MachineLoadTooHigh
@@ -94,7 +94,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: infrastructure
     - alert: MachineMemoryUsageTooHigh
       annotations:
@@ -105,5 +105,5 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: infrastructure

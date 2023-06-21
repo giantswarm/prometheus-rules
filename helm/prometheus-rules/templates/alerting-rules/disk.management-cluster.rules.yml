@@ -21,7 +21,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: storage
     - alert: ContainerdVolumeSpaceTooLow
       annotations:
@@ -33,7 +33,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: storage
     - alert: EtcdVolumeSpaceTooLow
       annotations:
@@ -45,7 +45,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: storage
     - alert: KubeletVolumeSpaceTooLow
       annotations:
@@ -57,7 +57,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: storage
     - alert: LogVolumeSpaceTooLow
       annotations:
@@ -69,7 +69,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: storage
     - alert: PersistentVolumeSpaceTooLow
       annotations:
@@ -81,7 +81,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: storage
     - alert: RootVolumeSpaceTooLow
       annotations:
@@ -93,7 +93,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: {{ include "lifecycleTeam" . }}
         topic: storage
     - alert: DataDiskPersistentVolumeSpaceTooLow
       annotations:

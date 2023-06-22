@@ -35,6 +35,7 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               pod: "prometheus-wcbad-0"
+              cluster_id: wcbad
             exp_annotations:
               description: "Prometheus prometheus-wcbad-0 has availability ratio of 0.00 (min 0.8) over the last hour."
               opsrecipe: "prometheus-resource-limit-reached/"
@@ -54,6 +55,7 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               pod: "prometheus-wcbad-0"
+              cluster_id: wcbad
             exp_annotations:
               description: "Prometheus prometheus-wcbad-0 has availability ratio of 0.00 (min 0.8) over the last hour."
               opsrecipe: "prometheus-resource-limit-reached/"

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add alerts for legacy vault's etcd backups. 
+
 ## [2.105.0] - 2023-06-22
 
 ### Fixed

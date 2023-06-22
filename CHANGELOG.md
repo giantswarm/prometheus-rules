@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.72.1] - 2023-06-22
+
 - Respect also `apiserver_flowcontrol_request_concurrency_limit_overwrite` metric for `FlowcontrolTooManyRequests` alerts.
 
 ## [2.72.0] - 2023-01-09
@@ -1436,7 +1438,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.72.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.72.1...HEAD
+[2.72.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.72.0...v2.72.1
 [2.72.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.71.1...v2.72.0
 [2.71.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.71.0...v2.71.1
 [2.71.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.70.5...v2.71.0

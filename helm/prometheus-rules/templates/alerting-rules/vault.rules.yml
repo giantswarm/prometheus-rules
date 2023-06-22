@@ -98,7 +98,7 @@ spec:
         topic: vault
     - alert: VaultLatestEtcdBackupMetricsMissing
       annotations:
-        description: '{{`etcd backup metrics for vault absent on {{ $labels.installation }}.`}}'
+        description: '{{`etcd backup metrics for vault absent.`}}'
         opsrecipe: vault-backup/
       expr: absent(vault_etcd_backups_exporter_latest_successful_backup_time) == 1
       for: 120m

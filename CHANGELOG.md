@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.106.0] - 2023-06-22
+
 ### Added
 
 - Add alerts for legacy vault's etcd backups. 
@@ -1926,7 +1928,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.105.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.106.0...HEAD
+[2.106.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.105.0...v2.106.0
 [2.105.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.104.0...v2.105.0
 [2.104.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.103.0...v2.104.0
 [2.103.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.102.0...v2.103.0

@@ -86,7 +86,7 @@ spec:
       record: aggregation:giantswarm:node_pool_total
     - expr: sum(cluster_operator_node_pool_ready_workers)
       record: aggregation:giantswarm:node_pool_worker_ready_total
-  - name: ingress.grafana-cloud.recording
+  - name: nginx-ingress-controller.grafana-cloud.recording
     rules:
     - expr: sum(rate(nginx_ingress_controller_requests{namespace="giantswarm", ingress="passage"}[5m])) by (status)
       record: aggregation:giantswarm:passage_requests

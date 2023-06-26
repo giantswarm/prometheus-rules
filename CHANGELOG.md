@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Split Grafana Cloud recording rules into smaller groups.
+
 ## [2.106.0] - 2023-06-22
 
 ### Added

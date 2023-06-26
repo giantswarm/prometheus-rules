@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove unused karma dashboard.s
+
 ## [2.107.0] - 2023-06-26
 
 ### Changed

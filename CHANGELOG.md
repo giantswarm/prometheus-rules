@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change `for` setting of `WorkloadClusterCriticalPodNotRunningAWS` to 20 minutes.
+
 ### Removed
 
 - Remove vertical-pod-autoscaler slo as it was moved to Sloth.

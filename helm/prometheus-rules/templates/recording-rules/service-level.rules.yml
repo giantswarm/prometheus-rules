@@ -42,7 +42,7 @@ spec:
     - expr: |
         label_replace(
           kube_daemonset_status_desired_number_scheduled{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"},
-        "service", "$1", "workload_name", "(.*)" )
+        "service", "$1", "daemonset", "(.*)" )
       labels:
         class: MEDIUM
         area: kaas
@@ -55,11 +55,11 @@ spec:
           (
             label_replace(
               kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"},
-              "service", "$1", "workload_name", "(.*)" ) > 0
+              "service", "$1", "daemonset", "(.*)" ) > 0
             and on (daemonset, node)
             label_replace(
               kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|kiam-server|kiam-agent|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"} offset 10m,
-              "service", "$1", "workload_name", "(.*)" ) > 0
+              "service", "$1", "daemonset", "(.*)" ) > 0
           )
           and
           on (node) kube_node_spec_unschedulable == 0
@@ -164,9 +164,9 @@ spec:
         kube_daemonset_labels * on (daemonset, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_daemonset_status_number_unavailable
-            and on(daemonset,cluster_id,cluster_type,namespace,workload_name)
+            and on(daemonset,cluster_id,cluster_type,namespace)
             kube_daemonset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-          "service", "$1", "workload_name", "(.*)" )
+          "service", "$1", "daemonset", "(.*)" )
         )
       labels:
         class: MEDIUM
@@ -177,9 +177,9 @@ spec:
         kube_deployment_labels * on (deployment, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_deployment_status_replicas_unavailable
-            and on(deployment,cluster_id,cluster_type,namespace, workload_name)
+            and on(deployment,cluster_id,cluster_type,namespace)
             kube_deployment_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-          "service", "$1", "workload_name", "(.*)" )
+          "service", "$1", "deployment", "(.*)" )
         )
       labels:
         class: MEDIUM
@@ -190,9 +190,9 @@ spec:
         kube_statefulset_labels * on (statefulset, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_statefulset_status_replicas - kube_statefulset_status_replicas_current
-            and on(statefulset,cluster_id,cluster_type,namespace, workload_name)
+            and on(statefulset,cluster_id,cluster_type,namespace)
             kube_statefulset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-          "service", "$1", "workload_name", "(.*)" )
+          "service", "$1", "statefulset", "(.*)" )
         )
       labels:
         class: MEDIUM
@@ -203,9 +203,9 @@ spec:
         kube_daemonset_labels * on (daemonset, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_daemonset_status_desired_number_scheduled
-            and on(daemonset,cluster_id,cluster_type,namespace, workload_name)
+            and on(daemonset,cluster_id,cluster_type,namespace)
             kube_daemonset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-          "service", "$1", "workload_name", "(.*)" )
+          "service", "$1", "daemonset", "(.*)" )
         )
       labels:
         class: MEDIUM
@@ -215,9 +215,9 @@ spec:
         kube_deployment_labels * on (deployment, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_deployment_status_replicas
-            and on(deployment,cluster_id,cluster_type,namespace, workload_name)
+            and on(deployment,cluster_id,cluster_type,namespace)
             kube_deployment_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-          "service", "$1", "workload_name", "(.*)" )
+          "service", "$1", "deployment", "(.*)" )
         )
       labels:
         class: MEDIUM
@@ -227,9 +227,9 @@ spec:
         kube_statefulset_labels * on (statefulset, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_statefulset_status_replicas
-            and on(statefulset,cluster_id,cluster_type,namespace, workload_name)
+            and on(statefulset,cluster_id,cluster_type,namespace)
             kube_statefulset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-          "service", "$1", "workload_name", "(.*)" )
+          "service", "$1", "statefulset", "(.*)" )
         )
       labels:
         class: MEDIUM

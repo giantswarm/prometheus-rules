@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Change `for` setting of `WorkloadClusterCriticalPodNotRunningAWS` to 20 minutes.
+- Remove duplicate workload_name label in favor of existing daemonset|statefulset|deployment labels.
 
 ## [2.107.0] - 2023-06-26
 

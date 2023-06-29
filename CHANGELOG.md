@@ -11,15 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add dashboard link to `ServiceLevelBurnRateTooHigh` alert
 
+## [2.108.0] - 2023-06-28
+
 ### Changed
 
 - Change `for` setting of `WorkloadClusterCriticalPodNotRunningAWS` to 20 minutes.
+- Remove duplicate workload_name label in favor of existing daemonset|statefulset|deployment labels.
 
 ## [2.107.0] - 2023-06-26
 
 ### Changed
 
 - Split Grafana Cloud recording rules into smaller groups.
+
+### Added
+
+- Add rule for AWS load balancer controller deployment satisfied.
 
 ## [2.106.0] - 2023-06-22
 
@@ -1942,7 +1949,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.107.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.108.0...HEAD
+[2.108.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.107.0...v2.108.0
 [2.107.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.106.0...v2.107.0
 [2.106.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.105.0...v2.106.0
 [2.105.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.104.0...v2.105.0

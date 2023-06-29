@@ -14,6 +14,7 @@ spec:
       annotations:
         description: '{{`Service level burn rate is too high for {{ $labels.service }} service.`}}'
         opsrecipe: service-level-burn-rate-too-high/
+        dashboard: https://giantswarm.grafana.net/d/service-level/service-level?orgId=1
       expr: |
         (
           slo_errors_per_request:ratio_rate1h{service!~"efk-.*|.*external-dns.*|kong-.*|.*(ingress-nginx|nginx-ingress-controller).*"} > on (service) group_left slo_threshold_high

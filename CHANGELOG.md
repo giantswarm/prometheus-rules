@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add dashboard link to `ServiceLevelBurnRateTooHigh` alert
+
 ## [2.108.0] - 2023-06-28
 
 ### Changed

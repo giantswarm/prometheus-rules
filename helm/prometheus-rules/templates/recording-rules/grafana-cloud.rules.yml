@@ -307,7 +307,10 @@ spec:
     # Kyverno-related resource counts by kind
     - expr: sum(etcd_kubernetes_resources_count{kind=~".*.kyverno.io|clusterpolicyreports.wgpolicyk8s.io|policyreports.wgpolicyk8s.io"}) by (cluster_id, kind)
       record: aggregation:kyverno_resource_counts
-    # Kyverno policy status by team - Deployments
+    # Kyverno policy enforcement status
+    - expr: sum(kyverno_policy) by (background, category, kind, policy, rule, type, validationFailureAction)
+      record: aggregation:kyverno_policy_status
+    # Kyverno policy workload status by team - Deployments
     - expr: |-
         label_join(
           sum(
@@ -329,7 +332,7 @@ spec:
           ) by (team, deployment, app),
         "name", ",", "deployment")
       record: aggregation:kyverno_policy_deployment_status_team
-    # Kyverno policy status by team - DaemonSets
+    # Kyverno policy workload status by team - DaemonSets
     - expr: |-
         label_join(
           sum(
@@ -351,7 +354,7 @@ spec:
           ) by (team, daemonset, app),
         "name", ",", "daemonset")
       record: aggregation:kyverno_policy_daemonset_status_team
-    # Kyverno policy status by team - StatefulSets
+    # Kyverno policy workload status by team - StatefulSets
     - expr: |-
         label_join(
           sum(
@@ -373,7 +376,7 @@ spec:
           ) by (team, statefulset, app),
         "name", ",", "statefulset")
       record: aggregation:kyverno_policy_statefulset_status_team
-    # Kyverno policy status by team - Job
+    # Kyverno policy workload status by team - Job
     - expr: |-
         label_join(
           sum(
@@ -395,7 +398,7 @@ spec:
           ) by (team, job, app),
         "name", ",", "job")
       record: aggregation:kyverno_policy_job_status_team
-    # Kyverno policy status by team - CronJob
+    # Kyverno policy workload status by team - CronJob
     - expr: |-
         label_join(
           sum(

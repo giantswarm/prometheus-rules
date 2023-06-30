@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add two new alerts for ALB role errors.
 - Add dashboard link to `ServiceLevelBurnRateTooHigh` alert.
 - Ship Kyverno policy enforcement status to Grafana Cloud.
 

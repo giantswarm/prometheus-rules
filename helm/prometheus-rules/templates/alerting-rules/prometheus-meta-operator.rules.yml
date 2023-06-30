@@ -60,6 +60,7 @@ spec:
       annotations:
         description: '{{`prometheus-meta-operator controller {{ $labels.controller }} too many reconcile errors.`}}'
         opsrecipe: "pmo-reconcile-errors/"
+        dashboard: piJK9Vm4z/operatorkit
       expr: |
         avg_over_time(operatorkit_controller_errors_total{app="prometheus-meta-operator"}[20m]) > 0
       for: 1h

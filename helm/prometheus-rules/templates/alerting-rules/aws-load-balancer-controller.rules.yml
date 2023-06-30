@@ -12,7 +12,7 @@ spec:
   groups:
   - name: aws-load-balancer-controller
     rules:
-    - alert: AWSLoadBalacerAssumeRoleErrors
+    - alert: AWSLoadBalancerAssumeRoleErrors
       annotations:
         description: '{{`AWS load balancer pod {{ $labels.namespace}}/{{ $labels.pod_name }} on {{ $labels.cluster_id}}/{{ $labels.cluster }} can not assume the role.`}}'
         opsrecipe: alb-role-errors#assume-role-errors
@@ -27,7 +27,7 @@ spec:
         severity: page
         team: phoenix
         topic: alb
-    - alert: AWSLoadBalacerRolePolicyErrors
+    - alert: AWSLoadBalancerRolePolicyErrors
       annotations:
         description: '{{`AWS load balancer pod {{ $labels.namespace}}/{{ $labels.pod_name }} on {{ $labels.cluster_id}}/{{ $labels.cluster }} has a wrong role policy.`}}'
         opsrecipe: alb-role-errors#role-policy-errors

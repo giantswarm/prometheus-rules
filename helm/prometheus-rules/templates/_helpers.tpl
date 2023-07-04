@@ -42,7 +42,7 @@ phoenix
 {{- end -}}
 
 {{- define "workingHoursOnly" -}}
-{{- if has .Values.managementCluster.provider.kind (list "openstack" "capz") -}}
+{{- if has .Values.managementCluster.provider.kind (list "openstack" "capz" "capa") -}}
 "true"
 {{- else -}}
 "false"

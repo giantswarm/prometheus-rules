@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Change `ManagementClusterAPIServerAdmissionWebhookErrors` severity to page.
+- CAPA alerts only during business hours.
 
 ## [2.109.0] - 2023-06-30
 

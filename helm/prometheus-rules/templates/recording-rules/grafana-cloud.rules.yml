@@ -327,7 +327,7 @@ spec:
             ) by (deployment, app) 
             * on(app) group_left(team) 
             sum(
-              app_operator_app_info{namespace="giantswarm", team!="noteam"}
+              app_operator_app_info{namespace=~".*giantswarm", team!="noteam"}
             ) by (app, team)
           ) by (team, deployment, app),
         "name", ",", "deployment")
@@ -349,7 +349,7 @@ spec:
             ) by (daemonset, app) 
             * on(app) group_left(team) 
             sum(
-              app_operator_app_info{team!="noteam"}
+              app_operator_app_info{namespace=~".*giantswarm", team!="noteam"}
             ) by (app, team)
           ) by (team, daemonset, app),
         "name", ",", "daemonset")
@@ -371,7 +371,7 @@ spec:
             ) by (statefulset, app) 
             * on(app) group_left(team) 
             sum(
-              app_operator_app_info{team!="noteam"}
+              app_operator_app_info{namespace=~".*giantswarm", team!="noteam"}
             ) by (app, team)
           ) by (team, statefulset, app),
         "name", ",", "statefulset")
@@ -393,7 +393,7 @@ spec:
             ) by (job, app) 
             * on(app) group_left(team) 
             sum(
-              app_operator_app_info{team!="noteam"}
+              app_operator_app_info{namespace=~".*giantswarm", team!="noteam"}
             ) by (app, team)
           ) by (team, job, app),
         "name", ",", "job")
@@ -415,7 +415,7 @@ spec:
             ) by (cronjob, app) 
             * on(app) group_left(team) 
             sum(
-              app_operator_app_info{team!="noteam"}
+              app_operator_app_info{namespace=~".*giantswarm", team!="noteam"}
             ) by (app, team)
           ) by (team, cronjob, app),
         "name", ",", "cronjob")

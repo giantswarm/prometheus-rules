@@ -327,7 +327,7 @@ spec:
             ) by (deployment, app) 
             * on(app) group_left(team) 
             sum(
-              app_operator_app_info{team!="noteam"}
+              app_operator_app_info{namespace="giantswarm", team!="noteam"}
             ) by (app, team)
           ) by (team, deployment, app),
         "name", ",", "deployment")

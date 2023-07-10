@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: kyverno.all.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: webhooks
+    rules:
+    - alert: KyvernoWebhooksPresent
+      annotations:
+        description: 'Kyverno has no available replicas but webhooks are present.'
+        opsrecipe: deployment-not-satisfied/
+      expr: sum(kube_validatingwebhookconfiguration_info{cluster_id="$cluster", validatingwebhookconfiguration=~"kyverno-.*"}) > 0 and kube_deployment_status_replicas{deployment=~"kyverno|kyverno-admission-controller", cluster_id!~"argali|giraffe"} > 0
+      for: 5m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "false"
+        severity: notify
+        team: shield
+        topic: security

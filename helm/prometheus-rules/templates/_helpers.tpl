@@ -44,6 +44,8 @@ phoenix
 {{- define "workingHoursOnly" -}}
 {{- if has .Values.managementCluster.provider.kind (list "openstack" "capz" "capa") -}}
 "true"
+{{- else if .Values.managementCluster.pipeline (list "stable-testing") -}}
+"true"
 {{- else -}}
 "false"
 {{- end -}}

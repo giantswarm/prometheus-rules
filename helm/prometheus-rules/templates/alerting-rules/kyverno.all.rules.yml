@@ -14,7 +14,7 @@ spec:
       annotations:
         description: 'Kyverno has no available replicas but webhooks are present.'
         opsrecipe: deployment-not-satisfied/
-      expr: sum(kube_validatingwebhookconfiguration_info{validatingwebhookconfiguration=~"kyverno-.*"}) > 0 and kube_deployment_status_replicas{deployment=~"kyverno|kyverno-admission-controller"} == 0
+      expr: sum(kube_validatingwebhookconfiguration_info{validatingwebhookconfiguration=~"kyverno-.*"}) > 0 and sum(kube_deployment_status_replicas{deployment=~"kyverno|kyverno-admission-controller"}) == 0
       for: 5m
       labels:
         area: managedservices

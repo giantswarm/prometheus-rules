@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove `CoreDNSLatencyTooHigh` alert as it's flaky and superseeded by SLO alert.
+
 ## [2.110.0] - 2023-07-10
 
 ### Changed

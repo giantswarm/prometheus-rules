@@ -46,7 +46,7 @@ spec:
     rules:
     - alert: KyvernoScaledDownTooLong
       annotations:
-        description: 'Kyverno has been scaled down for too long'
+        description: 'Kyverno has been scaled down for too long.'
         opsrecipe: deployment-not-satisfied/
       expr: sum(kube_deployment_spec_replicas{deployment="kyverno"}) == 0
       for: 3h

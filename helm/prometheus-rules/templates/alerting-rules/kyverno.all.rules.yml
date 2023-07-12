@@ -13,7 +13,7 @@ spec:
     - alert: KyvernoWebhooksPresent
       annotations:
         description: 'Kyverno has no available replicas but webhooks are present.'
-        opsrecipe: deployment-not-satisfied/
+        opsrecipe: kyverno-webhooks/
       expr: sum(kube_validatingwebhookconfiguration_info{validatingwebhookconfiguration=~"kyverno-.*"}) > 0 and sum(kube_deployment_status_replicas{deployment=~"kyverno|kyverno-admission-controller"}) == 0
       for: 5m
       labels:
@@ -40,5 +40,22 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "false"
         severity: page
+        team: shield
+        topic: kyverno
+  - name: replicas
+    rules:
+    - alert: KyvernoScaledDownTooLong
+      annotations:
+        description: 'Kyverno has been scaled down for too long'
+        opsrecipe: deployment-not-satisfied/
+      expr: sum(kube_deployment_spec_replicas{deployment="kyverno"}) == 0
+      for: 3h
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: notify
         team: shield
         topic: kyverno

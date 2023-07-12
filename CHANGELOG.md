@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Use all nodes instead of just the Ready ones as raw_slo_requests
+
 ## [2.111.0] - 2023-07-11
 
 ### Removed

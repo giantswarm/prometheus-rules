@@ -21,41 +21,6 @@ spec:
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: observability
-    - alert: CoreDNSLatencyTooHigh
-      # There are two sub-queries here that need to be true for the alert to fire.
-      #
-      # The first part calculates the rate of DNS requests per second,
-      # comparing it with a threshold.
-      # As a low rate of DNS queries can lead to a misleading mean average,
-      # we ignore clusters that only have a low rate of DNS requests.
-      #
-      # The second part takes the rate of latency for requests (per cluster),
-      # dividing it by the rate of number of requests (per cluster),
-      # giving a mean average of DNS request latency,
-      # and then comparing it with the threshold.
-      #
-      # If both are true - that is, there are a high number of DNS requests,
-      # and they are on average taking longer than we'd like,
-      # then the alert fires.
-      annotations:
-        description: '{{`CoreDNS mean latency is too high.`}}'
-        opsrecipe: dns-issue-mitigation/
-      expr: sum( irate( coredns_dns_request_duration_seconds_count{zone!="dropped"}[15m] ) ) by (cluster_id) > 500 and sum( irate( coredns_dns_request_duration_seconds_sum[15m] ) ) by (cluster_id) / sum( irate( coredns_dns_request_duration_seconds_count[15m] ) ) by (cluster_id) > 0.003
-      # This is intentionally low.
-      #
-      # DNS latency tends to spike for a short period of time (< 2 minutes),
-      # but  this can still impact larger customer workloads.
-      #
-      # In practice, because we ignore clusters that have a low number of
-      # DNS requests (see the first subquery above), even a short spike
-      # implies a problem that should be taken care of.
-      for: 1m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: page
-        team: {{ include "providerTeam" . }}
-        topic: dns
     - alert: CoreDNSDeploymentNotSatisfied
       annotations:
         description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'

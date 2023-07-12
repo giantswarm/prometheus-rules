@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added a draft alertingrule for wrongly scaled kyverno deployments.
+
 ### Changed
 
 - Change `ManagementClusterAPIServerAdmissionWebhookErrors` severity to page.

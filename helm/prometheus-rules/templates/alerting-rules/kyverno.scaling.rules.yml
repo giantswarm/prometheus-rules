@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels: {{- include "labels.common" . | nindent 4}}
+  name: kyverno.scaling.rules
+  namespace: {{.Values.namespace}}
+spec:
+  groups:
+    - name: KyvernoScaling
+    rules:
+    - alert: KyvernoScalingWronglyConfigured
+        annotations:
+            description: "A Kyverno deployment has a replica count we do not support"
+        expr: avg(kube_deployment_spec_replicas{cluster_id=~".*", deployment=~"kyverno"}) > 0 && 3 <
+        for: 5m
+        labels:
+            area: managedservices
+            cancel_if_cluster_status_creating: "false"
+            cancel_if_cluster_status_deleting: "false"
+            cancel_if_cluster_status_updating: "false"
+            cancel_if_outside_working_hours: "false"
+            severity: page
+            sig: security
+            team: shield

@@ -1,0 +1,31 @@
+---
+rule_files:
+  - kyverno.all.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      # For the first 60min: test with 1 pod: none, up, down
+      - series: 'kube_deployment_spec_replicas{app="kube-state-metrics", cluster_id="gremlin", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="kyverno", endpoint="http", installation="gremlin", instance="10.0.135.241:8080", job="kube-state-metrics", namespace="kyverno", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", prometheus="kube-system/prometheus-agent", prometheus_replica="prometheus-prometheus-agent-0", provider="azure", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
+        values: "3+0x20 0+0x120 0+0x180"
+    alert_rule_test:
+      - alertname: KyvernoScaledDownTooLong
+        eval_time: 20m
+      - alertname: KyvernoScaledDownTooLong
+        eval_time: 140m
+      - alertname: KyvernoScaledDownTooLong
+        eval_time: 200m
+        exp_alerts:
+          - exp_labels:
+              area: managedservices
+              severity: page
+              team: shield
+              topic: kyverno
+              cancel_if_apiserver_down: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_scrape_timeout: "true"
+              cancel_if_outside_working_hours: "false"
+            exp_annotations:
+              description: "Kyverno has been scaled down for too long."

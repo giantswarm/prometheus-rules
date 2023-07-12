@@ -30,7 +30,7 @@ spec:
     - alert: KyvernoReportsTooHigh
       annotations:
         description: '{{`Kyverno {{ $labels.kind }} are too high.`}}'
-        opsrecipe: deployment-not-satisfied/
+        opsrecipe: kyverno-reports/
       expr: aggregation:kyverno_resource_counts{kind=~"(clusteradmissionreports|admissionreports).kyverno.io"} > 50000
       for: 15m
       labels:

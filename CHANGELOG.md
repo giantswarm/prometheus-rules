@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Use all nodes instead of just the Ready ones as raw_slo_requests
 
+### Removed
+
+- Remove kiam-agent and kiam-server from the ServiceLevelBurnRateTooHigh alert
+
 ## [2.111.0] - 2023-07-11
 
 ### Removed

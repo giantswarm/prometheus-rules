@@ -59,3 +59,18 @@ spec:
         severity: notify
         team: shield
         topic: kyverno
+    - alert: KyvernoWronglyScaled
+      annotations:
+        description: 'Kyverno deployment scaling has an unsupported amount of replicas'
+        opsrecipe: KyvernoWronglyScaled/
+      expr: sum(kube_deployment_spec_replicas{deployment="kyveno"}) > 0 && 3 <
+      for: 1h
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: shield
+        topic: kyverno

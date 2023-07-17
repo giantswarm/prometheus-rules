@@ -14,7 +14,7 @@ spec:
       annotations:
         description: '{{`Cilium BPF map is about to fill up.`}}'
         opsrecipe: cilium-bpf-map/
-      expr: avg(cilium_bpf_map_pressure) by (map_name) > 0.8
+      expr: avg(cilium_bpf_map_pressure) by (map_name) * 100 > 80
       for: 15m
       labels:
         area: kaas
@@ -26,7 +26,7 @@ spec:
       annotations:
         description: '{{`Cilium BPF map is about filled up.`}}'
         opsrecipe: cilium-bpf-map/
-      expr: avg(cilium_bpf_map_pressure) by (map_name) > 0.95
+      expr: avg(cilium_bpf_map_pressure) by (map_name) * 100 > 95
       for: 15m
       labels:
         area: kaas

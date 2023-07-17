@@ -7,7 +7,7 @@ tests:
     input_series:
       # For the first 60min: test with 1 pod: none, up, down
       - series: 'cilium_bpf_map_pressure{map_name="policy_00001"}'
-        values: "_x20 0.2+0x20 0.9+0x20"
+        values: "_x20 20+0x20 90+0x20"
     alert_rule_test:
       - alertname:  CiliumBPFMapAlmostFull
         eval_time: 10m
@@ -26,9 +26,8 @@ tests:
               description: "Cilium BPF map is about to fill up."
   - interval: 1m
     input_series:
-      # For the first 60min: test with 1 pod: none, up, down
       - series: 'cilium_bpf_map_pressure{map_name="policy_00001"}'
-        values: "_x20 0.2+0x20 0.9+0x20 0.98+0x20"
+        values: "_x20 20+0x20 90+0x20 98+0x20"
     alert_rule_test:
       - alertname:  CiliumBPFMapFull
         eval_time: 10m

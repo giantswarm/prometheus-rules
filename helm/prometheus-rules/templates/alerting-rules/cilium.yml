@@ -12,7 +12,8 @@ spec:
     rules:
     - alert: CiliumBPFMapAlmostFull
       annotations:
-        description: '{{`CoreDNS CPU usage is too high.`}}'
+        description: '{{`Cilium BPF map is about to fill up.`}}'
+        opsrecipe: cilium-bpf-map/
       expr: avg(cilium_bpf_map_pressure) by (map_name) > 0.8
       for: 15m
       labels:
@@ -23,7 +24,8 @@ spec:
         topic: cilium
     - alert: CiliumBPFMapFull
       annotations:
-        description: '{{`CoreDNS CPU usage is too high.`}}'
+        description: '{{`Cilium BPF map is about filled up.`}}'
+        opsrecipe: cilium-bpf-map/
       expr: avg(cilium_bpf_map_pressure) by (map_name) > 0.95
       for: 15m
       labels:

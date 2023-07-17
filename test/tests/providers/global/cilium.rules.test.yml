@@ -24,8 +24,6 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Cilium BPF map is about to fill up."
-
-tests:
   - interval: 1m
     input_series:
       # For the first 60min: test with 1 pod: none, up, down

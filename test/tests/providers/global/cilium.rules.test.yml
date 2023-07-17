@@ -22,8 +22,10 @@ tests:
               team: phoenix
               topic: cilium
               cancel_if_outside_working_hours: "true"
+              map_name: "policy_00001"
             exp_annotations:
               description: "Cilium BPF map is about to fill up."
+              opsrecipe: "cilium-bpf-map/"
   - interval: 1m
     input_series:
       - series: 'cilium_bpf_map_pressure{map_name="policy_00001"}'
@@ -41,6 +43,7 @@ tests:
               severity: page
               team: phoenix
               topic: cilium
-              cancel_if_outside_working_hours: "true"
+              map_name: "policy_00001"
             exp_annotations:
               description: "Cilium BPF map is about filled up."
+              opsrecipe: "cilium-bpf-map/"

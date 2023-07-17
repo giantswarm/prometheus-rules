@@ -1,0 +1,33 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: cilium.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: cilium
+    rules:
+    - alert: CiliumBPFMapAlmostFull
+      annotations:
+        description: '{{`CoreDNS CPU usage is too high.`}}'
+      expr: avg(cilium_bpf_map_pressure) by (map_name) > 0.8
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: cilium
+    - alert: CiliumBPFMapFull
+      annotations:
+        description: '{{`CoreDNS CPU usage is too high.`}}'
+      expr: avg(cilium_bpf_map_pressure) by (map_name) > 0.95
+      for: 15m
+      labels:
+        area: kaas
+        severity: page
+        team: phoenix
+        topic: cilium

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add cilium BPF map monitoring.
 
+### Changed
+
+- Make `VaultIsDown` page after 40m.
+
 ## [2.112.0] - 2023-07-13
 
 ### Fixed

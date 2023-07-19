@@ -14,10 +14,9 @@ spec:
         description: This pages when one of the vpa's component has restarted too much over the last 10min.
         opsrecipe: vpa-component-too-many-restarts/
       expr: |
-        1 - sum(increase(kube_pod_container_status_restarts_total{container=~"recommender|updater|admission-controller"}[10m])) by (container, cluster_id, cluster_type, customer, installation, pipeline, provider, region)/100
+        1 - sum(increase(kube_pod_container_status_restarts_total{container=~"recommender|updater|admission-controller"}[10m])) by (container, cluster_id, cluster_type, customer, installation, pipeline, provider, region)/100 < 0.98
           or
-        1 - sum(increase(kube_pod_container_status_restarts_total{container="vertical-pod-autoscaler-app"}[10m])) by (container, cluster_id, cluster_type, customer, installation, pipeline, provider, region)/100
-          < 0.98
+        1 - sum(increase(kube_pod_container_status_restarts_total{container="vertical-pod-autoscaler-app"}[10m])) by (container, cluster_id, cluster_type, customer, installation, pipeline, provider, region)/100 < 0.98
       for: 10m
       labels:
         area: managedservices

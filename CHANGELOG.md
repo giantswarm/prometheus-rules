@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `KubeStateMetricsDown` on pre-servicemonitor clusters
+
 ## [2.115.1] - 2023-07-20
 
 ### Fixed

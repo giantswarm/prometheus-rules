@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.115.1] - 2023-07-20
+
 ### Fixed
 
 - Fix `KubeStateMetricsDown`
@@ -2014,7 +2016,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.115.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.115.1...HEAD
+[2.115.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.115.0...v2.115.1
 [2.115.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.114.0...v2.115.0
 [2.114.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.113.0...v2.114.0
 [2.113.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.112.0...v2.113.0

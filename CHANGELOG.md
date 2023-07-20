@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `DNSRequestDurationTooSlow` to catch slow DNS.
+
+### Removed
+
+- Remove `CoreDNSLoadUnbalanced` alert.
+- Remove `CoreDNSCPUUsageTooHigh` alert.
+
 ## [2.113.0] - 2023-07-18
 
 ### Added

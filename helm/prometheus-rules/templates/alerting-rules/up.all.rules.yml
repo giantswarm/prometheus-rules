@@ -48,7 +48,7 @@ spec:
       annotations:
         description: '{{`KubeStateMetrics ({{ $labels.instance }}) is down.`}}'
         opsrecipe: kube-state-metrics-down/
-      expr: label_replace(up{app="kube-state-metrics"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0  or absent(up{app="kube-state-metrics"} == 1)
+      expr: label_replace(up{app="kube-state-metrics", endpoint="http"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0  or absent(up{app="kube-state-metrics", endpoint="http"} == 1)
       for: 15m
       labels:
         area: kaas

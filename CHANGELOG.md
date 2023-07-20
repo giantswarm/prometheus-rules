@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix `KubeStateMetricsDown` on pre-servicemonitor clusters
 
+### Changed
+
+- Switch `HighNumberOfAllocatedSockets` and `HighNumberOfOrphanedSockets` from Rocket to provider teams.
+
 ## [2.115.1] - 2023-07-20
 
 ### Fixed

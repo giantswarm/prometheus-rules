@@ -22,7 +22,7 @@ tests:
               area: kaas
               cancel_if_outside_working_hours: "true"
               severity: notify
-              team: clippy
+              team: phoenix
               topic: managementcluster
               cluster_name: clippaxy
               name: clippaxy-def99
@@ -37,7 +37,7 @@ tests:
               area: kaas
               cancel_if_outside_working_hours: "true"
               severity: notify
-              team: clippy
+              team: phoenix
               topic: managementcluster
               cluster_name: grumpy
               name: grumpy-72r5c

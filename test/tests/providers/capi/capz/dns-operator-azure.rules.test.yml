@@ -22,7 +22,7 @@ tests:
               area: kaas
               cancel_if_outside_working_hours: "true"
               severity: notify
-              team: clippy
+              team: phoenix
               topic: managementcluster
               phase: Provisioned
               exported_namespace: org-31f75bf9
@@ -38,7 +38,7 @@ tests:
               area: kaas
               cancel_if_outside_working_hours: "true"
               severity: notify
-              team: clippy
+              team: phoenix
               topic: managementcluster
               installation: puppy
               method: recordSets.CreateOrUpdate

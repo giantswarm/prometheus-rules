@@ -27,7 +27,7 @@ tests:
               collector: "cpu"
               instance: "10.0.5.111:10300"
               severity: "page"
-              team: "clippy"
+              team: "phoenix"
               topic: "observability"
             exp_annotations:
               description: "NodeExporter Collector cpu on 10.0.5.111:10300 is failed."
@@ -60,7 +60,7 @@ tests:
               instance: "10.0.5.111:10300"
               mountpoint: "/var/lib/kubelet"
               severity: "page"
-              team: "clippy"
+              team: "phoenix"
               topic: "observability"
             exp_annotations:
               description: "NodeExporter Mountpoint /var/lib/kubelet on device /dev/mapper/usr on 10.0.5.111:10300 is erroring."

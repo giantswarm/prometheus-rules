@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Increase time window of `ManagementClusterAPIServerAdmissionWebhookErrors` from 5m to 15m.
+
 ## [2.116.0] - 2023-07-20
 
 ### Fixed

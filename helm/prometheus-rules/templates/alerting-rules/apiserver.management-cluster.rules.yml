@@ -35,7 +35,7 @@ spec:
         description: '{{`Kubernetes API Server {{ $labels.cluster_id }} having admission webhook errors.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
       expr: rate(apiserver_admission_webhook_rejection_count{cluster_type="management_cluster", error_type=~"calling_webhook_error|apiserver_internal_error"}[5m]) > 0
-      for: 5m
+      for: 15m
       labels:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}

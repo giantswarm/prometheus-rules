@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Move Kyverno certificate expiry alert from KaaS to Managed Services.
+- Decrease sensitivity for alerting on KVM WC critical pods from 10m to 15m.
 
 ## [2.119.0] - 2023-07-31
 

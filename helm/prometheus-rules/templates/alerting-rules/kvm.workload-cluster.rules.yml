@@ -17,7 +17,7 @@ spec:
         description: '{{`Critical pod {{ $labels.namespace }}/{{ $labels.pod }} is not running.`}}'
         opsrecipe: critical-pod-is-not-running/
       expr: kube_pod_container_status_running{container=~"(k8s-api-server|k8s-controller-manager|k8s-scheduler)"} != 1
-      for: 10m
+      for: 15m
       labels:
         area: kaas
         severity: page

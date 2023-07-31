@@ -35,7 +35,7 @@ spec:
         description: '{{`Kubernetes API Server {{ $labels.cluster_id }} having admission webhook errors.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
       expr: rate(apiserver_admission_webhook_rejection_count{cluster_type="management_cluster", error_type=~"calling_webhook_error|apiserver_internal_error"}[5m]) > 0
-      for: 5m
+      for: 15m
       labels:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
@@ -46,7 +46,7 @@ spec:
       annotations:
         description: '{{`Kubernetes API Server admission webhook for {{ $labels.cluster_id }} is timing out.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
-      expr: rate(apiserver_admission_webhook_admission_duration_seconds_sum[5m]) / rate(apiserver_admission_webhook_admission_duration_seconds_count[5m]) > 8
+      expr: rate(apiserver_admission_webhook_admission_duration_seconds_count[5m]) > 0 and (rate(apiserver_admission_webhook_admission_duration_seconds_sum[5m]) / rate(apiserver_admission_webhook_admission_duration_seconds_count[5m]) > 8)
       for: 15m
       labels:
         area: kaas

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.119.0] - 2023-07-31
+
 ### Changed
 
 - Assign `clippy` rules to `phoenix`.
@@ -2048,7 +2050,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.118.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.119.0...HEAD
+[2.119.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.118.1...v2.119.0
 [2.118.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.118.0...v2.118.1
 [2.118.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.117.0...v2.118.0
 [2.117.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.116.0...v2.117.0

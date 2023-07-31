@@ -80,7 +80,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: honeybadger
+        team: shield
         topic: managementcluster
     - alert: DeploymentNotSatisfiedShieldChina
       annotations:
@@ -95,7 +95,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: honeybadger
+        team: shield
         topic: managementcluster
     - alert: DeploymentNotSatisfiedKaas
       annotations:

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Route `DeploymentNotSatisfiedShield[China]` and `KyvernoCertificateSecretWillExpireInLessThanTwoDays` to Honeybadger.
+- Move Kyverno certificate expiry alert from KaaS to Managed Services.
 
 ## [2.116.0] - 2023-07-20
 

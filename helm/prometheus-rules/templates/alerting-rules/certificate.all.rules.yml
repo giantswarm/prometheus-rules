@@ -43,7 +43,7 @@ spec:
         area: managedservices
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: honeybadger
+        team: shield
         topic: kyverno
     - alert: CertificateSecretWillExpireInLessThanTwoWeeks
       annotations:

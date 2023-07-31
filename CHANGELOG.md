@@ -11,6 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Assign `clippy` rules to `phoenix`.
 
+## [2.118.1] - 2023-07-31
+
+### Fixed
+
+- Check division by zero in `ManagementClusterWebhookDurationExceedsTimeout` alert's query.
+
+## [2.118.0] - 2023-07-28
+
+### Changed
+
+- Increase alert threshold for KVM WC critical pods from 5m to 10m.
+
+## [2.117.0] - 2023-07-27
+
+### Changed
+
+- Increase time window of `ManagementClusterAPIServerAdmissionWebhookErrors` from 5m to 15m.
+
 ## [2.116.0] - 2023-07-20
 
 ### Fixed
@@ -2030,7 +2048,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.116.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.118.1...HEAD
+[2.118.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.118.0...v2.118.1
+[2.118.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.117.0...v2.118.0
+[2.117.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.116.0...v2.117.0
 [2.116.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.115.1...v2.116.0
 [2.115.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.115.0...v2.115.1
 [2.115.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.114.0...v2.115.0

@@ -34,7 +34,7 @@ tests:
               installation: gollem
               service_priority: highest
               severity: page
-              team: clippy
+              team: phoenix
               topic: cert-manager
             exp_annotations:
               description: "cert-manager in namespace kube-system is down."

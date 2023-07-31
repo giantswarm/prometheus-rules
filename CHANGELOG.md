@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Check division by zero in `ManagementClusterWebhookDurationExceedsTimeout` alert's query.
+
 ## [2.118.0] - 2023-07-28
 
 ### Changed

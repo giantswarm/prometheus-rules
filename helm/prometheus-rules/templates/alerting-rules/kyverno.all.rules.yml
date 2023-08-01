@@ -61,7 +61,7 @@ spec:
         topic: kyverno
     - alert: KyvernoWronglyScaled
       annotations:
-        description: 'Kyverno deployment scaling has an unsupported amount of replicas'
+        description: 'Kyverno's admission controller deployment must use at least 3 replicas, or be scaled to 0.'
         opsrecipe: KyvernoWronglyScaled/
       expr: sum(kube_deployment_spec_replicas{deployment="kyveno"}) > 0 && 3 <
       for: 1h

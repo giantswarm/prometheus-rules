@@ -59,7 +59,7 @@ spec:
         severity: notify
         team: shield
         topic: kyverno
-    - alert: KyvernoWronglyScaled
+    - alert: KyvernoUnsafeReplicaCount
       annotations:
         description: 'Kyverno's admission controller deployment must use at least 3 replicas, or be scaled to 0.'
         opsrecipe: KyvernoWronglyScaled/

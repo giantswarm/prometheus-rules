@@ -27,7 +27,7 @@ spec:
         topic: kyverno
   - name: reports
     rules:
-    - alert: KyvernoReportsTooHigh
+    - alert: KyvernoAdmissionReportCountTooHigh
       annotations:
         description: '{{`Kyverno {{ $labels.kind }} are too high.`}}'
         opsrecipe: kyverno-reports/

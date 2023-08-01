@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Move Cert-manager alerts to Cabbage
+
 ## [2.120.0] - 2023-08-01
 
 ### Changed

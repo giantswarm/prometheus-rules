@@ -29,7 +29,7 @@ spec:
     rules:
     - alert: KyvernoAdmissionReportCountTooHigh
       annotations:
-        description: '{{`Kyverno {{ $labels.kind }} are too high.`}}'
+        description: '{{`Kyverno {{ $labels.kind }} are too high. This is an indicator that Kyverno's report processing may not be keeping up with cluster demand.`}}'
         opsrecipe: kyverno-reports/
       expr: aggregation:kyverno_resource_counts{kind=~"(clusteradmissionreports|admissionreports).kyverno.io"} > 50000
       for: 15m

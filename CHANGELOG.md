@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Allow 1 error/5 minutes for `ManagementClusterAPIServerAdmissionWebhookErrors`.
+
+### Fixed
+
+- Add webhook name in `ManagementClusterAPIServerAdmissionWebhookErrors` alert title.
+
 ## [2.121.0] - 2023-08-02
 
 ### Changed

@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Move Cert-manager alerts to Cabbage
 
+### Fixed
+
+- Make `ManagementClusterContainerIsRestartingTooFrequentlyAWS` alert title include the involved pod.
+- Make `DeploymentNotSatisfiedKaas` alert title include the involved deployment.
+- Make `WorkloadClusterNonCriticalDeploymentNotSatisfiedKaas` alert title include the involved deployment.
+- Make `WorkloadClusterDeploymentNotSatisfiedKaas` alert title include the involved deployment.
+- Make `WorkloadClusterContainerIsRestartingTooFrequentlyAWS` alert title include the involved pod.
+- Make `WorkloadClusterManagedDeploymentNotSatisfiedPhoenix` alert title include the involved deployment.
+
 ## [2.120.0] - 2023-08-01
 
 ### Changed

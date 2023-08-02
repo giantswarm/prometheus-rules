@@ -10,7 +10,7 @@ spec:
   groups:
   - name: webhooks
     rules:
-    - alert: KyvernoWebhooksPresent
+    - alert: KyvernoWebhookHasNoAvailableReplicas
       annotations:
         description: 'Kyverno has no available replicas but webhooks are present.'
         opsrecipe: kyverno-webhooks/

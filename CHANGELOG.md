@@ -7,6 +7,104 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Ignore `prometheus` PVCs in `PersistentVolumeSpaceTooLow` alert (they have a dedicated alert).
+
+## [2.122.0] - 2023-08-02
+
+### Changed
+
+- Allow 1 error/5 minutes for `ManagementClusterAPIServerAdmissionWebhookErrors`.
+
+### Fixed
+
+- Add webhook name in `ManagementClusterAPIServerAdmissionWebhookErrors` alert title.
+
+## [2.121.0] - 2023-08-02
+
+### Changed
+
+- Move Cert-manager alerts to Cabbage
+
+### Fixed
+
+- Make `ManagementClusterContainerIsRestartingTooFrequentlyAWS` alert title include the involved pod.
+- Make `DeploymentNotSatisfiedKaas` alert title include the involved deployment.
+- Make `WorkloadClusterNonCriticalDeploymentNotSatisfiedKaas` alert title include the involved deployment.
+- Make `WorkloadClusterDeploymentNotSatisfiedKaas` alert title include the involved deployment.
+- Make `WorkloadClusterContainerIsRestartingTooFrequentlyAWS` alert title include the involved pod.
+- Make `WorkloadClusterManagedDeploymentNotSatisfiedPhoenix` alert title include the involved deployment.
+
+## [2.120.0] - 2023-08-01
+
+### Changed
+
+- Move Kyverno certificate expiry alert from KaaS to Managed Services.
+- Decrease sensitivity for alerting on KVM WC critical pods from 10m to 15m.
+
+## [2.119.0] - 2023-07-31
+
+### Changed
+
+- Assign `clippy` rules to `phoenix`.
+
+## [2.118.1] - 2023-07-31
+
+### Fixed
+
+- Check division by zero in `ManagementClusterWebhookDurationExceedsTimeout` alert's query.
+
+## [2.118.0] - 2023-07-28
+
+### Changed
+
+- Increase alert threshold for KVM WC critical pods from 5m to 10m.
+
+## [2.117.0] - 2023-07-27
+
+### Changed
+
+- Increase time window of `ManagementClusterAPIServerAdmissionWebhookErrors` from 5m to 15m.
+
+## [2.116.0] - 2023-07-20
+
+### Fixed
+
+- Fix `KubeStateMetricsDown` on pre-servicemonitor clusters
+
+### Changed
+
+- Switch `HighNumberOfAllocatedSockets` and `HighNumberOfOrphanedSockets` from Rocket to provider teams.
+
+## [2.115.1] - 2023-07-20
+
+### Fixed
+
+- Fix `KubeStateMetricsDown`
+
+## [2.115.0] - 2023-07-20
+
+
+### Added
+
+- New alert `KubeStateMetricsSlow` that inhibits KSM related alerts.
+
+### Fixed
+
+- Fix `KubeStateMetricsDown` inhibition.
+
+## [2.114.0] - 2023-07-20
+
+### Added
+
+- Add `DNSRequestDurationTooSlow` to catch slow DNS.
+
+### Removed
+
+- Remove `CoreDNSLoadUnbalanced` alert.
+- Remove `CoreDNSCPUUsageTooHigh` alert.
+
 ## [2.113.0] - 2023-07-18
 
 ### Added
@@ -1989,7 +2087,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.113.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.122.0...HEAD
+[2.122.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.121.0...v2.122.0
+[2.121.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.120.0...v2.121.0
+[2.120.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.119.0...v2.120.0
+[2.119.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.118.1...v2.119.0
+[2.118.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.118.0...v2.118.1
+[2.118.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.117.0...v2.118.0
+[2.117.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.116.0...v2.117.0
+[2.116.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.115.1...v2.116.0
+[2.115.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.115.0...v2.115.1
+[2.115.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.114.0...v2.115.0
+[2.114.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.113.0...v2.114.0
 [2.113.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.112.0...v2.113.0
 [2.112.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.111.0...v2.112.0
 [2.111.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.110.0...v2.111.0

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.123.0] - 2023-08-03
+
 ### Changed
 
 - Ignore `prometheus` PVCs in `PersistentVolumeSpaceTooLow` alert (they have a dedicated alert).
@@ -2087,7 +2089,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.122.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.123.0...HEAD
+[2.123.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.122.0...v2.123.0
 [2.122.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.121.0...v2.122.0
 [2.121.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.120.0...v2.121.0
 [2.120.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.119.0...v2.120.0

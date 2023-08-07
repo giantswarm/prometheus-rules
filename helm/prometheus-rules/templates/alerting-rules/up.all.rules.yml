@@ -51,7 +51,7 @@ spec:
       expr: |-
         (
           # modern clusters
-          label_replace(up{app="kube-state-metrics",instance=~".*:8080"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{app="kube-state-metrics",instance=~".*:8080"} == 1)
+          label_replace(up{app="kube-state-metrics",instance=~".*:8080|.*:8081"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{app="kube-state-metrics",instance=~".*:8080|.*:8081"} == 1)
         )
         and
         (

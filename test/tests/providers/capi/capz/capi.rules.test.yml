@@ -16,7 +16,7 @@ tests:
               area: kaas
               cancel_if_outside_working_hours: "true"
               severity: notify
-              team: clippy
+              team: phoenix
               topic: managementcluster
               cluster_name: clippaxy
               name: clippaxy-72jq5
@@ -42,7 +42,7 @@ tests:
               area: kaas
               cancel_if_outside_working_hours: "true"
               severity: notify
-              team: clippy
+              team: phoenix
               topic: managementcluster
               cluster_name: clippaxy
               name: clippaxy-def99
@@ -67,7 +67,7 @@ tests:
               area: kaas
               cancel_if_outside_working_hours: "true"
               severity: notify
-              team: clippy
+              team: phoenix
               topic: managementcluster
               cluster_name: clippaxy
               name: clippaxy-def99
@@ -92,7 +92,7 @@ tests:
               area: kaas
               cancel_if_outside_working_hours: "true"
               severity: notify
-              team: clippy
+              team: phoenix
               topic: managementcluster
               cluster_name: clippaxy
               name: clippaxy-72jzy
@@ -113,7 +113,7 @@ tests:
               area: kaas
               cancel_if_outside_working_hours: "true"
               severity: notify
-              team: clippy
+              team: phoenix
               topic: managementcluster
               name: clippaxy
               exported_namespace: giantswarm

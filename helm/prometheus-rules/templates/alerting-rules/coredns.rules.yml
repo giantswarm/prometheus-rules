@@ -10,17 +10,6 @@ spec:
   groups:
   - name: coredns
     rules:
-    - alert: CoreDNSCPUUsageTooHigh
-      annotations:
-        description: '{{`CoreDNS CPU usage is too high.`}}'
-      expr: rate(container_cpu_user_seconds_total{pod=~"coredns-.*"}[5m]) > 0.15
-      for: 5m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
-        team: {{ include "providerTeam" . }}
-        topic: observability
     - alert: CoreDNSDeploymentNotSatisfied
       annotations:
         description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
@@ -28,36 +17,35 @@ spec:
       expr: sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) / (sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) + sum(kube_deployment_status_replicas_unavailable{deployment=~"coredns.*"}))* 100 < 51
       for: 10m
       labels:
-        area: managedservices
+        area: empowerment
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: cabbage
         topic: dns
     - alert: CoreDNSMaxHPAReplicasReached
       expr: kube_hpa_status_current_replicas{hpa="coredns"} == kube_hpa_spec_max_replicas{hpa="coredns"} AND kube_hpa_spec_min_replicas{hpa="coredns"} != kube_hpa_spec_max_replicas{hpa="coredns"}
       for: 120m
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: cabbage
         topic: dns
       annotations:
         description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} has been scaled to its maximum replica count for too long.`}}'
-    # This alert checks the percentage of the dns requests that are handled by a single pod. The result of the query should always be 0 (that means load is spread evenly between all coredns pods).
-    # If it's > 20 for 10 minutes there is something weird happening in the cluster.
-    # This is only relevant if there is a meaningful number of DNS requests happening
-    - alert: CoreDNSLoadUnbalanced
-      expr: sum by (cluster_id) (rate(coredns_dns_requests_total[10m])) > 10 AND (sum by(cluster_id,pod) (rate(coredns_dns_requests_total[10m])) / ignoring(pod) group_left sum by (cluster_id) (rate(coredns_dns_requests_total[10m])) * 100) - ignoring(pod) group_left 100 / sum by (cluster_id) (kube_deployment_status_replicas{deployment=~"coredns|coredns-cp"}) > 20
-      for: 10m
+    - alert: DNSRequestDurationTooSlow
+      expr: histogram_quantile(0.99, sum(irate(coredns_dns_request_duration_seconds_bucket{app="coredns"}[5m])) by (le)) > 1
+      for: 15m
       labels:
-        area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        area: empowerment
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: cabbage
         topic: dns
       annotations:
-        description: '{{`CoreDNS Load has been unbalanced for more than 10m.`}}'
-        opsrecipe: core-dns-unbalanced/
+        description: '{{`CoreDNS requests are taking more than 1 second to be responded.`}}'
+        opsrecipe: dns-request-duration-too-slow/
+        dashboard: Yu9tkufmk/dns
+
+

@@ -1,0 +1,35 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: cilium.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: cilium
+    rules:
+    - alert: CiliumBPFMapAlmostFull
+      annotations:
+        description: '{{`Cilium BPF map is about to fill up.`}}'
+        opsrecipe: cilium-bpf-map/
+      expr: avg(cilium_bpf_map_pressure) by (map_name) * 100 > 80
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: cilium
+    - alert: CiliumBPFMapFull
+      annotations:
+        description: '{{`Cilium BPF map is about filled up.`}}'
+        opsrecipe: cilium-bpf-map/
+      expr: avg(cilium_bpf_map_pressure) by (map_name) * 100 > 95
+      for: 15m
+      labels:
+        area: kaas
+        severity: page
+        team: phoenix
+        topic: cilium

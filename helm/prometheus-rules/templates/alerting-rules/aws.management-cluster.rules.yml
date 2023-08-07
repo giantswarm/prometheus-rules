@@ -133,7 +133,7 @@ spec:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/
       ## route53-manager is only used in China as route53 did not used to exist there
-      expr: increase(kube_pod_container_status_restarts_total{container=~"aws-admission-controller.*|aws-node.*|aws-operator.*|cluster-operator.*|route53-manager.*"}[1h]) > 6
+      expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"aws-admission-controller.*|aws-node.*|aws-operator.*|cluster-operator.*|route53-manager.*"}[1h]), "service", "/", "namespace", "pod") > 6
       for: 5m
       labels:
         area: kaas

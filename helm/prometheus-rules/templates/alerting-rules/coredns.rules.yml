@@ -17,21 +17,21 @@ spec:
       expr: sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) / (sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) + sum(kube_deployment_status_replicas_unavailable{deployment=~"coredns.*"}))* 100 < 51
       for: 10m
       labels:
-        area: managedservices
+        area: empowerment
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: cabbage
         topic: dns
     - alert: CoreDNSMaxHPAReplicasReached
       expr: kube_hpa_status_current_replicas{hpa="coredns"} == kube_hpa_spec_max_replicas{hpa="coredns"} AND kube_hpa_spec_min_replicas{hpa="coredns"} != kube_hpa_spec_max_replicas{hpa="coredns"}
       for: 120m
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: cabbage
         topic: dns
       annotations:
         description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} has been scaled to its maximum replica count for too long.`}}'
@@ -39,9 +39,9 @@ spec:
       expr: histogram_quantile(0.99, sum(irate(coredns_dns_request_duration_seconds_bucket{app="coredns"}[5m])) by (le)) > 1
       for: 15m
       labels:
-        area: kaas
+        area: empowerment
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: cabbage
         topic: dns
       annotations:
         description: '{{`CoreDNS requests are taking more than 1 second to be responded.`}}'

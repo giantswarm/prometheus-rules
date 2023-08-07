@@ -101,7 +101,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator-.+|azure-admission-controller-.+|azure-operator.*|azure-collector.*|cluster-operator-.+|cluster-api-core-webhook.*|coredns-.+|event-exporter-.*|etcd-kubernetes-resources-count-exporter-.*|upgrade-schedule-operator.*|worker-.+|master-.+", cluster_id!~"argali|giraffe"}, "service", "/", "namespace", "deployment") > 0
+      expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator-.+|azure-admission-controller-.+|azure-operator.*|azure-collector.*|cluster-operator-.+|cluster-api-core-webhook.*|event-exporter-.*|etcd-kubernetes-resources-count-exporter-.*|upgrade-schedule-operator.*|worker-.+|master-.+", cluster_id!~"argali|giraffe"}, "service", "/", "namespace", "deployment") > 0
       for: 30m
       labels:
         area: kaas
@@ -204,7 +204,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied-china/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"(ingress-nginx|nginx-ingress-controller)-.+", cluster_id=~"argali|giraffe"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"(ingress-nginx|nginx-ingress-controller|coredns)-.+", cluster_id=~"argali|giraffe"} > 0
       for: 3h
       labels:
         area: kaas

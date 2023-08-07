@@ -48,8 +48,8 @@ spec:
       annotations:
         description: 'Kyverno has been scaled down for too long.'
         opsrecipe: kyverno-scaled-down/
-      expr: sum(kube_deployment_spec_replicas{deployment="kyverno"}) == 0
-      for: 1h
+      expr: sum(kube_deployment_spec_replicas{deployment=~"kyverno|kyverno-kyverno-plugin|kyverno-policy-reporter"}) == 0
+      for: 4h
       labels:
         area: managedservices
         cancel_if_cluster_status_creating: "true"

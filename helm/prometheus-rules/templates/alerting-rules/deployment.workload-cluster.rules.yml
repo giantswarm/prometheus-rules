@@ -71,3 +71,14 @@ spec:
         severity: notify
         team: honeybadger
         topic: releng
+    - alert: WorkloadClusterDeploymentScaledDownToZeroShield
+      annotations:
+        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} has been scaled down to zero for prolonged period of time.`}}'
+      expr: kube_deployment_spec_replicas{cluster_type="workload_cluster", deployment=~"trivy-operator|starboard-exporter|jiralert"} == 0
+      for: 4h
+      labels:
+        area: managedservices
+        cancel_if_outside_working_hours: true
+        severity: notify
+        team: shield
+        topic: releng

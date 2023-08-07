@@ -52,7 +52,7 @@ tests:
               cancel_if_outside_working_hours: "false"
               kind: "admissionreports.kyverno.io"
             exp_annotations:
-              description: "Kyverno admissionreports.kyverno.io are too high."
+              description: "Kyverno admissionreports.kyverno.io are too high. This is an indicator that Kyverno's report processing may not be keeping up with cluster demand."
               opsrecipe: "kyverno-reports/"
       # Kyverno scaled down alert
       - alertname: KyvernoScaledDownTooLong

@@ -22,7 +22,7 @@ tests:
         values: "0+1000x30 30000+1500x30"
     alert_rule_test:
       # Webhooks alert
-      - alertname: KyvernoWebhooksPresent
+      - alertname: KyvernoWebhookHasNoAvailableReplicas
         eval_time: 5m
         exp_alerts:
           - exp_labels:
@@ -38,7 +38,7 @@ tests:
               description: "Kyverno has no available replicas but webhooks are present."
               opsrecipe: "kyverno-webhooks/"
       # Kyverno reports too high alert
-      - alertname: KyvernoReportsTooHigh
+      - alertname: KyvernoAdmissionReportCountTooHigh
         eval_time: 60m
         exp_alerts:
           - exp_labels:

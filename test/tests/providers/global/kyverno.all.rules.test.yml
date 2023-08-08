@@ -1,0 +1,88 @@
+---
+rule_files:
+  - kyverno.all.rules.yml
+tests:
+  - interval: 1m
+    input_series:
+      # Kyverno validating webhooks
+      - series: 'kube_validatingwebhookconfiguration_info{app="kube-state-metrics", cluster_id="gremlin", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="http", installation="gremlin", instance="10.0.135.241:8080", job="kube-state-metrics", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", prometheus="kube-system/prometheus-agent", prometheus_replica="prometheus-prometheus-agent-0", provider="azure", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest", validatingwebhookconfiguration="kyverno-exception-validating-webhook-cfg"}'
+        values: "1+0x10"
+      - series: 'kube_validatingwebhookconfiguration_info{app="kube-state-metrics", cluster_id="gremlin", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="http", installation="gremlin", instance="10.0.135.241:8080", job="kube-state-metrics", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", prometheus="kube-system/prometheus-agent", prometheus_replica="prometheus-prometheus-agent-0", provider="azure", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest", validatingwebhookconfiguration="kyverno-policy-validating-webhook-cfg"}'
+        values: "1+0x10"
+      - series: 'kube_validatingwebhookconfiguration_info{app="kube-state-metrics", cluster_id="gremlin", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="http", installation="gremlin", instance="10.0.135.241:8080", job="kube-state-metrics", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", prometheus="kube-system/prometheus-agent", prometheus_replica="prometheus-prometheus-agent-0", provider="azure", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest", validatingwebhookconfiguration="kyverno-resource-validating-webhook-cfg"}'
+        values: "1+0x10"
+      # Kyverno deployment status replicas
+      - series: 'kube_deployment_status_replicas{app="kube-state-metrics", cluster_id="gremlin", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="kyverno", endpoint="http", installation="gremlin", instance="10.0.135.241:8080", job="kube-state-metrics", namespace="kyverno", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", prometheus="kube-system/prometheus-agent", prometheus_replica="prometheus-prometheus-agent-0", provider="azure", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
+        values: "0+0x10"
+      # Kyverno deployment spec replicas
+      - series: 'kube_deployment_spec_replicas{app="kube-state-metrics", cluster_id="gremlin", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="kyverno", endpoint="http", installation="gremlin", instance="10.0.135.241:8080", job="kube-state-metrics", namespace="kyverno", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", prometheus="kube-system/prometheus-agent", prometheus_replica="prometheus-prometheus-agent-0", provider="azure", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
+        values: "0+0x240 1+0x70"
+      # Kyverno admission reports
+      - series: 'aggregation:kyverno_resource_counts{kind="admissionreports.kyverno.io"}'
+        values: "0+1000x30 30000+1500x30"
+    alert_rule_test:
+      # Webhooks alert
+      - alertname: KyvernoWebhookHasNoAvailableReplicas
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: managedservices
+              severity: page
+              team: shield
+              topic: kyverno
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "false"
+            exp_annotations:
+              description: "Kyverno has no available replicas but webhooks are present."
+              opsrecipe: "kyverno-webhooks/"
+      # Kyverno reports too high alert
+      - alertname: KyvernoAdmissionReportCountTooHigh
+        eval_time: 60m
+        exp_alerts:
+          - exp_labels:
+              area: managedservices
+              severity: page
+              team: shield
+              topic: kyverno
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "false"
+              kind: "admissionreports.kyverno.io"
+            exp_annotations:
+              description: "Kyverno admissionreports.kyverno.io are too high. This is an indicator that Kyverno's report processing may not be keeping up with cluster demand."
+              opsrecipe: "kyverno-reports/"
+      # Kyverno scaled down alert
+      - alertname: KyvernoScaledDownTooLong
+        eval_time: 240m
+        exp_alerts:
+          - exp_labels:
+              area: managedservices
+              severity: notify
+              team: shield
+              topic: kyverno
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+            exp_annotations:
+              description: "Kyverno has been scaled down for too long."
+              opsrecipe: "kyverno-scaled-down/"
+      # Kyverno unsafe replica count alert
+      - alertname: KyvernoUnsafeReplicaCount
+        eval_time: 310m
+        exp_alerts:
+          - exp_labels:
+              area: managedservices
+              severity: notify
+              team: shield
+              topic: kyverno
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+            exp_annotations:
+              description: "Kyverno's admission controller deployment must use at least 3 replicas, or be scaled to 0."
+              opsrecipe: "KyvernoWronglyScaled/"

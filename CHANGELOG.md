@@ -15,12 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add port 8081 for the `instance` label in `KubeStateMetricsDown` alert.
 
+### Changed
+
+- Move CoreDNS alerts from phoenix to cabbage.
+
 ## [2.123.0] - 2023-08-03
 
 ### Changed
 
 - Ignore `prometheus` PVCs in `PersistentVolumeSpaceTooLow` alert (they have a dedicated alert).
-- Move CoreDNS alerts from phoenix to cabbage.
 
 ## [2.122.0] - 2023-08-02
 

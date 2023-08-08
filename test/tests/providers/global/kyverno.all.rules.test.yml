@@ -6,14 +6,14 @@ tests:
     input_series:
       # Kyverno validating webhooks
       - series: 'kube_validatingwebhookconfiguration_info{app="kube-state-metrics", cluster_id="gremlin", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="http", installation="gremlin", instance="10.0.135.241:8080", job="kube-state-metrics", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", prometheus="kube-system/prometheus-agent", prometheus_replica="prometheus-prometheus-agent-0", provider="azure", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest", validatingwebhookconfiguration="kyverno-exception-validating-webhook-cfg"}'
-        values: "1+0x10"
+        values: "1+0x20"
       - series: 'kube_validatingwebhookconfiguration_info{app="kube-state-metrics", cluster_id="gremlin", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="http", installation="gremlin", instance="10.0.135.241:8080", job="kube-state-metrics", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", prometheus="kube-system/prometheus-agent", prometheus_replica="prometheus-prometheus-agent-0", provider="azure", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest", validatingwebhookconfiguration="kyverno-policy-validating-webhook-cfg"}'
-        values: "1+0x10"
+        values: "1+0x20"
       - series: 'kube_validatingwebhookconfiguration_info{app="kube-state-metrics", cluster_id="gremlin", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="http", installation="gremlin", instance="10.0.135.241:8080", job="kube-state-metrics", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", prometheus="kube-system/prometheus-agent", prometheus_replica="prometheus-prometheus-agent-0", provider="azure", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest", validatingwebhookconfiguration="kyverno-resource-validating-webhook-cfg"}'
-        values: "1+0x10"
+        values: "1+0x20"
       # Kyverno deployment status replicas
       - series: 'kube_deployment_status_replicas{app="kube-state-metrics", cluster_id="gremlin", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="kyverno", endpoint="http", installation="gremlin", instance="10.0.135.241:8080", job="kube-state-metrics", namespace="kyverno", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", prometheus="kube-system/prometheus-agent", prometheus_replica="prometheus-prometheus-agent-0", provider="azure", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
-        values: "0+0x10"
+        values: "0+0x20"
       # Kyverno deployment spec replicas
       - series: 'kube_deployment_spec_replicas{app="kube-state-metrics", cluster_id="gremlin", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="kyverno", endpoint="http", installation="gremlin", instance="10.0.135.241:8080", job="kube-state-metrics", namespace="kyverno", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", prometheus="kube-system/prometheus-agent", prometheus_replica="prometheus-prometheus-agent-0", provider="azure", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
         values: "0+0x240 1+0x70"
@@ -23,7 +23,7 @@ tests:
     alert_rule_test:
       # Webhooks alert
       - alertname: KyvernoWebhookHasNoAvailableReplicas
-        eval_time: 5m
+        eval_time: 15m
         exp_alerts:
           - exp_labels:
               area: managedservices

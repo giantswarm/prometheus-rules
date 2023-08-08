@@ -58,6 +58,11 @@ spec:
           # vintage clusters without servicemonitor
           label_replace(up{app="kube-state-metrics",container=""}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{app="kube-state-metrics",container=""} == 1)
         )
+        or
+        (
+          # When it looks up but we don't have metrics
+          count({app="kube-state-metrics"}) < 10
+        )
       for: 15m
       labels:
         area: kaas

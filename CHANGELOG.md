@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Changed
+
+- `KubeStateMetricsDown` also triggers when KSM does not show enough data (less than 10 metrics)
+
 ## [2.124.0] - 2023-08-08
 
 ### Added

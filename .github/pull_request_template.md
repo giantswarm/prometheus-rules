@@ -1,7 +1,7 @@
 Before adding a new alerting rule into this repository you should consider creating an SLO rules instead.
 SLO helps you both increase the quality of your monitoring and reduce the alert noise.
 
-* How to creat a SLO rule: https://github.com/giantswarm/sloth-rules#how-to-create-a-slo
+* How to create a SLO rule: https://github.com/giantswarm/sloth-rules#how-to-create-a-slo
 * Documentation: https://intranet.giantswarm.io/docs/monitoring/slo-alerting/
 
 ---

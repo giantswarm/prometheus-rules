@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.125.0] - 2023-08-09
+
 ## Changed
 
 - `KubeStateMetricsDown` also triggers when KSM does not show enough data (less than 10 metrics)
@@ -2107,7 +2109,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.124.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.125.0...HEAD
+[2.125.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.124.0...v2.125.0
 [2.124.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.123.0...v2.124.0
 [2.123.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.122.0...v2.123.0
 [2.122.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.121.0...v2.122.0

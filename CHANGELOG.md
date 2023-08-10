@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Changed
+
+- `ManagementClusterWebhookDurationExceedsTimeout`, `WorkloadClusterWebhookDurationExceedsTimeoutSolutionEngineers`, `WorkloadClusterWebhookDurationExceedsTimeoutHoneybadger`, `WorkloadClusterWebhookDurationExceedsTimeoutCabbage`, and `WorkloadClusterWebhookDurationExceedsTimeoutAtlas` are changed to use the 95th percentile latency of the webhook, instead of the average rate of change.
+
 ## [2.125.0] - 2023-08-09
 
 ## Changed

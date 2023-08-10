@@ -44,9 +44,9 @@ spec:
         topic: managementcluster
     - alert: ManagementClusterWebhookDurationExceedsTimeout
       annotations:
-        description: '{{`Kubernetes API Server admission webhook for {{ $labels.cluster_id }} is timing out.`}}'
+        description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
-      expr: rate(apiserver_admission_webhook_admission_duration_seconds_count[5m]) > 0 and (rate(apiserver_admission_webhook_admission_duration_seconds_sum[5m]) / rate(apiserver_admission_webhook_admission_duration_seconds_count[5m]) > 8)
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket[5m])) by (cluster_id, name, app, le)) > 5
       for: 15m
       labels:
         area: kaas

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- WorkloadClusterApp alerts now also monitor default catalog
+
 ## [2.126.1] - 2023-08-14
 
 ### Fixed

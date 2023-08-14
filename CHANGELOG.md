@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Revert change concerning port 8081 in `KubeStateMetricsDown` alert.
+
 ## [2.126.0] - 2023-08-10
 
 ## Changed

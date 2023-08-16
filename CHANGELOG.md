@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.126.1] - 2023-08-14
 
+### Changed
+
+- Changed master memory limits to 80%
+
 ### Fixed
 
 - Revert change concerning port 8081 in `KubeStateMetricsDown` alert.

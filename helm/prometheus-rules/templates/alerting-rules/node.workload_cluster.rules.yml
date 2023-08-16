@@ -137,7 +137,7 @@ spec:
               / (node_memory_MemTotal_bytes{cluster_type="workload_cluster"}
             ) * 100
           )
-        ) > 90
+        ) > 80
         and
         ( node_memory_MemFree_bytes{cluster_type="workload_cluster"}
           + node_memory_Cached_bytes{cluster_type="workload_cluster"}

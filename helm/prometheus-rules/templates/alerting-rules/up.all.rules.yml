@@ -74,5 +74,5 @@ spec:
         cancel_if_kubelet_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: atlas
+        team: turtles
         topic: observability

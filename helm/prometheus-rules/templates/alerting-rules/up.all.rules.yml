@@ -72,7 +72,7 @@ spec:
         cancel_if_cluster_has_no_workers: "true"
         inhibit_kube_state_metrics_down: "true"
         cancel_if_kubelet_down: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: "false"
         severity: page
         team: atlas
         topic: observability

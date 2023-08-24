@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Handover cert-manager alerts to BigMac
+
 ## [2.127.0] - 2023-08-21
 
 ### Changed
@@ -214,7 +218,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add alerts for legacy vault's etcd backups. 
+- Add alerts for legacy vault's etcd backups.
 
 ## [2.105.0] - 2023-06-22
 

@@ -26,7 +26,7 @@ spec:
         cancel_if_kubelet_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: turtles
+        team: phoenix
         topic: observability
     - alert: KubeConfigMapCreatedMetricMissing
       annotations:
@@ -39,7 +39,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: turtles
+        team: phoenix
         topic: kubernetes
     - alert: KubeDaemonSetCreatedMetricMissing
       annotations:
@@ -52,7 +52,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: turtles
+        team: phoenix
         topic: kubernetes
     - alert: KubeDeploymentCreatedMetricMissing
       annotations:
@@ -65,7 +65,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: turtles
+        team: phoenix
         topic: kubernetes
     - alert: KubeEndpointCreatedMetricMissing
       annotations:
@@ -78,7 +78,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: turtles
+        team: phoenix
         topic: kubernetes
     - alert: KubeNamespaceCreatedMetricMissing
       annotations:
@@ -91,7 +91,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: turtles
+        team: phoenix
         topic: kubernetes
     - alert: KubeNodeCreatedMetricMissing
       annotations:
@@ -104,7 +104,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: turtles
+        team: phoenix
         topic: kubernetes
     - alert: KubePodCreatedMetricMissing
       annotations:
@@ -117,7 +117,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: turtles
+        team: phoenix
         topic: kubernetes
     - alert: KubeReplicaSetCreatedMetricMissing
       annotations:
@@ -130,7 +130,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: turtles
+        team: phoenix
         topic: kubernetes
     - alert: KubeSecretCreatedMetricMissing
       annotations:
@@ -143,7 +143,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: turtles
+        team: phoenix
         topic: kubernetes
     - alert: KubeServiceCreatedMetricMissing
       annotations:
@@ -156,5 +156,5 @@ spec:
         cancel_if_outside_working_hours: "true"
         cancel_if_kube_state_metrics_down: "true"
         severity: page
-        team: turtles
+        team: phoenix
         topic: kubernetes

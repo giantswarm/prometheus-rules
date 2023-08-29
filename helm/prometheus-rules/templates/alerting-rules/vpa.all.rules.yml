@@ -27,5 +27,5 @@ spec:
         cancel_if_scrape_timeout: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: turtles
+        team: phoenix
         topic: observability

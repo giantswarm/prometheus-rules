@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Unit tests for KubeStateMetricsDown
+
 ### Changed
 
-- Change ownership from Atlas to Turtles for all vertical pod autoscaler and kube state metrics related alerts.
+- Change ownership from Atlas to Turtles/Phoenix for all vertical pod autoscaler and kube state metrics related alerts.
 
 ## [2.127.0] - 2023-08-21
 

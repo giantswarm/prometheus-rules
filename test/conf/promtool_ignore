@@ -71,7 +71,6 @@ templates/alerting-rules/systemd.workload-cluster.rules.yml
 templates/alerting-rules/tiller.all.rules.yml
 templates/alerting-rules/tiller.workload-cluster.rules.yml
 templates/alerting-rules/timesync.rules.yml
-templates/alerting-rules/up.all.rules.yml
 templates/alerting-rules/up.management-cluster.rules.yml
 templates/alerting-rules/vault.rules.yml
 templates/recording-rules/grafana-cloud.rules.yml

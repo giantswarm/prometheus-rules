@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Unit tests for KubeStateMetricsDown
 
+### Changed
+
+- Loki alerts only during working hours
+
 ## [2.127.0] - 2023-08-21
 
 ### Changed

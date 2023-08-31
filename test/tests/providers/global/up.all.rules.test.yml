@@ -58,7 +58,7 @@ tests:
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "observability"
             exp_annotations:
               description: "KubeStateMetrics () is down."
@@ -80,7 +80,7 @@ tests:
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "observability"
             exp_annotations:
               description: "KubeStateMetrics () is down."
@@ -108,7 +108,7 @@ tests:
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "observability"
             exp_annotations:
               description: "KubeStateMetrics () is down."
@@ -161,7 +161,7 @@ tests:
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "observability"
             exp_annotations:
               description: "KubeStateMetrics () is down."
@@ -183,7 +183,7 @@ tests:
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "observability"
             exp_annotations:
               description: "KubeStateMetrics () is down."

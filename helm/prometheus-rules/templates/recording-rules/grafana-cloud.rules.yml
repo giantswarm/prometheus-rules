@@ -325,7 +325,7 @@ spec:
               cluster_type="management_cluster",
               label_application_giantswarm_io_team!=""
             }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
-          ) by (team, app, deployment)
+          ) by (team, app, deployment),
         "name", ",", "deployment")
       record: aggregation:kyverno_policy_deployment_status_team
     # Kyverno policy workload status by team - DaemonSets
@@ -343,7 +343,7 @@ spec:
               cluster_type="management_cluster",
               label_application_giantswarm_io_team!=""
             }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
-          ) by (team, app, daemonset)
+          ) by (team, app, daemonset),
         "name", ",", "daemonset")
       record: aggregation:kyverno_policy_daemonset_status_team
     # Kyverno policy workload status by team - StatefulSets
@@ -361,7 +361,7 @@ spec:
               cluster_type="management_cluster",
               label_application_giantswarm_io_team!=""
             }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
-          ) by (team, app, statefulset)
+          ) by (team, app, statefulset),
         "name", ",", "statefulset")
       record: aggregation:kyverno_policy_statefulset_status_team
     # Kyverno policy workload status by team - Job
@@ -379,7 +379,7 @@ spec:
               cluster_type="management_cluster",
               label_application_giantswarm_io_team!=""
             }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
-          ) by (team, app, job)
+          ) by (team, app, job),
         "name", ",", "job")
       record: aggregation:kyverno_policy_job_status_team
     # Kyverno policy workload status by team - CronJob
@@ -397,7 +397,7 @@ spec:
               cluster_type="management_cluster",
               label_application_giantswarm_io_team!=""
             }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
-          ) by (team, app, cronjob)
+          ) by (team, app, cronjob),
         "name", ",", "cronjob")
       record: aggregation:kyverno_policy_cronjob_status_team
   - name: starboard.grafana-cloud.recording

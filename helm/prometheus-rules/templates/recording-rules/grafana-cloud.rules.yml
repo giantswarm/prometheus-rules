@@ -318,18 +318,14 @@ spec:
               policy!="check-deprecated-apis-1-25",
               cluster_type="management_cluster",
               kind=~"Deployment"
-              }, "deployment", ",", "name")
-          ) by (deployment, category, policy, status) 
-          * on(deployment) group_left(team, app) 
-          sum(
-            sum(
-              label_join(kube_deployment_labels{}, "app", ",", "label_app_kubernetes_io_name")
-            ) by (deployment, app) 
-            * on(app) group_left(team) 
-            sum(
-              app_operator_app_info{namespace=~".*giantswarm", team!="noteam"}
-            ) by (app, team)
-          ) by (team, deployment, app),
+            }, "deployment", ",", "name")
+          ) by (deployment, category, policy, status)
+          * on(deployment) group_left(team, app) sum(
+            label_join(label_join(kube_deployment_labels{
+              cluster_type="management_cluster",
+              label_application_giantswarm_io_team!=""
+            }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
+          ) by (team, app, deployment)
         "name", ",", "deployment")
       record: aggregation:kyverno_policy_deployment_status_team
     # Kyverno policy workload status by team - DaemonSets
@@ -340,18 +336,14 @@ spec:
               policy!="check-deprecated-apis-1-25",
               cluster_type="management_cluster",
               kind=~"DaemonSet"
-              }, "daemonset", ",", "name")
-          ) by (daemonset, category, policy, status) 
-          * on(daemonset) group_left(team, app) 
-          sum(
-            sum(
-              label_join(kube_daemonset_labels{}, "app", ",", "label_app_kubernetes_io_name")
-            ) by (daemonset, app) 
-            * on(app) group_left(team) 
-            sum(
-              app_operator_app_info{namespace=~".*giantswarm", team!="noteam"}
-            ) by (app, team)
-          ) by (team, daemonset, app),
+            }, "daemonset", ",", "name")
+          ) by (daemonset, category, policy, status)
+          * on(daemonset) group_left(team, app) sum(
+            label_join(label_join(kube_daemonset_labels{
+              cluster_type="management_cluster",
+              label_application_giantswarm_io_team!=""
+            }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
+          ) by (team, app, daemonset)
         "name", ",", "daemonset")
       record: aggregation:kyverno_policy_daemonset_status_team
     # Kyverno policy workload status by team - StatefulSets
@@ -362,18 +354,14 @@ spec:
               policy!="check-deprecated-apis-1-25",
               cluster_type="management_cluster",
               kind=~"StatefulSet"
-              }, "statefulset", ",", "name")
-          ) by (statefulset, category, policy, status) 
-          * on(statefulset) group_left(team, app) 
-          sum(
-            sum(
-              label_join(kube_statefulset_labels{}, "app", ",", "label_app_kubernetes_io_name")
-            ) by (statefulset, app) 
-            * on(app) group_left(team) 
-            sum(
-              app_operator_app_info{namespace=~".*giantswarm", team!="noteam"}
-            ) by (app, team)
-          ) by (team, statefulset, app),
+            }, "statefulset", ",", "name")
+          ) by (statefulset, category, policy, status)
+          * on(statefulset) group_left(team, app) sum(
+            label_join(label_join(kube_statefulset_labels{
+              cluster_type="management_cluster",
+              label_application_giantswarm_io_team!=""
+            }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
+          ) by (team, app, statefulset)
         "name", ",", "statefulset")
       record: aggregation:kyverno_policy_statefulset_status_team
     # Kyverno policy workload status by team - Job
@@ -384,18 +372,14 @@ spec:
               policy!="check-deprecated-apis-1-25",
               cluster_type="management_cluster",
               kind=~"Job"
-              }, "job", ",", "name")
-          ) by (job, category, policy, status) 
-          * on(job) group_left(team, app) 
-          sum(
-            sum(
-              label_join(kube_job_labels{}, "app", ",", "label_app_kubernetes_io_name")
-            ) by (job, app) 
-            * on(app) group_left(team) 
-            sum(
-              app_operator_app_info{namespace=~".*giantswarm", team!="noteam"}
-            ) by (app, team)
-          ) by (team, job, app),
+            }, "job", ",", "name")
+          ) by (job, category, policy, status)
+          * on(job) group_left(team, app) sum(
+            label_join(label_join(kube_job_labels{
+              cluster_type="management_cluster",
+              label_application_giantswarm_io_team!=""
+            }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
+          ) by (team, app, job)
         "name", ",", "job")
       record: aggregation:kyverno_policy_job_status_team
     # Kyverno policy workload status by team - CronJob
@@ -406,18 +390,14 @@ spec:
               policy!="check-deprecated-apis-1-25",
               cluster_type="management_cluster",
               kind=~"CronJob"
-              }, "cronjob", ",", "name")
-          ) by (cronjob, category, policy, status) 
-          * on(cronjob) group_left(team, app) 
-          sum(
-            sum(
-              label_join(kube_cronjob_labels{}, "app", ",", "label_app_kubernetes_io_name")
-            ) by (cronjob, app) 
-            * on(app) group_left(team) 
-            sum(
-              app_operator_app_info{namespace=~".*giantswarm", team!="noteam"}
-            ) by (app, team)
-          ) by (team, cronjob, app),
+            }, "cronjob", ",", "name")
+          ) by (cronjob, category, policy, status)
+          * on(cronjob) group_left(team, app) sum(
+            label_join(label_join(kube_cronjob_labels{
+              cluster_type="management_cluster",
+              label_application_giantswarm_io_team!=""
+            }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
+          ) by (team, app, cronjob)
         "name", ",", "cronjob")
       record: aggregation:kyverno_policy_cronjob_status_team
   - name: starboard.grafana-cloud.recording

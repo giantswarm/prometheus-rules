@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Refactor the Kyverno policy reports recording rule to include missing apps from Team Overview dashboard.
+
 ## [2.129.0] - 2023-09-11
 
 ### Changed

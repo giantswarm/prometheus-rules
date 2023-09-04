@@ -18,7 +18,8 @@ spec:
         summary: Prometheus agent fails to send samples to remote write endpoint.
         opsrecipe: prometheus-agent-remote-write-failed/
         dashboard: promRW001/prometheus-remote-write
-      expr: count(absent_over_time(up{instance="prometheus-agent"}[10m])) and count((present_over_time(kube_statefulset_created{namespace="kube-system",statefulset=~"prometheus-prometheus-agent.*"}[10m])))
+      #  expr: count(absent_over_time(up{instance="prometheus-agent"}[10m]))
+      expr: up{instance="prometheus-agent"} == 0 or absent(up{instance="prometheus-agent"}) == 1
       for: 10m
       labels:
         area: empowerment

@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Change ownership from Atlas to Turtles/Phoenix for all vertical pod autoscaler and kube state metrics related alerts.
 - Loki alerts only during working hours
+- `PrometheusAgentFailing` does not rely on KSM metrics anymore
 
 ## [2.127.0] - 2023-08-21
 

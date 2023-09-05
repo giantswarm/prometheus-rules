@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Loki alerts only during working hours
 - `PrometheusAgentFailing` does not rely on KSM metrics anymore
 - Prometheus-agent inhibition rework, run on the MC
+- `ManagementClusterApp` alerts now check for default catalog as well
 
 ## [2.127.0] - 2023-08-21
 

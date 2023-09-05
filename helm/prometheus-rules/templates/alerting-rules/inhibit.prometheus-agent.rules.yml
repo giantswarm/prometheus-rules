@@ -12,14 +12,29 @@ spec:
   - name: inhibit.prometheus-agent
     rules:
     # this inhibition fires when a cluster is not running prometheus-agent.
-    # If we have prometheus-agent statefulset, it means prometheus-agent is installed on this cluster
-    # so, raise an inhibition unless prometheus-agent runs on the cluster 
+    # we retrieve the list of existing cluster IDs from `kube_namespace_created`
+    #   excluding the MC's one, because it's always using prometheus-agent and namespace is not named after cluster name
+    # then compare it with the list of deployed prometheus-agents from `app_operator_app_info`
     # 
-    # Will produce data (and inhibitions) on MC/WC.
+    # Will only produce data (and inhibitions) on MC because it's where app_operator is running
+    # but that's enough to have the inhibitions on the installation-global alertmanager
     - alert: InhibitionClusterIsNotRunningPrometheusAgent
       annotations:
         description: '{{`Cluster ({{ $labels.cluster_id }}) is not running Prometheus Agent.`}}'
-      expr: (count by (cluster_id) (prometheus_build_info{app="prometheus"}) unless count by (cluster_id) (kube_statefulset_created{namespace="kube-system",statefulset=~"prometheus-prometheus-agent.*"}  > 0))
+      expr: |-
+        count(
+          label_replace(
+            kube_namespace_created{namespace!="{{ .Values.managementCluster.name }}-prometheus", namespace=~".+-prometheus"},
+            "cluster_id", "$1", "namespace", "(.+)-prometheus"
+          )
+        ) by (cluster_id)
+        unless
+        count(
+          label_replace(
+            app_operator_app_info{app="prometheus-agent"},
+            "cluster_id", "$1", "namespace", "(.*)"
+          )
+        ) by (cluster_id)
       labels:
         cluster_is_not_running_prometheus_agent: "true"
         area: empowerment

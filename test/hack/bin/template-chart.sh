@@ -17,6 +17,7 @@ main() {
       "$GIT_WORKDIR"/helm/prometheus-rules \
       --set="managementCluster.provider.flavor=${BASH_REMATCH[1]}" \
       --set="managementCluster.provider.kind=${BASH_REMATCH[2]}" \
+      --set="managementCluster.name=myinstall" \
       --output-dir "$GIT_WORKDIR"/test/hack/output/"$provider"
   done
 }

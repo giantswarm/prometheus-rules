@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Remove `DNSRequestDurationTooSlow` in favor of SLO alerting.
+
 ## [2.130.0] - 2023-09-12
 
 ### Changed

@@ -35,17 +35,3 @@ spec:
         topic: dns
       annotations:
         description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} has been scaled to its maximum replica count for too long.`}}'
-    - alert: DNSRequestDurationTooSlow
-      expr: histogram_quantile(0.99, sum(irate(coredns_dns_request_duration_seconds_bucket{app="coredns"}[5m])) by (le)) > 1
-      for: 15m
-      labels:
-        area: empowerment
-        severity: page
-        team: cabbage
-        topic: dns
-      annotations:
-        description: '{{`CoreDNS requests are taking more than 1 second to be responded.`}}'
-        opsrecipe: dns-request-duration-too-slow/
-        dashboard: Yu9tkufmk/dns
-
-

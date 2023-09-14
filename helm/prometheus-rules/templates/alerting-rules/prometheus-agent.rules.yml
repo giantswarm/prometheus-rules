@@ -19,7 +19,15 @@ spec:
         opsrecipe: prometheus-agent-remote-write-failed/
         dashboard: promRW001/prometheus-remote-write
       #  expr: count(absent_over_time(up{instance="prometheus-agent"}[10m]))
-      expr: up{instance="prometheus-agent"} == 0 or absent(up{instance="prometheus-agent"}) == 1
+      expr: |-
+        max_over_time(
+          sum by (cluster_type, cluster_id, installation, instance, service)
+          (
+            up{instance="prometheus-agent"} == 0
+            or
+            absent(up{instance="prometheus-agent"}) == 1
+          )[5m:30s]
+        )
       for: 10m
       labels:
         area: empowerment
@@ -38,7 +46,7 @@ spec:
         summary: Prometheus agent is missing shards.
         opsrecipe: prometheus-agent-missing-shards/
       expr: |-
-        count(
+        max_over_time(sum(count(
           ## number of remotes that are not mimir or grafana-cloud
           prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir"}
         ) != sum(
@@ -50,7 +58,7 @@ spec:
             and on(controller, name)
             prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
           )
-        )
+        ))[5m:1m])
       for: 10m
       labels:
         area: empowerment

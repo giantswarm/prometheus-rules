@@ -46,19 +46,24 @@ spec:
         summary: Prometheus agent is missing shards.
         opsrecipe: prometheus-agent-missing-shards/
       expr: |-
-        max_over_time(sum(count(
-          ## number of remotes that are not mimir or grafana-cloud
-          prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir"}
-        ) != sum(
-          ## number of shards defined in the Prometheus CR
-          prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"}
-          or (
-            # if there is only 1 shard, there is no shard metric so we use the replicas metric
-            absent(prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"})
-            and on(controller, name)
-            prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
+        max_over_time(sum(
+          count(
+            ## number of remotes that are not mimir or grafana-cloud
+            prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir"}
           )
-        ))[5m:1m])
+          !=
+          sum(
+            ## number of shards defined in the Prometheus CR
+            prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"}
+            or
+            (
+              # if there is only 1 shard, there is no shard metric so we use the replicas metric
+              absent(prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"})
+              and on(controller, name)
+              prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
+            )
+          )
+        )[5m:1m])
       for: 10m
       labels:
         area: empowerment

@@ -55,8 +55,6 @@ tests:
   # Tests for `PrometheusAgentShardsMissing` alert
   - interval: 1m
     input_series:
-      - series: 'up{instance="prometheus-agent", cluster_type="workload_cluster", cluster_id="gauss",installation="myinstall", team="atlas"}'
-        values: "_x60  0+0x60 1+0x60 0x60"
       - series: 'prometheus_remote_storage_metadata_total{app="prometheus", cluster_id="test01", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
         values: "10000+0x180"
       - series: 'prometheus_remote_storage_metadata_total{app="prometheus", cluster_id="test01", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-1-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'

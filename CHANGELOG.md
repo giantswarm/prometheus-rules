@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.132.0] - 2023-09-15
+
 ### Changed
 
 - `PrometheusAgentFailing` and `PrometheusAgentShardsMissing`: keep alerts for 5min after it's solved
@@ -2168,7 +2170,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.131.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.132.0...HEAD
+[2.132.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.131.0...v2.132.0
 [2.131.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.130.0...v2.131.0
 [2.130.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.129.0...v2.130.0
 [2.129.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.128.0...v2.129.0

@@ -26,7 +26,7 @@ spec:
             up{instance="prometheus-agent"} == 0
             or
             absent(up{instance="prometheus-agent"}) == 1
-          )[5m:30s]
+          )[5m:]
         )
       for: 10m
       labels:
@@ -63,7 +63,7 @@ spec:
               prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
             )
           )
-        )[5m:1m])
+        )[5m:])
       for: 10m
       labels:
         area: empowerment

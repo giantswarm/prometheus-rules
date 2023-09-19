@@ -38,7 +38,6 @@ spec:
         cancel_if_cluster_is_not_running_prometheus_agent: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
-        cancel_if_outside_working_hours: "true"
     ## Page Atlas if prometheus agent is missing shards to send samples to MC prometheus.
     - alert: PrometheusAgentShardsMissing
       annotations:
@@ -74,5 +73,4 @@ spec:
         cancel_if_cluster_is_not_running_prometheus_agent: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
-        cancel_if_outside_working_hours: "true"
 {{- end }}

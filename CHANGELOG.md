@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Split `KubeStateMetricsDown` alert into 2 alerts : `KubeStateMetricsDown` and `KubeStateMetricsNotRetrievingMetrics`
+- Add missing prometheus-agent inhibition to `KubeStateMetricsDown` alert
+- Change time duration before `ManagementClusterDeploymentMissingAWS` pages because it is dependant on the `PrometheusAgentFailing` alert. 
 
 ## [2.132.0] - 2023-09-15
 
@@ -171,7 +173,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix `KubeStateMetricsDown`
 
 ## [2.115.0] - 2023-07-20
-
 
 ### Added
 

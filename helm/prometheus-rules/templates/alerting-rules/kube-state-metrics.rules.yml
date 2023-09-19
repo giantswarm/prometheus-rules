@@ -63,7 +63,7 @@ spec:
       expr: |-
         # When it looks up but we don't have metrics
         count({app="kube-state-metrics"}) < 10
-      for: 60m
+      for: 20m
       labels:
         area: kaas
         cancel_if_apiserver_down: "true"
@@ -73,7 +73,7 @@ spec:
         inhibit_kube_state_metrics_down: "true"
         cancel_if_kubelet_down: "true"
         cancel_if_kube_state_metrics_down: "true"
-        cancel_if_outside_working_hours: "false"
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
         topic: observability

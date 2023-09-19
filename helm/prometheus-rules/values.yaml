@@ -2,8 +2,8 @@ name: prometheus-rules
 namespace: monitoring
 serviceType: managed
 project:
-  branch: '[[ .Branch ]]'
-  commit: '[[ .SHA ]]'
+  branch: 'split-ksm-alerts'
+  commit: 'b67266c8479ebef0cdd918fa9fc5e44717edf794'
 managementCluster:
   name: ""
   pipeline: ""

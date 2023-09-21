@@ -1,6 +1,6 @@
 ---
 rule_files:
-- up.all.rules.yml
+- kube-state-metrics.rules.yml
 
 tests:
   # KubeStateMetricsDown tests

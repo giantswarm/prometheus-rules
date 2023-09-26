@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.134.1] - 2023-09-26
+
 ### Fixed
 
 - Improve InhibitionClusterIsNotRunningPrometheusAgent to keep paging if the kube-state-metrics metric is missing for 5 minutes (avoid flapping of inhibitions).
@@ -2190,7 +2192,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.134.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.134.1...HEAD
+[2.134.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.134.0...v2.134.1
 [2.134.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.133.0...v2.134.0
 [2.133.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.132.0...v2.133.0
 [2.132.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.131.0...v2.132.0

@@ -149,7 +149,7 @@ spec:
         description: '{{`Deployment {{ $labels.deployment }} is missing.`}}'
         opsrecipe: management-cluster-deployment-is-missing/
       expr: absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-admission-controller"})
-      for: 5m
+      for: 15m
       labels:
         area: kaas
         cancel_if_prometheus_agent_down: "true"

@@ -25,6 +25,7 @@ spec:
         cancel_if_kubelet_down: "true"
         cancel_if_cluster_has_no_workers: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_prometheus_agent_down: "true"
         severity: notify
         team: honeybadger
         topic: releng
@@ -41,38 +42,7 @@ spec:
         cancel_if_kubelet_down: "true"
         cancel_if_cluster_has_no_workers: "true"
         cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
-    - alert: KubeStateMetricsDown
-      annotations:
-        description: '{{`KubeStateMetrics ({{ $labels.instance }}) is down.`}}'
-        opsrecipe: kube-state-metrics-down/
-      expr: |-
-        (
-          # modern clusters
-          label_replace(up{app="kube-state-metrics",instance=~".*:8080"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{app="kube-state-metrics",instance=~".*:8080"} == 1)
-        )
-        and
-        (
-          # vintage clusters without servicemonitor
-          label_replace(up{app="kube-state-metrics",container=""}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{app="kube-state-metrics",container=""} == 1)
-        )
-        or
-        (
-          # When it looks up but we don't have metrics
-          count({app="kube-state-metrics"}) < 10
-        )
-      for: 15m
-      labels:
-        area: kaas
-        cancel_if_apiserver_down: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_has_no_workers: "true"
-        inhibit_kube_state_metrics_down: "true"
-        cancel_if_kubelet_down: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_prometheus_agent_down: "true"
         severity: page
         team: atlas
         topic: observability

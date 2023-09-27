@@ -11,6 +11,68 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Handover cert-manager alerts to BigMac
 
+## [2.134.1] - 2023-09-26
+
+### Fixed
+
+- Improve InhibitionClusterIsNotRunningPrometheusAgent to keep paging if the kube-state-metrics metric is missing for 5 minutes (avoid flapping of inhibitions).
+
+## [2.134.0] - 2023-09-21
+
+### Changed
+
+- Split `KubeStateMetricsDown` alert into 2 alerts : `KubeStateMetricsDown` and `KubeStateMetricsNotRetrievingMetrics`
+
+## [2.133.0] - 2023-09-19
+
+### Changed
+
+- Add missing prometheus-agent inhibition to `KubeStateMetricsDown` alert
+- Change time duration before `ManagementClusterDeploymentMissingAWS` pages because it is dependant on the `PrometheusAgentFailing` alert.
+
+### Fixed
+
+- Remove `cancel_if_outside_working_hours` from PrometheusAgent alerts.
+
+## [2.132.0] - 2023-09-15
+
+### Changed
+
+- `PrometheusAgentFailing` and `PrometheusAgentShardsMissing`: keep alerts for 5min after it's solved
+
+## [2.131.0] - 2023-09-12
+
+### Changed
+
+- Remove `DNSRequestDurationTooSlow` in favor of SLO alerting.
+
+## [2.130.0] - 2023-09-12
+
+### Changed
+
+- Refactor the Kyverno policy reports recording rule to include missing apps from Team Overview dashboard.
+- Change `ClusterUnhealthyPhase` severity to page, so that we get paged when a cluster is not working properly.
+
+## [2.129.0] - 2023-09-11
+
+### Changed
+
+- Unit tests for `PrometheusAgentShardsMissing`
+- fixes for `PrometheusAgentShardsMissing`
+
+## [2.128.0] - 2023-09-05
+
+### Added
+
+- Unit tests for KubeStateMetricsDown
+
+### Changed
+
+- Loki alerts only during working hours
+- `PrometheusAgentFailing` does not rely on KSM metrics anymore
+- Prometheus-agent inhibition rework, run on the MC
+- `ManagementClusterApp` alerts now check for default catalog as well
+
 ## [2.127.0] - 2023-08-21
 
 ### Changed
@@ -132,7 +194,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix `KubeStateMetricsDown`
 
 ## [2.115.0] - 2023-07-20
-
 
 ### Added
 
@@ -2135,7 +2196,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.127.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.134.1...HEAD
+[2.134.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.134.0...v2.134.1
+[2.134.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.133.0...v2.134.0
+[2.133.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.132.0...v2.133.0
+[2.132.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.131.0...v2.132.0
+[2.131.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.130.0...v2.131.0
+[2.130.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.129.0...v2.130.0
+[2.129.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.128.0...v2.129.0
+[2.128.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.127.0...v2.128.0
 [2.127.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.126.1...v2.127.0
 [2.126.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.126.0...v2.126.1
 [2.126.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.125.0...v2.126.0

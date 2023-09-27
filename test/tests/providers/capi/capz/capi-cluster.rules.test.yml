@@ -21,7 +21,7 @@ tests:
           - exp_labels:
               area: kaas
               cancel_if_outside_working_hours: "true"
-              severity: notify
+              severity: page
               team: phoenix
               topic: managementcluster
               name: clippaxy

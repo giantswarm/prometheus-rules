@@ -3,17 +3,71 @@ rule_files:
 - prometheus-agent.rules.yml
 
 tests:
+  # Tests for `PrometheusAgentFailing` alert
   - interval: 1m
     input_series:
-      - series: 'up{instance="prometheus-agent",cluster_type="workload_cluster",cluster_id="gauss",installation="gauss"}'
-        values: "_x10  _x20  0+0x100 1+0x100"
-      - series: 'kube_statefulset_created{namespace="kube-system",statefulset="prometheus-prometheus-agent",cluster_id="gauss",installation="gauss"}'
-        values: "_x10 0+0x20 1+0x100 1+0x100"
+      - series: 'up{instance="prometheus-agent",cluster_type="workload_cluster",cluster_id="gauss",installation="myinstall"}'
+        values: "_x60  0+0x60 1+0x60"
     alert_rule_test:
       - alertname: PrometheusAgentFailing
-        eval_time: 10m
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              area: empowerment
+              severity: page
+              team: atlas
+              topic: observability
+              inhibit_prometheus_agent_down: "true"
+              instance: prometheus-agent
+              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+            exp_annotations:
+              dashboard: "promRW001/prometheus-remote-write"
+              description: "Prometheus agent remote write is failing."
+              opsrecipe: "prometheus-agent-remote-write-failed/"
+              summary: "Prometheus agent fails to send samples to remote write endpoint."
       - alertname: PrometheusAgentFailing
-        eval_time: 25m
+        eval_time: 90m
+        exp_alerts:
+          - exp_labels:
+              area: empowerment
+              cluster_id: gauss
+              cluster_type: workload_cluster
+              severity: page
+              team: atlas
+              topic: observability
+              inhibit_prometheus_agent_down: "true"
+              installation: myinstall
+              instance: prometheus-agent
+              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+            exp_annotations:
+              dashboard: "promRW001/prometheus-remote-write"
+              description: "Prometheus agent remote write is failing."
+              opsrecipe: "prometheus-agent-remote-write-failed/"
+              summary: "Prometheus agent fails to send samples to remote write endpoint."
+      - alertname: PrometheusAgentFailing
+        eval_time: 150m
+  # Tests for `PrometheusAgentShardsMissing` alert
+  - interval: 1m
+    input_series:
+      - series: 'prometheus_remote_storage_metadata_total{app="prometheus", cluster_id="test01", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+        values: "10000+0x180"
+      - series: 'prometheus_remote_storage_metadata_total{app="prometheus", cluster_id="test01", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-1-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+        values: "10000+0x180"
+      - series: 'prometheus_remote_storage_metadata_total{app="prometheus", cluster_id="test01", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-2-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+        values: "10000+0x180"
+      - series: 'prometheus_operator_spec_shards{cluster_id="test01", container="prometheus-operator-app", controller="prometheus", instance="prometheus-operator-app", job="prometheus-operator-app-operator", name="prometheus-agent", pod="prometheus-operator-app-operator-76b5899558-nz8h5", service="prometheus-operator-app-operator", team="atlas"}'
+        values: '3+0x60 5+0x60 3+0x60'
+      - series: 'prometheus_operator_spec_replicas{cluster_id="test01", container="prometheus-operator-app", controller="prometheus", instance="prometheus-operator-app", job="prometheus-operator-app-operator", name="prometheus-agent", pod="prometheus-operator-app-operator-76b5899558-nz8h5", service="prometheus-operator-app-operator", team="atlas"}'
+        values: '1+0x180'
+    alert_rule_test:
+      - alertname: PrometheusAgentShardsMissing
+        eval_time: 40m
+      - alertname: PrometheusAgentShardsMissing
+        eval_time: 100m
         exp_alerts:
           - exp_labels:
               area: empowerment
@@ -26,11 +80,25 @@ tests:
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
             exp_annotations:
-              dashboard: "promRW001/prometheus-remote-write"
-              description: "Prometheus agent remote write is failing."
-              opsrecipe: "prometheus-agent-remote-write-failed/"
-              summary: "Prometheus agent fails to send samples to remote write endpoint."
-      - alertname: PrometheusAgentFailing
-        eval_time: 65m
-      - alertname: PrometheusAgentFailing
-        eval_time: 165m
+              description: "Prometheus agent is missing shards."
+              opsrecipe: "prometheus-agent-missing-shards/"
+              summary: "Prometheus agent is missing shards."
+      - alertname: PrometheusAgentShardsMissing
+        eval_time: 125m
+        exp_alerts:
+          - exp_labels:
+              area: empowerment
+              severity: page
+              team: atlas
+              topic: observability
+              inhibit_prometheus_agent_down: "true"
+              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_outside_working_hours: "true"
+            exp_annotations:
+              description: "Prometheus agent is missing shards."
+              opsrecipe: "prometheus-agent-missing-shards/"
+              summary: "Prometheus agent is missing shards."
+      - alertname: PrometheusAgentShardsMissing
+        eval_time: 130m

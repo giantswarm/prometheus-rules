@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Change ownership from Atlas to Turtles/Phoenix for all vertical pod autoscaler alerts.
+
 ### Changed
 
 - Handover cert-manager alerts to BigMac

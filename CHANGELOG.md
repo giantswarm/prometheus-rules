@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Remove PrometheusAvailabilityRatio alert.
+
 ## [2.135.0] - 2023-10-02
 
 ### Changed

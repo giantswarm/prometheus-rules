@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove role label usage instead of relying on `kube_node_role`` metric.
+
 ## [2.136.0] - 2023-10-04
 
 ### Changed

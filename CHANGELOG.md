@@ -7,11 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
 - Change ownership from Atlas to Turtles/Phoenix for all vertical pod autoscaler alerts.
+
+## [2.137.0] - 2023-10-04
+
+### Removed
+
+- Remove role label usage instead of relying on `kube_node_role`` metric.
+
+## [2.136.0] - 2023-10-04
+
+### Changed
+
+- Remove PrometheusAvailabilityRatio alert.
+
+## [2.135.0] - 2023-10-02
 
 ### Changed
 
 - Handover cert-manager alerts to BigMac
+- Ignore ETCD alerts on EKS clusters.
 
 ## [2.134.1] - 2023-09-26
 
@@ -2198,7 +2214,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.134.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.137.0...HEAD
+[2.137.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.136.0...v2.137.0
+[2.136.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.135.0...v2.136.0
+[2.135.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.134.1...v2.135.0
 [2.134.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.134.0...v2.134.1
 [2.134.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.133.0...v2.134.0
 [2.133.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.132.0...v2.133.0

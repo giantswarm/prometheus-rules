@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Change ownership from Atlas to Turtles/Phoenix for all vertical pod autoscaler alerts
 
+### Removed
+
+- Remove vertical-pod-autoscaler slo as it was moved to Sloth.
+
 ## [2.137.0] - 2023-10-04
 
 ### Removed
@@ -287,10 +291,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Change `for` setting of `WorkloadClusterCriticalPodNotRunningAWS` to 20 minutes.
 - Remove duplicate workload_name label in favor of existing daemonset|statefulset|deployment labels.
-
-### Removed
-
-- Remove vertical-pod-autoscaler slo as it was moved to Sloth.
 
 ## [2.107.0] - 2023-06-26
 

@@ -7,6 +7,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+- Change ownership from Atlas to Turtles/Phoenix for all vertical pod autoscaler alerts.
+
+## [2.137.0] - 2023-10-04
+
+### Removed
+
+- Remove role label usage instead of relying on `kube_node_role`` metric.
+
+## [2.136.0] - 2023-10-04
+
+### Changed
+
+- Remove PrometheusAvailabilityRatio alert.
+
+## [2.135.0] - 2023-10-02
+
+### Changed
+
+- Handover cert-manager alerts to BigMac
+- Ignore ETCD alerts on EKS clusters.
+
+## [2.134.1] - 2023-09-26
+
+### Fixed
+
+- Improve InhibitionClusterIsNotRunningPrometheusAgent to keep paging if the kube-state-metrics metric is missing for 5 minutes (avoid flapping of inhibitions).
+
+## [2.134.0] - 2023-09-21
+
+### Changed
+
+- Split `KubeStateMetricsDown` alert into 2 alerts : `KubeStateMetricsDown` and `KubeStateMetricsNotRetrievingMetrics`
+
+## [2.133.0] - 2023-09-19
+
+### Changed
+
+- Add missing prometheus-agent inhibition to `KubeStateMetricsDown` alert
+- Change time duration before `ManagementClusterDeploymentMissingAWS` pages because it is dependant on the `PrometheusAgentFailing` alert.
+
+### Fixed
+
+- Remove `cancel_if_outside_working_hours` from PrometheusAgent alerts.
+
+## [2.132.0] - 2023-09-15
+
+### Changed
+
+- `PrometheusAgentFailing` and `PrometheusAgentShardsMissing`: keep alerts for 5min after it's solved
+
+## [2.131.0] - 2023-09-12
+
+### Changed
+
+- Remove `DNSRequestDurationTooSlow` in favor of SLO alerting.
+
+## [2.130.0] - 2023-09-12
+
+### Changed
+
+- Refactor the Kyverno policy reports recording rule to include missing apps from Team Overview dashboard.
+- Change `ClusterUnhealthyPhase` severity to page, so that we get paged when a cluster is not working properly.
+
 ## [2.129.0] - 2023-09-11
 
 ### Changed
@@ -150,7 +214,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.115.0] - 2023-07-20
 
-
 ### Added
 
 - New alert `KubeStateMetricsSlow` that inhibits KSM related alerts.
@@ -235,7 +298,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add alerts for legacy vault's etcd backups. 
+- Add alerts for legacy vault's etcd backups.
 
 ## [2.105.0] - 2023-06-22
 
@@ -2152,7 +2215,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.129.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.137.0...HEAD
+[2.137.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.136.0...v2.137.0
+[2.136.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.135.0...v2.136.0
+[2.135.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.134.1...v2.135.0
+[2.134.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.134.0...v2.134.1
+[2.134.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.133.0...v2.134.0
+[2.133.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.132.0...v2.133.0
+[2.132.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.131.0...v2.132.0
+[2.131.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.130.0...v2.131.0
+[2.130.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.129.0...v2.130.0
 [2.129.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.128.0...v2.129.0
 [2.128.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.127.0...v2.128.0
 [2.127.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.126.1...v2.127.0

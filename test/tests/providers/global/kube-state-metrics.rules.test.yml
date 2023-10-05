@@ -1,6 +1,6 @@
 ---
 rule_files:
-- up.all.rules.yml
+- kube-state-metrics.rules.yml
 
 tests:
   # KubeStateMetricsDown tests
@@ -57,6 +57,7 @@ tests:
               cancel_if_kubelet_down: "true"
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
+              cancel_if_prometheus_agent_down: "true"
               severity: "page"
               team: "phoenix"
               topic: "observability"
@@ -79,6 +80,7 @@ tests:
               cancel_if_kubelet_down: "true"
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
+              cancel_if_prometheus_agent_down: "true"
               severity: "page"
               team: "phoenix"
               topic: "observability"
@@ -107,6 +109,7 @@ tests:
               cancel_if_kubelet_down: "true"
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
+              cancel_if_prometheus_agent_down: "true"
               severity: "page"
               team: "phoenix"
               topic: "observability"
@@ -160,6 +163,7 @@ tests:
               cancel_if_kubelet_down: "true"
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
+              cancel_if_prometheus_agent_down: "true"
               severity: "page"
               team: "phoenix"
               topic: "observability"
@@ -182,6 +186,7 @@ tests:
               cancel_if_kubelet_down: "true"
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
+              cancel_if_prometheus_agent_down: "true"
               severity: "page"
               team: "phoenix"
               topic: "observability"

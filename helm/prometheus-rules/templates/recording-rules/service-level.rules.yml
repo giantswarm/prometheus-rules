@@ -15,6 +15,7 @@ spec:
         class: HIGH
         area: kaas
         service: api-server
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: raw_slo_requests
     # The first statement ensures that an api-server error is counted if the kubernetes api is not up for a specific cluster.
     # The next statement returns 1 for a cluster with "updated", "created" or unknown (absent) status.
@@ -36,6 +37,7 @@ spec:
       labels:
         area: kaas
         service: api-server
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: slo_target
 
       # -- daemonset
@@ -46,6 +48,7 @@ spec:
       labels:
         class: MEDIUM
         area: kaas
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: raw_slo_requests
       # -- the errors are counted as follows: 
       # -- pods in a daemonset that are UNAVAILABLE NOW and have been UNAVAILABLE 10 MINUTES AGO 
@@ -75,6 +78,7 @@ spec:
     - expr: sum by (service, area) (raw_slo_errors{area="kaas", service=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"} - raw_slo_errors{area="kaas", service=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"}) + 1-0.99
       labels:
         area: kaas
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: slo_target
 
       # -- kubelet whole cluster
@@ -83,6 +87,7 @@ spec:
         class: MEDIUM
         area: kaas
         service: kubelet
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: raw_slo_requests
     - expr: |
         (
@@ -96,12 +101,14 @@ spec:
         area: kaas
         class: MEDIUM
         service: kubelet
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: raw_slo_errors
       # -- 99% availability
     - expr: "vector((1 - 0.99))"
       labels:
         area: kaas
         service: kubelet
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: slo_target
 
     # kubelet - single nodepool
@@ -109,6 +116,7 @@ spec:
       labels:
         area: kaas
         class: MEDIUM
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: raw_slo_requests
 
     - expr: |
@@ -122,12 +130,14 @@ spec:
       labels:
         area: kaas
         class: MEDIUM
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: raw_slo_errors
 
     - expr: |
         label_replace(max by (nodepool) (kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.+)") * (1 - 0.99)
       labels:
         area: kaas
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: slo_target
 
       # -- node-exporter
@@ -137,6 +147,7 @@ spec:
         class: MEDIUM
         area: kaas
         service: node-exporter
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: raw_slo_requests
       # record of number of node-exporters that are down.
       # up == 1 when node-exporters are up, and up == 0 when node-exporters are down -
@@ -149,12 +160,14 @@ spec:
         area: kaas
         class: MEDIUM
         service: node-exporter
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: raw_slo_errors
       # -- 99% availability
     - expr: "vector((1 - 0.99))"
       labels:
         area: kaas
         service: node-exporter
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: slo_target
 
     # -- managed-apps
@@ -246,17 +259,20 @@ spec:
       labels:
         class: MEDIUM
         area: kaas
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: raw_slo_requests
       # record number of errors.
     - expr: label_replace(sum(rest_client_requests_total{app=~"kube-controller-manager|kube-scheduler", code=~"5..|<error>"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
       labels:
         area: kaas
         class: MEDIUM
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: raw_slo_errors
       # -- 99% availability
     - expr: label_replace(group(rest_client_requests_total{app=~"kube-controller-manager|kube-scheduler"}) by (app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
       labels:
         area: kaas
+        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: slo_target
 
     # core k8s components azure API requests
@@ -265,17 +281,20 @@ spec:
       labels:
         class: MEDIUM
         area: kaas
+        label_application_giantswarm_io_team: phoenix
       record: raw_slo_requests
       # record number of errors.
     - expr: label_replace(sum(cloudprovider_azure_api_request_errors{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
       labels:
         area: kaas
         class: MEDIUM
+        label_application_giantswarm_io_team: phoenix
       record: raw_slo_errors
       # -- 99% availability
     - expr: label_replace(group(cloudprovider_azure_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
       labels:
         area: kaas
+        label_application_giantswarm_io_team: phoenix
       record: slo_target
 
     # core k8s components aws API requests
@@ -284,17 +303,20 @@ spec:
       labels:
         class: MEDIUM
         area: kaas
+        label_application_giantswarm_io_team: phoenix
       record: raw_slo_requests
       # record number of errors.
     - expr: label_replace(sum(cloudprovider_aws_api_request_errors{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
       labels:
         area: kaas
         class: MEDIUM
+        label_application_giantswarm_io_team: phoenix
       record: raw_slo_errors
       # -- 99% availability
     - expr: label_replace(group(cloudprovider_aws_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
       labels:
         area: kaas
+        label_application_giantswarm_io_team: phoenix
       record: slo_target
 
     # -- Managed Prometheus
@@ -304,6 +326,7 @@ spec:
         area: managed-apps
         class: MEDIUM
         service: managed-prometheus
+        label_application_giantswarm_io_team: atlas
       record: raw_slo_requests
     # Set SLO error to be 1 when a managed prometheus is down.
     - expr: (up{app="prometheus-operator-app-prometheus",container="prometheus"}*-1)+1 == 1
@@ -311,6 +334,7 @@ spec:
         area: managed-apps
         class: MEDIUM
         service: managed-prometheus
+        label_application_giantswarm_io_team: atlas
       record: raw_slo_errors
 
     # -- Managed Alertmanager
@@ -320,6 +344,7 @@ spec:
         area: managed-apps
         class: MEDIUM
         service: managed-alertmanager
+        label_application_giantswarm_io_team: atlas
       record: raw_slo_requests
     # Set SLO error to be 1 when a managed alertmanager is down.
     - expr: (up{app="prometheus-operator-app-alertmanager",container="alertmanager"}*-1)+1 == 1
@@ -327,6 +352,7 @@ spec:
         area: managed-apps
         class: MEDIUM
         service: managed-alertmanager
+        label_application_giantswarm_io_team: atlas
       record: raw_slo_errors
 
     # -- VPA
@@ -364,9 +390,9 @@ spec:
       record: slo_burnrate_high
     - expr: "vector(12)"
       record: slo_burnrate_low
-    - expr: sum(raw_slo_requests) by (service, cluster_type, cluster_id, area)
+    - expr: sum(raw_slo_requests) by (service, cluster_type, cluster_id, area, label_application_giantswarm_io_team)
       record: slo_requests
-    - expr: sum(raw_slo_errors) by (service, cluster_type, cluster_id, area)
+    - expr: sum(raw_slo_errors) by (service, cluster_type, cluster_id, area, label_application_giantswarm_io_team)
       record: slo_errors
     - expr: sum(sum_over_time(raw_slo_errors[5m])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[5m])) by (cluster_type, cluster_id, service, class, area, label_application_giantswarm_io_team)
       record: slo_errors_per_request:ratio_rate5m

@@ -84,12 +84,26 @@ spec:
         team: cabbage
         topic: kubernetes
 
+      # Webhooks owned by Phoenix
+    - alert: WorkloadClusterWebhookDurationExceedsTimeoutPhoenix
+      annotations:
+        description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
+        opsrecipe: apiserver-admission-webhook-errors/
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(vpa.k8s.io).*"}[5m])) by (cluster_id, name, app, le)) > 5
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: phoenix
+        topic: kubernetes
+
       # Webhooks owned by Atlas
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutAtlas
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
-      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(prometheus|vpa.k8s.io).*"}[5m])) by (cluster_id, name, app, le)) > 5
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(prometheus).*"}[5m])) by (cluster_id, name, app, le)) > 5
       for: 15m
       labels:
         area: kaas

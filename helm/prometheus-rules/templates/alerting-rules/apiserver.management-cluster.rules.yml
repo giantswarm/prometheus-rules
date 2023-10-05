@@ -34,19 +34,19 @@ spec:
       annotations:
         description: '{{`Kubernetes API Server {{ $labels.cluster_id }} having admission webhook errors.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
-      expr: rate(apiserver_admission_webhook_rejection_count{cluster_type="management_cluster", error_type=~"calling_webhook_error|apiserver_internal_error"}[5m]) > 0
-      for: 5m
+      expr: label_replace(rate(apiserver_admission_webhook_rejection_count{cluster_type="management_cluster", error_type=~"calling_webhook_error|apiserver_internal_error"}[5m]), "service", "$1", "name", "(.*)") > 1
+      for: 15m
       labels:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        severity: page
         team: {{ include "providerTeam" . }}
         topic: managementcluster
     - alert: ManagementClusterWebhookDurationExceedsTimeout
       annotations:
-        description: '{{`Kubernetes API Server admission webhook for {{ $labels.cluster_id }} is timing out.`}}'
+        description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
-      expr: rate(apiserver_admission_webhook_admission_duration_seconds_sum[5m]) / rate(apiserver_admission_webhook_admission_duration_seconds_count[5m]) > 8
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket[5m])) by (cluster_id, name, app, le)) > 5
       for: 15m
       labels:
         area: kaas

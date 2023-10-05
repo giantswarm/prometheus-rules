@@ -23,7 +23,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: bigmac
         topic: observability
     - alert: CertManagerDown
       annotations:
@@ -38,7 +38,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_kubelet_down: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: bigmac
         topic: cert-manager
     - alert: CertManagerTooManyCertificateRequests
       annotations:
@@ -50,5 +50,5 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: bigmac
         topic: cert-manager

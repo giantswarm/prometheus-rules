@@ -39,7 +39,7 @@ spec:
       annotations:
         description: '{{`Etcd volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
         opsrecipe: low-disk-space/#etcd-volume
-      expr: 100 * node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/etcd"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/lib/etcd"} < 10
+      expr: 100 * node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/etcd", provider!~"eks"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/lib/etcd", provider!~"eks"} < 10
       for: 10m
       labels:
         area: kaas
@@ -75,7 +75,7 @@ spec:
       annotations:
         description: '{{`Persistent volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
         opsrecipe: low-disk-space/#persistent-volume
-      expr: 100 * ((node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*"}) * on (pod) group_left kube_pod_info{priority_class!="prometheus"}) < 10
+      expr: 100 * ((node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*",mountpoint!~".*prometheus/[0-9]+"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*",mountpoint!~".*prometheus/[0-9]+"}) * on (pod) group_left kube_pod_info{priority_class!="prometheus"}) < 10
       for: 10m
       labels:
         area: kaas

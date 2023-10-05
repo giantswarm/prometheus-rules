@@ -31,18 +31,18 @@ giantswarm.io/service-type: {{ .Values.serviceType }}
 {{- define "providerTeam" -}}
 {{- if has .Values.managementCluster.provider.kind (list "kvm" "openstack" "cloud-director" "vsphere") -}}
 rocket
-{{- else if has .Values.managementCluster.provider.kind (list "gcp" "capa") -}}
+{{- else if has .Values.managementCluster.provider.kind (list "gcp" "capa" "capz") -}}
 {{- /* hydra alerts merged into phoenix business hours on-call */ -}}
 phoenix
-{{- else if eq .Values.managementCluster.provider.kind "capz" -}}
-clippy
 {{- else -}}
 phoenix
 {{- end -}}
 {{- end -}}
 
 {{- define "workingHoursOnly" -}}
-{{- if has .Values.managementCluster.provider.kind (list "openstack" "capz") -}}
+{{- if has .Values.managementCluster.provider.kind (list "openstack" "capz" "capa") -}}
+"true"
+{{- else if eq .Values.managementCluster.pipeline "stable-testing" -}}
 "true"
 {{- else -}}
 "false"

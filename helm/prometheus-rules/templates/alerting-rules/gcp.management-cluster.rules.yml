@@ -45,7 +45,7 @@ spec:
         topic: kubernetes
     - alert: ManagementClusterDeploymentMissingGCP
       annotations:
-        description: '{{`Deployment {{ $labels.workload_name }} is missing.`}}'
+        description: '{{`Deployment {{ $labels.deployment }} is missing.`}}'
         opsrecipe: management-cluster-deployment-is-missing/
       expr: absent(kube_deployment_status_condition{namespace=~"giantswarm|kube-system", condition="Available", deployment=~"capi-controller-manager.*|capg-controller-manager.*|capi-kubeadm-bootstrap-controller-manager.*|capi-kubeadm-control-plane-controller-manager.*|dns-operator-gcp.*|.*workload-identity-operator-gcp.*"})
       for: 5m

@@ -21,8 +21,8 @@ tests:
           - exp_labels:
               area: kaas
               cancel_if_outside_working_hours: "true"
-              severity: notify
-              team: clippy
+              severity: page
+              team: phoenix
               topic: managementcluster
               name: clippaxy
               exported_namespace: giantswarm
@@ -37,7 +37,7 @@ tests:
               area: kaas
               cancel_if_outside_working_hours: "true"
               severity: notify
-              team: clippy
+              team: phoenix
               topic: managementcluster
               name: grumpy
               exported_namespace: giantswarm
@@ -53,7 +53,7 @@ tests:
               area: kaas
               cancel_if_outside_working_hours: "true"
               severity: notify
-              team: clippy
+              team: phoenix
               topic: managementcluster
               name: grumpy
               exported_namespace: giantswarm

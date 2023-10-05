@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add missing team label to slo alerts.
 
+### Changed
+
+- Change ownership from Atlas to Turtles/Phoenix for all vertical pod autoscaler alerts
+
 ## [2.137.0] - 2023-10-04
 
 ### Removed

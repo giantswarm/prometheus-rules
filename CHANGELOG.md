@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix link for node exporter opsrecipe
+
 ## [2.138.0] - 2023-10-05
 
 ### Fixed
@@ -409,7 +413,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.98.0] - 2023-05-10
 
-
 ### Added
 
 - Add `WorkloadClusterMasterMemoryUsageTooHigh` alert.
@@ -711,7 +714,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix cortex recording rules for requests and limits
 - Upgrade inhibition labels checking script
 - inhibition script now throwing error in github-action if missing labels are detected
-
 
 ## [2.77.0] - 2023-02-03
 
@@ -1030,7 +1032,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Narrow down Flux `FluxKustomizationFailed` alert.
 
 ## [2.56.0] - 2022-11-03
-
 
 ### Added
 
@@ -1531,7 +1532,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Removed `ManagementClusterPodPendingFor15Min` and `ManagementClusterPodPending`.
 
-
 ## [1.7.1] - 2022-03-22
 
 ### Changed
@@ -1861,7 +1861,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Change `WorkloadClusterEtcdCommitDurationTooHigh` severity to paging.
-
 
 ## [0.31.3] - 2021-11-09
 

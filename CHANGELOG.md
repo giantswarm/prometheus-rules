@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix link for node exporter opsrecipe
+- Fix AppWithoutTeamAnnotation so it only pages for Giant Swarm catalogs.
 
 ## [2.138.0] - 2023-10-05
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add recording rules to list all clusters.
+
 ## [2.138.1] - 2023-10-11
 
 ### Fixed

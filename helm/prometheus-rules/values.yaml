@@ -5,6 +5,7 @@ project:
   branch: '[[ .Branch ]]'
   commit: '[[ .SHA ]]'
 managementCluster:
+  customer: ""
   name: ""
   pipeline: ""
   provider:

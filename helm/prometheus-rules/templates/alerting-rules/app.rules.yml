@@ -15,7 +15,7 @@ spec:
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"(control-plane-.*|default)",team!~"^$|noteam", namespace=~".*gianstswarm"}
+      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"(control-plane-.*|default)",team!~"^$|noteam", namespace=~".*giantswarm"}
       for: 30m
       labels:
         area: managedservices
@@ -30,7 +30,7 @@ spec:
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
         opsrecipe: app-pending-update/
-      expr: app_operator_app_info{catalog=~"(control-plane-.*|default)", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam", namespace=~".*gianstswarm"}
+      expr: app_operator_app_info{catalog=~"(control-plane-.*|default)", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam", namespace=~".*giantswarm"}
       for: 40m
       labels:
         area: managedservices

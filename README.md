@@ -95,10 +95,9 @@ Official documentation for inhibit rules can be found here: https://www.promethe
 
 The recording rules are located `helm/prometheus-rules/templates/recording-rules`
 
-
 ### Mixin
 
-#### kubermetes-mixins
+#### kubernetes-mixins
 
 To Update `kubernetes-mixins` recording rules:
 
@@ -113,6 +112,10 @@ Come as-is from https://github.com/grafana/mimir/tree/main/operations/mimir-mixi
 #### loki-mixins
 
 Come as-is from https://github.com/grafana/loki/tree/main/production/loki-mixin-compiled-ssd ; just added helm headers (metadata, spec...)
+
+#### tempo-mixins
+
+Come as-is from https://github.com/grafana/tempo/tree/main/operations/tempo-mixin-compiled ; just added helm headers (metadata, spec...)
 
 ### Testing
 

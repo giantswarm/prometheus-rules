@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- fixed `aggregation:kyverno_policy_job_status_team` expression. 
+
 ### Added
 
 - Recording rules for Tempo

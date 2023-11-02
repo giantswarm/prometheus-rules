@@ -409,10 +409,10 @@ spec:
             }, "job", ",", "name")
           ) by (job, category, policy, status)
           * on(job) group_left(team, app) sum(
-            label_join(label_join(kube_job_labels{
+            label_join(label_join(label_join(kube_job_labels{
               cluster_type="management_cluster",
               label_application_giantswarm_io_team!=""
-            }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
+            }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team"), "job", ",", "job_name")
           ) by (team, app, job),
         "name", ",", "job")
       record: aggregation:kyverno_policy_job_status_team

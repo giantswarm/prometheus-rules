@@ -21,8 +21,9 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        severity: page
-        team: phoenix
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: atlas
         topic: autoscaling
     - alert: KedaScaledObjectErrors
       annotations:
@@ -37,7 +38,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: phoenix
+        team: atlas
         topic: autoscaling
     - alert: KedaWebhookScaledObjectValidationErrors
       annotations:
@@ -52,7 +53,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: phoenix
+        team: atlas
         topic: autoscaling
     - alert: KedaScalerErrors
       annotations:
@@ -67,5 +68,5 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: phoenix
+        team: atlas
         topic: autoscaling

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add KEDA alerting rules.
+
 ### Changed
 
 - Added `namespace` label to Flux helm release related alerts

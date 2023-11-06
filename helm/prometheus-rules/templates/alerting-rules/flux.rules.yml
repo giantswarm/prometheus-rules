@@ -38,6 +38,7 @@ spec:
         severity: page
         team: honeybadger
         topic: releng
+        namespace: {{ $labels.namespace }}
     - alert: FluxWorkloadClusterHelmReleaseFailed
       annotations:
         description: |-
@@ -51,6 +52,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         team: honeybadger
         topic: releng
+        namespace: {{ $labels.namespace }}
     - alert: FluxKustomizationFailed
       annotations:
         description: |-

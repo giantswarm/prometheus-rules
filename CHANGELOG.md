@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.139.0] - 2023-11-07
+
 ### Added
 
 - Add KEDA alerting rules.
@@ -2252,7 +2254,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.138.3...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.139.0...HEAD
+[2.139.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.138.3...v2.139.0
 [2.138.3]: https://github.com/giantswarm/prometheus-rules/compare/v2.138.2...v2.138.3
 [2.138.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.138.1...v2.138.2
 [2.138.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.138.0...v2.138.1

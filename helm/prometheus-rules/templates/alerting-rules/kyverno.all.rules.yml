@@ -25,7 +25,7 @@ spec:
         severity: page
         team: shield
         topic: kyverno
-  - name: reports
+  - name: resources
     rules:
     - alert: KyvernoAdmissionReportCountTooHigh
       annotations:
@@ -40,6 +40,21 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "false"
         severity: page
+        team: shield
+        topic: kyverno
+    - alert: KyvernoUpdateRequestsCountTooHigh
+      annotations:
+        description: "{{`Kyverno {{ $labels.kind }} are too high. This is an indicator that Kyverno\'s background controller may not be able to create some resources.`}}"
+        opsrecipe: kyverno-updaterequests/
+      expr: aggregation:kyverno_resource_counts{kind=~"(generate|update)requests.kyverno.io"} > 5000
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "false"
+        severity: notify
         team: shield
         topic: kyverno
   - name: replicas

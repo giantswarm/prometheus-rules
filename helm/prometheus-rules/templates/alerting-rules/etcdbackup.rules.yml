@@ -70,7 +70,7 @@ spec:
         topic: etcd-backup
     - alert: ETCDBackupMetricsMissing
       annotations:
-        description: '{{`ETCD backup metrics are missing on {{ $labels.cluster_id }}`}}'
+        description: '{{`ETCD backup metrics are missing`}}'
         opsrecipe: etcd-backup-failed/
       expr: absent(etcd_backup_latest_attempt)
       for: 12h

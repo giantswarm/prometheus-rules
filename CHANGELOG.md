@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add new alert that fires if etcd backup metrics are missing for 12h.
+
 ## [2.139.0] - 2023-11-07
 
 ### Added

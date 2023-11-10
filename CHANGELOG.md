@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.139.0] - 2023-11-07
 
+### Fixed
+
+- Fix `raw_slo_requests` recording rule expression for kubelet status.
+
 ### Added
 
 - Add KEDA alerting rules.

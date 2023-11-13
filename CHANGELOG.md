@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix `raw_slo_requests` recording rule expression for kubelet status.
+- Use `exported_namespace` for certificate expiration alerts.
 
 ## [2.140.0] - 2023-11-13
 

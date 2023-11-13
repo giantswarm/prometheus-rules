@@ -68,3 +68,15 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: etcd-backup
+    - alert: ETCDBackupMetricsMissing
+      annotations:
+        description: '{{`ETCD backup metrics are missing`}}'
+        opsrecipe: etcd-backup-metrics-missing/
+      expr: absent(etcd_backup_latest_attempt)
+      for: 12h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: etcd-backup

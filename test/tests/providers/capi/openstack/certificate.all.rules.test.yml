@@ -65,7 +65,7 @@ tests:
               cluster_type: workload_cluster
               container: cert-exporter
               customer: giantswarm
-              exported_namespace: kube-system
+              exported_namespace: giantswarm
               instance: 10.0.0.0:1234
               job: 12345-prometheus/workload-12345/0
               namespace: kube-system

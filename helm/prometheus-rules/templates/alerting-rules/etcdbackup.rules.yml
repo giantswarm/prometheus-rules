@@ -71,7 +71,7 @@ spec:
     - alert: ETCDBackupMetricsMissing
       annotations:
         description: '{{`ETCD backup metrics are missing`}}'
-        opsrecipe: etcd-backup-failed/
+        opsrecipe: etcd-backup-metrics-missing/
       expr: absent(etcd_backup_latest_attempt)
       for: 12h
       labels:

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `raw_slo_requests` recording rule expression for kubelet status.
+
 ## [2.140.0] - 2023-11-13
 
 ### Added
@@ -14,10 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add new alert that fires if etcd backup metrics are missing for 12h.
 
 ## [2.139.0] - 2023-11-07
-
-### Fixed
-
-- Fix `raw_slo_requests` recording rule expression for kubelet status.
 
 ### Added
 

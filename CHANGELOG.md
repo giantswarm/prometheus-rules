@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Split prometheus-agent alerts (`PrometheusAgentFailing` and `PrometheusAgentShardsMissing`) in 2:
+  - existing alerts will fire later
+  - new inhibitions alerts will fire earlier
+
 ## [2.140.2] - 2023-11-13
 
 ### Fixed

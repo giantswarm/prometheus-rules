@@ -9,21 +9,36 @@ spec:
   groups:
   - name: gs-managed-app-deployments.recording
     rules:
-    - expr: label_replace(
-              kube_deployment_status_replicas_available *
-              on (namespace, deployment) group_left(label_app_kubernetes_io_name)
-              kube_deployment_labels{label_giantswarm_io_service_type="managed"},
-            "managed_app", "$1", "label_app_kubernetes_io_name", "(.*)" )
+    - expr: |
+        label_replace(
+            kube_deployment_status_replicas_available
+          * on (pod, namespace, deployment) group_left (label_app_kubernetes_io_name)
+            kube_deployment_labels{label_giantswarm_io_service_type="managed"},
+          "managed_app",
+          "$1",
+          "label_app_kubernetes_io_name",
+          "(.*)"
+        )
       record: managed_app_deployment_status_replicas_available
-    - expr: label_replace(
-              kube_deployment_status_replicas_unavailable *
-              on (namespace, deployment) group_left(label_app_kubernetes_io_name)
-              kube_deployment_labels{label_giantswarm_io_service_type="managed"},
-            "managed_app", "$1", "label_app_kubernetes_io_name", "(.*)" )
+    - expr: |
+        label_replace(
+            kube_deployment_status_replicas_unavailable
+          * on (pod, namespace, deployment) group_left (label_app_kubernetes_io_name)
+            kube_deployment_labels{label_giantswarm_io_service_type="managed"},
+          "managed_app",
+          "$1",
+          "label_app_kubernetes_io_name",
+          "(.*)"
+        )
       record: managed_app_deployment_status_replicas_unavailable
-    - expr: label_replace(
-              kube_deployment_spec_replicas *
-              on (namespace, deployment) group_left(label_app_kubernetes_io_name)
-              kube_deployment_labels{label_giantswarm_io_service_type="managed"},
-            "managed_app", "$1", "label_app_kubernetes_io_name", "(.*)" )
+    - expr: |
+        label_replace(
+            kube_deployment_spec_replicas
+          * on (pod, namespace, deployment) group_left (label_app_kubernetes_io_name)
+            kube_deployment_labels{label_giantswarm_io_service_type="managed"},
+          "managed_app",
+          "$1",
+          "label_app_kubernetes_io_name",
+          "(.*)"
+        )
       record: managed_app_deployment_spec_replicas

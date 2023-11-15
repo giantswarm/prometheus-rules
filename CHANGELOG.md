@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Support multiple KSM pods in our alerts.
 - Split prometheus-agent alerts (`PrometheusAgentFailing` and `PrometheusAgentShardsMissing`) in 2:
   - existing alerts will fire later
   - new inhibitions alerts will fire earlier

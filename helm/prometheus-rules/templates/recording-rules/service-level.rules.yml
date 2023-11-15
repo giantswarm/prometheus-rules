@@ -174,12 +174,14 @@ spec:
     # -- error recording rules
     # record when pods of a daemonset with label "label_giantswarm_io_monitoring_basic_sli" are down
     - expr: |
-        kube_daemonset_labels * on (daemonset, namespace) group_right(label_application_giantswarm_io_team) (
-          label_replace(
+        label_replace(
             kube_daemonset_status_number_unavailable
-            and on(daemonset,cluster_id,cluster_type,namespace)
-            kube_daemonset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-          "service", "$1", "daemonset", "(.*)" )
+          * on (pod, daemonset, cluster_id, cluster_type, namespace) group_left (label_application_giantswarm_io_team)
+            kube_statefulset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
+          "service",
+          "$1",
+          "daemonset",
+          "(.*)"
         )
       labels:
         class: MEDIUM
@@ -187,12 +189,14 @@ spec:
       record: raw_slo_errors
     # record when pods of a deployment with label "label_giantswarm_io_monitoring_basic_sli" are down
     - expr: |
-        kube_deployment_labels * on (deployment, namespace) group_right(label_application_giantswarm_io_team) (
-          label_replace(
+        label_replace(
             kube_deployment_status_replicas_unavailable
-            and on(deployment,cluster_id,cluster_type,namespace)
+          * on (pod, deployment, cluster_id, cluster_type, namespace) group_left (label_application_giantswarm_io_team)
             kube_deployment_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-          "service", "$1", "deployment", "(.*)" )
+          "service",
+          "$1",
+          "deployment",
+          "(.*)"
         )
       labels:
         class: MEDIUM
@@ -200,12 +204,14 @@ spec:
       record: raw_slo_errors
     # record when pods of a statefulset with label "label_giantswarm_io_monitoring_basic_sli" are down
     - expr: |
-        kube_statefulset_labels * on (statefulset, namespace) group_right(label_application_giantswarm_io_team) (
-          label_replace(
+        label_replace(
             kube_statefulset_status_replicas - kube_statefulset_status_replicas_current
-            and on(statefulset,cluster_id,cluster_type,namespace)
+          * on (pod, statefulset, cluster_id, cluster_type, namespace) group_left (label_application_giantswarm_io_team)
             kube_statefulset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
-          "service", "$1", "statefulset", "(.*)" )
+          "service",
+          "$1",
+          "statefulset",
+          "(.*)"
         )
       labels:
         class: MEDIUM

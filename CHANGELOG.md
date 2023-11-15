@@ -10,6 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Support multiple KSM pods in our alerts.
+- Split prometheus-agent alerts (`PrometheusAgentFailing` and `PrometheusAgentShardsMissing`) in 2:
+  - existing alerts will fire later
+  - new inhibitions alerts will fire earlier
+
+## [2.140.2] - 2023-11-13
+
+### Fixed
+
+- Use `exported_namespace` for certificate expiration alerts.
+
+## [2.140.1] - 2023-11-13
+
+### Fixed
+
+- Fix `raw_slo_requests` recording rule expression for kubelet status.
 
 ## [2.140.0] - 2023-11-13
 
@@ -2264,7 +2279,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.140.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.140.2...HEAD
+[2.140.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.140.1...v2.140.2
+[2.140.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.140.0...v2.140.1
 [2.140.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.139.0...v2.140.0
 [2.139.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.138.3...v2.139.0
 [2.138.3]: https://github.com/giantswarm/prometheus-rules/compare/v2.138.2...v2.138.3

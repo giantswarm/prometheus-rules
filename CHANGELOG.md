@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix counting of docker.io images by using the `image_spec` label instead of `image`:
+  - `aggregation:docker:containers_using_dockerhub_image`
+  - `aggregation:docker:containers_using_dockerhub_image_relative`
+
 ## [2.142.1] - 2023-11-20
 
 ### Changed

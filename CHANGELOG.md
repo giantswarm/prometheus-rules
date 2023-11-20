@@ -9,7 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add new alert to list giantswarm images used in our clusters.
+- Add new aggreration to list giantswarm images used in our clusters.
+
+## [2.142.0] - 2023-11-20
+
+### Added
+
+- Add two aggregations to track usage of Docker Hub
+  - `aggregation:docker:containers_using_dockerhub_image`: Number of containers running iwht image from docker.io.
+  - `aggregation:docker:containers_using_dockerhub_image_relative`: Percentage of all running containers that use an image from docker.io (range 0.0 to 1.0).
 
 ## [2.141.0] - 2023-11-15
 
@@ -2285,7 +2293,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.141.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.142.0...HEAD
+[2.142.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.141.0...v2.142.0
 [2.141.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.140.2...v2.141.0
 [2.140.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.140.1...v2.140.2
 [2.140.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.140.0...v2.140.1

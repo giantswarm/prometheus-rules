@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add two aggregations to track usage of Docker Hub
+  - `aggregation:docker:containers_using_dockerhub_image`: Number of containers running iwht image from docker.io.
+  - `aggregation:docker:containers_using_dockerhub_image_relative`: Percentage of all running containers that use an image from docker.io (range 0.0 to 1.0).
+
 ## [2.141.0] - 2023-11-15
 
 ### Changed

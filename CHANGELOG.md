@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change these aggregations to also account for init containers:
+  - `aggregation:docker:containers_using_dockerhub_image`
+  - `aggregation:docker:containers_using_dockerhub_image_relative`
+
 ## [2.142.0] - 2023-11-20
 
 ### Added

@@ -105,9 +105,9 @@ spec:
     rules:
     - expr: sum(engine_daemon_image_actions_seconds_count) by (cluster_id, cluster_type, action)
       record: aggregation:docker:action_count
-    - expr: sum(kube_pod_container_info{image=~"docker\\.io/.*"})
+    - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"})
       record: aggregation:docker:containers_using_dockerhub_image
-    - expr: sum(kube_pod_container_info{image=~"docker\\.io/.*"}) / sum(kube_pod_container_info{})
+    - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"}) / sum(kube_pod_container_info{} or kube_pod_init_container_info{})
       record: aggregation:docker:containers_using_dockerhub_image_relative
   - name: certificates.grafana-cloud.recording
     rules:

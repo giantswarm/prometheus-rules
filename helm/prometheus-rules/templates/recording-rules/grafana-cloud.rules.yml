@@ -473,3 +473,24 @@ spec:
       record: aggregation:container:memory_usage_bytes
     - expr: sum(rate(container_cpu_usage_seconds_total{cluster_type="management_cluster"}[2m])) by (container)
       record: aggregation:container:cpu_usage_cores
+    - expr: |-
+        label_replace(
+          label_replace(
+                count by (cluster_id, pod, image) (kube_pod_init_container_info{image=~".*giantswarm.*"})
+              * on (cluster_id, pod) group_left (label_application_giantswarm_io_team)
+                kube_pod_labels
+            or
+                count by (cluster_id, pod, image) (kube_pod_container_info{image=~".*giantswarm.*"})
+              * on (cluster_id, pod) group_left (label_application_giantswarm_io_team)
+                kube_pod_labels,
+            "team",
+            "$2",
+            "label_application_giantswarm_io_team",
+            "(team-)?(.*)"
+          ),
+          "label_application_giantswarm_io_team",
+          "",
+          "label_application_giantswarm_io_team",
+          ".*"
+        )
+      record: aggregation:container:images

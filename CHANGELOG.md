@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add new aggreration to list giantswarm images used in our clusters.
+
 ## [2.142.2] - 2023-11-20
 
 ### Fixed

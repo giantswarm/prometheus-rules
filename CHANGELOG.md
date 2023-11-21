@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix aggregation:container:images by adding the namespace to avoid issues when one application is deployed multiple times in one cluster.
+
 ## [2.143.0] - 2023-11-21
 
 ### Added

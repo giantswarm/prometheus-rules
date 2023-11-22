@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Make `aggregation:container:images` an aggregation to avoid sending too much data to Grafana Cloud.
+
 ## [2.143.1] - 2023-11-21
 
 ### Fixed

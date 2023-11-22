@@ -16,16 +16,30 @@ spec:
         opsrecipe: service-level-burn-rate-too-high/
         dashboard: https://giantswarm.grafana.net/d/service-level/service-level?orgId=1
       expr: |
-        (
-          slo_errors_per_request:ratio_rate1h{service!~"efk-.*|.*external-dns.*|kong-.*|.*(ingress-nginx|nginx-ingress-controller).*"} > on (service) group_left slo_threshold_high
-        and
-          slo_errors_per_request:ratio_rate5m{service!~"efk-.*|.*external-dns.*|kong-.*|.*(ingress-nginx|nginx-ingress-controller).*"} > on (service) group_left slo_threshold_high
-        )
-        or
-        (
-          slo_errors_per_request:ratio_rate6h{service!~"efk-.*|.*external-dns.*|kong-.*|.*(ingress-nginx|nginx-ingress-controller).*"} > on (service) group_left slo_threshold_low
-        and
-          slo_errors_per_request:ratio_rate30m{service!~"efk-.*|.*external-dns.*|kong-.*|.*(ingress-nginx|nginx-ingress-controller).*"} > on (service) group_left slo_threshold_low
+        label_replace(
+            (
+                  slo_errors_per_request:ratio_rate1h{service!~"efk-.*|.*external-dns.*|kong-.*|.*(ingress-nginx|nginx-ingress-controller).*"}
+                > on (service) group_left ()
+                  slo_threshold_high
+              and
+                  slo_errors_per_request:ratio_rate5m{service!~"efk-.*|.*external-dns.*|kong-.*|.*(ingress-nginx|nginx-ingress-controller).*"}
+                > on (service) group_left ()
+                  slo_threshold_high
+            )
+          or
+            (
+                  slo_errors_per_request:ratio_rate6h{service!~"efk-.*|.*external-dns.*|kong-.*|.*(ingress-nginx|nginx-ingress-controller).*"}
+                > on (service) group_left ()
+                  slo_threshold_low
+              and
+                  slo_errors_per_request:ratio_rate30m{service!~"efk-.*|.*external-dns.*|kong-.*|.*(ingress-nginx|nginx-ingress-controller).*"}
+                > on (service) group_left ()
+                  slo_threshold_low
+            ),
+          "team",
+          "$1",
+          "label_application_giantswarm_io_team",
+          "(.*)"
         )
       for: 5m
       labels:
@@ -35,4 +49,4 @@ spec:
         cancel_if_cluster_has_no_workers: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: '{{`{{ $labels.label_application_giantswarm_io_team }}`}}'
+        team: '{{`{{ $labels.team }}`}}'

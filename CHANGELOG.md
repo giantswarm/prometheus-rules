@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- reduced sensitivity for lokiringunhealthy
+
 ## [2.143.2] - 2023-11-22
 
 ### Changed

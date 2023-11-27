@@ -32,7 +32,7 @@ spec:
       annotations:
         description: '{{`Critical pod {{ $labels.namespace }}/{{ $labels.pod }} is not running.`}}'
         opsrecipe: critical-pod-is-not-running/
-      expr: kube_pod_container_status_running{namespace="kube-system",container=~"(k8s-api-server|k8s-controller-manager|k8s-scheduler)"} != 1 or label_replace(absent(kube_pod_container_status_running{namespace="kube-system",container="k8s-api-server"}), "pod", "$1", "container", "(.+)") == 1 or label_replace(absent(kube_pod_container_status_running{namespace="kube-system",container="k8s-controller-manager"}), "pod", "$1", "container", "(.+)") == 1 or label_replace(absent(kube_pod_container_status_running{namespace="kube-system",container="k8s-scheduler"}), "pod", "$1", "container", "(.+)") == 1
+      expr: kube_pod_container_status_running{namespace="kube-system",container=~"(k8s-api-server|k8s-controller-manager|k8s-scheduler)"} != 1 or (label_replace(absent(kube_pod_container_status_running{namespace="kube-system",container="k8s-api-server"}), "pod", "$1", "container", "(.+)") == 1 or label_replace(absent(kube_pod_container_status_running{namespace="kube-system",container="k8s-controller-manager"}), "pod", "$1", "container", "(.+)") == 1 or label_replace(absent(kube_pod_container_status_running{namespace="kube-system",container="k8s-scheduler"}), "pod", "$1", "container", "(.+)") == 1) and (up{app="kube-state-metrics"} offset 2m)
       for: 20m
       labels:
         area: kaas

@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - reduced sensitivity for lokiringunhealthy
 
+## [2.144.0] - 2023-11-27
+
+### Changed
+
+- Relabel team in `ServiceLevelBurnRateTooHigh` alert.
+
 ## [2.143.2] - 2023-11-22
 
 ### Changed
@@ -2327,7 +2333,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.143.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.144.0...HEAD
+[2.144.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.143.2...v2.144.0
 [2.143.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.143.1...v2.143.2
 [2.143.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.143.0...v2.143.1
 [2.143.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.142.2...v2.143.0

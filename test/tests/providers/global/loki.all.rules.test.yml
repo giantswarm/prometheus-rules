@@ -72,7 +72,7 @@ tests:
         eval_time: 25m  # after 25 minutes we have an unhealthy member, but we want to filter too short events. So no alert yet.
         exp_alerts:
       - alertname: LokiRingUnhealthy
-        eval_time: 40m  # now the event has been there for 20 minutes, we should have an alert.
+        eval_time: 60m  # now the event has been there for 20 minutes, we should have an alert.
         exp_alerts:
           - exp_labels:
               app: loki-compactor

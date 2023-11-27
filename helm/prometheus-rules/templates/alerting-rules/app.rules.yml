@@ -105,9 +105,9 @@ spec:
         description: '{{`App {{ $labels.name }} has no team label.`}}'
         opsrecipe: app-without-team-annotation/
       {{- if eq .Values.managementCluster.provider.flavor "capi" }}
-      expr: label_replace(app_operator_app_info{team=~"^$|noteam", catalog=~"giantswarm.*|control-plane(-test)?-catalog|cluster(-test)?|default(-test)?|releases(-test)?"}, "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*") == 1
+      expr: label_replace(app_operator_app_info{app!~"akv2k8s|opencost", team=~"^$|noteam", catalog=~"giantswarm.*|control-plane(-test)?-catalog|cluster(-test)?|default(-test)?|releases(-test)?"}, "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*") == 1
       {{- else }}
-      expr: label_replace(app_operator_app_info{team=~"^$|noteam", catalog=~"giantswarm.*|control-plane(-test)?-catalog|cluster(-test)?|default(-test)?|releases(-test)?"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
+      expr: label_replace(app_operator_app_info{app!~"akv2k8s|opencost", team=~"^$|noteam", catalog=~"giantswarm.*|control-plane(-test)?-catalog|cluster(-test)?|default(-test)?|releases(-test)?"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
       {{- end }}
       for: 40m
       labels:

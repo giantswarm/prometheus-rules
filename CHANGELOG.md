@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - reduced sensitivity for lokiringunhealthy
 
+### Removed
+
+- Ignore `akv2k8s` and `opencost` from `AppWithoutTeamAnnotation` alert.
+
 ## [2.144.0] - 2023-11-27
 
 ### Changed

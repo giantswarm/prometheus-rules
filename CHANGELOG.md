@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - reduced sensitivity for lokiringunhealthy
+- added check if KSM was up 2 minutes ago in `WorkloadClusterCriticalPodNotRunningAWS` alert
 
 ## [2.144.0] - 2023-11-27
 

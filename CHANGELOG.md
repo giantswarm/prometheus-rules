@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.145.0] - 2023-11-30
+
 ### Fixed
 
 - Fix `WorkloadClusterContainerIsRestartingTooFrequentlyAWS` expr to use `ebs-plugin` and not `ebs-csi`
@@ -2337,7 +2339,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.144.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.145.0...HEAD
+[2.145.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.144.0...v2.145.0
 [2.144.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.143.2...v2.144.0
 [2.143.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.143.1...v2.143.2
 [2.143.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.143.0...v2.143.1

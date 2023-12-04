@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Ignore `api-spec` from `AppWithoutTeamAnnotation` alert.
+
 ## [2.145.0] - 2023-11-30
 
 ### Fixed

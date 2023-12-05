@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: karpenter.workload-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: karpenter
+    rules:
+    - alert: KarpenterDeploymentNotSatisfied
+      annotations:
+        description: '{{`Karpenter Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        opsrecipe: workload-cluster-managed-deployment-not-satisfied/
+      expr: managed_app_deployment_status_replicas_available{managed_app=~"karpenter.*"} / managed_app_deployment_status_replicas_available{managed_app=~"karpenter.*"} < 0.9
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "false"
+        severity: notify
+        team: phoenix
+        topic: kubernetes

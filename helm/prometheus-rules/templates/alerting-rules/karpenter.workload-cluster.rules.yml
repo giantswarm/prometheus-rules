@@ -14,7 +14,7 @@ spec:
       annotations:
         dashboard: e8ea41bb-55a8-48c5-a070-262551ad3722/karpenter
         description: '{{`Karpenter Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-      expr: managed_app_deployment_status_replicas_available{managed_app=~"karpenter.*"} / managed_app_deployment_status_replicas_available{managed_app=~"karpenter.*"} < 0.9
+      expr: managed_app_deployment_status_replicas_available{managed_app=~"karpenter.*"} / (managed_app_deployment_status_replicas_available{managed_app=~"karpenter.*"} + managed_app_deployment_status_replicas_unavailable{managed_app=~"karpenter.*"}) < 0.9
       for: 30m
       labels:
         area: managedservices

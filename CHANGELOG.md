@@ -7,8 +7,146 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
 
-- Change ownership from Atlas to Turtles/Phoenix for all vertical pod autoscaler alerts.
+- Fix expression for KongDeploymentNotSatisfied
+
+### Removed
+
+- Ignore `api-spec` from `AppWithoutTeamAnnotation` alert.
+
+## [2.145.0] - 2023-11-30
+
+### Fixed
+
+- Fix `WorkloadClusterContainerIsRestartingTooFrequentlyAWS` expr to use `ebs-plugin` and not `ebs-csi`
+
+### Changed
+
+- reduced sensitivity for lokiringunhealthy
+
+## [2.144.0] - 2023-11-27
+
+### Changed
+
+- Relabel team in `ServiceLevelBurnRateTooHigh` alert.
+
+## [2.143.2] - 2023-11-22
+
+### Changed
+
+- Make `aggregation:container:images` an aggregation to avoid sending too much data to Grafana Cloud.
+
+## [2.143.1] - 2023-11-21
+
+### Fixed
+
+- Fix aggregation:container:images by adding the namespace to avoid issues when one application is deployed multiple times in one cluster.
+
+## [2.143.0] - 2023-11-21
+
+### Added
+
+- Add new aggreration to list giantswarm images used in our clusters.
+
+## [2.142.2] - 2023-11-20
+
+### Fixed
+
+- Fix counting of docker.io images by using the `image_spec` label instead of `image`:
+  - `aggregation:docker:containers_using_dockerhub_image`
+  - `aggregation:docker:containers_using_dockerhub_image_relative`
+
+## [2.142.1] - 2023-11-20
+
+### Changed
+
+- Change these aggregations to also account for init containers:
+  - `aggregation:docker:containers_using_dockerhub_image`
+  - `aggregation:docker:containers_using_dockerhub_image_relative`
+
+## [2.142.0] - 2023-11-20
+
+### Added
+
+- Add two aggregations to track usage of Docker Hub
+  - `aggregation:docker:containers_using_dockerhub_image`: Number of containers running iwht image from docker.io.
+  - `aggregation:docker:containers_using_dockerhub_image_relative`: Percentage of all running containers that use an image from docker.io (range 0.0 to 1.0).
+
+## [2.141.0] - 2023-11-15
+
+### Changed
+
+- Support multiple KSM pods in our alerts.
+- Split prometheus-agent alerts (`PrometheusAgentFailing` and `PrometheusAgentShardsMissing`) in 2:
+  - existing alerts will fire later
+  - new inhibitions alerts will fire earlier
+
+## [2.140.2] - 2023-11-13
+
+### Fixed
+
+- Use `exported_namespace` for certificate expiration alerts.
+
+## [2.140.1] - 2023-11-13
+
+### Fixed
+
+- Fix `raw_slo_requests` recording rule expression for kubelet status.
+
+## [2.140.0] - 2023-11-13
+
+### Added
+
+- Add new alert that fires if etcd backup metrics are missing for 12h.
+
+## [2.139.0] - 2023-11-07
+
+### Added
+
+- Add KEDA alerting rules.
+
+### Changed
+
+- Added `namespace` label to Flux helm release related alerts
+
+## [2.138.3] - 2023-11-02
+
+### Changed
+
+- fixed `aggregation:kyverno_policy_job_status_team` expression. 
+
+### Added
+
+- Recording rules for Tempo
+
+## [2.138.2] - 2023-10-23
+
+### Added
+
+- Add recording rules to list all clusters.
+- Fix typo in `ManagementClusterAppFailed` and `ManagementClusterAppPendingUpdate`.
+
+## [2.138.1] - 2023-10-11
+
+### Fixed
+
+- Fix link for node exporter opsrecipe
+- Fix AppWithoutTeamAnnotation so it only pages for Giant Swarm catalogs.
+
+## [2.138.0] - 2023-10-05
+
+### Fixed
+
+- Add missing team label to slo alerts.
+
+### Changed
+
+- Change ownership from Atlas to Turtles/Phoenix for all vertical pod autoscaler alerts
+
+### Removed
+
+- Remove vertical-pod-autoscaler slo as it was moved to Sloth.
 
 ## [2.137.0] - 2023-10-04
 
@@ -399,7 +537,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.98.0] - 2023-05-10
 
-
 ### Added
 
 - Add `WorkloadClusterMasterMemoryUsageTooHigh` alert.
@@ -701,7 +838,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix cortex recording rules for requests and limits
 - Upgrade inhibition labels checking script
 - inhibition script now throwing error in github-action if missing labels are detected
-
 
 ## [2.77.0] - 2023-02-03
 
@@ -1020,7 +1156,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Narrow down Flux `FluxKustomizationFailed` alert.
 
 ## [2.56.0] - 2022-11-03
-
 
 ### Added
 
@@ -1521,7 +1656,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Removed `ManagementClusterPodPendingFor15Min` and `ManagementClusterPodPending`.
 
-
 ## [1.7.1] - 2022-03-22
 
 ### Changed
@@ -1851,7 +1985,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Change `WorkloadClusterEtcdCommitDurationTooHigh` severity to paging.
-
 
 ## [0.31.3] - 2021-11-09
 
@@ -2215,7 +2348,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.137.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.145.0...HEAD
+[2.145.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.144.0...v2.145.0
+[2.144.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.143.2...v2.144.0
+[2.143.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.143.1...v2.143.2
+[2.143.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.143.0...v2.143.1
+[2.143.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.142.2...v2.143.0
+[2.142.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.142.1...v2.142.2
+[2.142.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.142.0...v2.142.1
+[2.142.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.141.0...v2.142.0
+[2.141.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.140.2...v2.141.0
+[2.140.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.140.1...v2.140.2
+[2.140.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.140.0...v2.140.1
+[2.140.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.139.0...v2.140.0
+[2.139.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.138.3...v2.139.0
+[2.138.3]: https://github.com/giantswarm/prometheus-rules/compare/v2.138.2...v2.138.3
+[2.138.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.138.1...v2.138.2
+[2.138.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.138.0...v2.138.1
+[2.138.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.137.0...v2.138.0
 [2.137.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.136.0...v2.137.0
 [2.136.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.135.0...v2.136.0
 [2.135.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.134.1...v2.135.0

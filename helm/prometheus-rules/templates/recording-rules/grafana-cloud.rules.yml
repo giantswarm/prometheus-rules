@@ -58,6 +58,40 @@ spec:
       record: aggregation:giantswarm:app_upgrade_available
   - name: clusters.grafana-cloud.recording
     rules:
+    # This recording rule is used to list all clusters. The last expression is used to list vintage MCs
+    - expr: |-
+        avg by (cluster_id, customer, installation) (
+          label_replace(
+            capi_cluster_info,
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          ) >= 1
+          or cluster_operator_cluster_status >= 1
+          or cluster_service_cluster_info >= 1
+          or
+            label_replace(
+              label_replace(
+                label_replace(
+                  vector(1),
+                  "cluster_id",
+                  {{ .Values.managementCluster.name | quote }},
+                  "",
+                  ""
+                ),
+                "customer",
+                {{ .Values.managementCluster.customer | quote }},
+                "",
+                ""
+              ),
+              "installation",
+              {{ .Values.managementCluster.name | quote }},
+              "",
+              ""
+            )
+        )
+      record: aggregation:giantswarm:cluster_info
     - expr: sum(label_replace(azure_operator_cluster_release{release_version!=""}, "cluster_id", "$1", "exported_cluster_id", "(.*)")) by (release_version, cluster_id) or sum(cluster_service_cluster_info) by (release_version, cluster_id) / 2 or sum(cluster_operator_cluster_status{release_version!=""}) by (release_version, cluster_id)
       record: aggregation:giantswarm:cluster_release_version
     - expr: avg_over_time(cluster_operator_cluster_create_transition[1w]) or avg_over_time(azure_operator_cluster_create_transition[1w])
@@ -71,6 +105,33 @@ spec:
     rules:
     - expr: sum(engine_daemon_image_actions_seconds_count) by (cluster_id, cluster_type, action)
       record: aggregation:docker:action_count
+    - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"})
+      record: aggregation:docker:containers_using_dockerhub_image
+    - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"}) / sum(kube_pod_container_info{} or kube_pod_init_container_info{})
+      record: aggregation:docker:containers_using_dockerhub_image_relative
+    - expr: |-
+        count by (image, team) (
+          label_replace(
+            label_replace(
+                  count by (cluster_id, pod, image, namespace) (kube_pod_init_container_info{image=~".*giantswarm.*"})
+                * on (cluster_id, pod, namespace) group_left (label_application_giantswarm_io_team)
+                  kube_pod_labels
+              or
+                  count by (cluster_id, pod, image, namespace) (kube_pod_container_info{image=~".*giantswarm.*"})
+                * on (cluster_id, pod, namespace) group_left (label_application_giantswarm_io_team)
+                  kube_pod_labels,
+              "team",
+              "$2",
+              "label_application_giantswarm_io_team",
+              "(team-)?(.*)"
+            ),
+            "label_application_giantswarm_io_team",
+            "",
+            "label_application_giantswarm_io_team",
+            ".*"
+          )
+        )
+      record: aggregation:container:images
   - name: certificates.grafana-cloud.recording
     rules:
     - expr: min(cert_exporter_not_after) by (cluster_id, cluster_type)
@@ -375,10 +436,10 @@ spec:
             }, "job", ",", "name")
           ) by (job, category, policy, status)
           * on(job) group_left(team, app) sum(
-            label_join(label_join(kube_job_labels{
+            label_join(label_join(label_join(kube_job_labels{
               cluster_type="management_cluster",
               label_application_giantswarm_io_team!=""
-            }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
+            }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team"), "job", ",", "job_name")
           ) by (team, app, job),
         "name", ",", "job")
       record: aggregation:kyverno_policy_job_status_team

@@ -20,6 +20,9 @@ tests:
       # Kyverno admission reports
       - series: 'aggregation:kyverno_resource_counts{kind="admissionreports.kyverno.io"}'
         values: "0+1000x30 30000+1500x30"
+      # Kyverno updaterequests
+      - series: 'aggregation:kyverno_resource_counts{kind="updaterequests.kyverno.io"}'
+        values: "0+100x15 5000+1500x30"
     alert_rule_test:
       # Webhooks alert
       - alertname: KyvernoWebhookHasNoAvailableReplicas
@@ -54,6 +57,23 @@ tests:
             exp_annotations:
               description: "Kyverno admissionreports.kyverno.io are too high. This is an indicator that Kyverno's report processing may not be keeping up with cluster demand."
               opsrecipe: "kyverno-reports/"
+      # Kyverno reports too high alert
+      - alertname: KyvernoUpdateRequestsCountTooHigh
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              area: managedservices
+              severity: notify
+              team: shield
+              topic: kyverno
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "false"
+              kind: "updaterequests.kyverno.io"
+            exp_annotations:
+              description: "Kyverno updaterequests.kyverno.io are too high. This is an indicator that Kyverno's background controller may not be able to create some resources."
+              opsrecipe: "kyverno-updaterequests/"
       # Kyverno scaled down alert
       - alertname: KyvernoScaledDownTooLong
         eval_time: 240m

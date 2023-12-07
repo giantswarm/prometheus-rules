@@ -22,7 +22,8 @@ spec:
         severity: page
         team: atlas
         topic: monitoring
-    - alert: AlertManagerNotificationsFailingNotPaging
+        cancel_if_outside_working_hours: "true"
+    - alert: AlertManagerOpsgenieNotificationsFailing
       annotations:
         description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
         opsrecipe: alert-manager-notifications-failing/
@@ -44,7 +45,8 @@ spec:
         severity: page
         team: atlas
         topic: monitoring
-    - alert: AlertManagerNotificationsFailingChinaNotPaging
+        cancel_if_outside_working_hours: "true"
+    - alert: AlertManagerOpsgenieNotificationsFailingChina
       annotations:
         description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
         opsrecipe: alert-manager-notifications-failing/

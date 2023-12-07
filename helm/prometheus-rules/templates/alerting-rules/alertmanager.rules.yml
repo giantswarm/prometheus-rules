@@ -15,21 +15,43 @@ spec:
       annotations:
         description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
         opsrecipe: alert-manager-notifications-failing/
-      expr: rate(alertmanager_notifications_failed_total{cluster_id!~"argali|giraffe", integration!~"slack|webhook"}[5m]) > 0
+      expr: rate(alertmanager_notifications_failed_total{cluster_id!~"akita|argali|giraffe", integration!="opsgenie"}[5m]) > 0
       for: 10m
       labels:
         area: empowerment
         severity: page
         team: atlas
         topic: monitoring
+    - alert: AlertManagerNotificationsFailingNotPaging
+      annotations:
+        description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
+        opsrecipe: alert-manager-notifications-failing/
+      expr: rate(alertmanager_notifications_failed_total{cluster_id!~"akita|argali|giraffe", integration="opsgenie"}[5m]) > 0
+      for: 10m
+      labels:
+        area: empowerment
+        severity: notify
+        team: atlas
+        topic: monitoring
     - alert: AlertManagerNotificationsFailingChina
       annotations:
         description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
         opsrecipe: alert-manager-notifications-failing/
-      expr: rate(alertmanager_notifications_failed_total{cluster_id=~"argali|giraffe", integration!~"slack|webhook"}[5m]) > 0
+      expr: rate(alertmanager_notifications_failed_total{cluster_id=~"akita|argali|giraffe", integration!="opsgenie"}[5m]) > 0
       for: 120m
       labels:
         area: empowerment
         severity: page
+        team: atlas
+        topic: monitoring
+    - alert: AlertManagerNotificationsFailingChinaNotPaging
+      annotations:
+        description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
+        opsrecipe: alert-manager-notifications-failing/
+      expr: rate(alertmanager_notifications_failed_total{cluster_id=~"akita|argali|giraffe", integration="opsgenie"}[5m]) > 0
+      for: 120m
+      labels:
+        area: empowerment
+        severity: notify
         team: atlas
         topic: monitoring

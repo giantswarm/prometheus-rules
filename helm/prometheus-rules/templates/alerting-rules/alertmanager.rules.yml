@@ -28,7 +28,7 @@ spec:
         description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
         opsrecipe: alert-manager-notifications-failing/
       expr: rate(alertmanager_notifications_failed_total{cluster_id!~"akita|argali|giraffe", integration="opsgenie"}[5m]) > 0
-      for: 10m
+      for: 2m
       labels:
         area: empowerment
         severity: notify

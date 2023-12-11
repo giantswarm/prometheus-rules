@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add container-level resources recording rule for grafana cloud
+
 ### Changed
 
 - Fix expression for KongDeploymentNotSatisfied

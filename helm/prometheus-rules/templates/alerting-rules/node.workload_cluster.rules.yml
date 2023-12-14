@@ -78,10 +78,10 @@ spec:
         topic: kubernetes
     - alert: NodeConnTrackAlmostExhausted
       annotations:
-        description: '{{`Node {{ $labels.node }} reports a connection usage above 90%.`}}'
+        description: '{{`Node {{ $labels.node }} reports a connection usage above 85% for the last 15 minutes.`}}'
         opsrecipe: node-conntrack-limits/
-      expr: node_nf_conntrack_entries / node_nf_conntrack_entries_limit >= 0.90
-      for: 5m
+      expr: node_nf_conntrack_entries / node_nf_conntrack_entries_limit >= 0.85
+      for: 15m
       labels:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}

@@ -165,10 +165,6 @@ spec:
       record: aggregation:kubelet:version
   - name: kubernetes.api-server.grafana-cloud.recording
     rules:
-    - expr: sum(apiserver_request_total) by (cluster_type, cluster_id)
-      record: aggregation:kubernetes:apiserver_request_count
-    - expr: sum(apiserver_request_duration_seconds_bucket) by (le, cluster_type, cluster_id)
-      record: aggregation:kubernetes:apiserver_request_duration_seconds_bucket
     - expr: apiserver_request_total
       record: aggregation:kubernetes:apiserver_request_total
     - expr: apiserver_request_aborts_total

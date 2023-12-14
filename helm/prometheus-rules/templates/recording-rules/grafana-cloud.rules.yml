@@ -169,6 +169,16 @@ spec:
       record: aggregation:kubernetes:apiserver_request_count
     - expr: sum(apiserver_request_duration_seconds_bucket) by (le, cluster_type, cluster_id)
       record: aggregation:kubernetes:apiserver_request_duration_seconds_bucket
+    - expr: apiserver_request_total
+      record: aggregation:kubernetes:apiserver_request_total
+    - expr: apiserver_request_aborts_total
+      record: aggregation:kubernetes:apiserver_request_aborts_total
+    - expr: apiserver_request_duration_seconds_bucket
+      record: aggregation:kubernetes:apiserver_request_duration_seconds_bucket
+    - expr: apiserver_request_duration_seconds_count
+      record: aggregation:kubernetes:apiserver_request_duration_seconds_count
+    - expr: apiserver_request_terminations_total
+      record: aggregation:kubernetes:apiserver_request_terminations_total
   - name: kubernetes.audit.grafana-cloud.recording
     rules:
     - expr: sum(apiserver_audit_event_total) by (cluster_type, cluster_id)

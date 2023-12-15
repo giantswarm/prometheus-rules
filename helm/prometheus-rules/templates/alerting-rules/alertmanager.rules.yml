@@ -11,11 +11,11 @@ spec:
   groups:
   - name: alertmanager
     rules:
-    - alert: AlertManagerNotificationsFailing
+    - alert: AlertmanagerPageNotificationsFailing
       annotations:
         description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
         opsrecipe: alert-manager-notifications-failing/
-      expr: rate(alertmanager_notifications_failed_total{cluster_id!~"akita|argali|giraffe", integration!="opsgenie"}[5m]) > 0
+      expr: rate(alertmanager_notifications_failed_total{integration!="opsgenie"}[5m]) > 0
       for: 10m
       labels:
         area: empowerment
@@ -23,35 +23,12 @@ spec:
         team: atlas
         topic: monitoring
         cancel_if_outside_working_hours: "true"
-    - alert: AlertManagerOpsgenieNotificationsFailing
+    - alert: AlertmanagerNotifyNotificationsFailing
       annotations:
         description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
         opsrecipe: alert-manager-notifications-failing/
-      expr: rate(alertmanager_notifications_failed_total{cluster_id!~"akita|argali|giraffe", integration="opsgenie"}[5m]) > 0
+      expr: rate(alertmanager_notifications_failed_total{integration="opsgenie"}[5m]) > 0
       for: 2m
-      labels:
-        area: empowerment
-        severity: notify
-        team: atlas
-        topic: monitoring
-    - alert: AlertManagerNotificationsFailingChina
-      annotations:
-        description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
-        opsrecipe: alert-manager-notifications-failing/
-      expr: rate(alertmanager_notifications_failed_total{cluster_id=~"akita|argali|giraffe", integration!="opsgenie"}[5m]) > 0
-      for: 120m
-      labels:
-        area: empowerment
-        severity: page
-        team: atlas
-        topic: monitoring
-        cancel_if_outside_working_hours: "true"
-    - alert: AlertManagerOpsgenieNotificationsFailingChina
-      annotations:
-        description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
-        opsrecipe: alert-manager-notifications-failing/
-      expr: rate(alertmanager_notifications_failed_total{cluster_id=~"akita|argali|giraffe", integration="opsgenie"}[5m]) > 0
-      for: 120m
       labels:
         area: empowerment
         severity: notify

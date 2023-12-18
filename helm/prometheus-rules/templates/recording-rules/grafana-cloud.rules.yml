@@ -321,6 +321,10 @@ spec:
       record: aggregation:node:memory_memfree_bytes_total
     - expr: sum(node_memory_MemTotal_bytes) by (cluster_type, cluster_id)
       record: aggregation:node:memory_memtotal_bytes_total
+    - expr: sum(container_memory_usage_bytes) by (namespace, container, pod)
+      record: aggregation:container:memory_usage_bytes
+    - expr: sum(rate(container_cpu_usage_seconds_total[5m])) by (namespace, container, pod)
+      record: aggregation:container:cpu_usage_seconds_total
     - expr: sum(rate(node_network_receive_bytes_total[5m])) by (cluster_type, cluster_id)
       record: aggregation:node:network_receive_bytes_total
     - expr: sum(rate(node_network_transmit_bytes_total[5m])) by (cluster_type, cluster_id)

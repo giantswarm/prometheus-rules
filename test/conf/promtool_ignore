@@ -1,6 +1,5 @@
 templates/alerting-rules-test/capo.rules.test.yml
 templates/alerting-rules/alertmanager-dashboard.rules.yml
-templates/alerting-rules/alertmanager.rules.yml
 templates/alerting-rules/apiserver.management-cluster.rules.yml
 templates/alerting-rules/apiserver.workload-cluster.rules.yml
 templates/alerting-rules/argocd.rules.yml

@@ -12,13 +12,13 @@ tests:
       - series: 'alertmanager_notifications_failed_total{integration="webhook"}'
         values: "0x60 1+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x120"
     alert_rule_test:
-      - alertname:  AlertmanagerPageNotificationsFailing
+      - alertname:  AlertmanagerNotifyNotificationsFailing
         eval_time: 10m
-      - alertname:  AlertmanagerPageNotificationsFailing
+      - alertname:  AlertmanagerNotifyNotificationsFailing
         eval_time: 90m
-      - alertname:  AlertmanagerPageNotificationsFailing
+      - alertname:  AlertmanagerNotifyNotificationsFailing
         eval_time: 95m
-      - alertname:  AlertmanagerPageNotificationsFailing
+      - alertname:  AlertmanagerNotifyNotificationsFailing
         eval_time: 106m
         exp_alerts:
           - exp_labels:
@@ -31,7 +31,7 @@ tests:
             exp_annotations:
               description: "AlertManager slack notifications are failing."
               opsrecipe: alert-manager-notifications-failing/
-      - alertname:  AlertmanagerPageNotificationsFailing
+      - alertname:  AlertmanagerNotifyNotificationsFailing
         eval_time: 240m
   - interval: 1m
     input_series:
@@ -40,11 +40,11 @@ tests:
       - series: 'alertmanager_notifications_failed_total{integration="opsgenie"}'
         values: "0x60 1+0x15 2+0x15 2+0x15 2+0x60 3+0x15 3+0x60"
     alert_rule_test:
-      - alertname:  AlertmanagerNotifyNotificationsFailing
+      - alertname:  AlertmanagerPageNotificationsFailing
         eval_time: 10m
-      - alertname:  AlertmanagerNotifyNotificationsFailing
+      - alertname:  AlertmanagerPageNotificationsFailing
         eval_time: 75m
-      - alertname:  AlertmanagerNotifyNotificationsFailing
+      - alertname:  AlertmanagerPageNotificationsFailing
         eval_time: 91m
         exp_alerts:
           - exp_labels:
@@ -56,7 +56,7 @@ tests:
             exp_annotations:
               description: "AlertManager opsgenie notifications are failing."
               opsrecipe: alert-manager-notifications-failing/
-      - alertname:  AlertmanagerNotifyNotificationsFailing
+      - alertname:  AlertmanagerPageNotificationsFailing
         eval_time: 180m
-      - alertname:  AlertmanagerNotifyNotificationsFailing
+      - alertname:  AlertmanagerPageNotificationsFailing
         eval_time: 210m

@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Ignore `api-spec` from `AppWithoutTeamAnnotation` alert.
 - Remove `WorkloadClusterManagedDeploymentNotSatisfiedPhoenix` as `cert-manager` is no longer owned by Phoenix.
-
+- Remove `InhibitionClusterIsNotRunningPrometheusAgent` inhibition on CAPI.
 
 ## [2.145.0] - 2023-11-30
 

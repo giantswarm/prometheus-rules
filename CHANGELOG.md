@@ -12,11 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Increase the time window for `NodeConnTrackAlmostExhausted`.
 - Fix expression for KongDeploymentNotSatisfied
 
+### Fixed
+
+- Fix `InhibitionClusterIsNotRunningPrometheusAgent` inhibition to also work on CAPI.
+
 ### Removed
 
 - Ignore `api-spec` from `AppWithoutTeamAnnotation` alert.
 - Remove `WorkloadClusterManagedDeploymentNotSatisfiedPhoenix` as `cert-manager` is no longer owned by Phoenix.
-
 
 ## [2.145.0] - 2023-11-30
 

@@ -1,4 +1,4 @@
-{{- if ne .Values.managementCluster.provider.kind "kvm" }}
+{{- if and (ne .Values.managementCluster.provider.kind "kvm") ( eq .Values.managementCluster.provider.flavor "vintage") }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -21,24 +21,6 @@ spec:
     - alert: InhibitionClusterIsNotRunningPrometheusAgent
       annotations:
         description: '{{`Cluster ({{ $labels.cluster_id }}) is not running Prometheus Agent.`}}'
-      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
-      expr: |-
-        count(
-          label_replace(
-            sum_over_time(
-              kube_namespace_created{namespace!="{{ .Values.managementCluster.name }}-prometheus", namespace=~".+-prometheus"}[5m]
-            ), "cluster_id", "$1", "namespace", "(.+)-prometheus"
-          )
-        ) by (cluster_id)
-        unless
-        count(
-          label_replace(
-            sum_over_time(
-              app_operator_app_info{app="prometheus-agent"}[5m]
-            ), "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*"
-          )
-        ) by (cluster_id)
-      {{- else }}
       expr: |-
         count(
           label_replace(
@@ -55,7 +37,6 @@ spec:
             ), "cluster_id", "$1", "namespace", "(.*)"
           )
         ) by (cluster_id)
-      {{- end }}
       labels:
         cluster_is_not_running_prometheus_agent: "true"
         area: empowerment

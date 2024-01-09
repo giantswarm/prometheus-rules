@@ -1,4 +1,4 @@
-{{- if ne .Values.managementCluster.provider.kind "kvm" }}
+{{- if and (ne .Values.managementCluster.provider.kind "kvm") ( eq .Values.managementCluster.provider.flavor "vintage") }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:

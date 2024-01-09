@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.147.0] - 2024-01-09
+
 ### Changed
 
 - Update `AlertManagerNotificationsFailing` routing on Atlas slack for opsgenie integration.
@@ -2356,7 +2358,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.146.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.147.0...HEAD
+[2.147.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.146.0...v2.147.0
 [2.146.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.145.0...v2.146.0
 [2.145.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.144.0...v2.145.0
 [2.144.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.143.2...v2.144.0

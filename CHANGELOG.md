@@ -7,13 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update `AlertManagerNotificationsFailing` routing on Atlas slack for opsgenie integration.
+
 ## [2.146.0] - 2024-01-04
 
 ### Changed
 
 - Increase the time window for `NodeConnTrackAlmostExhausted`.
 - Fix expression for KongDeploymentNotSatisfied
-- Update `AlertManagerNotificationsFailing` routing on Atlas slack for opsgenie integration.
 
 ### Removed
 

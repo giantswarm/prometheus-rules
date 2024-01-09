@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Increase the time window for `NodeConnTrackAlmostExhausted`.
 - Fix expression for KongDeploymentNotSatisfied
+- Update `AlertManagerNotificationsFailing` routing on Atlas slack for opsgenie integration.
 
 ### Removed
 

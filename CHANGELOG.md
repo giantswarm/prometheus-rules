@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added specific deployment status alerts for BigMac application
+- Added telepor-operator alerts for missing secrets and configmaps
+
 ### Changed
 
 - Update ops recipe link for all prometheus-agent alerts.

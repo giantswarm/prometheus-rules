@@ -16,7 +16,7 @@ spec:
       annotations:
         description: '{{`Prometheus agent remote write is failing.`}}'
         summary: Prometheus agent fails to send samples to remote write endpoint.
-        opsrecipe: prometheus-agent-remote-write-failed/
+        opsrecipe: prometheus-agent/
         dashboard: promRW001/prometheus-remote-write
       #  expr: count(absent_over_time(up{instance="prometheus-agent"}[10m]))
       expr: |-
@@ -43,7 +43,7 @@ spec:
       annotations:
         description: '{{`Prometheus agent remote write is failing.`}}'
         summary: Prometheus agent fails to send samples to remote write endpoint.
-        opsrecipe: prometheus-agent-remote-write-failed/
+        opsrecipe: prometheus-agent/
         dashboard: promRW001/prometheus-remote-write
       #  expr: count(absent_over_time(up{instance="prometheus-agent"}[10m]))
       expr: |-
@@ -70,7 +70,7 @@ spec:
       annotations:
         description: '{{`Prometheus agent is missing shards.`}}'
         summary: Prometheus agent is missing shards.
-        opsrecipe: prometheus-agent-missing-shards/
+        opsrecipe: prometheus-agent/
       expr: |-
         max_over_time(sum(
           count(
@@ -106,7 +106,7 @@ spec:
       annotations:
         description: '{{`Prometheus agent is missing shards.`}}'
         summary: Prometheus agent is missing shards.
-        opsrecipe: prometheus-agent-missing-shards/
+        opsrecipe: prometheus-agent/
       expr: |-
         max_over_time(sum(
           count(

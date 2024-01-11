@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update ops recipe link for all prometheus-agent alerts.
+
 ## [2.147.0] - 2024-01-09
 
 ### Changed

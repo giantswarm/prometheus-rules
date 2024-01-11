@@ -77,7 +77,10 @@ spec:
       for: 30m
       labels:
         area: kass
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
+        severity: page
         team: bigmac
         topic: workloadcluster

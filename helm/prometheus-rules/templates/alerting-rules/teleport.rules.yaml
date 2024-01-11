@@ -1,0 +1,40 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: prometheus.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: teleport
+    rules:
+    - alert: TeleportJoinTokenSecretMismatch
+      annotations:
+        description: '{{`Mismatch in number of teleport-join-token secrets and clusters`}}'
+      expr: count(kube_secret_created{secret=~".*-teleport-join-token"}) != count(capi_cluster_info{control_plane_reference_kind="KubeadmControlPlane"})
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: bigmac
+        topic: teleport
+    - alert: TeleportKubeAgentConfigMapMismatch
+      annotations:
+        description: '{{`Teleport join token is missing`}}'
+      expr: count(kube_configmap_info{configmap=~".*-teleport-kube-agent-config"})!= count(capi_cluster_info{control_plane_reference_kind="KubeadmControlPlane"})
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: bigmac
+        topic: teleport

@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'kube_secret_created{secret=~".*-teleport-join-token"}'
+      - series: 'kube_secret_created{secret="grizzly-teleport-join-token"}'
         values: "2+0x30"
       - series: 'capi_cluster_info{control_plane_reference_kind="KubeadmControlPlane"}'
         values: "1+0x30"
@@ -27,7 +27,7 @@ tests:
               description: "Mismatch in number of teleport-join-token secrets and clusters"
   - interval: 1m
     input_series:
-      - series: 'kube_secret_created{secret=~".*-teleport-join-token"}'
+      - series: 'kube_secret_created{secret=~"grizzly-teleport-join-token"}'
         values: "1+0x30"
       - series: 'capi_cluster_info{control_plane_reference_kind="KubeadmControlPlane"}'
         values: "1+0x30"

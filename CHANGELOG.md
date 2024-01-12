@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added specific deployment status alerts for BigMac application
-- Added telepor-operator alerts for missing secrets and configmaps
+- Added teleport-operator alerts for missing secrets and configmaps
 
 ### Changed
 

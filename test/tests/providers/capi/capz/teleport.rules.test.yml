@@ -6,7 +6,9 @@ tests:
   - interval: 1m
     input_series:
       - series: 'kube_secret_created{secret="grizzly-teleport-join-token"}'
-        values: "2+0x40"
+        values: "1+0x40"
+      - series: 'kube_secret_created{secret="test-teleport-join-token"}'
+        values: "1+0x40"
       - series: 'capi_cluster_info{control_plane_reference_kind="KubeadmControlPlane"}'
         values: "1+0x40"
     alert_rule_test:
@@ -38,7 +40,9 @@ tests:
   - interval: 1m
     input_series:
       - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="grizzly", configmap="grizzly-teleport-kube-agent-config"}'
-        values: "2+0x40"
+        values: "1+0x40"
+      - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="grizzly", configmap="test-teleport-kube-agent-config"}'
+        values: "1+0x40"
       - series: 'capi_cluster_info{cluster_id="grizzly", control_plane_reference_kind="KubeadmControlPlane"}'
         values: "1+0x40"
     alert_rule_test:

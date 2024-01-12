@@ -20,5 +20,5 @@ tests:
               team: phoenix
               topic: security
             exp_annotations:
-              description: 'Cannot renew Certificate for Secret example on {{ $labels.cluster_id }} because it is missing.'
+              description: 'Cannot renew Certificate for Secret giantswarm/aws-admission-controller-certificates on gauss because it is missing.'
               opsrecipe: managed-app-cert-manager/missing-certificate-for-secret/

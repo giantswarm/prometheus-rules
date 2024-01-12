@@ -26,8 +26,8 @@ spec:
         topic: teleport
     - alert: TeleportKubeAgentConfigMapMismatch
       annotations:
-        description: '{{`Teleport join token is missing`}}'
-      expr: count(kube_configmap_info{configmap=~".*-teleport-kube-agent-config"})!= count(capi_cluster_info{control_plane_reference_kind="KubeadmControlPlane"})
+        description: '{{`Mismatch in number of teleport-kube-agent-config secrets and clusters`}}'
+      expr: count(kube_configmap_info{configmap=~".*-teleport-kube-agent-config"}) != count(capi_cluster_info{control_plane_reference_kind="KubeadmControlPlane"})
       for: 30m
       labels:
         area: kaas

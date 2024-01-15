@@ -40,14 +40,17 @@ tests:
   - interval: 1m
     input_series:
       - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="grizzly", configmap="grizzly-teleport-kube-agent-config"}'
-        values: "1+0x40"
+        values: "1+0x40 1+0x40"
       - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="grizzly", configmap="test-teleport-kube-agent-config"}'
-        values: "1+0x40"
+        values: "_x40   1+0x40"
       - series: 'capi_cluster_info{cluster_id="grizzly", control_plane_reference_kind="KubeadmControlPlane"}'
-        values: "1+0x40"
+        values: "1+0x40 1+0x40"
     alert_rule_test:
       - alertname: TeleportKubeAgentConfigMapMismatch
         eval_time: 30m
+        exp_alerts: []
+      - alertname: TeleportKubeAgentConfigMapMismatch
+        eval_time: 70m
         exp_alerts:
           - exp_labels:
               alertname: TeleportKubeAgentConfigMapMismatch
@@ -61,13 +64,3 @@ tests:
               topic: teleport
             exp_annotations:
               description: "Mismatch in number of teleport-kube-agent-config secrets and clusters"
-  - interval: 1m
-    input_series:
-      - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="grizzly", configmap="grizzly-teleport-kube-agent-config"}'
-        values: "1+0x40"
-      - series: 'capi_cluster_info{cluster_id="grizzly", control_plane_reference_kind="KubeadmControlPlane"}'
-        values: "1+0x40"
-    alert_rule_test:
-      - alertname: TeleportKubeAgentConfigMapMismatch
-        eval_time: 30m
-        exp_alerts: []

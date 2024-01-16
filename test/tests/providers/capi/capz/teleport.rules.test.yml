@@ -1,0 +1,59 @@
+---
+rule_files:
+  - teleport.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'kube_secret_created{secret="grizzly-teleport-join-token"}'
+        values: "1+0x40 1+0x40"
+      - series: 'kube_secret_created{secret="test-teleport-join-token"}'
+        values: "_x40   1+0x40"
+      - series: 'capi_cluster_info{control_plane_reference_kind="KubeadmControlPlane"}'
+        values: "1+0x40 1+0x40"
+    alert_rule_test:
+      - alertname: TeleportJoinTokenSecretMismatch
+        eval_time: 30m
+        exp_alerts: []
+      - alertname: TeleportJoinTokenSecretMismatch
+        eval_time: 70m
+        exp_alerts:
+          - exp_labels:
+              alertname: TeleportJoinTokenSecretMismatch
+              area: kaas
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_outside_working_hours: "true"
+              severity: page
+              team: bigmac
+              topic: teleport
+            exp_annotations:
+              description: "Mismatch in number of teleport-join-token secrets and clusters"
+  - interval: 1m
+    input_series:
+      - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="grizzly", configmap="grizzly-teleport-kube-agent-config"}'
+        values: "1+0x40 1+0x40"
+      - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="grizzly", configmap="test-teleport-kube-agent-config"}'
+        values: "_x40   1+0x40"
+      - series: 'capi_cluster_info{cluster_id="grizzly", control_plane_reference_kind="KubeadmControlPlane"}'
+        values: "1+0x40 1+0x40"
+    alert_rule_test:
+      - alertname: TeleportKubeAgentConfigMapMismatch
+        eval_time: 30m
+        exp_alerts: []
+      - alertname: TeleportKubeAgentConfigMapMismatch
+        eval_time: 70m
+        exp_alerts:
+          - exp_labels:
+              alertname: TeleportKubeAgentConfigMapMismatch
+              area: kaas
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_outside_working_hours: "true"
+              severity: page
+              team: bigmac
+              topic: teleport
+            exp_annotations:
+              description: "Mismatch in number of teleport-kube-agent-config secrets and clusters"

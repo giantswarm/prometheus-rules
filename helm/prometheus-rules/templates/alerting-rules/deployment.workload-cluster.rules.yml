@@ -70,3 +70,17 @@ spec:
         severity: notify
         team: shield
         topic: releng
+    - alert: WorkloadClusterDeploymentNotSatisfiedBigMac
+      annotations:
+        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} has been scaled down to zero for prolonged period of time.`}}'
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="workload_cluster", deployment=~"cert-manager-*|teleport-*|dex*|athena*|rbac-operator|credentiald"} > 0
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: bigmac
+        topic: workloadcluster

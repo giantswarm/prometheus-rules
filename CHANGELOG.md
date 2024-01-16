@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added specific deployment status alerts for BigMac application
+- Added teleport-operator alerts for missing secrets and configmaps
+
 ## [2.147.1] - 2024-01-11
 
 ### Changed

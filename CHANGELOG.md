@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added specific deployment status alerts for BigMac application
 - Added teleport-operator alerts for missing secrets and configmaps
 
+### Changed
+
+- Silence `ManagementClusterDeploymentMissingAWS` if KSM is down.
+
 ## [2.147.1] - 2024-01-11
 
 ### Changed

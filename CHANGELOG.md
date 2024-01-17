@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added non SLO alerts for apiserver availability.
+
 ## [2.148.0] - 2024-01-17
 
 ### Added

@@ -111,3 +111,21 @@ spec:
         severity: page
         team: atlas
         topic: kubernetes
+          #
+    # Check for API server errors rate
+    - alert: WorkloadClusterAPIServerErrorRateTooHigh
+      annotations:
+        description: '{{`Kubernetes API Server request error rate increase is too high for cluster {{ $labels.cluster_id }}.`}}'
+        opsrecipe: apiserver-overloaded/
+      expr: sum(rate(apiserver_request_total{code=~"(429|5..)",job="apiserver"}[2m])) by (cluster_id) /sum(rate(apiserver_request_total{job="apiserver"}[2m])) by (cluster_id) *100 > 5
+      for: 2m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_cluster_with_notready_nodepools: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: kubernetes

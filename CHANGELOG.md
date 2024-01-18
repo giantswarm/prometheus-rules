@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Ship `dipstick` metrics to Grafana Cloud.
 
+### Changed
+
+- Changed teleport alerts to take into accont only `Provisioned` clusters
+
 ## [2.148.0] - 2024-01-17
 
 ### Added

@@ -9,7 +9,7 @@ tests:
         values: "1+0x40 1+0x40"
       - series: 'kube_secret_created{secret="test-teleport-join-token"}'
         values: "_x40   1+0x40"
-      - series: 'capi_cluster_info{control_plane_reference_kind="KubeadmControlPlane"}'
+      - series: 'capi_cluster_status_phase{phase="Provisioned"}'
         values: "1+0x40 1+0x40"
     alert_rule_test:
       - alertname: TeleportJoinTokenSecretMismatch
@@ -36,7 +36,7 @@ tests:
         values: "1+0x40 1+0x40"
       - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="grizzly", configmap="test-teleport-kube-agent-config"}'
         values: "_x40   1+0x40"
-      - series: 'capi_cluster_info{cluster_id="grizzly", control_plane_reference_kind="KubeadmControlPlane"}'
+      - series: 'capi_cluster_status_phase{phase="Provisioned",name="grizzly"}'
         values: "1+0x40 1+0x40"
     alert_rule_test:
       - alertname: TeleportKubeAgentConfigMapMismatch

@@ -12,7 +12,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: kaas
-              cancel_if_outside_working_hours: "true"
+              cancel_if_outside_working_hours: "false"
               severity: notify
               team: phoenix
               topic: managementcluster

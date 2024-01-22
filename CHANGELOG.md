@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Changed teleport alerts to take into accont only `Provisioned` clusters
+- Made use of `workingHoursOnly` template on more alerts to ensure `stable-testing` MCs don't page out of hours
+- No longer silence all CAPA and CAPZ alerts out of hours by default
 
 ## [2.148.0] - 2024-01-17
 
@@ -150,7 +152,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- fixed `aggregation:kyverno_policy_job_status_team` expression. 
+- fixed `aggregation:kyverno_policy_job_status_team` expression.
 
 ### Added
 

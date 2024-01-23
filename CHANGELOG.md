@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.149.0] - 2024-01-22
+
 ### Added
 
 - Ship `dipstick` metrics to Grafana Cloud.
@@ -14,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Changed teleport alerts to take into account only `Provisioned` clusters
+- Made use of `workingHoursOnly` template on more alerts to ensure `stable-testing` MCs don't page out of hours
+- No longer silence all CAPA and CAPZ alerts out of hours by default
 - Transfer ownership of `circleci` Azure app registration expiry alert to honeybadger
 
 ## [2.148.0] - 2024-01-17
@@ -2384,7 +2388,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.148.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.149.0...HEAD
+[2.149.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.148.0...v2.149.0
 [2.148.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.147.1...v2.148.0
 [2.147.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.147.0...v2.147.1
 [2.147.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.146.0...v2.147.0

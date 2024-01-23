@@ -202,7 +202,7 @@ spec:
       annotations:
         description: '{{`Azure service principal for app {{ $labels.application_name }} in subscription {{ $labels.subscription_id }} is about to expire.`}}'
         opsrecipe: azure-service-principals/
-      expr: min(azure_operator_service_principal_token_expiration{application_name!~"dex-operator.*|.*dex-app|circleci"} - time()) by (application_name,subscription_id) < 60*60*24*7
+      expr: min(azure_operator_service_principal_token_expiration{application_name!~"dex-operator.*|.*dex-app|circleci.*"} - time()) by (application_name,subscription_id) < 60*60*24*7
       for: 10m
       labels:
         area: kaas

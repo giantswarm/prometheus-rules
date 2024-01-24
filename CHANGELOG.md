@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.149.0] - 2024-01-22
+## [2.150.0] - 2024-01-24
 
 ### Added
 
 - Add alert for missing certificates when only secret is present.
+
+## [2.149.0] - 2024-01-22
+
+### Added
+
 - Ship `dipstick` metrics to Grafana Cloud.
 
 ### Changed
@@ -2388,7 +2393,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.149.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.150.0...HEAD
+[2.150.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.149.0...v2.150.0
 [2.149.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.148.0...v2.149.0
 [2.148.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.147.1...v2.148.0
 [2.147.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.147.0...v2.147.1

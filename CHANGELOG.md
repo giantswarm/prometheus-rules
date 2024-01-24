@@ -9,11 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.150.0] - 2024-01-24
 
+### Added
+
+- Add alert for missing certificates when only secret is present.
+
 ## [2.149.0] - 2024-01-22
 
 ### Added
 
-- Add alert for missing certificates when only secret is present.
 - Ship `dipstick` metrics to Grafana Cloud.
 
 ### Changed

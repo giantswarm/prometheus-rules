@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Rename `dipstick` report count metric.
+
 ## [2.150.1] - 2024-01-24
 
 ### Fixed

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Check creation CAPI cluster creation time before paging `LatestETCDBackup2DaysOld`.
+
 ### Changed
 
 - Rename `dipstick` report count metric.

@@ -35,9 +35,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Changed teleport alerts to take into accont only `Provisioned` clusters
+- Changed teleport alerts to take into account only `Provisioned` clusters
 - Made use of `workingHoursOnly` template on more alerts to ensure `stable-testing` MCs don't page out of hours
 - No longer silence all CAPA and CAPZ alerts out of hours by default
+- Transfer ownership of `circleci` Azure app registration expiry alert to honeybadger
 
 ## [2.148.0] - 2024-01-17
 

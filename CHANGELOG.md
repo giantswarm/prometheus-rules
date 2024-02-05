@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Rename `dipstick` report count metric.
+- Changed `MachinePoolReplicasMismatch` and `MachineUnhealthyPhase` to page.
 
 ## [2.150.1] - 2024-01-24
 

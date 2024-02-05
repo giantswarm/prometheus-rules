@@ -507,3 +507,7 @@ spec:
       record: aggregation:container:memory_usage_bytes
     - expr: sum(rate(container_cpu_usage_seconds_total{cluster_type="management_cluster"}[2m])) by (container)
       record: aggregation:container:cpu_usage_cores
+  - name: cluster_compliance.grafana-cloud.recording
+    rules:
+      - expr: sum(trivy_cluster_compliance{title!~".*Pod.*"}) by (cluster_id, title, status)
+        record: aggregation:cluster_compliance

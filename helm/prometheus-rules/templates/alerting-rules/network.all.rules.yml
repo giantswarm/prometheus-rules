@@ -25,7 +25,7 @@ spec:
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         cancel_if_cluster_has_no_workers: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: cabbage
         topic: network
     - alert: DNSCheckErrorRateTooHigh
       annotations:
@@ -42,7 +42,7 @@ spec:
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         cancel_if_cluster_has_no_workers: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: cabbage
         topic: network
     - alert: NetworkErrorRateTooHigh
       annotations:

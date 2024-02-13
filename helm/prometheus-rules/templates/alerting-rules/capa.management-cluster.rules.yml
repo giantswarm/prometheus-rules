@@ -44,7 +44,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.deployment }} is missing.`}}'
         opsrecipe: management-cluster-deployment-is-missing/
-      expr: absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment=~"(aws-network-topology-operator|aws-resolver-rules-operator|aws-vpc-operator|capa-controller-manager|capa-iam-operator|irsa-operator)"})
+      expr: absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-network-topology-operator"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-resolver-rules-operator"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-vpc-operator"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capa-controller-manager"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capa-iam-operator"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="irsa-operator"})
       for: 15m
       labels:
         area: kaas

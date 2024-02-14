@@ -1,0 +1,70 @@
+{{- if eq .Values.managementCluster.provider.kind "capa" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: capa.management-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: capa
+    rules:
+    - alert: ManagementClusterPodPendingCAPA
+      annotations:
+        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
+        opsrecipe: pod-stuck-in-pending/
+      expr: kube_pod_status_phase{namespace="giantswarm",pod=~"(aws.*|capa.*|irsa-operator.*)",phase="Pending"} == 1
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_prometheus_agent_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: managementcluster
+    - alert: ManagementClusterContainerIsRestartingTooFrequentlyCAPA
+      annotations:
+        description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
+        opsrecipe: container-is-restarting-too-often/
+      expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"(aws.*|capa-.*|irsa-operator.*)"}[1h]), "service", "/", "namespace", "pod") > 6
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_prometheus_agent_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: kubernetes
+    - alert: ManagementClusterDeploymentMissingCAPA
+      annotations:
+        description: '{{`Deployment {{ $labels.deployment }} is missing.`}}'
+        opsrecipe: management-cluster-deployment-is-missing/
+      expr: absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-network-topology-operator"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-resolver-rules-operator"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-vpc-operator"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capa-controller-manager"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capa-iam-operator"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="irsa-operator"})
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_prometheus_agent_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: kubernetes
+    - alert: IRSATooManyErrors
+      annotations:
+        description: '{{`IRSA bootstrap for Cluster {{ $labels.cluster_id }} failed.`}}'
+        opsrecipe: irsa-operator-error/
+      expr: irsa_operator_cluster_errors > 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: aws
+{{- end }}

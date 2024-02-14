@@ -9,7 +9,7 @@ metadata:
   namespace: {{.Values.namespace}}
 spec:
   groups:
-  - name: capi.management-cluster
+  - name: capi-management-cluster
     rules:
     - alert: ManagementClusterPodPendingCAPI
       annotations:

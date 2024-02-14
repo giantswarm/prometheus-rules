@@ -43,7 +43,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.deployment }} is missing.`}}'
         opsrecipe: management-cluster-deployment-is-missing/
-      expr: absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment~="capi-controller-manager|capi-kubeadm-bootstrap-controller-manager|capi-kubeadm-control-plane-controller-manager)"})
+      expr: absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capi-controller-manager"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capi-kubeadm-bootstrap-controller-manager"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capi-kubeadm-control-plane-controller-manager"})
       for: 15m
       labels:
         area: kaas

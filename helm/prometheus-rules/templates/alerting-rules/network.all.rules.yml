@@ -17,7 +17,7 @@ spec:
       expr: rate(dns_resolve_error_total[15m]) > 0.015
       for: 15m
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_with_no_nodepools: "true"
         cancel_if_cluster_with_notready_nodepools: "true"
@@ -34,7 +34,7 @@ spec:
       expr: rate(dns_error_total[15m]) > 0.015
       for: 15m
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_with_no_nodepools: "true"
         cancel_if_cluster_with_notready_nodepools: "true"

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add Alerts for missing or failing CAPI controller pods.
 - Add Alerts for missing or failing CAPA controller pods.
+- Add recording rule for more detailed cluster compliance information.
 
 ## [2.151.0] - 2024-01-31
 

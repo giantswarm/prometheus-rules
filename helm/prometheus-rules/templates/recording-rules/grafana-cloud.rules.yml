@@ -511,3 +511,7 @@ spec:
     rules:
       - expr: sum(trivy_cluster_compliance{title!~".*Pod.*"}) by (cluster_id, title, status)
         record: aggregation:cluster_compliance
+  - name: cluster_compliance_info.grafana-cloud.recording
+    rules:
+      - expr: sum(trivy_compliance_info{title!~".*Pod.*"}) by (cluster_id, compliance_id, compliance_name, severity, title, status)
+        record: aggregation:cluster_compliance_info

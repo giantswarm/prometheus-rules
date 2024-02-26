@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix outside business hours inhibition to not page on sundays.
+
 ## [2.152.0] - 2024-02-14
 
 ### Added

@@ -103,7 +103,7 @@ spec:
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/
-      expr: increase(kube_pod_container_status_restarts_total{cluster_type="management_cluster", container!="prometheus.*|promxy.*|.*-admission-controller.*|*-aws-*|aws-*|route53-manager.*|*-gcp-*|gcp-*"}[1h]) > 5
+      expr: increase(kube_pod_container_status_restarts_total{cluster_type="management_cluster", container!="grafana.*|prometheus.*|promxy.*|promtail.*|silence.*|teleport.*|.*-admission-controller.*|*-aws-*|aws-*|route53-manager.*|*-gcp-*|gcp-*"}[1h]) > 5
       for: 5m
       labels:
         area: kaas

@@ -22,15 +22,3 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: observability
-    - alert: NodeExporterDeviceError
-      annotations:
-        description: '{{`NodeExporter Mountpoint {{ $labels.mountpoint }} on device {{ $labels.device }} on {{ $labels.instance }} is erroring.`}}'
-        opsrecipe: node-exporter-device-error/
-      expr: node_filesystem_device_error{mountpoint=~"(/rootfs)?/var/(log|lib/kubelet.*|lib/kubelet|lib/etcd|lib/docker|lib/containerd)",cluster_type="management_cluster"} == 1 or node_filesystem_device_error{mountpoint=~"(/rootfs)?/var/(log|lib/kubelet|lib/etcd|lib/docker|lib/containerd)",cluster_type="workload_cluster"} == 1
-      for: 10m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: {{ include "providerTeam" . }}
-        topic: observability

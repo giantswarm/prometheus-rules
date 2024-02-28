@@ -71,18 +71,6 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: storage
-    - alert: PersistentVolumeSpaceTooLow
-      annotations:
-        description: '{{`Persistent volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
-        opsrecipe: low-disk-space/#persistent-volume
-      expr: 100 * ((node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*",mountpoint!~".*prometheus/[0-9]+"} / node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*",mountpoint!~".*prometheus/[0-9]+"}) * on (pod) group_left kube_pod_info{priority_class!="prometheus"}) < 10
-      for: 10m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: {{ include "providerTeam" . }}
-        topic: storage
     - alert: RootVolumeSpaceTooLow
       annotations:
         description: '{{`Root volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
@@ -95,11 +83,50 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: storage
+    - alert: PersistentVolumeSpaceTooLow
+      annotations:
+        description: '{{`Persistent volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
+        opsrecipe: low-disk-space/#persistent-volume
+      expr: |
+        100 * (
+          label_replace(
+            (
+                node_filesystem_free_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*"}
+              /
+                node_filesystem_size_bytes{mountpoint=~"(/rootfs)?/var/lib/kubelet.*"}
+            ),
+            "uid",
+            "$1",
+            "mountpoint",
+            "/var/lib/kubelet/pods/([^/]+).*"
+          )
+          * on (uid) group_left (affected_pod, affected_namespace)
+          label_replace(
+            label_replace(
+              kube_pod_info{pod!~"(alertmanager|loki|mimir|prometheus|pyroscope|tempo).*"},
+              "affected_pod",
+              "$1",
+              "pod",
+              "(.*)"
+            ),
+            "affected_namespace",
+            "$1",
+            "namespace",
+            "(.*)"
+          )
+        ) < 10
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: storage
     - alert: DataDiskPersistentVolumeSpaceTooLow
       annotations:
         description: '{{`The free space on the Data Disk for instance: {{ $labels.instance }} and PVC: {{ $labels.persistentvolumeclaim}} was below 10 percent for longer than 1 hour (current value {{ $value | printf "%.2f" }}).`}}'
         opsrecipe: low-disk-space/#persistent-volume
-      expr: kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"prometheus.*|alertmanager.*"}/kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~"prometheus.*|alertmanager.*"} < 0.10
+      expr: kubelet_volume_stats_available_bytes{persistentvolumeclaim=~".*(alertmanager|loki|mimir|prometheus|pyroscope|tempo).*"}/kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~".*(alertmanager|loki|mimir|prometheus|pyroscope|tempo).*"} < 0.10
       for: 1h
       labels:
         area: empowerment

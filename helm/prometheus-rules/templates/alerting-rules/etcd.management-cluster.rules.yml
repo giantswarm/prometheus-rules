@@ -11,6 +11,21 @@ spec:
   groups:
   - name: etcd
     rules:
+    - alert: ManagementClusterEtcdDown
+      annotations:
+        description: '{{`Etcd ({{ $labels.ip }}) is down.`}}'
+        opsrecipe: etcd-down/
+      expr: up{app="etcd",cluster_type="management_cluster"} == 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: etcd
     - alert: ManagementClusterEtcdCommitDurationTooHigh
       annotations:
         description: '{{`Etcd ({{ $labels.instance }}) has a too high commit duration.`}}'

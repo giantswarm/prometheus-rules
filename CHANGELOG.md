@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove GCP alerts and configs.
+
 ## [2.153.1] - 2024-02-28
 
 ### Fixed

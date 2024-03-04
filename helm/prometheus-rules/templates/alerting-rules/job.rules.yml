@@ -11,43 +11,6 @@ spec:
   groups:
   - name: job
     rules:
-    - alert: ManagementClusterJobFailed
-      annotations:
-        description: '{{`Job {{ $labels.namespace }}/{{ $labels.job_name }} is failed.`}}'
-      expr: kube_job_failed{cluster_type="management_cluster", condition="true", job_name!~"silence-operator-sync.+|grafana-permission.+"} == 1
-      for: 15m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
-        team: {{ include "providerTeam" . }}
-        topic: managementcluster
-    - alert: SilenceOperatorSyncJobHasNotBeenScheduledForTooLong
-      annotations:
-        description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 1 day.`}}'
-        opsrecipe: job-has-not-been-scheduled-for-too-long/
-      # This alert triggers when the silence operator sync job did not schedule for more than 1 day
-      # or if the job did not run successfully at least once in the last day
-      expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="silence-operator-sync"} ) > 86400
-            or count(max_over_time(kube_job_status_succeeded{job_name=~"silence-operator-sync.+"}[1d]) == 1) == 0
-      labels:
-        area: empowerment
-        severity: page
-        team: atlas
-        topic: managementcluster
-    - alert: GrafanaPermissionJobHasNotBeenScheduledForTooLong
-      annotations:
-        description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 1 day.`}}'
-        opsrecipe: job-has-not-been-scheduled-for-too-long/
-      # This alert triggers when the grafana permission job did not schedule for more than 1 day
-      # or if the job did not run successfully at least once in the last day
-      expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="grafana-permissions"} ) > 86400
-            or count(max_over_time(kube_job_status_succeeded{job_name=~"grafana-permission.+"}[1d]) == 1) == 0
-      labels:
-        area: empowerment
-        severity: page
-        team: atlas
-        topic: managementcluster
     {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: JobHasNotBeenScheduledForTooLong
       annotations:

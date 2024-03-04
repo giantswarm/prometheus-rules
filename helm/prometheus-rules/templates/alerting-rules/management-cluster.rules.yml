@@ -11,7 +11,7 @@ spec:
   groups:
   - name: management-cluster
     rules:
-    {{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
+    {{- if (eq .Values.managementCluster.provider.kind "aws") }}
     - alert: ManagementClusterHasLessThanThreeNodes
       annotations:
         description: '{{`Management cluster {{ $labels.cluster_id }} has less than 3 nodes.`}}'

@@ -64,3 +64,14 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: FluentbitDaemonSetNotSatisfied
+      annotations:
+        description: '{{`Daemonset {{ $labels.namespace}}/{{ $labels.daemonset }} is not satisfied.`}}'
+      expr: kube_daemonset_status_number_unavailable{daemonset="fluent-logshipping-app"} > 0
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: managementcluster

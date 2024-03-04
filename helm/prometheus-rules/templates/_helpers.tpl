@@ -31,7 +31,7 @@ giantswarm.io/service-type: {{ .Values.serviceType }}
 {{- define "providerTeam" -}}
 {{- if has .Values.managementCluster.provider.kind (list "kvm" "openstack" "cloud-director" "vsphere") -}}
 rocket
-{{- else if has .Values.managementCluster.provider.kind (list "gcp" "capa" "capz") -}}
+{{- else if has .Values.managementCluster.provider.kind (list "capa" "capz") -}}
 {{- /* hydra alerts merged into phoenix business hours on-call */ -}}
 phoenix
 {{- else -}}

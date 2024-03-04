@@ -29,7 +29,7 @@ giantswarm.io/service-type: {{ .Values.serviceType }}
 {{- end -}}
 
 {{- define "providerTeam" -}}
-{{- if has .Values.managementCluster.provider.kind (list "kvm" "openstack" "cloud-director" "vsphere") -}}
+{{- if has .Values.managementCluster.provider.kind (list "kvm" "cloud-director" "vsphere") -}}
 rocket
 {{- else if has .Values.managementCluster.provider.kind (list "capa" "capz") -}}
 {{- /* hydra alerts merged into phoenix business hours on-call */ -}}
@@ -40,9 +40,7 @@ phoenix
 {{- end -}}
 
 {{- define "workingHoursOnly" -}}
-{{- if has .Values.managementCluster.provider.kind (list "openstack") -}}
-"true"
-{{- else if eq .Values.managementCluster.pipeline "stable-testing" -}}
+{{- if eq .Values.managementCluster.pipeline "stable-testing" -}}
 "true"
 {{- else -}}
 "false"
@@ -50,7 +48,7 @@ phoenix
 {{- end -}}
 
 {{- define "isCertExporterInstalled" -}}
-{{- if has .Values.managementCluster.provider.kind (list "openstack" "cloud-director" "vsphere" "capa") -}}
+{{- if has .Values.managementCluster.provider.kind (list "cloud-director" "vsphere" "capa") -}}
 false
 {{- else -}}
 true

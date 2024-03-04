@@ -1,5 +1,3 @@
-templates/alerting-rules-test/capo.rules.test.yml
-templates/alerting-rules/alertmanager-dashboard.rules.yml
 templates/alerting-rules/apiserver.management-cluster.rules.yml
 templates/alerting-rules/apiserver.workload-cluster.rules.yml
 templates/alerting-rules/argocd.rules.yml
@@ -26,7 +24,6 @@ templates/alerting-rules/disk.management-cluster.rules.yml
 templates/alerting-rules/disk.workload-cluster.rules.yml
 templates/alerting-rules/docker.management-cluster.rules.yml
 templates/alerting-rules/docker.workload-cluster.rules.yml
-templates/alerting-rules/draughtsman.rules.yml
 templates/alerting-rules/elasticsearch.rules.yml
 templates/alerting-rules/etcd.management-cluster.rules.yml
 templates/alerting-rules/etcd.workload-cluster.rules.yml
@@ -35,7 +32,6 @@ templates/alerting-rules/external-dns.rules.yml
 templates/alerting-rules/fairness.rules.yml
 templates/alerting-rules/falco.rules.yml
 templates/alerting-rules/fluentbit.rules.yml
-templates/alerting-rules/fluentd.rules.yml
 templates/alerting-rules/flux.rules.yml
 templates/alerting-rules/helm.rules.yml
 templates/alerting-rules/ingress-controller.rules.yml
@@ -67,8 +63,6 @@ templates/alerting-rules/secret.rules.yml
 templates/alerting-rules/service-level.rules.yml
 templates/alerting-rules/systemd.management-cluster.rules.yml
 templates/alerting-rules/systemd.workload-cluster.rules.yml
-templates/alerting-rules/tiller.all.rules.yml
-templates/alerting-rules/tiller.workload-cluster.rules.yml
 templates/alerting-rules/timesync.rules.yml
 templates/alerting-rules/up.management-cluster.rules.yml
 templates/alerting-rules/vault.rules.yml

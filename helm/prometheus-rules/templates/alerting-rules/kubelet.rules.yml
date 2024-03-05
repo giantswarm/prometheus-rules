@@ -4,8 +4,7 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    cluster_type: "management_cluster"
-  name: kubelet.management-cluster.rules
+  name: kubelet.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
@@ -20,13 +19,12 @@ spec:
         area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_instance_state_not_running: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         cancel_if_kubelet_down: "true"
         severity: notify
         team: {{ include "providerTeam" . }}
-        topic: managementcluster
+        topic: kubernetes
     - alert: KubeletDockerOperationsErrorsTooHigh
       annotations:
         description: '{{`Kubelet ({{ $labels.instance }}) is reporting errors rates while performing Docker {{ $labels.operation_type }} operations.`}}'
@@ -36,12 +34,11 @@ spec:
         area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         cancel_if_kubelet_down: "true"
         severity: notify
         team: {{ include "providerTeam" . }}
-        topic: managementcluster
+        topic: kubernetes
     - alert: KubeletDockerOperationsLatencyTooHigh
       annotations:
         description: '{{`Kubelet ({{ $labels.instance }}) is taking too long to perform Docker {{ $labels.operation_type }} operations.`}}'
@@ -51,12 +48,11 @@ spec:
         area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         cancel_if_kubelet_down: "true"
         severity: notify
         team: {{ include "providerTeam" . }}
-        topic: managementcluster
+        topic: kubernetes
     - alert: KubeletPLEGLatencyTooHigh
       annotations:
         description: '{{`Kubelet ({{ $labels.instance }}) PLEG latency is too high.`}}'
@@ -66,9 +62,8 @@ spec:
         area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         cancel_if_kubelet_down: "true"
         severity: notify
         team: {{ include "providerTeam" . }}
-        topic: managementcluster
+        topic: kubernetes

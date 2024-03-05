@@ -4,7 +4,9 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    cluster_type: workload_cluster
+{{- if not .Values.mimir.enabled }}
+    cluster_type: "workload_cluster"
+{{- end }}
   name: node.rules
   namespace: {{ .Values.namespace  }}
 spec:

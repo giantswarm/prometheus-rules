@@ -12,7 +12,7 @@ spec:
     - expr: |
         label_replace(
             kube_deployment_status_replicas_available
-          * on (pod, namespace, deployment) group_left (label_app_kubernetes_io_name)
+          * on (cluster_id, cluster_type, pod, namespace, deployment) group_left (label_app_kubernetes_io_name)
             kube_deployment_labels{label_giantswarm_io_service_type="managed"},
           "managed_app",
           "$1",
@@ -23,7 +23,7 @@ spec:
     - expr: |
         label_replace(
             kube_deployment_status_replicas_unavailable
-          * on (pod, namespace, deployment) group_left (label_app_kubernetes_io_name)
+          * on (cluster_id, cluster_type, pod, namespace, deployment) group_left (label_app_kubernetes_io_name)
             kube_deployment_labels{label_giantswarm_io_service_type="managed"},
           "managed_app",
           "$1",

@@ -10,7 +10,7 @@ spec:
   - name: service-level.recording
     rules:
       # -- api-server
-    - expr: "count(up{app='kubernetes'}) by (cluster_type,cluster_id)"
+    - expr: "count(up{app='kubernetes'}) by (cluster_type, cluster_id)"
       labels:
         class: HIGH
         area: kaas
@@ -24,7 +24,7 @@ spec:
     - expr: sum((up{app='kubernetes'} * -1) + 1) by (cluster_id, cluster_type) * 
             ignoring (cluster_type) group_left (cluster_id) 
             (
-              max(cluster_operator_cluster_status{status=~"Updated|Created"}) by (cluster_id) 
+              max(cluster_operator_cluster_status{status=~"Updated|Created"}) by (cluster_id, cluster_type) 
               or absent(cluster_operator_cluster_status)
             )
       labels:
@@ -59,23 +59,23 @@ spec:
             label_replace(
               kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"},
               "service", "$1", "daemonset", "(.*)" ) > 0
-            and on (daemonset, node)
+            and on (cluster_id, cluster_type, daemonset, node)
             label_replace(
               kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"} offset 10m,
               "service", "$1", "daemonset", "(.*)" ) > 0
           )
           and
-          on (node) kube_node_spec_unschedulable == 0
+          on (cluster_id, cluster_type, node) kube_node_spec_unschedulable == 0
         )
         and
-        on (node) time() - kube_node_created > 10 * 60
+        on (cluster_id, cluster_type, node) time() - kube_node_created > 10 * 60
       labels:
         class: MEDIUM
         area: kaas
       record: raw_slo_errors
       # -- 99% availability
       # -- this expression collects all the daemonsets and assigns the same slo target to all of them
-    - expr: sum by (service, area) (raw_slo_errors{area="kaas", service=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"} - raw_slo_errors{area="kaas", service=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"}) + 1-0.99
+    - expr: sum by (cluster_id, cluster_type, service, area) (raw_slo_errors{area="kaas", service=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"} - raw_slo_errors{area="kaas", service=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"}) + 1-0.99
       labels:
         area: kaas
         label_application_giantswarm_io_team: {{ include "providerTeam" . }}
@@ -93,10 +93,10 @@ spec:
         (
           kube_node_status_condition{condition="Ready", status!="true"}
           and
-          on (node) kube_node_spec_unschedulable == 0
+          on (cluster_id, cluster_type, node) kube_node_spec_unschedulable == 0
         )
         and
-        on (node) time() - kube_node_created > 10 * 60
+        on (cluster_id, cluster_type, node) time() - kube_node_created > 10 * 60
       labels:
         area: kaas
         class: MEDIUM
@@ -121,12 +121,12 @@ spec:
 
     - expr: |
         (
-          label_replace((kube_node_status_condition{condition="Ready", status!="true"} * on (node) group_left(nodepool) kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.*)")
+          label_replace((kube_node_status_condition{condition="Ready", status!="true"} * on (cluster_id, cluster_type, node) group_left(nodepool) kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.*)")
           and
-          on (node) kube_node_spec_unschedulable == 0
+          on (cluster_id, cluster_type, node) kube_node_spec_unschedulable == 0
         )
         and
-        on (node) time() - kube_node_created > 10 * 60
+        on (cluster_id, cluster_type, node) time() - kube_node_created > 10 * 60
       labels:
         area: kaas
         class: MEDIUM
@@ -134,7 +134,7 @@ spec:
       record: raw_slo_errors
 
     - expr: |
-        label_replace(max by (nodepool) (kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.+)") * (1 - 0.99)
+        label_replace(max by (cluster_id, cluster_type, nodepool) (kube_node_labels{nodepool=~".+"}), "service", "kubelet nodepool $1", "nodepool", "(.+)") * (1 - 0.99)
       labels:
         area: kaas
         label_application_giantswarm_io_team: {{ include "providerTeam" . }}
@@ -176,7 +176,7 @@ spec:
     - expr: |
         label_replace(
             kube_daemonset_status_number_unavailable
-          * on (pod, daemonset, cluster_id, cluster_type, namespace) group_left (label_application_giantswarm_io_team)
+          * on (cluster_id, cluster_type, pod, daemonset, namespace) group_left (label_application_giantswarm_io_team)
             kube_statefulset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
           "service",
           "$1",
@@ -191,7 +191,7 @@ spec:
     - expr: |
         label_replace(
             kube_deployment_status_replicas_unavailable
-          * on (pod, deployment, cluster_id, cluster_type, namespace) group_left (label_application_giantswarm_io_team)
+          * on (cluster_id, cluster_type, pod, deployment, namespace) group_left (label_application_giantswarm_io_team)
             kube_deployment_labels{label_giantswarm_io_monitoring_basic_sli='true'},
           "service",
           "$1",
@@ -206,7 +206,7 @@ spec:
     - expr: |
         label_replace(
             kube_statefulset_status_replicas - kube_statefulset_status_replicas_current
-          * on (pod, statefulset, cluster_id, cluster_type, namespace) group_left (label_application_giantswarm_io_team)
+          * on (cluster_id, cluster_type, pod, statefulset, namespace) group_left (label_application_giantswarm_io_team)
             kube_statefulset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
           "service",
           "$1",
@@ -219,10 +219,10 @@ spec:
       record: raw_slo_errors
     # -- present pods recording rules
     - expr: |
-        kube_daemonset_labels * on (daemonset, namespace) group_right(label_application_giantswarm_io_team) (
+        kube_daemonset_labels * on (cluster_id, cluster_type, daemonset, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_daemonset_status_desired_number_scheduled
-            and on(daemonset,cluster_id,cluster_type,namespace)
+            and on (cluster_id, cluster_type, daemonset, namespace)
             kube_daemonset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
           "service", "$1", "daemonset", "(.*)" )
         )
@@ -231,10 +231,10 @@ spec:
         area: managed-apps
       record: raw_slo_requests
     - expr: |
-        kube_deployment_labels * on (deployment, namespace) group_right(label_application_giantswarm_io_team) (
+        kube_deployment_labels * on (cluster_id, cluster_type, deployment, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_deployment_status_replicas
-            and on(deployment,cluster_id,cluster_type,namespace)
+            and on (cluster_id, cluster_type, deployment, namespace)
             kube_deployment_labels{label_giantswarm_io_monitoring_basic_sli='true'},
           "service", "$1", "deployment", "(.*)" )
         )
@@ -243,10 +243,10 @@ spec:
         area: managed-apps
       record: raw_slo_requests
     - expr: |
-        kube_statefulset_labels * on (statefulset, namespace) group_right(label_application_giantswarm_io_team) (
+        kube_statefulset_labels * on (cluster_id, cluster_type, statefulset, namespace) group_right(label_application_giantswarm_io_team) (
           label_replace(
             kube_statefulset_status_replicas
-            and on(statefulset,cluster_id,cluster_type,namespace)
+            and on (cluster_id, cluster_type, statefulset, namespace)
             kube_statefulset_labels{label_giantswarm_io_monitoring_basic_sli='true'},
           "service", "$1", "statefulset", "(.*)" )
         )
@@ -256,26 +256,26 @@ spec:
       record: raw_slo_requests
       # -- 99% availability
       # -- this expression collects all the services from the area managed apps and assigns the same slo target to all of them
-    - expr: sum by (service, area, class) (raw_slo_errors{area="managed-apps"} - raw_slo_errors{area="managed-apps"}) + 1-0.99
+    - expr: sum by (cluster_id, cluster_type, service, area, class) (raw_slo_errors{area="managed-apps"} - raw_slo_errors{area="managed-apps"}) + 1-0.99
       record: slo_target
 
     # core k8s components internal API requests
     # record number of requests.
-    - expr: label_replace(sum(rest_client_requests_total{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
+    - expr: label_replace(sum(rest_client_requests_total{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, cluster_type, app), "service", "$1", "app", "(.*)")
       labels:
         class: MEDIUM
         area: kaas
         label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: raw_slo_requests
       # record number of errors.
-    - expr: label_replace(sum(rest_client_requests_total{app=~"kube-controller-manager|kube-scheduler", code=~"5..|<error>"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
+    - expr: label_replace(sum(rest_client_requests_total{app=~"kube-controller-manager|kube-scheduler", code=~"5..|<error>"}) by (cluster_id, cluster_type, app), "service", "$1", "app", "(.*)")
       labels:
         area: kaas
         class: MEDIUM
         label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: raw_slo_errors
       # -- 99% availability
-    - expr: label_replace(group(rest_client_requests_total{app=~"kube-controller-manager|kube-scheduler"}) by (app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
+    - expr: label_replace(group(rest_client_requests_total{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, cluster_type, app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
       labels:
         area: kaas
         label_application_giantswarm_io_team: {{ include "providerTeam" . }}
@@ -283,21 +283,21 @@ spec:
 
     # core k8s components azure API requests
     # record number of requests.
-    - expr: label_replace(sum(cloudprovider_azure_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
+    - expr: label_replace(sum(cloudprovider_azure_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, cluster_type, app), "service", "$1", "app", "(.*)")
       labels:
         class: MEDIUM
         area: kaas
         label_application_giantswarm_io_team: phoenix
       record: raw_slo_requests
       # record number of errors.
-    - expr: label_replace(sum(cloudprovider_azure_api_request_errors{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
+    - expr: label_replace(sum(cloudprovider_azure_api_request_errors{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, cluster_type, app), "service", "$1", "app", "(.*)")
       labels:
         area: kaas
         class: MEDIUM
         label_application_giantswarm_io_team: phoenix
       record: raw_slo_errors
       # -- 99% availability
-    - expr: label_replace(group(cloudprovider_azure_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
+    - expr: label_replace(group(cloudprovider_azure_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, cluster_type, app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
       labels:
         area: kaas
         label_application_giantswarm_io_team: phoenix
@@ -305,21 +305,21 @@ spec:
 
     # core k8s components aws API requests
     # record number of requests.
-    - expr: label_replace(sum(cloudprovider_aws_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
+    - expr: label_replace(sum(cloudprovider_aws_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, cluster_type, app), "service", "$1", "app", "(.*)")
       labels:
         class: MEDIUM
         area: kaas
         label_application_giantswarm_io_team: phoenix
       record: raw_slo_requests
       # record number of errors.
-    - expr: label_replace(sum(cloudprovider_aws_api_request_errors{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id,app), "service", "$1", "app", "(.*)")
+    - expr: label_replace(sum(cloudprovider_aws_api_request_errors{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, cluster_type, app), "service", "$1", "app", "(.*)")
       labels:
         area: kaas
         class: MEDIUM
         label_application_giantswarm_io_team: phoenix
       record: raw_slo_errors
       # -- 99% availability
-    - expr: label_replace(group(cloudprovider_aws_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
+    - expr: label_replace(group(cloudprovider_aws_api_request_duration_seconds_count{app=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, cluster_type, app), "service", "$1", "app", "(.*)") * 0 + 1 - 0.99
       labels:
         area: kaas
         label_application_giantswarm_io_team: phoenix

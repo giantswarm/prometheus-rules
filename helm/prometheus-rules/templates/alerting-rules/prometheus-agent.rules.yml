@@ -75,7 +75,7 @@ spec:
         max_over_time(sum(
           count(
             ## number of remotes that are not mimir or grafana-cloud
-            prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir"}
+            prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir.*"}
           )
           !=
           sum(
@@ -111,7 +111,7 @@ spec:
         max_over_time(sum(
           count(
             ## number of remotes that are not mimir or grafana-cloud
-            prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir"}
+            prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir.*"}
           )
           !=
           sum(

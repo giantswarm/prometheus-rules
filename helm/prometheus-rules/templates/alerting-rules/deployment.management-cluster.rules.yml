@@ -4,7 +4,9 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
     cluster_type: "management_cluster"
+{{- end }}
   name: deployment.management-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -101,7 +103,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator-.+|azure-admission-controller-.+|azure-operator.*|azure-collector.*|cluster-operator-.+|cluster-api-core-webhook.*|event-exporter-.*|etcd-kubernetes-resources-count-exporter-.*|upgrade-schedule-operator.*|worker-.+|master-.+", cluster_id!~"argali|giraffe"}, "service", "/", "namespace", "deployment") > 0
+      expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator-.+|cluster-operator-.+|cluster-api-core-webhook.*|event-exporter-.*|etcd-kubernetes-resources-count-exporter-.*|upgrade-schedule-operator.*|worker-.+|master-.+", cluster_id!~"argali|giraffe"}, "service", "/", "namespace", "deployment") > 0
       for: 30m
       labels:
         area: kaas
@@ -145,18 +147,6 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: page
-        team: phoenix
-        topic: managementcluster
-    {{- end }}
-    {{- if eq .Values.managementCluster.provider.kind "azure" }}
-    - alert: AzureManagementClusterDeploymentScaledDownToZero
-      annotations:
-        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} on Azure has been scaled down to zero for prolonged period of time.`}}'
-      expr: kube_deployment_status_replicas_available{cluster_type="management_cluster", deployment=~"([a-z]*)-operator([a-z,-]*)",provider="azure"} + kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"([a-z]*)-operator([a-z,-]*)",provider="azure"} == 0
-      for: 4h
-      labels:
-        area: kaas
-        severity: notify
         team: phoenix
         topic: managementcluster
     {{- end }}

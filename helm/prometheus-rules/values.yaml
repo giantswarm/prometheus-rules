@@ -11,3 +11,6 @@ managementCluster:
   provider:
     kind: ""
     flavor: ""
+
+mimir:
+  enabled: false

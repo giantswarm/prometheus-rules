@@ -92,10 +92,6 @@ spec:
             )
         )
       record: aggregation:giantswarm:cluster_info
-    - expr: sum(label_replace(azure_operator_cluster_release{release_version!=""}, "cluster_id", "$1", "exported_cluster_id", "(.*)")) by (release_version, cluster_id) or sum(cluster_service_cluster_info) by (release_version, cluster_id) / 2 or sum(cluster_operator_cluster_status{release_version!=""}) by (release_version, cluster_id)
-      record: aggregation:giantswarm:cluster_release_version
-    - expr: avg_over_time(cluster_operator_cluster_create_transition[1w]) or avg_over_time(azure_operator_cluster_create_transition[1w])
-      record: aggregation:giantswarm:cluster_transition_create
     - expr: avg_over_time(cluster_operator_cluster_update_transition[1w])
       record: aggregation:giantswarm:cluster_transition_update
     # Scheduled cluster upgrade times

@@ -1,3 +1,4 @@
+{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -23,3 +24,4 @@ spec:
         severity: page
         team: honeybadger
         topic: managementcluster
+{{- end }}

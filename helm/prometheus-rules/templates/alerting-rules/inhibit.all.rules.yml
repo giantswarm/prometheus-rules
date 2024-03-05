@@ -48,13 +48,11 @@ spec:
         apiserver_down: "true"
         team: phoenix
         topic: monitoring
-    {{- if or (eq .Values.managementCluster.provider.kind "azure") (eq .Values.managementCluster.provider.kind "aws") }}
+    {{- if (eq .Values.managementCluster.provider.kind "aws") }}
     - alert: InhibitionClusterWithoutWorkerNodes
       annotations:
         description: '{{`Cluster ({{ $labels.cluster_id }}) has no worker nodes.`}}'
-      {{- if eq .Values.managementCluster.provider.kind "azure" }}
-      expr: azure_operator_cluster_worker_nodes == 0
-      {{- else if eq .Values.managementCluster.provider.kind "aws" }}
+      {{-  if eq .Values.managementCluster.provider.kind "aws" }}
       expr: sum(aws_operator_asg_desired_count) by (cluster_id) - on(cluster_id) sum(aws_operator_asg_desired_count{asg=~".*-tccpn-.*"}) by (cluster_id) == 0
       {{- end }}
       labels:

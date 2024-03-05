@@ -5,6 +5,7 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+    # Kept because it will be gone with Gorilla
     cluster_type: "management_cluster"
   name: crsync.rules
   namespace: {{ .Values.namespace  }}

@@ -5,6 +5,7 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+    # Kept because it will be gone with Vintage
     cluster_type: "workload_cluster"
   name: kvm.workload-cluster.rules
   namespace: {{ .Values.namespace  }}

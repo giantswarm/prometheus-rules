@@ -5,6 +5,7 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+    # Kept because it will be gone with Vintage
     cluster_type: "management_cluster"
   name: vault.rules
   namespace: {{ .Values.namespace  }}

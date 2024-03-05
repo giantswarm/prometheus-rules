@@ -33,7 +33,7 @@ spec:
       annotations:
         description: '{{`Cadvisor ({{ $labels.instance }}) is down.`}}'
         opsrecipe: kubelet-is-down/
-      expr: label_replace(up{app="cadvisor"}, "ip", "$1", "instance", "(.+):\\d+") == 0
+      expr: up{app="cadvisor"} == 0
       for: 1h
       labels:
         area: kaas

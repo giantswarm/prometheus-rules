@@ -1,3 +1,4 @@
+{{- if eq (include "isBastionBeingMonitored" .) "true" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -11,24 +12,6 @@ spec:
   groups:
   - name: up.management-cluster
     rules:
-    - alert: AppExporterDown
-      annotations:
-        description: '{{`App-exporter ({{ $labels.instance }}) is down.`}}'
-        opsrecipe: app-exporter-down/
-      expr: (up{app="app-exporter"} == 0) and (up{service="app-exporter"} == 0)
-      for: 15m
-      labels:
-        area: managedservices
-        cancel_if_apiserver_down: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_scrape_timeout: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: page
-        team: honeybadger
-        topic: releng
-    {{- if eq (include "isBastionBeingMonitored" .) "true" }}
     - alert: NoHealthyJumphost
       annotations:
         description: '{{`There are no healthy jumphosts available.`}}'
@@ -41,4 +24,4 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: managementcluster
-    {{- end }}
+{{- end }}

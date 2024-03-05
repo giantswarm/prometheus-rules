@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'operatorkit_controller_errors_total{app="silence-operator", controller="silence-controller"}'
+      - series: 'operatorkit_controller_errors_total{app="silence-operator", controller="silence-controller", cluster_type="management_cluster"}'
         values: "0x30 1+0x20 20x45 20-1x20 0x100"
     alert_rule_test:
       - alertname: SilenceOperatorReconcileErrors
@@ -17,6 +17,7 @@ tests:
               app: silence-operator
               area: "empowerment"
               cancel_if_outside_working_hours: "true"
+              cluster_type: management_cluster
               controller: silence-controller
               installation: "myinstall"
               severity: "page"

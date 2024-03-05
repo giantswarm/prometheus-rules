@@ -1,10 +1,13 @@
+{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
     cluster_type: "management_cluster"
+{{- end }}
   name: inhibit.management-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -105,3 +108,4 @@ spec:
         team: phoenix
         topic: status
     {{- end }}
+{{- end }}

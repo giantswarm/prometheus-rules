@@ -5,6 +5,7 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+    # No need for .Values.mimir.enabled condition - will be gone with Vintage
     cluster_type: "management_cluster"
   name: kvm.management-cluster.rules
   namespace: {{ .Values.namespace  }}

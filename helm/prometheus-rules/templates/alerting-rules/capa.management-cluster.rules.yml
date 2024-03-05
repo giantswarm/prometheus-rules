@@ -5,7 +5,9 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
     cluster_type: "management_cluster"
+{{- end }}
   name: capa.management-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -16,7 +18,7 @@ spec:
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
         opsrecipe: pod-stuck-in-pending/
-      expr: kube_pod_status_phase{namespace="giantswarm",pod=~"(aws.*|capa.*|irsa-operator.*)",phase="Pending"} == 1
+      expr: kube_pod_status_phase{namespace="giantswarm", pod=~"(aws.*|capa.*|irsa-operator.*)",phase="Pending", cluster_type="management_cluster"} == 1
       for: 15m
       labels:
         area: kaas
@@ -30,7 +32,7 @@ spec:
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/
-      expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"(aws.*|capa-.*|irsa-operator.*)"}[1h]), "service", "/", "namespace", "pod") > 6
+      expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"(aws.*|capa-.*|irsa-operator.*)", cluster_type="management_cluster"}[1h]), "service", "/", "namespace", "pod") > 6
       for: 5m
       labels:
         area: kaas
@@ -44,7 +46,13 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.deployment }} is missing.`}}'
         opsrecipe: management-cluster-deployment-is-missing/
-      expr: absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-network-topology-operator"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-resolver-rules-operator"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-vpc-operator"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capa-controller-manager"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capa-iam-operator"}) or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="irsa-operator"})
+      expr: |
+        absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-network-topology-operator", cluster_type="management_cluster"})
+        or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-resolver-rules-operator", cluster_type="management_cluster"})
+        or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-vpc-operator", cluster_type="management_cluster"})
+        or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capa-controller-manager", cluster_type="management_cluster"})
+        or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capa-iam-operator", cluster_type="management_cluster"})
+        or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="irsa-operator", cluster_type="management_cluster"})
       for: 15m
       labels:
         area: kaas

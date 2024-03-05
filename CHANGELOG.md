@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add new mimir.enabled property to disable the MC/WC split in alerts.
+
 ### Changed
 
 - Review alerting prior to Mimir migration.

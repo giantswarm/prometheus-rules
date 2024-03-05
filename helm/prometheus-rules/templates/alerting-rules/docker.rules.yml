@@ -1,3 +1,5 @@
+{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+# newer clusters don't use docker anymore
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -22,3 +24,4 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: observability
+{{- end }}

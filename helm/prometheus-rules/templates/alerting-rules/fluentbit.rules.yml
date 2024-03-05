@@ -4,7 +4,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    cluster_type: "management_cluster"
   name: fluentbit.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -20,12 +19,10 @@ spec:
       for: 10m
       labels:
         area: empowerment
-        cancel_if_outside_working_hours: "true"
-        cancel_if_apiserver_down: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_scrape_timeout: "true"
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
         topic: observability
@@ -38,16 +35,13 @@ spec:
       for: 10m
       labels:
         area: empowerment
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        cancel_if_apiserver_down: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_scrape_timeout: "true"
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
         topic: observability
-    # This alert ensures our fluent-bit daemon sets are running on the management clusters nodes for customers that configured it.
     - alert: FluentbitDown
       annotations:
         description: '{{`Fluentbit is down on node ({{ $labels.node }}).`}}'
@@ -56,12 +50,24 @@ spec:
       for: 15m
       labels:
         area: empowerment
-        cancel_if_outside_working_hours: "true"
-        cancel_if_apiserver_down: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_scrape_timeout: "true"
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
         topic: observability
+    - alert: FluentbitDaemonSetNotSatisfied
+      annotations:
+        description: '{{`Daemonset {{ $labels.namespace}}/{{ $labels.daemonset }} is not satisfied.`}}'
+      expr: kube_daemonset_status_number_unavailable{daemonset="fluent-logshipping-app"} > 0
+      for: 1h
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: managementcluster

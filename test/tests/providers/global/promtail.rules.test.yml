@@ -6,12 +6,12 @@ tests:
   - interval: 1m
     input_series:
       # For the first 60min: test with 1 pod: none, up, down
-      - series: 'up{app="promtail",cluster_type="management_cluster", cluster_id="gauss", installation="gauss", node="ip-10-0-5-35.eu-west-1.compute.internal"}'
+      - series: 'up{container="promtail",cluster_type="management_cluster", cluster_id="gauss", installation="gauss", node="ip-10-0-5-35.eu-west-1.compute.internal"}'
         values: "_x20 1+0x20 0+0x20" 
       # From 60min: test with 2 pods: 1 up and 1 down, 2 up, 2 down.
-      - series: 'up{app="promtail",cluster_type="management_cluster", cluster_id="gauss", installation="gauss", node="ip-10-0-5-145.eu-west-1.compute.internal"}'
+      - series: 'up{container="promtail",cluster_type="management_cluster", cluster_id="gauss", installation="gauss", node="ip-10-0-5-145.eu-west-1.compute.internal"}'
         values: "_x60 1+0x20 1+0x20 0+0x20"
-      - series: 'up{app="promtail",cluster_type="management_cluster", cluster_id="gauss", installation="gauss", node="ip-10-0-5-76.eu-west-1.compute.internal"}'
+      - series: 'up{container="promtail",cluster_type="management_cluster", cluster_id="gauss", installation="gauss", node="ip-10-0-5-76.eu-west-1.compute.internal"}'
         values: "_x60 0+0x20 1+0x20 0+0x20"
     alert_rule_test:
       - alertname: PromtailDown
@@ -23,12 +23,12 @@ tests:
         exp_alerts:
           - exp_labels:
               area: empowerment
-              severity: page
-              team: atlas
-              topic: observability
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
+              severity: page
+              team: atlas
+              topic: observability
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 5 minutes."
               opsrecipe: "promtail-is-not-running/"
@@ -38,12 +38,12 @@ tests:
         exp_alerts:
           - exp_labels:
               area: empowerment
-              severity: page
-              team: atlas
-              topic: observability
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
+              severity: page
+              team: atlas
+              topic: observability
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 5 minutes."
               opsrecipe: "promtail-is-not-running/"
@@ -54,12 +54,12 @@ tests:
         exp_alerts:
           - exp_labels:
               area: empowerment
-              severity: page
-              team: atlas
-              topic: observability
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
+              severity: page
+              team: atlas
+              topic: observability
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 5 minutes."
               opsrecipe: "promtail-is-not-running/"
@@ -84,12 +84,12 @@ tests:
         exp_alerts:
           - exp_labels:
               area: empowerment
-              severity: page
-              team: atlas
-              topic: observability
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
+              severity: page
+              team: atlas
+              topic: observability
             exp_annotations:
               description: "This alert checks if that the amount of failed requests is below 10% for promtail"
               opsrecipe: "promtail-requests-are-failing/"
@@ -98,12 +98,12 @@ tests:
         exp_alerts:
           - exp_labels:
               area: empowerment
-              severity: page
-              team: atlas
-              topic: observability
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
+              severity: page
+              team: atlas
+              topic: observability
             exp_annotations:
               description: "This alert checks if that the amount of failed requests is below 10% for promtail"
               opsrecipe: "promtail-requests-are-failing/"

@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Review alerting prior to Mimir migration.
+
 ### Removed
 
 - Remove Azure provider.
+- Remove Tiller related alerts.
 - Remove GCP alerts and configs.
 - Remove Openstack alerts and configs.
 

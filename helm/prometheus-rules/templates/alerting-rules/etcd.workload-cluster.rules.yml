@@ -4,7 +4,9 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
     cluster_type: "workload_cluster"
+{{- end }}
   name: etcd.workload-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -76,7 +78,7 @@ spec:
       annotations:
         description: '{{`Etcd metrics missing for {{ $labels.cluster_id }}.`}}'
         opsrecipe: etcd-metrics-missing/
-      expr: count(up{cluster_type="workload_cluster", provider!~"eks"}) by (cluster_id) unless count(etcd_server_id{provider!~"eks"}) by (cluster_id)
+      expr: count(up{cluster_type="workload_cluster", provider!~"eks"}) by (cluster_id) unless count(etcd_server_id{cluster_type="workload_cluster", provider!~"eks"}) by (cluster_id)
       for: 1h
       labels:
         area: kaas

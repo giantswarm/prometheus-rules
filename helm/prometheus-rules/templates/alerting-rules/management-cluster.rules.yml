@@ -86,7 +86,10 @@ spec:
       annotations:
         description: '{{`Critical pod {{ $labels.container }} does not have metrics.`}}'
         opsrecipe: critical-pod-is-not-running/
-      expr: absent(kube_pod_container_status_running{container="k8s-api-server", cluster_type="management_cluster"}) == 1 or absent(kube_pod_container_status_running{container="k8s-controller-manager", cluster_type="management_cluster"}) == 1 or absent(kube_pod_container_status_running{container="k8s-scheduler", cluster_type="management_cluster"}) == 1
+      expr: |
+        absent(kube_pod_container_status_running{container="k8s-api-server", cluster_type="management_cluster"}) == 1
+          or absent(kube_pod_container_status_running{container="k8s-controller-manager", cluster_type="management_cluster"}) == 1
+          or absent(kube_pod_container_status_running{container="k8s-scheduler", cluster_type="management_cluster"}) == 1
       for: 25m
       labels:
         area: kaas

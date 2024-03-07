@@ -4,31 +4,26 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'capi_machinepool_spec_replicas{cluster_name="clippaxy", name="clippaxy-def00", exported_namespace="giantswarm"}'
+      - series: 'capi_machinedeployment_status_phase{phase="Failed", cluster_name="clippaxy", name="clippaxy-def00", exported_namespace="giantswarm"}'
         values: "0+3x75"
-      - series: 'capi_machinepool_status_replicas_available{cluster_name="clippaxy", name="clippaxy-def00", exported_namespace="giantswarm"}'
-        values: "0+3x75"
-      - series: 'capi_machinepool_spec_replicas{cluster_name="clippaxy", name="clippaxy-def99", exported_namespace="giantswarm"}'
-        values: "0+3x75"
-      - series: 'capi_machinepool_status_replicas_available{cluster_name="clippaxy", name="clippaxy-def99", exported_namespace="giantswarm"}'
-        values: "0+2x75"
       - series: 'capi_machinepool_annotation_paused{paused_value="true",cluster_name="grumpy", name="grumpy-72r5c", exported_namespace="giantswarm"}'
         values: "0+1x75"
     alert_rule_test:
       - alertname: MachinePoolReplicasMismatch
-        eval_time: 75m
+        eval_time: 25m
         exp_alerts:
           - exp_labels:
               area: kaas
-              cancel_if_outside_working_hours: "false"
+              cancel_if_prometheus_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
               severity: page
               team: phoenix
               topic: managementcluster
               cluster_name: clippaxy
-              name: clippaxy-def99
+              name: clippaxy-def00
               exported_namespace: giantswarm
             exp_annotations:
-              description: "The clusters clippaxy machinepool giantswarm/clippaxy-def99 does not match the expected number of replicas for longer than 1h."
+              description: "The clusters clippaxy machinepool giantswarm/clippaxy-def99 is not healthy."
               opsrecipe: capi-machinepool/
       - alertname: MachinePoolPaused
         eval_time: 75m

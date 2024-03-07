@@ -2,8 +2,8 @@ name: prometheus-rules
 namespace: monitoring
 serviceType: managed
 project:
-  branch: 'capi-checks'
-  commit: 'e40164471d4ec8ff51e1dab0759a27555c49da6d'
+  branch: '[[ .Branch ]]'
+  commit: '[[ .SHA ]]'
 managementCluster:
   customer: ""
   name: ""

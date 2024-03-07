@@ -14,13 +14,14 @@ spec:
           for: 1h
           labels:
             area: kaas
-            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            cancel_if_prometheus_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
             severity: page
-            team: {{include "providerTeam" .}}
+            team: {{ include "providerTeam" . }}
             topic: managementcluster
           annotations:
             description: |-
-              {{`The clusters {{$labels.cluster_name}} machinepool {{$labels.exported_namespace}}/{{$labels.name}} does not match the expected number of replicas for longer than 1h.`}}
+              {{`The clusters {{ $labels.cluster_name }} machinepool {{ $labels.exported_namespace }}/{{ $labels.name }} does not match the expected number of replicas for longer than 1h.`}}
             opsrecipe: capi-machinepool/
 
         - alert: MachinePoolPaused
@@ -28,12 +29,13 @@ spec:
           for: 1h
           labels:
             area: kaas
-            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            cancel_if_prometheus_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
             severity: notify
-            team: {{include "providerTeam" .}}
+            team: {{ include "providerTeam" . }}
             topic: managementcluster
           annotations:
             description: |-
-              {{`The clusters {{$labels.cluster_name}} machinepool {{$labels.exported_namespace}}/{{$labels.name}} is paused.`}}
+              {{`The clusters {{ $labels.cluster_name }} machinepool {{ $labels.exported_namespace }}/{{ $labels.name }} is paused.`}}
             opsrecipe: capi-machinepool/
 {{- end }}

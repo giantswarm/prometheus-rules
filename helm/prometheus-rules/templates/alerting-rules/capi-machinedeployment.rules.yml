@@ -14,9 +14,10 @@ spec:
           for: 1h
           labels:
             area: kaas
-            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            cancel_if_prometheus_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
             severity: notify
-            team: {{include "providerTeam" .}}
+            team: {{ include "providerTeam" . }}
             topic: managementcluster
           annotations:
             description: |-
@@ -27,9 +28,10 @@ spec:
           for: 1h
           labels:
             area: kaas
-            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            cancel_if_prometheus_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
             severity: notify
-            team: {{include "providerTeam" .}}
+            team: {{ include "providerTeam" . }}
             topic: managementcluster
           annotations:
             description: |-

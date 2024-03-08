@@ -16,7 +16,7 @@ spec:
         opsrecipe: fluentbit-too-many-erros/
       # If we have some failures sending data, raise an alert
       expr: rate(fluentbit_output_retries_failed_total[10m]) > 0
-      for: 10m
+      for: 20m
       labels:
         area: empowerment
         cancel_if_cluster_status_creating: "true"
@@ -32,7 +32,7 @@ spec:
         opsrecipe: fluentbit-too-many-erros/
       # Check the ratio of dropped records over the total number of records.
       expr: rate(fluentbit_output_dropped_records_total[10m]) / (rate(fluentbit_output_proc_records_total[10m]) + rate(fluentbit_output_dropped_records_total[10m])) > 0.01
-      for: 10m
+      for: 20m
       labels:
         area: empowerment
         cancel_if_cluster_status_creating: "true"

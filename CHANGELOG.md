@@ -18,10 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Remove Azure provider.
-- Remove Tiller related alerts.
-- Remove GCP alerts and configs.
-- Remove Openstack alerts and configs.
+= Remove `kvm` provider alerts.
+- Remove `azure` provider alerts.
+- Remove `tiller` alerts.
+- Remove `gcp` provider alerts.
+- Remove `openstack` provider alerts.
 
 ## [2.153.1] - 2024-02-28
 

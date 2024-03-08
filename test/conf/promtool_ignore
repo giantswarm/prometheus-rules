@@ -1,6 +1,5 @@
 templates/alerting-rules/apiserver.management-cluster.rules.yml
 templates/alerting-rules/apiserver.workload-cluster.rules.yml
-templates/alerting-rules/argocd.rules.yml
 templates/alerting-rules/aws.management-cluster.rules.yml
 templates/alerting-rules/aws.workload-cluster.rules.yml
 templates/alerting-rules/calico.rules.yml
@@ -9,8 +8,6 @@ templates/alerting-rules/certificate.workload-cluster.rules.yml
 templates/alerting-rules/chart.rules.yml
 templates/alerting-rules/cluster-autoscaler.rules.yml
 templates/alerting-rules/cluster-service.rules.yml
-templates/alerting-rules/configmap.management-cluster.rules.yml
-templates/alerting-rules/configmap.workload-cluster.rules.yml
 templates/alerting-rules/coredns.rules.yml
 templates/alerting-rules/credentiald.rules.yml
 templates/alerting-rules/crsync.rules.yml
@@ -40,8 +37,6 @@ templates/alerting-rules/kiam.rules.yml
 templates/alerting-rules/kube-state-metrics.rules.yml
 templates/alerting-rules/kubelet.management-cluster.rules.yml
 templates/alerting-rules/kubelet.workload-cluster.rules.yml
-templates/alerting-rules/kvm.management-cluster.rules.yml
-templates/alerting-rules/kvm.workload-cluster.rules.yml
 templates/alerting-rules/kyverno.rules.yml
 templates/alerting-rules/managed-logging.rules.yml
 templates/alerting-rules/management-cluster.rules.yml

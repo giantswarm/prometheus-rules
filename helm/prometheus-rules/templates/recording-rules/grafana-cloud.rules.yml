@@ -70,6 +70,7 @@ spec:
             "name",
             "(.*)"
           ) >= 1
+          {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
           or cluster_operator_cluster_status >= 1
           or cluster_service_cluster_info >= 1
           or
@@ -116,6 +117,7 @@ spec:
               "",
               ""
             )
+          {{- end }}
         )
       record: aggregation:giantswarm:cluster_info
     - expr: avg_over_time(cluster_operator_cluster_update_transition[1w])

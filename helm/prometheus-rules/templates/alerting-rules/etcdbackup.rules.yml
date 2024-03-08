@@ -58,21 +58,6 @@ spec:
         team: {{ include "providerTeam" . }}
         topic: etcd-backup
 {{- end }}
-    - alert: ManagementClusterNotBackedUp24h
-      annotations:
-        description: '{{`{{ $labels.cluster_id }} management cluster''s ETCD backup was unsuccessful.`}}'
-        opsrecipe: etcd-backup-failed/
-      expr: time() - etcd_backup_latest_success{etcd_version="V2",tenant_cluster_id="Control Plane", provider="kvm"} > 60*60*24 or time() - etcd_backup_latest_success{etcd_version="V3",tenant_cluster_id="Control Plane"} > 60*60*24
-      for: 5m
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: {{ include "providerTeam" . }}
-        topic: etcd-backup
     - alert: ETCDBackupMetricsMissing
       annotations:
         description: '{{`ETCD backup metrics are missing`}}'

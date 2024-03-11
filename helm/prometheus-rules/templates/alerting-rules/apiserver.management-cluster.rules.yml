@@ -20,7 +20,7 @@ spec:
       annotations:
         description: '{{`Kubernetes API Server {{ $labels.verb }} request latency is too high.`}}'
         opsrecipe: apiserver-overloaded/
-      expr: histogram_quantile(0.95, sum(rate(apiserver_request_duration_seconds_bucket{cluster_type="management_cluster", verb=~"CONNECT|DELETE|GET|PATCH|POST|PUT"}[1h])) by (verb, le)) > 1
+      expr: histogram_quantile(0.95, sum(rate(apiserver_request_duration_seconds_bucket{cluster_type="management_cluster", verb=~"CONNECT|DELETE|GET|PATCH|POST|PUT"}[1h])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, verb, le)) > 1
       for: 1h
       labels:
         area: kaas
@@ -48,7 +48,7 @@ spec:
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
-      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="management_cluster"}[5m])) by (cluster_id, name, app, le)) > 5
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="management_cluster"}[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, name, app, le)) > 5
       for: 15m
       labels:
         area: kaas

@@ -78,7 +78,7 @@ spec:
       annotations:
         description: '{{`Etcd metrics missing for {{ $labels.cluster_id }}.`}}'
         opsrecipe: etcd-metrics-missing/
-      expr: count(up{cluster_type="workload_cluster", provider!~"eks"}) by (cluster_id) unless count(etcd_server_id{cluster_type="workload_cluster", provider!~"eks"}) by (cluster_id)
+      expr: count(up{cluster_type="workload_cluster", provider!~"eks"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) unless count(etcd_server_id{cluster_type="workload_cluster", provider!~"eks"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       for: 1h
       labels:
         area: kaas

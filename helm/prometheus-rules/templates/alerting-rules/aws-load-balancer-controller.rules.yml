@@ -29,19 +29,19 @@ spec:
         severity: page
         team: phoenix
         topic: alb
-      - alert: AWSLoadBalancerControllerReconcileErrors
-        annotations:
-          description: '{{`AWS load balancer controller pod {{ $labels.namespace }}/{{ $labels.pod }} on {{ $labels.cluster_id }} is throwing errors while reconciling the {{ $labels.controller }} controller.`}}'
-          opsrecipe: alb-errors
-        expr: sum(increase(controller_runtime_reconcile_total{result = "error"}[20m])) by (controller,namespace,pod,cluster_id) > 0
-        for: 40m
-        labels:
-          area: managedservices
-          cancel_if_cluster_status_creating: "true"
-          cancel_if_cluster_status_deleting: "true"
-          cancel_if_cluster_status_updating: "true"
-          cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-          severity: page
-          team: phoenix
-          topic: alb
+    - alert: AWSLoadBalancerControllerReconcileErrors
+      annotations:
+        description: '{{`AWS load balancer controller pod {{ $labels.namespace }}/{{ $labels.pod }} on {{ $labels.cluster_id }} is throwing errors while reconciling the {{ $labels.controller }} controller.`}}'
+        opsrecipe: alb-errors
+      expr: sum(increase(controller_runtime_reconcile_total{result = "error"}[20m])) by (controller,namespace,pod,cluster_id) > 0
+      for: 40m
+      labels:
+        area: managedservices
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: phoenix
+        topic: alb
 {{- end }}

@@ -62,7 +62,7 @@ spec:
         opsrecipe: kube-state-metrics-down/
       expr: |-
         # When it looks up but we don't have metrics
-        count({app="kube-state-metrics"}) < 10
+        count({app="kube-state-metrics"}) by (cluster_id) < 10
       for: 20m
       labels:
         area: kaas

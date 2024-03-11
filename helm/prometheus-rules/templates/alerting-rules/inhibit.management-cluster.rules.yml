@@ -59,7 +59,6 @@ spec:
         cluster_status_deleting: "true"
         team: phoenix
         topic: status
-    {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: InhibitionClusterWithNoNodePools
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} doesn''t have any node pools.`}}'
@@ -96,5 +95,4 @@ spec:
         instance_state_not_running: "true"
         team: phoenix
         topic: status
-    {{- end }}
 {{- end }}

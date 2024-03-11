@@ -15,7 +15,7 @@ spec:
         description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: core-dns-deployment-not-satisfied/
       expr: |
-        sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) / (sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) + sum(kube_deployment_status_replicas_unavailable{deployment=~"coredns.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region))* 100 < 51
+        sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) by (cluster_id) / (sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) by (cluster_id) + sum(kube_deployment_status_replicas_unavailable{deployment=~"coredns.*"}) by (cluster_id))* 100 < 51
       for: 10m
       labels:
         area: empowerment

@@ -19,7 +19,7 @@ spec:
       annotations:
         description: '{{`Kubernetes API Server {{ $labels.verb }} request latency is too high.`}}'
         opsrecipe: apiserver-overloaded/
-      expr: histogram_quantile(0.95, sum(rate(apiserver_request_duration_seconds_bucket{cluster_type="workload_cluster", verb=~"CONNECT|DELETE|GET|PATCH|POST|PUT"}[1h])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, verb, le)) > 1
+      expr: histogram_quantile(0.95, sum(rate(apiserver_request_duration_seconds_bucket{cluster_type="workload_cluster", verb=~"CONNECT|DELETE|GET|PATCH|POST|PUT"}[1h])) by (cluster_id, verb, le)) > 1
       for: 1h
       labels:
         area: kaas
@@ -49,7 +49,7 @@ spec:
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
-      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name!~".*(prometheus|vpa.k8s.io|linkerd|validate.nginx.ingress.kubernetes.io|kong.konghq.com|cert-manager.io|kyverno|app-admission-controller).*"}[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, name, app, le)) > 5
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name!~".*(prometheus|vpa.k8s.io|linkerd|validate.nginx.ingress.kubernetes.io|kong.konghq.com|cert-manager.io|kyverno|app-admission-controller).*"}[5m])) by (cluster_id, name, app, le)) > 5
       for: 15m
       labels:
         area: kaas
@@ -63,7 +63,7 @@ spec:
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
-      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(kyverno|app-admission-controller).*"}[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, name, app, le)) > 5
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(kyverno|app-admission-controller).*"}[5m])) by (cluster_id, name, app, le)) > 5
       for: 15m
       labels:
         area: kaas
@@ -77,7 +77,7 @@ spec:
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
-      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(linkerd|validate.nginx.ingress.kubernetes.io|kong.konghq.com|cert-manager.io).*"}[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, name, app, le)) > 5
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(linkerd|validate.nginx.ingress.kubernetes.io|kong.konghq.com|cert-manager.io).*"}[5m])) by (cluster_id, name, app, le)) > 5
       for: 15m
       labels:
         area: kaas
@@ -91,7 +91,7 @@ spec:
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
-      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(vpa.k8s.io).*"}[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, name, app, le)) > 5
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(vpa.k8s.io).*"}[5m])) by (cluster_id, name, app, le)) > 5
       for: 15m
       labels:
         area: kaas
@@ -105,7 +105,7 @@ spec:
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
         opsrecipe: apiserver-admission-webhook-errors/
-      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(prometheus).*"}[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, name, app, le)) > 5
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(prometheus).*"}[5m])) by (cluster_id, name, app, le)) > 5
       for: 15m
       labels:
         area: kaas

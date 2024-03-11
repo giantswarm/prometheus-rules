@@ -17,7 +17,7 @@ spec:
           If memory usage value is equal to memory limit value then it is likely the pod will be evicted.
           If no limits are set then the pod will burst.
           `}}
-      expr: sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, pod, namespace, container) (container_memory_working_set_bytes{container=~"(cert-manager|cert-manager-app-controller)"}) / sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, pod, namespace, container) (kube_pod_container_resource_requests{resource="memory", unit="byte",container=~"(cert-manager|cert-manager-app-controller)"}) >= 0.85
+      expr: sum by (cluster_id, pod, namespace, container) (container_memory_working_set_bytes{container=~"(cert-manager|cert-manager-app-controller)"}) / sum by (cluster_id, pod, namespace, container) (kube_pod_container_resource_requests{resource="memory", unit="byte",container=~"(cert-manager|cert-manager-app-controller)"}) >= 0.85
       for: 10m
       labels:
         area: kaas
@@ -44,7 +44,7 @@ spec:
       annotations:
         description: '{{`There are too many CertificateRequests in cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: cert-requests-too-many/
-      expr: sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) (etcd_kubernetes_resources_count{kind="certificaterequests.cert-manager.io"}) > 10000
+      expr: sum by (cluster_id) (etcd_kubernetes_resources_count{kind="certificaterequests.cert-manager.io"}) > 10000
       for: 15m
       labels:
         area: kaas

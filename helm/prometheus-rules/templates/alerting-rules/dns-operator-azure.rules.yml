@@ -31,7 +31,7 @@ spec:
               {{`Error rate for {{ $labels.method }} is high. Check dns-operator-azure logs in installation/{{ $labels.installation }}.`}}
             opsrecipe: dns-operator-azure/
           expr: |-
-            sum by (cluster_id, method) (rate(dns_operator_azure_api_request_errors_total[5m])) > 0
+            sum by (cluster_id, method, installation) (rate(dns_operator_azure_api_request_errors_total[5m])) > 0
           for: 15m
           labels:
             area: kaas

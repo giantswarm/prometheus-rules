@@ -77,7 +77,7 @@ spec:
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
         opsrecipe: operator-not-reconciling/
-      expr: (sum by (instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"aws-operator.+|cluster-operator.+"}[10m])) == 0 and on (instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
+      expr: (sum by (cluster_id, instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"aws-operator.+|cluster-operator.+"}[10m])) == 0 and on (cluster_id, instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
       for: 20m
       labels:
         area: kaas
@@ -105,7 +105,7 @@ spec:
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
         opsrecipe: operator-not-reconciling/
-      expr: (sum by (instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"node-operator"}[10m])) == 0 and on (instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
+      expr: (sum by (cluster_id, instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"node-operator"}[10m])) == 0 and on (cluster_id, instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
       for: 20m
       labels:
         area: kaas

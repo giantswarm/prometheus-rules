@@ -10,12 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add new mimir.enabled property to disable the MC/WC split in alerts.
+- Add new alert for reconciling errors of `AWS load balancer controller`.
 
 ### Changed
 
 - Change ownership of `CadvisorDown` to Turtles/Phoenix.
 - Review alerting prior to Mimir migration.
 - Increase duration for fluentbit rules to avoid false alerts when a new release is deployed.
+- Improve `AWS load balancer controller` alert for failed AWS calls query.
 
 ### Removed
 

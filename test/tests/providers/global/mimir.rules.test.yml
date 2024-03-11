@@ -28,5 +28,6 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_scrape_timeout: "true"
               cancel_if_outside_working_hours: "true"
+              cluster_id: gauss
             exp_annotations:
               description: "Mimir component : mimir-ingester is down."

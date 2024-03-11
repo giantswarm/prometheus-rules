@@ -70,7 +70,7 @@ spec:
       # in the last hour.
       annotations:
         description: '{{`Node {{ $labels.ip }} has constant OOM kills.`}}'
-      expr: kube_pod_container_status_restarts_total{cluster_type="workload_cluster", namespace=~"(giantswarm|kube-system)"} - kube_pod_container_status_restarts_total offset{cluster_type="workload_cluster"} 1h >= 1 AND ignoring(reason) kube_pod_container_status_last_terminated_reason{cluster_type="workload_cluster", reason='OOMKilled'} > 0
+      expr: kube_pod_container_status_restarts_total{cluster_type="workload_cluster", namespace=~"(giantswarm|kube-system)"} - kube_pod_container_status_restarts_total{cluster_type="workload_cluster"} offset 1h >= 1 AND ignoring(reason) kube_pod_container_status_last_terminated_reason{cluster_type="workload_cluster", reason="OOMKilled"} > 0
       for: 10m
       labels:
         area: kaas

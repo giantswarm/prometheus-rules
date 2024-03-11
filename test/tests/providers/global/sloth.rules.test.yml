@@ -18,6 +18,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: managedservices
+              cluster_id: gauss
               severity: page
               team: atlas
               topic: observability

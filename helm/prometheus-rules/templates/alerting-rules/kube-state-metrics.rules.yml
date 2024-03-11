@@ -77,11 +77,27 @@ spec:
         severity: page
         team: atlas
         topic: observability
+
     - alert: KubeConfigMapCreatedMetricMissing
       annotations:
         description: '{{`kube_configmap_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-state-metrics-down/
+      {{- if not .Values.mimir.enabled }}
       expr: absent(kube_configmap_created{})
+      {{- else }}
+      expr: |-
+        (
+          label_replace(
+            capi_cluster_status_condition{type="Ready", status="True"},
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          ) == 1
+        ) unless on (cluster_id, customer, installation, pipeline, provider, region) (
+          count(kube_configmap_created{}) by (cluster_id, customer, installation, pipeline, provider, region)
+        )
+      {{- end }}
       for: 30m
       labels:
         area: kaas
@@ -94,7 +110,22 @@ spec:
       annotations:
         description: '{{`kube_daemonset_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-state-metrics-down/
+      {{- if not .Values.mimir.enabled }}
       expr: absent(kube_daemonset_created{})
+      {{- else }}
+      expr: |-
+        (
+          label_replace(
+            capi_cluster_status_condition{type="Ready", status="True"},
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          ) == 1
+        ) unless on (cluster_id, customer, installation, pipeline, provider, region) (
+          count(kube_daemonset_created{}) by (cluster_id, customer, installation, pipeline, provider, region)
+        )
+      {{- end }}
       for: 30m
       labels:
         area: kaas
@@ -107,7 +138,22 @@ spec:
       annotations:
         description: '{{`kube_deployment_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-state-metrics-down/
+      {{- if not .Values.mimir.enabled }}
       expr: absent(kube_deployment_created{})
+      {{- else }}
+      expr: |-
+        (
+          label_replace(
+            capi_cluster_status_condition{type="Ready", status="True"},
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          ) == 1
+        ) unless on (cluster_id, customer, installation, pipeline, provider, region) (
+          count(kube_deployment_created{}) by (cluster_id, customer, installation, pipeline, provider, region)
+        )
+      {{- end }}
       for: 30m
       labels:
         area: kaas
@@ -120,7 +166,22 @@ spec:
       annotations:
         description: '{{`kube_endpoint_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-state-metrics-down/
+      {{- if not .Values.mimir.enabled }}
       expr: absent(kube_endpoint_created{})
+      {{- else }}
+      expr: |-
+        (
+          label_replace(
+            capi_cluster_status_condition{type="Ready", status="True"},
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          ) == 1
+        ) unless on (cluster_id, customer, installation, pipeline, provider, region) (
+          count(kube_endpoint_created{}) by (cluster_id, customer, installation, pipeline, provider, region)
+        )
+      {{- end }}
       for: 30m
       labels:
         area: kaas
@@ -133,7 +194,22 @@ spec:
       annotations:
         description: '{{`kube_namespace_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-state-metrics-down/
+      {{- if not .Values.mimir.enabled }}
       expr: absent(kube_namespace_created{})
+      {{- else }}
+      expr: |-
+        (
+          label_replace(
+            capi_cluster_status_condition{type="Ready", status="True"},
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          ) == 1
+        ) unless on (cluster_id, customer, installation, pipeline, provider, region) (
+          count(kube_namespace_created{}) by (cluster_id, customer, installation, pipeline, provider, region)
+        )
+      {{- end }}
       for: 30m
       labels:
         area: kaas
@@ -146,7 +222,22 @@ spec:
       annotations:
         description: '{{`kube_node_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-state-metrics-down/
+      {{- if not .Values.mimir.enabled }}
       expr: absent(kube_node_created{})
+      {{- else }}
+      expr: |-
+        (
+          label_replace(
+            capi_cluster_status_condition{type="Ready", status="True"},
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          ) == 1
+        ) unless on (cluster_id, customer, installation, pipeline, provider, region) (
+          count(kube_node_created{}) by (cluster_id, customer, installation, pipeline, provider, region)
+        )
+      {{- end }}
       for: 30m
       labels:
         area: kaas
@@ -159,7 +250,22 @@ spec:
       annotations:
         description: '{{`kube_pod_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-state-metrics-down/
+      {{- if not .Values.mimir.enabled }}
       expr: absent(kube_pod_created{})
+      {{- else }}
+      expr: |-
+        (
+          label_replace(
+            capi_cluster_status_condition{type="Ready", status="True"},
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          ) == 1
+        ) unless on (cluster_id, customer, installation, pipeline, provider, region) (
+          count(kube_pod_created{}) by (cluster_id, customer, installation, pipeline, provider, region)
+        )
+      {{- end }}
       for: 30m
       labels:
         area: kaas
@@ -172,7 +278,22 @@ spec:
       annotations:
         description: '{{`kube_replicaset_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-state-metrics-down/
+      {{- if not .Values.mimir.enabled }}
       expr: absent(kube_replicaset_created{})
+      {{- else }}
+      expr: |-
+        (
+          label_replace(
+            capi_cluster_status_condition{type="Ready", status="True"},
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          ) == 1
+        ) unless on (cluster_id, customer, installation, pipeline, provider, region) (
+          count(kube_replicaset_created{}) by (cluster_id, customer, installation, pipeline, provider, region)
+        )
+      {{- end }}
       for: 30m
       labels:
         area: kaas
@@ -185,7 +306,22 @@ spec:
       annotations:
         description: '{{`kube_secret_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-state-metrics-down/
+      {{- if not .Values.mimir.enabled }}
       expr: absent(kube_secret_created{})
+      {{- else }}
+      expr: |-
+        (
+          label_replace(
+            capi_cluster_status_condition{type="Ready", status="True"},
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          ) == 1
+        ) unless on (cluster_id, customer, installation, pipeline, provider, region) (
+          count(kube_secret_created{}) by (cluster_id, customer, installation, pipeline, provider, region)
+        )
+      {{- end }}
       for: 30m
       labels:
         area: kaas
@@ -198,7 +334,22 @@ spec:
       annotations:
         description: '{{`kube_service_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         opsrecipe: kube-state-metrics-down/
+      {{- if not .Values.mimir.enabled }}
       expr: absent(kube_service_created{})
+      {{- else }}
+      expr: |-
+        (
+          label_replace(
+            capi_cluster_status_condition{type="Ready", status="True"},
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          ) == 1
+        ) unless on (cluster_id, customer, installation, pipeline, provider, region) (
+          count(kube_secret_created{}) by (cluster_id, customer, installation, pipeline, provider, region)
+        )
+      {{- end }}
       for: 30m
       labels:
         area: kaas

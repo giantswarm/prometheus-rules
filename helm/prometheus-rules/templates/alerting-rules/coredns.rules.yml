@@ -14,7 +14,8 @@ spec:
       annotations:
         description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: core-dns-deployment-not-satisfied/
-      expr: sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) / (sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) + sum(kube_deployment_status_replicas_unavailable{deployment=~"coredns.*"}))* 100 < 51
+      expr: |
+        sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) by (cluster_id) / (sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) by (cluster_id) + sum(kube_deployment_status_replicas_unavailable{deployment=~"coredns.*"}) by (cluster_id))* 100 < 51
       for: 10m
       labels:
         area: empowerment
@@ -25,7 +26,19 @@ spec:
         team: cabbage
         topic: dns
     - alert: CoreDNSMaxHPAReplicasReached
-      expr: kube_hpa_status_current_replicas{hpa="coredns"} == kube_hpa_spec_max_replicas{hpa="coredns"} AND kube_hpa_spec_min_replicas{hpa="coredns"} != kube_hpa_spec_max_replicas{hpa="coredns"}
+      expr: |
+        (
+          # This is using the deprecated HPA metric names https://github.com/kubernetes/kube-state-metrics/commit/eb01334f2d03ebc3ab25cd7b29d0ff28f6ca5ee0
+          # TODO(@team-cabbage) remove once kube-state-metrics is updated to use the new metric names everywhere
+          kube_hpa_status_current_replicas{hpa="coredns"} == kube_hpa_spec_max_replicas{hpa="coredns"}
+          and
+          kube_hpa_spec_min_replicas{hpa="coredns"} != kube_hpa_spec_max_replicas{hpa="coredns"}
+        ) or (
+          # This is using the new HPA metric names
+          kube_horizontalpodautoscaler_status_current_replicas{horizontalpodautoscaler="coredns"} == kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="coredns"}
+          and
+          kube_horizontalpodautoscaler_spec_min_replicas{horizontalpodautoscaler="coredns"} != kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="coredns"}
+        )
       for: 120m
       labels:
         area: empowerment

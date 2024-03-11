@@ -16,7 +16,7 @@ spec:
             opsrecipe: dns-operator-azure/
           expr: |-
             capi_cluster_status_phase{phase="Provisioned"}
-            unless on (name)
+            unless on (cluster_id, name)
             label_replace(dns_operator_azure_zone_info{type="public"}, "name", "$1", "resource_group", "(.+)")
           for: 30m
           labels:
@@ -31,7 +31,7 @@ spec:
               {{`Error rate for {{ $labels.method }} is high. Check dns-operator-azure logs in installation/{{ $labels.installation }}.`}}
             opsrecipe: dns-operator-azure/
           expr: |-
-            sum by (method,installation) (rate(dns_operator_azure_api_request_errors_total[5m])) > 0
+            sum by (cluster_id, method, installation) (rate(dns_operator_azure_api_request_errors_total[5m])) > 0
           for: 15m
           labels:
             area: kaas

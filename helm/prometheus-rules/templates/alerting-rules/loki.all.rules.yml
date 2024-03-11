@@ -15,9 +15,9 @@ spec:
         description: This alert checks that we have less than 10% errors on Loki requests.
         opsrecipe: loki/
       expr: |
-        100 * sum(rate(loki_request_duration_seconds_count{status_code=~"5.."}[1m])) by (namespace, job, route)
+        100 * sum(rate(loki_request_duration_seconds_count{status_code=~"5.."}[1m])) by (cluster_id, namespace, job, route)
           /
-        sum(rate(loki_request_duration_seconds_count[1m])) by (namespace, job, route)
+        sum(rate(loki_request_duration_seconds_count[1m])) by (cluster_id, namespace, job, route)
           > 10
       for: 120m
       labels:
@@ -36,7 +36,7 @@ spec:
         description: This alert checks that we have no panic errors on Loki.
         opsrecipe: loki/
       expr: |
-        sum(increase(loki_panic_total[10m])) by (namespace, job) > 0
+        sum(increase(loki_panic_total[10m])) by (cluster_id, namespace, job) > 0
       labels:
         area: managedservices
         cancel_if_apiserver_down: "true"

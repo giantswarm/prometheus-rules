@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2024-03-12
+
 ### Added
 
 - Add new mimir.enabled property to disable the MC/WC split in alerts.
@@ -2459,7 +2461,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.153.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.153.1...v3.0.0
 [2.153.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.153.0...v2.153.1
 [2.153.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.152.1...v2.153.0
 [2.152.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.152.0...v2.152.1

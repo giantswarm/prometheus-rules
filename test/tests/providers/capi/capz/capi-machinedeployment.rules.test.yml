@@ -4,38 +4,35 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'capi_machinedeployment_spec_replicas{cluster_name="clippaxy", name="clippaxy-def00", exported_namespace="giantswarm"}'
+      - series: 'capi_machinedeployment_status_phase{phase="Failed", cluster_name="clippaxy", name="clippaxy-def00", exported_namespace="giantswarm"}'
         values: "0+3x75"
-      - series: 'capi_machinedeployment_status_replicas_available{cluster_name="clippaxy", name="clippaxy-def00", exported_namespace="giantswarm"}'
-        values: "0+3x75"
-      - series: 'capi_machinedeployment_spec_replicas{cluster_name="clippaxy", name="clippaxy-def99", exported_namespace="giantswarm"}'
-        values: "0+3x75"
-      - series: 'capi_machinedeployment_status_replicas_available{cluster_name="clippaxy", name="clippaxy-def99", exported_namespace="giantswarm"}'
-        values: "0+2x75"
       - series: 'capi_machinedeployment_annotation_paused{paused_value="true",cluster_name="grumpy", name="grumpy-def99", exported_namespace="giantswarm"}'
         values: "0+1x75"
     alert_rule_test:
-      - alertname: MachineDeploymentReplicasMismatch
-        eval_time: 75m
+      - alertname: MachineDeploymentIsNotHealthy
+        eval_time: 25m
         exp_alerts:
           - exp_labels:
               area: kaas
-              cancel_if_outside_working_hours: "false"
+              cancel_if_prometheus_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
               severity: notify
+              phase: Failed
               team: phoenix
               topic: managementcluster
               cluster_name: clippaxy
-              name: clippaxy-def99
+              name: clippaxy-def00
               exported_namespace: giantswarm
             exp_annotations:
-              description: "The clusters clippaxy machinedeployment giantswarm/clippaxy-def99 does not match the expected number of replicas for longer than 1h."
+              description: "The clusters clippaxy machinedeployment giantswarm/clippaxy-def00 is not healthy."
               opsrecipe: capi-machinedeployment/
       - alertname: MachineDeploymentPaused
         eval_time: 75m
         exp_alerts:
           - exp_labels:
               area: kaas
-              cancel_if_outside_working_hours: "false"
+              cancel_if_prometheus_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
               severity: notify
               team: phoenix
               topic: managementcluster

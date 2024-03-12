@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Set `PromtailDown` alert to not page out of business hours
+
 ### Fixed
 
 - Fix `AWSLoadBalancerControllerReconcileErrors` alert query.

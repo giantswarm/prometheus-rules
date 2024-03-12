@@ -10,19 +10,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add new mimir.enabled property to disable the MC/WC split in alerts.
+- Add new alert for reconciling errors of `AWS load balancer controller`.
 
 ### Changed
 
 - Adjust CAPI rules.
 - Change ownership of `CadvisorDown` to Turtles/Phoenix.
 - Review alerting prior to Mimir migration.
+- Increase duration for fluentbit rules to avoid false alerts when a new release is deployed.
+- Improve `AWS load balancer controller` alert for failed AWS calls query.
 
 ### Removed
 
-- Remove Azure provider.
-- Remove Tiller related alerts.
-- Remove GCP alerts and configs.
-- Remove Openstack alerts and configs.
+= Remove `kvm` provider alerts.
+- Remove `azure` provider alerts.
+- Remove `tiller` alerts.
+- Remove `gcp` provider alerts.
+- Remove `openstack` provider alerts.
 
 ## [2.153.1] - 2024-02-28
 

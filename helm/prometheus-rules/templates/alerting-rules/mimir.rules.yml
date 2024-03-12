@@ -12,7 +12,7 @@ spec:
     - alert: MimirComponentDown
       annotations:
         description: '{{`Mimir component : {{ $labels.service }} is down.`}}'
-      expr: count(up{app="mimir"} == 0) by (service) > 0
+      expr: count(up{app="mimir"} == 0) by (cluster_id, service) > 0
       for: 5m
       labels:
         area: managedservices

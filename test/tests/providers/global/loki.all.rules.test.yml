@@ -14,7 +14,6 @@ tests:
       - series: 'loki_request_duration_seconds_count{app="loki-distributor", cluster_id="zj88t", cluster_type="workload_cluster", container="distributor", customer="giantswarm", installation="gorilla", instance="10.7.75.90:3100", job="zj88t-prometheus/workload-zj88t/0", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-distributor-74b78f5559-tz6zs", provider="aws", route="loki_api_v1_push", service_priority="highest", status_code="503", ws="false"}'
         values: "0+0x20 0+30x160"  # After 20 minutes, we also have 0.5 rq/s failing 
     alert_rule_test:
-
       - alertname: LokiRequestPanics
         eval_time: 15m  # should be OK after 15 minutes
         exp_alerts:
@@ -29,6 +28,7 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cancel_if_scrape_timeout: "true"
+              cluster_id: zj88t
               job: zj88t-prometheus/workload-zj88t/0
               namespace: loki
               severity: page
@@ -55,6 +55,7 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cancel_if_scrape_timeout: "true"
+              cluster_id: zj88t
               job: zj88t-prometheus/workload-zj88t/0
               namespace: loki
               route: loki_api_v1_push

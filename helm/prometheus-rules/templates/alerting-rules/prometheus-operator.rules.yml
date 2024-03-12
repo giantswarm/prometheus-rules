@@ -33,7 +33,7 @@ spec:
     - alert: PrometheusOperatorListErrors
       annotations:
         description: Errors while performing List operations in controller {{`{{`}}$labels.controller{{`}}`}} in {{`{{`}}$labels.namespace{{`}}`}} namespace.
-      expr: (sum by (cluster_id, controller,namespace) (rate(prometheus_operator_list_operations_failed_total{app=~"prometheus-operator.*|kube-prometheus-.*"}[10m])) / sum by (cluster_id, controller,namespace) (rate(prometheus_operator_list_operations_total{app=~"prometheus-operator.*|kube-prometheus-.*"}[10m]))) > 0.4
+      expr: (sum by (cluster_id, controller, namespace) (rate(prometheus_operator_list_operations_failed_total{app=~"prometheus-operator.*|kube-prometheus-.*"}[10m])) / sum by (cluster_id, controller,namespace) (rate(prometheus_operator_list_operations_total{app=~"prometheus-operator.*|kube-prometheus-.*"}[10m]))) > 0.4
       for: 15m
       labels:
         area: empowerment
@@ -88,7 +88,7 @@ spec:
     - alert: PrometheusOperatorNotReady
       annotations:
         description: Prometheus operator in {{`{{`}} $labels.namespace {{`}}`}} namespace isn't ready to reconcile {{`{{`}} $labels.controller {{`}}`}} resources.
-      expr: min by(cluster_id, namespace, controller) (max_over_time(prometheus_operator_ready{app=~"prometheus-operator.*|kube-prometheus-.*"}[5m]) == 0)
+      expr: min by (cluster_id, namespace, controller) (max_over_time(prometheus_operator_ready{app=~"prometheus-operator.*|kube-prometheus-.*"}[5m]) == 0)
       for: 5m
       labels:
         area: empowerment

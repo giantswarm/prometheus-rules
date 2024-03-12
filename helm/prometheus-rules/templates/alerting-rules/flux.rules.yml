@@ -107,7 +107,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         team: honeybadger
         topic: releng
-# this alert checks average reconciliation times in 10 min windows, then calculates monthly error budget usage for it
+    # this alert checks average reconciliation times in 10 min windows, then calculates monthly error budget usage for it
     - alert: FluxReconciliationLongErrorBudgetLow
       annotations:
         description: |-

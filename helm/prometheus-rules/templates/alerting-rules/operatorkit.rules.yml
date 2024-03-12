@@ -77,7 +77,7 @@ spec:
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
         opsrecipe: operator-not-reconciling/
-      expr: (sum by (instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"aws-operator.+|cluster-operator.+"}[10m])) == 0 and on (instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
+      expr: (sum by (cluster_id, instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"aws-operator.+|cluster-operator.+"}[10m])) == 0 and on (cluster_id, instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
       for: 20m
       labels:
         area: kaas
@@ -92,40 +92,12 @@ spec:
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
         opsrecipe: check-operator-error-rate-high/
-      expr: operatorkit_controller_error_total{app=~"kvm-operator|ignition-operator|cert-operator|node-operator"} > 5
+      expr: operatorkit_controller_error_total{app=~"ignition-operator|cert-operator|node-operator"} > 5
       for: 1m
       labels:
         area: kaas
         severity: notify
         team: {{ include "providerTeam" . }}
-        topic: qa
-    # It might happen that CRs get orphaned or deletion gets kind of stuck during
-    # the cleanup process. Then we want to get notified and figure out what went
-    # wrong to fix the root cause eventually.
-    - alert: OperatorkitCRNotDeletedRocket
-      annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has not deleted object {{ $labels.namespace }}/{{ $labels.name }} of type {{ $labels.kind }} for too long.`}}'
-        opsrecipe: check-not-deleted-object/
-      expr: (time() - operatorkit_controller_deletion_timestamp{app=~"kvm-operator|cluster-operator", provider=~"kvm|vmware"}) > 18000
-      for: 5m
-      labels:
-        area: kaas
-        severity: notify
-        team: rocket
-        topic: qa
-    # In case something stops an operator from reconciling CRs we want to
-    # be paged to be able to fix the issue immediately.
-    - alert: OperatorNotReconcilingRocket
-      annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
-        opsrecipe: operator-not-reconciling/
-      expr: (sum by (instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"kvm-operator|flannel-operator"}[10m])) == 0 and on (instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
-      for: 20m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: rocket
         topic: qa
     # In case something stops an operator from reconciling CRs we want to
     # be paged to be able to fix the issue immediately.
@@ -133,7 +105,7 @@ spec:
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
         opsrecipe: operator-not-reconciling/
-      expr: (sum by (instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"node-operator"}[10m])) == 0 and on (instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
+      expr: (sum by (cluster_id, instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"node-operator"}[10m])) == 0 and on (cluster_id, instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
       for: 20m
       labels:
         area: kaas

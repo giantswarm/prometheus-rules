@@ -19,21 +19,21 @@ spec:
         label_replace(
             (
                   slo_errors_per_request:ratio_rate1h{service!~"efk-.*|.*external-dns.*|kong-.*|.*(ingress-nginx|nginx-ingress-controller).*"}
-                > on (service) group_left ()
+                > on (cluster_id, service) group_left ()
                   slo_threshold_high
               and
                   slo_errors_per_request:ratio_rate5m{service!~"efk-.*|.*external-dns.*|kong-.*|.*(ingress-nginx|nginx-ingress-controller).*"}
-                > on (service) group_left ()
+                > on (cluster_id, service) group_left ()
                   slo_threshold_high
             )
           or
             (
                   slo_errors_per_request:ratio_rate6h{service!~"efk-.*|.*external-dns.*|kong-.*|.*(ingress-nginx|nginx-ingress-controller).*"}
-                > on (service) group_left ()
+                > on (cluster_id, service) group_left ()
                   slo_threshold_low
               and
                   slo_errors_per_request:ratio_rate30m{service!~"efk-.*|.*external-dns.*|kong-.*|.*(ingress-nginx|nginx-ingress-controller).*"}
-                > on (service) group_left ()
+                > on (cluster_id, service) group_left ()
                   slo_threshold_low
             ),
           "team",

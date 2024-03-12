@@ -59,18 +59,6 @@ spec:
         cluster_status_deleting: "true"
         team: phoenix
         topic: status
-    {{- if eq .Values.managementCluster.provider.kind "kvm" }}
-    - alert: InhibitionKVMClusterHasNoRunningCPNodes
-      annotations:
-        description: '{{`KVM Cluster {{ $labels.cluster_id }} has nodes down.`}}'
-      expr: label_replace(up{app=~"master|worker", cluster_type="management_cluster"} == 0, "cluster_id", "$1", "namespace", "(.*)")
-      labels:
-        area: kaas
-        nodes_down: "true"
-        team: phoenix
-        topic: status
-    {{- end }}
-    {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: InhibitionClusterWithNoNodePools
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} doesn''t have any node pools.`}}'
@@ -107,5 +95,4 @@ spec:
         instance_state_not_running: "true"
         team: phoenix
         topic: status
-    {{- end }}
 {{- end }}

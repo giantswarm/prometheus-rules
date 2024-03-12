@@ -25,7 +25,7 @@ spec:
         cancel_if_prometheus_agent_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{include "providerTeam" .}}
+        team: {{ include "providerTeam" . }}
         topic: capi
     - alert: ManagementClusterContainerIsRestartingTooFrequentlyCAPI
       annotations:
@@ -39,7 +39,7 @@ spec:
         cancel_if_prometheus_agent_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{include "providerTeam" .}}
+        team: {{ include "providerTeam" . }}
         topic: capi
     - alert: ManagementClusterDeploymentMissingCAPI
       annotations:
@@ -56,6 +56,6 @@ spec:
         cancel_if_prometheus_agent_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{include "providerTeam" .}}
+        team: {{ include "providerTeam" . }}
         topic: capi
  {{- end -}}

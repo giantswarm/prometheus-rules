@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Adjust CAPI rules.
 - Change ownership of `CadvisorDown` to Turtles/Phoenix.
 - Review alerting prior to Mimir migration.
 - Increase duration for fluentbit rules to avoid false alerts when a new release is deployed.

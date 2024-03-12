@@ -12,7 +12,8 @@ tests:
         exp_alerts:
           - exp_labels:
               area: kaas
-              cancel_if_outside_working_hours: "false"
+              cancel_if_prometheus_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
               severity: notify
               team: phoenix
               topic: managementcluster

@@ -5,11 +5,11 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'kube_secret_created{secret="grizzly-teleport-join-token"}'
+      - series: 'kube_secret_created{cluster_id="my-cluster", installation="golem", secret="grizzly-teleport-join-token"}'
         values: "1+0x40 1+0x40"
-      - series: 'kube_secret_created{secret="test-teleport-join-token"}'
+      - series: 'kube_secret_created{cluster_id="my-cluster", installation="golem", secret="test-teleport-join-token"}'
         values: "_x40   1+0x40"
-      - series: 'capi_cluster_status_phase{phase="Provisioned"}'
+      - series: 'capi_cluster_status_phase{name="my-cluster", installation="golem", phase="Provisioned"}'
         values: "1+0x40 1+0x40"
     alert_rule_test:
       - alertname: TeleportJoinTokenSecretMismatch
@@ -25,6 +25,8 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
+              cluster_id: my-cluster
+              installation: golem
               severity: page
               team: bigmac
               topic: teleport
@@ -32,11 +34,11 @@ tests:
               description: "Mismatch in number of teleport-join-token secrets and clusters"
   - interval: 1m
     input_series:
-      - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="grizzly", configmap="grizzly-teleport-kube-agent-config"}'
+      - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="my-cluster", installation="grizzly", configmap="grizzly-teleport-kube-agent-config"}'
         values: "1+0x40 1+0x40"
-      - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="grizzly", configmap="test-teleport-kube-agent-config"}'
+      - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="my-cluster", installation="grizzly", configmap="test-teleport-kube-agent-config"}'
         values: "_x40   1+0x40"
-      - series: 'capi_cluster_status_phase{phase="Provisioned",name="grizzly"}'
+      - series: 'capi_cluster_status_phase{phase="Provisioned", name="my-cluster", installation="grizzly"}'
         values: "1+0x40 1+0x40"
     alert_rule_test:
       - alertname: TeleportKubeAgentConfigMapMismatch
@@ -52,6 +54,8 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
+              cluster_id: my-cluster
+              installation: grizzly
               severity: page
               team: bigmac
               topic: teleport

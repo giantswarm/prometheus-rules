@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Remove `aws-network-topology-operator` from `ManagementClusterDeploymentMissingCAPA` alert.
+
 ## [3.0.3] - 2024-03-12
 
 ### Changed

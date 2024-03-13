@@ -11,7 +11,7 @@ spec:
       rules:
         - alert: PromtailDown
           annotations:
-            description: '{{`Scraping of all promtail pods to check if one failed every 5 minutes.`}}'
+            description: '{{`Scraping of all promtail pods to check if one failed every 30 minutes.`}}'
             opsrecipe: promtail-is-not-running/
           expr: count(up{container="promtail"} == 0) by (cluster_id) > 0
           for: 30m

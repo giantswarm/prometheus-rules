@@ -24,7 +24,7 @@ spec:
       name: ""
       namespace: ""
   name: grafana-agent
-  namespace: mimir
+  namespace: {{ .Values.namespace | quote }}
   # used by renovate
   # repo: giantswarm/grafana-agent-app
   version: 0.4.3

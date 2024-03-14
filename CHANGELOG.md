@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix teleport alerts for mimir.
 
+### Changed
+- Adjusted cert-manager `CertManagerPodHighMemoryUsage` alerting threshold (https://github.com/giantswarm/prometheus-rules/pull/1077)
+
 ## [3.1.0] - 2024-03-13
 
 ### Changed

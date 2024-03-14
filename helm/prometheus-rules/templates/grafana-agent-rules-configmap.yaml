@@ -16,4 +16,4 @@ data:
 kind: ConfigMap
 metadata:
   name: grafana-agent-rules-config
-  namespace: {{ .Release.Namespace | quote }}
+  namespace: giantswarm

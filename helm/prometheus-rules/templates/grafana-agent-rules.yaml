@@ -6,13 +6,13 @@ metadata:
     app-operator.giantswarm.io/version: 0.0.0
     {{- include "labels.common" . | nindent 4 }}
   name: grafana-agent-rules
-  namespace: {{ .Release.Namespace | quote }}
+  namespace: giantswarm
 spec:
   catalog: giantswarm
   config:
     configMap:
       name: grafana-agent-rules-config
-      namespace: {{ .Release.Namespace | quote }}
+      namespace: giantswarm
     secret:
       name: ""
       namespace: ""
@@ -24,7 +24,7 @@ spec:
       name: ""
       namespace: ""
   name: grafana-agent
-  namespace: {{ .Values.namespace | quote }}
+  namespace: mimir
   # used by renovate
   # repo: giantswarm/grafana-agent-app
   version: 0.4.3

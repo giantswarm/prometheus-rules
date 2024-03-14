@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add Grafana Agent App CR to be able to send our PrometheusRules CRs to Mimir.
+
 ### Fixed
 
 - Fix teleport alerts for mimir.

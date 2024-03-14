@@ -1,0 +1,19 @@
+apiVersion: v1
+data:
+  values: |
+    grafana-agent:
+      agent:
+        configMap:
+          content: |
+            mimir.rules.kubernetes "local" {
+              address = "http://mimir-ruler.mimir.svc:8080/"
+              tenant_id = "anonymous"
+            }
+      controller:
+        type: "deployment"
+      crds:
+        create: false
+kind: ConfigMap
+metadata:
+  name: grafana-agent-rules-config
+  namespace: {{ .Release.Namespace | quote }}

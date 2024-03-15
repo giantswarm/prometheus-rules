@@ -2,8 +2,8 @@ name: prometheus-rules
 namespace: monitoring
 serviceType: managed
 project:
-  branch: 'increase-promtaildown-for'
-  commit: '7d73a88d4832fc22af59f86bccc67412cae1e71e'
+  branch: '[[ .Branch ]]'
+  commit: '[[ .SHA ]]'
 managementCluster:
   customer: ""
   name: ""

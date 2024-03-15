@@ -19,7 +19,7 @@ tests:
       - alertname: PromtailDown
         eval_time: 30m
       - alertname: PromtailDown
-        eval_time: 70m
+        eval_time: 71m
         exp_alerts:
           - exp_labels:
               area: empowerment
@@ -36,7 +36,7 @@ tests:
               opsrecipe: "promtail-is-not-running/"
       # Tests with 2 pods
       - alertname: PromtailDown
-        eval_time: 110m
+        eval_time: 111m
         exp_alerts:
           - exp_labels:
               area: empowerment
@@ -52,9 +52,9 @@ tests:
               description: "Scraping of all promtail pods to check if one failed every 30 minutes."
               opsrecipe: "promtail-is-not-running/"
       - alertname: PromtailDown
-        eval_time: 120m
+        eval_time: 121m
       - alertname: PromtailDown
-        eval_time: 170m
+        eval_time: 180m
         exp_alerts:
           - exp_labels:
               area: empowerment

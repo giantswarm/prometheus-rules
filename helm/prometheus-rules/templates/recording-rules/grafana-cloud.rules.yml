@@ -162,7 +162,7 @@ spec:
       record: aggregation:container:images
   - name: certificates.grafana-cloud.recording
     rules:
-    - expr: min(cert_exporter_not_after) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: min(cert_exporter_not_after) by (app, job, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:giantswarm:cluster_certificate_not_after_seconds
   - name: happa.grafana-cloud.recording
     rules:

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Increase `PromtailDown` "for" value.
+
 ### Fixed
 
 - Fix missing recording rules removed when removing the azure provider.

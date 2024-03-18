@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `grafana-agent` App CR to send PrometheusRules to mimir ruler.
+
 ## [3.2.0] - 2024-03-18
 
 ### Changed

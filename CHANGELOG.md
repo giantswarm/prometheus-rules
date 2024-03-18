@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add labels to recording rules that are to be sent to mimir so the Prometheus instance in the Mimir architecture in-charge of sending data to Grafana Cloud can only select the data it needs and not try to execute all rules in this repository.
+
 ## [3.2.0] - 2024-03-18
 
 ### Changed

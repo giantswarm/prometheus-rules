@@ -17,10 +17,10 @@ spec:
       expr: avg(cilium_bpf_map_pressure) by (cluster_id, map_name) * 100 > 80
       for: 15m
       labels:
-        area: kaas
+        area: managedservices
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: phoenix
+        team: cabbage
         topic: cilium
     - alert: CiliumBPFMapFull
       annotations:
@@ -29,7 +29,7 @@ spec:
       expr: avg(cilium_bpf_map_pressure) by (cluster_id, map_name) * 100 > 95
       for: 15m
       labels:
-        area: kaas
+        area: managedservices
         severity: page
-        team: phoenix
+        team: cabbage
         topic: cilium

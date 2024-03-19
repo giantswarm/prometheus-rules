@@ -27,7 +27,7 @@ spec:
             "(.*)"
           )
         ) by (cluster_id, installation)
-      for: 120m
+      for: 2h
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"
@@ -54,7 +54,7 @@ spec:
             "(.*)"
           )
         ) by (cluster_id, installation)
-      for: 120m
+      for: 2h
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"

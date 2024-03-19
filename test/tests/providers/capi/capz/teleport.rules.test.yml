@@ -16,7 +16,7 @@ tests:
         eval_time: 30m
         exp_alerts: []
       - alertname: TeleportJoinTokenSecretMismatch
-        eval_time: 2h10m
+        eval_time: 130m
         exp_alerts:
           - exp_labels:
               alertname: TeleportJoinTokenSecretMismatch
@@ -45,7 +45,7 @@ tests:
         eval_time: 30m
         exp_alerts: []
       - alertname: TeleportKubeAgentConfigMapMismatch
-        eval_time: 2h10m
+        eval_time: 130m
         exp_alerts:
           - exp_labels:
               alertname: TeleportKubeAgentConfigMapMismatch

@@ -29,7 +29,7 @@ spec:
       annotations:
         description: 'Grafana-agent sending PrometheusRules to Mimir ruler is down.'
       expr: count(up{app="grafana-agent", namespace="mimir"} == 0) by (cluster_id) > 0
-      for: 10m
+      for: 1h
       labels:
         area: managedservices
         cancel_if_apiserver_down: "true"
@@ -44,7 +44,7 @@ spec:
       annotations:
         description: 'Mimir ruler is failing to process PrometheusRules.'
       expr: rate(mimir_rules_events_failed_total{cluster_type="management_cluster"}[5m]) > 0
-      for: 10m
+      for: 1h
       labels:
         area: managedservices
         cancel_if_apiserver_down: "true"

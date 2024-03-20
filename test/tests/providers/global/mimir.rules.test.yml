@@ -35,14 +35,14 @@ tests:
     input_series:
       # For the first 50min: test with 1 pod: none, up, down
       - series: 'up{app="grafana-agent",cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="mimir"}'
-        values: "_x20 1+0x10 0+0x20"
+        values: "_x20 1+0x70 0+0x70"
     alert_rule_test:
       - alertname: GrafanaAgentForPrometheusRulesDown
         eval_time: 10m
       - alertname: GrafanaAgentForPrometheusRulesDown
-        eval_time: 30m
+        eval_time: 80m
       - alertname: GrafanaAgentForPrometheusRulesDown
-        eval_time: 45m
+        eval_time: 160m
         exp_alerts:
           - exp_labels:
               area: managedservices
@@ -61,12 +61,12 @@ tests:
     input_series:
       # For the first 60min: none, rate > 0, rate = 0
       - series: 'mimir_rules_events_failed_total{cluster_type="management_cluster", cluster_id="golem", installation="golem"}'
-        values: "_x20 1+1x20 0+0x20"
+        values: "_x20 1+1x70 0+0x70"
     alert_rule_test:
       - alertname: MimirRulerEventsFailed
         eval_time: 25m
       - alertname: MimirRulerEventsFailed
-        eval_time: 35m
+        eval_time: 90m
         exp_alerts:
           - exp_labels:
               area: managedservices
@@ -84,4 +84,4 @@ tests:
             exp_annotations:
               description: "Mimir ruler is failing to process PrometheusRules."
       - alertname: MimirRulerEventsFailed
-        eval_time: 60m
+        eval_time: 160m

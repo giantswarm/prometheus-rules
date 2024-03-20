@@ -2,8 +2,8 @@ name: prometheus-rules
 namespace: monitoring
 serviceType: managed
 project:
-  branch: '[[ .Branch ]]'
-  commit: '[[ .SHA ]]'
+  branch: 'add-grafana-agent-alerting'
+  commit: '3c12208b896b8a87be96ab2ed33536aee3dbe8fe'
 managementCluster:
   customer: ""
   name: ""

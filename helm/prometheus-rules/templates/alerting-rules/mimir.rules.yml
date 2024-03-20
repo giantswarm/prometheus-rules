@@ -43,7 +43,7 @@ spec:
     - alert: MimirRulerEventsFailed
       annotations:
         description: 'Mimir ruler is failing to process PrometheusRules.'
-      expr: rate(mimir_rules_events_failed_total{cluster_type="management_cluster"}[5m]) > 0
+      expr: rate(mimir_rules_events_failed_total{cluster_type="management_cluster", namespace="mimir"}[5m]) > 0
       for: 1h
       labels:
         area: managedservices

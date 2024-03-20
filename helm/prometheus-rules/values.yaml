@@ -3,7 +3,7 @@ namespace: monitoring
 serviceType: managed
 project:
   branch: 'add-grafana-agent-alerting'
-  commit: '3c12208b896b8a87be96ab2ed33536aee3dbe8fe'
+  commit: 'f1976837d1573d974b04ae40ef34ac13904f7d39'
 managementCluster:
   customer: ""
   name: ""

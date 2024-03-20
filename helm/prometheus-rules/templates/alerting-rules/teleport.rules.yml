@@ -27,14 +27,14 @@ spec:
             "(.*)"
           )
         ) by (cluster_id, installation)
-      for: 30m
+      for: 120m
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: notify
         team: bigmac
         topic: teleport
     - alert: TeleportKubeAgentConfigMapMismatch
@@ -54,13 +54,13 @@ spec:
             "(.*)"
           )
         ) by (cluster_id, installation)
-      for: 30m
+      for: 120m
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: notify
         team: bigmac
         topic: teleport

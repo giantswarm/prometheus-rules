@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Changed severity for `TeleportJoinTokenSecret/ConfigmapMistamch` to `notify` and increased alert interval from 30m to 120m
+
 ## [3.3.0] - 2024-03-18
 
 ### Added

@@ -6,17 +6,17 @@ tests:
   - interval: 1m
     input_series:
       - series: 'kube_secret_created{cluster_id="my-cluster", installation="golem", secret="grizzly-teleport-join-token"}'
-        values: "1+0x40 1+0x40"
+        values: "1+0x150"
       - series: 'kube_secret_created{cluster_id="my-cluster", installation="golem", secret="test-teleport-join-token"}'
-        values: "_x40   1+0x40"
+        values: "0+0x150"
       - series: 'capi_cluster_status_phase{name="my-cluster", installation="golem", phase="Provisioned"}'
-        values: "1+0x40 1+0x40"
+        values: "1+0x150"
     alert_rule_test:
       - alertname: TeleportJoinTokenSecretMismatch
         eval_time: 30m
         exp_alerts: []
       - alertname: TeleportJoinTokenSecretMismatch
-        eval_time: 70m
+        eval_time: 140m
         exp_alerts:
           - exp_labels:
               alertname: TeleportJoinTokenSecretMismatch
@@ -27,7 +27,7 @@ tests:
               cancel_if_outside_working_hours: "true"
               cluster_id: my-cluster
               installation: golem
-              severity: page
+              severity: notify
               team: bigmac
               topic: teleport
             exp_annotations:
@@ -35,17 +35,17 @@ tests:
   - interval: 1m
     input_series:
       - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="my-cluster", installation="grizzly", configmap="grizzly-teleport-kube-agent-config"}'
-        values: "1+0x40 1+0x40"
+        values: "1+0x150"
       - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="my-cluster", installation="grizzly", configmap="test-teleport-kube-agent-config"}'
-        values: "_x40   1+0x40"
+        values: "0+0x150"
       - series: 'capi_cluster_status_phase{phase="Provisioned", name="my-cluster", installation="grizzly"}'
-        values: "1+0x40 1+0x40"
+        values: "1+0x150"
     alert_rule_test:
       - alertname: TeleportKubeAgentConfigMapMismatch
         eval_time: 30m
         exp_alerts: []
       - alertname: TeleportKubeAgentConfigMapMismatch
-        eval_time: 70m
+        eval_time: 140m
         exp_alerts:
           - exp_labels:
               alertname: TeleportKubeAgentConfigMapMismatch
@@ -56,7 +56,7 @@ tests:
               cancel_if_outside_working_hours: "true"
               cluster_id: my-cluster
               installation: grizzly
-              severity: page
+              severity: notify
               team: bigmac
               topic: teleport
             exp_annotations:

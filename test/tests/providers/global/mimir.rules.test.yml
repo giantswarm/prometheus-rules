@@ -31,3 +31,58 @@ tests:
               cluster_id: gauss
             exp_annotations:
               description: "Mimir component : mimir-ingester is down."
+  - interval: 1m
+    input_series:
+      # test with 1 pod: none, up, down
+      - series: 'up{app="grafana-agent",cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="mimir"}'
+        values: "_x20 1+0x70 0+0x70"
+    alert_rule_test:
+      - alertname: GrafanaAgentForPrometheusRulesDown
+        eval_time: 10m
+      - alertname: GrafanaAgentForPrometheusRulesDown
+        eval_time: 80m
+      - alertname: GrafanaAgentForPrometheusRulesDown
+        eval_time: 160m
+        exp_alerts:
+          - exp_labels:
+              area: managedservices
+              cancel_if_apiserver_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: golem
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Grafana-agent sending PrometheusRules to Mimir ruler is down."
+  - interval: 1m
+    input_series:
+      # test: none, rate > 0, rate = 0
+      - series: 'mimir_rules_events_failed_total{cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="mimir"}'
+        values: "_x20 1+1x80 0+0x70"
+    alert_rule_test:
+      - alertname: MimirRulerEventsFailed
+        eval_time: 40m
+      - alertname: MimirRulerEventsFailed
+        eval_time: 95m
+        exp_alerts:
+          - exp_labels:
+              area: managedservices
+              cancel_if_apiserver_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: golem
+              cluster_type: management_cluster
+              installation: golem
+              namespace: mimir
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Mimir ruler is failing to process PrometheusRules."
+      - alertname: MimirRulerEventsFailed
+        eval_time: 160m

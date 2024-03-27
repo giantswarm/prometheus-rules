@@ -3,6 +3,7 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
+    giantswarm.io/remote-write-target: grafana-cloud
   name: service-level.recording.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -40,7 +41,7 @@ spec:
         label_application_giantswarm_io_team: {{ include "providerTeam" . }}
       record: slo_target
 
-      # -- daemonset
+      # -- KAAS daemonset
     - expr: |
         label_replace(
           kube_daemonset_status_desired_number_scheduled{namespace=~"giantswarm|kube-system", daemonset=~"aws-node|aws-cloud-controller-manager|ebs-csi-node|calico-node|cert-exporter|kube-proxy|net-exporter|node-exporter|azure-cloud-controller-manager|azure-cloud-node-manager|azure-scheduled-events|csi-azuredisk-node|cilium"},
@@ -79,6 +80,48 @@ spec:
       labels:
         area: kaas
         label_application_giantswarm_io_team: {{ include "providerTeam" . }}
+      record: slo_target
+
+      # -- empowerment daemonset
+    - expr: |
+        label_replace(
+          kube_daemonset_status_desired_number_scheduled{namespace=~"giantswarm|kube-system", daemonset=~"cilium"},
+        "service", "$1", "daemonset", "(.*)" )
+      labels:
+        class: MEDIUM
+        area: empowerment
+        label_application_giantswarm_io_team: cabbage
+      record: raw_slo_requests
+      # -- the errors are counted as follows:
+      # -- pods in a daemonset that are UNAVAILABLE NOW and have been UNAVAILABLE 10 MINUTES AGO
+      # -- which are on a SCHEDULABLE node that was CREATED AT LEAST 10 MINUTES AGO
+    - expr: |
+        (
+          (
+            label_replace(
+              kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"cilium"},
+              "service", "$1", "daemonset", "(.*)" ) > 0
+            and on (cluster_id, cluster_type, customer, installation, pipeline, provider, region, daemonset, node)
+            label_replace(
+              kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"cilium"} offset 10m,
+              "service", "$1", "daemonset", "(.*)" ) > 0
+          )
+          and
+          on (cluster_id, cluster_type, customer, installation, pipeline, provider, region, node) kube_node_spec_unschedulable == 0
+        )
+        and
+        on (cluster_id, cluster_type, customer, installation, pipeline, provider, region, node) time() - kube_node_created > 10 * 60
+      labels:
+        class: MEDIUM
+        area: empowerment
+        label_application_giantswarm_io_team: cabbage
+      record: raw_slo_errors
+      # -- 99% availability
+      # -- this expression collects all the daemonsets and assigns the same slo target to all of them
+    - expr: sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, service, area) (raw_slo_errors{area="empowerment", service=~"cilium"}) + 1-0.99
+      labels:
+        area: empowerment
+        label_application_giantswarm_io_team: cabbage
       record: slo_target
 
       # -- kubelet whole cluster

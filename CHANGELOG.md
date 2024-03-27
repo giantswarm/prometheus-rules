@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.5.0] - 2024-03-27
+
+### Changed
+
+- Assign `cilium` SLO alerts to cabbage/empowerment.
+
+## [3.4.0] - 2024-03-25
+
+### Added
+
+- Add rules to monitor that `grafana-agent` is sending `PrometheusRules` to `Mimir ruler`.
+- Add rules to monitor that `grafana-agent` is running.
+
+### Changed
+
+- Changed severity for `TeleportJoinTokenSecret/ConfigmapMistamch` to `notify` and increased alert interval from 30m to 120m
+
+## [3.3.0] - 2024-03-18
+
+### Added
+
+- Add label `giantswarm.io/remote-write-target: grafana-cloud` to recording rules that are to be sent to mimir so the Prometheus instance in the Mimir architecture in-charge of sending data to Grafana Cloud can only select the data it needs and not try to execute all rules in this repository.
+- Add `grafana-agent` App CR to send PrometheusRules to mimir ruler.
+
+## [3.2.0] - 2024-03-18
+
+### Changed
+
+- Increase `PromtailDown` "for" value.
+
+### Fixed
+
+- Fix missing recording rules removed when removing the azure provider.
+- Fix certificate recording rules.
+
 ## [3.1.1] - 2024-03-14
 
 ### Fixed
@@ -2494,7 +2529,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.1.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.5.0...HEAD
+[3.5.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.4.0...v3.5.0
+[3.4.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.3.0...v3.4.0
+[3.3.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.2.0...v3.3.0
+[3.2.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.1.1...v3.2.0
 [3.1.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.0.3...v3.1.0
 [3.0.3]: https://github.com/giantswarm/prometheus-rules/compare/v3.0.2...v3.0.3

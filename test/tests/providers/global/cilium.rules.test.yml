@@ -17,9 +17,9 @@ tests:
         eval_time: 50m
         exp_alerts:
           - exp_labels:
-              area: kaas
+              area: managedservices
               severity: page
-              team: phoenix
+              team: cabbage
               topic: cilium
               cancel_if_outside_working_hours: "true"
               map_name: "policy_00001"
@@ -39,9 +39,9 @@ tests:
         eval_time: 70m
         exp_alerts:
           - exp_labels:
-              area: kaas
+              area: managedservices
               severity: page
-              team: phoenix
+              team: cabbage
               topic: cilium
               map_name: "policy_00001"
             exp_annotations:

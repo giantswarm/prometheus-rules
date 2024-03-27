@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Add missing alert about loki statefulsets not running to ensure we do not suffer from (extra cloud cost)[https://github.com/giantswarm/giantswarm/issues/30124].
+
 ## [3.5.0] - 2024-03-27
 
 ### Changed

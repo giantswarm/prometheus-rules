@@ -3,12 +3,33 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: grafana.all.rules
+  name: loki.rules
   namespace: {{ .Values.namespace }}
 spec:
   groups:
   - name: loki
     rules:
+    # Coming from https://github.com/giantswarm/giantswarm/issues/30124
+    # This alert ensures Loki statefulsets (loki-write and loki-backend) are running as expected.
+    # If it is not the the case, this can incur high costs by cloud providers (s3 api calls are quite expensive).
+    - alert: LokiStatefulsetNotRunning
+      annotations:
+        description: '{{`Loki statefulsets are not running.`}}'
+        opsrecipe: loki/
+      expr: |
+        kube_statefulset_status_replicas{cluster_type="management_cluster", namespace="loki"}
+        - 
+        kube_statefulset_status_replicas_available{cluster_type="management_cluster", namespace="loki"}
+        > 0
+      for: 30m
+      labels:
+        area: managedservices
+        # This label is used to ensure the alert go through even for non-stable installations
+        all_pipelines: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
     # Rules inspired from loki-mixins - https://github.com/grafana/loki/blob/main/production/loki-mixin-compiled/alerts.yaml
     - alert: LokiRequestErrors
       annotations:

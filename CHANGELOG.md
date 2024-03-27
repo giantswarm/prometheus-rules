@@ -10,8 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Assign `cilium` SLO alerts to cabbage/empowerment.
+
+## [3.4.0] - 2024-03-25
+
+### Added
+
 - Add rules to monitor that `grafana-agent` is sending `PrometheusRules` to `Mimir ruler`.
 - Add rules to monitor that `grafana-agent` is running.
+
+### Changed
+
 - Changed severity for `TeleportJoinTokenSecret/ConfigmapMistamch` to `notify` and increased alert interval from 30m to 120m
 
 ## [3.3.0] - 2024-03-18
@@ -2519,7 +2527,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.3.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.4.0...HEAD
+[3.4.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.3.0...v3.4.0
 [3.3.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.1.1...v3.2.0
 [3.1.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.1.0...v3.1.1

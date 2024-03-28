@@ -84,8 +84,10 @@ tests:
         eval_time: 160m
   - interval: 1m
     input_series:
-      - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir"}'
-        values: "0+0x20 0+5x20 100+0x120"  # 0 restarts after 20 minutes then we ramp up to 100 restarts in 20 minutes and then back to 0
+      - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container="mimir-ingester"}'
+        values: "0+0x20 0+5x20 100+0x140" # 0 restarts after 20 minutes then we restart 5 times per minute for 20 minutes then we stop restarting for 140 minutes
+      - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container="prometheus"}'
+        values: "0+5x180"                 # prometheus container restarts 5 times per minute for 180 minutes
     alert_rule_test:
       - alertname: MimirRestartingTooOften
         eval_time: 15m  # should be OK after 15 minutes
@@ -98,6 +100,7 @@ tests:
               area: managedservices
               cancel_if_outside_working_hours: "true"
               cluster_type: management_cluster
+              container: mimir-ingester
               namespace: mimir
               severity: page
               team: atlas

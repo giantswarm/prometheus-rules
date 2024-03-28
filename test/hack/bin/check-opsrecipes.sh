@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # List of generated rules
-RULES_FILES=(./test/hack/output/*/prometheus-rules/templates/alerting-rules/*)
+RULES_FILES=(./test/hack/output/*/*/prometheus-rules/templates/alerting-rules/*)
 #RULES_FILES=(./test/hack/output/*/prometheus-rules/templates/alerting-rules/up*)
 
 DEBUG_MODE=false

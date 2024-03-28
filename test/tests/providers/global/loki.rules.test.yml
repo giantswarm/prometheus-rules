@@ -100,16 +100,14 @@ tests:
               opsrecipe: "loki/"
   - interval: 1m
     input_series:
-      - series: 'kube_statefulset_status_replicas{cluster_type="management_cluster", namespace="loki"}'
-        values: "2+0x20 2+0x160"  # 1 unhealthy value after 20 minutes
-      - series: 'kube_statefulset_status_replicas_available{cluster_type="management_cluster", namespace="loki"}'
-        values: "0+0x20 1+0x60 2+0x100"  # 1 pod stop working after 20 minutes then come back up after 60 minutes
+      - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="loki"}'
+        values: "0+0x20 0+100x20 0+0x120"  # 0 restarts after 20 minutes then we ramp up to 100 restarts in 20 minutes and then back to 0
     alert_rule_test:
-      - alertname: LokiStatefulsetNotRunning
+      - alertname: LokiRestartingTooOften
         eval_time: 15m  # should be OK after 15 minutes
         exp_alerts:
-      - alertname: LokiStatefulsetNotRunning
-        eval_time: 60m  # After 60 minutes, should fire an alert for the t+60 error
+      - alertname: LokiRestartingTooOften
+        eval_time: 85m  # After 85 minutes, should fire an alert for the t+85 error
         exp_alerts:
           - exp_labels:
               all_pipelines: true
@@ -121,8 +119,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              description: Loki statefulsets are not running.
+              description: Loki containers are restarting too often.
               opsrecipe: loki/
-      - alertname: LokiStatefulsetNotRunning
-        eval_time: 120m  # After 120m minutes, all should be back to normal
+      - alertname: LokiRestartingTooOften
+        eval_time: 140m  # After 140m minutes, all should be back to normal
         exp_alerts:

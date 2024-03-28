@@ -10,18 +10,17 @@ spec:
   - name: loki
     rules:
     # Coming from https://github.com/giantswarm/giantswarm/issues/30124
-    # This alert ensures Loki statefulsets (loki-write and loki-backend) are running as expected.
+    # This alert ensures Loki containers are not restarting too often (flappiness).
     # If it is not the the case, this can incur high costs by cloud providers (s3 api calls are quite expensive).
-    - alert: LokiStatefulsetNotRunning
+    - alert: LokiRestartingTooOften
       annotations:
-        description: '{{`Loki statefulsets are not running.`}}'
+        description: '{{`Loki containers are restarting too often.`}}'
         opsrecipe: loki/
       expr: |
-        kube_statefulset_status_replicas{cluster_type="management_cluster", namespace="loki"}
-        - 
-        kube_statefulset_status_replicas_available{cluster_type="management_cluster", namespace="loki"}
-        > 0
-      for: 30m
+        increase(
+          kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="loki"}[1h]
+        ) > 5
+      for: 5m
       labels:
         area: managedservices
         # This label is used to ensure the alert go through even for non-stable installations

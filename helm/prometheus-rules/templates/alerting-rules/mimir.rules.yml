@@ -9,6 +9,21 @@ spec:
   groups:
   - name: mimir
     rules:
+    # This alert is meant to always fire, to ensure the entire alerting pipeline is functional.
+    - alert: "Heartbeat"
+      annotations:
+        description: This alert is used to ensure the entire alerting pipeline is functional.
+      expr: up{app="mimir"} > 0
+      labels:
+        area: "empowerment"
+        # TODO(@team-atlas): do we need this label? Let's test once we use mimir alertmanager
+        installation: {{ .Values.managementCluster.name }}
+        team: "atlas"
+        topic: "observability"
+        # TODO(@team-atlas): do we need this label? Let's test once we use mimir alertmanager
+        type: "heartbeat"
+        # TODO(@team-atlas): remove once we use mimir alertmanager
+        namespace: "monitoring" # Needed due to https://github.com/prometheus-operator/prometheus-operator/issues/3737
     - alert: MimirComponentDown
       annotations:
         description: '{{`Mimir component : {{ $labels.service }} is down.`}}'

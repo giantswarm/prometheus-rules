@@ -12,12 +12,13 @@ spec:
     # Coming from https://github.com/giantswarm/giantswarm/issues/30124
     # This alert ensures Mimir containers are not restarting too often (flappiness).
     # If it is not the the case, this can incur high costs by cloud providers (s3 api calls are quite expensive).
+    # This alert will not page for the prometheus-buddy.
     - alert: MimirRestartingTooOften
       annotations:
         description: '{{`Mimir containers are restarting too often.`}}'
       expr: |
         increase(
-          kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir"}[1h]
+          kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container!="prometheus"}[1h]
         ) > 5
       for: 5m
       labels:

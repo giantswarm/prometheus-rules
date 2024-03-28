@@ -9,6 +9,25 @@ spec:
   groups:
   - name: mimir
     rules:
+    # Coming from https://github.com/giantswarm/giantswarm/issues/30124
+    # This alert ensures Mimir containers are not restarting too often (flappiness).
+    # If it is not the the case, this can incur high costs by cloud providers (s3 api calls are quite expensive).
+    - alert: MimirRestartingTooOften
+      annotations:
+        description: '{{`Mimir containers are restarting too often.`}}'
+      expr: |
+        increase(
+          kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir"}[1h]
+        ) > 5
+      for: 5m
+      labels:
+        area: managedservices
+        # This label is used to ensure the alert go through even for non-stable installations
+        all_pipelines: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
     - alert: MimirComponentDown
       annotations:
         description: '{{`Mimir component : {{ $labels.service }} is down.`}}'
@@ -16,11 +35,9 @@ spec:
       for: 5m
       labels:
         area: managedservices
-        cancel_if_apiserver_down: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_scrape_timeout: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -32,7 +49,6 @@ spec:
       for: 1h
       labels:
         area: managedservices
-        cancel_if_apiserver_down: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -47,7 +63,6 @@ spec:
       for: 1h
       labels:
         area: managedservices
-        cancel_if_apiserver_down: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"

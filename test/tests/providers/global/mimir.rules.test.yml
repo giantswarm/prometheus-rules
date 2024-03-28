@@ -22,11 +22,9 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              cancel_if_apiserver_down: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
-              cancel_if_scrape_timeout: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: gauss
             exp_annotations:
@@ -46,7 +44,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: managedservices
-              cancel_if_apiserver_down: "true"
               cancel_if_outside_working_hours: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
@@ -70,7 +67,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: managedservices
-              cancel_if_apiserver_down: "true"
               cancel_if_outside_working_hours: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
@@ -86,3 +82,28 @@ tests:
               description: "Mimir ruler is failing to process PrometheusRules."
       - alertname: MimirRulerEventsFailed
         eval_time: 160m
+  - interval: 1m
+    input_series:
+      - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir"}'
+        values: "0+0x20 0+5x20 100+0x120"  # 0 restarts after 20 minutes then we ramp up to 100 restarts in 20 minutes and then back to 0
+    alert_rule_test:
+      - alertname: MimirRestartingTooOften
+        eval_time: 15m  # should be OK after 15 minutes
+        exp_alerts:
+      - alertname: MimirRestartingTooOften
+        eval_time: 85m  # After 85 minutes, should fire an alert for the t+85 error
+        exp_alerts:
+          - exp_labels:
+              all_pipelines: true
+              area: managedservices
+              cancel_if_outside_working_hours: "true"
+              cluster_type: management_cluster
+              namespace: mimir
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Mimir containers are restarting too often.
+      - alertname: MimirRestartingTooOften
+        eval_time: 140m  # After 140m minutes, all should be back to normal
+        exp_alerts:

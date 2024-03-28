@@ -12,3 +12,10 @@ managementCluster:
 
 mimir:
   enabled: false
+
+Installation:
+  V1:
+    Guest:
+      Kubernetes:
+        IngressController:
+          BaseDomain: ""

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add Heartbeat alert for mimir.
+
 ## [3.5.0] - 2024-03-27
 
 ### Changed

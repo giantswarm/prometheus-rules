@@ -1,6 +1,6 @@
 ---
 rule_files:
-  - loki.all.rules.yml
+  - loki.rules.yml
 
 tests:
   - interval: 1m
@@ -98,3 +98,29 @@ tests:
             exp_annotations:
               description: "Loki pod loki-compactor-676b8c897b-rq298 (namespace loki) sees 1 unhealthy ring members"
               opsrecipe: "loki/"
+  - interval: 1m
+    input_series:
+      - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="loki"}'
+        values: "0+0x20 0+5x20 100+0x140" # 0 restarts after 20 minutes then we restart 5 times per minute for 20 minutes then we stop restarting for 140 minutes
+    alert_rule_test:
+      - alertname: LokiRestartingTooOften
+        eval_time: 15m  # should be OK after 15 minutes
+        exp_alerts:
+      - alertname: LokiRestartingTooOften
+        eval_time: 85m  # After 85 minutes, should fire an alert for the t+85 error
+        exp_alerts:
+          - exp_labels:
+              all_pipelines: true
+              area: managedservices
+              cancel_if_outside_working_hours: "true"
+              cluster_type: management_cluster
+              namespace: loki
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Loki containers are restarting too often.
+              opsrecipe: loki/
+      - alertname: LokiRestartingTooOften
+        eval_time: 140m  # After 140m minutes, all should be back to normal
+        exp_alerts:

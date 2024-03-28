@@ -60,6 +60,10 @@ Any Alert includes:
    - `cancel_if_.*`
 
 
+### Specific alert labels
+
+- `all_pipelines: true`: When adding this label to an alert, you are sure the alert will be send to opsgenie, even if the installation is not a stable installation.
+
 #### Routing
 
 Alertmanager does the routing based on the labels menitoned above.

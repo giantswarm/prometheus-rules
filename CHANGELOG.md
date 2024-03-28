@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add Heartbeat alert for mimir.
+- Add missing alert about loki containers not running to ensure we do not suffer from [extra cloud cost](https://github.com/giantswarm/giantswarm/issues/30124).
+- Add missing alert about mimir containers not running to ensure we do not suffer from [extra cloud cost](https://github.com/giantswarm/giantswarm/issues/30124).
 
 ## [3.5.0] - 2024-03-27
 

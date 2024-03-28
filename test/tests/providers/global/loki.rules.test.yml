@@ -101,7 +101,7 @@ tests:
   - interval: 1m
     input_series:
       - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="loki"}'
-        values: "0+0x20 0+100x20 0+0x120"  # 0 restarts after 20 minutes then we ramp up to 100 restarts in 20 minutes and then back to 0
+        values: "0+0x20 0+5x20 100+0x120"  # 0 restarts after 20 minutes then we ramp up to 100 restarts in 20 minutes and then back to 0
     alert_rule_test:
       - alertname: LokiRestartingTooOften
         eval_time: 15m  # should be OK after 15 minutes

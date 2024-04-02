@@ -28,7 +28,7 @@ spec:
         topic: kubernetes
       annotations:
         description: '{{`Kubelet ({{ $labels.instance }}) is down.`}}'
-    # TODO: fix with real expr 
+    # TODO(@team-turtles): fix with real expr
     - alert: ScrapeTimeout
       annotations:
         description: '{{`Never fires (dummy alert).`}}'
@@ -38,7 +38,7 @@ spec:
         scrape_timeout: "true"
         team: phoenix
         topic: monitoring
-    # TODO: fix with real expr
+    # TODO(@team-turtles): fix with real expr
     - alert: ApiServerDown
       annotations:
         description: '{{`Never fires (dummy alert).`}}'

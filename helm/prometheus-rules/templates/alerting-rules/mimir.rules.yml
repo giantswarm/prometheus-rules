@@ -1,3 +1,4 @@
+{{- if .Values.mimir.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -9,6 +10,18 @@ spec:
   groups:
   - name: mimir
     rules:
+    # This alert is meant to always fire, to ensure the entire alerting pipeline is functional.
+    - alert: "Heartbeat"
+      annotations:
+        description: This alert is used to ensure the entire alerting pipeline is functional.
+      expr: up{app="mimir"} > 0
+      labels:
+        area: "empowerment"
+        installation: {{ .Values.managementCluster.name }}
+        # TODO(@team-atlas): We need this label as long as we have the old and new heartbeats. Let's remove once the legacy monitoring is gone
+        type: "mimir-heartbeat"
+        team: "atlas"
+        topic: "observability"
     # Coming from https://github.com/giantswarm/giantswarm/issues/30124
     # This alert ensures Mimir containers are not restarting too often (flappiness).
     # If it is not the the case, this can incur high costs by cloud providers (s3 api calls are quite expensive).
@@ -71,3 +84,4 @@ spec:
         severity: page
         team: atlas
         topic: observability
+{{- end }}

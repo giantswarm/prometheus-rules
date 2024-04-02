@@ -1,3 +1,4 @@
+{{- if .Values.mimir.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -577,3 +578,4 @@ spec:
     - expr: |
         sum by(cluster, namespace, pod) (rate(cortex_ingester_ingested_samples_total[1m]))
       record: cluster_namespace_pod:cortex_ingester_ingested_samples_total:rate1m
+{{- end }}

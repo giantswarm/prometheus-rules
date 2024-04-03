@@ -22,6 +22,9 @@ template-chart: install-tools ## prepare the helm chart
 test-rules: install-tools template-chart ## run unit tests for alerting rules
 	bash test/hack/bin/verify-rules.sh "$(test_filter)"
 
+test-rules: install-tools template-chart ## run unit tests for alerting rules
+	bash test/hack/bin/verify-rules.sh "$(test_filter)"
+
 test-inhibitions: install-tools template-chart ## test whether inhibition labels are well defined
 	bash test/hack/bin/get-inhibition.sh
 	cd test/hack/checkLabels; go run main.go

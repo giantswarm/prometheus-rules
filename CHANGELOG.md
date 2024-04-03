@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add non-blocking opsrecipe validation.
+
 ## [3.7.2] - 2024-04-08
 
 ### Fixed

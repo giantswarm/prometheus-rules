@@ -6,9 +6,11 @@ RULES_FILES=(./test/hack/output/*/*/prometheus-rules/templates/alerting-rules/*)
 #RULES_FILES=(./test/hack/output/*/prometheus-rules/templates/alerting-rules/up*)
 
 DEBUG_MODE=false
+
 CHECK_EXTRADATA_ERRORS=true
 CHECK_NORECIPE_ERRORS=true
 CHECK_UNEXISTINGRECIPE_ERRORS=true
+OPSRECIPES_DIR=
 
 # Parameters:
 # - an element
@@ -29,13 +31,17 @@ isInArray () {
 
 
 listOpsRecipes () {
-    # find list of opsrecipes from git repo
-    tmpDir="$(mktemp -d)"
-    git clone --depth 1 --single-branch -b main -q git@github.com:giantswarm/giantswarm.git "$tmpDir"
+    # find list of opsrecipes from git repo if the OPSRECIPES_DIR is not set
+    if [ -z "$OPSRECIPES_DIR" ]; then
+        tmpDir="$(mktemp -d)"
+        git clone --depth 1 --single-branch -b main -q git@github.com:giantswarm/giantswarm.git "$tmpDir"
+        OPSRECIPES_DIR="$tmpDir"
+    fi
+
     # find all ops-recipes ".md" files, and keep only the opsrecipe name (may contain a path, like "rolling-nodes/rolling-nodes")
-    find "$tmpDir"/content/docs/support-and-ops/ops-recipes -type f -name \*.md \
-        | sed -n 's_'"$tmpDir"'/content/docs/support-and-ops/ops-recipes/\(.*\).md_\1_p'
-    rm -rf "$tmpDir"
+    find "$OPSRECIPES_DIR"/content/docs/support-and-ops/ops-recipes -type f -name \*.md \
+        | sed -n 's_'"$OPSRECIPES_DIR"'/content/docs/support-and-ops/ops-recipes/\(.*\).md_\1_p'
+    rm -rf "$OPSRECIPES_DIR"
 
     # Add extra opsrecipes
     # These ones are defined as aliases of `deployment-not-satisfied`:

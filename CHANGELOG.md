@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.6.2] - 2024-04-04
 
+### Changed
+
+- Limit alerts for the split setup (dual vs single flux) to the `flux-giantswarm` controller ones.
+
 ## [3.6.1] - 2024-04-04
 
 ### Changed

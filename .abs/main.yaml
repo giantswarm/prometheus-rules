@@ -1,0 +1,5 @@
+replace-chart-version-with-git: true
+generate-metadata: true
+chart-dir: ./helm/cluster-aws
+destination: ./build
+ct-config: ./.circleci/ct-config.yaml

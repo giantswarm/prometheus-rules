@@ -33,3 +33,18 @@ spec:
         severity: page
         team: cabbage
         topic: cilium
+    - alert: CiliumFailedNetworkPolicy
+      annotations:
+        description: '{{`Too many Cilium Network Policy errors.`}}'
+        opsrecipe: unsupported-cilium-network-policy/
+      # cilium_policy_change_total - for cilium >=1.15
+      # cilium_policy_import_errors_total - for cilium <1.15
+      expr: (sum_over_time(cilium_policy_change_total{outcome=~"fail.*"}[5m]) OR sum_over_time(cilium_policy_import_errors_total[5m]) OR vector(0)) > 10
+      for: 30m
+      labels:
+        area: managedservices
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: cabbage
+        topic: cilium
+

@@ -5,6 +5,55 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
+      # For the first 60min: test with 1 pod: up, none, up, down, up
+      - series: 'up{app="mimir"}'
+        values: "1+0x60 _x30 1+0x30 0+0x30 1+0x30"
+    alert_rule_test:
+      - alertname:  Heartbeat
+        eval_time: 20m
+        exp_alerts:
+          - exp_labels:
+              app: mimir
+              area: empowerment
+              installation: myinstall
+              namespace: monitoring
+              team: atlas
+              topic: observability
+              type: heartbeat
+            exp_annotations:
+              description: "This alert is used to ensure the entire alerting pipeline is functional."
+      - alertname:  Heartbeat
+        eval_time: 70m
+      - alertname:  Heartbeat
+        eval_time: 95m
+        exp_alerts:
+          - exp_labels:
+              app: mimir
+              area: empowerment
+              installation: myinstall
+              namespace: monitoring
+              team: atlas
+              topic: observability
+              type: heartbeat
+            exp_annotations:
+              description: "This alert is used to ensure the entire alerting pipeline is functional."
+      - alertname:  Heartbeat
+        eval_time: 140m
+      - alertname:  Heartbeat
+        eval_time: 165m
+        exp_alerts:
+          - exp_labels:
+              app: mimir
+              area: empowerment
+              installation: myinstall
+              namespace: monitoring
+              team: atlas
+              topic: observability
+              type: heartbeat
+            exp_annotations:
+              description: "This alert is used to ensure the entire alerting pipeline is functional."
+  - interval: 1m
+    input_series:
       # For the first 60min: test with 1 pod: none, up, down
       - series: 'up{app="mimir",cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", service="mimir-ingester"}'
         values: "_x20 1+0x20 0+0x20"

@@ -186,6 +186,10 @@ spec:
       record: aggregation:ingress:management_cluster_replicas
     - expr: sum(rate(nginx_ingress_controller_nginx_process_requests_total[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:ingress:requests_total
+    {{- with .Values.Installation.V1.Guest.Kubernetes.IngressController.BaseDomain }}
+    - expr: count(count(kube_ingress_path{host=~".*{{ . }}"}) by (ingress,cluster_id)) by (cluster_id)
+      record: aggregation:ingress:base_domain_total
+    {{- end }}
   - name: kubelet.grafana-cloud.recording
     rules:
     - expr: sum(kubelet_running_container_count or kubelet_running_containers{container_state="running"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
@@ -379,7 +383,7 @@ spec:
     # Dex operator metrics for expiry time of identity provider oauth app secrets 
     - expr: dex_operator_idp_secret_expiry_time
       record: aggregation:dex_operator_idp_secret_expiry_time
-    # Requests to the deprecated k8s authenticator. TODO: Get rid of this recording rule when the component is no longer used.
+    # Requests to the deprecated k8s authenticator. TODO(@team-bigmac): Get rid of this recording rule when the component is no longer used.
     - expr: nginx_ingress_controller_requests{ingress="dex-k8s-authenticator"}
       record: aggregation:dex_k8s_authenticator_requests
   - name: grafana.grafana-cloud.recording

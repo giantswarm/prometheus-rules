@@ -27,21 +27,21 @@ spec:
       # This expression list all the cluster IDs that exist and are not being deleted and compares them (using unless) to the running prometheus pods.
       # If a prometheus is missing, this alert will fire. This alert will not check if a prometheus is running when it should not (e.g. deleted cluster)
       expr: |
-        (
-          sum by(cluster_id) (
+         (
+          sum by(cluster_id, installation, provider, pipeline) (
             {__name__=~"cluster_service_cluster_info|cluster_operator_cluster_status", status!="Deleting"}
-          ) unless sum by(cluster_id) (
+          ) unless sum by(cluster_id, installation, provider, pipeline) (
             label_replace(
               kube_pod_container_status_running{container="prometheus", namespace!="{{ .Values.managementCluster.name }}-prometheus", namespace=~".*-prometheus"},
               "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)"
             )
           )
-        ) + (
-          sum by (cluster_name) (
+        ) or (
+          sum by (name, installation, provider, pipeline) (
             capi_cluster_status_phase{phase!="Deleting"}
-          ) unless sum by (cluster_name) (
-            label_replace(kube_pod_container_status_running{container="prometheus",namespace=~".*-prometheus"}, 
-            "cluster_name", "$2", "pod", "(prometheus-)(.+)(-.+)"
+          ) unless sum by (name, installation, provider, pipeline) (
+            label_replace(kube_pod_container_status_running{container="prometheus",namespace=~".*-prometheus"},
+            "name", "$2", "pod", "(prometheus-)(.+)(-.+)"
             )
           )
         )

@@ -13,7 +13,7 @@ spec:
           annotations:
             description: '{{`Scraping of all promtail pods to check if one failed every 30 minutes.`}}'
             opsrecipe: promtail-is-not-running/
-          expr: count(up{container="promtail"} == 0) by (cluster_id) > 0
+          expr: count(up{container="promtail"} == 0) by (cluster_id, installation, provider, pipeline) > 0
           for: 30m
           labels:
             area: "empowerment"
@@ -26,11 +26,11 @@ spec:
             cancel_if_cluster_status_updating: "true"
         # Not tested
         - alert: PromtailRequestsErrors
-          annotations: 
+          annotations:
             description: This alert checks if that the amount of failed requests is below 10% for promtail
             opsrecipe: promtail-requests-are-failing/
           expr: |
-            100 * sum(rate(promtail_request_duration_seconds_count{status_code=~"5..|failed"}[1m])) by (cluster_id, namespace, job, route, instance) / sum(rate(promtail_request_duration_seconds_count[1m])) by (cluster_id, namespace, job, route, instance) > 10
+            100 * sum(rate(promtail_request_duration_seconds_count{status_code=~"5..|failed"}[2m])) by (cluster_id, installation, provider, pipeline, namespace, job, route, instance) / sum(rate(promtail_request_duration_seconds_count[2m])) by (cluster_id, installation, provider, pipeline, namespace, job, route, instance) > 10
           for: 15m
           labels:
             area: "empowerment"

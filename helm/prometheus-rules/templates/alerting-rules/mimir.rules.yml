@@ -32,7 +32,7 @@ spec:
     - alert: MimirComponentDown
       annotations:
         description: '{{`Mimir component : {{ $labels.service }} is down.`}}'
-      expr: count(up{app="mimir"} == 0) by (cluster_id, service) > 0
+      expr: count(up{app="mimir"} == 0) by (cluster_id, installation, provider, pipeline, service) > 0
       for: 5m
       labels:
         area: managedservices
@@ -46,7 +46,7 @@ spec:
     - alert: GrafanaAgentForPrometheusRulesDown
       annotations:
         description: 'Grafana-agent sending PrometheusRules to Mimir ruler is down.'
-      expr: count(up{app="grafana-agent", namespace="mimir"} == 0) by (cluster_id) > 0
+      expr: count(up{app="grafana-agent", namespace="mimir"} == 0) by (cluster_id, installation, provider, pipeline) > 0
       for: 1h
       labels:
         area: managedservices

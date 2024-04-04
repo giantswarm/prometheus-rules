@@ -13,7 +13,7 @@ spec:
     - alert: KedaDown
       annotations:
         description: 'Keda is down.'
-      expr: count (up{container=~"keda-.*"} == 0) > 0
+      expr: count by(cluster_id, installation, provider, pipeline) (up{container=~"keda-.*"} == 0) > 0
       for: 10m
       labels:
         area: kaas

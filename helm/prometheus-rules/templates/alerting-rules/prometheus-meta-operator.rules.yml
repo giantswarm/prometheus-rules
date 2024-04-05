@@ -37,11 +37,13 @@ spec:
             )
           )
         ) or (
-          sum by (name, installation, provider, pipeline) (
-            capi_cluster_status_phase{phase!="Deleting"}
-          ) unless sum by (name, installation, provider, pipeline) (
+          sum by (cluster_id, installation, provider, pipeline) (
+            label_replace(capi_cluster_status_phase{phase!="Deleting"},
+            "cluster_id", "$1", "name", "(.+)"
+            )
+          ) unless sum by (cluster_id, installation, provider, pipeline) (
             label_replace(kube_pod_container_status_running{container="prometheus",namespace=~".*-prometheus"},
-            "name", "$2", "pod", "(prometheus-)(.+)(-.+)"
+            "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)"
             )
           )
         )

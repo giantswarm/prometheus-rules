@@ -1,0 +1,36 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: systemd.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: systemd
+    rules:
+    - alert: ClusterCriticalSystemdUnitFailed
+      annotations:
+        description: '{{`Critical systemd unit {{ $labels.name }} is failed on {{ $labels.instance }}.`}}'
+        opsrecipe: critical-systemd-unit-failed/
+      expr: node_systemd_unit_state{name=~"k8s-addons.service|systemd-networkd.service", state="failed"} == 1
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: infrastructure
+    - alert: ClusterDisabledSystemdUnitActive
+      annotations:
+        description: '{{`Disabled Systemd unit {{ $labels.name }} is active on {{ $labels.ip }}.`}}'
+        opsrecipe: disabled-systemd-unit-active/
+      expr: node_systemd_unit_state{name=~"locksmithd.service|update-engine.service", state="active"} == 1
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: infrastructure

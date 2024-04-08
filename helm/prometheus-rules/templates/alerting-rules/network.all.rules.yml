@@ -17,7 +17,7 @@ spec:
       expr: rate(dns_resolve_error_total[15m]) > 0.015
       for: 15m
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_with_no_nodepools: "true"
         cancel_if_cluster_with_notready_nodepools: "true"
@@ -25,7 +25,7 @@ spec:
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         cancel_if_cluster_has_no_workers: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: cabbage
         topic: network
     - alert: DNSCheckErrorRateTooHigh
       annotations:
@@ -34,7 +34,7 @@ spec:
       expr: rate(dns_error_total[15m]) > 0.015
       for: 15m
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_with_no_nodepools: "true"
         cancel_if_cluster_with_notready_nodepools: "true"
@@ -42,7 +42,7 @@ spec:
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         cancel_if_cluster_has_no_workers: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: cabbage
         topic: network
     - alert: NetworkErrorRateTooHigh
       annotations:
@@ -74,7 +74,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: rocket
+        team: {{ include "providerTeam" . }}
         topic: network
     - alert: HighNumberOfOrphanedSockets
       annotations:
@@ -87,5 +87,38 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: rocket
+        team: {{ include "providerTeam" . }}
+        topic: network
+    - alert: NetworkCheckErrorRateTooHigh
+      annotations:
+        description: '{{`Network check error rate is too high for {{ or $labels.pod_name $labels.instance }}.`}}'
+      expr: rate(network_error_total{}[15m]) > 0
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: network
+    - alert: Network95thPercentileLatencyTooHigh
+      annotations:
+        description: '{{`Network 95th percentile latency is too high.`}}'
+      expr: histogram_quantile(0.95, sum(irate(network_latency_seconds_bucket{}[15m])) by (le, cluster_id)) > 0.5
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: network
+    - alert: SYNRetransmissionRateTooHigh
+      annotations:
+        description: '{{`SYN retransmission rate is too high for {{ or $labels.pod_name $labels.instance }}.`}}'
+      expr: rate(node_netstat_TcpExt_TCPSynRetrans{}[15m]) > 3
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: {{ include "providerTeam" . }}
         topic: network

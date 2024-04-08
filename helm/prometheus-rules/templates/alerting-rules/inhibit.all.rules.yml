@@ -28,7 +28,7 @@ spec:
         topic: kubernetes
       annotations:
         description: '{{`Kubelet ({{ $labels.instance }}) is down.`}}'
-    # TODO: fix with real expr 
+    # TODO(@team-turtles): fix with real expr
     - alert: ScrapeTimeout
       annotations:
         description: '{{`Never fires (dummy alert).`}}'
@@ -38,7 +38,7 @@ spec:
         scrape_timeout: "true"
         team: phoenix
         topic: monitoring
-    # TODO: fix with real expr
+    # TODO(@team-turtles): fix with real expr
     - alert: ApiServerDown
       annotations:
         description: '{{`Never fires (dummy alert).`}}'
@@ -48,22 +48,16 @@ spec:
         apiserver_down: "true"
         team: phoenix
         topic: monitoring
-    {{- if or (eq .Values.managementCluster.provider.kind "azure") (eq .Values.managementCluster.provider.kind "aws") }}
+    {{- if (eq .Values.managementCluster.provider.kind "aws") }}
     - alert: InhibitionClusterWithoutWorkerNodes
       annotations:
         description: '{{`Cluster ({{ $labels.cluster_id }}) has no worker nodes.`}}'
-      {{- if eq .Values.managementCluster.provider.kind "azure" }}
-      expr: azure_operator_cluster_worker_nodes == 0
-      {{- else if eq .Values.managementCluster.provider.kind "aws" }}
       expr: sum(aws_operator_asg_desired_count) by (cluster_id) - on(cluster_id) sum(aws_operator_asg_desired_count{asg=~".*-tccpn-.*"}) by (cluster_id) == 0
-      {{- end }}
       labels:
         area: kaas
         has_worker_nodes: "false"
         team: phoenix
         topic: status
-    {{- end }}
-    {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: InhibitionKiamErrors
       annotations:
         description: '{{`Kiam on cluster {{ $labels.cluster_id }} has increased error rate.`}}'

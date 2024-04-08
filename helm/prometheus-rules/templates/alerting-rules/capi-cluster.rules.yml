@@ -14,13 +14,14 @@ spec:
           for: 1h
           labels:
             area: kaas
-            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
-            severity: notify
-            team: {{include "providerTeam" .}}
+            cancel_if_prometheus_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: {{ include "providerTeam" . }}
             topic: managementcluster
           annotations:
             description: |-
-              {{`Cluster {{$labels.exported_namespace}}/{{$labels.name}} stuck in {{$labels.phase}} phase.`}}
+              {{`Cluster {{ $labels.exported_namespace }}/{{ $labels.name }} stuck in {{ $labels.phase }} phase.`}}
             opsrecipe: capi-cluster/
 
         - alert: ClusterStatusNotReady
@@ -28,13 +29,14 @@ spec:
           for: 1h
           labels:
             area: kaas
-            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            cancel_if_prometheus_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
             severity: notify
-            team: {{include "providerTeam" .}}
+            team: {{ include "providerTeam" . }}
             topic: managementcluster
           annotations:
             description: |-
-              {{`Cluster {{$labels.exported_namespace}}/{{$labels.name}} is not ready.`}}
+              {{`Cluster {{ $labels.exported_namespace }}/{{ $labels.name }} is not ready.`}}
             opsrecipe: capi-cluster/
 
         - alert: ClusterPaused
@@ -42,12 +44,13 @@ spec:
           for: 1h
           labels:
             area: kaas
-            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            cancel_if_prometheus_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
             severity: notify
-            team: {{include "providerTeam" .}}
+            team: {{ include "providerTeam" . }}
             topic: managementcluster
           annotations:
             description: |-
-              {{`The cluster {{$labels.name}} is paused.`}}
+              {{`The cluster {{ $labels.exported_namespace }}/{{ $labels.name }} is paused.`}}
             opsrecipe: capi-cluster/
 {{- end }}

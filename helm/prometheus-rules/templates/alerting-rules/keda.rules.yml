@@ -1,0 +1,72 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: keda.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: Keda
+    rules:
+    - alert: KedaDown
+      annotations:
+        description: 'Keda is down.'
+      expr: count by (cluster_id, installation, provider, pipeline) (up{container=~"keda-.*"} == 0) > 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: atlas
+        topic: autoscaling
+    - alert: KedaScaledObjectErrors
+      annotations:
+        description: '{{`Errors detected in scaled object {{ $labels.scaledObject }} in namespace {{ $labels.namespace}}.`}}'
+      expr: increase(keda_scaled_object_errors[10m])> 0
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: atlas
+        topic: autoscaling
+    - alert: KedaWebhookScaledObjectValidationErrors
+      annotations:
+        description: '{{`Validation errors detected in webhook for scaled object {{ $labels.scaledObject }} in namespace {{ $labels.namespace}}.`}}'
+      expr: increase(keda_webhook_scaled_object_validation_errors[10m]) > 0
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: atlas
+        topic: autoscaling
+    - alert: KedaScalerErrors
+      annotations:
+        description: '{{`Errors detected in scaler {{ $labels.scaler }} for scaled object {{ $labels.scaledObject }} in namespace {{ $labels.namespace}}.`}}'
+      expr: increase(keda_scaler_errors[10m]) > 0
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: atlas
+        topic: autoscaling

@@ -4,7 +4,9 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
     cluster_type: "management_cluster"
+{{- end }}
   name: etcdbackup.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -23,11 +25,12 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: etcd
-    - alert: LatestETCDBackup1DayOld
+{{- if eq .Values.managementCluster.provider.flavor "capi" }}
+    - alert: LatestETCDBackup2DaysOld
       annotations:
-        description: '{{`Latest successfull ETCD backup for {{ $labels.cluster_id }}/{{ $labels.tenant_cluster_id }} was more than 24h ago.`}}'
+        description: '{{`Latest successfull ETCD backup for {{ $labels.cluster_id }}/{{ $labels.tenant_cluster_id }} was more than 48h ago.`}}'
         opsrecipe: etcd-backup-failed/
-      expr: (time() - etcd_backup_latest_success{tenant_cluster_id!="Control Plane"}) > 24 * 60 * 60 and (time() - etcd_backup_latest_success{tenant_cluster_id!="Control Plane"}) < 48 * 60 * 60
+      expr: count(label_replace(capi_cluster_created, "tenant_cluster_id", "$1", "name", "(.*)")) by (tenant_cluster_id)  > 48 * 60 * 60 unless count((time() - etcd_backup_latest_success{tenant_cluster_id!="Control Plane"}) > 48 * 60 * 60) by (tenant_cluster_id)
       for: 5m
       labels:
         area: kaas
@@ -35,9 +38,10 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
-        severity: notify
+        severity: page
         team: {{ include "providerTeam" . }}
         topic: etcd-backup
+{{- else }}
     - alert: LatestETCDBackup2DaysOld
       annotations:
         description: '{{`Latest successfull ETCD backup for {{ $labels.cluster_id }}/{{ $labels.tenant_cluster_id }} was more than 48h ago.`}}'
@@ -53,17 +57,15 @@ spec:
         severity: page
         team: {{ include "providerTeam" . }}
         topic: etcd-backup
-    - alert: ManagementClusterNotBackedUp24h
+{{- end }}
+    - alert: ETCDBackupMetricsMissing
       annotations:
-        description: '{{`{{ $labels.cluster_id }} management cluster''s ETCD backup was unsuccessful.`}}'
-        opsrecipe: etcd-backup-failed/
-      expr: time() - etcd_backup_latest_success{etcd_version="V2",tenant_cluster_id="Control Plane", provider="kvm"} > 60*60*24 or time() - etcd_backup_latest_success{etcd_version="V3",tenant_cluster_id="Control Plane"} > 60*60*24
-      for: 5m
+        description: '{{`ETCD backup metrics are missing`}}'
+        opsrecipe: etcd-backup-metrics-missing/
+      expr: absent(etcd_backup_latest_attempt)
+      for: 12h
       labels:
         area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: {{ include "providerTeam" . }}

@@ -4,7 +4,9 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
     cluster_type: "management_cluster"
+{{- end }}
   name: deployment.management-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -15,22 +17,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"alertmanager.*|grafana.*|prometheus.*|promxy.*", cluster_id!~"argali|giraffe"} > 0
-      for: 30m
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: page
-        team: atlas
-        topic: managementcluster
-    - alert: DeploymentNotSatisfiedChinaAtlas
-      annotations:
-        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"alertmanager.*|grafana.*|prometheus.*|promxy.*", cluster_id=~"argali|giraffe"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"alertmanager.*|grafana.*|prometheus.*|promxy.*|mimir.*|loki.*|object-storage.*|logging-operator.*|silence-operator.*|sloth.*"} > 0
       for: 30m
       labels:
         area: kaas
@@ -101,7 +88,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator-.+|azure-admission-controller-.+|azure-operator.*|azure-collector.*|cluster-operator-.+|cluster-api-core-webhook.*|coredns-.+|event-exporter-.*|etcd-kubernetes-resources-count-exporter-.*|upgrade-schedule-operator.*|worker-.+|master-.+", cluster_id!~"argali|giraffe"} > 0
+      expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator-.+|cluster-operator-.+|cluster-api-core-webhook.*|event-exporter-.*|etcd-kubernetes-resources-count-exporter-.*|upgrade-schedule-operator.*|worker-.+|master-.+", cluster_id!~"argali|giraffe"}, "service", "/", "namespace", "deployment") > 0
       for: 30m
       labels:
         area: kaas
@@ -148,44 +135,6 @@ spec:
         team: phoenix
         topic: managementcluster
     {{- end }}
-    {{- if eq .Values.managementCluster.provider.kind "azure" }}
-    - alert: AzureManagementClusterDeploymentScaledDownToZero
-      annotations:
-        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} on Azure has been scaled down to zero for prolonged period of time.`}}'
-      expr: kube_deployment_status_replicas_available{cluster_type="management_cluster", deployment=~"([a-z]*)-operator([a-z,-]*)",provider="azure"} + kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"([a-z]*)-operator([a-z,-]*)",provider="azure"} == 0
-      for: 4h
-      labels:
-        area: kaas
-        severity: notify
-        team: phoenix
-        topic: managementcluster
-    {{- end }}
-    {{- if eq .Values.managementCluster.provider.kind "kvm" }}
-    - alert: KVMManagementClusterDeploymentScaledDownToZero
-      annotations:
-        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} on KVM has been scaled down to zero for prolonged period of time.`}}'
-      expr: kube_deployment_status_replicas_available{cluster_type="management_cluster", deployment=~"([a-z]*)-operator([a-z,-]*)",provider="kvm"} + kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"([a-z]*)-operator([a-z],-]*)",provider="kvm"} == 0
-      for: 4h
-      labels:
-        area: kaas
-        severity: notify
-        team: rocket
-        topic: managementcluster
-    - alert: DeploymentNotSatisfiedRocket
-      annotations:
-        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"worker-.+|master-.+"} > 0
-      for: 30m
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: page
-        team: rocket
-        topic: managementcluster
-    {{- end }}
     - alert: DeploymentNotSatisfiedCabbage
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
@@ -204,10 +153,25 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied-china/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"(ingress-nginx|nginx-ingress-controller)-.+", cluster_id=~"argali|giraffe"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"(ingress-nginx|nginx-ingress-controller|coredns)-.+", cluster_id=~"argali|giraffe"} > 0
       for: 3h
       labels:
         area: kaas
         severity: page
         team: cabbage
+        topic: managementcluster
+    - alert: DeploymentNotSatisfiedBigMac
+      annotations:
+        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        opsrecipe: deployment-not-satisfied/
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"cert-manager-*|teleport-*|dex*|athena*|rbac-operator|credentiald"} > 0
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: bigmac
         topic: managementcluster

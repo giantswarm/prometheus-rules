@@ -1,0 +1,49 @@
+---
+rule_files:
+  - cilium.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      # For the first 60min: test with 1 pod: none, up, down
+      - series: 'cilium_bpf_map_pressure{map_name="policy_00001"}'
+        values: "_x20 20+0x20 90+0x20"
+    alert_rule_test:
+      - alertname:  CiliumBPFMapAlmostFull
+        eval_time: 10m
+      - alertname:  CiliumBPFMapAlmostFull
+        eval_time: 30m
+      - alertname:  CiliumBPFMapAlmostFull
+        eval_time: 50m
+        exp_alerts:
+          - exp_labels:
+              area: managedservices
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_outside_working_hours: "true"
+              map_name: "policy_00001"
+            exp_annotations:
+              description: "Cilium BPF map is about to fill up."
+              opsrecipe: "cilium-bpf-map/"
+  - interval: 1m
+    input_series:
+      - series: 'cilium_bpf_map_pressure{map_name="policy_00001"}'
+        values: "_x20 20+0x20 90+0x20 98+0x20"
+    alert_rule_test:
+      - alertname:  CiliumBPFMapFull
+        eval_time: 10m
+      - alertname:  CiliumBPFMapFull
+        eval_time: 30m
+      - alertname:  CiliumBPFMapFull
+        eval_time: 70m
+        exp_alerts:
+          - exp_labels:
+              area: managedservices
+              severity: page
+              team: cabbage
+              topic: cilium
+              map_name: "policy_00001"
+            exp_annotations:
+              description: "Cilium BPF map is about filled up."
+              opsrecipe: "cilium-bpf-map/"

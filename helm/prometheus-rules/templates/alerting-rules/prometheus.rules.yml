@@ -23,7 +23,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_has_no_workers: "true"
-        cancel_if_outside_working_hours: "false"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: atlas
         topic: observability
@@ -32,7 +32,7 @@ spec:
       annotations:
         description: 'Prometheus is not sending data to Grafana Cloud.'
         opsrecipe: tbd/
-      expr: absent(prometheus_remote_storage_samples_total{remote_name="grafana-cloud"})
+      expr: absent(prometheus_remote_storage_samples_total{remote_name="grafana-cloud", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
       for: 1h
       labels:
         area: empowerment
@@ -71,7 +71,7 @@ spec:
         description: {{`Prometheus {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}
         summary: Prometheus fails to scrape all targets in a job.
         opsrecipe: prometheus-job-scraping-failure/
-      expr: (count(up == 0) BY (job, installation, cluster_id) / count(up) BY (job, installation, cluster_id)) == 1
+      expr: (count(up == 0) BY (job, installation, cluster_id, provider, pipeline) / count(up) BY (job, installation, cluster_id, provider, pipeline)) == 1
       for: 1d
       labels:
         area: empowerment
@@ -79,7 +79,6 @@ spec:
         team: atlas
         topic: observability
         cancel_if_outside_working_hours: "true"
-{{- if ne .Values.managementCluster.provider.kind "kvm" }}
     - alert: PrometheusCriticalJobScrapingFailure
       annotations:
         description: {{`Prometheus {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}
@@ -93,14 +92,14 @@ spec:
               app=~"kubernetes|kube-controller-manager|kube-scheduler|kubelet|node-exporter|kube-state-metrics",
               job!~".*bastions.*"
             } == 0
-          ) BY (app,job, installation, cluster_id)
+          ) BY (app,job, installation, cluster_id, provider, pipeline)
           /
           count(
             up{
               app=~"kubernetes|kube-controller-manager|kube-scheduler|kubelet|node-exporter|kube-state-metrics",
               job!~".*bastions.*"
             }
-          ) BY (app, job, installation, cluster_id)
+          ) BY (app, job, installation, cluster_id, provider, pipeline)
         ) == 1
       for: 3d
       labels:
@@ -112,4 +111,3 @@ spec:
         cancel_if_cluster_is_not_running_prometheus_agent: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
-{{- end }}

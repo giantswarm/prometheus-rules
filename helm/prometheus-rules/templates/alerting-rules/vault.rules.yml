@@ -5,6 +5,7 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+    # No need for .Values.mimir.enabled condition - will be gone with Vintage
     cluster_type: "management_cluster"
   name: vault.rules
   namespace: {{ .Values.namespace  }}
@@ -17,7 +18,7 @@ spec:
         description: '{{`Vault is down.`}}'
         opsrecipe: vault-is-down/
       expr: vault_up == 0
-      for: 20m
+      for: 40m
       labels:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
@@ -57,6 +58,7 @@ spec:
       labels:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_prometheus_agent_down: "true"
         severity: page
         team: {{ include "providerTeam" . }}
         topic: vault

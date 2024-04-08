@@ -4,7 +4,9 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
     cluster_type: "management_cluster"
+{{- end }}
   name: app.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -15,7 +17,7 @@ spec:
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
-      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team!~"^$|noteam"}
+      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"(control-plane-.*|default)",team!~"^$|noteam", namespace=~".*giantswarm"}
       for: 30m
       labels:
         area: managedservices
@@ -30,7 +32,7 @@ spec:
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
         opsrecipe: app-pending-update/
-      expr: app_operator_app_info{catalog=~"control-plane-.*", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}
+      expr: app_operator_app_info{catalog=~"(control-plane-.*|default)", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam", namespace=~".*giantswarm"}
       for: 40m
       labels:
         area: managedservices
@@ -46,9 +48,9 @@ spec:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
       {{- if eq .Values.managementCluster.provider.flavor "capi" }}
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog=~"giantswarm|cluster", team!~"^$|noteam"}, "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*") == 1
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog=~"giantswarm|cluster|default", team!~"^$|noteam"}, "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*") == 1
       {{- else }}
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog="giantswarm", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog=~"giantswarm|default", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
       {{- end }}
       for: 30m
       labels:
@@ -66,9 +68,9 @@ spec:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         opsrecipe: app-failed/
       {{- if eq .Values.managementCluster.provider.flavor "capi" }}
-      expr: label_replace(app_operator_app_info{status="not-installed", catalog=~"giantswarm|cluster", team!~"^$|noteam"}, "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*") == 1
+      expr: label_replace(app_operator_app_info{status="not-installed", catalog=~"giantswarm|cluster|default", team!~"^$|noteam"}, "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*") == 1
       {{- else }}
-      expr: label_replace(app_operator_app_info{status="not-installed", catalog="giantswarm", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
+      expr: label_replace(app_operator_app_info{status="not-installed", catalog=~"giantswarm|default", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
       {{- end }}
       for: 30m
       labels:
@@ -86,9 +88,9 @@ spec:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
         opsrecipe: app-pending-update/
       {{- if eq .Values.managementCluster.provider.flavor "capi" }}
-      expr: label_replace(app_operator_app_info{catalog=~"giantswarm|cluster", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}, "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*") == 1
+      expr: label_replace(app_operator_app_info{catalog=~"giantswarm|cluster|default", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}, "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*") == 1
       {{- else }}
-      expr: label_replace(app_operator_app_info{catalog="giantswarm", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
+      expr: label_replace(app_operator_app_info{catalog=~"giantswarm|default", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
       {{- end }}
       for: 40m
       labels:
@@ -105,9 +107,9 @@ spec:
         description: '{{`App {{ $labels.name }} has no team label.`}}'
         opsrecipe: app-without-team-annotation/
       {{- if eq .Values.managementCluster.provider.flavor "capi" }}
-      expr: label_replace(app_operator_app_info{team=~"^$|noteam"}, "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*") == 1
+      expr: label_replace(app_operator_app_info{app!~"api-spec(-app)?", team=~"^$|noteam", catalog=~"giantswarm.*|control-plane(-test)?-catalog|cluster(-test)?|default(-test)?|releases(-test)?"}, "cluster_id", "$1", "name", "([a-zA-Z0-9]+)-.*") == 1
       {{- else }}
-      expr: label_replace(app_operator_app_info{team=~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
+      expr: label_replace(app_operator_app_info{app!~"api-spec(-app)?", team=~"^$|noteam", catalog=~"giantswarm.*|control-plane(-test)?-catalog|cluster(-test)?|default(-test)?|releases(-test)?"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
       {{- end }}
       for: 40m
       labels:
@@ -140,6 +142,23 @@ spec:
       labels:
         area: managedservices
         cancel_if_outside_working_hours: "true"
+        severity: page
+        team: honeybadger
+        topic: releng
+    - alert: AppExporterDown
+      annotations:
+        description: '{{`App-exporter ({{ $labels.instance }}) is down.`}}'
+        opsrecipe: app-exporter-down/
+      expr: (up{app="app-exporter"} == 0) and (up{service="app-exporter"} == 0)
+      for: 15m
+      labels:
+        area: managedservices
+        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_scrape_timeout: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: honeybadger
         topic: releng

@@ -28,20 +28,22 @@ spec:
       # If a prometheus is missing, this alert will fire. This alert will not check if a prometheus is running when it should not (e.g. deleted cluster)
       expr: |
         (
-          sum by(cluster_id) (
+          sum by(cluster_id, installation, provider, pipeline) (
             {__name__=~"cluster_service_cluster_info|cluster_operator_cluster_status", status!="Deleting"}
-          ) unless sum by(cluster_id) (
+          ) unless sum by(cluster_id, installation, provider, pipeline) (
             label_replace(
               kube_pod_container_status_running{container="prometheus", namespace!="{{ .Values.managementCluster.name }}-prometheus", namespace=~".*-prometheus"},
               "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)"
             )
           )
-        ) + (
-          sum by (cluster_name) (
-            capi_cluster_status_phase{phase!="Deleting"}
-          ) unless sum by (cluster_name) (
-            label_replace(kube_pod_container_status_running{container="prometheus",namespace=~".*-prometheus"}, 
-            "cluster_name", "$2", "pod", "(prometheus-)(.+)(-.+)"
+        ) or (
+          sum by (cluster_id, installation, provider, pipeline) (
+            label_replace(capi_cluster_status_phase{phase!="Deleting"},
+            "cluster_id", "$1", "name", "(.+)"
+            )
+          ) unless sum by (cluster_id, installation, provider, pipeline) (
+            label_replace(kube_pod_container_status_running{container="prometheus",namespace=~".*-prometheus"},
+            "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)"
             )
           )
         )
@@ -60,6 +62,7 @@ spec:
       annotations:
         description: '{{`prometheus-meta-operator controller {{ $labels.controller }} too many reconcile errors.`}}'
         opsrecipe: "pmo-reconcile-errors/"
+        dashboard: piJK9Vm4z/operatorkit
       expr: |
         avg_over_time(operatorkit_controller_errors_total{app="prometheus-meta-operator"}[20m]) > 0
       for: 1h
@@ -67,7 +70,7 @@ spec:
         area: "empowerment"
         cancel_if_mc_kube_state_metrics_down: "false"
         cancel_if_cluster_status_creating: "true"
-        cancel_if_outside_working_hours: "true"
+        cancel_if_outside_working_hours: true
         installation: {{ .Values.managementCluster.name }}
         severity: "page"
         team: "atlas"

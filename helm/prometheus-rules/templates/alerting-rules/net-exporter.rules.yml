@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: net-exporter.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: net-exporter
+    rules:
+    - alert: ClusterNetExporterCPUUsageTooHigh
+      annotations:
+        description: '{{`net-exporter cpu usage is too high.`}}'
+      expr: rate(container_cpu_user_seconds_total{pod_name=~"net-exporter-.*"}[5m]) > 0.015
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: observability

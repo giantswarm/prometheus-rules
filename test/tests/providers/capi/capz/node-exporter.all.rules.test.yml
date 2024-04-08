@@ -27,41 +27,12 @@ tests:
               collector: "cpu"
               instance: "10.0.5.111:10300"
               severity: "page"
-              team: "clippy"
+              team: "phoenix"
               topic: "observability"
             exp_annotations:
               description: "NodeExporter Collector cpu on 10.0.5.111:10300 is failed."
-              opsrecipe: "node-exporter-device-failed/"
+              opsrecipe: "node-exporter-device-error/"
       - alertname: NodeExporterCollectorFailed
         eval_time: 70m
 
-  # NodeExporterDeviceError tests
-  - interval: 1m
-    input_series:
-      - series: 'node_filesystem_device_error{device="/dev/mapper/usr", fstype="ext4", instance="10.0.5.111:10300", mountpoint="/var/lib/kubelet", cluster_type="workload_cluster"}'
-        values: "_x20 1+0x20 0+0x20"
-    alert_rule_test:
-      - alertname: NodeExporterDeviceError
-        eval_time: 10m
-        exp_alerts:
-      - alertname: NodeExporterDeviceError
-        eval_time: 20m
-        exp_alerts:
-      - alertname: NodeExporterDeviceError
-        eval_time: 30m
-        exp_alerts:
-          - exp_labels:
-              alertname: NodeExporterDeviceError
-              area: "kaas"
-              cancel_if_outside_working_hours: "true"
-              cluster_type: "workload_cluster"
-              device: "/dev/mapper/usr"
-              fstype: "ext4"
-              instance: "10.0.5.111:10300"
-              mountpoint: "/var/lib/kubelet"
-              severity: "page"
-              team: "clippy"
-              topic: "observability"
-            exp_annotations:
-              description: "NodeExporter Mountpoint /var/lib/kubelet on device /dev/mapper/usr on 10.0.5.111:10300 is erroring."
-              opsrecipe: "node-exporter-device-error/"
+

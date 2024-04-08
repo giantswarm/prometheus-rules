@@ -19,8 +19,6 @@ Common labels
 {{- define "labels.common" -}}
 app.kubernetes.io/name: {{ include "name" . | quote }}
 app.kubernetes.io/instance: {{ .Release.Name | quote }}
-app.giantswarm.io/branch: {{ .Values.project.branch | replace "#" "-" | replace "/" "-" | replace "." "-" | trunc 63 | trimSuffix "-" | quote }}
-app.giantswarm.io/commit: {{ .Values.project.commit | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantswarm.io/team" | default "atlas" | quote }}
@@ -29,20 +27,18 @@ giantswarm.io/service-type: {{ .Values.serviceType }}
 {{- end -}}
 
 {{- define "providerTeam" -}}
-{{- if has .Values.managementCluster.provider.kind (list "kvm" "openstack" "cloud-director" "vsphere") -}}
+{{- if has .Values.managementCluster.provider.kind (list "cloud-director" "vsphere") -}}
 rocket
-{{- else if has .Values.managementCluster.provider.kind (list "gcp" "capa") -}}
+{{- else if has .Values.managementCluster.provider.kind (list "capa" "capz") -}}
 {{- /* hydra alerts merged into phoenix business hours on-call */ -}}
 phoenix
-{{- else if eq .Values.managementCluster.provider.kind "capz" -}}
-clippy
 {{- else -}}
 phoenix
 {{- end -}}
 {{- end -}}
 
 {{- define "workingHoursOnly" -}}
-{{- if has .Values.managementCluster.provider.kind (list "openstack" "capz") -}}
+{{- if eq .Values.managementCluster.pipeline "stable-testing" -}}
 "true"
 {{- else -}}
 "false"
@@ -50,7 +46,7 @@ phoenix
 {{- end -}}
 
 {{- define "isCertExporterInstalled" -}}
-{{- if has .Values.managementCluster.provider.kind (list "openstack" "cloud-director" "vsphere" "capa") -}}
+{{- if has .Values.managementCluster.provider.kind (list "cloud-director" "vsphere" "capa") -}}
 false
 {{- else -}}
 true

@@ -4,7 +4,9 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    cluster_type: workload_cluster
+{{- if not .Values.mimir.enabled }}
+    cluster_type: "workload_cluster"
+{{- end }}
   name: node.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -25,6 +27,7 @@ spec:
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: kubernetes
+    {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: AWSWorkloadClusterNodeTooManyAutoTermination
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} has too many nodes terminated by node auto termination feature in a short time.`}}'
@@ -39,6 +42,7 @@ spec:
         severity: page
         team: phoenix
         topic: kubernetes
+    {{- end }}
     - alert: NodeStateFlappingUnderLoad
       # Check if the kubelet status is flapping, unless the node is under load.
       # It helps to read this rule from the bottom upwards.
@@ -51,7 +55,7 @@ spec:
       # relabelling 'ip' to 'label_ip' to match against 'kube_node_labels'.
       annotations:
         description: '{{`Node {{ $labels.label_ip }} status is flapping under load.`}}'
-      expr: label_replace( node_load15 / count(count(node_cpu) without (mode)) without (cpu) >= 2, "label_ip", "$1", "ip", "(.*)" ) unless on (label_ip) kube_node_labels and on (ip) changes(kube_node_status_condition{condition="Ready", status="true"}[30m]) >= 6
+      expr: label_replace(node_load15{cluster_type="workload_cluster"} / count(count(node_cpu_seconds_total{cluster_type="workload_cluster"}) without (mode)) without (cpu) >= 2, "label_ip", "$1", "ip", "(.*)" ) unless on (cluster_id, label_ip) kube_node_labels{cluster_type="workload_cluster"} and on (cluster_id, ip) changes(kube_node_status_condition{cluster_type="workload_cluster", condition="Ready", status="true"}[30m]) >= 6
       for: 10m
       labels:
         area: kaas
@@ -66,7 +70,7 @@ spec:
       # in the last hour.
       annotations:
         description: '{{`Node {{ $labels.ip }} has constant OOM kills.`}}'
-      expr: kube_pod_container_status_restarts_total{namespace=~"(giantswarm|kube-system)"} - kube_pod_container_status_restarts_total offset 1h >= 1 AND ignoring(reason) kube_pod_container_status_last_terminated_reason{reason='OOMKilled'} > 0
+      expr: kube_pod_container_status_restarts_total{cluster_type="workload_cluster", namespace=~"(giantswarm|kube-system)"} - kube_pod_container_status_restarts_total{cluster_type="workload_cluster"} offset 1h >= 1 AND ignoring(reason) kube_pod_container_status_last_terminated_reason{cluster_type="workload_cluster", reason="OOMKilled"} > 0
       for: 10m
       labels:
         area: kaas
@@ -78,10 +82,10 @@ spec:
         topic: kubernetes
     - alert: NodeConnTrackAlmostExhausted
       annotations:
-        description: '{{`Node {{ $labels.node }} reports a connection usage above 90%.`}}'
+        description: '{{`Node {{ $labels.node }} reports a connection usage above 85% for the last 15 minutes.`}}'
         opsrecipe: node-conntrack-limits/
-      expr: node_nf_conntrack_entries / node_nf_conntrack_entries_limit >= 0.90
-      for: 5m
+      expr: node_nf_conntrack_entries{cluster_type="workload_cluster"} / node_nf_conntrack_entries_limit{cluster_type="workload_cluster"} >= 0.85
+      for: 15m
       labels:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
@@ -92,7 +96,7 @@ spec:
       annotations:
         description: '{{`Machine {{ $labels.instance }} entropy is too low.`}}'
         opsrecipe: low-entropy/
-      expr: node_entropy_available_bits < 250
+      expr: node_entropy_available_bits{cluster_type="workload_cluster"} < 250
       for: 10m
       labels:
         area: kaas
@@ -104,7 +108,7 @@ spec:
       annotations:
         description: '{{`Machine {{ $labels.instance }} has too many allocated file descriptors.`}}'
         opsrecipe: high-number-file-descriptors/
-      expr: node_filefd_allocated / node_filefd_maximum * 100 > 80
+      expr: node_filefd_allocated{cluster_type="workload_cluster"} / node_filefd_maximum{cluster_type="workload_cluster"} * 100 > 80
       for: 15m
       labels:
         area: kaas
@@ -137,12 +141,12 @@ spec:
               / (node_memory_MemTotal_bytes{cluster_type="workload_cluster"}
             ) * 100
           )
-        ) > 90
+        ) > 80
         and
         ( node_memory_MemFree_bytes{cluster_type="workload_cluster"}
           + node_memory_Cached_bytes{cluster_type="workload_cluster"}
         ) < 2147483648) 
-        and on (node) kube_node_role{role=~"control-plane|master"}
+        and on (cluster_id, node) kube_node_role{cluster_type="workload_cluster", role=~"control-plane|master"}
       for: 60m
       labels:
         area: kaas

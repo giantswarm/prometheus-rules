@@ -5,8 +5,57 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
+      # For the first 60min: test with 1 pod: up, none, up, down, up
+      - series: 'up{app="mimir"}'
+        values: "1+0x60 _x30 1+0x30 0+0x30 1+0x30"
+    alert_rule_test:
+      - alertname:  Heartbeat
+        eval_time: 20m
+        exp_alerts:
+          - exp_labels:
+              app: mimir
+              area: empowerment
+              installation: myinstall
+              namespace: monitoring
+              team: atlas
+              topic: observability
+              type: heartbeat
+            exp_annotations:
+              description: "This alert is used to ensure the entire alerting pipeline is functional."
+      - alertname:  Heartbeat
+        eval_time: 70m
+      - alertname:  Heartbeat
+        eval_time: 95m
+        exp_alerts:
+          - exp_labels:
+              app: mimir
+              area: empowerment
+              installation: myinstall
+              namespace: monitoring
+              team: atlas
+              topic: observability
+              type: heartbeat
+            exp_annotations:
+              description: "This alert is used to ensure the entire alerting pipeline is functional."
+      - alertname:  Heartbeat
+        eval_time: 140m
+      - alertname:  Heartbeat
+        eval_time: 165m
+        exp_alerts:
+          - exp_labels:
+              app: mimir
+              area: empowerment
+              installation: myinstall
+              namespace: monitoring
+              team: atlas
+              topic: observability
+              type: heartbeat
+            exp_annotations:
+              description: "This alert is used to ensure the entire alerting pipeline is functional."
+  - interval: 1m
+    input_series:
       # For the first 60min: test with 1 pod: none, up, down
-      - series: 'up{app="mimir",cluster_type="management_cluster", cluster_id="gauss", installation="gauss", service="mimir-ingester"}'
+      - series: 'up{app="mimir",cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", service="mimir-ingester"}'
         values: "_x20 1+0x20 0+0x20"
     alert_rule_test:
       - alertname:  MimirComponentDown
@@ -22,11 +71,97 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              cancel_if_apiserver_down: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
-              cancel_if_scrape_timeout: "true"
               cancel_if_outside_working_hours: "true"
+              cluster_id: gauss
+              installation: gauss
+              provider: aws
+              pipeline: testing
             exp_annotations:
               description: "Mimir component : mimir-ingester is down."
+  - interval: 1m
+    input_series:
+      # test with 1 pod: none, up, down
+      - series: 'up{app="grafana-agent",cluster_type="management_cluster", cluster_id="golem", provider="capa", pipeline="testing", installation="golem", namespace="mimir"}'
+        values: "_x20 1+0x70 0+0x70"
+    alert_rule_test:
+      - alertname: GrafanaAgentForPrometheusRulesDown
+        eval_time: 10m
+      - alertname: GrafanaAgentForPrometheusRulesDown
+        eval_time: 80m
+      - alertname: GrafanaAgentForPrometheusRulesDown
+        eval_time: 160m
+        exp_alerts:
+          - exp_labels:
+              area: managedservices
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: golem
+              installation: golem
+              provider: capa
+              pipeline: testing
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Grafana-agent sending PrometheusRules to Mimir ruler is down."
+  - interval: 1m
+    input_series:
+      # test: none, rate > 0, rate = 0
+      - series: 'mimir_rules_events_failed_total{cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="mimir"}'
+        values: "_x20 1+1x80 0+0x70"
+    alert_rule_test:
+      - alertname: MimirRulerEventsFailed
+        eval_time: 40m
+      - alertname: MimirRulerEventsFailed
+        eval_time: 95m
+        exp_alerts:
+          - exp_labels:
+              area: managedservices
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: golem
+              cluster_type: management_cluster
+              installation: golem
+              namespace: mimir
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Mimir ruler is failing to process PrometheusRules."
+      - alertname: MimirRulerEventsFailed
+        eval_time: 160m
+  - interval: 1m
+    input_series:
+      - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container="mimir-ingester"}'
+        values: "0+0x20 0+5x20 100+0x140" # 0 restarts after 20 minutes then we restart 5 times per minute for 20 minutes then we stop restarting for 140 minutes
+      - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container="prometheus"}'
+        values: "0+5x180"                 # prometheus container restarts 5 times per minute for 180 minutes
+    alert_rule_test:
+      - alertname: MimirRestartingTooOften
+        eval_time: 15m  # should be OK after 15 minutes
+        exp_alerts:
+      - alertname: MimirRestartingTooOften
+        eval_time: 85m  # After 85 minutes, should fire an alert for the t+85 error
+        exp_alerts:
+          - exp_labels:
+              all_pipelines: true
+              area: managedservices
+              cancel_if_outside_working_hours: "true"
+              cluster_type: management_cluster
+              container: mimir-ingester
+              namespace: mimir
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Mimir containers are restarting too often.
+      - alertname: MimirRestartingTooOften
+        eval_time: 140m  # After 140m minutes, all should be back to normal
+        exp_alerts:

@@ -16,9 +16,10 @@ tests:
         exp_alerts:
           - exp_labels:
               area: kaas
+              cancel_if_prometheus_agent_down: "true"
               cancel_if_outside_working_hours: "true"
-              severity: notify
-              team: clippy
+              severity: page
+              team: phoenix
               topic: managementcluster
               cluster_name: clippaxy
               name: clippaxy-72jq5
@@ -32,9 +33,10 @@ tests:
         exp_alerts:
           - exp_labels:
               area: kaas
+              cancel_if_prometheus_agent_down: "true"
               cancel_if_outside_working_hours: "true"
               severity: notify
-              team: clippy
+              team: phoenix
               topic: managementcluster
               cluster_name: grumpy
               name: grumpy-72r5c

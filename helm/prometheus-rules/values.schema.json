@@ -5,6 +5,9 @@
         "managementCluster": {
             "type": "object",
             "properties": {
+                "customer": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -14,10 +17,24 @@
                 "provider": {
                     "type": "object",
                     "properties": {
+                        "flavor": {
+                            "type": "string"
+                        },
                         "kind": {
+                            "type": "string"
+                        },
+                        "region": {
                             "type": "string"
                         }
                     }
+                }
+            }
+        },
+        "mimir": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
                 }
             }
         },

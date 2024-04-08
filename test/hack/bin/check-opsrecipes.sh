@@ -30,7 +30,7 @@ isInArray () {
 
 # merge_docs () merges a Hugo docs hierarchy from a source directory (first arg) into a destination directory (second arg).
 merge_docs() {
-    if [ ! -d "$1/content/docs/." ] ; then
+    if [[ ! -d "$1/content/docs/." ]] ; then
         echo "Source Hugo base directory not specified or invalid (must contain content/docs)!" >&2
     fi
     if [ ! -d "$2/content/docs/." ] ; then

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix `PrometheusMissingGrafanaCloud` alert.
+- Fix `PrometheusMissingGrafanaCloud` alert for non-mimir installations.
 
 ## [3.7.1] - 2024-04-08
 

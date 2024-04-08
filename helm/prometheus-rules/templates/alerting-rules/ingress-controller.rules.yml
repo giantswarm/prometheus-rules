@@ -13,7 +13,7 @@ spec:
     - alert: IngressControllerDeploymentNotSatisfied
       annotations:
         description: '{{`Ingress Controller Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        opsrecipe: ingress-controller-deployment-not-satisfied/
+        opsrecipe: ingress-controller-down/
       expr: managed_app_deployment_status_replicas_available{managed_app=~".*(ingress-nginx|nginx-ingress-controller).*"} / (managed_app_deployment_status_replicas_available{managed_app=~".*(ingress-nginx|nginx-ingress-controller).*"} + managed_app_deployment_status_replicas_unavailable{managed_app=~".*(ingress-nginx|nginx-ingress-controller).*"}) * 100 <= 50
       for: 10m
       labels:

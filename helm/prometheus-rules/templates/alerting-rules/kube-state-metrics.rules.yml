@@ -15,7 +15,16 @@ spec:
         description: '{{`KubeStateMetrics ({{ $labels.instance }}) is down.`}}'
         opsrecipe: kube-state-metrics-down/
       {{- if not .Values.mimir.enabled }}
-      expr: label_replace(up{app="kube-state-metrics",container=""}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{app="kube-state-metrics",container=""} == 1)
+      expr: |-
+        (
+          # modern clusters
+          label_replace(up{app="kube-state-metrics",instance=~".*:8080"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{app="kube-state-metrics",instance=~".*:8080"} == 1)
+        )
+        and
+        (
+          # vintage clusters without servicemonitor
+          label_replace(up{app="kube-state-metrics",container=""}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{app="kube-state-metrics",container=""} == 1)
+        )
       {{- else }}
       expr: |-
         count by (cluster_id, installation, provider, pipeline) (label_replace(up{app="kube-state-metrics", instance=~".*:8080"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*")) == 0

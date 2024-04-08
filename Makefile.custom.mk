@@ -33,4 +33,4 @@ test-opsrecipes: install-tools template-chart ## Check if opsrecipes are valid
 	bash test/hack/bin/check-opsrecipes.sh
 
 test-ci-opsrecipes: install-tools template-chart ## Check if opsrecipes are valid in CI
-	bash OPSRECIPES_DIR=./giantswarm test/hack/bin/check-opsrecipes.sh
+	test/hack/bin/check-opsrecipes.sh --ci

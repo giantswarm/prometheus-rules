@@ -10,7 +10,6 @@ DEBUG_MODE=false
 CHECK_EXTRADATA_ERRORS=true
 CHECK_NORECIPE_ERRORS=true
 CHECK_UNEXISTINGRECIPE_ERRORS=true
-OPSRECIPES_DIR=
 
 # Parameters:
 # - an element
@@ -31,17 +30,29 @@ isInArray () {
 
 
 listOpsRecipes () {
-    # find list of opsrecipes from git repo if the OPSRECIPES_DIR is not set
-    if [ -z "$OPSRECIPES_DIR" ]; then
+    local runInCi="$1" && shift
+    privateOpsrecipesParentDirectory="./giantswarm"
+    if [[ "$runInCi" == false ]]; then
         tmpDir="$(mktemp -d)"
         git clone --depth 1 --single-branch -b main -q git@github.com:giantswarm/giantswarm.git "$tmpDir"
-        OPSRECIPES_DIR="$tmpDir"
+        privateOpsrecipesParentDirectory="$tmpDir"
     fi
-
     # find all ops-recipes ".md" files, and keep only the opsrecipe name (may contain a path, like "rolling-nodes/rolling-nodes")
-    find "$OPSRECIPES_DIR"/content/docs/support-and-ops/ops-recipes -type f -name \*.md \
-        | sed -n 's_'"$OPSRECIPES_DIR"'/content/docs/support-and-ops/ops-recipes/\(.*\).md_\1_p'
-    rm -rf "$OPSRECIPES_DIR"
+    find "$privateOpsrecipesParentDirectory"/content/docs/support-and-ops/ops-recipes -type f -name \*.md \
+        | sed -n 's_'"$privateOpsrecipesParentDirectory"'/content/docs/support-and-ops/ops-recipes/\(.*\).md_\1_p'
+    rm -rf "$privateOpsrecipesParentDirectory"
+
+    # opsrecipes from the handbook
+    publicOpsrecipesParentDirectory="./handbook"
+    if [[ "$runInCi" == false ]]; then
+        tmpDir="$(mktemp -d)"
+        git clone --depth 1 --single-branch -b main -q git@github.com:giantswarm/handbook.git "$tmpDir"
+        publicOpsrecipesParentDirectory="$tmpDir"
+    fi
+    # find all ops-recipes ".md" files, and keep only the opsrecipe name (may contain a path, like "rolling-nodes/rolling-nodes")
+    find "$publicOpsrecipesParentDirectory"/content/docs/support-and-ops/ops-recipes -type f -name \*.md \
+        | sed -n 's_'"$publicOpsrecipesParentDirectory"'/content/docs/support-and-ops/ops-recipes/\(.*\).md_\1_p'
+    rm -rf "$publicOpsrecipesParentDirectory"
 
     # Add extra opsrecipes
     # These ones are defined as aliases of `deployment-not-satisfied`:
@@ -52,6 +63,14 @@ listOpsRecipes () {
 
 
 main() {
+    local -a runInCi=false
+    for arg in "$@"; do
+        shift
+        case "$arg" in
+            '--ci')  runInCi=true   ;;
+        esac
+    done
+
     local -a checkedRules=()
     local -a opsRecipes=()
     local -a E_extradata=()
@@ -63,7 +82,7 @@ main() {
     ########################
 
     # Retrieve list of opsrecipes
-    mapfile -t opsRecipes < <(listOpsRecipes)
+    mapfile -t opsRecipes < <(listOpsRecipes $runInCi)
 
     if [[ "$DEBUG_MODE" != "false" ]]; then
         echo "List of opsrecipe:"

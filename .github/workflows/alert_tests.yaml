@@ -26,9 +26,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: "0"
-      - name: Clone opsrecipe repo
+      - name: Clone private opsrecipe repo
         run: |
           git clone --depth 1 --single-branch -b main -q https://oauth2:${{ secrets.TAYLORBOT_GITHUB_ACTION }}@github.com/giantswarm/giantswarm.git
+      - name: Clone public opsrecipe repo
+        run: |
+          git clone --depth 1 --single-branch -b main -q https://oauth2:${{ secrets.TAYLORBOT_GITHUB_ACTION }}@github.com/giantswarm/handbook.git
       - name: run opsrecipe tests
         env:
           OPSRECIPES_DIR: ./giantswarm

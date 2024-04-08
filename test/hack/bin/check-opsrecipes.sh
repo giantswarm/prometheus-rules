@@ -28,27 +28,13 @@ isInArray () {
     return 1
 }
 
-
-mergeInHandbook() {
-    if [ ! -d "$1/content/docs/." ]
-    then
-        echo Destination Hugo base directory not specified or invalid (must contain content/docs)! >&2
-    fi
-    tmpDirHandbook="$(mktemp -d)"
-    git clone --depth=1 https://github.com/giantswarm/handbook.git "$tmpDirHandbook" && \
-        find "$tmpDirHandbook/content/docs" -mindepth 1 -maxdepth 1 -type d | xargs cp -v -x -a -r -u -t "$1/content/docs/." | \
-            grep -o -P "(?<= -> ').*\.md" | \
-            xargs sed -s -i'' '0,/^---.*$/s//---\nsourceOrigin: handbook/'
-
-}
-
-# merge_docs() merges a Hugo docs hierarchy from a source directory (first arg) into a destination directory (second arg).
+# merge_docs () merges a Hugo docs hierarchy from a source directory (first arg) into a destination directory (second arg).
 merge_docs() {
     if [ ! -d "$1/content/docs/." ] ; then
-        echo Source Hugo base directory not specified or invalid (must contain content/docs)! >&2
+        echo "Source Hugo base directory not specified or invalid (must contain content/docs)!" >&2
     fi
     if [ ! -d "$2/content/docs/." ] ; then
-        echo Destination Hugo base directory not specified or invalid (must contain content/docs)! >&2
+        echo "Destination Hugo base directory not specified or invalid (must contain content/docs)!" >&2
     fi
     find "$1/content/docs" -mindepth 1 -maxdepth 1 -type d | xargs cp -v -x -a -r -u -t "$2/content/docs/." | \
         grep -o -P "(?<= -> ').*\.md" | \

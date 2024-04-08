@@ -45,6 +45,7 @@ listOpsRecipes () {
     local runInCi="$1" && shift
     privateOpsrecipesParentDirectory="./giantswarm"
     privateOpsrecipesHandbookParentDirectory="./handbook"
+    # CI clones git dependencies, but if we run it locally we have to do it ourselves
     if [[ "$runInCi" == false ]]; then
         tmpDir="$(mktemp -d)"
         tmpDirHandbook="$(mktemp -d)"

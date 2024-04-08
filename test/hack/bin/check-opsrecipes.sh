@@ -33,7 +33,7 @@ merge_docs() {
     if [[ ! -d "$1/content/docs/." ]] ; then
         echo "Source Hugo base directory not specified or invalid (must contain content/docs)!" >&2
     fi
-    if [ ! -d "$2/content/docs/." ] ; then
+    if [[ ! -d "$2/content/docs/." ]] ; then
         echo "Destination Hugo base directory not specified or invalid (must contain content/docs)!" >&2
     fi
     find "$1/content/docs" -mindepth 1 -maxdepth 1 -type d | xargs cp -v -x -a -r -u -t "$2/content/docs/." | \

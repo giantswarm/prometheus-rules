@@ -60,6 +60,7 @@ spec:
     - alert: FluentbitDaemonSetNotSatisfied
       annotations:
         description: '{{`Daemonset {{ $labels.namespace}}/{{ $labels.daemonset }} is not satisfied.`}}'
+        opsrecipe: daemonset-not-satisfied/
       expr: kube_daemonset_status_number_unavailable{daemonset="fluent-logshipping-app"} > 0
       for: 1h
       labels:

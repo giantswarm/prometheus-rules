@@ -12,7 +12,7 @@ spec:
     - alert: "SilenceOperatorReconcileErrors"
       annotations:
         description: '{{`silence-operator controller {{ $labels.controller }} too many reconcile errors.`}}'
-        opsrecipe: "silence-operator-reconcile-errors/"
+        opsrecipe: "operator-not-reconciling/"
       expr: |
         avg_over_time(operatorkit_controller_errors_total{app="silence-operator", cluster_type="management_cluster"}[20m]) > 0
       for: 1h

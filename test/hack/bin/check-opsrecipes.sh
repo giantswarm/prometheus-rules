@@ -91,7 +91,7 @@ main() {
     ########################
 
     # Retrieve list of opsrecipes
-    mapfile -t opsRecipes < <(listOpsRecipes $runInCi)
+    mapfile -t opsRecipes < <(listOpsRecipes "$runInCi")
 
     if [[ "$DEBUG_MODE" != "false" ]]; then
         echo "List of opsrecipe:"

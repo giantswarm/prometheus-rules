@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix missing ops-recipes.
 
+### Changed
+
+- Make Atlas rules compatible with Mimir:
+  - Add labels `cluster_id, installation, provider, pipeline` for each aggregation functions
+  - Rewrite some of `absent` functions
+
 ## [3.6.2] - 2024-04-04
 
 ### Changed

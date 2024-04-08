@@ -13,7 +13,7 @@ spec:
       annotations:
         description: 'Sloth is down.'
         opsrecipe: sloth-down/
-      expr: count(up{app="sloth"} == 0) by (cluster_id) > 0
+      expr: count(up{app="sloth"} == 0) by (cluster_id, installation, provider, pipeline) > 0
       for: 5m
       labels:
         area: managedservices

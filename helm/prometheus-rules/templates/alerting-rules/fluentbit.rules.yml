@@ -46,7 +46,7 @@ spec:
       annotations:
         description: '{{`Fluentbit is down on node ({{ $labels.node }}).`}}'
         opsrecipe: fluentbit-down/
-      expr: sum(up{app="fluent-logshipping-app"}) by (app, cluster_id, job, namespace, node) == 0
+      expr: sum(up{app="fluent-logshipping-app"}) by (app, cluster_id, installation, provider, pipeline, job, namespace, node) == 0
       for: 15m
       labels:
         area: empowerment

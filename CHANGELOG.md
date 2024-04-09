@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.8.1] - 2024-04-09
+
 ### Fixed
 
 - Fix cluster_type label for vintage clusters in `aggregation:giantswarm:cluster_info` recording query.
@@ -2589,7 +2591,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.8.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.8.1...HEAD
+[3.8.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.8.0...v3.8.1
 [3.8.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.7.2...v3.8.0
 [3.7.2]: https://github.com/giantswarm/prometheus-rules/compare/v3.7.1...v3.7.2
 [3.7.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.7.0...v3.7.1

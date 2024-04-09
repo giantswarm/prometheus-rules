@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix cluster_type label for vintage clusters in `aggregation:giantswarm:cluster_info` recording query.
+
 ## [3.8.0] - 2024-04-08
 
 ### Added

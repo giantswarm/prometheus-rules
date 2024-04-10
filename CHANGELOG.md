@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.10.0] - 2024-04-10
+
 ### Added
 
 - Add `IRSAACMCertificateExpiringInLessThan60Days` alert.
@@ -2601,7 +2603,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.9.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.10.0...HEAD
+[3.10.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.9.0...v3.10.0
 [3.9.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.8.1...v3.9.0
 [3.8.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.8.0...v3.8.1
 [3.8.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.7.2...v3.8.0

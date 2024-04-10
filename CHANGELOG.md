@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add ops recipe for `ClusterCertificateExpirationMetricsMissing` alert.
+
 ## [3.8.1] - 2024-04-09
 
 ### Fixed

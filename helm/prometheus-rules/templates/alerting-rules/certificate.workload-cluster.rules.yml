@@ -30,6 +30,7 @@ spec:
     - alert: ClusterCertificateExpirationMetricsMissing
       annotations:
         description: '{{`Certificate metrics are missing for cluster {{ $labels.cluster_id }}.`}}'
+        opsrecipe: absent-metrics
       expr: max(up{cluster_id!="", cluster_type="workload_cluster"}) by (cluster_id) unless on (cluster_id) count (cert_exporter_not_after{cluster_type="workload_cluster"}) by (cluster_id) > 0
       for: 30m
       labels:

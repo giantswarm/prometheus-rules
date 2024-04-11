@@ -32,6 +32,7 @@ spec:
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/
+        dashboard: bdiako8tt1b7kc/capa-agregated-error-logs-for-capa-controllers
       expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"(aws.*|capa-.*|irsa-operator.*)", cluster_type="management_cluster"}[1h]), "service", "/", "namespace", "pod") > 6
       for: 5m
       labels:
@@ -65,6 +66,7 @@ spec:
       annotations:
         description: '{{`IRSA bootstrap for Cluster {{ $labels.cluster_id }} failed.`}}'
         opsrecipe: irsa-operator-error/
+        dashboard: bdiako8tt1b7kc/capa-agregated-error-logs-for-capa-controllers
       expr: irsa_operator_cluster_errors > 0
       for: 10m
       labels:

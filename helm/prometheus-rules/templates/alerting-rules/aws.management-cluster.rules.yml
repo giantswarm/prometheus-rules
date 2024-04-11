@@ -175,4 +175,18 @@ spec:
         severity: page
         team: phoenix
         topic: aws
+    - alert: IRSAACMCertificateExpiringInLessThan60Days
+      annotations:
+        description: '{{`IRSA ACM certificate for Cluster {{ $labels.cluster_id }} ({{ $labels.certificate_name }}) will expire in less than 2 months.`}}'
+        opsrecipe: irsa-acm-certificate-expiring/
+      expr: min(irsa_operator_acm_certificate_not_after) by (cluster_id, installation, pipeline, provider, certificate_name) - time() < 5184000
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: aws
 {{- end }}

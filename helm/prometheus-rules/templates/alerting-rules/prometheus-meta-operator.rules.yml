@@ -30,7 +30,7 @@ spec:
         (
           sum by(cluster_id, installation, provider, pipeline) (
             {__name__=~"cluster_service_cluster_info|cluster_operator_cluster_status", status!="Deleting"}
-          ) unless sum by(cluster_id, installation, provider, pipeline) (
+          ) > 0 unless sum by(cluster_id, installation, provider, pipeline) (
             label_replace(
               kube_pod_container_status_running{container="prometheus", namespace!="{{ .Values.managementCluster.name }}-prometheus", namespace=~".*-prometheus"},
               "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)"

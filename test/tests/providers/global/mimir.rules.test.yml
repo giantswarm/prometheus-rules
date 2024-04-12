@@ -55,7 +55,7 @@ tests:
   - interval: 1m
     input_series:
       # For the first 60min: test with 1 pod: none, up, down
-      - series: 'up{app="mimir",cluster_type="management_cluster", cluster_id="gauss", installation="gauss", service="mimir-ingester"}'
+      - series: 'up{app="mimir",cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", service="mimir-ingester"}'
         values: "_x20 1+0x20 0+0x20"
     alert_rule_test:
       - alertname:  MimirComponentDown
@@ -76,12 +76,15 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: gauss
+              installation: gauss
+              provider: aws
+              pipeline: testing
             exp_annotations:
               description: "Mimir component : mimir-ingester is down."
   - interval: 1m
     input_series:
       # test with 1 pod: none, up, down
-      - series: 'up{app="grafana-agent",cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="mimir"}'
+      - series: 'up{app="grafana-agent",cluster_type="management_cluster", cluster_id="golem", provider="capa", pipeline="testing", installation="golem", namespace="mimir"}'
         values: "_x20 1+0x70 0+0x70"
     alert_rule_test:
       - alertname: GrafanaAgentForPrometheusRulesDown
@@ -98,6 +101,9 @@ tests:
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cluster_id: golem
+              installation: golem
+              provider: capa
+              pipeline: testing
               severity: page
               team: atlas
               topic: observability

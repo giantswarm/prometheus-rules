@@ -132,6 +132,7 @@ spec:
     - alert: WorkloadClusterMasterMemoryUsageTooHigh
       annotations:
         description: '{{`Machine {{ $labels.instance }} memory usage is too high (less than 10% and 2G of allocatable memory).`}}'
+        opsrecipe: master-machine-usage-too-high/
       expr: |-
         ( ( (
               ( node_memory_MemTotal_bytes{cluster_type="workload_cluster"}

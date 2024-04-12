@@ -11,6 +11,71 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add CiliumFailedNetworkPolicy alert.
 
+## [3.10.1] - 2024-04-12
+
+### Fixed
+
+- Fix `MatchingNumberOfPrometheusAndCluster` alert.
+
+## [3.10.0] - 2024-04-10
+
+### Added
+
+- Add `IRSAACMCertificateExpiringInLessThan60Days` alert.
+
+## [3.9.0] - 2024-04-10
+
+### Added
+
+- Add ops recipe for `ClusterCertificateExpirationMetricsMissing` alert.
+
+## [3.8.1] - 2024-04-09
+
+### Fixed
+
+- Fix cluster_type label for vintage clusters in `aggregation:giantswarm:cluster_info` recording query.
+
+## [3.8.0] - 2024-04-08
+
+### Added
+
+- Add non-blocking opsrecipe validation.
+
+### Fixed
+
+- Fix `WorkloadClusterMasterMemoryUsageTooHigh` opsrecipe.
+
+## [3.7.2] - 2024-04-08
+
+### Fixed
+
+- Fix `PrometheusMissingGrafanaCloud` alert for non-mimir installations.
+- Fix `IngressControllerDeploymentNotSatisfied` opsrecipe.
+
+## [3.7.1] - 2024-04-08
+
+### Fixed
+
+- Fix `kube-state-metrics` down alert.
+
+## [3.7.0] - 2024-04-08
+
+### Fixed
+
+- Fix missing ops-recipes.
+
+### Changed
+
+- Make Atlas rules compatible with Mimir:
+  - Add labels `cluster_id, installation, provider, pipeline` for each aggregation functions
+  - Rewrite some of `absent` functions
+
+## [3.6.2] - 2024-04-04
+
+### Changed
+
+- Limit alerts for the split setup (dual vs single flux) to the `flux-giantswarm` controller ones.
+
 ## [3.6.1] - 2024-04-04
 
 ### Changed
@@ -2548,7 +2613,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.6.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.10.1...HEAD
+[3.10.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.10.0...v3.10.1
+[3.10.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.9.0...v3.10.0
+[3.9.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.8.1...v3.9.0
+[3.8.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.8.0...v3.8.1
+[3.8.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.7.2...v3.8.0
+[3.7.2]: https://github.com/giantswarm/prometheus-rules/compare/v3.7.1...v3.7.2
+[3.7.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.7.0...v3.7.1
+[3.7.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.6.2...v3.7.0
+[3.6.2]: https://github.com/giantswarm/prometheus-rules/compare/v3.6.1...v3.6.2
 [3.6.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.6.0...v3.6.1
 [3.6.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.5.0...v3.6.0
 [3.5.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.4.0...v3.5.0

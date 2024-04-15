@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add CiliumFailedNetworkPolicy alert.
+- Add CiliumNetworkPolicyFailed alert.
 
 ## [3.10.1] - 2024-04-12
 

@@ -9,11 +9,11 @@ tests:
       - series: 'cilium_bpf_map_pressure{map_name="policy_00001"}'
         values: "_x20 20+0x20 90+0x20"
     alert_rule_test:
-      - alertname:  CiliumBPFMapAlmostFull
+      - alertname: CiliumBPFMapAlmostFull
         eval_time: 10m
-      - alertname:  CiliumBPFMapAlmostFull
+      - alertname: CiliumBPFMapAlmostFull
         eval_time: 30m
-      - alertname:  CiliumBPFMapAlmostFull
+      - alertname: CiliumBPFMapAlmostFull
         eval_time: 50m
         exp_alerts:
           - exp_labels:
@@ -31,11 +31,11 @@ tests:
       - series: 'cilium_bpf_map_pressure{map_name="policy_00001"}'
         values: "_x20 20+0x20 90+0x20 98+0x20"
     alert_rule_test:
-      - alertname:  CiliumBPFMapFull
+      - alertname: CiliumBPFMapFull
         eval_time: 10m
-      - alertname:  CiliumBPFMapFull
+      - alertname: CiliumBPFMapFull
         eval_time: 30m
-      - alertname:  CiliumBPFMapFull
+      - alertname: CiliumBPFMapFull
         eval_time: 70m
         exp_alerts:
           - exp_labels:
@@ -47,7 +47,7 @@ tests:
             exp_annotations:
               description: "Cilium BPF map is about filled up."
               opsrecipe: "cilium-bpf-map/"
-  # CiliumFailedNetworkPolicy for 1.15+ (cilium_policy_change_total{outcome="fail.*"})
+  # CiliumNetworkPolicyFailed for 1.15+ (cilium_policy_change_total{outcome="fail.*"})
   - interval: 1m
     input_series:
       # For the first 60min: test with 1 pod: none, up, down
@@ -59,11 +59,11 @@ tests:
         values: "_x220 0+0x20 0+100x30 _x1000"
     alert_rule_test:
       # cilium_policy_change_total{outcome="fail"}
-      - alertname:  CiliumFailedNetworkPolicy
+      - alertname: CiliumNetworkPolicyFailed
         eval_time: 10m
-      - alertname:  CiliumFailedNetworkPolicy
+      - alertname: CiliumNetworkPolicyFailed
         eval_time: 30m
-      - alertname:  CiliumFailedNetworkPolicy
+      - alertname: CiliumNetworkPolicyFailed
         eval_time: 60m
         exp_alerts:
           - exp_labels:
@@ -76,18 +76,18 @@ tests:
               description: "Too many Cilium Network Policy errors."
               opsrecipe: "unsupported-cilium-network-policy/"
       # cilium_policy_change_total{outcome="success"}
-      - alertname:  CiliumFailedNetworkPolicy
+      - alertname: CiliumNetworkPolicyFailed
         eval_time: 110m
-      - alertname:  CiliumFailedNetworkPolicy
+      - alertname: CiliumNetworkPolicyFailed
         eval_time: 130m
-      - alertname:  CiliumFailedNetworkPolicy
+      - alertname: CiliumNetworkPolicyFailed
         eval_time: 160m
       # cilium_policy_import_errors_total{}
-      - alertname:  CiliumFailedNetworkPolicy
+      - alertname: CiliumNetworkPolicyFailed
         eval_time: 210m
-      - alertname:  CiliumFailedNetworkPolicy
+      - alertname: CiliumNetworkPolicyFailed
         eval_time: 230m
-      - alertname:  CiliumFailedNetworkPolicy
+      - alertname: CiliumNetworkPolicyFailed
         eval_time: 260m
         exp_alerts:
           - exp_labels:

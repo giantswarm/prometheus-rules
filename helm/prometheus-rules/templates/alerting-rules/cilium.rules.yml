@@ -33,7 +33,7 @@ spec:
         severity: page
         team: cabbage
         topic: cilium
-    - alert: CiliumFailedNetworkPolicy
+    - alert: CiliumNetworkPolicyFailed
       annotations:
         description: '{{`Too many Cilium Network Policy errors.`}}'
         opsrecipe: unsupported-cilium-network-policy/

@@ -4,17 +4,16 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    cluster_type: "workload_cluster"
-  name: net-exporter.workload-cluster.rules
+  name: net-exporter.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
   - name: net-exporter
     rules:
-    - alert: WorkloadClusterNetExporterCPUUsageTooHigh
+    - alert: ClusterNetExporterCPUUsageTooHigh
       annotations:
         description: '{{`net-exporter cpu usage is too high.`}}'
-      expr: rate(container_cpu_user_seconds_total{pod_name=~"net-exporter-.*", cluster_type="workload_cluster"}[5m]) > 0.015
+      expr: rate(container_cpu_user_seconds_total{pod_name=~"net-exporter-.*"}[5m]) > 0.015
       for: 5m
       labels:
         area: kaas

@@ -1,4 +1,3 @@
-{{- if ne .Values.managementCluster.provider.kind "kvm" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -16,9 +15,9 @@ spec:
       annotations:
         description: '{{`Prometheus agent remote write is failing.`}}'
         summary: Prometheus agent fails to send samples to remote write endpoint.
-        opsrecipe: prometheus-agent-remote-write-failed/
+        opsrecipe: prometheus-agent/
         dashboard: promRW001/prometheus-remote-write
-      #  expr: count(absent_over_time(up{instance="prometheus-agent"}[10m]))
+      {{- if not .Values.mimir.enabled }}
       expr: |-
         max_over_time(
           sum by (cluster_type, cluster_id, installation, instance, service)
@@ -28,6 +27,20 @@ spec:
             absent(up{instance="prometheus-agent"}) == 1
           )[5m:]
         )
+      {{- else }}
+      expr: |-
+        (
+          label_replace(
+            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          ) == 1
+        ) unless on (cluster_id, customer, installation, pipeline, provider, region) (
+          count(up{job="prometheus-agent"} > 0) by (cluster_id, customer, installation, pipeline, provider, region)
+        )
+      {{- end }}
       for: 20m
       labels:
         area: empowerment
@@ -43,9 +56,9 @@ spec:
       annotations:
         description: '{{`Prometheus agent remote write is failing.`}}'
         summary: Prometheus agent fails to send samples to remote write endpoint.
-        opsrecipe: prometheus-agent-remote-write-failed/
+        opsrecipe: prometheus-agent/
         dashboard: promRW001/prometheus-remote-write
-      #  expr: count(absent_over_time(up{instance="prometheus-agent"}[10m]))
+      {{- if not .Values.mimir.enabled }}
       expr: |-
         max_over_time(
           sum by (cluster_type, cluster_id, installation, instance, service)
@@ -55,7 +68,21 @@ spec:
             absent(up{instance="prometheus-agent"}) == 1
           )[5m:]
         )
-      for: 1m
+      {{- else }}
+      expr: |-
+        (
+          label_replace(
+            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          ) == 1
+        ) unless on (cluster_id, customer, installation, pipeline, provider, region) (
+          count(up{job="prometheus-agent"} > 0) by (cluster_id, customer, installation, pipeline, provider, region)
+        )
+      {{- end }}
+      for: 2m
       labels:
         area: empowerment
         severity: none
@@ -70,25 +97,20 @@ spec:
       annotations:
         description: '{{`Prometheus agent is missing shards.`}}'
         summary: Prometheus agent is missing shards.
-        opsrecipe: prometheus-agent-missing-shards/
+        opsrecipe: prometheus-agent/
       expr: |-
-        max_over_time(sum(
+        max_over_time(sum by (cluster_id, installation, provider, pipeline)(
           count(
             ## number of remotes that are not mimir or grafana-cloud
-            prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir"}
-          )
+            prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir.*"}
+          ) by (cluster_id, installation, provider, pipeline)
           !=
           sum(
             ## number of shards defined in the Prometheus CR
             prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"}
-            or
-            (
-              # if there is only 1 shard, there is no shard metric so we use the replicas metric
-              absent(prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"})
-              and on(controller, name)
-              prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
-            )
-          )
+            # if there is only 1 shard, there is no shard metric so we use the replicas metric
+            or prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
+          ) by (cluster_id, installation, provider, pipeline)
         )[5m:])
       for: 20m
       labels:
@@ -106,27 +128,22 @@ spec:
       annotations:
         description: '{{`Prometheus agent is missing shards.`}}'
         summary: Prometheus agent is missing shards.
-        opsrecipe: prometheus-agent-missing-shards/
+        opsrecipe: prometheus-agent/
       expr: |-
-        max_over_time(sum(
+        max_over_time(sum by (cluster_id, installation, provider, pipeline)(
           count(
             ## number of remotes that are not mimir or grafana-cloud
-            prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir"}
-          )
+            prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir.*"}
+          ) by (cluster_id, installation, provider, pipeline)
           !=
           sum(
             ## number of shards defined in the Prometheus CR
             prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"}
-            or
-            (
-              # if there is only 1 shard, there is no shard metric so we use the replicas metric
-              absent(prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"})
-              and on(controller, name)
-              prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
-            )
-          )
+            # if there is only 1 shard, there is no shard metric so we use the replicas metric
+            or prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
+          ) by (cluster_id, installation, provider, pipeline)
         )[5m:])
-      for: 1m
+      for: 2m
       labels:
         area: empowerment
         severity: none
@@ -137,4 +154,3 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"
-{{- end }}

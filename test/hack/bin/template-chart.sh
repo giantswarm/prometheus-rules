@@ -1,7 +1,6 @@
 #!/bin/bash
 
 main() {
-
   local GIT_WORKDIR
   GIT_WORKDIR="$(git rev-parse --show-toplevel)"
 

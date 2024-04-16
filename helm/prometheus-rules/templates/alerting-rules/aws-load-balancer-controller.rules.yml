@@ -5,40 +5,42 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
     cluster_type: "workload_cluster"
+{{- end }}
   name: aws-load-balancer-controller.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
   - name: aws-load-balancer-controller
     rules:
-    - alert: AWSLoadBalancerAssumeRoleErrors
+    - alert: AWSLoadBalancerControllerAWSAPIErrors
       annotations:
-        description: '{{`AWS load balancer pod {{ $labels.namespace}}/{{ $labels.pod_name }} on {{ $labels.cluster_id}}/{{ $labels.cluster }} can not assume the role.`}}'
-        opsrecipe: alb-role-errors#assume-role-errors
-      expr: increase(aws_api_calls_total{error_code="WebIdentityErr"}[20m]) > 0
+        description: '{{`AWS load balancer controller pod {{ $labels.namespace}}/{{ $labels.pod }} on {{ $labels.cluster_id}} is throwing {{ $labels.error_code }} errors when contacting AWS API.`}}'
+        opsrecipe: alb-errors
+      expr: sum(increase(aws_api_calls_total{error_code != ""}[20m])) by (error_code,namespace,pod,cluster_id) > 0
       for: 40m
       labels:
         area: managedservices
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "false"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: phoenix
         topic: alb
-    - alert: AWSLoadBalancerRolePolicyErrors
+    - alert: AWSLoadBalancerControllerReconcileErrors
       annotations:
-        description: '{{`AWS load balancer pod {{ $labels.namespace}}/{{ $labels.pod_name }} on {{ $labels.cluster_id}}/{{ $labels.cluster }} has a wrong role policy.`}}'
-        opsrecipe: alb-role-errors#role-policy-errors
-      expr: increase(aws_api_calls_total{error_code="UnauthorizedOperation"}[20m]) > 0
+        description: '{{`AWS load balancer controller pod {{ $labels.namespace }}/{{ $labels.pod }} on {{ $labels.cluster_id }} is throwing errors while reconciling the {{ $labels.controller }} controller.`}}'
+        opsrecipe: alb-errors
+      expr: sum(increase(controller_runtime_reconcile_total{service="aws-load-balancer-controller", result = "error"}[20m])) by (controller,namespace,pod,cluster_id) > 0
       for: 40m
       labels:
         area: managedservices
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "false"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: phoenix
         topic: alb

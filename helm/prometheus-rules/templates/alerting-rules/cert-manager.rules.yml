@@ -17,7 +17,7 @@ spec:
           If memory usage value is equal to memory limit value then it is likely the pod will be evicted.
           If no limits are set then the pod will burst.
           `}}
-      expr: sum by (pod, namespace, container) (container_memory_working_set_bytes{container=~"(cert-manager)"}) / sum by (pod, namespace, container) (kube_pod_container_resource_requests_memory_bytes{container=~"(cert-manager)"}) >= 0.85
+      expr: (sum by (cluster_id, pod, namespace, container) (container_memory_working_set_bytes{container=~"(cert-manager|cert-manager-app-controller)"}) / 1024 / 1024 / 1024) >= 0.85
       for: 10m
       labels:
         area: kaas

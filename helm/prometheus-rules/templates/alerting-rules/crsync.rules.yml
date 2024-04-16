@@ -5,6 +5,7 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+    # No need for .Values.mimir.enabled condition - will be gone with Vintage
     cluster_type: "management_cluster"
   name: crsync.rules
   namespace: {{ .Values.namespace  }}
@@ -31,7 +32,7 @@ spec:
       annotations:
         description: '{{`Too many tags are not synchronised to registry mirrors.`}}'
         opsrecipe: crsync-too-many-tags-missing/
-      expr: crsync_sync_tags_total{registry="quay.io"} - on (repository,app) group_left sum by(repository,app) (crsync_sync_tags_total{registry!="quay.io"}) > 0
+      expr: crsync_sync_tags_total{registry="quay.io"} - on (cluster_id, repository, app) group_left sum by(cluster_id, repository, app) (crsync_sync_tags_total{registry!="quay.io"}) > 0
       for: 1h
       labels:
         area: kaas

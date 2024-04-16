@@ -60,6 +60,10 @@ Any Alert includes:
    - `cancel_if_.*`
 
 
+### Specific alert labels
+
+- `all_pipelines: true`: When adding this label to an alert, you are sure the alert will be send to opsgenie, even if the installation is not a stable installation.
+
 #### Routing
 
 Alertmanager does the routing based on the labels menitoned above.
@@ -151,15 +155,10 @@ There are 2 kinds of tests on rules:
    [...]
    ### Skipping templates/alerting-rules/calico.rules.yml
    ### Testing templates/alerting-rules/capi.rules.yml
-   ###    Provider: openstack
-   ###    extracting /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/providers/openstack/capi.rules.yml
-   ###    promtool check rules /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/tests/providers/openstack/capi.rules.yml
+   ###    Provider: capa
+   ###    extracting /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/providers/capa/capi.rules.yml
+   ###    promtool check rules /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/tests/providers/capa/capi.rules.yml
    ###    promtool test rules capi.rules.test.yml
-   ### Testing templates/alerting-rules/capo.rules.yml
-   ###    Provider: openstack
-   ###    extracting /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/providers/openstack/capo.rules.yml
-   ###    promtool check rules /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/tests/providers/openstack/capo.rules.yml
-   ###    promtool test rules capo.rules.test.yml
    ### Skipping templates/alerting-rules/cert-manager.rules.yml
    ### Skipping templates/alerting-rules/certificate.all.rules.yml
    [...]

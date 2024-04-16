@@ -1,10 +1,13 @@
+{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
     cluster_type: "management_cluster"
+{{- end }}
   name: inhibit.management-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -56,18 +59,6 @@ spec:
         cluster_status_deleting: "true"
         team: phoenix
         topic: status
-    {{- if eq .Values.managementCluster.provider.kind "kvm" }}
-    - alert: InhibitionKVMClusterHasNoRunningCPNodes
-      annotations:
-        description: '{{`KVM Cluster {{ $labels.cluster_id }} has nodes down.`}}'
-      expr: label_replace(up{app=~"master|worker", cluster_type="management_cluster"} == 0, "cluster_id", "$1", "namespace", "(.*)")
-      labels:
-        area: kaas
-        nodes_down: "true"
-        team: phoenix
-        topic: status
-    {{- end }}
-    {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: InhibitionClusterWithNoNodePools
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} doesn''t have any node pools.`}}'
@@ -104,4 +95,4 @@ spec:
         instance_state_not_running: "true"
         team: phoenix
         topic: status
-    {{- end }}
+{{- end }}

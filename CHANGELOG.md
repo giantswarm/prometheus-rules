@@ -7,13 +7,281 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.11.0] - 2024-04-15
+
+### Added
+
+- Add CiliumNetworkPolicyFailed alert.
+
+## [3.10.1] - 2024-04-12
+
+### Fixed
+
+- Fix `MatchingNumberOfPrometheusAndCluster` alert.
+
+## [3.10.0] - 2024-04-10
+
+### Added
+
+- Add `IRSAACMCertificateExpiringInLessThan60Days` alert.
+
+## [3.9.0] - 2024-04-10
+
+### Added
+
+- Add ops recipe for `ClusterCertificateExpirationMetricsMissing` alert.
+
+## [3.8.1] - 2024-04-09
+
+### Fixed
+
+- Fix cluster_type label for vintage clusters in `aggregation:giantswarm:cluster_info` recording query.
+
+## [3.8.0] - 2024-04-08
+
+### Added
+
+- Add non-blocking opsrecipe validation.
+
+### Fixed
+
+- Fix `WorkloadClusterMasterMemoryUsageTooHigh` opsrecipe.
+
+## [3.7.2] - 2024-04-08
+
+### Fixed
+
+- Fix `PrometheusMissingGrafanaCloud` alert for non-mimir installations.
+- Fix `IngressControllerDeploymentNotSatisfied` opsrecipe.
+
+## [3.7.1] - 2024-04-08
+
+### Fixed
+
+- Fix `kube-state-metrics` down alert.
+
+## [3.7.0] - 2024-04-08
+
+### Fixed
+
+- Fix missing ops-recipes.
+
 ### Changed
 
+- Make Atlas rules compatible with Mimir:
+  - Add labels `cluster_id, installation, provider, pipeline` for each aggregation functions
+  - Rewrite some of `absent` functions
+
+## [3.6.2] - 2024-04-04
+
+### Changed
+
+- Limit alerts for the split setup (dual vs single flux) to the `flux-giantswarm` controller ones.
+
+## [3.6.1] - 2024-04-04
+
+### Changed
+
+- Adjust Flux alerts for single Flux scenario.
+
+## [3.6.0] - 2024-04-02
+
+### Added
+
+- Add Heartbeat alert for mimir.
+- Add missing alert about loki containers not running to ensure we do not suffer from [extra cloud cost](https://github.com/giantswarm/giantswarm/issues/30124).
+- Add missing alert about mimir containers not running to ensure we do not suffer from [extra cloud cost](https://github.com/giantswarm/giantswarm/issues/30124).
+- Add recording rule for ingresses using the baseDomain.
+
+## [3.5.0] - 2024-03-27
+
+### Changed
+
+- Assign `cilium` SLO alerts to cabbage/empowerment.
+
+## [3.4.0] - 2024-03-25
+
+### Added
+
+- Add rules to monitor that `grafana-agent` is sending `PrometheusRules` to `Mimir ruler`.
+- Add rules to monitor that `grafana-agent` is running.
+
+### Changed
+
+- Changed severity for `TeleportJoinTokenSecret/ConfigmapMistamch` to `notify` and increased alert interval from 30m to 120m
+
+## [3.3.0] - 2024-03-18
+
+### Added
+
+- Add label `giantswarm.io/remote-write-target: grafana-cloud` to recording rules that are to be sent to mimir so the Prometheus instance in the Mimir architecture in-charge of sending data to Grafana Cloud can only select the data it needs and not try to execute all rules in this repository.
+- Add `grafana-agent` App CR to send PrometheusRules to mimir ruler.
+
+## [3.2.0] - 2024-03-18
+
+### Changed
+
+- Increase `PromtailDown` "for" value.
+
+### Fixed
+
+- Fix missing recording rules removed when removing the azure provider.
+- Fix certificate recording rules.
+
+## [3.1.1] - 2024-03-14
+
+### Fixed
+
+- Fix teleport alerts for mimir.
+
+### Changed
+- Adjusted cert-manager `CertManagerPodHighMemoryUsage` alerting threshold (https://github.com/giantswarm/prometheus-rules/pull/1077)
+
+## [3.1.0] - 2024-03-13
+
+### Changed
+
+- Remove `aws-network-topology-operator` from `ManagementClusterDeploymentMissingCAPA` alert.
+
+## [3.0.3] - 2024-03-12
+
+### Changed
+
+- Set `PromtailDown` alert to not page out of business hours
+
+## [3.0.2] - 2024-03-12
+
+### Fixed
+
+- Fix `AWSLoadBalancerControllerReconcileErrors` alert query.
+
+## [3.0.1] - 2024-03-12
+
+### Fixed
+
+- Fix management-cluster.rules paging on WCs.
+
+## [3.0.0] - 2024-03-12
+
+### Added
+
+- Add new mimir.enabled property to disable the MC/WC split in alerts.
+- Add new alert for reconciling errors of `AWS load balancer controller`.
+
+### Changed
+
+- Adjust CAPI rules.
+- Change ownership of `CadvisorDown` to Turtles/Phoenix.
+- Review alerting prior to Mimir migration.
+- Increase duration for fluentbit rules to avoid false alerts when a new release is deployed.
+- Improve `AWS load balancer controller` alert for failed AWS calls query.
+
+### Removed
+
+= Remove `kvm` provider alerts.
+- Remove `azure` provider alerts.
+- Remove `tiller` alerts.
+- Remove `gcp` provider alerts.
+- Remove `openstack` provider alerts.
+
+## [2.153.1] - 2024-02-28
+
+### Fixed
+
+- Fix `PersistentVolumeSpaceTooLow` to ignore the observability components and `DataDiskPersistentVolumeSpaceTooLow` to alert on the new observability stack components.
+
+## [2.153.0] - 2024-02-27
+
+### Removed
+
+- Remove `NodeExporterDeviceError` alert.
+
+## [2.152.1] - 2024-02-26
+
+### Fixed
+
+- Fix `ManagementClusterContainerIsRestartingTooFrequently` alert to only page for rocket components.
+
+## [2.152.0] - 2024-02-14
+
+### Added
+
+- Add Alerts for missing or failing CAPI controller pods.
+- Add Alerts for missing or failing CAPA controller pods.
+- Add recording rule for more detailed cluster compliance information.
+
+## [2.151.0] - 2024-01-31
+
+### Added
+
+- Check creation CAPI cluster creation time before paging `LatestETCDBackup2DaysOld`.
+- Added recording rule for cluster_compliance_metrics.
+
+### Changed
+
+- Rename `dipstick` report count metric.
+- Changed `MachinePoolReplicasMismatch` and `MachineUnhealthyPhase` to page.
+
+## [2.150.1] - 2024-01-24
+
+### Fixed
+
+- Fix Labels `ManagementClusterCertificateIsMissing`.
+
+## [2.150.0] - 2024-01-24
+
+### Added
+
+- Add alert for missing certificates when only secret is present.
+
+## [2.149.0] - 2024-01-22
+
+### Added
+
+- Ship `dipstick` metrics to Grafana Cloud.
+
+### Changed
+
+- Changed teleport alerts to take into account only `Provisioned` clusters
+- Made use of `workingHoursOnly` template on more alerts to ensure `stable-testing` MCs don't page out of hours
+- No longer silence all CAPA and CAPZ alerts out of hours by default
+- Transfer ownership of `circleci` Azure app registration expiry alert to honeybadger
+
+## [2.148.0] - 2024-01-17
+
+### Added
+
+- Added specific deployment status alerts for BigMac application
+- Added teleport-operator alerts for missing secrets and configmaps
+
+### Changed
+
+- Silence `ManagementClusterDeploymentMissingAWS` if KSM is down.
+
+## [2.147.1] - 2024-01-11
+
+### Changed
+
+- Update ops recipe link for all prometheus-agent alerts.
+
+## [2.147.0] - 2024-01-09
+
+### Changed
+
+- Update `AlertManagerNotificationsFailing` routing on Atlas slack for opsgenie integration.
+
+## [2.146.0] - 2024-01-04
+
+### Changed
+
+- Increase the time window for `NodeConnTrackAlmostExhausted`.
 - Fix expression for KongDeploymentNotSatisfied
 
 ### Removed
 
 - Ignore `api-spec` from `AppWithoutTeamAnnotation` alert.
+- Remove `WorkloadClusterManagedDeploymentNotSatisfiedPhoenix` as `cert-manager` is no longer owned by Phoenix.
+- Remove `InhibitionClusterIsNotRunningPrometheusAgent` inhibition on CAPI.
 
 ## [2.145.0] - 2023-11-30
 
@@ -114,7 +382,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- fixed `aggregation:kyverno_policy_job_status_team` expression. 
+- fixed `aggregation:kyverno_policy_job_status_team` expression.
 
 ### Added
 
@@ -2348,7 +2616,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v2.145.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.11.0...HEAD
+[3.11.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.10.1...v3.11.0
+[3.10.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.10.0...v3.10.1
+[3.10.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.9.0...v3.10.0
+[3.9.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.8.1...v3.9.0
+[3.8.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.8.0...v3.8.1
+[3.8.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.7.2...v3.8.0
+[3.7.2]: https://github.com/giantswarm/prometheus-rules/compare/v3.7.1...v3.7.2
+[3.7.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.7.0...v3.7.1
+[3.7.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.6.2...v3.7.0
+[3.6.2]: https://github.com/giantswarm/prometheus-rules/compare/v3.6.1...v3.6.2
+[3.6.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.6.0...v3.6.1
+[3.6.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.5.0...v3.6.0
+[3.5.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.4.0...v3.5.0
+[3.4.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.3.0...v3.4.0
+[3.3.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.2.0...v3.3.0
+[3.2.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.1.1...v3.2.0
+[3.1.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.1.0...v3.1.1
+[3.1.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.0.3...v3.1.0
+[3.0.3]: https://github.com/giantswarm/prometheus-rules/compare/v3.0.2...v3.0.3
+[3.0.2]: https://github.com/giantswarm/prometheus-rules/compare/v3.0.1...v3.0.2
+[3.0.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.0.0...v3.0.1
+[3.0.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.153.1...v3.0.0
+[2.153.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.153.0...v2.153.1
+[2.153.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.152.1...v2.153.0
+[2.152.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.152.0...v2.152.1
+[2.152.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.151.0...v2.152.0
+[2.151.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.150.1...v2.151.0
+[2.150.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.150.0...v2.150.1
+[2.150.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.149.0...v2.150.0
+[2.149.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.148.0...v2.149.0
+[2.148.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.147.1...v2.148.0
+[2.147.1]: https://github.com/giantswarm/prometheus-rules/compare/v2.147.0...v2.147.1
+[2.147.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.146.0...v2.147.0
+[2.146.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.145.0...v2.146.0
 [2.145.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.144.0...v2.145.0
 [2.144.0]: https://github.com/giantswarm/prometheus-rules/compare/v2.143.2...v2.144.0
 [2.143.2]: https://github.com/giantswarm/prometheus-rules/compare/v2.143.1...v2.143.2

@@ -1,11 +1,13 @@
-{{- if or (eq .Values.managementCluster.provider.kind "aws") (eq .Values.managementCluster.provider.kind "azure") }}
+{{- if eq .Values.managementCluster.provider.kind "aws" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
     cluster_type: "workload_cluster"
+{{- end }}
   name: cluster-autoscaler.rules
   namespace: {{ .Values.namespace  }}
 spec:

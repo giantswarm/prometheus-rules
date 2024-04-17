@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add CAPI and CAPA dashbaord to the coresponding alerts.
+
 ### Fixed
 
 - link to `PrometheusMissingGrafanaCloud` opsrecipe

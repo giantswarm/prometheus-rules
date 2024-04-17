@@ -31,6 +31,7 @@ tests:
             exp_annotations:
               description: "Cluster giantswarm/clippaxy stuck in Pending phase."
               opsrecipe: capi-cluster/
+              dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
       - alertname: ClusterStatusNotReady
         eval_time: 75m
         exp_alerts:
@@ -48,6 +49,7 @@ tests:
             exp_annotations:
               description: "Cluster giantswarm/grumpy is not ready."
               opsrecipe: capi-cluster/
+              dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
       - alertname: ClusterPaused
         eval_time: 75m
         exp_alerts:
@@ -64,3 +66,4 @@ tests:
             exp_annotations:
               description: "The cluster giantswarm/grumpy is paused."
               opsrecipe: capi-cluster/
+              dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers

@@ -36,7 +36,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 30 minutes."
-              opsrecipe: "promtail-is-not-running/"
+              opsrecipe: "promtail/"
       # Tests with 2 pods
       - alertname: PromtailDown
         eval_time: 111m
@@ -56,7 +56,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 30 minutes."
-              opsrecipe: "promtail-is-not-running/"
+              opsrecipe: "promtail/"
       - alertname: PromtailDown
         eval_time: 121m
       - alertname: PromtailDown
@@ -77,7 +77,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 30 minutes."
-              opsrecipe: "promtail-is-not-running/"
+              opsrecipe: "promtail/"
   - interval: 1m
     input_series:
       # Tests with multiple cases: no metrics, no requests, only status_code 204 ones, 204 ones and 500 that are less than 10% of the the total, 500 request that represent more than 10% of the total, only 500 ones
@@ -111,7 +111,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "This alert checks if that the amount of failed requests is below 10% for promtail"
-              opsrecipe: "promtail-requests-are-failing/"
+              opsrecipe: "promtail/"
       - alertname: PromtailRequestsErrors
         eval_time: 330m
         exp_alerts:
@@ -129,4 +129,4 @@ tests:
               topic: observability
             exp_annotations:
               description: "This alert checks if that the amount of failed requests is below 10% for promtail"
-              opsrecipe: "promtail-requests-are-failing/"
+              opsrecipe: "promtail/"

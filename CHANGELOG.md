@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update ops-recipe link for promtail alerts.
+- Remove Linkerd form Service SLO alerts.
+- Include all Linkerd Namespaces in LinkerdDeploymentNotSatisfied alert.
+- Make LinkerdDeploymentNotSatisfied alert business hours only.
 
 ## [3.11.2] - 2024-04-18
 

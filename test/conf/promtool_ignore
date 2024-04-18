@@ -27,7 +27,6 @@ templates/alerting-rules/external-dns.rules.yml
 templates/alerting-rules/fairness.rules.yml
 templates/alerting-rules/falco.rules.yml
 templates/alerting-rules/fluentbit.rules.yml
-templates/alerting-rules/flux.rules.yml
 templates/alerting-rules/helm.rules.yml
 templates/alerting-rules/ingress-controller.rules.yml
 templates/alerting-rules/inhibit.all.rules.yml

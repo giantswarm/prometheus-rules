@@ -33,7 +33,7 @@ spec:
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", namespace="flux-giantswarm", exported_namespace=~".*giantswarm.*"} > 0
       for: 10m
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_outside_working_hours: "true"
         severity: page
         team: honeybadger
@@ -48,7 +48,7 @@ spec:
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="workload_cluster", organization="giantswarm"} > 0
       for: 2h
       labels:
-        area: kaas
+        area: empowerment
         severity: page
         cancel_if_outside_working_hours: "true"
         team: honeybadger
@@ -63,7 +63,7 @@ spec:
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="management_cluster", namespace="flux-giantswarm", exported_namespace=~".*giantswarm.*"} > 0
       for: 20m
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_outside_working_hours: "true"
         severity: page
         team: honeybadger
@@ -76,7 +76,7 @@ spec:
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="workload_cluster", organization="giantswarm"} > 0
       for: 2h
       labels:
-        area: kaas
+        area: empowerment
         severity: page
         cancel_if_outside_working_hours: "true"
         team: honeybadger
@@ -89,7 +89,7 @@ spec:
       expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="management_cluster", namespace="flux-giantswarm", exported_namespace=~".*giantswarm.*"} > 0
       for: 2h
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_outside_working_hours: "true"
         severity: page
         team: honeybadger
@@ -102,7 +102,7 @@ spec:
       expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="workload_cluster", organization="giantswarm"} > 0
       for: 2h
       labels:
-        area: kaas
+        area: empowerment
         severity: page
         cancel_if_outside_working_hours: "true"
         team: honeybadger
@@ -125,7 +125,7 @@ spec:
         / (7*24*6) < 0.97
       for: 10m
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_outside_working_hours: "true"
         severity: page
         team: honeybadger
@@ -138,7 +138,7 @@ spec:
       expr: gotk_suspend_status{namespace="flux-giantswarm", exported_namespace="flux-giantswarm"} > 0
       for: 24h
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_outside_working_hours: "true"
         severity: page
         team: honeybadger
@@ -168,7 +168,7 @@ spec:
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", exported_namespace!~".*giantswarm.*"} > 0
       for: 10m
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: honeybadger
@@ -181,7 +181,7 @@ spec:
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="workload_cluster", organization!="giantswarm"} > 0
       for: 2h
       labels:
-        area: kaas
+        area: empowerment
         severity: notify
         cancel_if_outside_working_hours: "true"
         team: honeybadger
@@ -194,7 +194,7 @@ spec:
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="management_cluster", exported_namespace!~".*giantswarm.*"} > 0
       for: 10m
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: honeybadger
@@ -207,7 +207,7 @@ spec:
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="workload_cluster", organization!="giantswarm"} > 0
       for: 2h
       labels:
-        area: kaas
+        area: empowerment
         severity: notify
         cancel_if_outside_working_hours: "true"
         team: honeybadger
@@ -220,7 +220,7 @@ spec:
       expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="management_cluster", exported_namespace!~".*giantswarm.*"} > 0
       for: 2h
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: honeybadger
@@ -233,7 +233,7 @@ spec:
       expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="workload_cluster", organization!="giantswarm"} > 0
       for: 2h
       labels:
-        area: kaas
+        area: empowerment
         severity: notify
         cancel_if_outside_working_hours: "true"
         team: honeybadger
@@ -248,7 +248,7 @@ spec:
         sum(rate(controller_runtime_reconcile_time_seconds_count{app=~".*flux.*", namespace!~".*giantswarm.*"}[5m])) by (installation, cluster_id, controller)) > 60
       for: 10m
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: honeybadger
@@ -262,7 +262,7 @@ spec:
         sum by (name, namespace) (workqueue_unfinished_work_seconds{namespace=~"flux-giantswarm|flux-system"}) > 3600.0
       for: 10m
       labels:
-        area: kaas
+        area: empowerment
         cancel_if_outside_working_hours: "true"
         severity: page
         team: honeybadger

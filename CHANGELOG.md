@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update ops-recipe link for promtail alerts.
 
+### Fixed
+
+- Fix expression for teleport DeploymentNotSatisfiedBigMac
+
 ## [3.11.2] - 2024-04-18
 
 ### Added

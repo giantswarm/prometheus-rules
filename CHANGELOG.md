@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add ops recipe for flux being suspended for too long alert.
+
 ## [3.11.1] - 2024-04-17
 
 ### Added

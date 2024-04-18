@@ -134,6 +134,7 @@ spec:
       annotations:
         description: |-
           {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }} has been suspended for 24h.`}}
+        opsrecipe: fluxcd-suspended-for-too-long/
       expr: gotk_suspend_status{namespace="flux-giantswarm", exported_namespace="flux-giantswarm"} > 0
       for: 24h
       labels:

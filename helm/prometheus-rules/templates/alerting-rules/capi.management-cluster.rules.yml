@@ -31,6 +31,7 @@ spec:
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/
+        dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
       expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"capi.*", cluster_type="management_cluster"}[1h]), "service", "/", "namespace", "pod") > 6
       for: 5m
       labels:

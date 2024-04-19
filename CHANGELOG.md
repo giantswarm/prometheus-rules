@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.12.0] - 2024-04-19
+
 ### Changed
 
 - Update ops-recipe link for promtail alerts.
@@ -2638,7 +2640,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.11.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.12.0...HEAD
+[3.12.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.11.2...v3.12.0
 [3.11.2]: https://github.com/giantswarm/prometheus-rules/compare/v3.11.1...v3.11.2
 [3.11.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.11.0...v3.11.1
 [3.11.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.10.1...v3.11.0

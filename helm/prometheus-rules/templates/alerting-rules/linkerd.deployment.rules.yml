@@ -14,11 +14,11 @@ spec:
       annotations:
         description: '{{`Linkerd Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: managed-app-linkerd/
-      expr: managed_app_deployment_status_replicas_unavailable{deployment=~"linkerd.*"} > 0
+      expr: managed_app_deployment_status_replicas_unavailable{namespace=~"linkerd.*"} > 0
       for: 30m
       labels:
         area: managedservices
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: true
         severity: page
         team: cabbage
         topic: linkerd

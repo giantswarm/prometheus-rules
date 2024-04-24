@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update LokiRingUnhealthy query to avoid false positive when a new pod is starting.
+
 ## [3.12.0] - 2024-04-19
 
 ### Changed

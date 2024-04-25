@@ -10,7 +10,6 @@ templates/alerting-rules/cluster-autoscaler.rules.yml
 templates/alerting-rules/cluster-service.rules.yml
 templates/alerting-rules/coredns.rules.yml
 templates/alerting-rules/credentiald.rules.yml
-templates/alerting-rules/crsync.rules.yml
 templates/alerting-rules/daemonset.management-cluster.rules.yml
 templates/alerting-rules/deployment.management-cluster.rules.yml
 templates/alerting-rules/deployment.workload-cluster.rules.yml

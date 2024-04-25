@@ -15,7 +15,7 @@ spec:
     rules:
     - alert: CrsyncDeploymentNotSatisfied
       annotations:
-        description: '{{`Crsync deployment is not satisfied.`}}'
+        description: '{{`CrSync deployment {{ $labels.deployment }} is not satisfied in {{ $labels.installation }} / {{ $labels.cluster_id }} at the {{ $labels.namespace }} namespace.`}}'
         opsrecipe: deployment-not-satisfied/
       expr: kube_deployment_status_replicas_available{cluster_type="workload_cluster", cluster_id="operations", deployment=~"crsync-.*"} == 0
       for: 10m

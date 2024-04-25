@@ -32,7 +32,7 @@ spec:
       annotations:
         description: '{{`Too many tags are not synchronised to registry mirrors.`}}'
         opsrecipe: crsync-too-many-tags-missing/
-      expr: crsync_sync_tags_total{registry="quay.io"} - on (cluster_id, repository, app) group_left sum by(cluster_id, repository, app) (crsync_sync_tags_total{registry!="quay.io"}) > 0
+      expr: crsync_sync_tags_total{registry="quay.io"} - on (cluster_id, repository) group_left sum by(cluster_id, repository) (crsync_sync_tags_total{registry!="quay.io"}) > 0
       for: 1h
       labels:
         area: kaas

@@ -73,7 +73,7 @@ spec:
         description: '{{`Loki pod {{ $labels.pod }} (namespace {{ $labels.namespace }}) sees {{ $value }} unhealthy ring members`}}'
         opsrecipe: loki/
       expr: |
-        sum by (app, cluster_id, container, customer, installation, provider, pipeline, name, namespace, organization, pod) (cortex_ring_members{state="Unhealthy"}) > 0
+        sum by (app, cluster_id, container, customer, installation, provider, pipeline, name, namespace, organization, pod) (cortex_ring_members{state="Unhealthy", app="loki"}) > 0
       for: 30m
       labels:
         area: managedservices

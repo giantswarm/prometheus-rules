@@ -1,4 +1,4 @@
-{{- if eq .Values.managementCluster.name "gorilla" }}
+{{- if eq .Values.managementCluster.name "gazelle" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -17,7 +17,7 @@ spec:
       annotations:
         description: '{{`Crsync deployment is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_available{cluster_type="workload_cluster", cluster_id="rfjh2", deployment=~"crsync-.*"} == 0
+      expr: kube_deployment_status_replicas_available{cluster_type="workload_cluster", cluster_id="operations", deployment=~"crsync-.*"} == 0
       for: 10m
       labels:
         area: kaas

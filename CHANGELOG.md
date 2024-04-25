@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Removed check for Teleport operators in `DeploymentNotSatisfiedBigMac` alert as it is not valid on vintage
+
 ## [3.12.1] - 2024-04-25
 
 ### Fixed

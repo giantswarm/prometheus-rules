@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix alerting rules for `crsync`.
+
 ## [3.12.0] - 2024-04-19
 
 ### Changed

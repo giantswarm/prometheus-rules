@@ -1,0 +1,54 @@
+---
+rule_files:
+  - crsync.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'kube_deployment_status_replicas_available{cluster_type="workload_cluster", installation="gazelle", cluster_id="operations", namespace="crsync", deployment="crsync-giantswarm-azurecr-io"}'
+        values: "1x5 0x9 1x5 0x10"
+    alert_rule_test:
+      - alertname: CrsyncDeploymentNotSatisfied
+        eval_time: 32m
+        exp_alerts:
+          - exp_labels:
+              alertname: "CrsyncDeploymentNotSatisfied"
+              area: "kaas"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "operations"
+              cluster_type: "workload_cluster"
+              deployment: "crsync-giantswarm-azurecr-io"
+              installation: "gazelle"
+              namespace: "crsync"
+              severity: "page"
+              team: "honeybadger"
+              topic: "releng"
+            exp_annotations:
+              description: "CrSync deployment crsync-giantswarm-azurecr-io is not satisfied in gazelle / operations at the crsync namespace."
+              opsrecipe: "deployment-not-satisfied/"
+  - interval: 1m
+    input_series:
+      - series: 'crsync_sync_tags_total{registry="quay.io", cluster_id="example", repository="giantswarm/example"}'
+        values: "100x60"
+      - series: 'crsync_sync_tags_total{registry="docker.io", cluster_id="example", repository="giantswarm/example"}'
+        values: "95x60"
+    alert_rule_test:
+      - alertname: CrsyncTooManyTagsMissing
+        eval_time: 60m
+        exp_alerts:
+          - exp_labels:
+              alertname: "CrsyncTooManyTagsMissing"
+              area: "kaas"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "example"
+              registry: "quay.io"
+              repository: "giantswarm/example"
+              severity: "page"
+              team: "honeybadger"
+              topic: "releng"
+            exp_annotations:
+              description: "Too many tags are not synchronised to registry mirrors."
+              opsrecipe: "crsync-too-many-tags-missing/"

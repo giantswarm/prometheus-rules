@@ -1,4 +1,4 @@
-{{- if eq .Values.managementCluster.name "gorilla" }}
+{{- if eq .Values.managementCluster.name "gazelle" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -15,9 +15,9 @@ spec:
     rules:
     - alert: CrsyncDeploymentNotSatisfied
       annotations:
-        description: '{{`Crsync deployment is not satisfied.`}}'
+        description: '{{`CrSync deployment {{ $labels.deployment }} is not satisfied in {{ $labels.installation }} / {{ $labels.cluster_id }} at the {{ $labels.namespace }} namespace.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_available{cluster_type="workload_cluster", cluster_id="rfjh2", deployment=~"crsync-.*"} == 0
+      expr: kube_deployment_status_replicas_available{cluster_type="workload_cluster", cluster_id="operations", deployment=~"crsync-.*"} == 0
       for: 10m
       labels:
         area: kaas
@@ -32,7 +32,7 @@ spec:
       annotations:
         description: '{{`Too many tags are not synchronised to registry mirrors.`}}'
         opsrecipe: crsync-too-many-tags-missing/
-      expr: crsync_sync_tags_total{registry="quay.io"} - on (cluster_id, repository, app) group_left sum by(cluster_id, repository, app) (crsync_sync_tags_total{registry!="quay.io"}) > 0
+      expr: crsync_sync_tags_total{registry="quay.io"} - on (cluster_id, repository) group_left sum by(cluster_id, repository) (crsync_sync_tags_total{registry!="quay.io"}) > 0
       for: 1h
       labels:
         area: kaas

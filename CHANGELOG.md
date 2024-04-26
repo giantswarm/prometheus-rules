@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Changed DeploymentNotSatisfiedBigMac alert to work for teleport related deployments only on CAPI flavored clusters
+
 ### Changed
 
 - Update LokiRingUnhealthy query to avoid false positive when a new pod is starting.

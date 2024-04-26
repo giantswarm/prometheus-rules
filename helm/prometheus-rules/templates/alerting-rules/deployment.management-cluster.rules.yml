@@ -175,3 +175,18 @@ spec:
         severity: page
         team: bigmac
         topic: managementcluster
+    - alert: DeploymentNotSatisfiedTeleportBigMac
+      annotations:
+        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        opsrecipe: deployment-not-satisfied/
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"teleport-operator|teleport-operator-tbot"} > 0
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: bigmac
+        topic: managementcluster

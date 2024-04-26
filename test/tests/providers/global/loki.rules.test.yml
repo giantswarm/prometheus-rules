@@ -5,8 +5,10 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'cortex_ring_members{app="loki-compactor", cluster_id="zj88t", cluster_type="workload_cluster", container="compactor", customer="giantswarm", installation="gorilla", instance="10.7.116.221:3100", job="zj88t-prometheus/workload-zj88t/0", name="compactor", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-compactor-676b8c897b-rq298", provider="aws", pipeline="stable", service_priority="highest", state="Unhealthy"}'
+      - series: 'cortex_ring_members{app="loki", cluster_id="zj88t", cluster_type="workload_cluster", container="compactor", customer="giantswarm", installation="gorilla", instance="10.7.116.221:3100", job="zj88t-prometheus/workload-zj88t/0", name="compactor", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-compactor-676b8c897b-rq298", provider="aws", pipeline="stable", service_priority="highest", state="Unhealthy"}'
         values: "0+0x20 1+0x160"  # 1 unhealthy value after 20 minutes
+      - series: 'cortex_ring_members{app="loki", cluster_id="zj88t", cluster_type="workload_cluster", container="loki", customer="giantswarm", installation="gorilla", instance="10.7.116.221:3100", job="zj88t-prometheus/workload-zj88t/0", name="distributor", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-write-0", provider="aws", pipeline="stable", service_priority="highest", state="Unhealthy"}'
+        values: "_x30 1+0x10 0+0x60"  # no data for 30 minutes then 1 unhealthy value for 10 minutes and back to normal for 1 hour
       - series: 'loki_panic_total{app="loki-compactor", cluster_id="zj88t", cluster_type="workload_cluster", container="compactor", customer="giantswarm", installation="gorilla", instance="10.7.116.221:3100", job="zj88t-prometheus/workload-zj88t/0", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-compactor-676b8c897b-rq298", provider="aws", pipeline="stable", service_priority="highest"}'
         values: "0+0x20 1+0x160"  # 1 panic after 20 minutes
       - series: 'loki_request_duration_seconds_count{app="loki-distributor", cluster_id="zj88t", cluster_type="workload_cluster", container="distributor", customer="giantswarm", installation="gorilla", instance="10.7.75.90:3100", job="zj88t-prometheus/workload-zj88t/0", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-distributor-74b78f5559-tz6zs", provider="aws", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="204", ws="false"}'
@@ -79,10 +81,13 @@ tests:
         eval_time: 25m  # after 25 minutes we have an unhealthy member, but we want to filter too short events. So no alert yet.
         exp_alerts:
       - alertname: LokiRingUnhealthy
+        eval_time: 35m  # special case to validate when a new pod is unhealthy (no data at the beginning)
+        exp_alerts:
+      - alertname: LokiRingUnhealthy
         eval_time: 60m  # now the event has been there for 20 minutes, we should have an alert.
         exp_alerts:
           - exp_labels:
-              app: loki-compactor
+              app: loki
               area: managedservices
               cancel_if_apiserver_down: "true"
               cancel_if_cluster_status_creating: "true"

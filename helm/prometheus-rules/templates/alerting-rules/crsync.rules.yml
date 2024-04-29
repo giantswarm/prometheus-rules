@@ -13,6 +13,36 @@ spec:
   groups:
   - name: crsync
     rules:
+    - alert: CrsyncDockerIoIsMissing
+      annotations:
+        description: 'CrSync deployment for docker.io is absent'
+        opsrecipe: crsync-deployments-missing/
+      expr: absent(kube_deployment_status_replicas_available{namespace="crsync", deployment="crsync-docker-io"})
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: honeybadger
+        topic: releng
+    - alert: CrsyncGiantswarmAzureCrIoIsMissing
+      annotations:
+        description: 'CrSync deployment for giantswarm.azurecr.io is absent'
+        opsrecipe: crsync-deployments-missing/
+      expr: absent(kube_deployment_status_replicas_available{namespace="crsync", deployment="crsync-giantswarm-azurecr-io"})
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: honeybadger
+        topic: releng
     - alert: CrsyncDeploymentNotSatisfied
       annotations:
         description: '{{`CrSync deployment {{ $labels.deployment }} is not satisfied in {{ $labels.installation }} / {{ $labels.cluster_id }} at the {{ $labels.namespace }} namespace.`}}'

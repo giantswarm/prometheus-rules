@@ -7,11 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Changed DeploymentNotSatisfiedBigMac alert to work for teleport related deployments only on CAPI flavored clusters
+### Added
+
+- Added alerts for absent `crsync` deployments.
 
 ### Changed
 
 - Update LokiRingUnhealthy query to avoid false positive when a new pod is starting.
+- Changed DeploymentNotSatisfiedBigMac alert to work for teleport related deployments only on CAPI flavored clusters
 
 ## [3.12.2] - 2024-04-25
 

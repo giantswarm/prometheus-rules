@@ -42,24 +42,6 @@ tests:
               description: "Kyverno has no available replicas but webhooks are present."
               opsrecipe: "kyverno-webhooks/"
       # Kyverno reports too high alert
-      - alertname: KyvernoAdmissionReportCountTooHigh
-        eval_time: 60m
-        exp_alerts:
-          - exp_labels:
-              area: managedservices
-              cluster_id: gremlin
-              severity: page
-              team: shield
-              topic: kyverno
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
-              cancel_if_outside_working_hours: "false"
-              kind: "admissionreports.kyverno.io"
-            exp_annotations:
-              description: "Kyverno admissionreports.kyverno.io are too high. This is an indicator that Kyverno's report processing may not be keeping up with cluster demand."
-              opsrecipe: "kyverno-reports/"
-      # Kyverno reports too high alert
       - alertname: KyvernoUpdateRequestsCountTooHigh
         eval_time: 45m
         exp_alerts:

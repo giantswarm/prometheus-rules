@@ -49,4 +49,3 @@ spec:
       annotations:
         description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} has been scaled to its maximum replica count for too long.`}}'
         opsrecipe: core-dns-max-replicas/
-

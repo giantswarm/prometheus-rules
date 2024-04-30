@@ -22,8 +22,19 @@
                         },
                         "kind": {
                             "type": "string"
+                        },
+                        "region": {
+                            "type": "string"
                         }
                     }
+                }
+            }
+        },
+        "mimir": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
                 }
             }
         },

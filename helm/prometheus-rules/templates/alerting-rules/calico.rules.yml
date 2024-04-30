@@ -1,3 +1,4 @@
+{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -34,37 +35,6 @@ spec:
       labels:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
-        team: {{ include "providerTeam" . }}
-        topic: kubernetes
-{{- if eq .Values.managementCluster.provider.kind "kvm" }}
-    - alert: CalicoNodeFailingToSaveIptables
-      annotations:
-        description: '{{`calico-node {{ $labels.namespace}}/{{ $labels.pod_name }} on {{ $labels.cluster_id}}/{{ $labels.cluster }} is failing to save iptables rules.`}}'
-        opsrecipe: calico-iptables-failing/
-      expr: increase(felix_iptables_save_errors[10m]) > 0
-      for: 10m
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: notify
-        team: {{ include "providerTeam" . }}
-        topic: kubernetes
-    - alert: CalicoNodeFailingToRestoreIptables
-      annotations:
-        description: '{{`calico-node {{ $labels.namespace}}/{{ $labels.pod_name }} on {{ $labels.cluster_id}}/{{ $labels.cluster }} is failing to restore iptables rules.`}}'
-        opsrecipe: calico-iptables-failing/
-      expr: increase(felix_iptables_restore_errors[10m]) > 0
-      for: 10m
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: kubernetes

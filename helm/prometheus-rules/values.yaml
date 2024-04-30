@@ -1,9 +1,6 @@
 name: prometheus-rules
 namespace: monitoring
 serviceType: managed
-project:
-  branch: '[[ .Branch ]]'
-  commit: '[[ .SHA ]]'
 managementCluster:
   customer: ""
   name: ""
@@ -11,3 +8,14 @@ managementCluster:
   provider:
     kind: ""
     flavor: ""
+    region: ""
+
+mimir:
+  enabled: false
+
+Installation:
+  V1:
+    Guest:
+      Kubernetes:
+        IngressController:
+          BaseDomain: ""

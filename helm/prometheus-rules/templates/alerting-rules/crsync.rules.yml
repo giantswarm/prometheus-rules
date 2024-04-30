@@ -1,10 +1,11 @@
-{{- if eq .Values.managementCluster.name "gorilla" }}
+{{- if eq .Values.managementCluster.name "gazelle" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+    # No need for .Values.mimir.enabled condition - will be gone with Vintage
     cluster_type: "management_cluster"
   name: crsync.rules
   namespace: {{ .Values.namespace  }}
@@ -12,11 +13,41 @@ spec:
   groups:
   - name: crsync
     rules:
+    - alert: CrsyncDockerIoIsMissing
+      annotations:
+        description: 'CrSync deployment for docker.io is absent'
+        opsrecipe: crsync-deployments-missing/
+      expr: absent(kube_deployment_status_replicas_available{namespace="crsync", deployment="crsync-docker-io"})
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: honeybadger
+        topic: releng
+    - alert: CrsyncGiantswarmAzureCrIoIsMissing
+      annotations:
+        description: 'CrSync deployment for giantswarm.azurecr.io is absent'
+        opsrecipe: crsync-deployments-missing/
+      expr: absent(kube_deployment_status_replicas_available{namespace="crsync", deployment="crsync-giantswarm-azurecr-io"})
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: honeybadger
+        topic: releng
     - alert: CrsyncDeploymentNotSatisfied
       annotations:
-        description: '{{`Crsync deployment is not satisfied.`}}'
+        description: '{{`CrSync deployment {{ $labels.deployment }} is not satisfied in {{ $labels.installation }} / {{ $labels.cluster_id }} at the {{ $labels.namespace }} namespace.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_available{cluster_type="workload_cluster", cluster_id="rfjh2", deployment=~"crsync-.*"} == 0
+      expr: kube_deployment_status_replicas_available{cluster_type="workload_cluster", cluster_id="operations", deployment=~"crsync-.*"} == 0
       for: 10m
       labels:
         area: kaas
@@ -31,7 +62,7 @@ spec:
       annotations:
         description: '{{`Too many tags are not synchronised to registry mirrors.`}}'
         opsrecipe: crsync-too-many-tags-missing/
-      expr: crsync_sync_tags_total{registry="quay.io"} - on (repository,app) group_left sum by(repository,app) (crsync_sync_tags_total{registry!="quay.io"}) > 0
+      expr: crsync_sync_tags_total{registry="quay.io"} - on (cluster_id, repository) group_left sum by(cluster_id, repository) (crsync_sync_tags_total{registry!="quay.io"}) > 0
       for: 1h
       labels:
         area: kaas

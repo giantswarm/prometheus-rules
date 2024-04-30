@@ -10,24 +10,24 @@ tests:
   # Test PrometheusJobScrapingFailure and PrometheusCriticalJobScrapingFailure
   - interval: 1h
     input_series:
-      - series: 'up{app="kubernetes",installation="gauss",cluster_id="gauss",job="gauss-prometheus/kubernetes-apiserver-gauss/0"}'
+      - series: 'up{app="kubernetes", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/kubernetes-apiserver-gauss/0"}'
         values: "1+0x240"
       # critcal target up for 5d and down for 5d
-      - series: 'up{app="kube-controller-manager",installation="gauss",cluster_id="gauss",job="gauss-prometheus/kubernetes-controller-manager-gauss/0"}'
+      - series: 'up{app="kube-controller-manager", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/kubernetes-controller-manager-gauss/0"}'
         values: "1+0x120 0+0x120"
-      - series: 'up{app="kube-scheduler",installation="gauss",cluster_id="gauss",job="gauss-prometheus/kubernetes-scheduler-gauss/0"}'
+      - series: 'up{app="kube-scheduler", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/kubernetes-scheduler-gauss/0"}'
         values: "1+0x240"
-      - series: 'up{app="kubelet",installation="gauss",cluster_id="gauss",job="gauss-prometheus/kubernetes-kubelet-gauss/0"}'
+      - series: 'up{app="kubelet", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/kubernetes-kubelet-gauss/0"}'
         values: "1+0x240"
-      - series: 'up{app="node-exporter",installation="gauss",cluster_id="gauss",job="gauss-prometheus/node-exporter-gauss/0"}'
+      - series: 'up{app="node-exporter", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/node-exporter-gauss/0"}'
         values: "1+0x240"
-      - series: 'up{app="kube-state-metrics",installation="gauss",cluster_id="gauss",job="gauss-prometheus/kube-state-metrics-gauss/0"}'
+      - series: 'up{app="kube-state-metrics", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/kube-state-metrics-gauss/0"}'
         values: "1+0x240"
       # Add bastion host test to ensure we do not page
-      - series: 'up{app="node-exporter",installation="gauss",cluster_id="gauss",job="gauss-prometheus/bastions/0"}'
+      - series: 'up{app="node-exporter", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/bastions/0"}'
         values: "1+0x240"
       # non-critcal target up for 5d and down for 5d
-      - series: 'up{app="app-exporter",installation="gauss",cluster_id="gauss",job="gauss-prometheus/app-exporter-gauss/0"}'
+      - series: 'up{app="app-exporter", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/app-exporter-gauss/0"}'
         values: "1+0x120 0+0x120"
     alert_rule_test:
       - alertname: PrometheusCriticalJobScrapingFailure
@@ -48,6 +48,8 @@ tests:
               cancel_if_outside_working_hours: "true"
               cluster_id: "gauss"
               installation: "gauss"
+              provider: "aws"
+              pipeline: "testing"
               job: "gauss-prometheus/kubernetes-controller-manager-gauss/0"
             exp_annotations:
               opsrecipe: "prometheus-job-scraping-failure/"
@@ -61,6 +63,8 @@ tests:
               cancel_if_outside_working_hours: "true"
               cluster_id: "gauss"
               installation: "gauss"
+              provider: "aws"
+              pipeline: "testing"
               job: "gauss-prometheus/app-exporter-gauss/0"
             exp_annotations:
               opsrecipe: "prometheus-job-scraping-failure/"
@@ -79,6 +83,8 @@ tests:
               app: "kube-controller-manager"
               cluster_id: "gauss"
               installation: "gauss"
+              provider: "aws"
+              pipeline: "testing"
               job: "gauss-prometheus/kubernetes-controller-manager-gauss/0"
               cancel_if_outside_working_hours: "true"
               cancel_if_cluster_is_not_running_prometheus_agent: "true"

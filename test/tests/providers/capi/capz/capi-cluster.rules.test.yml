@@ -20,6 +20,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: kaas
+              cancel_if_prometheus_agent_down: "true"
               cancel_if_outside_working_hours: "true"
               severity: page
               team: phoenix
@@ -30,11 +31,13 @@ tests:
             exp_annotations:
               description: "Cluster giantswarm/clippaxy stuck in Pending phase."
               opsrecipe: capi-cluster/
+              dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
       - alertname: ClusterStatusNotReady
         eval_time: 75m
         exp_alerts:
           - exp_labels:
               area: kaas
+              cancel_if_prometheus_agent_down: "true"
               cancel_if_outside_working_hours: "true"
               severity: notify
               team: phoenix
@@ -46,11 +49,13 @@ tests:
             exp_annotations:
               description: "Cluster giantswarm/grumpy is not ready."
               opsrecipe: capi-cluster/
+              dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
       - alertname: ClusterPaused
         eval_time: 75m
         exp_alerts:
           - exp_labels:
               area: kaas
+              cancel_if_prometheus_agent_down: "true"
               cancel_if_outside_working_hours: "true"
               severity: notify
               team: phoenix
@@ -59,5 +64,6 @@ tests:
               exported_namespace: giantswarm
               paused_value: true
             exp_annotations:
-              description: "The cluster grumpy is paused."
+              description: "The cluster giantswarm/grumpy is paused."
               opsrecipe: capi-cluster/
+              dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers

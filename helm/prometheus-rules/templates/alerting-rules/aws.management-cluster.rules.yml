@@ -5,6 +5,7 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+    # No need for .Values.mimir.enabled condition - will be gone with Vintage
     cluster_type: "management_cluster"
   name: aws.management-cluster.rules
   namespace: {{ .Values.namespace  }}
@@ -165,6 +166,20 @@ spec:
         description: '{{`IRSA bootstrap for Cluster {{ $labels.cluster_id }} failed.`}}'
         opsrecipe: irsa-operator-error/
       expr: irsa_operator_cluster_errors > 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: aws
+    - alert: IRSAACMCertificateExpiringInLessThan60Days
+      annotations:
+        description: '{{`IRSA ACM certificate for Cluster {{ $labels.cluster_id }} ({{ $labels.certificate_name }}) will expire in less than 2 months.`}}'
+        opsrecipe: irsa-acm-certificate-expiring/
+      expr: min(irsa_operator_acm_certificate_not_after) by (cluster_id, installation, pipeline, provider, certificate_name) - time() < 5184000
       for: 10m
       labels:
         area: kaas

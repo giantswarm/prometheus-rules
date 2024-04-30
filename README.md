@@ -60,6 +60,10 @@ Any Alert includes:
    - `cancel_if_.*`
 
 
+### Specific alert labels
+
+- `all_pipelines: true`: When adding this label to an alert, you are sure the alert will be send to opsgenie, even if the installation is not a stable installation.
+
 #### Routing
 
 Alertmanager does the routing based on the labels menitoned above.
@@ -151,15 +155,10 @@ There are 2 kinds of tests on rules:
    [...]
    ### Skipping templates/alerting-rules/calico.rules.yml
    ### Testing templates/alerting-rules/capi.rules.yml
-   ###    Provider: openstack
-   ###    extracting /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/providers/openstack/capi.rules.yml
-   ###    promtool check rules /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/tests/providers/openstack/capi.rules.yml
+   ###    Provider: capa
+   ###    extracting /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/providers/capa/capi.rules.yml
+   ###    promtool check rules /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/tests/providers/capa/capi.rules.yml
    ###    promtool test rules capi.rules.test.yml
-   ### Testing templates/alerting-rules/capo.rules.yml
-   ###    Provider: openstack
-   ###    extracting /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/providers/openstack/capo.rules.yml
-   ###    promtool check rules /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/tests/providers/openstack/capo.rules.yml
-   ###    promtool test rules capo.rules.test.yml
    ### Skipping templates/alerting-rules/cert-manager.rules.yml
    ### Skipping templates/alerting-rules/certificate.all.rules.yml
    [...]
@@ -186,7 +185,7 @@ tests:
 ```
 
 Let's breakdown the above example:
-* For the first input series, the prometheus timesies returns an `empty query result` for 20 minutes (20*interval), then it is returning the value `1` for 20 minutes. Finally, it is returning the value `0` for 20 minutes.
+* For the first input series, the prometheus timeseries returns an `empty query result` for 20 minutes (20*interval), then it is returning the value `1` for 20 minutes. Finally, it is returning the value `0` for 20 minutes.
 This is a good example of an input series for testing an `up` query.
 * The second series introduce a timeseries which first returns a `0` value and which adds `600` every minutes (=interval) for 40 minutes. After 40 minutes it has reached a value of `24000` (600x40) and goes on by adding `400` every minutes for 40 more minutes.
 This is a good example of an input series for testing a `range` query.

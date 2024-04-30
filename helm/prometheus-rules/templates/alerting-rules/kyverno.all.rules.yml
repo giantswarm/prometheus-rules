@@ -14,34 +14,19 @@ spec:
       annotations:
         description: 'Kyverno has no available replicas but webhooks are present.'
         opsrecipe: kyverno-webhooks/
-      expr: sum(kube_validatingwebhookconfiguration_info{validatingwebhookconfiguration=~"kyverno-.*"}) > 0 and sum(kube_deployment_status_replicas{deployment=~"kyverno|kyverno-admission-controller"}) == 0
+      expr: sum(kube_validatingwebhookconfiguration_info{validatingwebhookconfiguration=~"kyverno-.*"}) by (cluster_id) > 0 and sum(kube_deployment_status_replicas{deployment=~"kyverno|kyverno-admission-controller"}) by (cluster_id) == 0
       for: 15m
       labels:
         area: managedservices
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "false"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: shield
         topic: kyverno
   - name: resources
     rules:
-    - alert: KyvernoAdmissionReportCountTooHigh
-      annotations:
-        description: "{{`Kyverno {{ $labels.kind }} are too high. This is an indicator that Kyverno\'s report processing may not be keeping up with cluster demand.`}}"
-        opsrecipe: kyverno-reports/
-      expr: aggregation:kyverno_resource_counts{kind=~"(clusteradmissionreports|admissionreports).kyverno.io"} > 50000
-      for: 15m
-      labels:
-        area: managedservices
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "false"
-        severity: page
-        team: shield
-        topic: kyverno
     - alert: KyvernoUpdateRequestsCountTooHigh
       annotations:
         description: "{{`Kyverno {{ $labels.kind }} are too high. This is an indicator that Kyverno's background controller may not be able to create some resources.`}}"
@@ -53,7 +38,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "false"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: shield
         topic: kyverno
@@ -63,7 +48,7 @@ spec:
       annotations:
         description: 'Kyverno has been scaled down for too long.'
         opsrecipe: kyverno-scaled-down/
-      expr: sum(kube_deployment_spec_replicas{deployment=~"kyverno|kyverno-kyverno-plugin|kyverno-policy-reporter"}) == 0
+      expr: sum(kube_deployment_spec_replicas{deployment=~"kyverno|kyverno-kyverno-plugin|kyverno-policy-reporter"}) by (cluster_id) == 0
       for: 4h
       labels:
         area: managedservices
@@ -78,7 +63,7 @@ spec:
       annotations:
         description: "Kyverno's admission controller deployment must use at least 3 replicas, or be scaled to 0."
         opsrecipe: KyvernoWronglyScaled/
-      expr: sum(kube_deployment_spec_replicas{deployment="kyverno"}) != 0 and sum(kube_deployment_spec_replicas{deployment="kyverno"}) < 3
+      expr: sum(kube_deployment_spec_replicas{deployment="kyverno"}) by (cluster_id) != 0 and sum(kube_deployment_spec_replicas{deployment="kyverno"}) by (cluster_id) < 3
       for: 1h
       labels:
         area: managedservices

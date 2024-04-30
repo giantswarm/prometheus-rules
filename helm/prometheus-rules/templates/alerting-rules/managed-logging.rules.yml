@@ -1,9 +1,11 @@
+{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+    # No need for .Values.mimir.enabled condition - will be gone with Vintage
     cluster_type: "workload_cluster"
   name: managed-logging.rules
   namespace: {{ .Values.namespace  }}
@@ -35,3 +37,4 @@ spec:
         severity: page
         team: atlas
         topic: logging
+{{- end }}

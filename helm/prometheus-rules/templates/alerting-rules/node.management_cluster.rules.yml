@@ -4,7 +4,9 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
     cluster_type: "management_cluster"
+{{- end }}
   name: node.management-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -23,7 +25,7 @@ spec:
       # relabelling 'ip' to 'label_ip' to match against 'kube_node_labels'.
       annotations:
         description: '{{`Node {{ $labels.label_ip }} status is flapping under load.`}}'
-      expr: label_replace( node_load15 / count(count(node_cpu) without (mode)) without (cpu) >= 2, "label_ip", "$1", "ip", "(.*)" ) unless on (label_ip) kube_node_labels and on (ip) changes(kube_node_status_condition{condition="Ready", status="true"}[30m]) >= 6
+      expr: label_replace(node_load15{cluster_type="management_cluster"} / count(count(node_cpu_seconds_total{cluster_type="management_cluster"}) without (mode)) without (cpu) >= 2, "label_ip", "$1", "ip", "(.*)" ) unless on (label_ip) kube_node_labels{cluster_type="management_cluster"} and on (ip) changes(kube_node_status_condition{cluster_type="management_cluster", condition="Ready", status="true"}[30m]) >= 6
       for: 10m
       labels:
         area: kaas
@@ -37,7 +39,7 @@ spec:
     - alert: NodeHasConstantOOMKills
       annotations:
         description: '{{`Node {{ $labels.ip }} has constant OOM kills.`}}'
-      expr: kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset 1h >= 1 AND ignoring(reason) kube_pod_container_status_last_terminated_reason{reason='OOMKilled'} > 0
+      expr: kube_pod_container_status_restarts_total{cluster_type="management_cluster"} - kube_pod_container_status_restarts_total{cluster_type="management_cluster"} offset 1h >= 1 AND ignoring(reason) kube_pod_container_status_last_terminated_reason{cluster_type="management_cluster", reason='OOMKilled'} > 0
       for: 10m
       labels:
         area: kaas
@@ -52,7 +54,7 @@ spec:
       annotations:
         description: '{{`Node {{ $labels.node }} reports a connection usage above 85% for the last 15 minutes.`}}'
         opsrecipe: node-conntrack-limits/
-      expr: node_nf_conntrack_entries / node_nf_conntrack_entries_limit >= 0.85
+      expr: node_nf_conntrack_entries{cluster_type="management_cluster"} / node_nf_conntrack_entries_limit{cluster_type="management_cluster"} >= 0.85
       for: 15m
       labels:
         area: kaas
@@ -64,7 +66,7 @@ spec:
       annotations:
         description: '{{`Machine {{ $labels.instance }} entropy is too low.`}}'
         opsrecipe: low-entropy/
-      expr: node_entropy_available_bits < 250
+      expr: node_entropy_available_bits{cluster_type="management_cluster"} < 250
       for: 10m
       labels:
         area: kaas
@@ -76,7 +78,7 @@ spec:
       annotations:
         description: '{{`Machine {{ $labels.instance }} has too many allocated file descriptors.`}}'
         opsrecipe: high-number-file-descriptors/
-      expr: node_filefd_allocated / node_filefd_maximum * 100 > 80
+      expr: node_filefd_allocated{cluster_type="management_cluster"} / node_filefd_maximum{cluster_type="management_cluster"} * 100 > 80
       for: 15m
       labels:
         area: kaas
@@ -88,7 +90,7 @@ spec:
     - alert: MachineLoadTooHigh
       annotations:
         description: '{{`Machine {{ $labels.instance }} CPU load is too high.`}}'
-      expr: node_load5{cluster_type="management_cluster"} > 2 * count(node_cpu{cluster_type="management_cluster", mode="idle"}) without (cpu,mode)
+      expr: node_load5{cluster_type="management_cluster"} > 2 * count(node_cpu_seconds_total{cluster_type="management_cluster", mode="idle"}) without (cpu,mode)
       for: 3m
       labels:
         area: kaas

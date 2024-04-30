@@ -4,13 +4,30 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
     cluster_type: "management_cluster"
+{{- end }}
   name: etcd.management-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
   - name: etcd
     rules:
+    - alert: ManagementClusterEtcdDown
+      annotations:
+        description: '{{`Etcd ({{ $labels.ip }}) is down.`}}'
+        opsrecipe: etcd-down/
+      expr: up{app="etcd", cluster_type="management_cluster"} == 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: etcd
     - alert: ManagementClusterEtcdCommitDurationTooHigh
       annotations:
         description: '{{`Etcd ({{ $labels.instance }}) has a too high commit duration.`}}'
@@ -61,7 +78,7 @@ spec:
       annotations:
         description: '{{`Etcd metrics missing for {{ $labels.cluster_id }}.`}}'
         opsrecipe: etcd-metrics-missing/
-      expr: count(up{cluster_type="management_cluster", provider!~"eks"}) by (cluster_id) unless count(etcd_server_id{provider!~"eks"}) by (cluster_id)
+      expr: count(up{cluster_type="management_cluster", provider!~"eks"}) by (cluster_id) unless count(etcd_server_id{cluster_type="management_cluster", provider!~"eks"}) by (cluster_id)
       for: 1h
       labels:
         area: kaas

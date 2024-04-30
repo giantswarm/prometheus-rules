@@ -4,7 +4,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    cluster_type: "management_cluster"
   name: job.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -22,42 +21,16 @@ spec:
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: managementcluster
-    - alert: SilenceOperatorSyncJobHasNotBeenScheduledForTooLong
-      annotations:
-        description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 1 day.`}}'
-        opsrecipe: job-has-not-been-scheduled-for-too-long/
-      # This alert triggers when the silence operator sync job did not schedule for more than 1 day
-      # or if the job did not run successfully at least once in the last day
-      expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="silence-operator-sync"} ) > 86400
-            or count(max_over_time(kube_job_status_succeeded{job_name=~"silence-operator-sync.+"}[1d]) == 1) == 0
-      labels:
-        area: empowerment
-        severity: page
-        team: atlas
-        topic: managementcluster
-    - alert: GrafanaPermissionJobHasNotBeenScheduledForTooLong
-      annotations:
-        description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 1 day.`}}'
-        opsrecipe: job-has-not-been-scheduled-for-too-long/
-      # This alert triggers when the grafana permission job did not schedule for more than 1 day
-      # or if the job did not run successfully at least once in the last day
-      expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="grafana-permissions"} ) > 86400
-            or count(max_over_time(kube_job_status_succeeded{job_name=~"grafana-permission.+"}[1d]) == 1) == 0
-      labels:
-        area: empowerment
-        severity: page
-        team: atlas
-        topic: managementcluster
-    {{- if eq .Values.managementCluster.provider.kind "aws" }}
+{{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: JobHasNotBeenScheduledForTooLong
       annotations:
         description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 2 hours.`}}'
         opsrecipe: job-has-not-been-scheduled-for-too-long/
-      expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="route53-manager"} ) > 7200
+      expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="route53-manager"}) > 7200
       for: 15m
       labels:
         area: kaas
         severity: page
         team: phoenix
         topic: managementcluster
-    {{- end }}
+{{- end }}

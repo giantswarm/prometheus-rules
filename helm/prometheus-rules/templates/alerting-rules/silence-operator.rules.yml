@@ -7,14 +7,14 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: silences
+  - name: silence-operator
     rules:
     - alert: "SilenceOperatorReconcileErrors"
       annotations:
         description: '{{`silence-operator controller {{ $labels.controller }} too many reconcile errors.`}}'
-        opsrecipe: "silence-operator-reconcile-errors/"
+        opsrecipe: "operator-not-reconciling/"
       expr: |
-        avg_over_time(operatorkit_controller_errors_total{app="silence-operator"}[20m]) > 0
+        avg_over_time(operatorkit_controller_errors_total{app="silence-operator", cluster_type="management_cluster"}[20m]) > 0
       for: 1h
       labels:
         area: "empowerment"
@@ -23,3 +23,16 @@ spec:
         severity: "page"
         team: "atlas"
         topic: "observability"
+    - alert: SilenceOperatorSyncJobHasNotBeenScheduledForTooLong
+      annotations:
+        description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 1 day.`}}'
+        opsrecipe: job-has-not-been-scheduled-for-too-long/
+      # This alert triggers when the silence operator sync job did not schedule for more than 1 day
+      # or if the job did not run successfully at least once in the last day
+      expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="silence-operator-sync", cluster_type="management_cluster"}) > 86400
+            or count(max_over_time(kube_job_status_succeeded{job_name=~"silence-operator-sync.+", cluster_type="management_cluster"}[1d]) == 1) by (cluster_id, installation, provider, pipeline) == 0
+      labels:
+        area: empowerment
+        severity: page
+        team: atlas
+        topic: managementcluster

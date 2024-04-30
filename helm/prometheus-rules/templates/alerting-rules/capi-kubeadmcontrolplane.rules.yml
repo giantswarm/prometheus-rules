@@ -15,26 +15,30 @@ spec:
           for: 90m
           labels:
             area: kaas
-            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            cancel_if_prometheus_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
             severity: notify
-            team: {{include "providerTeam" .}}
+            team: {{ include "providerTeam" . }}
             topic: managementcluster
           annotations:
             description: |-
               {{`The clusters {{$labels.cluster_name}} kubeadmcontrolplane {{$labels.exported_namespace}}/{{$labels.name}} does not match the expected number of replicas for longer than 90 minutes.`}}
             opsrecipe: capi-kubeadmcontrolplane/
+            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
 
         - alert: KubeadmControlPlanePaused
           expr: capi_kubeadmcontrolplane_annotation_paused{paused_value="true"} > 0
           for: 1h
           labels:
             area: kaas
-            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            cancel_if_prometheus_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
             severity: notify
-            team: {{include "providerTeam" .}}
+            team: {{ include "providerTeam" . }}
             topic: managementcluster
           annotations:
             description: |-
               {{`The clusters {{$labels.cluster_name}} kubeadmcontrolplane {{$labels.exported_namespace}}/{{$labels.name}} is paused.`}}
             opsrecipe: capi-kubeadmcontrolplane/
+            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
 {{- end }}

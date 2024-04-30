@@ -2,10 +2,11 @@
 set -euo pipefail
 
 # List of generated rules
-RULES_FILES=(./test/hack/output/*/prometheus-rules/templates/alerting-rules/*)
+RULES_FILES=(./test/hack/output/*/*/prometheus-rules/templates/alerting-rules/*)
 #RULES_FILES=(./test/hack/output/*/prometheus-rules/templates/alerting-rules/up*)
 
 DEBUG_MODE=false
+
 CHECK_EXTRADATA_ERRORS=true
 CHECK_NORECIPE_ERRORS=true
 CHECK_UNEXISTINGRECIPE_ERRORS=true
@@ -27,15 +28,40 @@ isInArray () {
     return 1
 }
 
+# merge_docs () merges a Hugo docs hierarchy from a source directory (first arg) into a destination directory (second arg).
+merge_docs() {
+    if [[ ! -d "$1/content/docs/." ]] ; then
+        echo "Source Hugo base directory not specified or invalid (must contain content/docs)!" >&2
+    fi
+    if [[ ! -d "$2/content/docs/." ]] ; then
+        echo "Destination Hugo base directory not specified or invalid (must contain content/docs)!" >&2
+    fi
+    find "$1/content/docs" -mindepth 1 -maxdepth 1 -type d | xargs cp -v -x -a -r -u -t "$2/content/docs/." | \
+        grep -o -P "(?<= -> ').*\.md" | \
+        xargs sed -s -i'' '0,/^---.*$/s//---\nsourceOrigin: handbook/'
+}
 
 listOpsRecipes () {
-    # find list of opsrecipes from git repo
-    tmpDir="$(mktemp -d)"
-    git clone --depth 1 --single-branch -b main -q git@github.com:giantswarm/giantswarm.git "$tmpDir"
+    local runInCi="$1" && shift
+    privateOpsrecipesParentDirectory="./giantswarm"
+    privateOpsrecipesHandbookParentDirectory="./handbook"
+    # CI clones git dependencies, but if we run it locally we have to do it ourselves
+    if [[ "$runInCi" == false ]]; then
+        tmpDir="$(mktemp -d)"
+        tmpDirHandbook="$(mktemp -d)"
+        git clone --depth 1 --single-branch -b main -q git@github.com:giantswarm/giantswarm.git "$tmpDir"
+        git clone --depth=1 --single-branch -b main -q git@github.com:giantswarm/handbook.git "$tmpDirHandbook"
+        privateOpsrecipesParentDirectory="$tmpDir"
+        privateOpsrecipesHandbookParentDirectory="$tmpDirHandbook"
+    fi
+
+    # perform merge as done by intranet build
+    merge_docs "$privateOpsrecipesHandbookParentDirectory" "$privateOpsrecipesParentDirectory"
+
     # find all ops-recipes ".md" files, and keep only the opsrecipe name (may contain a path, like "rolling-nodes/rolling-nodes")
-    find "$tmpDir"/content/docs/support-and-ops/ops-recipes -type f -name \*.md \
-        | sed -n 's_'"$tmpDir"'/content/docs/support-and-ops/ops-recipes/\(.*\).md_\1_p'
-    rm -rf "$tmpDir"
+    find "$privateOpsrecipesParentDirectory"/content/docs/support-and-ops/ops-recipes -type f -name \*.md \
+        | sed -n 's_'"$privateOpsrecipesParentDirectory"'/content/docs/support-and-ops/ops-recipes/\(.*\).md_\1_p'
+    rm -rf "$privateOpsrecipesParentDirectory"
 
     # Add extra opsrecipes
     # These ones are defined as aliases of `deployment-not-satisfied`:
@@ -46,6 +72,14 @@ listOpsRecipes () {
 
 
 main() {
+    local -a runInCi=false
+    for arg in "$@"; do
+        shift
+        case "$arg" in
+            '--ci')  runInCi=true   ;;
+        esac
+    done
+
     local -a checkedRules=()
     local -a opsRecipes=()
     local -a E_extradata=()
@@ -57,7 +91,7 @@ main() {
     ########################
 
     # Retrieve list of opsrecipes
-    mapfile -t opsRecipes < <(listOpsRecipes)
+    mapfile -t opsRecipes < <(listOpsRecipes "$runInCi")
 
     if [[ "$DEBUG_MODE" != "false" ]]; then
         echo "List of opsrecipe:"

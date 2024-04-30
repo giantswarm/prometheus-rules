@@ -9,31 +9,35 @@ spec:
   groups:
     - name: capi-machinepool
       rules:
-        - alert: MachinePoolReplicasMismatch
-          expr: capi_machinepool_spec_replicas{} != capi_machinepool_status_replicas_available{}
-          for: 1h
+        - alert: MachinePoolIsNotHealthy
+          expr: capi_machinepool_status_phase{phase="Failed"} > 0
+          for: 15m
           labels:
             area: kaas
-            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
-            severity: notify
-            team: {{include "providerTeam" .}}
+            cancel_if_prometheus_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: {{ include "providerTeam" . }}
             topic: managementcluster
           annotations:
             description: |-
-              {{`The clusters {{$labels.cluster_name}} machinepool {{$labels.exported_namespace}}/{{$labels.name}} does not match the expected number of replicas for longer than 1h.`}}
+              {{`The clusters {{ $labels.cluster_name }} machinepool {{ $labels.exported_namespace }}/{{ $labels.name }} is not healthy.`}}
             opsrecipe: capi-machinepool/
+            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
 
         - alert: MachinePoolPaused
           expr: capi_machinepool_annotation_paused{paused_value="true"} > 0
           for: 1h
           labels:
             area: kaas
-            cancel_if_outside_working_hours: {{include "workingHoursOnly" .}}
+            cancel_if_prometheus_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
             severity: notify
-            team: {{include "providerTeam" .}}
+            team: {{ include "providerTeam" . }}
             topic: managementcluster
           annotations:
             description: |-
-              {{`The clusters {{$labels.cluster_name}} machinepool {{$labels.exported_namespace}}/{{$labels.name}} is paused.`}}
+              {{`The clusters {{ $labels.cluster_name }} machinepool {{ $labels.exported_namespace }}/{{ $labels.name }} is paused.`}}
             opsrecipe: capi-machinepool/
+            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
 {{- end }}

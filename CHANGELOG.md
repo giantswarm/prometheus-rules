@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Add opsrecipe to `CoreDNSMaxHPAReplicasReached`
 
+### Fixed
+
+- Remove cilium entry from KAAS SLOs.
+
 ## [3.13.1] - 2024-04-30
 
 ### Removed

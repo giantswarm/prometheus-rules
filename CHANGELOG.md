@@ -15,6 +15,10 @@ Add opsrecipe to `CoreDNSMaxHPAReplicasReached`
 
 - Remove cilium entry from KAAS SLOs.
 
+### Added
+
+- Added inhibitions expressions for CAPI clusters.
+
 ## [3.13.1] - 2024-04-30
 
 ### Removed

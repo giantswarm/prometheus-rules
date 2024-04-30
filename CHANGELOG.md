@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.13.1] - 2024-04-30
+
 ### Removed
 
 - Removed alerts for absent `crsync` deployments. They cause false alerts because the rules apply to all prometheus instances on the MC.
@@ -2671,7 +2673,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.13.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.13.1...HEAD
+[3.13.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.13.0...v3.13.1
 [3.13.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.12.2...v3.13.0
 [3.12.2]: https://github.com/giantswarm/prometheus-rules/compare/v3.12.1...v3.12.2
 [3.12.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.12.0...v3.12.1

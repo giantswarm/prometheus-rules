@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Removed alerts for absent `crsync` deployments. They cause false alerts because the rules apply to all prometheus instances on the MC.
+
 ## [3.13.0] - 2024-04-30
 
 ### Added

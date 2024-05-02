@@ -11,7 +11,7 @@ rule {
     label_values = true
   }
 
-  # Ensure that all aggregations are preserving "job" label.
+  # Ensure that all aggregations are preserving mandatory labels.
   aggregate ".+" {
     severity = "bug"
     keep     = ["cluster_id", "installation", "pipeline", "provider"]
@@ -24,8 +24,14 @@ rule {
     kind = "alerting"
   }
 
-  # Each alert must have a 'summary' annotation on every alert.
+  # Each alert must have a 'description' annotation.
   annotation "description" {
+    severity = "bug"
+    required = true
+  }
+
+  # Each alert must have a 'opsrecipe' annotation.
+  annotation "opsrecipe" {
     severity = "bug"
     required = true
   }
@@ -36,7 +42,7 @@ rule {
     required = true
   }
 
-  # Each alert must have a 'severity' annotation that's either 'critical' or 'warning'.
+  # Each alert must have a 'severity' annotation that's either 'page' or 'notify'.
   label "severity" {
     severity = "bug"
     value    = "(page|notify)"
@@ -48,10 +54,5 @@ rule {
     range   = "1d"
     step    = "1m"
     resolve = "5m"
-  }
-
-  annotation "opsrecipe" {
-    severity = "bug"
-    required = true
   }
 }

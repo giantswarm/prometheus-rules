@@ -80,7 +80,7 @@ spec:
     - alert: InhibitionClusterNodePoolsNotReady
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} node pools are not ready. Either they have been scaled down to 0 or they are not up yet.`}}'
-      expr: cluster_operator_node_pool_desired_workers == 0 and cluster_operator_node_pool_ready_workers == 0 or capi_machinepool_status_condition{type="Ready", status="False"} == 1
+      expr: (cluster_operator_node_pool_desired_workers == 0 and cluster_operator_node_pool_ready_workers == 0) or capi_machinepool_status_condition{type="Ready", status="False"} == 1
       labels:
         area: kaas
         cluster_with_notready_nodepools: "true"

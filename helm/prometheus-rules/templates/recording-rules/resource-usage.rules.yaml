@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: resource-usage.recording.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: monitoring.resource-usage.recording
+    rules:
+    - expr: (count({__name__=~".+"}) by (cluster_id, job) / on(cluster_id) group_left prometheus_tsdb_head_series) * on(cluster_id) group_left sum(container_memory_usage_bytes{container="prometheus"}) by (cluster_id)
+      record: monitoring:resource_usage:memory_usage_bytes
+    - expr: (count({__name__=~".+"}) by (cluster_id, job) / on(cluster_id) group_left prometheus_tsdb_head_series) * on(cluster_id) group_left sum(container_memory_working_set_bytes{container="prometheus"}) by (cluster_id)
+      record: monitoring:resource_usage:memory_working_set_bytes
+

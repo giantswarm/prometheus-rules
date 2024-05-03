@@ -6,6 +6,11 @@ set -euo pipefail
 
 set -eu
 
+# Global options
+
+## GENERATE_ONLY: if set to true, the script will only generate the rules files
+GENERATE_ONLY="${GENERATE_ONLY:-false}"
+
 array_contains() {
     local search="$1" && shift
 
@@ -88,6 +93,8 @@ main() {
                 failing_extraction+=("$provider:$file")
                 continue
             fi
+
+            if [[ "$GENERATE_ONLY" == "true" ]]; then continue; fi
 
             # Syntax check of rules file
             echo "###    promtool check rules $GIT_WORKDIR/test/tests/providers/$provider/$filename"

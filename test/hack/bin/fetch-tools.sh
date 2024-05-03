@@ -6,7 +6,6 @@ ARCHITECT_VERSION="6.8.0"
 PROMETHEUS_VERSION="2.41.0"
 HELM_VERSION="3.9.0"
 YQ_VERSION="4.26.1"
-PINT_VERSION="0.58.1"
 
 GIT_WORKDIR=$(git rev-parse --show-toplevel)
 
@@ -19,8 +18,6 @@ Linux*)
     export ARCHITECT_SOURCE="https://github.com/giantswarm/architect/releases/download/v${ARCHITECT_VERSION}/architect-v${ARCHITECT_VERSION}-linux-amd64.tar.gz"
     export YQ_SOURCE="https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64.tar.gz"
     export YQ_BIN_FILE="yq_linux_amd64"
-    export PINT_SOURCE="https://github.com/cloudflare/pint/releases/download/v${PINT_VERSION}/pint-${PINT_VERSION}-linux-amd64.tar.gz"
-    export PINT_BIN_FILE="pint-linux-amd64"
     ;;
 
 Darwin*)
@@ -29,8 +26,6 @@ Darwin*)
     export ARCHITECT_SOURCE="https://github.com/giantswarm/architect/releases/download/v${ARCHITECT_VERSION}/architect-v${ARCHITECT_VERSION}-darwin-amd64.tar.gz"
     export YQ_SOURCE="https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_darwin_amd64.tar.gz"
     export YQ_BIN_FILE="yq_darwin_amd64"
-    export PINT_SOURCE="https://github.com/cloudflare/pint/releases/download/v${PINT_VERSION}/pint-${PINT_VERSION}-darwin-amd64.tar.gz"
-    export PINT_BIN_FILE="pint-darwin-amd64"
     TAR_CMD="gtar"
     ;;
 
@@ -62,7 +57,6 @@ extract() {
     local tarfile="$1" && shift
     local sourceurl="$1" && shift
     local wildcards="$1" && shift
-    local stripcomponents="${1:-1}" && shift || true
 
     # extract files only if not exist yet
     if [[ ! -f "$binfile" ]]; then
@@ -76,7 +70,7 @@ extract() {
         echo "## Extracted files:"
         "$TAR_CMD" -xvf "$tarfile" \
             -C "$GIT_WORKDIR/test/hack/bin/" \
-            --strip-components="$stripcomponents" \
+            --strip-components=1 \
             --wildcards "$wildcards"
     fi
 
@@ -109,15 +103,6 @@ main() {
         "*/yq_*"
     if [[ ! -f "${GIT_WORKDIR}/test/hack/bin/yq" ]]; then
         ln -s "${GIT_WORKDIR}/test/hack/bin/${YQ_BIN_FILE}" "${GIT_WORKDIR}/test/hack/bin/yq"
-    fi
-    extract \
-        "${GIT_WORKDIR}/test/hack/bin/${PINT_BIN_FILE}" \
-        "${GIT_WORKDIR}/test/hack/bin/pint-${PINT_VERSION}.tar.gz" \
-        "$PINT_SOURCE" \
-        "pint-*" \
-        0
-    if [[ ! -f "${GIT_WORKDIR}/test/hack/bin/pint" ]]; then
-        ln -s "${GIT_WORKDIR}/test/hack/bin/${PINT_BIN_FILE}" "${GIT_WORKDIR}/test/hack/bin/pint"
     fi
 }
 

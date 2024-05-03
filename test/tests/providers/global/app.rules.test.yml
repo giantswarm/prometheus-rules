@@ -67,14 +67,14 @@ tests:
               alertname: AppWithoutTeamAnnotation
               app: userd
               area: managedservices
-              cancel_if_apiserver_down: true
-              cancel_if_cluster_status_creating: true
-              cancel_if_cluster_status_deleting: true
-              cancel_if_cluster_status_updating: true
-              cancel_if_outside_working_hours: true
+              cancel_if_apiserver_down: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
               catalog: control-plane-catalog
               cluster_id: gauss
-              cluster_missing: false
+              cluster_missing: "false"
               cluster_type: management_cluster
               customer: vodafone
               deployed_version: 1.2.1
@@ -94,9 +94,9 @@ tests:
               status: deployed
               team: atlas
               topic: releng
-              upgrade_available: false
+              upgrade_available: "false"
               version: 1.2.1
-              version_mismatch: false
+              version_mismatch: "false"
             exp_annotations:
               description: App userd has no team label.
               opsrecipe: app-without-team-annotation/

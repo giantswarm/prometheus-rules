@@ -82,7 +82,7 @@ spec:
       for: 1h
       labels:
         area: kaas
-        cancel_if_outside_working_hours: true
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: {{ include "providerTeam" . }}
         topic: etcd

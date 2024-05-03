@@ -62,7 +62,7 @@ Any Alert includes:
 
 ### Specific alert labels
 
-- `all_pipelines: true`: When adding this label to an alert, you are sure the alert will be send to opsgenie, even if the installation is not a stable installation.
+- `all_pipelines: "true"`: When adding this label to an alert, you are sure the alert will be send to opsgenie, even if the installation is not a stable installation.
 
 #### Routing
 

@@ -20,7 +20,7 @@ tests:
               cluster_name: grumpy
               name: grumpy-def99
               exported_namespace: giantswarm
-              paused_value: true
+              paused_value: "true"
             exp_annotations:
               description: "Machineset giantswarm/grumpy-def99 is paused."
               opsrecipe: capi-machineset/

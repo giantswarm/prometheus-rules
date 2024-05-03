@@ -62,7 +62,7 @@ tests:
               topic: managementcluster
               name: grumpy
               exported_namespace: giantswarm
-              paused_value: true
+              paused_value: "true"
             exp_annotations:
               description: "The cluster giantswarm/grumpy is paused."
               opsrecipe: capi-cluster/

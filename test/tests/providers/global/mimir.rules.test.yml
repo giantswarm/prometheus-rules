@@ -151,7 +151,7 @@ tests:
         eval_time: 85m  # After 85 minutes, should fire an alert for the t+85 error
         exp_alerts:
           - exp_labels:
-              all_pipelines: true
+              all_pipelines: "true"
               area: managedservices
               cancel_if_outside_working_hours: "true"
               cluster_type: management_cluster

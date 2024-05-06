@@ -39,7 +39,7 @@ spec:
         opsrecipe: unsupported-cilium-network-policy/
       # cilium_policy_change_total - for cilium >=1.15
       # cilium_policy_import_errors_total - for cilium <1.15
-      expr: max(rate(cilium_policy_change_total{outcome=~"fail.*"}[20m]) by (cluster_id, installation, pipeline, provider) OR rate(cilium_policy_import_errors_total[20m])) > 0
+      expr: max(rate(cilium_policy_change_total{outcome=~"fail.*"}[20m]) OR rate(cilium_policy_import_errors_total[20m])) by (cluster_id, installation, pipeline, provider) > 0
       for: 10m
       labels:
         area: managedservices

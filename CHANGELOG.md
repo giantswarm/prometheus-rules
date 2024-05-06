@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove cilium entry from KAAS SLOs.
 - Fix cilium related alerts for mimir.
+- Add missing labels for apiserver alerts.
 
 ## [3.13.1] - 2024-04-30
 

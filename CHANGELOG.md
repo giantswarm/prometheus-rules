@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove cilium entry from KAAS SLOs.
 - Fix Loki/Mimir and Tempo mixins according to `pint` recommendations
+- Fix cilium related alerts for mimir.
 - Fix etcd alerts for Mimir.
 - Add missing labels for apiserver alerts.
 

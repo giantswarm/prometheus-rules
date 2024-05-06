@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `cluster_control_plane_unhealthy` inhibition.
 
+### Added
+
+- Added inhibitions expressions for CAPI clusters.
+
 ## [3.13.1] - 2024-04-30
 
 ### Removed

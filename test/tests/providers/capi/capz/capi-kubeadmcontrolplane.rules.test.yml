@@ -45,7 +45,7 @@ tests:
               cluster_name: grumpy
               name: grumpy-72r5c
               exported_namespace: giantswarm
-              paused_value: true
+              paused_value: "true"
             exp_annotations:
               description: "The clusters grumpy kubeadmcontrolplane giantswarm/grumpy-72r5c is paused."
               opsrecipe: capi-kubeadmcontrolplane/

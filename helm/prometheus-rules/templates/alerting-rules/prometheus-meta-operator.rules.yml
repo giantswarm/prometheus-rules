@@ -70,7 +70,7 @@ spec:
         area: "empowerment"
         cancel_if_mc_kube_state_metrics_down: "false"
         cancel_if_cluster_status_creating: "true"
-        cancel_if_outside_working_hours: true
+        cancel_if_outside_working_hours: "true"
         installation: {{ .Values.managementCluster.name }}
         severity: "page"
         team: "atlas"

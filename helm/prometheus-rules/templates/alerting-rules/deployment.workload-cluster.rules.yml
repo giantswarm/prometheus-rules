@@ -41,12 +41,12 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: workload-cluster-deployment-not-satisfied/
-      expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="workload_cluster", deployment=~"etcd-kubernetes-resources-count-exporter"}, "service", "/", "namespace", "deployment") > 0
+      expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="workload_cluster", deployment="etcd-kubernetes-resources-count-exporter"}, "service", "/", "namespace", "deployment") > 0
       for: 30m
       labels:
         area: kaas
         cancel_if_prometheus_agent_down: "true"
-        cancel_if_outside_working_hours: true
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: {{ include "providerTeam" . }}
         topic: observability
@@ -68,7 +68,7 @@ spec:
       for: 4h
       labels:
         area: managedservices
-        cancel_if_outside_working_hours: true
+        cancel_if_outside_working_hours: "true"
         severity: notify
         team: shield
         topic: releng

@@ -16,17 +16,11 @@ spec:
       expr: |
         count (
           kube_secret_created{secret=~".*-teleport-join-token"}
-        ) by (cluster_id, installation)
+        )
         !=
         sum (
-          label_replace(
-            capi_cluster_status_phase{phase="Provisioned"},
-            "cluster_id",
-            "$1",
-            "name",
-            "(.*)"
-          )
-        ) by (cluster_id, installation)
+            capi_cluster_status_phase{phase="Provisioned"}
+        )
       for: 120m
       labels:
         area: kaas
@@ -43,17 +37,11 @@ spec:
       expr: |
         count (
           kube_configmap_info{configmap=~".*-teleport-kube-agent-config"}
-        ) by (cluster_id, installation)
+        )
         !=
         sum (
-          label_replace(
-            capi_cluster_status_phase{phase="Provisioned"},
-            "cluster_id",
-            "$1",
-            "name",
-            "(.*)"
-          )
-        ) by (cluster_id, installation)
+            capi_cluster_status_phase{phase="Provisioned"}
+        )
       for: 120m
       labels:
         area: kaas

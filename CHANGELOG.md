@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add opsrecipe to `CoreDNSMaxHPAReplicasReached`
 - Replace `cancel_if_apiserver_down` with `cancel_if_cluster_control_plane_unhealthy`
+- Removed `apiserver_down` inhibition dummy trigger.
 
 ### Fixed
 

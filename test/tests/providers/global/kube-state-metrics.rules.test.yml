@@ -50,7 +50,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: "kaas"
-              cancel_if_apiserver_down: "true"
+              cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
@@ -77,7 +77,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: "kaas"
-              cancel_if_apiserver_down: "true"
+              cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
@@ -110,7 +110,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: "kaas"
-              cancel_if_apiserver_down: "true"
+              cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
@@ -168,7 +168,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: "kaas"
-              cancel_if_apiserver_down: "true"
+              cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
@@ -195,7 +195,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: "kaas"
-              cancel_if_apiserver_down: "true"
+              cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"

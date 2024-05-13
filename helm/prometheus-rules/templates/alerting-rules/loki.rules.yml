@@ -42,7 +42,7 @@ spec:
       for: 120m
       labels:
         area: managedservices
-        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -59,7 +59,7 @@ spec:
         sum(increase(loki_panic_total[10m])) by (cluster_id, installation, provider, pipeline, namespace, job) > 0
       labels:
         area: managedservices
-        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -77,7 +77,7 @@ spec:
       for: 30m
       labels:
         area: managedservices
-        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"

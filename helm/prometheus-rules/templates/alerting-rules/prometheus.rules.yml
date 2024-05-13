@@ -18,7 +18,7 @@ spec:
       for: 30m
       labels:
         area: empowerment
-        cancel_if_any_apiserver_down: "true"
+        cancel_if_any_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_cluster_status_deleting: "true"

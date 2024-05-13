@@ -62,6 +62,7 @@ spec:
     - alert: GrafanaAgentForPrometheusRulesDown
       annotations:
         description: 'Grafana-agent sending PrometheusRules to Mimir ruler is down.'
+        opsrecipe: mimir/
       expr: count(up{app="grafana-agent", namespace="mimir"} == 0) by (cluster_id, installation, provider, pipeline) > 0
       for: 1h
       labels:

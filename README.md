@@ -125,11 +125,12 @@ Come as-is from https://github.com/grafana/tempo/tree/main/operations/tempo-mixi
 
 You can run all tests by running `make test`.
 
-There are 3 different types tests implemented:
+There are 4 different types tests implemented:
 
 - [Prometheus rules unit tests](#prometheus-rules-unit-tests)
 - [Alertmanager inhibition dependency check](#alertmanager-inhibition-dependency-check)
 - [Opsrecipe check](#opsrecipe-check)
+- [Prometheus Linter](#prometheus-linter)
 
 ---
 
@@ -318,3 +319,16 @@ The inhibition labels checking script is also run automatically at PR's creation
 You can run `make test-opsrecipes` to check if linked opsrecipes are valid.
 
 This check is not part of the global `make test` command until we fix all missing / wrong opsrecipes.
+
+## Prometheus Linter
+
+We are using [pint](https://cloudflare.github.io/pint/) to run some static checks on the rules.
+
+You can run them manually with `make pint`.
+
+### Pint specific cases
+
+If you want to run `pint` against a specific team's rules, you can run: `make pint PINT_TEAM_FILTER=myteam`
+
+We also have a target that does not run all pint checks, only checks for tags needed for aggregations with mimir.
+This one runs with `make pint-aggregations`.

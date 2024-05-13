@@ -38,16 +38,6 @@ spec:
         scrape_timeout: "true"
         team: phoenix
         topic: monitoring
-    # TODO(@team-turtles): fix with real expr
-    - alert: ApiServerDown
-      annotations:
-        description: '{{`Never fires (dummy alert).`}}'
-      expr: vector(0) > 1
-      labels:
-        area: empowerment
-        apiserver_down: "true"
-        team: phoenix
-        topic: monitoring
     {{- if (eq .Values.managementCluster.provider.kind "aws") }}
     - alert: InhibitionClusterWithoutWorkerNodes
       annotations:

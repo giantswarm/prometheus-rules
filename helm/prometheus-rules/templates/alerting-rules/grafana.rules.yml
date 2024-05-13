@@ -29,11 +29,11 @@ spec:
         team: atlas
         topic: observability
     - alert: GrafanaFolderPermissionsDown
-      # Monitors that folder permissions have been updated.
+      # Monitors that folder permissions have been updated at least once in the last 6 hours.
       # We have a cronjob (grafana-permissions) that runs every 20 minutes.
       # When successfully run, folders permissions successful updates counter increases.
       annotations:
-        description: '{{`Grafana Folder not updated for ({{ $labels.instance }}).`}}'
+        description: '{{`Grafana Folder could not be updated.`}}'
         opsrecipe: grafana-perms/
       expr: sum by(cluster_id, installation, provider, pipeline) (increase(grafana_http_request_duration_seconds_count{handler="/api/folders/:uid/permissions/", method="POST", namespace="monitoring", service="grafana", status_code="200", cluster_type="management_cluster"}[2h])) < 1 or absent(grafana_http_request_duration_seconds_count{handler="/api/folders/:uid/permissions/", method="POST", namespace="monitoring", service="grafana", status_code="200", cluster_type="management_cluster"})
       for: 6h
@@ -47,11 +47,11 @@ spec:
         team: atlas
         topic: observability
     - alert: GrafanaFolderPermissionsCronjobFails
-      # Monitors that folder permissions job has run successfully.
+      # Monitors that folder permissions job has run successfully at least once in the last 6 hours.
       # We have a cronjob (grafana-permissions) that runs every 20 minutes.
       # Here we check the kubernetes job status
       annotations:
-        description: '{{`Grafana permissions updates cronjob failed for ({{ $labels.job_name }}).`}}'
+        description: '{{`Grafana permissions updates cronjob failed to run.`}}'
         opsrecipe: grafana-perms/
       # expression explanation:
       # - we create cronjob label from cron name (label_replace)

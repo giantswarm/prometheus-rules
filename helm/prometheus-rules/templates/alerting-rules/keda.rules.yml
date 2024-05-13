@@ -17,7 +17,7 @@ spec:
       for: 10m
       labels:
         area: kaas
-        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -32,7 +32,7 @@ spec:
       for: 15m
       labels:
         area: kaas
-        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -47,7 +47,7 @@ spec:
       for: 15m
       labels:
         area: kaas
-        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -62,7 +62,7 @@ spec:
       for: 15m
       labels:
         area: kaas
-        cancel_if_apiserver_down: "true"
+        cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"

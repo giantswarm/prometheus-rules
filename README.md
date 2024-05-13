@@ -54,15 +54,26 @@ Any Alert includes:
    - `area`
    - `team`
    - `severity`
+   - `cluster_id`
+   - `installation`
+   - `pipeline`
+   - `provider`
 
 * Optional labels:
    - `sig`
    - `cancel_if_.*`
 
 
-### Specific alert labels
+#### Specific alert labels
 
 - `all_pipelines: "true"`: When adding this label to an alert, you are sure the alert will be send to opsgenie, even if the installation is not a stable installation.
+
+#### `Absent` function
+
+If you want to make sure a metrics exists on one cluster, you can't just use the `absent` function anymore.
+With `mimir` we have metrics for all the clusters on a single database, and it makes detecting the absence of one metrics on one cluster much harder.
+
+To achieve such a test, you should do like [`PrometheusAgentFailing`](https://github.com/giantswarm/prometheus-rules/blob/master/helm/prometheus-rules/templates/alerting-rules/prometheus-agent.rules.yml) alert does.
 
 #### Routing
 

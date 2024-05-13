@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `cluster_control_plane_unhealthy` inhibition.
+- Added inhibitions expressions for CAPI clusters.
+- make targets for pint linter
+
 ### Changed
 
 - Add opsrecipe to `CoreDNSMaxHPAReplicasReached`
@@ -16,16 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Remove cilium entry from KAAS SLOs.
+- Fix operatorkit related alerts for mimir.
 - Fix Loki/Mimir and Tempo mixins according to `pint` recommendations
 - Fix cilium related alerts for mimir.
 - Fix etcd alerts for Mimir.
 - Add missing labels for apiserver alerts.
-
-### Added
-
-- Add `cluster_control_plane_unhealthy` inhibition.
-- Added inhibitions expressions for CAPI clusters.
-- make targets for pint linter
+- Add missing opsrecipe for mimir alerts.
 
 ## [3.13.1] - 2024-04-30
 

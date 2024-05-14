@@ -41,7 +41,7 @@ spec:
       annotations:
         description: '{{`Etcd volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
         opsrecipe: low-disk-space/#etcd-volume
-      expr: 100 * node_filesystem_free_bytes{cluster_type="management_cluster", mountpoint=~"(/rootfs)?/var/lib/etcd", provider!~"eks"} / node_filesystem_size_bytes{cluster_type="management_cluster", mountpoint=~"(/rootfs)?/var/lib/etcd", provider!~"eks"} < 10
+      expr: 100 * node_filesystem_free_bytes{cluster_type="management_cluster", mountpoint=~"(/rootfs)?/var/lib/etcd", provider!="eks"} / node_filesystem_size_bytes{cluster_type="management_cluster", mountpoint=~"(/rootfs)?/var/lib/etcd", provider!="eks"} < 10
       for: 10m
       labels:
         area: kaas

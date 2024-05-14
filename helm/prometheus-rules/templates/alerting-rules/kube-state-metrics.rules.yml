@@ -12,7 +12,7 @@ spec:
     rules:
     - alert: KubeStateMetricsDown
       annotations:
-        description: '{{`KubeStateMetrics ({{ $labels.instance }}) is down.`}}'
+        description: '{{`KubeStateMetrics is down.`}}'
         opsrecipe: kube-state-metrics-down/
       {{- if not .Values.mimir.enabled }}
       expr: |-
@@ -56,7 +56,7 @@ spec:
         topic: observability
     - alert: KubeStateMetricsSlow
       annotations:
-        description: '{{`KubeStateMetrics ({{ $labels.instance }}) is too slow.`}}'
+        description: '{{`KubeStateMetrics is too slow.`}}'
         opsrecipe: kube-state-metrics-down/
       expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{handler="metrics", job="kube-state-metrics"}[5m])) by (le, cluster_id, installation, provider, pipeline)) > 7
       for: 15m
@@ -74,7 +74,7 @@ spec:
         topic: observability
     - alert: KubeStateMetricsNotRetrievingMetrics
       annotations:
-        description: '{{`KubeStateMetrics ({{ $labels.instance }}) is not retrieving metrics.`}}'
+        description: '{{`KubeStateMetrics is not retrieving metrics.`}}'
         opsrecipe: kube-state-metrics-down/
       expr: |-
         # When it looks up but we don't have metrics

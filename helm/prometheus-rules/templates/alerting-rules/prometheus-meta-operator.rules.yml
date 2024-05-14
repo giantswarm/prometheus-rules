@@ -10,7 +10,7 @@ spec:
   - name: observability
     rules:
     - alert: "Heartbeat"
-      expr: up{app="prometheus",instance!="prometheus-agent"}
+      expr: up{app="prometheus",instance!="prometheus-agent"} == 1
       labels:
         area: "empowerment"
         installation: {{ .Values.managementCluster.name }}

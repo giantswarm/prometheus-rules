@@ -56,7 +56,7 @@ spec:
     - alert: KubeletPLEGLatencyTooHigh
       annotations:
         description: '{{`Kubelet ({{ $labels.instance }}) PLEG latency is too high.`}}'
-      expr: histogram_quantile(0.99, sum(rate(kubelet_pleg_relist_duration_seconds_bucket[5m])) by (cluster_id, instance, le)) > 100
+      expr: histogram_quantile(0.99, sum(rate(kubelet_pleg_relist_duration_seconds_bucket[5m])) by (cluster_id, installation, pipeline, provider, instance, le)) > 100
       for: 10m
       labels:
         area: kaas

@@ -79,7 +79,7 @@ spec:
       for: 1d
       labels:
         area: empowerment
-        severity: none
+        severity: notify
         team: atlas
         topic: observability
         cancel_if_outside_working_hours: "true"

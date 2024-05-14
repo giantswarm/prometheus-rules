@@ -424,7 +424,7 @@ spec:
             label_join(policy_report_result{
               policy!="check-deprecated-apis-1-25",
               cluster_type="management_cluster",
-              kind=~"Deployment"
+              kind="Deployment"
             }, "deployment", ",", "name")
           ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, deployment, category, policy, status)
           * on(deployment) group_left(team, app) sum(
@@ -442,7 +442,7 @@ spec:
             label_join(policy_report_result{
               policy!="check-deprecated-apis-1-25",
               cluster_type="management_cluster",
-              kind=~"DaemonSet"
+              kind="DaemonSet"
             }, "daemonset", ",", "name")
           ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, daemonset, category, policy, status)
           * on(daemonset) group_left(team, app) sum(
@@ -460,7 +460,7 @@ spec:
             label_join(policy_report_result{
               policy!="check-deprecated-apis-1-25",
               cluster_type="management_cluster",
-              kind=~"StatefulSet"
+              kind="StatefulSet"
             }, "statefulset", ",", "name")
           ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, statefulset, category, policy, status)
           * on(statefulset) group_left(team, app) sum(
@@ -478,7 +478,7 @@ spec:
             label_join(policy_report_result{
               policy!="check-deprecated-apis-1-25",
               cluster_type="management_cluster",
-              kind=~"Job"
+              kind="Job"
             }, "job", ",", "name")
           ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, job, category, policy, status)
           * on(job) group_left(team, app) sum(
@@ -496,7 +496,7 @@ spec:
             label_join(policy_report_result{
               policy!="check-deprecated-apis-1-25",
               cluster_type="management_cluster",
-              kind=~"CronJob"
+              kind="CronJob"
             }, "cronjob", ",", "name")
           ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, cronjob, category, policy, status)
           * on(cronjob) group_left(team, app) sum(

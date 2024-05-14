@@ -38,3 +38,5 @@ spec:\
 # Add the mimir enabled helm conditional blocks
 sed -i '1i{{- if .Values.mimir.enabled }}' "$OUTPUT_FILE"
 sed -i -e '$a{{- end }}' "$OUTPUT_FILE"
+
+sed -i 's/cluster_id,/cluster_id, installation, pipeline, provider,/g' "$OUTPUT_FILE"

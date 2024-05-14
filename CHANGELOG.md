@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fix honeybadger alerts for mimir.
 - Remove cilium entry from KAAS SLOs.
 - Fix cert-manager rules for mimir.
 - Fix operatorkit related alerts for mimir.

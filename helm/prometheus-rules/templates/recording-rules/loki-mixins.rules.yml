@@ -47,7 +47,7 @@ spec:
         by (le, cluster_id, provider, installation, pipeline, namespace, job, route))
       record: cluster_namespace_job_route:loki_request_duration_seconds:50quantile
     - expr: sum(rate(loki_request_duration_seconds_sum[1m])) by (cluster_id, provider, installation, pipeline, namespace,
-        job, route) / sum(rate(loki_request_duration_seconds_count[1m])) by (cluster,
+        job, route) / sum(rate(loki_request_duration_seconds_count[1m])) by (cluster_id, installation, pipeline, provider,
         namespace, job, route)
       record: cluster_namespace_job_route:loki_request_duration_seconds:avg
     - expr: sum(rate(loki_request_duration_seconds_bucket[1m])) by (le, cluster_id, provider, installation, pipeline, namespace,

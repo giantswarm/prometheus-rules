@@ -23,12 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix shield alerts labels for Mimir.
+- Fix shield alert labels for Mimir.
 - Fix cabbage alert labels for Mimir.
 - Fix honeybadger alert labels for Mimir.
 - Fix cert-manager alert labels for Mimir.
 - Fix operatorkit alert labels for Mimir.
-- Fix Loki/Mimir and Tempo mixins according to `pint` recommendations
+- Fix all mixins according to `pint` recommendations.
 - Fix etcd alert labels for Mimir.
 - Fix apiserver alert labels for Mimir.
 

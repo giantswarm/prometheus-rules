@@ -34,6 +34,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add missing labels for apiserver alerts.
 - Add missing opsrecipe for mimir alerts.
 
+### Removed
+
+- Remove elasticsearch and tempo related alerts and recording rules.
+
 ## [3.13.1] - 2024-04-30
 
 ### Removed

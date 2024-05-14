@@ -18,7 +18,6 @@ templates/alerting-rules/disk.management-cluster.rules.yml
 templates/alerting-rules/disk.workload-cluster.rules.yml
 templates/alerting-rules/docker.management-cluster.rules.yml
 templates/alerting-rules/docker.workload-cluster.rules.yml
-templates/alerting-rules/elasticsearch.rules.yml
 templates/alerting-rules/etcd.management-cluster.rules.yml
 templates/alerting-rules/etcd.workload-cluster.rules.yml
 templates/alerting-rules/etcdbackup.rules.yml
@@ -36,7 +35,6 @@ templates/alerting-rules/kube-state-metrics.rules.yml
 templates/alerting-rules/kubelet.management-cluster.rules.yml
 templates/alerting-rules/kubelet.workload-cluster.rules.yml
 templates/alerting-rules/kyverno.rules.yml
-templates/alerting-rules/managed-logging.rules.yml
 templates/alerting-rules/management-cluster.rules.yml
 templates/alerting-rules/microendpoint.rules.yml
 templates/alerting-rules/net-exporter.management-cluster.rules.yml
@@ -62,5 +60,4 @@ templates/recording-rules/gs-managed-app-deployment-status.rules.yml
 templates/recording-rules/kubernetes-mixins.rules.yml
 templates/recording-rules/service-level.rules.yml
 templates/recording-rules/mimir-mixins.rules.yml
-templates/recording-rules/tempo-mixins.rules.yml
 templates/recording-rules/loki-mixins.rules.yml

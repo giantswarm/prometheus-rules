@@ -16,12 +16,12 @@ tests:
               app: mimir
               area: empowerment
               installation: myinstall
-              namespace: monitoring
               team: atlas
               topic: observability
-              type: heartbeat
+              type: mimir-heartbeat
             exp_annotations:
               description: "This alert is used to ensure the entire alerting pipeline is functional."
+              opsrecipe: "mimir/"
       - alertname:  Heartbeat
         eval_time: 70m
       - alertname:  Heartbeat
@@ -31,12 +31,12 @@ tests:
               app: mimir
               area: empowerment
               installation: myinstall
-              namespace: monitoring
               team: atlas
               topic: observability
-              type: heartbeat
+              type: mimir-heartbeat
             exp_annotations:
               description: "This alert is used to ensure the entire alerting pipeline is functional."
+              opsrecipe: "mimir/"
       - alertname:  Heartbeat
         eval_time: 140m
       - alertname:  Heartbeat
@@ -46,12 +46,12 @@ tests:
               app: mimir
               area: empowerment
               installation: myinstall
-              namespace: monitoring
               team: atlas
               topic: observability
-              type: heartbeat
+              type: mimir-heartbeat
             exp_annotations:
               description: "This alert is used to ensure the entire alerting pipeline is functional."
+              opsrecipe: "mimir/"
   - interval: 1m
     input_series:
       # For the first 60min: test with 1 pod: none, up, down
@@ -81,6 +81,7 @@ tests:
               pipeline: testing
             exp_annotations:
               description: "Mimir component : mimir-ingester is down."
+              opsrecipe: "mimir/"
   - interval: 1m
     input_series:
       # test with 1 pod: none, up, down
@@ -109,6 +110,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Grafana-agent sending PrometheusRules to Mimir ruler is down."
+              opsrecipe: "mimir/"
   - interval: 1m
     input_series:
       # test: none, rate > 0, rate = 0
@@ -135,6 +137,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Mimir ruler is failing to process PrometheusRules."
+              opsrecipe: "mimir/"
       - alertname: MimirRulerEventsFailed
         eval_time: 160m
   - interval: 1m
@@ -162,6 +165,7 @@ tests:
               topic: observability
             exp_annotations:
               description: Mimir containers are restarting too often.
+              opsrecipe: "mimir/"
       - alertname: MimirRestartingTooOften
         eval_time: 140m  # After 140m minutes, all should be back to normal
         exp_alerts:

@@ -7,24 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add recording rules to show prometheus scraping job memory usage.
+- Add `cluster_control_plane_unhealthy` inhibition.
+- Add inhibitions expressions for CAPI clusters.
+- Add ops-recipe for `KeyPairStorageAlmostFull` alert
+- Add missing opsrecipe for Mimir alerts.
+- Add opsrecipe to `CoreDNSMaxHPAReplicasReached`
+- make targets for pint linter
+
 ### Changed
 
-- Add opsrecipe to `CoreDNSMaxHPAReplicasReached`
 - Replace `cancel_if_apiserver_down` with `cancel_if_cluster_control_plane_unhealthy`
-- Removed `apiserver_down` inhibition dummy trigger.
 
 ### Fixed
 
-- Remove cilium entry from KAAS SLOs.
+- Fix shield alerts labels for Mimir.
+- Fix cabbage alert labels for Mimir.
+- Fix honeybadger alert labels for Mimir.
+- Fix cert-manager alert labels for Mimir.
+- Fix operatorkit alert labels for Mimir.
 - Fix Loki/Mimir and Tempo mixins according to `pint` recommendations
-- Fix cilium related alerts for mimir.
-- Fix etcd alerts for Mimir.
-- Add missing labels for apiserver alerts.
+- Fix etcd alert labels for Mimir.
+- Fix apiserver alert labels for Mimir.
 
-### Added
+### Removed
 
-- Add `cluster_control_plane_unhealthy` inhibition.
-- Added inhibitions expressions for CAPI clusters.
+- Removed `apiserver_down` inhibition dummy trigger.
+- Remove cilium entry from KAAS SLOs.
+- Remove elasticsearch and tempo related alerts and recording rules.
 
 ## [3.13.1] - 2024-04-30
 

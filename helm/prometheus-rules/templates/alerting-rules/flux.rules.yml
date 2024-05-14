@@ -117,9 +117,9 @@ spec:
         1-sum_over_time(
         (
           (
-          sum(increase(gotk_reconcile_duration_seconds_sum{namespace="flux-giantswarm", exported_namespace="flux-giantswarm",kind=~"Kustomization|HelmRelease"}[10m])) by (kind,name,cluster_id,installation)
+          sum(increase(gotk_reconcile_duration_seconds_sum{namespace="flux-giantswarm", exported_namespace="flux-giantswarm",kind=~"Kustomization|HelmRelease"}[10m])) by (kind, name, cluster_id, installation, pipeline, provider)
           /
-          sum(increase(gotk_reconcile_duration_seconds_count{namespace="flux-giantswarm", exported_namespace="flux-giantswarm",kind=~"Kustomization|HelmRelease"}[10m])) by (kind,name,cluster_id,installation)
+          sum(increase(gotk_reconcile_duration_seconds_count{namespace="flux-giantswarm", exported_namespace="flux-giantswarm",kind=~"Kustomization|HelmRelease"}[10m])) by (kind, name, cluster_id, installation, pipeline, provider)
           )
         >bool 360)[7d:10m])
         / (7*24*6) < 0.97
@@ -149,7 +149,7 @@ spec:
           {{`Flux Image Automation Controller on {{ $labels.installation }} seems stuck.`}}
         opsrecipe: flux-image-automation-stuck/
       expr: |
-        sum(irate(workqueue_unfinished_work_seconds{name="imageupdateautomation",cluster_type="management_cluster",namespace=~"flux-giantswarm|flux-system"}[15m])) > 0
+        sum(irate(workqueue_unfinished_work_seconds{name="imageupdateautomation",cluster_type="management_cluster",namespace=~"flux-giantswarm|flux-system"}[15m])) by (cluster_id, installation, pipeline, provider) > 0
       for: 30m
       labels:
         area: empowerment
@@ -244,8 +244,8 @@ spec:
           {{`Flux controller {{ $labels.controller }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is reconciling very slowly.`}}
         opsrecipe: fluxcd-slow-reconciliation/
       expr: |
-        (sum(rate(controller_runtime_reconcile_time_seconds_sum{app=~".*flux.*", namespace!~".*giantswarm.*"}[5m])) by (installation, cluster_id, controller) /
-        sum(rate(controller_runtime_reconcile_time_seconds_count{app=~".*flux.*", namespace!~".*giantswarm.*"}[5m])) by (installation, cluster_id, controller)) > 60
+        (sum(rate(controller_runtime_reconcile_time_seconds_sum{app=~".*flux.*", namespace!~".*giantswarm.*"}[5m])) by (controller, cluster_id, installation, pipeline, provider) /
+        sum(rate(controller_runtime_reconcile_time_seconds_count{app=~".*flux.*", namespace!~".*giantswarm.*"}[5m])) by (controller, cluster_id, installation, pipeline, provider)) > 60
       for: 10m
       labels:
         area: empowerment
@@ -259,7 +259,7 @@ spec:
           {{`Flux artifacts are stuck in work queue for over 1 hour and are not being reconciled.`}}
         opsrecipe: fluxcd-workqueue-too-long/
       expr: |
-        sum by (name, namespace) (workqueue_unfinished_work_seconds{namespace=~"flux-giantswarm|flux-system"}) > 3600.0
+        sum by (cluster_id, installation, name, namespace, pipeline, provider) (workqueue_unfinished_work_seconds{namespace=~"flux-giantswarm|flux-system"}) > 3600.0
       for: 10m
       labels:
         area: empowerment

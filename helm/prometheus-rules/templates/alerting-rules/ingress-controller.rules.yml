@@ -28,7 +28,7 @@ spec:
       annotations:
         description: '{{`Ingress Controller {{ $labels.pod }} memory usage is too high.`}}'
         opsrecipe: ic-memory-too-high/
-      expr: sum by (node, pod, cluster_id) (container_memory_usage_bytes{pod=~".*(ingress-nginx|nginx-ingress-controller).*", container=""}) / ignoring (pod) group_left sum (node_memory_MemTotal_bytes) by (node, cluster_id) * 100 > 33
+      expr: sum by (node, pod, cluster_id, installation, pipeline, provider) (container_memory_usage_bytes{pod=~".*(ingress-nginx|nginx-ingress-controller).*", container=""}) / ignoring (pod) group_left sum (node_memory_MemTotal_bytes) by (node, cluster_id, installation, pipeline, provider) * 100 > 33
       for: 3m
       labels:
         area: managedservices
@@ -40,7 +40,7 @@ spec:
       annotations:
         description: '{{`Ingress Controller in namespace {{ $labels.namespace}} has {{ $value }} replica sets.`}}'
         opsrecipe: high-number-replicasets/
-      expr: count(kube_replicaset_spec_replicas{replicaset=~".*(ingress-nginx|nginx-ingress-controller).*"}) by (cluster_id, namespace) > 15
+      expr: count(kube_replicaset_spec_replicas{replicaset=~".*(ingress-nginx|nginx-ingress-controller).*"}) by (cluster_id, installation, pipeline, provider, namespace) > 15
       for: 2m
       labels:
         area: managedservices
@@ -52,7 +52,7 @@ spec:
       annotations:
         description: '{{`Ingress Controller has no live endpoints.`}}'
         opsrecipe: ingress-controller-no-live-endpoints/
-      expr: count by (cluster_id) (kube_endpoint_address_available{endpoint=~".*(ingress-nginx|nginx-ingress-controller).*"}) == 0
+      expr: count by (cluster_id, installation, pipeline, provider) (kube_endpoint_address_available{endpoint=~".*(ingress-nginx|nginx-ingress-controller).*"}) == 0
       for: 2m
       labels:
         area: managedservices

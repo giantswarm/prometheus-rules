@@ -6,6 +6,11 @@ set -euo pipefail
 
 set -eu
 
+# Global options
+
+## GENERATE_ONLY: if set to true, the script will only generate the rules files
+GENERATE_ONLY="${GENERATE_ONLY:-false}"
+
 array_contains() {
     local search="$1" && shift
 
@@ -65,6 +70,9 @@ main() {
         [[ -f "$expected_failure_file_provider" ]] \
             && mapfile -t expected_failure_prefixes_provider <"$expected_failure_file_provider"
 
+        # Create the directory for the provider if needed
+        [[ -d "$GIT_WORKDIR/test/tests/providers/$provider" ]] || mkdir -p "$GIT_WORKDIR/test/tests/providers/$provider"
+
         for file in "${all_files[@]}"; do
 
             [[ ! "$file" =~ .*$filter.* ]] && continue
@@ -78,16 +86,22 @@ main() {
             # Extract rules file from helm template
             echo "###    extracting $GIT_WORKDIR/test/tests/providers/$provider/$filename"
             if [[ -f "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/alerting-rules/$filename" ]]
+            # For alerting rules
             then
                 "$GIT_WORKDIR/$YQ" '.spec' "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/alerting-rules/$filename" > "$GIT_WORKDIR/test/tests/providers/$provider/$filename"
             elif [[ -f "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/recording-rules/$filename" ]]
+            # For recording rules
             then
                 "$GIT_WORKDIR/$YQ" '.spec' "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/recording-rules/$filename" > "$GIT_WORKDIR/test/tests/providers/$provider/$filename"
             else
+                # Fail when file is not found
                 echo "###    Failed extracting rules file $file"
                 failing_extraction+=("$provider:$file")
                 continue
             fi
+
+            # Skip next steps if GENERATE_ONLY is set
+            if [[ "$GENERATE_ONLY" == "true" ]]; then continue; fi
 
             # Syntax check of rules file
             echo "###    promtool check rules $GIT_WORKDIR/test/tests/providers/$provider/$filename"

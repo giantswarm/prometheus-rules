@@ -14,7 +14,7 @@ spec:
       annotations:
         description: 'Kyverno has no available replicas but webhooks are present.'
         opsrecipe: kyverno-webhooks/
-      expr: sum(kube_validatingwebhookconfiguration_info{validatingwebhookconfiguration=~"kyverno-.*"}) by (cluster_id) > 0 and sum(kube_deployment_status_replicas{deployment=~"kyverno|kyverno-admission-controller"}) by (cluster_id) == 0
+      expr: sum(kube_validatingwebhookconfiguration_info{validatingwebhookconfiguration=~"kyverno-.*"}) by (cluster_id, installation, pipeline, provider) > 0 and sum(kube_deployment_status_replicas{deployment=~"kyverno|kyverno-admission-controller"}) by (cluster_id, installation, pipeline, provider) == 0
       for: 15m
       labels:
         area: managedservices
@@ -48,7 +48,7 @@ spec:
       annotations:
         description: 'Kyverno has been scaled down for too long.'
         opsrecipe: kyverno-scaled-down/
-      expr: sum(kube_deployment_spec_replicas{deployment=~"kyverno|kyverno-kyverno-plugin|kyverno-policy-reporter"}) by (cluster_id) == 0
+      expr: sum(kube_deployment_spec_replicas{deployment=~"kyverno|kyverno-kyverno-plugin|kyverno-policy-reporter"}) by (cluster_id, installation, pipeline, provider) == 0
       for: 4h
       labels:
         area: managedservices
@@ -63,7 +63,7 @@ spec:
       annotations:
         description: "Kyverno's admission controller deployment must use at least 3 replicas, or be scaled to 0."
         opsrecipe: KyvernoWronglyScaled/
-      expr: sum(kube_deployment_spec_replicas{deployment="kyverno"}) by (cluster_id) != 0 and sum(kube_deployment_spec_replicas{deployment="kyverno"}) by (cluster_id) < 3
+      expr: sum(kube_deployment_spec_replicas{deployment="kyverno"}) by (cluster_id, installation, pipeline, provider) != 0 and sum(kube_deployment_spec_replicas{deployment="kyverno"}) by (cluster_id, installation, pipeline, provider) < 3
       for: 1h
       labels:
         area: managedservices

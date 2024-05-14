@@ -32,7 +32,7 @@ spec:
       annotations:
         description: '{{`CR version {{ $labels.version }} in cluster {{ $labels.cluster_id }} is reconciled by multiple apps including {{ $labels.app }}.`}}'
         opsrecipe: multiple-operators-running-same-version/
-      expr: sum(label_replace(giantswarm_build_info{app=~"app-operator.*|chart-operator.*"}, "version", "$1", "reconciled_version", "(.+)")) by (app, cluster_id, version) > 1
+      expr: sum(label_replace(giantswarm_build_info{app=~"app-operator.*|chart-operator.*"}, "version", "$1", "reconciled_version", "(.+)")) by (app, cluster_id, installation, provider, pipeline, version) > 1
       for: 5m
       labels:
         area: managedservices
@@ -47,7 +47,7 @@ spec:
       annotations:
         description: '{{`CR version {{ $labels.version }} in cluster {{ $labels.cluster_id }} is reconciled by multiple apps including {{ $labels.app }}.`}}'
         opsrecipe: multiple-operators-running-same-version/
-      expr: sum(label_replace(giantswarm_build_info{app=~"aws-operator.*|cluster-operator.*"}, "version", "$1", "reconciled_version", "(.+)")) by (app, cluster_id, version) > 1
+      expr: sum(label_replace(giantswarm_build_info{app=~"aws-operator.*|cluster-operator.*"}, "version", "$1", "reconciled_version", "(.+)")) by (app, cluster_id, installation, provider, pipeline, version) > 1
       for: 5m
       labels:
         area: kaas
@@ -62,7 +62,7 @@ spec:
       annotations:
         description: '{{`CR version {{ $labels.version }} in cluster {{ $labels.cluster_id }} is reconciled by multiple apps including {{ $labels.app }}.`}}'
         opsrecipe: multiple-operators-running-same-version/
-      expr: sum(label_replace(giantswarm_build_info{app=~"ignition-operator|cert-operator|node-operator"}, "version", "$1", "reconciled_version", "(.+)")) by (app, cluster_id, version) > 1
+      expr: sum(label_replace(giantswarm_build_info{app=~"ignition-operator|cert-operator|node-operator"}, "version", "$1", "reconciled_version", "(.+)")) by (app, cluster_id, installation, provider, pipeline, version) > 1
       for: 5m
       labels:
         area: kaas

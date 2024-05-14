@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add recording rules to show prometheus scraping job memory usage.
 - Add `cluster_control_plane_unhealthy` inhibition.
 - Added inhibitions expressions for CAPI clusters.
 - make targets for pint linter

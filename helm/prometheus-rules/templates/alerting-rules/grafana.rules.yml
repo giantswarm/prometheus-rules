@@ -75,7 +75,7 @@ spec:
       # This alert triggers when the grafana permission job did not schedule for more than 1 day
       # or if the job did not run successfully at least once in the last day
       expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="grafana-permissions", cluster_type="management_cluster"}) > 86400
-            or count by (cluster_id, installation, provider, pipeline) (max_over_time(kube_job_status_succeeded{job_name=~"grafana-permission.+", cluster_type="management_cluster"}[1d]) == 1) == 0
+            or count by (cluster_id, cronjob, installation, namespace, provider, pipeline) (label_replace(max_over_time(kube_job_status_succeeded{job_name=~"grafana-permissions-.+", cluster_type="management_cluster"}[1d]), "cronjob", "grafana-permissions", "job_name", "grafana-permissions-.+") == 1) == 0
       labels:
         area: empowerment
         severity: page

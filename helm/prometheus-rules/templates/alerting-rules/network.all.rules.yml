@@ -103,7 +103,7 @@ spec:
     - alert: Network95thPercentileLatencyTooHigh
       annotations:
         description: '{{`Network 95th percentile latency is too high.`}}'
-      expr: histogram_quantile(0.95, sum(irate(network_latency_seconds_bucket{}[15m])) by (le, cluster_id)) > 0.5
+      expr: histogram_quantile(0.95, sum(irate(network_latency_seconds_bucket{}[15m])) by (le, cluster_id, installation, pipeline, provider)) > 0.5
       for: 5m
       labels:
         area: kaas

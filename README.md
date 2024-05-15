@@ -122,15 +122,17 @@ To Update `kubernetes-mixins` recording rules:
 
 #### mimir-mixins
 
-Come as-is from https://github.com/grafana/mimir/tree/main/operations/mimir-mixin-compiled ; just added helm headers (metadata, spec...)
+To update `mimir-mixins` recording rules:
+
+* Run `./mimir/update.sh`
+* make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards)
 
 #### loki-mixins
 
-Come as-is from https://github.com/grafana/loki/tree/main/production/loki-mixin-compiled-ssd ; just added helm headers (metadata, spec...)
+To update `loki-mixins` recording rules:
 
-#### tempo-mixins
-
-Come as-is from https://github.com/grafana/tempo/tree/main/operations/tempo-mixin-compiled ; just added helm headers (metadata, spec...)
+* Run `./loki/update.sh`
+* make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards)
 
 ### Testing
 

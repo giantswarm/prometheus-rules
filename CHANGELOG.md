@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Remove atlas old slo alerts in favor of sloth alerts.
+- 
+## [3.14.1] - 2024-05-15
+
+### Fixed
+
+- Fix resource estimation recording rules for clusters that have more than 1 prometheus.
 
 ## [3.14.0] - 2024-05-15
 
@@ -2710,7 +2716,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.14.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.14.1...HEAD
+[3.14.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.14.0...v3.14.1
 [3.14.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.13.1...v3.14.0
 [3.13.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.13.0...v3.13.1
 [3.13.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.12.2...v3.13.0

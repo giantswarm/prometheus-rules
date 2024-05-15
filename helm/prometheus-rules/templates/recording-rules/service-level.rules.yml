@@ -368,42 +368,6 @@ spec:
         label_application_giantswarm_io_team: phoenix
       record: slo_target
 
-    # -- Managed Prometheus
-    # Set SLO request to always be 1 when a managed prometheus target is present.
-    - expr: (up{app=~"kube-prometheus-stack-prometheus-operator|prometheus-operator-app-prometheus",container=~"kube-prometheus-stack|prometheus"}*0)+1
-      labels:
-        area: managed-apps
-        class: MEDIUM
-        service: managed-prometheus
-        label_application_giantswarm_io_team: atlas
-      record: raw_slo_requests
-    # Set SLO error to be 1 when a managed prometheus is down.
-    - expr: (up{app=~"kube-prometheus-stack-prometheus-operator|prometheus-operator-app-prometheus",container=~"kube-prometheus-stack|prometheus"}*-1)+1 == 1
-      labels:
-        area: managed-apps
-        class: MEDIUM
-        service: managed-prometheus
-        label_application_giantswarm_io_team: atlas
-      record: raw_slo_errors
-
-    # -- Managed Alertmanager
-    # Set SLO request to always be 1 when a managed alertmanager target is present.
-    - expr: (up{app=~"alertmanager|prometheus-operator-app-alertmanager",container="alertmanager"}*0)+1
-      labels:
-        area: managed-apps
-        class: MEDIUM
-        service: managed-alertmanager
-        label_application_giantswarm_io_team: atlas
-      record: raw_slo_requests
-    # Set SLO error to be 1 when a managed alertmanager is down.
-    - expr: (up{app=~"alertmanager|prometheus-operator-app-alertmanager",container="alertmanager"}*-1)+1 == 1
-      labels:
-        area: managed-apps
-        class: MEDIUM
-        service: managed-alertmanager
-        label_application_giantswarm_io_team: atlas
-      record: raw_slo_errors
-
       # -- generic stuff
       # -- standard burnrates based on https://sre.google/workbook/alerting-on-slos/#6-multiwindow-multi-burn-rate-alerts
     - expr: "vector(36)"

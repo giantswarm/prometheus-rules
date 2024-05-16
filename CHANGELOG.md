@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.14.2] - 2024-05-16
+
+### Changed
+
+- Adjust the KubeletVolumeSpaceTooLow period to 30m. This will sync it better with the node-problem-detector.
+
+## [3.14.1] - 2024-05-15
+
+### Fixed
+
+- Fix resource estimation recording rules for clusters that have more than 1 prometheus.
+
+## [3.14.0] - 2024-05-15
+
 ### Added
 
 - Add recording rules to show prometheus scraping job memory usage.
@@ -23,12 +37,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix shield alerts labels for Mimir.
+- Fix shield alert labels for Mimir.
 - Fix cabbage alert labels for Mimir.
 - Fix honeybadger alert labels for Mimir.
 - Fix cert-manager alert labels for Mimir.
 - Fix operatorkit alert labels for Mimir.
-- Fix Loki/Mimir and Tempo mixins according to `pint` recommendations
+- Fix all mixins according to `pint` recommendations.
 - Fix etcd alert labels for Mimir.
 - Fix apiserver alert labels for Mimir.
 
@@ -2704,7 +2718,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.13.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.14.2...HEAD
+[3.14.2]: https://github.com/giantswarm/prometheus-rules/compare/v3.14.1...v3.14.2
+[3.14.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.14.0...v3.14.1
+[3.14.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.13.1...v3.14.0
 [3.13.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.13.0...v3.13.1
 [3.13.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.12.2...v3.13.0
 [3.12.2]: https://github.com/giantswarm/prometheus-rules/compare/v3.12.1...v3.12.2

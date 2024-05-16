@@ -9,7 +9,7 @@ spec:
   groups:
   - name: monitoring.resource-usage-estimation.recording
     rules:
-    - expr: (count({__name__=~".+"}) by (cluster_id, job) / on(cluster_id) group_left prometheus_tsdb_head_series) * on(cluster_id) group_left sum(container_memory_usage_bytes{container="prometheus"}) by (cluster_id)
+    - expr: (count({__name__=~".+"}) by (cluster_id, job) / on(cluster_id) group_left prometheus_tsdb_head_series{instance="localhost:9090"}) * on(cluster_id) group_left sum(container_memory_usage_bytes{container="prometheus", namespace="kube-system"}) by (cluster_id)
       record: giantswarm:observability:monitoring:resource_usage_estimation:memory_usage_bytes
-    - expr: (count({__name__=~".+"}) by (cluster_id, job) / on(cluster_id) group_left prometheus_tsdb_head_series) * on(cluster_id) group_left sum(container_memory_working_set_bytes{container="prometheus"}) by (cluster_id)
+    - expr: (count({__name__=~".+"}) by (cluster_id, job) / on(cluster_id) group_left prometheus_tsdb_head_series{instance="localhost:9090"}) * on(cluster_id) group_left sum(container_memory_working_set_bytes{container="prometheus", namespace="kube-system"}) by (cluster_id)
       record: giantswarm:observability:monitoring:resource_usage_estimation:memory_working_set_bytes

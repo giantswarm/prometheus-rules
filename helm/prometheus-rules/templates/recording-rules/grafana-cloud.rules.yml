@@ -388,7 +388,7 @@ spec:
       record: aggregation:dex_k8s_authenticator_requests
   - name: grafana.grafana-cloud.recording
     rules:
-    - expr: sum(increase(grafana_analytics_sessions_total[60s]) / (132 / 99))without (user_email, user_name)
+    - expr: sum(increase(grafana_analytics_sessions_total[60s]) / (132 / 99)) without (user_email, user_name)
       record: aggregation:grafana_analytics_sessions_total
   - name: dipstick.grafana-cloud.recording
     rules:

@@ -134,20 +134,26 @@ spec:
         description: '{{`Machine {{ $labels.instance }} memory usage is too high (less than 10% and 2G of allocatable memory).`}}'
         opsrecipe: master-machine-usage-too-high/
       expr: |-
-        ( ( (
-              ( node_memory_MemTotal_bytes{cluster_type="workload_cluster"}
-              - node_memory_MemFree_bytes{cluster_type="workload_cluster"}
-              - node_memory_Cached_bytes{cluster_type="workload_cluster"}
+        (
+          (
+            (
+              (
+                node_memory_MemTotal_bytes{cluster_type="workload_cluster"}
+                - node_memory_MemFree_bytes{cluster_type="workload_cluster"}
+                - node_memory_Cached_bytes{cluster_type="workload_cluster"}
               )
-              / (node_memory_MemTotal_bytes{cluster_type="workload_cluster"}
-            ) * 100
-          )
-        ) > 80
-        and
-        ( node_memory_MemFree_bytes{cluster_type="workload_cluster"}
-          + node_memory_Cached_bytes{cluster_type="workload_cluster"}
-        ) < 2147483648) 
-        and on (cluster_id, node) kube_node_role{cluster_type="workload_cluster", role=~"control-plane|master"}
+              / node_memory_MemTotal_bytes{cluster_type="workload_cluster"}
+              * 100
+            )
+          ) > 80
+          and
+          (
+            node_memory_MemFree_bytes{cluster_type="workload_cluster"}
+            + node_memory_Cached_bytes{cluster_type="workload_cluster"}
+          ) < 2.147483648e+09
+        )
+        and on (cluster_id, node)
+        kube_node_role{cluster_type="workload_cluster",role=~"control-plane|master"}
       for: 60m
       labels:
         area: kaas

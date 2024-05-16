@@ -26,7 +26,7 @@ spec:
         != sum (
             capi_cluster_status_phase{phase="Provisioned"}
         ) by (cluster_id, installation, provider, pipeline)
-      for: 120m
+      for: 60m
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"
@@ -52,7 +52,7 @@ spec:
         != sum (
             capi_cluster_status_phase{phase="Provisioned"}
         ) by (cluster_id, installation, provider, pipeline)
-      for: 120m
+      for: 60m
       labels:
         area: kaas
         cancel_if_cluster_status_creating: "true"

@@ -25,6 +25,8 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
+              cluster_id: my-cluster
+              installation: grizzly
               severity: notify
               team: bigmac
               topic: teleport
@@ -52,6 +54,8 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
+              cluster_id: my-cluster
+              installation: grizzly
               severity: notify
               team: bigmac
               topic: teleport

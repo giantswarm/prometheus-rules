@@ -15,12 +15,17 @@ spec:
         description: '{{`Mismatch in number of teleport-join-token secrets and clusters`}}'
       expr: |
         count (
-          kube_secret_created{secret=~".*-teleport-join-token"}
-        )
-        !=
-        sum (
+            label_replace(
+              kube_secret_created{secret=~".*-teleport-join-token"},
+              "cluster_id",
+              "$1",
+              "secret",
+              "(.*)-teleport-join-token"
+            )
+        ) by (cluster_id, installation, provider, pipeline)
+        != sum (
             capi_cluster_status_phase{phase="Provisioned"}
-        )
+        ) by (cluster_id, installation, provider, pipeline)
       for: 120m
       labels:
         area: kaas
@@ -36,12 +41,17 @@ spec:
         description: '{{`Mismatch in number of teleport-kube-agent-config secrets and clusters`}}'
       expr: |
         count (
-          kube_configmap_info{configmap=~".*-teleport-kube-agent-config"}
-        )
-        !=
-        sum (
+            label_replace(
+              kube_configmap_info{configmap=~".*-teleport-kube-agent-config"},
+              "cluster_id",
+              "$1",
+              "configmap",
+              "(.*)-teleport-kube-agent-config"
+            )
+        ) by (cluster_id, installation, provider, pipeline)
+        != sum (
             capi_cluster_status_phase{phase="Provisioned"}
-        )
+        ) by (cluster_id, installation, provider, pipeline)
       for: 120m
       labels:
         area: kaas

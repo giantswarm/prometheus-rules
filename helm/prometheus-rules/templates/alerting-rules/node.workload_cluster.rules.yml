@@ -49,13 +49,23 @@ spec:
       #
       # If the kubelet status is flapping between Ready and something else,
       # matching against the kubelet labels, as kube_node_status_condition labels
-      # by the node name, and node_exporter labels by the ip,
+      # by the node name, and node_exporter labels by the node name,
       # unless,
-      # the load over 15 minutes divided by number of CPUs is higher than 2 (the node is overloaded),
-      # relabelling 'ip' to 'label_ip' to match against 'kube_node_labels'.
+      # the load over 15 minutes divided by number of CPUs is higher than 2 (the node is overloaded).
       annotations:
-        description: '{{`Node {{ $labels.label_ip }} status is flapping under load.`}}'
-      expr: label_replace(node_load15{cluster_type="workload_cluster"} / count(count(node_cpu_seconds_total{cluster_type="workload_cluster"}) without (mode)) without (cpu) >= 2, "label_ip", "$1", "ip", "(.*)" ) unless on (cluster_id, label_ip) kube_node_labels{cluster_type="workload_cluster"} and on (cluster_id, ip) changes(kube_node_status_condition{cluster_type="workload_cluster", condition="Ready", status="true"}[30m]) >= 6
+        description: '{{`Node {{ $labels.node }} status is flapping under load.`}}'
+      expr: |
+        (
+          sum(node_load15{cluster_type="workload_cluster"})
+            by (cluster_id, installation, node, pipeline, provider)
+          / count(rate(node_cpu_seconds_total{cluster_type="workload_cluster"}[5m]))
+            by (cluster_id, installation, node, pipeline, provider)
+        ) >= 2
+        unless on (cluster_id, installation, node, pipeline, provider) (
+          kube_node_labels{cluster_type="workload_cluster"}
+          and on (cluster_id, installation, node, pipeline, provider)
+          changes(kube_node_status_condition{cluster_type="workload_cluster", condition="Ready", status="true"}[30m])
+        ) >= 6
       for: 10m
       labels:
         area: kaas

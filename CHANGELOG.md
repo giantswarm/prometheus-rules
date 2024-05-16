@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Adjust the KubeletVolumeSpaceTooLow period to 30m. This will sync it better with the node-problem-detector.
+
 ## [3.14.1] - 2024-05-15
 
 ### Fixed

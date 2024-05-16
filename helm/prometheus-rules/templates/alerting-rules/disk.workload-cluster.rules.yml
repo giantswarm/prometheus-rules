@@ -41,7 +41,7 @@ spec:
         description: '{{`Kubelet volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
         opsrecipe: low-disk-space/#root-volume
       expr: node_filesystem_free_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/lib/kubelet"} < (2 * 1024 * 1024 * 1024)
-      for: 10m
+      for: 30m
       labels:
         area: kaas
         severity: page

@@ -1,16 +1,14 @@
 ---
 rule_files:
-  - teleport.rules.yml
+  - 'teleport.rules.yml'
 
 tests:
   - interval: 1m
     input_series:
-      - series: 'kube_secret_created{cluster_id="my-cluster", installation="golem", secret="grizzly-teleport-join-token"}'
-        values: "1+0x150"
-      - series: 'kube_secret_created{cluster_id="my-cluster", installation="golem", secret="test-teleport-join-token"}'
-        values: "0+0x150"
-      - series: 'capi_cluster_status_phase{name="my-cluster", installation="golem", phase="Provisioned"}'
-        values: "1+0x150"
+    - series: 'kube_secret_created{cluster_id="my-cluster", installation="golem", secret="my-cluster-teleport-join-token"}'
+      values: "1+0x150"
+    - series: 'capi_cluster_status_phase{cluster_id="my-cluster", installation="golem", phase="Provisioned"}'
+      values: "2+0x150"
     alert_rule_test:
       - alertname: TeleportJoinTokenSecretMismatch
         eval_time: 30m
@@ -34,12 +32,10 @@ tests:
               description: "Mismatch in number of teleport-join-token secrets and clusters"
   - interval: 1m
     input_series:
-      - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="my-cluster", installation="grizzly", configmap="grizzly-teleport-kube-agent-config"}'
+      - series: 'kube_configmap_info{cluster_id="my-cluster", installation="grizzly", configmap="my-cluster-teleport-kube-agent-config"}'
         values: "1+0x150"
-      - series: 'kube_configmap_info{app="kube-state-metrics", cluster_id="my-cluster", installation="grizzly", configmap="test-teleport-kube-agent-config"}'
-        values: "0+0x150"
-      - series: 'capi_cluster_status_phase{phase="Provisioned", name="my-cluster", installation="grizzly"}'
-        values: "1+0x150"
+      - series: 'capi_cluster_status_phase{cluster_id="my-cluster", installation="grizzly", phase="Provisioned"}'
+        values: "2+0x150"
     alert_rule_test:
       - alertname: TeleportKubeAgentConfigMapMismatch
         eval_time: 30m

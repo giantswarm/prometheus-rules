@@ -28,7 +28,7 @@ spec:
         (
           sum(node_load15{cluster_type="management_cluster", app!="vault", role!="bastion"})
             by (cluster_id, installation, node, pipeline, provider)
-          / count(rate(node_cpu_seconds_total{cluster_type="management_cluster", app!="vault", role!="bastion"}[5m]))
+          / count(rate(node_cpu_seconds_total{cluster_type="management_cluster", app!="vault", role!="bastion", mode="idle"}[5m]))
             by (cluster_id, installation, node, pipeline, provider)
         ) >= 2
         unless on (cluster_id, installation, node, pipeline, provider) (

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fix teleport alerts for Mimir.
 - Fix formatting for `WorkloadClusterMasterMemoryUsageTooHigh` preventing pint from running.
 
 ## [3.14.2] - 2024-05-16

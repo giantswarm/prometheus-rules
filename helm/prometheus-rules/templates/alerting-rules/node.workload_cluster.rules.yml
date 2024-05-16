@@ -58,7 +58,7 @@ spec:
         (
           sum(node_load15{cluster_type="workload_cluster"})
             by (cluster_id, installation, node, pipeline, provider)
-          / count(rate(node_cpu_seconds_total{cluster_type="workload_cluster"}[5m]))
+          / count(rate(node_cpu_seconds_total{cluster_type="workload_cluster", mode="idle"}[5m]))
             by (cluster_id, installation, node, pipeline, provider)
         ) >= 2
         unless on (cluster_id, installation, node, pipeline, provider) (

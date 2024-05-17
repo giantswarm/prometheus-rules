@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix node load alerts for CAPI clusters.
+- Renove trailing spaces in rules.
 
 ## [3.14.2] - 2024-05-16
 

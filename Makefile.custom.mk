@@ -38,10 +38,10 @@ test-opsrecipes: install-tools template-chart ## Check if opsrecipes are valid
 test-ci-opsrecipes: install-tools template-chart ## Check if opsrecipes are valid in CI
 	test/hack/bin/check-opsrecipes.sh --ci
 
-pint: install-tools template-chart ## Run pint with all checks
+pint: install-tools template-chart ## Run pint
 	GENERATE_ONLY=true bash test/hack/bin/verify-rules.sh
 	test/hack/bin/pint -c test/conf/pint/pint-config.hcl lint ${PINT_FILES_LIST}
 
-pint-aggregations: install-tools template-chart ## Run pint with only the aggregation checks
+pint-all: install-tools template-chart ## Run pint with extra checks
 	GENERATE_ONLY=true bash test/hack/bin/verify-rules.sh
-	test/hack/bin/pint -c test/conf/pint/pint-aggregations.hcl lint ${PINT_FILES_LIST}
+	test/hack/bin/pint -c test/conf/pint/pint-all.hcl lint ${PINT_FILES_LIST}

@@ -156,7 +156,7 @@ spec:
         and
         ( node_memory_MemFree_bytes{cluster_type="workload_cluster"}
           + node_memory_Cached_bytes{cluster_type="workload_cluster"}
-        ) < 2147483648) 
+        ) < 2147483648)
         and on (cluster_id, node) kube_node_role{cluster_type="workload_cluster", role=~"control-plane|master"}
       for: 60m
       labels:

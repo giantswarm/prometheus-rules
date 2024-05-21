@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- pint tests: run automatically on CI. Also, target names have changed.
+
 ### Fixed
 
 - Fix teleport alerts for Mimir.
 - Fix formatting for `WorkloadClusterMasterMemoryUsageTooHigh` preventing pint from running.
+- Fix node load alerts for CAPI clusters.
+- Remove trailing spaces in rules.
 
 ## [3.14.2] - 2024-05-16
 

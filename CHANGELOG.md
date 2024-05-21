@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove atlas old slo alerts in favor of sloth alerts.
+
 ### Changed
 
 - pint tests: run automatically on CI. Also, target names have changed.

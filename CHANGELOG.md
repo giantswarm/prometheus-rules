@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove atlas old slo alerts in favor of sloth alerts.
 
+### Changed
+
+- pint tests: run automatically on CI. Also, target names have changed.
+
+### Fixed
+
+- Fix node load alerts for CAPI clusters.
+- Remove trailing spaces in rules.
+
 ## [3.14.2] - 2024-05-16
 
 ### Changed

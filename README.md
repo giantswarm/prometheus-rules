@@ -343,5 +343,5 @@ You can run them manually with `make pint`.
 
 If you want to run `pint` against a specific team's rules, you can run: `make pint PINT_TEAM_FILTER=myteam`
 
-We also have a target that does not run all pint checks, only checks for tags needed for aggregations with mimir.
-This one runs with `make pint-aggregations`.
+We also have a target that runs extra checks (that we hope to make default in the future).
+This one runs with `make pint-all`.

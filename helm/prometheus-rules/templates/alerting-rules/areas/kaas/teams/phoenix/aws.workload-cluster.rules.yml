@@ -98,7 +98,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: se
+        team: phoenix
         topic: workloadcluster
     - alert: WorkloadClusterAWSCNIIpExhausted
       annotations:

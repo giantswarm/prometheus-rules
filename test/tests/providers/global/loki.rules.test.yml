@@ -1,0 +1,139 @@
+---
+rule_files:
+  - loki.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'cortex_ring_members{app="loki", cluster_id="zj88t", cluster_type="workload_cluster", container="compactor", customer="giantswarm", installation="gorilla", instance="10.7.116.221:3100", job="zj88t-prometheus/workload-zj88t/0", name="compactor", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-compactor-676b8c897b-rq298", provider="aws", pipeline="stable", service_priority="highest", state="Unhealthy"}'
+        values: "0+0x20 1+0x160"  # 1 unhealthy value after 20 minutes
+      - series: 'cortex_ring_members{app="loki", cluster_id="zj88t", cluster_type="workload_cluster", container="loki", customer="giantswarm", installation="gorilla", instance="10.7.116.221:3100", job="zj88t-prometheus/workload-zj88t/0", name="distributor", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-write-0", provider="aws", pipeline="stable", service_priority="highest", state="Unhealthy"}'
+        values: "_x30 1+0x10 0+0x60"  # no data for 30 minutes then 1 unhealthy value for 10 minutes and back to normal for 1 hour
+      - series: 'loki_panic_total{app="loki-compactor", cluster_id="zj88t", cluster_type="workload_cluster", container="compactor", customer="giantswarm", installation="gorilla", instance="10.7.116.221:3100", job="zj88t-prometheus/workload-zj88t/0", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-compactor-676b8c897b-rq298", provider="aws", pipeline="stable", service_priority="highest"}'
+        values: "0+0x20 1+0x160"  # 1 panic after 20 minutes
+      - series: 'loki_request_duration_seconds_count{app="loki-distributor", cluster_id="zj88t", cluster_type="workload_cluster", container="distributor", customer="giantswarm", installation="gorilla", instance="10.7.75.90:3100", job="zj88t-prometheus/workload-zj88t/0", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-distributor-74b78f5559-tz6zs", provider="aws", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="204", ws="false"}'
+        values: "0+60x180"  # 1 request per second OK for 3 hours
+      - series: 'loki_request_duration_seconds_count{app="loki-distributor", cluster_id="zj88t", cluster_type="workload_cluster", container="distributor", customer="giantswarm", installation="gorilla", instance="10.7.75.90:3100", job="zj88t-prometheus/workload-zj88t/0", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-distributor-74b78f5559-tz6zs", provider="aws", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="503", ws="false"}'
+        values: "0+0x20 0+30x160"  # After 20 minutes, we also have 0.5 rq/s failing
+    alert_rule_test:
+      - alertname: LokiRequestPanics
+        eval_time: 15m  # should be OK after 15 minutes
+        exp_alerts:
+      - alertname: LokiRequestPanics
+        eval_time: 25m  # After 25 minutes, should fire an alert for the t+20 error
+        exp_alerts:
+          - exp_labels:
+              area: managedservices
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cancel_if_scrape_timeout: "true"
+              cluster_id: zj88t
+              installation: gorilla
+              pipeline: stable
+              provider: aws
+              job: zj88t-prometheus/workload-zj88t/0
+              namespace: loki
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: This alert checks that we have no panic errors on Loki.
+              opsrecipe: loki/
+      - alertname: LokiRequestPanics
+        eval_time: 40m  # After 40 minutes, all should be back to normal
+        exp_alerts:
+
+      - alertname: LokiRequestErrors
+        eval_time: 15m  # should be OK after 15 minutes
+        exp_alerts:
+      - alertname: LokiRequestErrors
+        eval_time: 160m  # Alert after more than 120m of incident
+        exp_alerts:
+          - exp_labels:
+              area: managedservices
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cancel_if_scrape_timeout: "true"
+              cluster_id: zj88t
+              installation: gorilla
+              provider: aws
+              pipeline: stable
+              job: zj88t-prometheus/workload-zj88t/0
+              namespace: loki
+              route: loki_api_v1_push
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: This alert checks that we have less than 10% errors on Loki requests.
+              opsrecipe: loki/
+
+      - alertname: LokiRingUnhealthy
+        eval_time: 15m  # should be OK after 15 minutes
+        exp_alerts:
+      - alertname: LokiRingUnhealthy
+        eval_time: 25m  # after 25 minutes we have an unhealthy member, but we want to filter too short events. So no alert yet.
+        exp_alerts:
+      - alertname: LokiRingUnhealthy
+        eval_time: 35m  # special case to validate when a new pod is unhealthy (no data at the beginning)
+        exp_alerts:
+      - alertname: LokiRingUnhealthy
+        eval_time: 60m  # now the event has been there for 20 minutes, we should have an alert.
+        exp_alerts:
+          - exp_labels:
+              app: loki
+              area: managedservices
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_scrape_timeout: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: zj88t
+              container: compactor
+              customer: giantswarm
+              installation: gorilla
+              provider: aws
+              pipeline: stable
+              name: compactor
+              namespace: loki
+              organization: giantswarm-production
+              pod: loki-compactor-676b8c897b-rq298
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Loki pod loki-compactor-676b8c897b-rq298 (namespace loki) sees 1 unhealthy ring members"
+              opsrecipe: "loki/"
+  - interval: 1m
+    input_series:
+      - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="loki"}'
+        values: "0+0x20 0+5x20 100+0x140" # 0 restarts after 20 minutes then we restart 5 times per minute for 20 minutes then we stop restarting for 140 minutes
+    alert_rule_test:
+      - alertname: LokiRestartingTooOften
+        eval_time: 15m  # should be OK after 15 minutes
+        exp_alerts:
+      - alertname: LokiRestartingTooOften
+        eval_time: 85m  # After 85 minutes, should fire an alert for the t+85 error
+        exp_alerts:
+          - exp_labels:
+              all_pipelines: "true"
+              area: managedservices
+              cancel_if_outside_working_hours: "true"
+              cluster_type: management_cluster
+              namespace: loki
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Loki containers are restarting too often.
+              opsrecipe: loki/
+      - alertname: LokiRestartingTooOften
+        eval_time: 140m  # After 140m minutes, all should be back to normal
+        exp_alerts:

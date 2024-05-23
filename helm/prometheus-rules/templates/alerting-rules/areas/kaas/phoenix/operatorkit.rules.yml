@@ -10,27 +10,6 @@ spec:
   groups:
   - name: operatorkit
     rules:
-    - alert: OperatorkitErrorRateTooHighHoneybadger
-      annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }} has reported errors. Please check logs.`}}'
-        opsrecipe: check-operator-error-rate-high/
-      expr: operatorkit_controller_error_total{app=~"app-operator.*|chart-operator.*"} > 5
-      for: 1m
-      labels:
-        area: kaas
-        severity: notify
-        team: honeybadger
-        topic: qa
-    - alert: OperatorNotReconcilingHoneybadger
-      annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }} not reconciling controller {{$labels.controller}}. Please check logs.`}}'
-      expr: (time() - operatorkit_controller_last_reconciled{app=~"app-operator.*|chart-operator.*"}) / 60 > 30
-      for: 10m
-      labels:
-        area: managedservices
-        severity: notify
-        team: honeybadger
-        topic: releng
     - alert: OperatorkitErrorRateTooHighPhoenix
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
@@ -84,32 +63,4 @@ spec:
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: phoenix
-        topic: qa
-
-    # In case something stops an operator from reconciling CRs we want to
-    # be paged to be able to fix the issue immediately.
-    - alert: OperatorkitErrorRateTooHighKaas
-      annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
-        opsrecipe: check-operator-error-rate-high/
-      expr: operatorkit_controller_error_total{app=~"ignition-operator|cert-operator|node-operator"} > 5
-      for: 1m
-      labels:
-        area: kaas
-        severity: notify
-        team: {{ include "providerTeam" . }}
-        topic: qa
-    # In case something stops an operator from reconciling CRs we want to
-    # be paged to be able to fix the issue immediately.
-    - alert: OperatorNotReconcilingProviderTeam
-      annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
-        opsrecipe: operator-not-reconciling/
-      expr: (sum by (cluster_id, installation, pipeline, provider, instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app="node-operator"}[10m])) == 0 and on (cluster_id, instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
-      for: 20m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: {{ include "providerTeam" . }}
         topic: qa

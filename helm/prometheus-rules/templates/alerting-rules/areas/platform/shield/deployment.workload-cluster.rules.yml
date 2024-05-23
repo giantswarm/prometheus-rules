@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
+    cluster_type: "workload_cluster"
+{{- end}}
+  name: deployment.workload-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: deployment
+    rules:
+    - alert: WorkloadClusterDeploymentScaledDownToZeroShield
+      annotations:
+        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} has been scaled down to zero for prolonged period of time.`}}'
+      expr: kube_deployment_spec_replicas{cluster_type="workload_cluster", deployment=~"trivy-operator|starboard-exporter|jiralert"} == 0
+      for: 4h
+      labels:
+        area: managedservices
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: shield
+        topic: releng

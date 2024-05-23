@@ -1,0 +1,41 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
+    cluster_type: "management_cluster"
+{{- end }}
+  name: deployment.management-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: deployment
+    rules:
+    - alert: DeploymentNotSatisfiedCabbage
+      annotations:
+        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        opsrecipe: deployment-not-satisfied/
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"(ingress-nginx|nginx-ingress-controller)-.+", cluster_id!~"argali|giraffe"} > 0
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        severity: page
+        team: cabbage
+        topic: managementcluster
+    - alert: DeploymentNotSatisfiedChinaCabbage
+      annotations:
+        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        opsrecipe: deployment-not-satisfied-china/
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"(ingress-nginx|nginx-ingress-controller|coredns)-.+", cluster_id=~"argali|giraffe"} > 0
+      for: 3h
+      labels:
+        area: kaas
+        severity: page
+        team: cabbage
+        topic: managementcluster
+

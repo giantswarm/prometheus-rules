@@ -20,6 +20,10 @@ main() {
       --set="managementCluster.name=myinstall" \
       --set="mimir.enabled=$mimir_enabled" \
       --output-dir "$GIT_WORKDIR"/test/hack/output/"$provider"
+
+    # Remove useless files for tests
+    rm -f "$GIT_WORKDIR"/test/hack/output/"$provider"/prometheus-rules/templates/grafana-agent-rules.yaml
+    rm -f "$GIT_WORKDIR"/test/hack/output/"$provider"/prometheus-rules/templates/grafana-agent-rules-configmap.yaml
   done
 }
 

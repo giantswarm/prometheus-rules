@@ -1,3 +1,4 @@
+{{- if eq .Values.managementCluster.provider.kind "aws" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -13,7 +14,6 @@ spec:
   groups:
   - name: deployment
     rules:
-    {{- if eq .Values.managementCluster.provider.kind "aws" }}
     - alert: AWSManagementClusterDeploymentScaledDownToZero
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} on AWS has been scaled down to zero for prolonged period of time.`}}'
@@ -38,4 +38,4 @@ spec:
         severity: page
         team: phoenix
         topic: managementcluster
-    {{- end }}
+{{- end }}

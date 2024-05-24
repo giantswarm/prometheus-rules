@@ -116,7 +116,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: aws
     - alert: ServiceUsageApproachingLimit
       annotations:
@@ -127,7 +127,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: aws
     - alert: ManagementClusterContainerIsRestartingTooFrequentlyAWS
       annotations:

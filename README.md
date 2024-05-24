@@ -9,7 +9,7 @@ This repository contains Giant Swarm alerting and recording rules
 
 ### Alerting
 
-The alerting rules are located in `helm/prometheus-rules/templates/alerting-rules`
+The alerting rules are located in `helm/prometheus-rules/templates/alerting-rules` in the specific area/team to which they belong.
 
 #### How alerts are structured
 
@@ -73,7 +73,7 @@ Any Alert includes:
 If you want to make sure a metrics exists on one cluster, you can't just use the `absent` function anymore.
 With `mimir` we have metrics for all the clusters on a single database, and it makes detecting the absence of one metrics on one cluster much harder.
 
-To achieve such a test, you should do like [`PrometheusAgentFailing`](https://github.com/giantswarm/prometheus-rules/blob/master/helm/prometheus-rules/templates/alerting-rules/prometheus-agent.rules.yml) alert does.
+To achieve such a test, you should do like [`PrometheusAgentFailing`](https://github.com/giantswarm/prometheus-rules/blob/master/helm/prometheus-rules/templates/alerting-rules/areas/platform/atlas/prometheus-agent.rules.yml) alert does.
 
 #### Routing
 

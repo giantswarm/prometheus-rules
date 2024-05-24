@@ -60,7 +60,16 @@ main() {
     local -a promtool_test_errors=()
     local -a failing_extraction=()
 
+    # Create generated directory with all test files
+    local outputPath="$GIT_WORKDIR/test/hack/output"
+    [[ -d "$outputPath/generated" ]] || cp -r "$GIT_WORKDIR/test/tests/providers/." "$outputPath/generated/"
+    # We remove the global directory
+    rm -rf "$outputPath/generated/global"
+
     for provider in "${providers[@]}"; do
+        # We need to copy the global test files in every provider directory
+        rsync -a "$GIT_WORKDIR/test/tests/providers/global/alerting-rules/" "$outputPath/generated/$provider/alerting-rules"
+
         echo "### Running tests for provider: $provider"
 
         # Get the list of whitelisted files for this provider
@@ -70,9 +79,6 @@ main() {
         [[ -f "$expected_failure_file_provider" ]] \
             && mapfile -t expected_failure_prefixes_provider <"$expected_failure_file_provider"
 
-        # Create generated directory with all test files
-        local outputPath="$GIT_WORKDIR/test/hack/output"
-        [[ -d "$outputPath/generated" ]] || cp -r "$GIT_WORKDIR/test/tests/providers/." "$outputPath/generated/"
 
         for file in "${all_files[@]}"; do
 
@@ -90,8 +96,6 @@ main() {
             then
                 [[ -d "$outputPath/generated/$provider/$dirname" ]] || mkdir -p "$outputPath/generated/$provider/$dirname"
                 "$GIT_WORKDIR/$YQ" '.spec' "$outputPath/helm-chart/$provider/prometheus-rules/templates/$file" > "$outputPath/generated/$provider/$file"
-                [[ -d "$outputPath/generated/global/$dirname" ]] || mkdir -p "$outputPath/generated/global/$dirname"
-                "$GIT_WORKDIR/$YQ" '.spec' "$outputPath/helm-chart/$provider/prometheus-rules/templates/$file" > "$outputPath/generated/global/$file"
             else
                 # Fail when file is not found
                 echo "###    Failed extracting rules file $file"
@@ -99,6 +103,7 @@ main() {
                 continue
             fi
 
+            continue
             # Skip next steps if GENERATE_ONLY is set
             if [[ "$GENERATE_ONLY" == "true" ]]; then continue; fi
 

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- /!\ Folder architecture for alerting-rules changed to fit with areas and teams.
 - pint tests: run automatically on CI. Also, target names have changed.
 
 ### Fixed

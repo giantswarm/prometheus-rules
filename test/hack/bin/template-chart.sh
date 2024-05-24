@@ -10,7 +10,7 @@ main() {
   for provider in "${providers[@]}"; do
     echo "Templating chart for provider: $provider"
 
-    [[ $provider =~ ([a-z]+)/([a-z]+)(-[a-z]+) ]]
+    [[ $provider =~ ([a-z]+)/([a-z]+)([-]*[a-z]*) ]]
     [[ "${BASH_REMATCH[3]}" == "-mimir" ]] && mimir_enabled=true || mimir_enabled=false
 
     helm template \

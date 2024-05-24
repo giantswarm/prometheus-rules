@@ -80,7 +80,7 @@ main() {
             && mapfile -t expected_failure_prefixes_provider <"$expected_failure_file_provider"
 
         # Look at each rules file for current provider
-        cd "$outputPath/generated/$provider"
+        cd "$outputPath/helm-chart/$provider/prometheus-rules/templates" || return 1
         while IFS= read -r -d '' file; do
             # Remove "./" at the vbeggining of the file path
             file="${file#./}"

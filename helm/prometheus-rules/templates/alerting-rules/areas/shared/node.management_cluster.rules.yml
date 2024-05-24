@@ -19,13 +19,23 @@ spec:
       #
       # If the kubelet status is flapping between Ready and something else,
       # matching against the kubelet labels, as kube_node_status_condition labels
-      # by the node name, and node_exporter labels by the ip,
+      # by the node name, and node_exporter labels by the node name,
       # unless,
-      # the load over 15 minutes divided by number of CPUs is higher than 2 (the node is overloaded),
-      # relabelling 'ip' to 'label_ip' to match against 'kube_node_labels'.
+      # the load over 15 minutes divided by number of CPUs is higher than 2 (the node is overloaded).
       annotations:
-        description: '{{`Node {{ $labels.label_ip }} status is flapping under load.`}}'
-      expr: label_replace(node_load15{cluster_type="management_cluster"} / count(count(node_cpu_seconds_total{cluster_type="management_cluster"}) without (mode)) without (cpu) >= 2, "label_ip", "$1", "ip", "(.*)" ) unless on (label_ip) kube_node_labels{cluster_type="management_cluster"} and on (ip) changes(kube_node_status_condition{cluster_type="management_cluster", condition="Ready", status="true"}[30m]) >= 6
+        description: '{{`Node {{ $labels.node }} status is flapping under load.`}}'
+      expr: |
+        (
+          sum(node_load15{cluster_type="management_cluster", app!="vault", role!="bastion"})
+            by (cluster_id, installation, node, pipeline, provider)
+          / count(rate(node_cpu_seconds_total{cluster_type="management_cluster", app!="vault", role!="bastion", mode="idle"}[5m]))
+            by (cluster_id, installation, node, pipeline, provider)
+        ) >= 2
+        unless on (cluster_id, installation, node, pipeline, provider) (
+          kube_node_labels{cluster_type="management_cluster"}
+          and on (cluster_id, installation, node, pipeline, provider)
+          changes(kube_node_status_condition{cluster_type="management_cluster", condition="Ready", status="true"}[30m])
+        ) >= 6
       for: 10m
       labels:
         area: kaas
@@ -89,8 +99,12 @@ spec:
     # Alert if load average is 2 times the number of CPUs.
     - alert: MachineLoadTooHigh
       annotations:
-        description: '{{`Machine {{ $labels.instance }} CPU load is too high.`}}'
-      expr: node_load5{cluster_type="management_cluster"} > 2 * count(node_cpu_seconds_total{cluster_type="management_cluster", mode="idle"}) without (cpu,mode)
+        description: '{{`Machine {{ $labels.node }} CPU load is too high.`}}'
+      expr: |
+        sum(node_load5{cluster_type="management_cluster", app!="vault", role!="bastion"})
+          by (node, cluster_id, installation, pipeline, provider) > 2
+        * count(rate(node_cpu_seconds_total{cluster_type="management_cluster", mode="idle", app!="vault", role!="bastion"}[5m]))
+          by (node, cluster_id, installation, pipeline, provider)
       for: 3m
       labels:
         area: kaas

@@ -15,9 +15,9 @@ main () {
     PINT_CONFIG="${1:-test/conf/pint/pint-config.hcl}"
 
     if [[ "${2:-}" != "" ]]; then
-        mapfile -t PINT_FILES_LIST < <(grep -l "team:.*${PINT_TEAM_FILTER}" test/tests/providers/capi/capa-mimir/*.rules.yml)
+        mapfile -t PINT_FILES_LIST < <(grep -lr "team:.*${PINT_TEAM_FILTER}" "test/hack/output/generated/capi/capa-mimir/" | grep -v ".test.yml")
     else
-        mapfile -t PINT_FILES_LIST < <(find test/tests/providers/capi/capa-mimir/ -name "*.rules.yml")
+        mapfile -t PINT_FILES_LIST < <(find test/hack/output/generated/capi/capa-mimir/ -name "*.rules.yml")
     fi
 
     test/hack/bin/pint -c "$PINT_CONFIG" lint "${PINT_FILES_LIST[@]}"

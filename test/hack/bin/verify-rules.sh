@@ -43,9 +43,9 @@ main() {
     local -a all_files
     mapfile -t all_files < <(
         cd "$GIT_WORKDIR" || return 1
-        # filter alerting-rules files, and remove prefix `helm/prometheus-rules/`
+        # filter alerting-rules files, and remove prefix `helm/prometheus-rules/templates/`
         git ls-files |
-            sed -En 's_^helm/prometheus-rules/(templates/(alerting|recording)-rules/.*\.ya?ml)$_\1_p' || echo error
+            sed -En 's_^helm/prometheus-rules/templates/((alerting|recording)-rules/.*\.ya?ml)$_\1_p' || echo error
     )
 
     # Get prefixes whitelisted via the failure_file
@@ -70,8 +70,9 @@ main() {
         [[ -f "$expected_failure_file_provider" ]] \
             && mapfile -t expected_failure_prefixes_provider <"$expected_failure_file_provider"
 
-        # Create the directory for the provider if needed
-        [[ -d "$GIT_WORKDIR/test/tests/providers/$provider" ]] || mkdir -p "$GIT_WORKDIR/test/tests/providers/$provider"
+        # Create generated directory with all test files
+        local outputPath="$GIT_WORKDIR/test/hack/output"
+        [[ -d "$outputPath/generated" ]] || cp -r "$GIT_WORKDIR/test/tests/providers/." "$outputPath/generated/"
 
         for file in "${all_files[@]}"; do
 
@@ -79,20 +80,18 @@ main() {
 
             echo "###  Testing $file"
 
-            # retrieve basename in pure bash
+            # retrieve basename and dirname in pure bash
             local filename="${file##*/}"
-
+            local dirname="${file%/*}"
 
             # Extract rules file from helm template
-            echo "###    extracting $GIT_WORKDIR/test/tests/providers/$provider/$filename"
-            if [[ -f "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/alerting-rules/$filename" ]]
-            # For alerting rules
+            echo "###    extracting $outputPath/generated/$provider/$file"
+            if [[ -f "$outputPath/helm-chart/$provider/prometheus-rules/templates/$file" ]]
             then
-                "$GIT_WORKDIR/$YQ" '.spec' "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/alerting-rules/$filename" > "$GIT_WORKDIR/test/tests/providers/$provider/$filename"
-            elif [[ -f "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/recording-rules/$filename" ]]
-            # For recording rules
-            then
-                "$GIT_WORKDIR/$YQ" '.spec' "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/recording-rules/$filename" > "$GIT_WORKDIR/test/tests/providers/$provider/$filename"
+                [[ -d "$outputPath/generated/$provider/$dirname" ]] || mkdir -p "$outputPath/generated/$provider/$dirname"
+                "$GIT_WORKDIR/$YQ" '.spec' "$outputPath/helm-chart/$provider/prometheus-rules/templates/$file" > "$outputPath/generated/$provider/$file"
+                [[ -d "$outputPath/generated/global/$dirname" ]] || mkdir -p "$outputPath/generated/global/$dirname"
+                "$GIT_WORKDIR/$YQ" '.spec' "$outputPath/helm-chart/$provider/prometheus-rules/templates/$file" > "$outputPath/generated/global/$file"
             else
                 # Fail when file is not found
                 echo "###    Failed extracting rules file $file"
@@ -104,9 +103,9 @@ main() {
             if [[ "$GENERATE_ONLY" == "true" ]]; then continue; fi
 
             # Syntax check of rules file
-            echo "###    promtool check rules $GIT_WORKDIR/test/tests/providers/$provider/$filename"
+            echo "###    promtool check rules $outputPath/generated/$provider/$file"
             local promtool_check_output
-            if ! promtool_check_output="$("$GIT_WORKDIR/$PROMTOOL" check rules "$GIT_WORKDIR/test/tests/providers/$provider/$filename" 2>&1)";
+            if ! promtool_check_output="$("$GIT_WORKDIR/$PROMTOOL" check rules "$outputPath/generated/$provider/$file" 2>&1)";
             then
                 echo "###   Syntax check failing for $file:"
                 echo "$promtool_check_output"
@@ -114,8 +113,8 @@ main() {
                 continue
             fi
 
-            local global_testfile="$GIT_WORKDIR/test/tests/providers/global/${filename%.yml}.test.yml"
-            local provider_testfile="$GIT_WORKDIR/test/tests/providers/$provider/${filename%.yml}.test.yml"
+            local global_testfile="$outputPath/generated/global/${filename%.yml}.test.yml"
+            local provider_testfile="$outputPath/generated/$provider/${filename%.yml}.test.yml"
 
 
             # if the file is whitelisted via the global ignore file

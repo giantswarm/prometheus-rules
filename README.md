@@ -212,15 +212,15 @@ This is a good example of an input series for testing a `range` query.
 #### Limitation
 
 * The current implementation only renders rules for different providers via the helm value `managementCluster.provider.kind`.
-Any other decision in the current helm chart is ignored for now (e.g. `helm/prometheus-rules/templates/alerting-rules/alertmanager-dashboard.rules.yml`)
 
 #### A word on the testing logic
 
 Here is a simplistic pseudocode view of the generate&test loop:
 ```
 for each provider from test/conf/providers:
-  for each file in helm/prometheus-rules/templates/alerting-rules:
-    generate the rule using helm template
+  for each file in test/hack/output/helm-chart/<provider>/prometheus-rules/templates/alerting-rules:
+    copy the test rules file in test/hack/output/generated/<provider>/alerting-rules
+    generate the rule using helm template in the same directory test/hack/output/generated/<provider>/alerting-rules
     if generation fails:
       we will try with next provider
     else:

@@ -79,8 +79,11 @@ main() {
         [[ -f "$expected_failure_file_provider" ]] \
             && mapfile -t expected_failure_prefixes_provider <"$expected_failure_file_provider"
 
-
-        for file in "${all_files[@]}"; do
+        # Look at each rules file for current provider
+        cd "$outputPath/generated/$provider"
+        while IFS= read -r -d '' file; do
+            # Remove "./" at the vbeggining of the file path
+            file="${file#./}"
 
             [[ ! "$file" =~ .*$filter.* ]] && continue
 
@@ -89,9 +92,9 @@ main() {
             # retrieve basename and dirname in pure bash
             local filename="${file##*/}"
             local dirname="${file%/*}"
+            local filenameWithoutExtension="${filename%.*}"
 
             # Extract rules file from helm template
-            echo "###    extracting $outputPath/generated/$provider/$file"
             if [[ -f "$outputPath/helm-chart/$provider/prometheus-rules/templates/$file" ]]
             then
                 [[ -d "$outputPath/generated/$provider/$dirname" ]] || mkdir -p "$outputPath/generated/$provider/$dirname"
@@ -103,7 +106,6 @@ main() {
                 continue
             fi
 
-            continue
             # Skip next steps if GENERATE_ONLY is set
             if [[ "$GENERATE_ONLY" == "true" ]]; then continue; fi
 
@@ -118,8 +120,7 @@ main() {
                 continue
             fi
 
-            local global_testfile="$outputPath/generated/global/${filename%.yml}.test.yml"
-            local provider_testfile="$outputPath/generated/$provider/${filename%.yml}.test.yml"
+            local provider_testfile="$outputPath/generated/$provider/$dirname/$filenameWithoutExtension.test.yml"
 
 
             # if the file is whitelisted via the global ignore file
@@ -135,15 +136,8 @@ main() {
                 continue
             fi
 
-            # don't run tests if no provider specific tests are defined
-            if [[ ! -d "$GIT_WORKDIR/test/tests/providers/$provider" ]]; then
-                echo "###   No tests for provider $provider - skipping"
-                continue
-            fi
-
             # Fail if no testfile found
-            if [[ ! -f "$global_testfile" ]] \
-                && [[ ! -f "$provider_testfile" ]]
+            if [[ ! -f "$provider_testfile" ]]
             then
                 echo "###  Warning: no testfile found for $filename"
                 continue
@@ -151,20 +145,13 @@ main() {
 
             local promtool_test_output
 
-            if [[ -f "$global_testfile" ]]; then
-                echo "###    promtool test rules ${filename%.yml}.test.yml - global"
-                cp "$global_testfile" "$provider_testfile"_global
-                promtool_test_output="$("$GIT_WORKDIR/$PROMTOOL" test rules "$provider_testfile"_global 2>&1)" ||
-                    promtool_test_errors+=("$promtool_test_output")
-            fi
-
             if [[ -f "$provider_testfile" ]]; then
-                echo "###    promtool test rules ${filename%.yml}.test.yml - $provider"
+                echo "###    promtool test rules $filenameWithoutExtension.test.yml - $provider"
                 promtool_test_output="$("$GIT_WORKDIR/$PROMTOOL" test rules "$provider_testfile" 2>&1)" ||
                     promtool_test_errors+=("$promtool_test_output")
             fi
 
-        done
+        done < <(find . -type f -name "*rules.yml" -print0)
     done
 
     # Job is done, print end time

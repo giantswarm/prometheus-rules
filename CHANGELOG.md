@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix node load alerts for CAPI clusters.
 - Remove trailing spaces in rules.
 - Fix `KubeStateMetricsNotRetrievingMetrics` on mimir.
+- Fix nginx ingress controller opsrecipe link.
 
 ## [3.14.2] - 2024-05-16
 

@@ -9,7 +9,7 @@ This repository contains Giant Swarm alerting and recording rules
 
 ### Alerting
 
-The alerting rules are located in `helm/prometheus-rules/templates/alerting-rules` in the specific area/team to which they belong.
+The alerting rules are located in `helm/prometheus-rules/templates/<area>/<team>/alerting-rules` in the specific area/team to which they belong.
 
 #### How alerts are structured
 
@@ -29,7 +29,7 @@ here is an example:
         expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="atlas"}
         for: 30m
         labels:
-            area: managedservices
+            area: platform
             cancel_if_cluster_status_creating: "true"
             cancel_if_cluster_status_deleting: "true"
             cancel_if_cluster_status_updating: "true"
@@ -108,7 +108,7 @@ Official documentation for inhibit rules can be found here: https://www.promethe
 
 ### Recording rules
 
-The recording rules are located `helm/prometheus-rules/templates/recording-rules`
+The recording rules are located in `helm/prometheus-rules/templates/<area>/<team>/recording-rules` in the specific area/team to which they belong.
 
 ### Mixin
 
@@ -117,7 +117,7 @@ The recording rules are located `helm/prometheus-rules/templates/recording-rules
 To Update `kubernetes-mixins` recording rules:
 
 * Follow the instructions in [giantswarm-kubernetes-mixin](https://github.com/giantswarm/giantswarm-kubernetes-mixin)
-* Run `./scripts/sync-kube-mixin.sh (?my-fancy-branch-or-tag)` to updated the `helm/prometheus-rules/templates/recording-rules/kubernetes-mixins.rules.yml` folder.
+* Run `./scripts/sync-kube-mixin.sh (?my-fancy-branch-or-tag)` to updated the `helm/prometheus-rules/templates/shared/recording-rules/kubernetes-mixins.rules.yml` folder.
 * make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards/tree/master/helm/dashboards/dashboards/mixin)
 
 #### mimir-mixins
@@ -167,14 +167,12 @@ There are 2 kinds of tests on rules:
 
    ```
    [...]
-   ### Skipping templates/alerting-rules/calico.rules.yml
-   ### Testing templates/alerting-rules/capi.rules.yml
-   ###    Provider: capa
-   ###    extracting /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/providers/capa/capi.rules.yml
-   ###    promtool check rules /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/tests/providers/capa/capi.rules.yml
-   ###    promtool test rules capi.rules.test.yml
-   ### Skipping templates/alerting-rules/cert-manager.rules.yml
-   ### Skipping templates/alerting-rules/certificate.all.rules.yml
+   ###  Testing platform/atlas/alerting-rules/prometheus-operator.rules.yml
+   ###    promtool check rules /home/marie/github-repo/prometheus-rules/test/hack/output/generated/capi/capa-mimir/platform/atlas/alerting-rules/prometheus-operator.rules.yml
+   ###    Skipping platform/atlas/alerting-rules/prometheus-operator.rules.yml: listed in test/conf/promtool_ignore
+   ###  Testing platform/atlas/alerting-rules/prometheus.rules.yml
+   ###    promtool check rules /home/marie/github-repo/prometheus-rules/test/hack/output/generated/capi/capa-mimir/platform/atlas/alerting-rules/prometheus.rules.yml
+   ###    promtool test rules prometheus.rules.test.yml - capi/capa-mimir
    [...]
    09:06:29 promtool: end (Elapsed time: 1s)
    Congratulations!  Prometheus rules have been promtool checked and tested
@@ -218,9 +216,9 @@ This is a good example of an input series for testing a `range` query.
 Here is a simplistic pseudocode view of the generate&test loop:
 ```
 for each provider from test/conf/providers:
-  for each file in test/hack/output/helm-chart/<provider>/prometheus-rules/templates/alerting-rules:
-    copy the test rules file in test/hack/output/generated/<provider>/alerting-rules
-    generate the rule using helm template in the same directory test/hack/output/generated/<provider>/alerting-rules
+  for each file in test/hack/output/helm-chart/<provider>/prometheus-rules/templates/<area>/<team>/alerting-rules:
+    copy the test rules file in test/hack/output/generated/<provider>/<area>/<team>/alerting-rules
+    generate the rule using helm template in the same directory test/hack/output/generated/<provider>/<area>/<team>/alerting-rules
     if generation fails:
       we will try with next provider
     else:

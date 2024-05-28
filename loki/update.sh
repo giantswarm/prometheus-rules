@@ -11,7 +11,7 @@ set -e
 
 BRANCH="main"
 MIXIN_URL=https://github.com/grafana/loki/production/loki-mixin@$BRANCH
-OUTPUT_FILE="$(pwd)"/helm/prometheus-rules/templates/recording-rules/loki-mixins.rules.yml
+OUTPUT_FILE="$(pwd)"/helm/prometheus-rules/templates/shared/recording-rules/loki-mixins.rules.yml
 
 cd loki
 rm -rf vendor jsonnetfile.* "$OUTPUT_FILE"

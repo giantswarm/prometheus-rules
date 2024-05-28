@@ -13,6 +13,24 @@ spec:
   groups:
   - name: prometheus-operator
     rules:
+    ## TODO remove once all clusters are passed v20
+    - alert: DuplicatePrometheusOperatorKubeletService
+      annotations:
+        description: '{{`Prometheus-operator in cluster {{ $labels.cluster_id }} has duplicate kubelet service.`}}'
+        opsrecipe: "prometheus-rule-failures/"
+      expr: count(kube_service_info{namespace=~"monitoring|kube-system", service=~"kube-prometheus-stack-kubelet|prometheus-operator-app-kubelet"}) by (cluster_id, installation, provider, pipeline) > 1
+      for: 20m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
     - alert: PrometheusOperatorDown
       annotations:
         description: '{{`Prometheus-operator ({{ $labels.instance }}) is down.`}}'

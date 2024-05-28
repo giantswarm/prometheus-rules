@@ -13,7 +13,7 @@ spec:
     - alert: IngressControllerDeploymentNotSatisfied
       annotations:
         description: '{{`Ingress Controller Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        opsrecipe: ingress-controller-down/
+        opsrecipe: managed-app-nginx-ic/
       expr: managed_app_deployment_status_replicas_available{managed_app=~".*(ingress-nginx|nginx-ingress-controller).*"} / (managed_app_deployment_status_replicas_available{managed_app=~".*(ingress-nginx|nginx-ingress-controller).*"} + managed_app_deployment_status_replicas_unavailable{managed_app=~".*(ingress-nginx|nginx-ingress-controller).*"}) * 100 <= 50
       for: 10m
       labels:
@@ -65,7 +65,7 @@ spec:
     - alert: IngressControllerDown
       annotations:
         description: '{{`Ingress Controller in namespace {{ $labels.namespace }}) is down.`}}'
-        opsrecipe: ingress-controller-down/
+        opsrecipe: managed-app-nginx-ic/
       expr: label_replace(up{app=~".*(ingress-nginx|nginx-ingress-controller).*"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:

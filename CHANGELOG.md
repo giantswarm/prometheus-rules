@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add new alert to detect old and new prometheus-operator kubelet services in the same cluster (https://github.com/giantswarm/giantswarm/issues/30888).
+
 ## [3.15.0] - 2024-05-27
 
 ### Removed

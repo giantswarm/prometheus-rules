@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- *! Breaking change !*
+  - Folder architecture for rules changed to fit with areas and teams for a better overview (https://github.com/giantswarm/giantswarm/issues/30769)
+
 ### Added
 
 - Add new alert to detect old and new prometheus-operator kubelet services in the same cluster (https://github.com/giantswarm/giantswarm/issues/30888).
@@ -19,7 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- /!\ Folder architecture for alerting-rules changed to fit with areas and teams.
 - pint tests: run automatically on CI. Also, target names have changed.
 
 ### Fixed

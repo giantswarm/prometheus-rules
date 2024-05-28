@@ -45,7 +45,7 @@ main() {
         cd "$GIT_WORKDIR" || return 1
         # filter alerting-rules files, and remove prefix `helm/prometheus-rules/templates/`
         git ls-files |
-            sed -En 's_^helm/prometheus-rules/templates/((alerting|recording)-rules/.*\.ya?ml)$_\1_p' || echo error
+            sed -En 's_^helm/prometheus-rules/templates/.*\.ya?ml)$_\1_p' || echo error
     )
 
     # Get prefixes whitelisted via the failure_file
@@ -68,7 +68,7 @@ main() {
 
     for provider in "${providers[@]}"; do
         # We need to copy the global test files in every provider directory
-        rsync -a "$GIT_WORKDIR/test/tests/providers/global/alerting-rules/" "$outputPath/generated/$provider/alerting-rules"
+        rsync -a "$GIT_WORKDIR/test/tests/providers/global/" "$outputPath/generated/$provider"
 
         echo "### Running tests for provider: $provider"
 

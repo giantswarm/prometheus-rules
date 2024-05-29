@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2024-05-29
+
 ### Changed
 
 - *! Breaking change !*
@@ -2744,7 +2746,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v3.15.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.15.0...v4.0.0
 [3.15.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.14.2...v3.15.0
 [3.14.2]: https://github.com/giantswarm/prometheus-rules/compare/v3.14.1...v3.14.2
 [3.14.1]: https://github.com/giantswarm/prometheus-rules/compare/v3.14.0...v3.14.1

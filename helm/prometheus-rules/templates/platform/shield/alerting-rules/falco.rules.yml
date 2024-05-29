@@ -27,7 +27,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: rocket
+        team: shield
         topic: security
     - alert: FalcoMediumAlertFiring
       annotations:
@@ -42,7 +42,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: rocket
+        team: shield
         topic: security
     - alert: FalcoInformationalAlert
       annotations:
@@ -57,5 +57,5 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         severity: notify
-        team: rocket
+        team: shield
         topic: security

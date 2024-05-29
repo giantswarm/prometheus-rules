@@ -11,7 +11,7 @@ set -e
 
 BRANCH="main"
 MIXIN_URL=https://github.com/grafana/mimir/operations/mimir-mixin@$BRANCH
-OUTPUT_FILE="$(pwd)"/helm/prometheus-rules/templates/recording-rules/mimir-mixins.rules.yml
+OUTPUT_FILE="$(pwd)"/helm/prometheus-rules/templates/shared/recording-rules/mimir-mixins.rules.yml
 
 cd mimir
 rm -rf vendor jsonnetfile.* "$OUTPUT_FILE"

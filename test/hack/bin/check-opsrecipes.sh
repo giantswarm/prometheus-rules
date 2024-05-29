@@ -2,8 +2,7 @@
 set -euo pipefail
 
 # List of generated rules
-RULES_FILES=(./test/hack/output/*/*/prometheus-rules/templates/alerting-rules/*)
-#RULES_FILES=(./test/hack/output/*/prometheus-rules/templates/alerting-rules/up*)
+RULES_FILES=(./test/hack/output/helm-chart)
 
 DEBUG_MODE=false
 
@@ -101,8 +100,7 @@ main() {
     fi
 
     # Look at each rules file
-    for rulesFile in "${RULES_FILES[@]}" ; do
-        # echo "rules file: $rulesFile"
+    while IFS= read -r -d '' rulesFile; do
         prettyRulesFilename="$(basename "$rulesFile")"
 
         # skip if rules file has already been checked
@@ -144,11 +142,13 @@ main() {
             if [[ "$DEBUG_MODE" != "false" ]]; then
                 echo "file $prettyRulesFilename / alert: $alertname / recipe: $opsrecipe - OK"
             fi
+
         # parse rules yaml files, and for each rule found output alertname, opsrecipe, and severity, space-separated, on one line.
         done < <(yq -o json "$rulesFile" | jq -j '.spec.groups[].rules[] | .alert, " ", .annotations.opsrecipe, " ", .labels.severity, "\n"')
 
-        checkedRules+=("$prettyRulesFilename")
-    done
+        checkedRules+=("$rulesFile")
+    done < <(find $RULES_FILES -type f -print0)
+
 
     # Output section - let's write down our findings
     #################################################

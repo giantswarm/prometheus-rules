@@ -22,8 +22,8 @@ spec:
     # The next statement returns 1 for a cluster with "updated", "created" or unknown (absent) status.
     # It returns 0 for clusters in "updating", "creating" and "deleting" status.
     # By multiplying with this statement we ensure that errors for transitioning clusters are not counted.
-    - expr: sum((up{app='kubernetes'} * -1) + 1) by (cluster_id, cluster_type) *
-            ignoring (cluster_type) group_left (cluster_id)
+    - expr: sum((up{app='kubernetes'} * -1) + 1) by (cluster_id, installation, pipeline, provider, cluster_type) *
+            ignoring (cluster_type, installation, pipeline, provider) group_left (cluster_id)
             (
               max(cluster_operator_cluster_status{status=~"Updated|Created"}) by (cluster_id, cluster_type)
               or absent(cluster_operator_cluster_status)
@@ -85,7 +85,7 @@ spec:
       # -- empowerment daemonset
     - expr: |
         label_replace(
-          kube_daemonset_status_desired_number_scheduled{namespace=~"giantswarm|kube-system", daemonset=~"cilium"},
+          kube_daemonset_status_desired_number_scheduled{namespace=~"giantswarm|kube-system", daemonset="cilium"},
         "service", "$1", "daemonset", "(.*)" )
       labels:
         class: MEDIUM
@@ -99,11 +99,11 @@ spec:
         (
           (
             label_replace(
-              kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"cilium"},
+              kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset="cilium"},
               "service", "$1", "daemonset", "(.*)" ) > 0
             and on (cluster_id, cluster_type, customer, installation, pipeline, provider, region, daemonset, node)
             label_replace(
-              kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset=~"cilium"} offset 10m,
+              kube_daemonset_status_number_unavailable{namespace=~"giantswarm|kube-system", daemonset="cilium"} offset 10m,
               "service", "$1", "daemonset", "(.*)" ) > 0
           )
           and
@@ -118,7 +118,7 @@ spec:
       record: raw_slo_errors
       # -- 99% availability
       # -- this expression collects all the daemonsets and assigns the same slo target to all of them
-    - expr: sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, service, area) (raw_slo_errors{area="empowerment", service=~"cilium"}) + 1-0.99
+    - expr: sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, service, area) (raw_slo_errors{area="empowerment", service="cilium"}) + 1-0.99
       labels:
         area: empowerment
         label_application_giantswarm_io_team: cabbage
@@ -393,7 +393,7 @@ spec:
     - expr: sum(sum_over_time(raw_slo_errors[3d])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, service, class, area, label_application_giantswarm_io_team) / sum(sum_over_time(raw_slo_requests[3d])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, service, class, area, label_application_giantswarm_io_team)
       record: slo_errors_per_request:ratio_rate3d
       # -- We use the `min` function here because we have `slo_burnrate_high` for each installation and cluster_id, even though the metric value is always the same.
-    - expr: slo_target*scalar(min(slo_burnrate_high))
+    - expr: slo_target*scalar(min(slo_burnrate_high) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, service, class, area, label_application_giantswarm_io_team))
       record: slo_threshold_high
-    - expr: slo_target*scalar(min(slo_burnrate_low))
+    - expr: slo_target*scalar(min(slo_burnrate_low) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, service, class, area, label_application_giantswarm_io_team))
       record: slo_threshold_low

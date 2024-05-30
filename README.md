@@ -265,7 +265,7 @@ In order to incorporate the SLO Framework in the Prometheus rules, several rules
 Those rules can be written according to this template :
 ```
 # Amout of requests for VPA
-- expr: "count(up{app=~'vertical-pod-autoscaler.*'}) by (cluster_type,cluster_id)"
+- expr: "count(up{job=~'vertical-pod-autoscaler.*'}) by (cluster_type,cluster_id)"
   labels:
     class: MEDIUM
     area: platform
@@ -278,7 +278,7 @@ Those rules can be written according to this template :
 # and summed with 1 so the final result is 0 : no error recorded.
 # If up was unsuccessful, there is an error. Up returns 0, multiplied by -1 and summed
 # with 1 so the final result is 1 : 1 error is recorded .
-- expr: "sum((up{app=~'vertical-pod-autoscaler.*'} * -1) + 1) by (cluster_id, cluster_type)"
+- expr: "sum((up{job=~'vertical-pod-autoscaler.*'} * -1) + 1) by (cluster_id, cluster_type)"
   labels:
     class: MEDIUM
     area: platform

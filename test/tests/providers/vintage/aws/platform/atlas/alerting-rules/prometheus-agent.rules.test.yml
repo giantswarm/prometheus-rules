@@ -16,7 +16,7 @@ tests:
         eval_time: 30m
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               severity: page
               team: atlas
               topic: observability
@@ -34,7 +34,7 @@ tests:
         eval_time: 30m
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               severity: none
               team: atlas
               topic: observability
@@ -52,7 +52,7 @@ tests:
         eval_time: 90m
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               cluster_id: gauss
               cluster_type: workload_cluster
               severity: page
@@ -73,7 +73,7 @@ tests:
         eval_time: 90m
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               cluster_id: gauss
               cluster_type: workload_cluster
               severity: none
@@ -97,11 +97,11 @@ tests:
   # Tests for `PrometheusAgentShardsMissing` alert
   - interval: 1m
     input_series:
-      - series: 'prometheus_remote_storage_metadata_total{app="prometheus", cluster_id="test01", installation="myinstall", provider="aws", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+      - series: 'prometheus_remote_storage_metadata_total{cluster_id="test01", installation="myinstall", provider="aws", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
         values: "10000+0x180"
-      - series: 'prometheus_remote_storage_metadata_total{app="prometheus", cluster_id="test01", installation="myinstall", provider="aws", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-1-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+      - series: 'prometheus_remote_storage_metadata_total{cluster_id="test01", installation="myinstall", provider="aws", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-1-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
         values: "10000+0x180"
-      - series: 'prometheus_remote_storage_metadata_total{app="prometheus", cluster_id="test01", installation="myinstall", provider="aws", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-2-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+      - series: 'prometheus_remote_storage_metadata_total{cluster_id="test01", installation="myinstall", provider="aws", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-2-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
         values: "10000+0x180"
       - series: 'prometheus_operator_spec_shards{cluster_id="test01", installation="myinstall", provider="aws", pipeline="testing", container="prometheus-operator-app", controller="prometheus", instance="prometheus-operator-app", job="prometheus-operator-app-operator", name="prometheus-agent", pod="prometheus-operator-app-operator-76b5899558-nz8h5", service="prometheus-operator-app-operator", team="atlas"}'
         values: '3+0x60 5+0x60 3+0x60'
@@ -116,7 +116,7 @@ tests:
         eval_time: 100m
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               cluster_id: test01
               installation: myinstall
               provider: aws
@@ -137,7 +137,7 @@ tests:
         eval_time: 100m
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               cluster_id: test01
               installation: myinstall
               provider: aws
@@ -158,7 +158,7 @@ tests:
         eval_time: 125m
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               cluster_id: test01
               installation: myinstall
               provider: aws
@@ -179,7 +179,7 @@ tests:
         eval_time: 125m
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               cluster_id: test01
               installation: myinstall
               provider: aws
@@ -203,11 +203,11 @@ tests:
   # Tests for `PrometheusAgentShardsMissing` alert with missing `prometheus_operator_spec_shards` metric
   - interval: 1m
     input_series:
-      - series: 'prometheus_remote_storage_metadata_total{app="prometheus", cluster_id="test01", installation="myinstall", provider="aws", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+      - series: 'prometheus_remote_storage_metadata_total{cluster_id="test01", installation="myinstall", provider="aws", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
         values: "10000+0x180"
-      - series: 'prometheus_remote_storage_metadata_total{app="prometheus", cluster_id="test01", installation="myinstall", provider="aws", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-1-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+      - series: 'prometheus_remote_storage_metadata_total{cluster_id="test01", installation="myinstall", provider="aws", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-1-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
         values: "10000+0x180"
-      - series: 'prometheus_remote_storage_metadata_total{app="prometheus", cluster_id="test01", installation="myinstall", provider="aws", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-2-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+      - series: 'prometheus_remote_storage_metadata_total{cluster_id="test01", installation="myinstall", provider="aws", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-2-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
         values: "10000+0x180"
       - series: 'prometheus_operator_spec_replicas{cluster_id="test01", installation="myinstall", provider="aws", pipeline="testing", container="prometheus-operator-app", controller="prometheus", instance="prometheus-operator-app", job="prometheus-operator-app-operator", name="prometheus-agent", pod="prometheus-operator-app-operator-76b5899558-nz8h5", service="prometheus-operator-app-operator", team="atlas"}'
         values: '3+0x60 5+0x60 3+0x60'
@@ -220,7 +220,7 @@ tests:
         eval_time: 100m
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               cluster_id: test01
               installation: myinstall
               provider: aws
@@ -241,7 +241,7 @@ tests:
         eval_time: 100m
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               cluster_id: test01
               installation: myinstall
               provider: aws
@@ -262,7 +262,7 @@ tests:
         eval_time: 125m
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               cluster_id: test01
               installation: myinstall
               provider: aws
@@ -283,7 +283,7 @@ tests:
         eval_time: 125m
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               cluster_id: test01
               installation: myinstall
               provider: aws

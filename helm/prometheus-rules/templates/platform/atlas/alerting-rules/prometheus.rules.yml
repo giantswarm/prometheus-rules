@@ -14,10 +14,10 @@ spec:
       annotations:
         description: '{{`Prometheus can''t communicate with Kubernetes API.`}}'
         opsrecipe: prometheus-cant-communicate/
-      expr: rate(prometheus_sd_kubernetes_http_request_total{app!="promxy-app", status_code="<error>"}[15m]) > 0.25
+      expr: rate(prometheus_sd_kubernetes_http_request_total{job!="promxy-app", status_code="<error>"}[15m]) > 0.25
       for: 30m
       labels:
-        area: empowerment
+        area: platform
         cancel_if_any_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_updating: "true"
@@ -39,7 +39,7 @@ spec:
       {{- end }}
       for: 1h
       labels:
-        area: empowerment
+        area: platform
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -52,7 +52,7 @@ spec:
       expr: rate(prometheus_remote_storage_samples_failed_total[10m]) > 0.1 or rate(prometheus_remote_storage_samples_total[10m]) == 0 or rate(prometheus_remote_storage_metadata_retried_total[10m]) > 0
       for: 1h
       labels:
-        area: empowerment
+        area: platform
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -65,7 +65,7 @@ spec:
       expr: rate(prometheus_rule_evaluation_failures_total[5m]) > 0
       for: 1h
       labels:
-        area: empowerment
+        area: platform
         severity: page
         team: atlas
         topic: observability
@@ -78,7 +78,7 @@ spec:
       expr: (count(up == 0) BY (job, installation, cluster_id, provider, pipeline) / count(up) BY (job, installation, cluster_id, provider, pipeline)) == 1
       for: 1d
       labels:
-        area: empowerment
+        area: platform
         severity: notify
         team: atlas
         topic: observability
@@ -92,22 +92,22 @@ spec:
       expr: |-
         (
           count(
-            up{
-              app=~"kubernetes|kube-controller-manager|kube-scheduler|kubelet|node-exporter|kube-state-metrics",
-              job!~".*bastions.*"
-            } == 0
-          ) BY (app,job, installation, cluster_id, provider, pipeline)
+            (
+              up{job=~"apiserver|kube-controller-manager|kube-scheduler|node-exporter|kube-state-metrics"}
+              or
+              up{job="kubelet", metrics_path="/metrics"}
+            ) == 0
+          ) BY (job, installation, cluster_id, provider, pipeline)
           /
           count(
-            up{
-              app=~"kubernetes|kube-controller-manager|kube-scheduler|kubelet|node-exporter|kube-state-metrics",
-              job!~".*bastions.*"
-            }
-          ) BY (app, job, installation, cluster_id, provider, pipeline)
+            up{job=~"apiserver|kube-controller-manager|kube-scheduler|node-exporter|kube-state-metrics"}
+            or
+            up{job="kubelet", metrics_path="/metrics"}
+          ) BY (job, installation, cluster_id, provider, pipeline)
         ) == 1
       for: 3d
       labels:
-        area: empowerment
+        area: platform
         severity: page
         team: atlas
         topic: observability

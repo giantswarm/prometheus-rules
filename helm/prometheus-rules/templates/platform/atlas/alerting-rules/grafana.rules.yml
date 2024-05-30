@@ -20,7 +20,7 @@ spec:
       expr: up{service="grafana", cluster_type="management_cluster"} == 0
       for: 1h
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -38,7 +38,7 @@ spec:
       expr: sum by(cluster_id, installation, provider, pipeline) (increase(grafana_http_request_duration_seconds_count{handler="/api/folders/:uid/permissions/", method="POST", namespace="monitoring", service="grafana", status_code="200", cluster_type="management_cluster"}[2h])) < 1 or absent(grafana_http_request_duration_seconds_count{handler="/api/folders/:uid/permissions/", method="POST", namespace="monitoring", service="grafana", status_code="200", cluster_type="management_cluster"})
       for: 6h
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -60,7 +60,7 @@ spec:
       expr: sum by (cronjob, cluster_id, installation, provider, pipeline) (label_replace(avg_over_time(kube_job_status_failed{job_name=~"grafana-permissions.*", reason!="BackoffLimitExceeded", cluster_type="management_cluster"}[60m]), "cronjob", "$1", "job_name", "(grafana-permissions)-.*")) > 0
       for: 6h
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -77,7 +77,7 @@ spec:
       expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="grafana-permissions", cluster_type="management_cluster"}) > 86400
             or count by (cluster_id, cronjob, installation, namespace, provider, pipeline) (label_replace(max_over_time(kube_job_status_succeeded{job_name=~"grafana-permissions-.+", cluster_type="management_cluster"}[1d]), "cronjob", "grafana-permissions", "job_name", "grafana-permissions-.+") == 1) == 0
       labels:
-        area: empowerment
+        area: platform
         severity: page
         team: atlas
         topic: managementcluster

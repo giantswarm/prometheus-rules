@@ -39,15 +39,6 @@ main() {
     expected_failure_relative_file_global="test/conf/promtool_ignore"
     expected_failure_file_global="$GIT_WORKDIR/$expected_failure_relative_file_global"
 
-    # Retrieve all files we're going to check
-    local -a all_files
-    mapfile -t all_files < <(
-        cd "$GIT_WORKDIR" || return 1
-        # filter alerting-rules files, and remove prefix `helm/prometheus-rules/templates/`
-        git ls-files |
-            sed -En 's_^helm/prometheus-rules/templates/.*\.ya?ml)$_\1_p' || echo error
-    )
-
     # Get prefixes whitelisted via the failure_file
     local -a expected_failure_prefixes_global=()
     [[ -f "$expected_failure_file_global" ]] \
@@ -60,9 +51,10 @@ main() {
     local -a promtool_test_errors=()
     local -a failing_extraction=()
 
-    # Create generated directory with all test files
+    # Clean and create generated directory with all test files
     local outputPath="$GIT_WORKDIR/test/hack/output"
-    [[ -d "$outputPath/generated" ]] || cp -r "$GIT_WORKDIR/test/tests/providers/." "$outputPath/generated/"
+    rm -rf "$outputPath/generated"
+    cp -r "$GIT_WORKDIR/test/tests/providers/." "$outputPath/generated/"
     # We remove the global directory
     rm -rf "$outputPath/generated/global"
 

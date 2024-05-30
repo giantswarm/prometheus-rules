@@ -23,25 +23,25 @@ tests:
       # - 02:30 all is up again
       # - 03:00 we don't have enough metrics
       # - 03:30 all is up again
-      - series: 'up{app="kube-state-metrics", cluster_id="testinstall", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="http", installation="testinstall", instance="192.0.2.10:8080", job="kube-state-metrics", namespace="kube-system", node="ip-10-0-1-1.eu-west-1.compute.internal", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-72vzx", provider="aws", region="eu-west-1", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
+      - series: 'up{job="kube-state-metrics", cluster_id="testinstall", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="http", installation="testinstall", instance="192.0.2.10:8080", namespace="kube-system", node="ip-10-0-1-1.eu-west-1.compute.internal", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-72vzx", provider="aws", region="eu-west-1", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
         values: "_x30 1x30 0x30 1x30 1x30 1x30 1x30 1x30"
-      - series: 'up{app="kube-state-metrics", cluster_id="testinstall", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="metrics", installation="testinstall", instance="192.0.2.10:8081", job="kube-state-metrics", namespace="kube-system", node="ip-10-0-1-1.eu-west-1.compute.internal", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-72vzx", provider="aws", region="eu-west-1", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
+      - series: 'up{job="kube-state-metrics", cluster_id="testinstall", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="metrics", installation="testinstall", instance="192.0.2.10:8081", namespace="kube-system", node="ip-10-0-1-1.eu-west-1.compute.internal", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-72vzx", provider="aws", region="eu-west-1", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
         values: "_x30 1x30 1x30 1x30 0x30 1x30 1x30 1x30"
-      - series: 'testmetric2{app="kube-state-metrics"}'
+      - series: 'testmetric2{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric3{app="kube-state-metrics"}'
+      - series: 'testmetric3{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric4{app="kube-state-metrics"}'
+      - series: 'testmetric4{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric5{app="kube-state-metrics"}'
+      - series: 'testmetric5{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric6{app="kube-state-metrics"}'
+      - series: 'testmetric6{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric7{app="kube-state-metrics"}'
+      - series: 'testmetric7{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric8{app="kube-state-metrics"}'
+      - series: 'testmetric8{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric9{app="kube-state-metrics"}'
+      - series: 'testmetric9{job="kube-state-metrics"}'
         values: "_x30 1x30 1x30 1x30 1x30 1x30 _x30 1x30"
     alert_rule_test:
       # - 00:00 Start with no metrics
@@ -49,7 +49,7 @@ tests:
         eval_time: 25m
         exp_alerts:
           - exp_labels:
-              area: "kaas"
+              area: "platform"
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_cluster_status_creating: "true"
@@ -76,7 +76,7 @@ tests:
         eval_time: 85m
         exp_alerts:
           - exp_labels:
-              area: "kaas"
+              area: "platform"
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_cluster_status_creating: "true"
@@ -109,7 +109,7 @@ tests:
         eval_time: 205m
         exp_alerts:
           - exp_labels:
-              area: "kaas"
+              area: "platform"
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_cluster_status_creating: "true"
@@ -141,25 +141,25 @@ tests:
       # - 00:30 all goes up
       # - 01:00 up goes down
       # - 01:30 All is up again
-      - series: 'up{app="kube-state-metrics", cluster_id="testvintage", cluster_type="workload_cluster", customer="giantswarm", installation="testinstall", instance="10.0.2.4:10301", job="test-prometheus/workload-test/0", namespace="kube-system", node="ip-10-1-0-3.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-v2-3-0-67b5fdc5d4-78mhf", provider="aws", service_priority="highest"}'
+      - series: 'up{job="kube-state-metrics", cluster_id="testvintage", cluster_type="workload_cluster", customer="giantswarm", installation="testinstall", instance="10.0.2.4:10301", namespace="kube-system", node="ip-10-1-0-3.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-v2-3-0-67b5fdc5d4-78mhf", provider="aws", service_priority="highest"}'
         values: "_x30 1x30 0x30 1x30"
-      - series: 'testmetric2{app="kube-state-metrics"}'
+      - series: 'testmetric2{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric3{app="kube-state-metrics"}'
+      - series: 'testmetric3{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric4{app="kube-state-metrics"}'
+      - series: 'testmetric4{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric5{app="kube-state-metrics"}'
+      - series: 'testmetric5{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric6{app="kube-state-metrics"}'
+      - series: 'testmetric6{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric7{app="kube-state-metrics"}'
+      - series: 'testmetric7{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric8{app="kube-state-metrics"}'
+      - series: 'testmetric8{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric9{app="kube-state-metrics"}'
+      - series: 'testmetric9{job="kube-state-metrics"}'
         values: "0x1000"
-      - series: 'testmetric10{app="kube-state-metrics"}'
+      - series: 'testmetric10{job="kube-state-metrics"}'
         values: "0x1000"
     alert_rule_test:
       # - 00:00 Start with no metrics
@@ -167,7 +167,7 @@ tests:
         eval_time: 25m
         exp_alerts:
           - exp_labels:
-              area: "kaas"
+              area: "platform"
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_cluster_status_creating: "true"
@@ -194,7 +194,7 @@ tests:
         eval_time: 85m
         exp_alerts:
           - exp_labels:
-              area: "kaas"
+              area: "platform"
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_cluster_status_creating: "true"

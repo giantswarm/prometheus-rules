@@ -550,3 +550,10 @@ spec:
     rules:
       - expr: sum(trivy_compliance_info{title!~".*Pod.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, compliance_id, compliance_name, severity, title, status)
         record: aggregation:cluster_compliance_info
+{{- if eq .Values.managementCluster.provider.kind "capa" }}
+  # Keeps track of the versions of the CAPI infrastructure CRDs in the management cluster. Currently only used for CAPA.
+  - name: capi_crds.grafana-cloud.recording
+    rules:
+      - expr: sum(capi_crd_info{resource_name=~".*infrastructure.cluster.x-k8s.io.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, version)
+        record: aggregation:capi_infrastructure_crd_versions
+{{- end }}

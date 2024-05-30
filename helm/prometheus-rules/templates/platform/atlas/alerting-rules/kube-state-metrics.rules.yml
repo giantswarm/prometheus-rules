@@ -79,7 +79,8 @@ spec:
         opsrecipe: kube-state-metrics-down/
       expr: |-
         # When it looks up but we don't have metrics
-        count({job="kube-state-metrics", __name__=~"kube_.+"}) by (cluster_id, installation, provider, pipeline) <= 100
+        # We need to keep the app label until all clusters are migrated to a release >= 18.2. TODO(atlas): Remove when this is the case
+        count({job="kube-state-metrics", __name__=~"kube_.+"} or {app="kube-state-metrics", __name__=~"kube_.+"}) by (cluster_id, installation, provider, pipeline) <= 100
       for: 20m
       labels:
         area: platform

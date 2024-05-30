@@ -10,37 +10,6 @@ spec:
   groups:
   - name: service-level.recording
     rules:
-      # -- api-server
-    - expr: "count(up{app='kubernetes'}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)"
-      labels:
-        class: HIGH
-        area: kaas
-        service: api-server
-        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
-      record: raw_slo_requests
-    # The first statement ensures that an api-server error is counted if the kubernetes api is not up for a specific cluster.
-    # The next statement returns 1 for a cluster with "updated", "created" or unknown (absent) status.
-    # It returns 0 for clusters in "updating", "creating" and "deleting" status.
-    # By multiplying with this statement we ensure that errors for transitioning clusters are not counted.
-    - expr: sum((up{app='kubernetes'} * -1) + 1) by (cluster_id, installation, pipeline, provider, cluster_type) *
-            ignoring (cluster_type, installation, pipeline, provider) group_left (cluster_id)
-            (
-              max(cluster_operator_cluster_status{status=~"Updated|Created"}) by (cluster_id, cluster_type)
-              or absent(cluster_operator_cluster_status)
-            )
-      labels:
-        class: HIGH
-        area: kaas
-        service: api-server
-      record: raw_slo_errors
-      # -- 99,9% availability
-    - expr: "vector((1 - 0.999))"
-      labels:
-        area: kaas
-        service: api-server
-        label_application_giantswarm_io_team: {{ include "providerTeam" . }}
-      record: slo_target
-
       # -- KAAS daemonset
     - expr: |
         label_replace(

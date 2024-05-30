@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `aggregation:capi_infrastructure_crd_versions` metric to Grafana Cloud.
 
+### Fixed
+
+- Fix remaining pint issues.
+
 ### Removed
 
 - Remove api-server from old SLO framework.

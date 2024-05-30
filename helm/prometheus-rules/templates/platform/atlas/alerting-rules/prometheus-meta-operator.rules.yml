@@ -10,13 +10,13 @@ spec:
   - name: observability
     rules:
     - alert: "Heartbeat"
-      expr: up{app="prometheus",instance!="prometheus-agent"} == 1
+      expr: up{job=~".*prometheus/prometheus.*",instance!="prometheus-agent"} == 1
       labels:
-        area: "empowerment"
+        area: platform
         installation: {{ .Values.managementCluster.name }}
-        team: "atlas"
-        topic: "observability"
-        type: "heartbeat"
+        team: atlas
+        topic: observability
+        type: heartbeat
         namespace: "monitoring" # Needed due to https://github.com/prometheus-operator/prometheus-operator/issues/3737
       annotations:
         description: This alert is used to ensure the entire alerting pipeline is functional.
@@ -50,28 +50,28 @@ spec:
         > 0
       for: 10m
       labels:
-        area: "empowerment"
+        area: platform
         cancel_if_mc_kube_state_metrics_down: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         installation: {{ .Values.managementCluster.name }}
-        severity: "page"
-        team: "atlas"
-        topic: "observability"
+        severity: page
+        team: atlas
+        topic: observability
     - alert: "PrometheusMetaOperatorReconcileErrors"
       annotations:
         description: '{{`prometheus-meta-operator controller {{ $labels.controller }} too many reconcile errors.`}}'
         opsrecipe: "pmo-reconcile-errors/"
         dashboard: piJK9Vm4z/operatorkit
       expr: |
-        avg_over_time(operatorkit_controller_errors_total{app="prometheus-meta-operator"}[20m]) > 0
+        avg_over_time(operatorkit_controller_errors_total{job="monitoring/prometheus-meta-operator"}[20m]) > 0
       for: 1h
       labels:
-        area: "empowerment"
+        area: platform
         cancel_if_mc_kube_state_metrics_down: "false"
         cancel_if_cluster_status_creating: "true"
         cancel_if_outside_working_hours: "true"
         installation: {{ .Values.managementCluster.name }}
-        severity: "page"
-        team: "atlas"
-        topic: "observability"
+        severity: page
+        team: atlas
+        topic: observability

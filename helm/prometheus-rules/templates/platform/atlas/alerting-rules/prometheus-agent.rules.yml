@@ -43,7 +43,7 @@ spec:
       {{- end }}
       for: 20m
       labels:
-        area: empowerment
+        area: platform
         severity: page
         team: atlas
         topic: observability
@@ -84,7 +84,7 @@ spec:
       {{- end }}
       for: 2m
       labels:
-        area: empowerment
+        area: platform
         severity: none
         team: atlas
         topic: observability
@@ -114,7 +114,7 @@ spec:
         )[5m:])
       for: 20m
       labels:
-        area: empowerment
+        area: platform
         severity: page
         team: atlas
         topic: observability
@@ -145,7 +145,7 @@ spec:
         )[5m:])
       for: 2m
       labels:
-        area: empowerment
+        area: platform
         severity: none
         team: atlas
         topic: observability

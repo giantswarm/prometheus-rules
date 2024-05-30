@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Get rid of the `app`, `role` and `node` external labels in Atlas rules.
+
 ## [4.0.0] - 2024-05-29
 
 ### Changed

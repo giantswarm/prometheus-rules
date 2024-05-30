@@ -18,7 +18,7 @@ spec:
       expr: rate(fluentbit_output_retries_failed_total[10m]) > 0
       for: 20m
       labels:
-        area: empowerment
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -34,7 +34,7 @@ spec:
       expr: rate(fluentbit_output_dropped_records_total[10m]) / (rate(fluentbit_output_proc_records_total[10m]) + rate(fluentbit_output_dropped_records_total[10m])) > 0.01
       for: 20m
       labels:
-        area: empowerment
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -46,10 +46,10 @@ spec:
       annotations:
         description: '{{`Fluentbit is down on node ({{ $labels.node }}).`}}'
         opsrecipe: fluentbit-down/
-      expr: sum(up{app="fluent-logshipping-app"}) by (app, cluster_id, installation, provider, pipeline, job, namespace, node) == 0
+      expr: sum(up{job="fluent-logshipping-app"}) by (job, cluster_id, installation, provider, pipeline, namespace, node) == 0
       for: 15m
       labels:
-        area: empowerment
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -64,11 +64,11 @@ spec:
       expr: kube_daemonset_status_number_unavailable{daemonset="fluent-logshipping-app"} > 0
       for: 1h
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
-        topic: managementcluster
+        topic: observability

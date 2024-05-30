@@ -20,7 +20,7 @@ spec:
       expr: rate(alertmanager_notifications_failed_total{integration!="opsgenie", cluster_type="management_cluster"}[20m]) > 0
       for: 45m
       labels:
-        area: empowerment
+        area: platform
         severity: page
         team: atlas
         topic: monitoring
@@ -33,7 +33,7 @@ spec:
       expr: rate(alertmanager_notifications_failed_total{integration="opsgenie", cluster_type="management_cluster"}[20m]) > 0
       for: 30m
       labels:
-        area: empowerment
+        area: platform
         severity: notify
         team: atlas
         topic: monitoring

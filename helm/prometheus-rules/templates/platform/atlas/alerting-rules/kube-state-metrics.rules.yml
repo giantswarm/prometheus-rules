@@ -23,7 +23,7 @@ spec:
         and
         (
           # vintage clusters without servicemonitor
-          # We need to keep the app label until all clusters are migrated to a release >= 18.2
+          # We need to keep the app label until all clusters are migrated to a release >= 18.2. TODO(atlas): Remove when this is the case
           label_replace(up{app="kube-state-metrics",container=""}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{app="kube-state-metrics",container=""} == 1)
         )
       {{- else }}

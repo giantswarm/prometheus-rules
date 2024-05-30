@@ -23,7 +23,8 @@ spec:
         and
         (
           # vintage clusters without servicemonitor
-          label_replace(up{job="kube-state-metrics",container=""}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{job="kube-state-metrics",container=""} == 1)
+          # We need to keep the app label until all clusters are migrated to a release >= 18.2
+          label_replace(up{app="kube-state-metrics",container=""}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{app="kube-state-metrics",container=""} == 1)
         )
       {{- else }}
       expr: |-

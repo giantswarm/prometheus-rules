@@ -22,7 +22,7 @@ tests:
         eval_time: 106m
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               cancel_if_outside_working_hours: "true"
               cluster_type: management_cluster
               integration: slack
@@ -49,7 +49,7 @@ tests:
         eval_time: 91m
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               cluster_type: management_cluster
               integration: opsgenie
               severity: notify

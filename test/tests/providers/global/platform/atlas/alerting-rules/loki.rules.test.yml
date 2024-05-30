@@ -5,15 +5,15 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'cortex_ring_members{app="loki", cluster_id="zj88t", cluster_type="workload_cluster", container="compactor", customer="giantswarm", installation="gorilla", instance="10.7.116.221:3100", job="zj88t-prometheus/workload-zj88t/0", name="compactor", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-compactor-676b8c897b-rq298", provider="aws", pipeline="stable", service_priority="highest", state="Unhealthy"}'
+      - series: 'cortex_ring_members{job="loki/loki-read", cluster_id="gaia-wc01", cluster_type="workload_cluster", container="loki", customer="giantswarm", installation="gaia", name="ingester", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-xxxxx", provider="aws", pipeline="stable", service_priority="highest", state="Unhealthy"}'
         values: "0+0x20 1+0x160"  # 1 unhealthy value after 20 minutes
-      - series: 'cortex_ring_members{app="loki", cluster_id="zj88t", cluster_type="workload_cluster", container="loki", customer="giantswarm", installation="gorilla", instance="10.7.116.221:3100", job="zj88t-prometheus/workload-zj88t/0", name="distributor", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-write-0", provider="aws", pipeline="stable", service_priority="highest", state="Unhealthy"}'
+      - series: 'cortex_ring_members{job="loki/loki-read", cluster_id="gaia-wc01", cluster_type="workload_cluster", container="loki", customer="giantswarm", installation="gaia", name="ingester", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-yyyyy", provider="aws", pipeline="stable", service_priority="highest", state="Unhealthy"}'
         values: "_x30 1+0x10 0+0x60"  # no data for 30 minutes then 1 unhealthy value for 10 minutes and back to normal for 1 hour
-      - series: 'loki_panic_total{app="loki-compactor", cluster_id="zj88t", cluster_type="workload_cluster", container="compactor", customer="giantswarm", installation="gorilla", instance="10.7.116.221:3100", job="zj88t-prometheus/workload-zj88t/0", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-compactor-676b8c897b-rq298", provider="aws", pipeline="stable", service_priority="highest"}'
+      - series: 'loki_panic_total{job="loki/loki-read", cluster_id="gaia-wc01", cluster_type="workload_cluster", container="loki", customer="giantswarm", installation="gaia", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-zzzzz", provider="aws", pipeline="stable", service_priority="highest"}'
         values: "0+0x20 1+0x160"  # 1 panic after 20 minutes
-      - series: 'loki_request_duration_seconds_count{app="loki-distributor", cluster_id="zj88t", cluster_type="workload_cluster", container="distributor", customer="giantswarm", installation="gorilla", instance="10.7.75.90:3100", job="zj88t-prometheus/workload-zj88t/0", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-distributor-74b78f5559-tz6zs", provider="aws", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="204", ws="false"}'
+      - series: 'loki_request_duration_seconds_count{job="loki/loki-write", cluster_id="gaia-wc01", cluster_type="workload_cluster", container="loki", customer="giantswarm", installation="gaia", instance="10.7.75.90:3100", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-write-0", provider="aws", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="204", ws="false"}'
         values: "0+60x180"  # 1 request per second OK for 3 hours
-      - series: 'loki_request_duration_seconds_count{app="loki-distributor", cluster_id="zj88t", cluster_type="workload_cluster", container="distributor", customer="giantswarm", installation="gorilla", instance="10.7.75.90:3100", job="zj88t-prometheus/workload-zj88t/0", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-distributor-74b78f5559-tz6zs", provider="aws", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="503", ws="false"}'
+      - series: 'loki_request_duration_seconds_count{job="loki/loki-write", cluster_id="gaia-wc01", cluster_type="workload_cluster", container="loki", customer="giantswarm", installation="gaia", instance="10.7.75.90:3100", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-write-0", provider="aws", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="503", ws="false"}'
         values: "0+0x20 0+30x160"  # After 20 minutes, we also have 0.5 rq/s failing
     alert_rule_test:
       - alertname: LokiRequestPanics
@@ -23,18 +23,18 @@ tests:
         eval_time: 25m  # After 25 minutes, should fire an alert for the t+20 error
         exp_alerts:
           - exp_labels:
-              area: managedservices
+              area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cancel_if_scrape_timeout: "true"
-              cluster_id: zj88t
-              installation: gorilla
+              cluster_id: gaia-wc01
+              installation: gaia
               pipeline: stable
               provider: aws
-              job: zj88t-prometheus/workload-zj88t/0
+              job: loki/loki-read
               namespace: loki
               severity: page
               team: atlas
@@ -53,18 +53,18 @@ tests:
         eval_time: 160m  # Alert after more than 120m of incident
         exp_alerts:
           - exp_labels:
-              area: managedservices
+              area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cancel_if_scrape_timeout: "true"
-              cluster_id: zj88t
-              installation: gorilla
+              cluster_id: gaia-wc01
+              installation: gaia
               provider: aws
               pipeline: stable
-              job: zj88t-prometheus/workload-zj88t/0
+              job: loki/loki-write
               namespace: loki
               route: loki_api_v1_push
               severity: page
@@ -87,29 +87,29 @@ tests:
         eval_time: 60m  # now the event has been there for 20 minutes, we should have an alert.
         exp_alerts:
           - exp_labels:
-              app: loki
-              area: managedservices
+              area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_scrape_timeout: "true"
               cancel_if_outside_working_hours: "true"
-              cluster_id: zj88t
-              container: compactor
+              cluster_id: gaia-wc01
+              container: loki
               customer: giantswarm
-              installation: gorilla
+              installation: gaia
               provider: aws
               pipeline: stable
-              name: compactor
+              job: loki/loki-read
+              name: ingester
               namespace: loki
               organization: giantswarm-production
-              pod: loki-compactor-676b8c897b-rq298
+              pod: loki-read-b7d9b85d4-xxxxx
               severity: page
               team: atlas
               topic: observability
             exp_annotations:
-              description: "Loki pod loki-compactor-676b8c897b-rq298 (namespace loki) sees 1 unhealthy ring members"
+              description: "Loki pod loki-read-b7d9b85d4-xxxxx (namespace loki) sees 1 unhealthy ring members"
               opsrecipe: "loki/"
   - interval: 1m
     input_series:
@@ -124,7 +124,7 @@ tests:
         exp_alerts:
           - exp_labels:
               all_pipelines: "true"
-              area: managedservices
+              area: platform
               cancel_if_outside_working_hours: "true"
               cluster_type: management_cluster
               namespace: loki

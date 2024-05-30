@@ -33,13 +33,13 @@ spec:
         count(
           label_replace(
             sum_over_time(
-              app_operator_app_info{app="prometheus-agent"}[5m]
+              app_operator_app_info{name="prometheus-agent"}[5m]
             ), "cluster_id", "$1", "namespace", "(.*)"
           )
         ) by (cluster_id)
       labels:
         cluster_is_not_running_prometheus_agent: "true"
-        area: empowerment
+        area: platform
         team: atlas
         topic: monitoring
 {{- end }}

@@ -16,7 +16,7 @@ spec:
       expr: count by (cluster_id, installation, provider, pipeline) (up{container=~"keda-.*"} == 0) > 0
       for: 10m
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
@@ -31,7 +31,7 @@ spec:
       expr: increase(keda_scaled_object_errors[10m])> 0
       for: 15m
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
@@ -46,7 +46,7 @@ spec:
       expr: increase(keda_webhook_scaled_object_validation_errors[10m]) > 0
       for: 15m
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
@@ -61,7 +61,7 @@ spec:
       expr: increase(keda_scaler_errors[10m]) > 0
       for: 15m
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"

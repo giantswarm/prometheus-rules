@@ -10,24 +10,24 @@ tests:
   # Test PrometheusJobScrapingFailure and PrometheusCriticalJobScrapingFailure
   - interval: 1h
     input_series:
-      - series: 'up{app="kubernetes", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/kubernetes-apiserver-gauss/0"}'
+      - series: 'up{job="apiserver", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
         values: "1+0x240"
       # critcal target up for 5d and down for 5d
-      - series: 'up{app="kube-controller-manager", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/kubernetes-controller-manager-gauss/0"}'
+      - series: 'up{job="kube-controller-manager", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
         values: "1+0x120 0+0x120"
-      - series: 'up{app="kube-scheduler", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/kubernetes-scheduler-gauss/0"}'
+      - series: 'up{job="kube-scheduler", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
         values: "1+0x240"
-      - series: 'up{app="kubelet", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/kubernetes-kubelet-gauss/0"}'
+      - series: 'up{job="kubelet", metrics_path="/metrics", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
         values: "1+0x240"
-      - series: 'up{app="node-exporter", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/node-exporter-gauss/0"}'
+      - series: 'up{job="node-exporter", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
         values: "1+0x240"
-      - series: 'up{app="kube-state-metrics", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/kube-state-metrics-gauss/0"}'
+      - series: 'up{job="kube-state-metrics", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
         values: "1+0x240"
       # Add bastion host test to ensure we do not page
-      - series: 'up{app="node-exporter", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/bastions/0"}'
+      - series: 'up{job="node-exporter", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
         values: "1+0x240"
       # non-critcal target up for 5d and down for 5d
-      - series: 'up{app="app-exporter", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing", job="gauss-prometheus/app-exporter-gauss/0"}'
+      - series: 'up{job="app-exporter", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
         values: "1+0x120 0+0x120"
     alert_rule_test:
       - alertname: PrometheusCriticalJobScrapingFailure
@@ -41,7 +41,7 @@ tests:
         eval_time: 7d
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               severity: notify
               team: atlas
               topic: observability
@@ -50,13 +50,13 @@ tests:
               installation: "gauss"
               provider: "aws"
               pipeline: "testing"
-              job: "gauss-prometheus/kubernetes-controller-manager-gauss/0"
+              job: "kube-controller-manager"
             exp_annotations:
               opsrecipe: "prometheus-job-scraping-failure/"
               summary: "Prometheus fails to scrape all targets in a job."
-              description: "Prometheus gauss/gauss has failed to scrape all targets in gauss-prometheus/kubernetes-controller-manager-gauss/0 job."
+              description: "Prometheus gauss/gauss has failed to scrape all targets in kube-controller-manager job."
           - exp_labels:
-              area: empowerment
+              area: platform
               severity: notify
               team: atlas
               topic: observability
@@ -65,27 +65,26 @@ tests:
               installation: "gauss"
               provider: "aws"
               pipeline: "testing"
-              job: "gauss-prometheus/app-exporter-gauss/0"
+              job: "app-exporter"
             exp_annotations:
               opsrecipe: "prometheus-job-scraping-failure/"
               summary: "Prometheus fails to scrape all targets in a job."
-              description: "Prometheus gauss/gauss has failed to scrape all targets in gauss-prometheus/app-exporter-gauss/0 job."
+              description: "Prometheus gauss/gauss has failed to scrape all targets in app-exporter job."
 
       # This fires only for critical target down.
       - alertname: PrometheusCriticalJobScrapingFailure
         eval_time: 9d
         exp_alerts:
           - exp_labels:
-              area: empowerment
+              area: platform
               severity: page
               team: atlas
               topic: observability
-              app: "kube-controller-manager"
               cluster_id: "gauss"
               installation: "gauss"
               provider: "aws"
               pipeline: "testing"
-              job: "gauss-prometheus/kubernetes-controller-manager-gauss/0"
+              job: "kube-controller-manager"
               cancel_if_outside_working_hours: "true"
               cancel_if_cluster_is_not_running_prometheus_agent: "true"
               cancel_if_cluster_status_creating: "true"
@@ -93,4 +92,4 @@ tests:
             exp_annotations:
               opsrecipe: "prometheus-job-scraping-failure/"
               summary: "Prometheus fails to scrape all targets in a job."
-              description: "Prometheus gauss/gauss has failed to scrape all targets in gauss-prometheus/kubernetes-controller-manager-gauss/0 job."
+              description: "Prometheus gauss/gauss has failed to scrape all targets in kube-controller-manager job."

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.1.2] - 2024-05-31
+
 ### Changed
 
 - Updated `ContainerdVolumeSpaceTooLow`, `KubeletVolumeSpaceTooLow` and `LogVolumeSpaceTooLow` alerts to not trigger when the node-problem-detector is already remediating the issue.
@@ -2770,7 +2772,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.1.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.1.2...HEAD
+[4.1.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.1.1...v4.1.2
 [4.1.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/giantswarm/prometheus-rules/compare/v3.15.0...v4.0.0

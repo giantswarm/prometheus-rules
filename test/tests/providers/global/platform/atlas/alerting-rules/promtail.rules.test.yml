@@ -8,7 +8,7 @@ tests:
     input_series:
       - series: kube_pod_info{cluster_id="gauss", cluster_type="management_cluster", pod="promtail-2j7z7", node="ip-10-0-5-35.eu-west-1.compute.internal", provider="aws", pipeline="testing"}
         values: "1x180"
-      - series: kube_node_status_condition{cluster_id="gauss", cluster_type="management_cluster", condition="Ready", node="ip-10-0-5-145.eu-west-1.compute.internal", provider="aws", pipeline="testing", status="true"}
+      - series: kube_node_status_condition{cluster_id="gauss", cluster_type="management_cluster", condition="Ready", node="ip-10-0-5-35.eu-west-1.compute.internal", provider="aws", pipeline="testing", status="true"}
         values: "1x180"
       # For the first 60min: test with 1 pod: none, up, down
       - series: 'up{container="promtail", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", pod="promtail-2j7z7", provider="aws", pipeline="testing"}'
@@ -53,7 +53,9 @@ tests:
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cluster_id: gauss
-              installation: gauss
+              cluster_type: management_cluster
+              node: ip-10-0-5-35.eu-west-1.compute.internal
+              pod: promtail-2j7z7
               provider: aws
               pipeline: testing
               severity: page
@@ -74,7 +76,9 @@ tests:
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cluster_id: gauss
-              installation: gauss
+              cluster_type: management_cluster
+              node: ip-10-0-5-35.eu-west-1.compute.internal
+              pod: promtail-2j7z7
               provider: aws
               pipeline: testing
               severity: page

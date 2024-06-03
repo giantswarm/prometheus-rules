@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added a new alerting rule to `falco.rules.yml` to fire an alert for XZ-backdoor.
+
 ## [4.1.2] - 2024-05-31
 
 ### Changed

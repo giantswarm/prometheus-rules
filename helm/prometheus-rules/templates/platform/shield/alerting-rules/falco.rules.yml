@@ -59,3 +59,18 @@ spec:
         severity: notify
         team: shield
         topic: security
+    - alert: FalcoXZBackdoorAlert
+      annotations:
+        description: |-
+          {{`{{ if eq $labels.k8s_pod_name "<NA>" }}The Falco rule {{ $labels.rule }} was triggered on the node {{ $labels.node }}.
+          {{else}}Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }} on the node {{ $labels.node }}.{{ end }}`}}
+        opsrecipe: falco-alert/
+      expr: falco_events{rule="Backdoored library loaded into SSHD (CVE-2024-3094)"} > 0
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "false"
+        cancel_if_cluster_status_deleting: "false"
+        cancel_if_cluster_status_updating: "false"
+        severity: notify
+        team: shield
+        topic: security

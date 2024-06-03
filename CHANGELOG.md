@@ -154,6 +154,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cleanup: get rid of microendpoint alerts as it never fired and probably never will
 - cleanup: remove scrape timeout inhibition leftovers (documentation and labels)
 
+### Fixed
+
+- Fix PromtailDown alert to fire only when the node is ready.
+
 ## [4.1.2] - 2024-05-31
 
 ### Changed

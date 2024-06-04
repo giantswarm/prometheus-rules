@@ -3,21 +3,30 @@ rule_files:
   - promtail.rules.yml
 
 tests:
-  # For this test, we assume the node is always ready
+
   - interval: 1m
     input_series:
-      - series: kube_pod_info{cluster_id="gauss", cluster_type="management_cluster", pod="promtail-2j7z7", node="ip-10-0-5-35.eu-west-1.compute.internal", provider="aws", pipeline="testing"}
+      # For this test, we assume the nodeS are always ready
+      - series: kube_node_status_condition{cluster_id="gauss", cluster_type="management_cluster", condition="Ready", installation="gauss", node="ip-10-0-5-1.eu-west-1.compute.internal", provider="aws", pipeline="testing", status="true"}
         values: "1x180"
-      - series: kube_node_status_condition{cluster_id="gauss", cluster_type="management_cluster", condition="Ready", node="ip-10-0-5-35.eu-west-1.compute.internal", provider="aws", pipeline="testing", status="true"}
+      - series: kube_node_status_condition{cluster_id="gauss", cluster_type="management_cluster", condition="Ready", installation="gauss", node="ip-10-0-5-2.eu-west-1.compute.internal", provider="aws", pipeline="testing", status="true"}
+        values: "1x180"
+      - series: kube_node_status_condition{cluster_id="gauss", cluster_type="management_cluster", condition="Ready", installation="gauss", node="ip-10-0-5-3.eu-west-1.compute.internal", provider="aws", pipeline="testing", status="true"}
         values: "1x180"
       # For the first 60min: test with 1 pod: none, up, down
-      - series: 'up{container="promtail", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", pod="promtail-2j7z7", provider="aws", pipeline="testing"}'
+      - series: 'up{container="promtail", cluster_id="gauss", cluster_type="management_cluster", installation="gauss", pod="promtail-1xxxx", provider="aws", pipeline="testing"}'
         values: "_x20 1+0x20 0+0x40"
+      - series: kube_pod_info{cluster_id="gauss", cluster_type="management_cluster", installation="gauss", pod="promtail-1xxxx", node="ip-10-0-5-1.eu-west-1.compute.internal", provider="aws", pipeline="testing"}
+        values: "1x180"
       # From 60min: test with 2 pods: 1 up and 1 down, 2 up, 2 down.
-      - series: 'up{container="promtail", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", pod="promtail-2j7z7", provider="aws", pipeline="testing"}'
+      - series: 'up{container="promtail", cluster_id="gauss", cluster_type="management_cluster", installation="gauss", pod="promtail-2xxxx", provider="aws", pipeline="testing"}'
         values: "_x80 1+0x40 1+0x20 0+0x40"
-      - series: 'up{container="promtail", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", pod="promtail-2j7z7", provider="aws", pipeline="testing"}'
+      - series: kube_pod_info{cluster_id="gauss", cluster_type="management_cluster", installation="gauss", pod="promtail-2xxxx", node="ip-10-0-5-2.eu-west-1.compute.internal", provider="aws", pipeline="testing"}
+        values: "1x180"
+      - series: 'up{container="promtail", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", pod="promtail-3xxxx", provider="aws", pipeline="testing"}'
         values: "_x80 0+0x40 1+0x20 0+0x40"
+      - series: kube_pod_info{cluster_id="gauss", cluster_type="management_cluster", installation="gauss", pod="promtail-3xxxx", node="ip-10-0-5-3.eu-west-1.compute.internal", provider="aws", pipeline="testing"}
+        values: "1x180"
     alert_rule_test:
       - alertname: PromtailDown
         eval_time: 10m
@@ -33,9 +42,12 @@ tests:
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cluster_id: gauss
+              cluster_type: management_cluster
               installation: gauss
-              provider: aws
+              node: ip-10-0-5-1.eu-west-1.compute.internal
               pipeline: testing
+              pod: promtail-1xxxx
+              provider: aws
               severity: page
               team: atlas
               topic: observability
@@ -54,10 +66,11 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cluster_id: gauss
               cluster_type: management_cluster
-              node: ip-10-0-5-35.eu-west-1.compute.internal
-              pod: promtail-2j7z7
-              provider: aws
+              installation: gauss
+              node: ip-10-0-5-3.eu-west-1.compute.internal
               pipeline: testing
+              pod: promtail-3xxxx
+              provider: aws
               severity: page
               team: atlas
               topic: observability
@@ -77,10 +90,30 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cluster_id: gauss
               cluster_type: management_cluster
-              node: ip-10-0-5-35.eu-west-1.compute.internal
-              pod: promtail-2j7z7
-              provider: aws
+              installation: gauss
+              node: ip-10-0-5-2.eu-west-1.compute.internal
               pipeline: testing
+              pod: promtail-2xxxx
+              provider: aws
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Scraping of all promtail pods to check if one failed every 30 minutes."
+              opsrecipe: "promtail/"
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: gauss
+              cluster_type: management_cluster
+              installation: gauss
+              node: ip-10-0-5-3.eu-west-1.compute.internal
+              pipeline: testing
+              pod: promtail-3xxxx
+              provider: aws
               severity: page
               team: atlas
               topic: observability

@@ -18,7 +18,7 @@ spec:
         sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider) / (sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider) + sum(kube_deployment_status_replicas_unavailable{deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider))* 100 < 51
       for: 10m
       labels:
-        area: empowerment
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
@@ -41,7 +41,7 @@ spec:
         )
       for: 120m
       labels:
-        area: empowerment
+        area: platform
         cancel_if_outside_working_hours: "true"
         severity: page
         team: cabbage

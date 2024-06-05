@@ -1,4 +1,5 @@
-{{- if eq (include "isVaultBeingMonitored" .) "true" }}
+## TODO Remove with vintage
+{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -23,7 +24,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: phoenix
         topic: vault
     - alert: VaultIsSealed
       annotations:
@@ -35,7 +36,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: phoenix
         topic: vault
     - alert: ClusterServiceVaultTokenAlmostExpired
       annotations:
@@ -47,7 +48,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: phoenix
         topic: vault
     - alert: ClusterServiceVaultTokenAlmostExpiredMissing
       annotations:
@@ -60,7 +61,7 @@ spec:
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         cancel_if_prometheus_agent_down: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: phoenix
         topic: vault
     - alert: CertOperatorVaultTokenAlmostExpired
       annotations:
@@ -72,7 +73,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: phoenix
         topic: vault
     - alert: CertOperatorVaultTokenAlmostExpiredMissing
       annotations:
@@ -84,7 +85,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: phoenix
         topic: vault
     - alert: VaultLatestEtcdBackupTooOld
       annotations:
@@ -96,7 +97,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: phoenix
         topic: vault
     - alert: VaultLatestEtcdBackupMetricsMissing
       annotations:
@@ -108,7 +109,6 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: phoenix
         topic: vault
-
 {{- end }}

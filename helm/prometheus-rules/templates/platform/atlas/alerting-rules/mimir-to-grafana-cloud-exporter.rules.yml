@@ -4,12 +4,11 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    cluster_type: "management_cluster"
   name: mimir-to-grafana-cloud-exporter.rules
   namespace: {{ .Values.namespace }}
 spec:
   groups:
-  - name: prometheus-mimir-to-grafana-cloud
+  - name: mimir-to-grafana-cloud-exporter
     rules:
     - alert: MimirToGrafanaCloudExporterDown
       annotations:
@@ -32,11 +31,14 @@ spec:
         description: '{{`Prometheus Mimir to Grafana-Cloud is failing to read or write data.`}}'
         opsrecipe: mimir-grafana-cloud-exporter-failing/
         dashboard: promRW001/prometheus-remote-write
+      # We can have encountered failures with remote read and/or remote write
+      # For remote write, some errors can increased the number of samples failed (non-recoverable errors) and/or dropped (unknown errors)
+      # See https://grafana.com/docs/agent/latest/flow/reference/components/prometheus.remote_write/#debug-metrics
       expr: |
         (
-          rate(prometheus_remote_storage_read_queries_total{job="mimir/mimir-to-grafana-cloud"}[2m]) == 0
-          or rate(prometheus_remote_storage_samples_failed_total{job="mimir/mimir-to-grafana-cloud"}[2m]) > 0
-          or rate(prometheus_remote_storage_samples_dropped_total{job="mimir/mimir-to-grafana-cloud"}[2m]) > 0
+          rate(prometheus_remote_storage_read_queries_total{job="mimir/mimir-to-grafana-cloud"}[10m]) == 0
+          or rate(prometheus_remote_storage_samples_failed_total{job="mimir/mimir-to-grafana-cloud"}[10m]) > 0
+          or rate(prometheus_remote_storage_samples_dropped_total{job="mimir/mimir-to-grafana-cloud"}[10m]) > 0
         )
       for: 30m
       labels:

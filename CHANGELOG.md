@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added a new alerting rule to `falco.rules.yml` to fire an alert for XZ-backdoor.
 
+### Changed
+
+- Review phoenix alerts towards Mimir.
+- Moves cluster-autoscaler and vpa alerts to turtles.
+
 ## [4.1.2] - 2024-05-31
 
 ### Changed

@@ -37,7 +37,7 @@ spec:
       annotations:
         description: '{{`Cilium API processing time is >50s pod="{{ $labels.pod }}" node="{{ $labels.node }}" method="{{ $labels.method}}" path="{{ $labels.path }}"`}}'
         opsrecipe: cilium-performance-issues/
-      expr: avg(rate(cilium_agent_api_process_time_seconds_sum{}[5m])/rate(cilium_agent_api_process_time_seconds_count{}[5m]) > 50) by (cluster_id, pod, method, path)
+      expr: avg(rate(cilium_agent_api_process_time_seconds_sum{}[5m])/rate(cilium_agent_api_process_time_seconds_count{}[5m]) > 50) by (cluster_id, node, pod, method, path, installation, pipeline, provider)
       for: 20m
       labels:
         area: managedservices

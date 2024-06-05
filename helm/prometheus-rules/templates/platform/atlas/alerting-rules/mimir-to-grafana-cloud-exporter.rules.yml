@@ -5,16 +5,16 @@ metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
     cluster_type: "management_cluster"
-  name: prometheus-mimir-to-grafana-cloud.rules
+  name: mimir-to-grafana-cloud-exporter.rules
   namespace: {{ .Values.namespace }}
 spec:
   groups:
   - name: prometheus-mimir-to-grafana-cloud
     rules:
-    - alert: PrometheusMimirToGrafanaCloudDown
+    - alert: MimirToGrafanaCloudExporterDown
       annotations:
         description: '{{`Prometheus Mimir to Grafana-Cloud is down.`}}'
-        opsrecipe: mimir-grafana-cloud-exporter/
+        opsrecipe: mimir-grafana-cloud-exporter-failing/
         dashboard: iWowmlSmk/prometheus?var-cluster=mimir-to-grafana-cloud
       expr: up{job="mimir/mimir-to-grafana-cloud"} == 0
       for: 30m
@@ -27,10 +27,10 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    - alert: PrometheusMimirToGrafanaCloudFailures
+    - alert: MimirToGrafanaCloudExporterFailures
       annotations:
         description: '{{`Prometheus Mimir to Grafana-Cloud is failing to read or write data.`}}'
-        opsrecipe: mimir-grafana-cloud-exporter/
+        opsrecipe: mimir-grafana-cloud-exporter-failing/
         dashboard: promRW001/prometheus-remote-write
       expr: |
         (

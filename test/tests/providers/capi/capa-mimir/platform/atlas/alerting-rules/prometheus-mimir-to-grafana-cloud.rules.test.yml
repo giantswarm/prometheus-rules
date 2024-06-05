@@ -35,7 +35,7 @@ tests:
             exp_annotations:
               dashboard: "iWowmlSmk/prometheus?var-cluster=mimir-to-grafana-cloud"
               description: "Prometheus Mimir to Grafana-Cloud is down."
-              opsrecipe: "prometheus-mimir-to-grafana-cloud/"
+              opsrecipe: "mimir-grafana-cloud-exporter/"
       - alertname: PrometheusMimirToGrafanaCloudDown
         eval_time: 200m
   # Tests for `PrometheusMimirToGrafanaCloudFailures` alert
@@ -71,6 +71,6 @@ tests:
             exp_annotations:
               dashboard: "promRW001/prometheus-remote-write"
               description: "Prometheus Mimir to Grafana-Cloud is failing to read or write data."
-              opsrecipe: "prometheus-mimir-to-grafana-cloud/"
+              opsrecipe: "mimir-grafana-cloud-exporter/"
       - alertname: PrometheusMimirToGrafanaCloudFailures
         eval_time: 200m

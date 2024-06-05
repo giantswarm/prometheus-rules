@@ -1,17 +1,17 @@
 ---
 rule_files:
-- prometheus-mimir-to-grafana-cloud.rules.yml
+- mimir-to-grafana-cloud-exporter.rules.yml
 
 tests:
-  # Tests for `PrometheusMimirToGrafanaCloudDown` alert
+  # Tests for `MimirToGrafanaCloudExporterDown` alert
   - interval: 1m
     input_series:
       - series: 'up{job="mimir/mimir-to-grafana-cloud", cluster_id="golem", cluster_type="management_cluster", installation="golem", namespace="mimir", customer="giantswarm", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "_x60 1+0x60 0+0x60 1+0x60"
     alert_rule_test:
-      - alertname: PrometheusMimirToGrafanaCloudDown
+      - alertname: MimirToGrafanaCloudExporterDown
         eval_time: 70m
-      - alertname: PrometheusMimirToGrafanaCloudDown
+      - alertname: MimirToGrafanaCloudExporterDown
         eval_time: 160m
         exp_alerts:
           - exp_labels:
@@ -35,19 +35,19 @@ tests:
             exp_annotations:
               dashboard: "iWowmlSmk/prometheus?var-cluster=mimir-to-grafana-cloud"
               description: "Prometheus Mimir to Grafana-Cloud is down."
-              opsrecipe: "mimir-grafana-cloud-exporter/"
-      - alertname: PrometheusMimirToGrafanaCloudDown
+              opsrecipe: "mimir-grafana-cloud-exporter-failing/"
+      - alertname: MimirToGrafanaCloudExporterDown
         eval_time: 200m
-  # Tests for `PrometheusMimirToGrafanaCloudFailures` alert
+  # Tests for `MimirToGrafanaCloudExporterFailures` alert
   - interval: 1m
     input_series:
       # remote read is working for 2 hours and then fails for 1 hour
       - series: 'prometheus_remote_storage_read_queries_total{job="mimir/mimir-to-grafana-cloud", cluster_id="golem", cluster_type="management_cluster", customer="giantswarm", installation="golem", namespace="mimir", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "_x60 10+0x60 0+0x60 10+0x60"
     alert_rule_test:
-      - alertname: PrometheusMimirToGrafanaCloudFailures
+      - alertname: MimirToGrafanaCloudExporterFailures
         eval_time: 70m
-      - alertname: PrometheusMimirToGrafanaCloudFailures
+      - alertname: MimirToGrafanaCloudExporterFailures
         eval_time: 160m
         exp_alerts:
           - exp_labels:
@@ -71,6 +71,6 @@ tests:
             exp_annotations:
               dashboard: "promRW001/prometheus-remote-write"
               description: "Prometheus Mimir to Grafana-Cloud is failing to read or write data."
-              opsrecipe: "mimir-grafana-cloud-exporter/"
-      - alertname: PrometheusMimirToGrafanaCloudFailures
+              opsrecipe: "mimir-grafana-cloud-exporter-failing/"
+      - alertname: MimirToGrafanaCloudExporterFailures
         eval_time: 200m

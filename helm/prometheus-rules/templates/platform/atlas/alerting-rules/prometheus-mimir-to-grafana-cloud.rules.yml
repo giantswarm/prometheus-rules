@@ -1,0 +1,51 @@
+{{- if .Values.mimir.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: prometheus-mimir-to-grafana-cloud.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+  - name: prometheus-mimir-to-grafana-cloud
+    rules:
+    - alert: PrometheusMimirToGrafanaCloudDown
+      annotations:
+        description: '{{`Prometheus Mimir to Grafana-Cloud is down.`}}'
+        opsrecipe: prometheus-mimir-to-grafana-cloud/
+        dashboard: iWowmlSmk/prometheus?var-cluster=mimir-to-grafana-cloud
+      expr: up{job="mimir/mimir-to-grafana-cloud"} == 0
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: PrometheusMimirToGrafanaCloudFailures
+      annotations:
+        description: '{{`Prometheus Mimir to Grafana-Cloud is failing to read or write data.`}}'
+        opsrecipe: prometheus-mimir-to-grafana-cloud/
+        dashboard: promRW001/prometheus-remote-write
+      expr: |
+        (
+          rate(prometheus_remote_storage_read_queries_total{job="mimir/mimir-to-grafana-cloud"}[2m]) == 0
+          or rate(prometheus_remote_storage_samples_failed_total{job="mimir/mimir-to-grafana-cloud"}[2m]) > 0
+          or rate(prometheus_remote_storage_samples_dropped_total{job="mimir/mimir-to-grafana-cloud"}[2m]) > 0
+        )
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+{{- end }}

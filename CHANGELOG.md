@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added a new alerting rule to `falco.rules.yml` to fire an alert for XZ-backdoor.
+- Added new alerting rules to monitor the Prometheus reading data from Mimir and sending them to Grafana Cloud.
 
 ## [4.1.2] - 2024-05-31
 
@@ -25,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.1.0] - 2024-05-30
 
-### Added 
+### Added
 
 - Add `aggregation:capi_infrastructure_crd_versions` metric to Grafana Cloud.
 

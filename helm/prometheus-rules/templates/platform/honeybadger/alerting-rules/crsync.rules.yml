@@ -20,7 +20,7 @@ spec:
       expr: kube_deployment_status_replicas_available{cluster_type="workload_cluster", cluster_id="operations", deployment=~"crsync-.*"} == 0
       for: 10m
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -35,7 +35,7 @@ spec:
       expr: crsync_sync_tags_total{registry="quay.io"} - on (cluster_id, repository) group_left sum by(cluster_id, repository) (crsync_sync_tags_total{registry!="quay.io"}) > 0
       for: 1h
       labels:
-        area: kaas
+        area: platform
         cancel_if_outside_working_hours: "true"
         severity: page
         team: honeybadger

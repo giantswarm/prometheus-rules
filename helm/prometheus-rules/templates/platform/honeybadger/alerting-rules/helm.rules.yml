@@ -16,7 +16,7 @@ spec:
       expr: increase(monitoring:helm:number_of_operations_on_release[15m]) > 5
       for: 5m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"

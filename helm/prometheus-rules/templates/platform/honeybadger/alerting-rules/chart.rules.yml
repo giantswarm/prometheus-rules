@@ -17,7 +17,7 @@ spec:
       expr: chart_operator_configmap_orphan > 0
       for: 10m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: honeybadger

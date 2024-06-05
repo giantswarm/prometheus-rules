@@ -162,4 +162,17 @@ spec:
         severity: page
         team: phoenix
         topic: kubernetes
+  - name: aws-jobs
+    rules:
+    - alert: JobHasNotBeenScheduledForTooLong
+      annotations:
+        description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 2 hours.`}}'
+        opsrecipe: job-has-not-been-scheduled-for-too-long/
+      expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="route53-manager"}) > 7200
+      for: 15m
+      labels:
+        area: kaas
+        severity: page
+        team: phoenix
+        topic: managementcluster
 {{- end }}

@@ -1,19 +1,20 @@
-{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-## TODO Remove when all vintage installations are gone
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    # No need for .Values.mimir.enabled condition - will be gone with Vintage
+{{- if not .Values.mimir.enabled }}
     cluster_type: "workload_cluster"
-  name: aws.node.workload-cluster.rules
+{{- end }}
+  name: node.aws.workload-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: aws.node
+  - name: node.aws
     rules:
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+    ## TODO Remove when all vintage installations are gone
     - alert: AWSWorkloadClusterNodeTooManyAutoTermination
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} has too many nodes terminated by node auto termination feature in a short time.`}}'
@@ -28,15 +29,16 @@ spec:
         severity: page
         team: phoenix
         topic: kubernetes
+    {{- end }}
     - alert: WorkloadClusterNodeUnexpectedTaintNodeWithImpairedVolumes
       annotations:
         description: '{{`Node {{ $labels.node }} has unexpected taint NodeWithImpairedVolumes`}}'
         opsrecipe: aws-node-taint-NodeWithImpairedVolumes/
-      expr: kube_node_spec_taint{key="NodeWithImpairedVolumes"}
+      expr: kube_node_spec_taint{key="NodeWithImpairedVolumes"} > 0
       for: 30m
       labels:
         area: kaas
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: phoenix
         topic: kubernetes
-{{- end }}
+

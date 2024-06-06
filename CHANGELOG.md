@@ -18,10 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - a new file named job.aws.rules that contains the aws specific alerts
   - move the rest of job.rules into the shared alerts because it is provider independent
 - Move the management cluster certificate alerts into the shared alerts because it is provider independent
+- Review and fix phoenix alerts towards Mimir and multi-provider MCs.
+- Moves cluster-autoscaler and vpa alerts to turtles.
 
 ### Fixed
 
 - Fix cabbage alerts for multi-provider wcs.
+
+### Removed
+
+- cleanup: remove scrape timeout inhibition leftovers (documentation and labels)
 
 ## [4.1.2] - 2024-05-31
 

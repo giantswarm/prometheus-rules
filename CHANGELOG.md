@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Review phoenix alerts towards Mimir.
 - Moves cluster-autoscaler and vpa alerts to turtles.
 
+### Fixed
+
+- Fix cabbage alerts for multi-provider wcs.
+
 ## [4.1.2] - 2024-05-31
 
 ### Changed

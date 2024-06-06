@@ -17,7 +17,7 @@ tests:
         eval_time: 50m
         exp_alerts:
           - exp_labels:
-              area: managedservices
+              area: platform
               severity: page
               team: cabbage
               topic: cilium
@@ -39,7 +39,7 @@ tests:
         eval_time: 70m
         exp_alerts:
           - exp_labels:
-              area: managedservices
+              area: platform
               severity: page
               team: cabbage
               topic: cilium
@@ -67,7 +67,7 @@ tests:
         eval_time: 60m
         exp_alerts:
           - exp_labels:
-              area: managedservices
+              area: platform
               severity: page
               team: cabbage
               topic: cilium
@@ -91,7 +91,7 @@ tests:
         eval_time: 260m
         exp_alerts:
           - exp_labels:
-              area: managedservices
+              area: platform
               severity: page
               team: cabbage
               topic: cilium

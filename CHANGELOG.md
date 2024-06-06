@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix and improve the ops-recipe test script.
 - Fix cabbage alerts for multi-provider wcs.
 - Fix shield alert area labels.
+- Fix `cert-exporter` alerting.
 
 ### Removed
 

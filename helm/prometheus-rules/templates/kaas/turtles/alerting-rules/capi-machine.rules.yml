@@ -24,7 +24,6 @@ spec:
             severity: page
             team: {{ include "providerTeam" . }}
             topic: managementcluster
-
         - alert: MachinePaused
           expr: capi_machine_annotation_paused{paused_value="true"} > 0
           for: 1h

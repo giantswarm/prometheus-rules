@@ -33,6 +33,18 @@ spec:
         severity: page
         team: cabbage
         topic: cilium
+    - alert: CiliumAPITooSlow
+      annotations:
+        description: '{{`Cilium API processing time is >50s pod="{{ $labels.pod }}" node="{{ $labels.node }}" method="{{ $labels.method}}" path="{{ $labels.path }}"`}}'
+        opsrecipe: cilium-performance-issues/#slow-cilium-api
+      expr: avg(rate(cilium_agent_api_process_time_seconds_sum{}[5m])/rate(cilium_agent_api_process_time_seconds_count{}[5m]) > 50) by (cluster_id, node, pod, method, path, installation, pipeline, provider)
+      for: 20m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: cilium
     - alert: CiliumNetworkPolicyFailed
       annotations:
         description: '{{`Too many Cilium Network Policy errors.`}}'

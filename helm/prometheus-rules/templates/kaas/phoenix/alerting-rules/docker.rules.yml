@@ -1,5 +1,5 @@
-## TODO Remove with vintage
 {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+## TODO Remove with vintage
 # newer clusters don't use docker anymore
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule

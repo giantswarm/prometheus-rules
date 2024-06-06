@@ -1,6 +1,6 @@
+{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
 ## TODO Remove with vintage
 # This rule applies to vintage aws management clusters
-{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:

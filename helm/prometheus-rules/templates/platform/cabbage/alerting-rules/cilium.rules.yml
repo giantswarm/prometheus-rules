@@ -17,7 +17,7 @@ spec:
       expr: avg(cilium_bpf_map_pressure) by (cluster_id, installation, pipeline, provider, map_name) * 100 > 80
       for: 15m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_outside_working_hours: "true"
         severity: page
         team: cabbage
@@ -29,7 +29,19 @@ spec:
       expr: avg(cilium_bpf_map_pressure) by (cluster_id, installation, pipeline, provider, map_name) * 100 > 95
       for: 15m
       labels:
-        area: managedservices
+        area: platform
+        severity: page
+        team: cabbage
+        topic: cilium
+    - alert: CiliumAPITooSlow
+      annotations:
+        description: '{{`Cilium API processing time is >50s pod="{{ $labels.pod }}" node="{{ $labels.node }}" method="{{ $labels.method}}" path="{{ $labels.path }}"`}}'
+        opsrecipe: cilium-performance-issues/#slow-cilium-api
+      expr: avg(rate(cilium_agent_api_process_time_seconds_sum{}[5m])/rate(cilium_agent_api_process_time_seconds_count{}[5m]) > 50) by (cluster_id, node, pod, method, path, installation, pipeline, provider)
+      for: 20m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: cabbage
         topic: cilium
@@ -42,7 +54,7 @@ spec:
       expr: max(rate(cilium_policy_change_total{outcome=~"fail.*"}[20m]) OR rate(cilium_policy_import_errors_total[20m])) by (cluster_id, installation, pipeline, provider) > 0
       for: 10m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_outside_working_hours: "true"
         severity: page
         team: cabbage

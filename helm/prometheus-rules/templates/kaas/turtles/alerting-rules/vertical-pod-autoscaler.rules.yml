@@ -3,11 +3,11 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: vpa.all.rules
+  name: vertical-pod-autoscaler.rules
   namespace: {{ .Values.namespace }}
 spec:
   groups:
-  - name: vpa
+  - name: vertical-pod-autoscaler
     rules:
     - alert: VpaComponentTooManyRestarts
       annotations:
@@ -24,8 +24,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_scrape_timeout: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: phoenix
-        topic: observability
+        team: turtles
+        topic: autoscaling

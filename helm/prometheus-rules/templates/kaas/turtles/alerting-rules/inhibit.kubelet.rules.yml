@@ -1,0 +1,22 @@
+# This rule applies to all clusters
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: inhibit.kubelet.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: inhibit.kubelet
+    rules:
+    - alert: InhibitionKubeletDown
+      annotations:
+        description: '{{`Kubelet ({{ $labels.instance }}) is down.`}}'
+      expr: label_replace(up{app="kubelet"}, "ip", "$1", "instance", "(.+):\\d+") == 0
+      labels:
+        kubelet_down: "true"
+        area: kaas
+        topic: kubernetes
+        team: turtles

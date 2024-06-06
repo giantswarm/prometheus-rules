@@ -59,7 +59,6 @@ spec:
         cancel_if_cluster_with_scaling_nodepools: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         cancel_if_cluster_has_no_workers: "true"
-        cancel_if_nodes_down: "true"
         severity: page
         team: {{ include "providerTeam" . }}
         topic: network

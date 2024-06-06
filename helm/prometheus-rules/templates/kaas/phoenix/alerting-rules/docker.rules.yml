@@ -1,3 +1,4 @@
+## TODO Remove with vintage
 {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
 # newer clusters don't use docker anymore
 apiVersion: monitoring.coreos.com/v1
@@ -22,6 +23,6 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: phoenix
         topic: observability
 {{- end }}

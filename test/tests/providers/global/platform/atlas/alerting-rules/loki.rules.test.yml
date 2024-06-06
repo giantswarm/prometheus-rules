@@ -29,7 +29,6 @@ tests:
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
-              cancel_if_scrape_timeout: "true"
               cluster_id: gaia-wc01
               installation: gaia
               pipeline: stable
@@ -59,7 +58,6 @@ tests:
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
-              cancel_if_scrape_timeout: "true"
               cluster_id: gaia-wc01
               installation: gaia
               provider: aws
@@ -92,7 +90,6 @@ tests:
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
-              cancel_if_scrape_timeout: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: gaia-wc01
               container: loki

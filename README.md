@@ -302,9 +302,9 @@ In order for Alertmanager inhibition to work we need 3 elements:
   - an Inhibition definition mapping source labels to target labels in the alertmanager config file
   - an Alert rule with some target labels
 
-An alert having a target label will be inhibited whenever the condition specified in the target label's name is fulfilled. This is why target labels' names are most of the time prefixed by "cancel_if_" (e.g "cancel_if_scrape_timeout").
+An alert having a target label will be inhibited whenever the condition specified in the target label's name is fulfilled. This is why target labels' names are most of the time prefixed by "cancel_if_" (e.g "cancel_if_outside_working_hours").
 
-An alert with a source label will define the conditions under which the target label is effective. For example, if an alert with the "scrape_timeout" label were to fire, all other alerts having the corresponding target label, i.e "cancel_if_scrape_timeout" would be inhibited.
+An alert with a source label will define the conditions under which the target label is effective. For example, if an alert with the "outside_working_hours" label were to fire, all other alerts having the corresponding target label, i.e "cancel_if_outside_working_hours" would be inhibited.
 
 This is possible thanks to the alertmanager config file stored in the Prometheus-Meta-operator which defines the target/source labels coupling.
 

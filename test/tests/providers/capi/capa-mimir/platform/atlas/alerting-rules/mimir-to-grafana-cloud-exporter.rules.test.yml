@@ -99,3 +99,37 @@ tests:
               dashboard: "promRW001/prometheus-remote-write"
               description: "Prometheus Mimir to Grafana-Cloud is failing to read or write data."
               opsrecipe: "mimir-grafana-cloud-exporter-failing/"
+  # Tests for `MimirToGrafanaCloudExporter` alert
+  - interval: 1m
+    input_series:
+      # remote read is working for 2 hours and then fails for 1 hour
+      - series: 'kube_pod_status_ready{condition="true", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="golem", customer="giantswarm", installation="golem", namespace="mimir", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "_x60 1+0x60 0+0x2 1+0x2 0+0x2 1+0x2 0+0x2 1+x60"
+    alert_rule_test:
+      - alertname: MimirToGrafanaCloudExporter
+        eval_time: 70m
+      - alertname: MimirToGrafanaCloudExporter
+        eval_time: 140m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: atlas
+              topic: observability
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "golem"
+              customer: "giantswarm"
+              installation: "golem"
+              namespace: "mimir"
+              pipeline: "testing"
+              provider: "capa"
+              region: "eu-west-2"
+            exp_annotations:
+              dashboard: "promRW001/prometheus-remote-write"
+              description: "Prometheus Mimir to Grafana-Cloud is restarting too much."
+              opsrecipe: "mimir-grafana-cloud-exporter-failing/"
+      - alertname: MimirToGrafanaCloudExporterFailures
+        eval_time: 180m

@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix cabbage alerts for multi-provider wcs.
+- Fix shield alert area labels.
 
 ### Removed
 

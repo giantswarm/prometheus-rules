@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added a new alerting rule to `falco.rules.yml` to fire an alert for XZ-backdoor.
 
+### Fixed
+
+- Fix cabbage alerts for multi-provider wcs.
+
 ## [4.1.2] - 2024-05-31
 
 ### Changed

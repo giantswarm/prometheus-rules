@@ -17,7 +17,7 @@ spec:
       expr: managed_app_deployment_status_replicas_unavailable{namespace=~"linkerd.*"} > 0
       for: 30m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_outside_working_hours: "true"
         severity: page
         team: cabbage

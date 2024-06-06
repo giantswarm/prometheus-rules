@@ -53,14 +53,6 @@ true
 {{- end -}}
 {{- end -}}
 
-{{- define "isClusterServiceInstalled" -}}
-{{ not (eq .Values.managementCluster.provider.flavor "capi") }}
-{{- end -}}
-
-{{- define "isVaultBeingMonitored" -}}
-{{ not (eq .Values.managementCluster.provider.flavor "capi") }}
-{{- end -}}
-
 {{- define "isBastionBeingMonitored" -}}
 {{ not (eq .Values.managementCluster.provider.flavor "capi") }}
 {{- end -}}

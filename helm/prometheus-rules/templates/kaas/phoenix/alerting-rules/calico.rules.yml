@@ -1,3 +1,4 @@
+## TODO Remove with vintage
 {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
@@ -21,7 +22,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: phoenix
         topic: kubernetes
     - alert: CalicoNodeMemoryHighUtilization
       annotations:
@@ -36,6 +37,6 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: phoenix
         topic: kubernetes
 {{- end }}

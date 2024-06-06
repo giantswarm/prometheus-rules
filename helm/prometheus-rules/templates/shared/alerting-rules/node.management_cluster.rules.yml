@@ -26,9 +26,9 @@ spec:
         description: '{{`Node {{ $labels.node }} status is flapping under load.`}}'
       expr: |
         (
-          sum(node_load15{cluster_type="management_cluster", app!="vault", role!="bastion"})
+          sum(node_load15{cluster_type="management_cluster", service="node-exporter"})
             by (cluster_id, installation, node, pipeline, provider)
-          / count(rate(node_cpu_seconds_total{cluster_type="management_cluster", app!="vault", role!="bastion", mode="idle"}[5m]))
+          / count(rate(node_cpu_seconds_total{cluster_type="management_cluster", service="node-exporter", mode="idle"}[5m]))
             by (cluster_id, installation, node, pipeline, provider)
         ) >= 2
         unless on (cluster_id, installation, node, pipeline, provider) (
@@ -101,9 +101,9 @@ spec:
       annotations:
         description: '{{`Machine {{ $labels.node }} CPU load is too high.`}}'
       expr: |
-        sum(node_load5{cluster_type="management_cluster", app!="vault", role!="bastion"})
+        sum(node_load5{cluster_type="management_cluster", service="node-exporter"})
           by (node, cluster_id, installation, pipeline, provider) > 2
-        * count(rate(node_cpu_seconds_total{cluster_type="management_cluster", mode="idle", app!="vault", role!="bastion"}[5m]))
+        * count(rate(node_cpu_seconds_total{cluster_type="management_cluster", mode="idle", service="node-exporter"}[5m]))
           by (node, cluster_id, installation, pipeline, provider)
       for: 3m
       labels:

@@ -12,9 +12,9 @@ spec:
     rules:
     - alert: OperatorkitErrorRateTooHighHoneybadger
       annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }} has reported errors. Please check logs.`}}'
+        description: '{{`{{ $labels.namespace }}/{{ $labels.pod }} has reported errors. Please check logs.`}}'
         opsrecipe: check-operator-error-rate-high/
-      expr: operatorkit_controller_error_total{app=~"app-operator.*|chart-operator.*"} > 5
+      expr: operatorkit_controller_error_total{pod=~"app-operator.*|chart-operator.*"} > 5
       for: 1m
       labels:
         area: kaas
@@ -23,8 +23,8 @@ spec:
         topic: qa
     - alert: OperatorNotReconcilingHoneybadger
       annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }} not reconciling controller {{$labels.controller}}. Please check logs.`}}'
-      expr: (time() - operatorkit_controller_last_reconciled{app=~"app-operator.*|chart-operator.*"}) / 60 > 30
+        description: '{{`{{ $labels.namespace }}/{{ $labels.pod }} not reconciling controller {{$labels.controller}}. Please check logs.`}}'
+      expr: (time() - operatorkit_controller_last_reconciled{pod=~"app-operator.*|chart-operator.*"}) / 60 > 30
       for: 10m
       labels:
         area: managedservices
@@ -33,9 +33,9 @@ spec:
         topic: releng
     - alert: OperatorkitErrorRateTooHighPhoenix
       annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
+        description: '{{`{{ $labels.namespace }}/{{ $labels.pod }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
         opsrecipe: check-operator-error-rate-high/
-      expr: rate(operatorkit_controller_error_total{app=~"aws-.*"}[5m]) > 1
+      expr: rate(operatorkit_controller_error_total{pod=~"aws-.*"}[5m]) > 1
       for: 10m
       labels:
         area: kaas
@@ -47,9 +47,9 @@ spec:
     # be paged to be able to fix the issue immediately.
     - alert: OperatorkitErrorRateTooHighAWS
       annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
+        description: '{{`{{ $labels.namespace }}/{{ $labels.pod }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
         opsrecipe: check-operator-error-rate-high/
-      expr: operatorkit_controller_error_total{app=~"aws-operator.+|cluster-operator.+"} > 5
+      expr: operatorkit_controller_error_total{pod=~"aws-operator.+|cluster-operator.+"} > 5
       for: 1m
       labels:
         area: kaas
@@ -62,9 +62,9 @@ spec:
     # wrong to fix the root cause eventually.
     - alert: OperatorkitCRNotDeletedAWS
       annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has not deleted object {{ $labels.namespace }}/{{ $labels.name }} of type {{ $labels.kind }} for too long.`}}'
+        description: '{{`{{ $labels.namespace }}/{{ $labels.pod }}@{{ $labels.app_version }} has not deleted object {{ $labels.namespace }}/{{ $labels.name }} of type {{ $labels.kind }} for too long.`}}'
         opsrecipe: check-not-deleted-object/
-      expr: (time() - operatorkit_controller_deletion_timestamp{app=~"aws-operator.+|cluster-operator.+", provider="aws"}) > 18000
+      expr: (time() - operatorkit_controller_deletion_timestamp{pod=~"aws-operator.+|cluster-operator.+", provider="aws"}) > 18000
       for: 5m
       labels:
         area: kaas
@@ -75,9 +75,9 @@ spec:
     # be paged to be able to fix the issue immediately.
     - alert: OperatorNotReconcilingAWS
       annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
+        description: '{{`{{ $labels.namespace }}/{{ $labels.pod }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
         opsrecipe: operator-not-reconciling/
-      expr: (sum by (cluster_id, installation, pipeline, provider, instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app=~"aws-operator.+|cluster-operator.+"}[10m])) == 0 and on (cluster_id, instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
+      expr: (sum by (cluster_id, installation, pipeline, provider, instance, pod, app_version, namespace)(increase(operatorkit_controller_event_count{pod=~"aws-operator.+|cluster-operator.+"}[10m])) == 0 and on (cluster_id, instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
       for: 20m
       labels:
         area: kaas
@@ -90,9 +90,9 @@ spec:
     # be paged to be able to fix the issue immediately.
     - alert: OperatorkitErrorRateTooHighKaas
       annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
+        description: '{{`{{ $labels.namespace }}/{{ $labels.pod }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
         opsrecipe: check-operator-error-rate-high/
-      expr: operatorkit_controller_error_total{app=~"ignition-operator|cert-operator|node-operator"} > 5
+      expr: operatorkit_controller_error_total{pod=~"ignition-operator.*|cert-operator.*|node-operator.*"} > 5
       for: 1m
       labels:
         area: kaas
@@ -103,9 +103,9 @@ spec:
     # be paged to be able to fix the issue immediately.
     - alert: OperatorNotReconcilingProviderTeam
       annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.app }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
+        description: '{{`{{ $labels.namespace }}/{{ $labels.pod }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
         opsrecipe: operator-not-reconciling/
-      expr: (sum by (cluster_id, installation, pipeline, provider, instance, app, app_version, namespace)(increase(operatorkit_controller_event_count{app="node-operator"}[10m])) == 0 and on (cluster_id, instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
+      expr: (sum by (cluster_id, installation, pipeline, provider, instance, pod, app_version, namespace)(increase(operatorkit_controller_event_count{pod=~"node-operator.*"}[10m])) == 0 and on (cluster_id, instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
       for: 20m
       labels:
         area: kaas

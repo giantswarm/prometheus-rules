@@ -21,7 +21,7 @@ spec:
         opsrecipe: falco-alert/
       expr: increase(falco_events{priority=~"0|1|2|3"}[10m] ) > 0
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -37,7 +37,7 @@ spec:
         opsrecipe: falco-alert/
       expr: increase(falco_events{priority=~"4|5"}[10m] ) > 0
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -52,7 +52,7 @@ spec:
         opsrecipe: falco-alert/
       expr: increase(falco_events{priority="6"}[10m] ) > 0
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -67,7 +67,7 @@ spec:
         opsrecipe: falco-alert/
       expr: falco_events{rule="Backdoored library loaded into SSHD (CVE-2024-3094)"} > 0
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_status_creating: "false"
         cancel_if_cluster_status_deleting: "false"
         cancel_if_cluster_status_updating: "false"

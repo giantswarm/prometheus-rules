@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed usage of yq, and jq in check-opsrecipes.sh
+- Fetch jq with make install-tools
+
 ### Added
 
 - Added a new alerting rule to `falco.rules.yml` to fire an alert for XZ-backdoor.

@@ -86,6 +86,10 @@ main() {
     local -a E_unexistingrecipe=()
     local returncode=0
 
+    local -r GIT_WORKDIR="$(git rev-parse --show-toplevel)"
+    local -r YQ=test/hack/bin/yq
+    local -r JQ=test/hack/bin/jq
+
     # Investigation section
     ########################
 
@@ -144,7 +148,7 @@ main() {
             fi
 
         # parse rules yaml files, and for each rule found output alertname, opsrecipe, and severity, space-separated, on one line.
-        done < <(yq -o json "$rulesFile" | jq -j '.spec.groups[].rules[] | .alert, " ", .annotations.opsrecipe, " ", .labels.severity, "\n"')
+        done < <("$GIT_WORKDIR/$YQ" -o json "$rulesFile" | "$GIT_WORKDIR/$JQ" -j '.spec.groups[]?.rules[] | .alert, " ", .annotations.opsrecipe, " ", .labels.severity, "\n"')
 
         checkedRules+=("$rulesFile")
     done < <(find "${RULES_FILES[@]}" -type f -print0)

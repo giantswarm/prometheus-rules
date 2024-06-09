@@ -1,5 +1,5 @@
-## TODO Remove with vintage
 {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+## TODO Remove when all vintage installations are gone
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:

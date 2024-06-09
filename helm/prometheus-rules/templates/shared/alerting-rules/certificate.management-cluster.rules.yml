@@ -23,13 +23,13 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: security
-    - alert: ManagementClusterAWSCertificateWillExpireInLessThanOneMonth
+    - alert: ManagementClusterCertificateWillExpireInLessThanOneMonth
       annotations:
         description: '{{`Certificate {{ $labels.path }} on {{ $labels.node }} will expire in less than one month.`}}'
         opsrecipe: renew-certificates/
-      expr: (cert_exporter_not_after{cluster_type="management_cluster", provider="aws", path!="/etc/kubernetes/ssl/service-account-crt.pem"} - time()) < 4 * 7 * 24 * 60 * 60
+      expr: (cert_exporter_not_after{cluster_type="management_cluster", path!="/etc/kubernetes/ssl/service-account-crt.pem"} - time()) < 4 * 7 * 24 * 60 * 60
       for: 5m
       labels:
         area: kaas

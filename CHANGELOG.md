@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Review and fix phoenix alerts towards Mimir and multi-provider MCs.
 - Moves cluster-autoscaler and vpa alerts to turtles.
 - Use `ready` replicas for Kyverno webhooks alert.
+- Moves ownership of alerts for shared components to turtles.
 
 ### Fixed
 

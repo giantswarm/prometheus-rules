@@ -7,11 +7,11 @@ metadata:
 {{- if not .Values.mimir.enabled }}
     cluster_type: "workload_cluster"
 {{- end }}
-  name: disk.workload-cluster.rules
+  name: core.storage.workload-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: disk
+  - name: core.storage.workload-cluster
     rules:
     - alert: DockerVolumeSpaceTooLow
       annotations:

@@ -24,7 +24,6 @@ spec:
               {{`Cluster {{ $labels.exported_namespace }}/{{ $labels.name }} stuck in {{ $labels.phase }} phase.`}}
             opsrecipe: capi-cluster/
             dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
-
         - alert: ClusterStatusNotReady
           expr: capi_cluster_status_condition{status="False", type="Ready"} > 0
           for: 1h

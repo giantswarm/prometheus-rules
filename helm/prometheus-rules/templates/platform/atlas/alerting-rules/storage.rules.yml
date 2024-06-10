@@ -20,7 +20,7 @@ spec:
       expr: kubelet_volume_stats_available_bytes{cluster_type="management_cluster", persistentvolumeclaim=~".*(alertmanager|loki|mimir|prometheus|pyroscope|tempo).*"}/kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~".*(alertmanager|loki|mimir|prometheus|pyroscope|tempo).*"} < 0.10
       for: 1h
       labels:
-        area: empowerment
+        area: platform
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas

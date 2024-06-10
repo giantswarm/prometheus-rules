@@ -17,7 +17,7 @@ spec:
       expr: label_replace(up{app=~"chart-operator.*"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"

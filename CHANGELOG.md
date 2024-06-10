@@ -25,15 +25,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use `ready` replicas for Kyverno webhooks alert.
 - Moves ownership of alerts for shared components to turtles.
 
-
 ### Fixed
 
 - Fixed usage of yq, and jq in check-opsrecipes.sh
 - Fetch jq with make install-tools
 - Fix and improve the check-opsrecipes.sh script so support <directory>/_index.md based ops-recipes.
 - Fix cabbage alerts for multi-provider wcs.
-- Fix a few area labels.
+- Fix a few area labels in alerts.
 - Fix `cert-exporter` alerting.
+- Fix `ManagementClusterDexAppMissing` use of absent for mimir.
 
 ### Removed
 

@@ -173,13 +173,13 @@ tests:
   # Test for MimirIngesterNeedsToBeScaledUp alert
   - interval: 1m
     input_series:
-      - series: 'sum by (namespace) (container_memory_working_set_bytes{container="ingester", namespace="mimir", cluster_type="management_cluster"}'
+      - series: 'sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir", cluster_type="management_cluster"}'
         values: "15+0x20 23+0x40 16+0x140 23+0x40 15+0x60" # mimir-ingester real memory usage gradually increases until it goes beyond 90% of the memory requests.
-      - series: 'sum by(namespace) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster"}'
+      - series: 'sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster"}'
         values: "24+0x300"                                 # mimir-ingester memory requests stay the same for the entire duration of the test.
-      - series: 'sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir", cluster_type="management_cluster"}[5m])) by (namespace)'
+      - series: 'sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir", cluster_type="management_cluster"}[5m])) by (cluster_id, installation, namespace, pipeline, provider)'
         values: "1+0x100 2.8+0x40 1+0x60 2.8+0x40 1+0x60"  # mimir-ingester real cpu usage gradually increases until it goes beyond 90% of the cpu requests.
-      - series: 'sum by(namespace) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster"})'
+      - series: 'sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster"})'
         values: "3+0x300"                                  # mimir-ingester cpu requests stay the same for the entire duration of the test
     alert_rule_test:
       - alertname: MimirIngesterNeedsToBeScaledUp
@@ -250,13 +250,13 @@ tests:
   # Test for MimirIngesterNeedsToBeScaledDown alert
   - interval: 1m
     input_series:
-      - series: 'sum by (namespace) (container_memory_working_set_bytes{container="ingester", namespace="mimir", cluster_type="management_cluster"}'
+      - series: 'sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir", cluster_type="management_cluster"}'
         values: "15+0x20 5+0x40 16+0x140 5+0x40 15+0x60" # mimir-ingester real memory usage gradually increases until it goes beyond 90% of the memory requests.
-      - series: 'sum by(namespace) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster"}'
+      - series: 'sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster"}'
         values: "24+0x300"                                 # mimir-ingester memory requests stay the same for the entire duration of the test.
-      - series: 'sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir", cluster_type="management_cluster"}[5m])) by (namespace)'
+      - series: 'sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir", cluster_type="management_cluster"}[5m])) by (cluster_id, installation, namespace, pipeline, provider)'
         values: "1+0x100 0.6+0x40 1+0x60 0.6+0x40 1+0x60"  # mimir-ingester real cpu usage gradually increases until it goes beyond 90% of the cpu requests.
-      - series: 'sum by(namespace) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster"})'
+      - series: 'sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster"})'
         values: "3+0x300"                                  # mimir-ingester cpu requests stay the same for the entire duration of the test
     alert_rule_test:
       - alertname: MimirIngesterNeedsToBeScaledDown

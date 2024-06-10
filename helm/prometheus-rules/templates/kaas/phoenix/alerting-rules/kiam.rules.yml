@@ -20,7 +20,7 @@ spec:
       expr: increase(kiam_metadata_find_role_errors_total[10m]) > 0
       for: 15m
       labels:
-        area: managedservices
+        area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"

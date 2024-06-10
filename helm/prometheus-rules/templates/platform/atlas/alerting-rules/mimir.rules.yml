@@ -92,7 +92,7 @@ spec:
     - alert: MimirIngesterNeedsToBeScaledUp
       annotations:
         description: 'Mimir ingester is consuming too much resources and needs to be scaled up.'
-        opsrecipe: mimir/
+        opsrecipe: mimir-ingester/
       expr: |-
         sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir"}) 
           / 
@@ -116,7 +116,7 @@ spec:
     - alert: MimirIngesterNeedsToBeScaledDown
       annotations:
         description: 'Mimir ingester is consuming very few resources and needs to be scaled down.'
-        opsrecipe: mimir/
+        opsrecipe: mimir-ingester/
       expr: |-
         sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir"}) 
           / 

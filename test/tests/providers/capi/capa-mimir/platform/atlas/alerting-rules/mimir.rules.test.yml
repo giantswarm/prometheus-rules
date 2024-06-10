@@ -202,7 +202,7 @@ tests:
               topic: observability
             exp_annotations:
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
-              opsrecipe: "mimir/"
+              opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledUp
         eval_time: 100m  # After 140m minutes, all should be back to normal
       - alertname: MimirIngesterNeedsToBeScaledUp
@@ -223,7 +223,7 @@ tests:
               topic: observability
             exp_annotations:
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
-              opsrecipe: "mimir/"
+              opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledUp
         eval_time: 180m  # After 140m minutes, all should be back to normal
       - alertname: MimirIngesterNeedsToBeScaledUp
@@ -244,7 +244,7 @@ tests:
               topic: observability
             exp_annotations:
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
-              opsrecipe: "mimir/"
+              opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledUp
         eval_time: 280m  # After 140m minutes, all should be back to normal
   # Test for MimirIngesterNeedsToBeScaledDown alert
@@ -279,7 +279,7 @@ tests:
               topic: observability
             exp_annotations:
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
-              opsrecipe: "mimir/"
+              opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledDown
         eval_time: 100m  # After 140m minutes, all should be back to normal
       - alertname: MimirIngesterNeedsToBeScaledDown
@@ -300,7 +300,7 @@ tests:
               topic: observability
             exp_annotations:
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
-              opsrecipe: "mimir/"
+              opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledDown
         eval_time: 180m  # After 140m minutes, all should be back to normal
       - alertname: MimirIngesterNeedsToBeScaledDown
@@ -321,6 +321,6 @@ tests:
               topic: observability
             exp_annotations:
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
-              opsrecipe: "mimir/"
+              opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledDown
         eval_time: 280m  # After 140m minutes, all should be back to normal

@@ -17,7 +17,7 @@ spec:
       expr: sum(kube_validatingwebhookconfiguration_info{validatingwebhookconfiguration=~"kyverno-.*"}) by (cluster_id, installation, pipeline, provider) > 0 and sum(kube_deployment_status_replicas{deployment=~"kyverno|kyverno-admission-controller"}) by (cluster_id, installation, pipeline, provider) == 0
       for: 15m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -34,7 +34,7 @@ spec:
       expr: aggregation:kyverno_resource_counts{kind=~"(generate|update)requests.kyverno.io"} > 5000
       for: 15m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -51,7 +51,7 @@ spec:
       expr: sum(kube_deployment_spec_replicas{deployment=~"kyverno|kyverno-kyverno-plugin|kyverno-policy-reporter"}) by (cluster_id, installation, pipeline, provider) == 0
       for: 4h
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -66,7 +66,7 @@ spec:
       expr: sum(kube_deployment_spec_replicas{deployment="kyverno"}) by (cluster_id, installation, pipeline, provider) != 0 and sum(kube_deployment_spec_replicas{deployment="kyverno"}) by (cluster_id, installation, pipeline, provider) < 3
       for: 1h
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"

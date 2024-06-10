@@ -1,5 +1,5 @@
-# This rule applies to all capi management clusters
 {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+# This rule applies to all capi management clusters
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:

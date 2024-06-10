@@ -59,7 +59,8 @@ listOpsRecipes () {
 
     # find all ops-recipes ".md" files, and keep only the opsrecipe name (may contain a path, like "rolling-nodes/rolling-nodes")
     find "$privateOpsrecipesParentDirectory"/content/docs/support-and-ops/ops-recipes -type f -name \*.md \
-        | sed -n 's_'"$privateOpsrecipesParentDirectory"'/content/docs/support-and-ops/ops-recipes/\(.*\).md_\1_p'
+        | sed -n 's_'"$privateOpsrecipesParentDirectory"'/content/docs/support-and-ops/ops-recipes/\(.*\).md_\1_p' \
+        | sed 's/\/_index//g' # Removes the _index.md files and keep the directory name
     rm -rf "$privateOpsrecipesParentDirectory"
 
     # Add extra opsrecipes
@@ -68,7 +69,6 @@ listOpsRecipes () {
     echo "workload-cluster-deployment-not-satisfied"
     echo "deployment-not-satisfied-china"
 }
-
 
 main() {
     local -a runInCi=false
@@ -85,6 +85,10 @@ main() {
     local -a E_norecipe=()
     local -a E_unexistingrecipe=()
     local returncode=0
+
+    local -r GIT_WORKDIR="$(git rev-parse --show-toplevel)"
+    local -r YQ=test/hack/bin/yq
+    local -r JQ=test/hack/bin/jq
 
     # Investigation section
     ########################
@@ -144,10 +148,10 @@ main() {
             fi
 
         # parse rules yaml files, and for each rule found output alertname, opsrecipe, and severity, space-separated, on one line.
-        done < <(yq -o json "$rulesFile" | jq -j '.spec.groups[].rules[] | .alert, " ", .annotations.opsrecipe, " ", .labels.severity, "\n"')
+        done < <("$GIT_WORKDIR/$YQ" -o json "$rulesFile" | "$GIT_WORKDIR/$JQ" -j '.spec.groups[]?.rules[] | .alert, " ", .annotations.opsrecipe, " ", .labels.severity, "\n"')
 
         checkedRules+=("$rulesFile")
-    done < <(find $RULES_FILES -type f -print0)
+    done < <(find "${RULES_FILES[@]}" -type f -print0)
 
 
     # Output section - let's write down our findings

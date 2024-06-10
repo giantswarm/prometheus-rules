@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed usage of yq, and jq in check-opsrecipes.sh
+- Fetch jq with make install-tools
+
 ### Added
 
 - Added a new alerting rule to `falco.rules.yml` to fire an alert for XZ-backdoor.
@@ -14,12 +19,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Review phoenix alerts towards Mimir.
+- Split the phoenix job alert into 2:
+  - a new file named job.aws.rules that contains the aws specific alerts
+  - move the rest of job.rules into the shared alerts because it is provider independent
+- Move the management cluster certificate alerts into the shared alerts because it is provider independent
+- Review and fix phoenix alerts towards Mimir and multi-provider MCs.
 - Moves cluster-autoscaler and vpa alerts to turtles.
 
 ### Fixed
 
+- Fix and improve the ops-recipe test script.
 - Fix cabbage alerts for multi-provider wcs.
+- Fix shield alert area labels.
+- Fix `cert-exporter` alerting.
 
 ### Removed
 

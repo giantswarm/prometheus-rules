@@ -29,7 +29,7 @@ tests:
         eval_time: 15m
         exp_alerts:
           - exp_labels:
-              area: managedservices
+              area: platform
               cluster_id: gremlin
               installation: gremlin
               pipeline: testing
@@ -49,7 +49,7 @@ tests:
         eval_time: 45m
         exp_alerts:
           - exp_labels:
-              area: managedservices
+              area: platform
               cluster_id: gremlin
               installation: gremlin
               pipeline: testing
@@ -70,7 +70,7 @@ tests:
         eval_time: 240m
         exp_alerts:
           - exp_labels:
-              area: managedservices
+              area: platform
               cluster_id: gremlin
               installation: gremlin
               pipeline: testing
@@ -90,7 +90,7 @@ tests:
         eval_time: 310m
         exp_alerts:
           - exp_labels:
-              area: managedservices
+              area: platform
               cluster_id: gremlin
               installation: gremlin
               pipeline: testing

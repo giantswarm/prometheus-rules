@@ -45,14 +45,6 @@ phoenix
 {{- end -}}
 {{- end -}}
 
-{{- define "isCertExporterInstalled" -}}
-{{- if has .Values.managementCluster.provider.kind (list "cloud-director" "vsphere" "capa") -}}
-false
-{{- else -}}
-true
-{{- end -}}
-{{- end -}}
-
 {{- define "isBastionBeingMonitored" -}}
 {{ not (eq .Values.managementCluster.provider.flavor "capi") }}
 {{- end -}}

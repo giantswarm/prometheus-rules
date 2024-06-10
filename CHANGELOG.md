@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added a new alerting rule to `falco.rules.yml` to fire an alert for XZ-backdoor.
 - Added `CiliumAPITooSlow`.
+- Added `CODEOWNERS` files.
 
 ### Changed
 
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Move the management cluster certificate alerts into the shared alerts because it is provider independent
 - Review and fix phoenix alerts towards Mimir and multi-provider MCs.
 - Moves cluster-autoscaler and vpa alerts to turtles.
+- Reviewed turtles alerts labels.
 - Use `ready` replicas for Kyverno webhooks alert.
 - Moves ownership of alerts for shared components to turtles.
 
@@ -28,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed usage of yq, and jq in check-opsrecipes.sh
 - Fetch jq with make install-tools
-- Fix and improve the check-opsrecipes.sh script to work with <directory>/_index.md opsrecipes.
+- Fix and improve the check-opsrecipes.sh script so support <directory>/_index.md based ops-recipes.
 - Fix cabbage alerts for multi-provider wcs.
 - Fix a few area labels.
 - Fix `cert-exporter` alerting.

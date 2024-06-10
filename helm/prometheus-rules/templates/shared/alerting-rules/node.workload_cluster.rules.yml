@@ -68,7 +68,7 @@ spec:
         ) >= 6
       for: 10m
       labels:
-        area: kaashelm/prometheus-rules/templates/shared/alerting-rules/net-exporter.rules.yml
+        area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}

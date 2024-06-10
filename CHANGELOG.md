@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added a new alerting rule to `falco.rules.yml` to fire an alert for XZ-backdoor.
 - Added `CiliumAPITooSlow`.
 - Added `CODEOWNERS` files.
+- Added `MimirIngesterNeedsToBeScaledUp` and `MimirIngesterNeedsToBeScaledDown` alerting rules to `mimir-rules.yml`.
 
 ### Changed
 

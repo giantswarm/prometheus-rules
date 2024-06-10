@@ -1,6 +1,6 @@
 ---
 rule_files:
-  - kyverno.all.rules.yml
+  - kyverno.rules.yml
 tests:
   - interval: 1m
     input_series:

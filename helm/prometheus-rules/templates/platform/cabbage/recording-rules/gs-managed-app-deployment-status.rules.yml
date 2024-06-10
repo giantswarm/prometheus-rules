@@ -1,3 +1,4 @@
+## Cabbage is the only user of those recording rules
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:

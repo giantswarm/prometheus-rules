@@ -7,7 +7,7 @@ metadata:
 {{- if not .Values.mimir.enabled }}
     cluster_type: "workload_cluster"
 {{- end }}
-  name: node.rules
+  name: node.workload-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
@@ -27,22 +27,6 @@ spec:
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: kubernetes
-    {{- if eq .Values.managementCluster.provider.kind "aws" }}
-    - alert: AWSWorkloadClusterNodeTooManyAutoTermination
-      annotations:
-        description: '{{`Cluster {{ $labels.cluster_id }} has too many nodes terminated by node auto termination feature in a short time.`}}'
-        opsrecipe: node-too-many-auto-termination-aws/
-      expr: increase(aws_operator_unhealthy_node_termination_count[60m]) > 10
-      for: 15m
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: page
-        team: phoenix
-        topic: kubernetes
-    {{- end }}
     - alert: NodeStateFlappingUnderLoad
       # Check if the kubelet status is flapping, unless the node is under load.
       # It helps to read this rule from the bottom upwards.
@@ -126,19 +110,6 @@ spec:
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: infrastructure
-    {{- if eq .Values.managementCluster.provider.kind "aws" }}
-    - alert: WorkloadClusterNodeUnexpectedTaintNodeWithImpairedVolumes
-      annotations:
-        description: '{{`Node {{ $labels.node }} has unexpected taint NodeWithImpairedVolumes`}}'
-        opsrecipe: aws-node-taint-NodeWithImpairedVolumes/
-      expr: kube_node_spec_taint{key="NodeWithImpairedVolumes"}
-      for: 30m
-      labels:
-        area: kaas
-        severity: notify
-        team: {{ include "providerTeam" . }}
-        topic: kubernetes
-    {{- end }}
     - alert: WorkloadClusterMasterMemoryUsageTooHigh
       annotations:
         description: '{{`Machine {{ $labels.instance }} memory usage is too high (less than 10% and 2G of allocatable memory).`}}'

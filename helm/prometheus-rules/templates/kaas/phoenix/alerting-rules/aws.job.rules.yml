@@ -1,4 +1,4 @@
-## TODO Remove with vintage
+## TODO Remove when all vintage installations are gone
 # This rule applies to vintage aws management clusters
 {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
 apiVersion: monitoring.coreos.com/v1

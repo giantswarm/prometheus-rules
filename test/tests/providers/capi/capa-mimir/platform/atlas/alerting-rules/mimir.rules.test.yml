@@ -152,7 +152,6 @@ tests:
     alert_rule_test:
       - alertname: MimirRestartingTooOften
         eval_time: 15m  # should be OK after 15 minutes
-        exp_alerts:
       - alertname: MimirRestartingTooOften
         eval_time: 85m  # After 85 minutes, should fire an alert for the t+85 error
         exp_alerts:
@@ -171,4 +170,157 @@ tests:
               opsrecipe: "mimir/"
       - alertname: MimirRestartingTooOften
         eval_time: 140m  # After 140m minutes, all should be back to normal
+  # Test for MimirIngesterNeedsToBeScaledUp alert
+  - interval: 1m
+    input_series:
+      - series: 'sum by (namespace) (container_memory_working_set_bytes{container="ingester", namespace="mimir", cluster_type="management_cluster"}'
+        values: "15+0x20 23+0x40 16+0x140 23+0x40 15+0x60" # mimir-ingester real memory usage gradually increases until it goes beyond 90% of the memory requests.
+      - series: 'sum by(namespace) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster"}'
+        values: "24+0x300"                                 # mimir-ingester memory requests stay the same for the entire duration of the test.
+      - series: 'sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir", cluster_type="management_cluster"}[5m])) by (namespace)'
+        values: "1+0x100 2.8+0x40 1+0x60 2.8+0x40 1+0x60"  # mimir-ingester real cpu usage gradually increases until it goes beyond 90% of the cpu requests.
+      - series: 'sum by(namespace) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster"})'
+        values: "3+0x300"                                  # mimir-ingester cpu requests stay the same for the entire duration of the test
+    alert_rule_test:
+      - alertname: MimirIngesterNeedsToBeScaledUp
+        eval_time: 15m  # should be OK after 15 minutes
+      - alertname: MimirIngesterNeedsToBeScaledUp
+        eval_time: 55m  # After 55 minutes, should fire an alert
         exp_alerts:
+          - exp_labels:
+              all_pipelines: "true"
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_type: management_cluster
+              container: mimir-ingester
+              namespace: mimir
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Mimir ingester is consuming very few resources and needs to be scaled down.
+              opsrecipe: "mimir/"
+      - alertname: MimirIngesterNeedsToBeScaledUp
+        eval_time: 100m  # After 140m minutes, all should be back to normal
+      - alertname: MimirIngesterNeedsToBeScaledUp
+        eval_time: 135m  # After 55 minutes, should fire an alert
+        exp_alerts:
+          - exp_labels:
+              all_pipelines: "true"
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_type: management_cluster
+              container: mimir-ingester
+              namespace: mimir
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Mimir ingester is consuming very few resources and needs to be scaled down.
+              opsrecipe: "mimir/"
+      - alertname: MimirIngesterNeedsToBeScaledUp
+        eval_time: 180m  # After 140m minutes, all should be back to normal
+      - alertname: MimirIngesterNeedsToBeScaledUp
+        eval_time: 235m  # After 55 minutes, should fire an alert
+        exp_alerts:
+          - exp_labels:
+              all_pipelines: "true"
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_type: management_cluster
+              container: mimir-ingester
+              namespace: mimir
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Mimir ingester is consuming very few resources and needs to be scaled down.
+              opsrecipe: "mimir/"
+      - alertname: MimirIngesterNeedsToBeScaledUp
+        eval_time: 280m  # After 140m minutes, all should be back to normal
+  # Test for MimirIngesterNeedsToBeScaledDown alert
+  - interval: 1m
+    input_series:
+      - series: 'sum by (namespace) (container_memory_working_set_bytes{container="ingester", namespace="mimir", cluster_type="management_cluster"}'
+        values: "15+0x20 5+0x40 16+0x140 5+0x40 15+0x60" # mimir-ingester real memory usage gradually increases until it goes beyond 90% of the memory requests.
+      - series: 'sum by(namespace) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster"}'
+        values: "24+0x300"                                 # mimir-ingester memory requests stay the same for the entire duration of the test.
+      - series: 'sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir", cluster_type="management_cluster"}[5m])) by (namespace)'
+        values: "1+0x100 0.6+0x40 1+0x60 0.6+0x40 1+0x60"  # mimir-ingester real cpu usage gradually increases until it goes beyond 90% of the cpu requests.
+      - series: 'sum by(namespace) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster"})'
+        values: "3+0x300"                                  # mimir-ingester cpu requests stay the same for the entire duration of the test
+    alert_rule_test:
+      - alertname: MimirIngesterNeedsToBeScaledDown
+        eval_time: 15m  # should be OK after 15 minutes
+      - alertname: MimirIngesterNeedsToBeScaledDown
+        eval_time: 55m  # After 55 minutes, should fire an alert
+        exp_alerts:
+          - exp_labels:
+              all_pipelines: "true"
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_type: management_cluster
+              container: mimir-ingester
+              namespace: mimir
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Mimir ingester is consuming very few resources and needs to be scaled down.
+              opsrecipe: "mimir/"
+      - alertname: MimirIngesterNeedsToBeScaledDown
+        eval_time: 100m  # After 140m minutes, all should be back to normal
+      - alertname: MimirIngesterNeedsToBeScaledDown
+        eval_time: 135m  # After 55 minutes, should fire an alert
+        exp_alerts:
+          - exp_labels:
+              all_pipelines: "true"
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_type: management_cluster
+              container: mimir-ingester
+              namespace: mimir
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Mimir ingester is consuming very few resources and needs to be scaled down.
+              opsrecipe: "mimir/"
+      - alertname: MimirIngesterNeedsToBeScaledDown
+        eval_time: 180m  # After 140m minutes, all should be back to normal
+      - alertname: MimirIngesterNeedsToBeScaledDown
+        eval_time: 235m  # After 55 minutes, should fire an alert
+        exp_alerts:
+          - exp_labels:
+              all_pipelines: "true"
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_type: management_cluster
+              container: mimir-ingester
+              namespace: mimir
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Mimir ingester is consuming very few resources and needs to be scaled down.
+              opsrecipe: "mimir/"
+      - alertname: MimirIngesterNeedsToBeScaledDown
+        eval_time: 280m  # After 140m minutes, all should be back to normal

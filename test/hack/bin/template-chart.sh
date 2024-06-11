@@ -7,6 +7,8 @@ main() {
   local -a providers
   mapfile -t providers <"$GIT_WORKDIR/test/conf/providers"
 
+  rm -rf "$GIT_WORKDIR"/test/hack/output/helm-chart/
+
   for provider in "${providers[@]}"; do
     echo "Templating chart for provider: $provider"
 

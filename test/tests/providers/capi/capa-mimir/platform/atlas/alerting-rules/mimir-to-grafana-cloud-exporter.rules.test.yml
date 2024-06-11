@@ -10,6 +10,23 @@ tests:
         values: "_x60 1+0x60 0+0x60 1+0x60"
     alert_rule_test:
       - alertname: MimirToGrafanaCloudExporterDown
+        eval_time: 50m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: atlas
+              topic: observability
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              job: mimir/mimir-to-grafana-cloud
+            exp_annotations:
+              dashboard: "iWowmlSmk/prometheus?var-cluster=mimir-to-grafana-cloud"
+              description: "Prometheus Mimir to Grafana-Cloud is down."
+              opsrecipe: "mimir-grafana-cloud-exporter-failing/"
+      - alertname: MimirToGrafanaCloudExporterDown
         eval_time: 70m
       - alertname: MimirToGrafanaCloudExporterDown
         eval_time: 160m
@@ -23,14 +40,14 @@ tests:
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
-              cluster_id: "golem"
-              customer: "giantswarm"
-              installation: "golem"
-              namespace: "mimir"
-              job: "mimir/mimir-to-grafana-cloud"
-              pipeline: "testing"
-              provider: "capa"
-              region: "eu-west-2"
+              cluster_id: golem
+              customer: giantswarm
+              installation: golem
+              namespace: mimir
+              job: mimir/mimir-to-grafana-cloud
+              pipeline: testing
+              provider: capa
+              region: eu-west-2
             exp_annotations:
               dashboard: "iWowmlSmk/prometheus?var-cluster=mimir-to-grafana-cloud"
               description: "Prometheus Mimir to Grafana-Cloud is down."
@@ -62,13 +79,9 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: "golem"
-              customer: "giantswarm"
               installation: "golem"
-              namespace: "mimir"
-              job: "mimir/mimir-to-grafana-cloud"
               pipeline: "testing"
               provider: "capa"
-              region: "eu-west-2"
             exp_annotations:
               dashboard: "promRW001/prometheus-remote-write"
               description: "Prometheus Mimir to Grafana-Cloud is failing to read or write data."
@@ -88,13 +101,9 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: "golem"
-              customer: "giantswarm"
               installation: "golem"
-              namespace: "mimir"
-              job: "mimir/mimir-to-grafana-cloud"
               pipeline: "testing"
               provider: "capa"
-              region: "eu-west-2"
             exp_annotations:
               dashboard: "promRW001/prometheus-remote-write"
               description: "Prometheus Mimir to Grafana-Cloud is failing to read or write data."

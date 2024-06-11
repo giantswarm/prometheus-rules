@@ -122,7 +122,7 @@ spec:
           / 
         sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte"}) 
           <= 0.30 
-        or 
+        and
         sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir"}[5m])) by (cluster_id, installation, namespace, pipeline, provider) 
           / 
         sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core"}) 

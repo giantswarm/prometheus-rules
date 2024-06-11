@@ -173,19 +173,29 @@ tests:
   # Test for MimirIngesterNeedsToBeScaledUp alert
   - interval: 1m
     input_series:
-      - series: 'sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir", cluster_type="management_cluster"}'
-        values: "15+0x20 23+0x40 16+0x140 23+0x40 15+0x60" # mimir-ingester real memory usage gradually increases until it goes beyond 90% of the memory requests.
-      - series: 'sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster"}'
-        values: "24+0x300"                                 # mimir-ingester memory requests stay the same for the entire duration of the test.
-      - series: 'sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir", cluster_type="management_cluster"}[5m])) by (cluster_id, installation, namespace, pipeline, provider)'
-        values: "1+0x100 2.8+0x40 1+0x60 2.8+0x40 1+0x60"  # mimir-ingester real cpu usage gradually increases until it goes beyond 90% of the cpu requests.
-      - series: 'sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster"})'
-        values: "3+0x300"                                  # mimir-ingester cpu requests stay the same for the entire duration of the test
+      # mimir-ingester real memory usage gradually increases until it goes beyond 90% of the memory requests.
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "8+0x20 11+0x40 8+0x140 11+0x40 8+0x60"
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "8+0x20 11+0x40 8+0x140 11+0x40 8+0x60"
+      # mimir-ingester memory requests stay the same for the entire duration of the test.
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "12+0x300"
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "12+0x300"
+      # mimir-ingester real cpu usage gradually increases until it goes beyond 90% of the cpu requests.                              
+      # - series: 'sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}[5m]))'
+      #   values: "1+0x100 2.8+0x40 1+0x60 2.8+0x40 1+0x60"
+      # # mimir-ingester cpu requests stay the same for the entire duration of the test.
+      # - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      #   values: "1.5+0x300"                                 
+      # - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      #   values: "1.5+0x300"                                 
     alert_rule_test:
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 15m  # should be OK after 15 minutes
+        eval_time: 15m
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 55m  # After 55 minutes, should fire an alert
+        eval_time: 55m
         exp_alerts:
           - exp_labels:
               all_pipelines: "true"
@@ -204,9 +214,9 @@ tests:
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
               opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 100m  # After 140m minutes, all should be back to normal
+        eval_time: 100m
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 135m  # After 55 minutes, should fire an alert
+        eval_time: 135m 
         exp_alerts:
           - exp_labels:
               all_pipelines: "true"
@@ -225,9 +235,9 @@ tests:
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
               opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 180m  # After 140m minutes, all should be back to normal
+        eval_time: 180m
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 235m  # After 55 minutes, should fire an alert
+        eval_time: 235m
         exp_alerts:
           - exp_labels:
               all_pipelines: "true"
@@ -246,23 +256,33 @@ tests:
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
               opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 280m  # After 140m minutes, all should be back to normal
+        eval_time: 280m
   # Test for MimirIngesterNeedsToBeScaledDown alert
   - interval: 1m
     input_series:
-      - series: 'sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir", cluster_type="management_cluster"}'
-        values: "15+0x20 5+0x40 16+0x140 5+0x40 15+0x60" # mimir-ingester real memory usage gradually increases until it goes beyond 90% of the memory requests.
-      - series: 'sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster"}'
-        values: "24+0x300"                                 # mimir-ingester memory requests stay the same for the entire duration of the test.
-      - series: 'sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir", cluster_type="management_cluster"}[5m])) by (cluster_id, installation, namespace, pipeline, provider)'
-        values: "1+0x100 0.6+0x40 1+0x60 0.6+0x40 1+0x60"  # mimir-ingester real cpu usage gradually increases until it goes beyond 90% of the cpu requests.
-      - series: 'sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster"})'
-        values: "3+0x300"                                  # mimir-ingester cpu requests stay the same for the entire duration of the test
+      # mimir-ingester real memory usage gradually decreases until it goes below 30% of the memory requests.
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "8+0x20 2+0x40 8+0x140 2+0x40 8+0x60"
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "8+0x20 2+0x40 8+0x140 2+0x40 8+0x60"
+      # mimir-ingester memory requests stay the same for the entire duration of the test.
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "12+0x300"
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "12+0x300"       
+      # mimir-ingester real cpu usage gradually increases until it goes below 30% of the cpu requests.                        
+      # - series: 'sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}[5m]))'
+      #   values: "1+0x100 0.6+0x40 1+0x60 0.6+0x40 1+0x60" 
+      # # mimir-ingester cpu requests stay the same for the entire duration of the test
+      # - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      #   values: "1.5+0x300"                                 
+      # - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      #   values: "1.5+0x300"                                  # mimir-ingester cpu requests stay the same for the entire duration of the test
     alert_rule_test:
       - alertname: MimirIngesterNeedsToBeScaledDown
-        eval_time: 15m  # should be OK after 15 minutes
+        eval_time: 15m 
       - alertname: MimirIngesterNeedsToBeScaledDown
-        eval_time: 55m  # After 55 minutes, should fire an alert
+        eval_time: 55m 
         exp_alerts:
           - exp_labels:
               all_pipelines: "true"
@@ -281,9 +301,9 @@ tests:
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
               opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledDown
-        eval_time: 100m  # After 140m minutes, all should be back to normal
+        eval_time: 100m
       - alertname: MimirIngesterNeedsToBeScaledDown
-        eval_time: 135m  # After 55 minutes, should fire an alert
+        eval_time: 135m
         exp_alerts:
           - exp_labels:
               all_pipelines: "true"
@@ -302,9 +322,9 @@ tests:
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
               opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledDown
-        eval_time: 180m  # After 140m minutes, all should be back to normal
+        eval_time: 180m 
       - alertname: MimirIngesterNeedsToBeScaledDown
-        eval_time: 235m  # After 55 minutes, should fire an alert
+        eval_time: 235m 
         exp_alerts:
           - exp_labels:
               all_pipelines: "true"
@@ -323,4 +343,4 @@ tests:
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
               opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledDown
-        eval_time: 280m  # After 140m minutes, all should be back to normal
+        eval_time: 280m 

@@ -42,7 +42,7 @@ spec:
         opsrecipe: kyverno-certificate-secret-will-expire-in-less-than-two-days/
       expr: (cert_exporter_secret_not_after{name=~".*kyverno.*"} - time()) < 2 * 24 * 60 * 60
       labels:
-        area: managedservices
+        area: kaas
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: shield

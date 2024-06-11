@@ -13,28 +13,27 @@ spec:
   groups:
   - name: management-cluster
     rules:
-    {{- if (eq .Values.managementCluster.provider.kind "aws") }}
     - alert: ManagementClusterHasLessThanThreeNodes
       annotations:
         description: '{{`Management cluster {{ $labels.cluster_id }} has less than 3 nodes.`}}'
         opsrecipe: management-cluster-less-than-three-workers/
-      expr: sum(kubelet_node_name{cluster_type="management_cluster"} * on (cluster_id, node) kube_node_role{role="worker", cluster_type="management_cluster"}) by (cluster_id) < 3
+      expr: sum(kubelet_node_name{cluster_type="management_cluster"} * on (cluster_id, node) kube_node_role{role="worker", cluster_type="management_cluster"}) by (cluster_id, installation, pipeline, provider) < 3
       for: 1h
       labels:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: managementcluster
     - alert: ManagementClusterMissingNodes
       annotations:
         description: '{{`Management cluster {{ $labels.cluster_id }} has less than 4 minimum nodes.`}}'
-      expr: sum(kube_node_status_condition{cluster_type="management_cluster", condition="Ready", status="true"}) by (cluster_id) < 4
+      expr: sum(kube_node_status_condition{cluster_type="management_cluster", condition="Ready", status="true"}) by (cluster_id, installation, pipeline, provider) < 4
       for: 15m
       labels:
         area: kaas
         severity: notify
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: managementcluster
     - alert: ManagementClusterCPUUsageTooHigh
       annotations:
@@ -46,7 +45,7 @@ spec:
         area: kass
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: managementcluster
     - alert: ManagementClusterMemoryUsageTooHigh
       annotations:
@@ -58,12 +57,12 @@ spec:
         area: kass
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: managementcluster
     - alert: ManagementClusterPodLimitAlmostReached
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} is almost exceeding its pod limit.`}}'
-      expr: (sum(kube_pod_info{cluster_type="management_cluster"}) by (cluster_id) / sum(kube_node_status_capacity{resource="pods", cluster_type="management_cluster"}) by (cluster_id)) > 0.8
+      expr: (sum(kube_pod_info{cluster_type="management_cluster"}) by (cluster_id, installation, pipeline, provider) / sum(kube_node_status_capacity{resource="pods", cluster_type="management_cluster"}) by (cluster_id, installation, pipeline, provider)) > 0.8
       for: 5m
       labels:
         area: kaas
@@ -72,8 +71,10 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: managementcluster
+    {{- if (eq .Values.managementCluster.provider.kind "aws") }}
+    ## TODO Remove when all vintage clusters are gone
     - alert: ManagementClusterCriticalPodNotRunning
       annotations:
         description: '{{`Critical pod {{ $labels.namespace }}/{{ $labels.pod }} is not running.`}}'

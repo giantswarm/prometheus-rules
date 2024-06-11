@@ -23,20 +23,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Moves cluster-autoscaler and vpa alerts to turtles.
 - Reviewed turtles alerts labels.
 - Use `ready` replicas for Kyverno webhooks alert.
-- Moves ownership of alerts for shared components to turtles.
+- Sort out shared alert ownership by distributing them all to teams.
 
 ### Fixed
 
 - Fixed usage of yq, and jq in check-opsrecipes.sh
 - Fetch jq with make install-tools
-- Fix and improve the check-opsrecipes.sh script so support <directory>/_index.md based ops-recipes.
-- Fix cabbage alerts for multi-provider wcs.
-- Fix a few area labels in alerts.
-- Fix `cert-exporter` alerting.
+- Fixed and improve the check-opsrecipes.sh script to support <directory>/_index.md based ops-recipes.
+- Fixed cabbage alerts for multi-provider MCs.
+- Fixed all area alert labels.
+- Fixed `cert-exporter` alerts to page on all providers.
 - Fix `ManagementClusterDexAppMissing` use of absent for mimir.
 
 ### Removed
 
+- cleanup: get rid of microendpoint alerts as it never fired and probably never will
 - cleanup: remove scrape timeout inhibition leftovers (documentation and labels)
 
 ## [4.1.2] - 2024-05-31

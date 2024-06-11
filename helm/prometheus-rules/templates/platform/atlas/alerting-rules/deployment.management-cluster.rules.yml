@@ -20,7 +20,7 @@ spec:
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"alertmanager.*|grafana.*|prometheus.*|promxy.*|mimir.*|loki.*|object-storage.*|logging-operator.*|silence-operator.*|sloth.*"} > 0
       for: 30m
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -35,7 +35,7 @@ spec:
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"app-admission-controller-.+|app-operator-.+|chart-operator-.+", cluster_id!~"argali|giraffe"} > 0
       for: 30m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -50,7 +50,7 @@ spec:
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"app-admission-controller-.+|app-operator-.+|chart-operator-.+", cluster_id=~"argali|giraffe"} > 0
       for: 3h
       labels:
-        area: managedservices
+        area: platform
         severity: page
         team: honeybadger
         topic: managementcluster
@@ -61,7 +61,7 @@ spec:
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"kyverno.*", cluster_id!~"argali|giraffe"} > 0
       for: 30m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -76,7 +76,7 @@ spec:
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"kyverno.*", cluster_id=~"argali|giraffe"} > 0
       for: 30m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -91,7 +91,7 @@ spec:
       expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator-.+|cluster-operator-.+|cluster-api-core-webhook.*|event-exporter-.*|etcd-kubernetes-resources-count-exporter-.*|upgrade-schedule-operator.*|worker-.+|master-.+", cluster_id!~"argali|giraffe"}, "service", "/", "namespace", "deployment") > 0
       for: 30m
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -105,7 +105,7 @@ spec:
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-operator-.+|cluster-operator-.+|coredns-.+|event-exporter-.+|etcd-kubernetes-resources-count-exporter.*", cluster_id=~"argali|giraffe"} > 0
       for: 3h
       labels:
-        area: kaas
+        area: platform
         severity: page
         team: {{ include "providerTeam" . }}
         topic: managementcluster
@@ -116,7 +116,7 @@ spec:
       expr: kube_deployment_status_replicas_available{cluster_type="management_cluster", deployment=~"([a-z]*)-operator([a-z,-]*)",provider="aws"} + kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"([a-z]*)-operator([a-z,-]*)",provider="aws"} == 0
       for: 4h
       labels:
-        area: kaas
+        area: platform
         severity: notify
         team: phoenix
         topic: managementcluster
@@ -127,7 +127,7 @@ spec:
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator.*|cluster-operator.*|cluster-api-core-webhook.*|event-exporter-.*|upgrade-schedule-operator.*|event-exporter-app.*", cluster_id=~"argali|giraffe"} > 0
       for: 3h
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -142,7 +142,7 @@ spec:
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"(ingress-nginx|nginx-ingress-controller)-.+", cluster_id!~"argali|giraffe"} > 0
       for: 30m
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -156,7 +156,7 @@ spec:
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"(ingress-nginx|nginx-ingress-controller|coredns)-.+", cluster_id=~"argali|giraffe"} > 0
       for: 3h
       labels:
-        area: kaas
+        area: platform
         severity: page
         team: cabbage
         topic: managementcluster
@@ -171,7 +171,7 @@ spec:
       {{- end }}
       for: 30m
       labels:
-        area: kaas
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"

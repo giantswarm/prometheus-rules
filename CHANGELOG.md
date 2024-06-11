@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Update team bigmac rules based on the label changes
 - Split the phoenix job alert into 2:
   - a new file named job.aws.rules that contains the aws specific alerts
   - move the rest of job.rules into the shared alerts because it is provider independent

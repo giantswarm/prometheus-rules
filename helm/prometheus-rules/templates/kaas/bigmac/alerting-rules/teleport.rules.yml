@@ -22,10 +22,10 @@ spec:
               "secret",
               "(.*)-teleport-join-token"
             )
-        ) by (cluster_id, installation, provider)
+        ) by (pipeline, cluster_id, installation, provider)
         != sum (
             capi_cluster_status_phase{phase="Provisioned"}
-        ) by (cluster_id, installation, provider)
+        ) by (pipeline, cluster_id, installation, provider)
       for: 60m
       labels:
         area: kaas
@@ -48,10 +48,10 @@ spec:
               "configmap",
               "(.*)-teleport-kube-agent-config"
             )
-        ) by (cluster_id, installation, provider)
+        ) by (pipeline, cluster_id, installation, provider)
         != sum (
             capi_cluster_status_phase{phase="Provisioned"}
-        ) by (cluster_id, installation, provider)
+        ) by (pipeline, cluster_id, installation, provider)
       for: 60m
       labels:
         area: kaas

@@ -39,6 +39,7 @@ kaas/turtles/alerting-rules/job.rules.yml
 kaas/turtles/alerting-rules/kubelet.rules.yml
 kaas/turtles/alerting-rules/management-cluster.rules.yml
 kaas/turtles/alerting-rules/net-exporter.rules.yml
+kaas/turtles/alerting-rules/network.rules.yml
 kaas/turtles/alerting-rules/node-exporter.rules.yml
 kaas/turtles/alerting-rules/node.management-cluster.rules.yml
 kaas/turtles/alerting-rules/node.workload-cluster.rules.yml
@@ -69,7 +70,7 @@ platform/atlas/recording-rules/service-level.rules.yml
 platform/cabbage/alerting-rules/coredns.rules.yml
 platform/cabbage/alerting-rules/external-dns.rules.yml
 platform/cabbage/alerting-rules/ingress-controller.rules.yml
-platform/cabbage/alerting-rules/network.rules.yml
+platform/cabbage/alerting-rules/dns.rules.yml
 platform/cabbage/recording-rules/gs-managed-app-deployment-status.rules.yml
 platform/honeybadger/alerting-rules/chart.rules.yml
 platform/honeybadger/alerting-rules/helm.rules.yml

@@ -1,0 +1,46 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: dns.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: dns
+    rules:
+    - alert: DNSErrorRateTooHigh
+      annotations:
+        description: '{{`DNS error rate is too high for {{ or $labels.pod_name $labels.instance }} to {{ $labels.host }}, using {{ $labels.proto }}.`}}'
+        opsrecipe: network-error/
+      expr: rate(dns_resolve_error_total[15m]) > 0.015
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_with_no_nodepools: "true"
+        cancel_if_cluster_with_notready_nodepools: "true"
+        cancel_if_cluster_with_scaling_nodepools: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_cluster_has_no_workers: "true"
+        severity: page
+        team: cabbage
+        topic: network
+    - alert: DNSCheckErrorRateTooHigh
+      annotations:
+        description: '{{`DNS check error rate is too high for {{ or $labels.pod_name $labels.instance }}.`}}'
+        opsrecipe: network-error/
+      expr: rate(dns_error_total[15m]) > 0.015
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_with_no_nodepools: "true"
+        cancel_if_cluster_with_notready_nodepools: "true"
+        cancel_if_cluster_with_scaling_nodepools: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_cluster_has_no_workers: "true"
+        severity: page
+        team: cabbage
+        topic: network

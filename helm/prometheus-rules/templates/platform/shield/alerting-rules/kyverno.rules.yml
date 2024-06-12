@@ -8,7 +8,7 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: webhooks
+  - name: kyverno.webhooks
     rules:
     - alert: KyvernoWebhookHasNoAvailableReplicas
       annotations:
@@ -25,7 +25,7 @@ spec:
         severity: page
         team: shield
         topic: kyverno
-  - name: resources
+  - name: kyverno.resources
     rules:
     - alert: KyvernoUpdateRequestsCountTooHigh
       annotations:
@@ -42,7 +42,7 @@ spec:
         severity: notify
         team: shield
         topic: kyverno
-  - name: replicas
+  - name: kyverno.replicas
     rules:
     - alert: KyvernoScaledDownTooLong
       annotations:

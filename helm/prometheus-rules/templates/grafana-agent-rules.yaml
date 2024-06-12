@@ -27,5 +27,5 @@ spec:
   namespace: mimir
   # used by renovate
   # repo: giantswarm/grafana-agent-app
-  version: 0.4.3
+  version: 0.4.4
 {{- end -}}

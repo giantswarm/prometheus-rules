@@ -4,7 +4,7 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: kyverno.all.rules
+  name: kyverno.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
@@ -14,7 +14,7 @@ spec:
       annotations:
         description: 'Kyverno has no available replicas but webhooks are present.'
         opsrecipe: kyverno-webhooks/
-      expr: sum(kube_validatingwebhookconfiguration_info{validatingwebhookconfiguration=~"kyverno-.*"}) by (cluster_id, installation, pipeline, provider) > 0 and sum(kube_deployment_status_replicas{deployment=~"kyverno|kyverno-admission-controller"}) by (cluster_id, installation, pipeline, provider) == 0
+      expr: sum(kube_validatingwebhookconfiguration_info{validatingwebhookconfiguration=~"kyverno-.*"}) by (cluster_id, installation, pipeline, provider) > 0 and sum(kube_deployment_status_replicas_ready{deployment=~"kyverno|kyverno-admission-controller"}) by (cluster_id, installation, pipeline, provider) == 0
       for: 15m
       labels:
         area: platform

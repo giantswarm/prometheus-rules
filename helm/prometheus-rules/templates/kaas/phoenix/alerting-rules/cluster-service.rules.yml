@@ -22,7 +22,7 @@ spec:
       expr: cluster_service_key_pair_total > 2400
       for: 10m
       labels:
-        area: storage
+        area: kaas
         severity: page
         team: phoenix
         topic: managementcluster

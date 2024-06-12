@@ -16,7 +16,6 @@ install-tools:
 	./test/hack/bin/fetch-tools.sh
 
 template-chart: install-tools ## prepare the helm chart
-	test/hack/bin/architect helm template --dir helm/prometheus-rules --dry-run
 	bash ./test/hack/bin/template-chart.sh
 
 test-rules: install-tools template-chart ## run unit tests for alerting rules

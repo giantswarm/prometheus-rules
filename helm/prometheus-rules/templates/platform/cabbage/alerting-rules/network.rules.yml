@@ -4,11 +4,11 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: network.all.rules
+  name: network.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: network.all
+  - name: network
     rules:
     - alert: DNSErrorRateTooHigh
       annotations:
@@ -44,6 +44,7 @@ spec:
         severity: page
         team: cabbage
         topic: network
+    ## TODO Sort those alerts ownership
     - alert: NetworkErrorRateTooHigh
       annotations:
         description: '{{`Network error rate is too high for {{ or $labels.pod_name $labels.instance }} to {{ $labels.host }}.`}}'

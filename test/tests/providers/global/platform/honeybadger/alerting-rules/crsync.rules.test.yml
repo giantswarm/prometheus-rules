@@ -13,7 +13,7 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: "CrsyncDeploymentNotSatisfied"
-              area: "kaas"
+              area: platform
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
@@ -41,7 +41,7 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: "CrsyncTooManyTagsMissing"
-              area: "kaas"
+              area: platform
               cancel_if_outside_working_hours: "true"
               cluster_id: "example"
               registry: "quay.io"

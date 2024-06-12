@@ -48,7 +48,7 @@ spec:
         cancel_if_cluster_has_no_workers: "true"
         severity: page
         team: phoenix
-    {{- if eq .Values.managementCluster.provider.kind "aws" }}
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
     ## TODO Remove when all vintage installations are gone
     - alert: WorkloadClusterCriticalPodNotRunningAWS
       annotations:

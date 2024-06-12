@@ -16,7 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Restrict `grafana-agent-rules` CiliumNetworkPolicy.
-- Update team bigmac rules based on the label changes
 - Reviewed turtles alerts labels.
 - Use `ready` replicas for Kyverno webhooks alert.
 - Sort out shared alert ownership by distributing them all to teams.
@@ -29,7 +28,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Merge `kiam` and `inhibit.kiam` into one file.
   - Support any AWS WC in the aws-load-balancer-controller alerts.
   - Create a shared IRSA alerts rule file to avoid duplication between capa and vintage aws.
-- Review and fix cabbage alerts for multi-provider MCs.
+- Review and fix cabbage alerts for multi-provider MCs and Mimir.
+- Review and fix shield alerts for multi-provider MCs and Mimir.
+- Review and fix honeybadger alerts for multi-provider MCs and Mimir.
+- Review and fix bigmac alerts for multi-provider MCs and Mimir.
+  - Fix `ManagementClusterDexAppMissing` use of absent for mimir.
+  - Update team bigmac rules based on the label changes
 
 ### Fixed
 
@@ -38,7 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed and improve the check-opsrecipes.sh script to support <directory>/_index.md based ops-recipes.
 - Fixed all area alert labels.
 - Fixed `cert-exporter` alerts to page on all providers.
-- Fix `ManagementClusterDexAppMissing` use of absent for mimir.
 
 ### Removed
 

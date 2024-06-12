@@ -1,4 +1,5 @@
-{{- if eq .Values.managementCluster.provider.kind "aws" }}
+{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+## TODO Remove when all vintage installations are gone
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -11,7 +12,7 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: aws
+  - name: aws.management-cluster
     rules:
     - alert: AWSClusterCreationFailed
       annotations:
@@ -189,4 +190,17 @@ spec:
         severity: page
         team: phoenix
         topic: aws
+  - name: aws-jobs
+    rules:
+    - alert: JobHasNotBeenScheduledForTooLong
+      annotations:
+        description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 2 hours.`}}'
+        opsrecipe: job-has-not-been-scheduled-for-too-long/
+      expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="route53-manager"}) > 7200
+      for: 15m
+      labels:
+        area: kaas
+        severity: page
+        team: phoenix
+        topic: managementcluster
 {{- end }}

@@ -13,7 +13,7 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: "FluxSuspendedForTooLong"
-              area: "empowerment"
+              area: platform
               cancel_if_outside_working_hours: "true"
               exported_namespace: "flux-giantswarm"
               installation: "test"

@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Restrict `grafana-agent-rules` CiliumNetworkPolicy.
 - Update team bigmac rules based on the label changes
 - Split the phoenix job alert into 2:
   - a new file named job.aws.rules that contains the aws specific alerts
@@ -59,7 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.1.0] - 2024-05-30
 
-### Added 
+### Added
 
 - Add `aggregation:capi_infrastructure_crd_versions` metric to Grafana Cloud.
 

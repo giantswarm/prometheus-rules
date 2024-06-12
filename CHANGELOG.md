@@ -17,15 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Restrict `grafana-agent-rules` CiliumNetworkPolicy.
 - Update team bigmac rules based on the label changes
-- Split the phoenix job alert into 2:
-  - a new file named job.aws.rules that contains the aws specific alerts
-  - move the rest of job.rules into the shared alerts because it is provider independent
 - Move the management cluster certificate alerts into the shared alerts because it is provider independent
-- Review and fix phoenix alerts towards Mimir and multi-provider MCs.
-- Moves cluster-autoscaler and vpa alerts to turtles.
 - Reviewed turtles alerts labels.
 - Use `ready` replicas for Kyverno webhooks alert.
 - Sort out shared alert ownership by distributing them all to teams.
+- Review and fix phoenix alerts towards Mimir and multi-provider MCs.
+  - Moves cluster-autoscaler and vpa alerts to turtles.
+  - Split the phoenix job alert into 2:
+    - a new file named job.aws.rules that contains the aws specific alerts
+    - move the rest of job.rules into the shared alerts because it is provider independent
+  - Support any AWS WC in the aws-load-balancer-controller alerts.
 
 ### Fixed
 

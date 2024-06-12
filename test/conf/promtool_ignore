@@ -6,6 +6,7 @@ kaas/phoenix/alerting-rules/aws.node.workload-cluster.rules.yml
 kaas/phoenix/alerting-rules/aws.workload-cluster.rules.yml
 kaas/phoenix/alerting-rules/capa.management-cluster.rules.yml
 kaas/phoenix/alerting-rules/dns-operator-azure.rules.yml
+kaas/phoenix/alerting-rules/irsa.rules.yml
 kaas/phoenix/alerting-rules/vintage.aws.management-cluster.rules.yml
 kaas/phoenix/alerting-rules/vintage.calico.rules.yml
 kaas/phoenix/alerting-rules/vintage.cluster-service.rules.yml

@@ -15,28 +15,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Update team bigmac rules based on the label changes
-- Split the phoenix job alert into 2:
-  - a new file named job.aws.rules that contains the aws specific alerts
-  - move the rest of job.rules into the shared alerts because it is provider independent
-- Move the management cluster certificate alerts into the shared alerts because it is provider independent
-- Review and fix phoenix alerts towards Mimir and multi-provider MCs.
-- Moves cluster-autoscaler and vpa alerts to turtles.
+- Restrict `grafana-agent-rules` CiliumNetworkPolicy.
 - Reviewed turtles alerts labels.
 - Use `ready` replicas for Kyverno webhooks alert.
 - Sort out shared alert ownership by distributing them all to teams.
+- Review and fix phoenix alerts towards Mimir and multi-provider MCs.
+  - Move core components alerts from phoenix to turtles (`cluster-autoscaler`, `vertical-pod-autoscaler`, `kubelet`, `etcd-kubernetes-resources-count-exporter`, `certificates`)
+  - Split the phoenix job alert into 2:
+    - Add the aws specific job alerts in the `vintage.aws.management-cluster.rules` file.
+    - Move the rest of `job.rules` to turtles because it is provider independent
+  - Prefix all vintage alerts with `vintage` to facilitate maintenance.
+  - Merge `kiam` and `inhibit.kiam` into one file.
+  - Support any AWS WC in the aws-load-balancer-controller alerts.
+  - Create a shared IRSA alerts rule file to avoid duplication between capa and vintage aws.
+- Review and fix cabbage alerts for multi-provider MCs and Mimir.
+- Review and fix shield alerts for multi-provider MCs and Mimir.
+- Review and fix honeybadger alerts for multi-provider MCs and Mimir.
+- Review and fix bigmac alerts for multi-provider MCs and Mimir.
+  - Fix `ManagementClusterDexAppMissing` use of absent for mimir.
+  - Update team bigmac rules based on the label changes
 
 ### Fixed
 
 - Fixed usage of yq, and jq in check-opsrecipes.sh
 - Fetch jq with make install-tools
 - Fixed and improve the check-opsrecipes.sh script to support <directory>/_index.md based ops-recipes.
-- Fixed cabbage alerts for multi-provider MCs.
 - Fixed all area alert labels.
 - Fixed `cert-exporter` alerts to page on all providers.
-- Fix `ManagementClusterDexAppMissing` use of absent for mimir.
 - Fix PromtailDown alert to fire only when the node is ready.
-  
+
 ### Removed
 
 - cleanup: get rid of microendpoint alerts as it never fired and probably never will
@@ -56,7 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.1.0] - 2024-05-30
 
-### Added 
+### Added
 
 - Add `aggregation:capi_infrastructure_crd_versions` metric to Grafana Cloud.
 

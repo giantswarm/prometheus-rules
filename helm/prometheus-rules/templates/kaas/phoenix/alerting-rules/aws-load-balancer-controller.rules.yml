@@ -1,4 +1,4 @@
-{{- if eq .Values.managementCluster.provider.kind "aws" }}
+# This rule applies to vintage aws and capa workload clusters
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -18,7 +18,7 @@ spec:
       annotations:
         description: '{{`AWS load balancer controller pod {{ $labels.namespace}}/{{ $labels.pod }} on {{ $labels.cluster_id}} is throwing {{ $labels.error_code }} errors when contacting AWS API.`}}'
         opsrecipe: alb-errors
-      expr: sum(increase(aws_api_calls_total{error_code != ""}[20m])) by (error_code,namespace,pod,cluster_id) > 0
+      expr: sum(increase(aws_api_calls_total{cluster_type="workload_cluster", error_code != "", provider=~"aws|capa|eks"}[20m])) by (cluster_id, error_code, installation, namespace, pipeline, provider, pod) > 0
       for: 40m
       labels:
         area: kaas
@@ -33,7 +33,7 @@ spec:
       annotations:
         description: '{{`AWS load balancer controller pod {{ $labels.namespace }}/{{ $labels.pod }} on {{ $labels.cluster_id }} is throwing errors while reconciling the {{ $labels.controller }} controller.`}}'
         opsrecipe: alb-errors
-      expr: sum(increase(controller_runtime_reconcile_total{service="aws-load-balancer-controller", result = "error"}[20m])) by (controller,namespace,pod,cluster_id) > 0
+      expr: sum(increase(controller_runtime_reconcile_total{cluster_type="workload_cluster", provider=~"aws|capa|eks", result = "error", service="aws-load-balancer-controller"}[20m])) by (cluster_id, controller, installation, namespace, pipeline, provider, pod) > 0
       for: 40m
       labels:
         area: kaas
@@ -44,4 +44,3 @@ spec:
         severity: page
         team: phoenix
         topic: alb
-{{- end }}

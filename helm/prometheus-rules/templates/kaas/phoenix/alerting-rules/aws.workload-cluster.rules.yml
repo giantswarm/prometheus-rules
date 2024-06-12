@@ -1,23 +1,25 @@
-{{- if eq .Values.managementCluster.provider.kind "aws" }}
+# This rule applies to vintage aws and capa workload clusters
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    # No need for .Values.mimir.enabled condition - will be gone with Vintage
+    {{- if not .Values.mimir.enabled }}
     cluster_type: "workload_cluster"
+    {{- end }}
   name: aws.workload-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: aws
+  - name: aws.workload-cluster
     rules:
     - alert: WorkloadClusterContainerIsRestartingTooFrequentlyAWS
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/
-      expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"aws-node.*|kiam-agent.*|kiam-server.*|cluster-autoscaler.*|ebs-plugin.*|aws-pod-identity-webhook.*|etcd-kubernetes-resources-count-exporter.*"}[1h]),"service","/","namespace","pod") > 10
+      ## TODO Review this list once all vintage installations are gone
+      expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"aws-node.*|kiam-agent.*|kiam-server.*|ebs-(plugin|csi).*|aws-pod-identity-webhook.*"}[1h]), "service", "/", "namespace", "pod") > 10
       for: 10m
       labels:
         area: kaas
@@ -29,54 +31,12 @@ spec:
         severity: page
         team: phoenix
         topic: kubernetes
-    - alert: WorkloadClusterCriticalPodNotRunningAWS
-      annotations:
-        description: '{{`Critical pod {{ $labels.namespace }}/{{ $labels.pod }} is not running.`}}'
-        opsrecipe: critical-pod-is-not-running/
-      expr: kube_pod_container_status_running{namespace="kube-system",container=~"(k8s-api-server|k8s-controller-manager|k8s-scheduler)"} != 1 or label_replace(absent(kube_pod_container_status_running{namespace="kube-system",container="k8s-api-server"}), "pod", "$1", "container", "(.+)") == 1 or label_replace(absent(kube_pod_container_status_running{namespace="kube-system",container="k8s-controller-manager"}), "pod", "$1", "container", "(.+)") == 1 or label_replace(absent(kube_pod_container_status_running{namespace="kube-system",container="k8s-scheduler"}), "pod", "$1", "container", "(.+)") == 1
-      for: 20m
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_kube_state_metrics_down: "true"
-        severity: page
-        team: phoenix
-        topic: kubernetes
-    - alert: WorkloadClusterControlPlaneNodeMissingAWS
-      annotations:
-        description: '{{`Control plane node is missing.`}}'
-        opsrecipe: master-node-missing/
-      expr: count by (cluster_id) (kubernetes_build_info{app="kubelet"} unless on (node) kube_node_role{role!~"control-plane|master"}) == 0
-      for: 30m
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        control_plane_node_down: "true"
-        severity: page
-        team: phoenix
-        topic: kubernetes
-    - alert: WorkloadClusterHAControlPlaneDownForTooLong
-      annotations:
-        description: '{{`Control plane node in HA setup is down for a long time.`}}'
-        opsrecipe: master-node-missing/
-      expr: sum by (cluster_id) (kubernetes_build_info{app="kubelet"} * on (node) kube_node_role{role="control-plane"}) == 2 or sum by (cluster_id) (kubernetes_build_info{app="kubelet"} * on (node) kube_node_role{role="master"}) == 2
-      for: 30m
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_outside_working_hours: "true"
-        control_plane_node_down: "true"
-        severity: page
-        team: phoenix
-        topic: kubernetes
     - alert: WorkloadClusterPodPendingAWS
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
         opsrecipe: pod-stuck-in-pending/
-      expr: kube_pod_status_phase{namespace="kube-system",pod=~"(aws-node.*|kiam-agent.*|kiam-server.*|cluster-autoscaler.*|ebs-csi-.*)",phase="Pending"} == 1
+      ## TODO Review this list once all vintage installations are gone
+      expr: kube_pod_status_phase{namespace="kube-system",pod=~"(aws-node.*|kiam-agent.*|kiam-server.*|ebs-(plugin|csi).*)", phase="Pending"} == 1
       for: 15m
       labels:
         area: kaas
@@ -88,9 +48,25 @@ spec:
         cancel_if_cluster_has_no_workers: "true"
         severity: page
         team: phoenix
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+    ## TODO Remove when all vintage installations are gone
+    - alert: WorkloadClusterCriticalPodNotRunningAWS
+      annotations:
+        description: '{{`Critical pod {{ $labels.namespace }}/{{ $labels.pod }} is not running.`}}'
+        opsrecipe: critical-pod-is-not-running/
+      expr: kube_pod_container_status_running{namespace="kube-system", container=~"(k8s-api-server|k8s-controller-manager|k8s-scheduler)"} != 1 or label_replace(absent(kube_pod_container_status_running{namespace="kube-system", container="k8s-api-server"}), "pod", "$1", "container", "(.+)") == 1 or label_replace(absent(kube_pod_container_status_running{namespace="kube-system", container="k8s-controller-manager"}), "pod", "$1", "container", "(.+)") == 1 or label_replace(absent(kube_pod_container_status_running{namespace="kube-system", container="k8s-scheduler"}), "pod", "$1", "container", "(.+)") == 1
+      for: 20m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        severity: page
+        team: phoenix
+        topic: kubernetes
     - alert: WorkloadClusterAWSCNIIpAlmostExhausted
       annotations:
-        description: '{{`IPs exhausted for aws-cni subnet {{ $labels.id }} in AZ {{ $labels.availabvility_zone }}.`}}'
+        description: '{{`IPs exhausted for aws-cni subnet {{ $labels.id }} in AZ {{ $labels.availability_zone }}.`}}'
         opsrecipe: aws-ips-exhausted/
       expr: min(aws_operator_subnet_available_ips_percentage{subnet_type="aws-cni"}) by (account, availability_zone, cluster_id, id) < 0.1
       for: 5m
@@ -111,4 +87,4 @@ spec:
         severity: page
         team: phoenix
         topic: workloadcluster
-{{- end }}
+    {{- end }}

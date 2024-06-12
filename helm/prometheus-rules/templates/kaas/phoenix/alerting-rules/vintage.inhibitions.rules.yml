@@ -9,11 +9,11 @@ metadata:
     {{- include "labels.common" . | nindent 4 }}
     # No need for .Values.mimir.enabled condition - will be gone with Vintage
     cluster_type: "management_cluster"
-  name: inhibit.aws.management-cluster.rules
+  name: vintage.inhibitions.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: inhibit.aws.management-cluster
+  - name: vintage.inhibitions
     rules:
     - alert: InhibitionClusterStatusCreating
       annotations:
@@ -90,7 +90,7 @@ spec:
     - alert: InhibitionInstanceStateNotRunning
       annotations:
         description: '{{`Instance at {{ $labels.private_dns }} is not in ''running'' state.`}}'
-      expr: label_replace( aws_operator_ec2_instance_status {private_dns!=""} == 0, "node", "$1", "private_dns", "(.*)")
+      expr: label_replace(aws_operator_ec2_instance_status {private_dns!=""} == 0, "node", "$1", "private_dns", "(.*)")
       labels:
         area: kaas
         instance_state_not_running: "true"

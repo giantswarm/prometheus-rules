@@ -16,7 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Restrict `grafana-agent-rules` CiliumNetworkPolicy.
-- Reviewed turtles alerts labels.
 - Use `ready` replicas for Kyverno webhooks alert.
 - Sort out shared alert ownership by distributing them all to teams.
 - Review and fix phoenix alerts towards Mimir and multi-provider MCs.
@@ -34,6 +33,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Review and fix bigmac alerts for multi-provider MCs and Mimir.
   - Fix `ManagementClusterDexAppMissing` use of absent for mimir.
   - Update team bigmac rules based on the label changes
+- Review and fix atlas alerts for multi-provider MCs and Mimir.
+  - Fix alerts using absent metrics for Mimir.
+- Review and fix turtles alerts for multi-provider MCs and Mimir.
+  - Fix alerts using absent metrics for Mimir.
+  - Reviewed turtles alerts labels.
 
 ### Fixed
 

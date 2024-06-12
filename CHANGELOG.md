@@ -17,15 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Restrict `grafana-agent-rules` CiliumNetworkPolicy.
 - Update team bigmac rules based on the label changes
-- Move the management cluster certificate alerts into the shared alerts because it is provider independent
 - Reviewed turtles alerts labels.
 - Use `ready` replicas for Kyverno webhooks alert.
 - Sort out shared alert ownership by distributing them all to teams.
 - Review and fix phoenix alerts towards Mimir and multi-provider MCs.
-  - Move cluster-autoscaler and vpa alerts to turtles.
+  - Move core components alerts from phoenix to turtles (`cluster-autoscaler`, `vertical-pod-autoscaler`, `kubelet`, `etcd-kubernetes-resources-count-exporter`, `certificates`)
   - Split the phoenix job alert into 2:
     - Add the aws specific job alerts in the `vintage.aws.management-cluster.rules` file.
-    - Move the rest of job.rules to turtles because it is provider independent
+    - Move the rest of `job.rules` to turtles because it is provider independent
   - Prefix all vintage alerts with `vintage` to facilitate maintenance.
   - Merge `kiam` and `inhibit.kiam` into one file.
   - Support any AWS WC in the aws-load-balancer-controller alerts.

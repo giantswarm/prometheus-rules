@@ -42,6 +42,7 @@ kaas/turtles/alerting-rules/net-exporter.rules.yml
 kaas/turtles/alerting-rules/node-exporter.rules.yml
 kaas/turtles/alerting-rules/node.management-cluster.rules.yml
 kaas/turtles/alerting-rules/node.workload-cluster.rules.yml
+kaas/turtles/alerting-rules/pods.core.rules.yml
 kaas/turtles/alerting-rules/release.rules.yml
 kaas/turtles/alerting-rules/storage.management-cluster.rules.yml
 kaas/turtles/alerting-rules/storage.workload-cluster.rules.yml

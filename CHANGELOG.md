@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Prefix all vintage alerts with `vintage` to facilitate maintenance.
   - Merge `kiam` and `inhibit.kiam` into one file.
   - Support any AWS WC in the aws-load-balancer-controller alerts.
+  - Create a shared IRSA alerts rule file to avoid duplication between capa and vintage aws.
 - Review and fix cabbage alerts for multi-provider MCs.
 
 ### Fixed

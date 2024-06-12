@@ -62,18 +62,4 @@ spec:
         severity: page
         team: phoenix
         topic: kubernetes
-    - alert: IRSATooManyErrors
-      annotations:
-        description: '{{`IRSA bootstrap for Cluster {{ $labels.cluster_id }} failed.`}}'
-        opsrecipe: irsa-operator-error/
-        dashboard: bdiako8tt1b7kc/capa-agregated-error-logs-for-capa-controllers
-      expr: irsa_operator_cluster_errors > 0
-      for: 10m
-      labels:
-        area: kaas
-        cancel_if_kube_state_metrics_down: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: phoenix
-        topic: aws
 {{- end }}

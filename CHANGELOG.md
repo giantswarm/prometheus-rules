@@ -22,19 +22,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use `ready` replicas for Kyverno webhooks alert.
 - Sort out shared alert ownership by distributing them all to teams.
 - Review and fix phoenix alerts towards Mimir and multi-provider MCs.
-  - Moves cluster-autoscaler and vpa alerts to turtles.
+  - Move cluster-autoscaler and vpa alerts to turtles.
   - Split the phoenix job alert into 2:
-    - Add the aws jobs only in the `vintage.aws.management-cluster.rules` file.
-    - move the rest of job.rules into the shared alerts because it is provider independent
+    - Add the aws specific job alerts in the `vintage.aws.management-cluster.rules` file.
+    - Move the rest of job.rules to turtles because it is provider independent
   - Prefix all vintage alerts with `vintage` to facilitate maintenance.
   - Merge `kiam` and `inhibit.kiam` into one file.
+  - Support any AWS WC in the aws-load-balancer-controller alerts.
+- Review and fix cabbage alerts for multi-provider MCs.
 
 ### Fixed
 
 - Fixed usage of yq, and jq in check-opsrecipes.sh
 - Fetch jq with make install-tools
 - Fixed and improve the check-opsrecipes.sh script to support <directory>/_index.md based ops-recipes.
-- Fixed cabbage alerts for multi-provider MCs.
 - Fixed all area alert labels.
 - Fixed `cert-exporter` alerts to page on all providers.
 - Fix `ManagementClusterDexAppMissing` use of absent for mimir.
@@ -43,10 +44,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - cleanup: get rid of microendpoint alerts as it never fired and probably never will
 - cleanup: remove scrape timeout inhibition leftovers (documentation and labels)
-
-### Fixed
-
-- Fix honeybadger area labels.
 
 ## [4.1.2] - 2024-05-31
 

@@ -1,6 +1,6 @@
 ---
 rule_files:
-  - node-exporter.all.rules.yml
+  - node-exporter.rules.yml
 
 tests:
   # NodeExporterCollectorFailed tests

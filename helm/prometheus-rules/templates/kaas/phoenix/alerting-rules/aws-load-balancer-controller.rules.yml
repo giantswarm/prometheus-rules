@@ -21,7 +21,7 @@ spec:
       expr: sum(increase(aws_api_calls_total{error_code != ""}[20m])) by (error_code,namespace,pod,cluster_id) > 0
       for: 40m
       labels:
-        area: managedservices
+        area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -36,7 +36,7 @@ spec:
       expr: sum(increase(controller_runtime_reconcile_total{service="aws-load-balancer-controller", result = "error"}[20m])) by (controller,namespace,pod,cluster_id) > 0
       for: 40m
       labels:
-        area: managedservices
+        area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"

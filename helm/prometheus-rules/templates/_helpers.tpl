@@ -27,14 +27,7 @@ giantswarm.io/service-type: {{ .Values.serviceType }}
 {{- end -}}
 
 {{- define "providerTeam" -}}
-{{- if has .Values.managementCluster.provider.kind (list "cloud-director" "vsphere") -}}
-rocket
-{{- else if has .Values.managementCluster.provider.kind (list "capa" "capz") -}}
-{{- /* hydra alerts merged into phoenix business hours on-call */ -}}
-phoenix
-{{- else -}}
-phoenix
-{{- end -}}
+'{{`{{ if or (eq .Labels.provider "cloud-director") (eq .Labels.provider "vsphere") }}rocket{{ else }}phoenix{{ end }}`}}'
 {{- end -}}
 
 {{- define "workingHoursOnly" -}}
@@ -43,26 +36,6 @@ phoenix
 {{- else -}}
 "false"
 {{- end -}}
-{{- end -}}
-
-{{- define "isCertExporterInstalled" -}}
-{{- if has .Values.managementCluster.provider.kind (list "cloud-director" "vsphere" "capa") -}}
-false
-{{- else -}}
-true
-{{- end -}}
-{{- end -}}
-
-{{- define "isClusterServiceInstalled" -}}
-{{ not (eq .Values.managementCluster.provider.flavor "capi") }}
-{{- end -}}
-
-{{- define "isVaultBeingMonitored" -}}
-{{ not (eq .Values.managementCluster.provider.flavor "capi") }}
-{{- end -}}
-
-{{- define "isBastionBeingMonitored" -}}
-{{ not (eq .Values.managementCluster.provider.flavor "capi") }}
 {{- end -}}
 
 {{- define "namespaceNotGiantswarm" -}}

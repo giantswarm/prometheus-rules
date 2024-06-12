@@ -1,0 +1,47 @@
+# This rule applies to all cloud workload clusters
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
+    cluster_type: "workload_cluster"
+{{- end }}
+  name: cluster-autoscaler.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: cluster-autoscaler
+    rules:
+    - alert: ClusterAutoscalerUnneededNodes
+      annotations:
+        description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has unneeded nodes.`}}'
+        opsrecipe: cluster-autoscaler-scaling/
+      expr: cluster_autoscaler_unneeded_nodes_count{cluster_type="workload_cluster", provider=~"aws|capa|capz|eks"} > 0
+      for: 240m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        severity: page
+        team: turtles
+        topic: cluster-autoscaler
+    - alert: ClusterAutoscalerFailedScaling
+      annotations:
+        description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has failed scaling up.`}}'
+        opsrecipe: cluster-autoscaler-scaling/
+      expr: increase(cluster_autoscaler_failed_scale_ups_total{cluster_type="workload_cluster", provider=~"aws|capa|capz|eks"}[5m]) > 1
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: turtles
+        topic: cluster-autoscaler

@@ -29,7 +29,7 @@ spec:
       annotations:
         description: '{{`cert-manager in namespace {{ $labels.namespace }} is down.`}}'
         opsrecipe: cert-manager-down/
-      expr: label_replace(up{app=~"cert-manager-(app|controller)"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
+      expr: label_replace(up{job=~"cert-manager-(app|controller)"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:
         area: kaas

@@ -24,16 +24,16 @@ import (
 * - an Alert with some target labels
 *
 * example:
-* - Alert `ScrapeTimeout` has label `scrape_timeout=true`
-* - Inhibition definition says `source_matchers: [scrape_timeout=true], target_matchers: [cancel_if_scrape_timeout=true]` (leaving out the equal part to simplify)
-* - Alert `MyAlert` has label `cancel_if_scrape_timeout=true`
+* - Alert `InhibitionOutsideWorkingHours` has label `outside_working_hours=true`
+* - Inhibition definition says `source_matchers: [outside_working_hours=true], target_matchers: [cancel_if_outside_working_hours=true]` (leaving out the equal part to simplify)
+* - Alert `MyAlert` has label `cancel_if_outside_working_hours=true`
 *
 * GLOSSARY
 * https://github.com/giantswarm/prometheus-rules/#inhibitions
 * am_sourceMatchers and am_targetMatchers are the labels defined in the alertmanager config file
 * sourceLabels are the labels defined in the alerting rules from which originate the inhibitions
-* 	--> For example, 'scrape_timeout' is the source label for the 'cancel_if_scrape_timeout' inhibition label
-* cancelLabels is another name for the inhibition labels (for example : 'cancel_if_scrape_timeout')
+* 	--> For example, 'outside_working_hours' is the source label for the 'cancel_if_outside_working_hours' inhibition label
+* cancelLabels is another name for the inhibition labels (for example : 'cancel_if_outside_working_hours')
 **/
 const output = "../output/helm-chart"
 const alertRulesPath = "alerting-rules"

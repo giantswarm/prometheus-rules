@@ -1,0 +1,29 @@
+## TODO Remove when all vintage installations are gone
+# This rule applies to vintage aws management clusters
+{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    # No need for .Values.mimir.enabled condition - will be gone with Vintage
+    cluster_type: "management_cluster"
+  name: aws.job.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: aws-jobs
+    rules:
+    - alert: JobHasNotBeenScheduledForTooLong
+      annotations:
+        description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 2 hours.`}}'
+        opsrecipe: job-has-not-been-scheduled-for-too-long/
+      expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="route53-manager"}) > 7200
+      for: 15m
+      labels:
+        area: kaas
+        severity: page
+        team: phoenix
+        topic: managementcluster
+{{- end }}

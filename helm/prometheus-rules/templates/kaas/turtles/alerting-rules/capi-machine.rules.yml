@@ -1,0 +1,42 @@
+{{- if eq .Values.managementCluster.provider.flavor "capi" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels: {{- include "labels.common" . | nindent 4}}
+  name: capi-machine.rules
+  namespace: {{.Values.namespace}}
+spec:
+  groups:
+    - name: capi-machine
+      rules:
+        - alert: MachineUnhealthyPhase
+          annotations:
+            description: |-
+              {{`Machine {{ $labels.exported_namespace}}/{{ $labels.name }} stuck in phase {{ $labels.phase }} for more than 30 minutes.`}}
+            opsrecipe: capi-machine/
+            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
+          expr: capi_machine_status_phase{phase!="Running", name!~".*bastion.*"} > 0
+          for: 30m
+          labels:
+            area: kaas
+            cancel_if_prometheus_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: {{ include "providerTeam" . }}
+            topic: managementcluster
+        - alert: MachinePaused
+          expr: capi_machine_annotation_paused{paused_value="true"} > 0
+          for: 1h
+          labels:
+            area: kaas
+            cancel_if_prometheus_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: notify
+            team: {{ include "providerTeam" . }}
+            topic: managementcluster
+          annotations:
+            description: |-
+              {{`Machine {{ $labels.exported_namespace}}/{{ $labels.name }} is paused.`}}
+            opsrecipe: capi-machine/
+            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
+{{- end }}

@@ -1,0 +1,58 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
+    cluster_type: "management_cluster"
+{{- end }}
+  name: etcdbackup.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: etcdbackup
+    rules:
+    - alert: ETCDBackupJobFailedOrStuck
+      annotations:
+        description: '{{`Job {{ $labels.job }} failed or has not been completed for more than 30 minutes.`}}'
+        opsrecipe: etcd-backup-failed/
+      expr: kube_job_failed{cluster_type="management_cluster",condition="true",job=~"etcd-backup.+"} == 1 or kube_pod_status_phase{cluster_type="management_cluster",phase="Pending",pod=~"etcd-backup.+"} == 1 or kube_job_status_succeeded{cluster_type="management_cluster",job=~"etcd-backup.+"} == 0
+      for: 30m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: etcd-backup
+    - alert: LatestETCDBackup2DaysOld
+      annotations:
+        description: '{{`Latest successfull ETCD backup for {{ $labels.cluster_id }}/{{ $labels.tenant_cluster_id }} was more than 48h ago.`}}'
+        opsrecipe: etcd-backup-failed/
+      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+      expr: count(label_replace(capi_cluster_created, "tenant_cluster_id", "$1", "name", "(.*)")) by (cluster_id, installation, pipeline, provider, tenant_cluster_id)  > 48 * 60 * 60 unless count((time() - etcd_backup_latest_success{tenant_cluster_id!="Control Plane"}) > 48 * 60 * 60) by (cluster_id, installation, pipeline, provider, tenant_cluster_id)
+      {{- else }}
+      expr: (time() - etcd_backup_latest_success{tenant_cluster_id!="Control Plane"}) > 48 * 60 * 60
+      {{- end }}
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: etcd-backup
+    - alert: ETCDBackupMetricsMissing
+      annotations:
+        description: '{{`ETCD backup metrics are missing`}}'
+        opsrecipe: etcd-backup-metrics-missing/
+      expr: absent(etcd_backup_latest_attempt)
+      for: 12h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: etcd-backup

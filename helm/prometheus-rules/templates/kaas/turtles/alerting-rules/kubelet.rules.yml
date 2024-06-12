@@ -1,0 +1,88 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: kubelet.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: cadvisor
+    rules:
+      - alert: CadvisorDown
+        annotations:
+          description: '{{`Cadvisor ({{ $labels.instance }}) is down.`}}'
+          opsrecipe: kubelet-is-down/
+        expr: label_replace(up{job="kubelet", metrics_path="/metrics/cadvisor"}, "ip", "$1", "instance", "(.+):\\d+") == 0
+        for: 1h
+        labels:
+          area: kaas
+          cancel_if_cluster_status_creating: "true"
+          cancel_if_cluster_status_deleting: "true"
+          cancel_if_kubelet_down: "true"
+          cancel_if_cluster_has_no_workers: "true"
+          cancel_if_outside_working_hours: "true"
+          cancel_if_prometheus_agent_down: "true"
+          severity: page
+          team: {{ include "providerTeam" . }}
+          topic: kubernetes
+  - name: kubelet
+    rules:
+    - alert: KubeletConditionBad
+      annotations:
+        description: '{{`Kubelet {{ $labels.node }} has status condition {{ $labels.condition }}.`}}'
+      expr: kube_node_status_condition{condition=~"DiskPressure|MemoryPressure|OutOfDisk", status="true"} == 1
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_instance_state_not_running: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_kubelet_down: "true"
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: kubernetes
+    - alert: KubeletDockerOperationsErrorsTooHigh
+      annotations:
+        description: '{{`Kubelet ({{ $labels.instance }}) is reporting errors rates while performing Docker {{ $labels.operation_type }} operations.`}}'
+      expr: rate(kubelet_docker_operations_errors[5m]) > 1
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_kubelet_down: "true"
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: kubernetes
+    - alert: KubeletDockerOperationsLatencyTooHigh
+      annotations:
+        description: '{{`Kubelet ({{ $labels.instance }}) is taking too long to perform Docker {{ $labels.operation_type }} operations.`}}'
+      expr: kubelet_docker_operations_latency_microseconds{quantile="0.9", operation_type!="pull_image"} > 115000000
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_kubelet_down: "true"
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: kubernetes
+    - alert: KubeletPLEGLatencyTooHigh
+      annotations:
+        description: '{{`Kubelet ({{ $labels.instance }}) PLEG latency is too high.`}}'
+      expr: histogram_quantile(0.99, sum(rate(kubelet_pleg_relist_duration_seconds_bucket[5m])) by (cluster_id, installation, pipeline, provider, instance, le)) > 100
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_kubelet_down: "true"
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: kubernetes

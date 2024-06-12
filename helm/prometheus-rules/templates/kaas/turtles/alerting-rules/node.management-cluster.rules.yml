@@ -1,0 +1,125 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+{{- if not .Values.mimir.enabled }}
+    cluster_type: "management_cluster"
+{{- end }}
+  name: node.management-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: node
+    rules:
+    - alert: NodeStateFlappingUnderLoad
+      # Check if the kubelet status is flapping, unless the node is under load.
+      # It helps to read this rule from the bottom upwards.
+      #
+      # If the kubelet status is flapping between Ready and something else,
+      # matching against the kubelet labels, as kube_node_status_condition labels
+      # by the node name, and node_exporter labels by the node name,
+      # unless,
+      # the load over 15 minutes divided by number of CPUs is higher than 2 (the node is overloaded).
+      annotations:
+        description: '{{`Node {{ $labels.node }} status is flapping under load.`}}'
+      expr: |
+        (
+          sum(node_load15{cluster_type="management_cluster", service="node-exporter"})
+            by (cluster_id, installation, node, pipeline, provider)
+          / count(rate(node_cpu_seconds_total{cluster_type="management_cluster", service="node-exporter", mode="idle"}[5m]))
+            by (cluster_id, installation, node, pipeline, provider)
+        ) >= 2
+        unless on (cluster_id, installation, node, pipeline, provider) (
+          kube_node_labels{cluster_type="management_cluster"}
+          and on (cluster_id, installation, node, pipeline, provider)
+          changes(kube_node_status_condition{cluster_type="management_cluster", condition="Ready", status="true"}[30m])
+        ) >= 6
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: kubernetes
+    - alert: NodeHasConstantOOMKills
+      annotations:
+        description: '{{`Node {{ $labels.ip }} has constant OOM kills.`}}'
+      expr: kube_pod_container_status_restarts_total{cluster_type="management_cluster"} - kube_pod_container_status_restarts_total{cluster_type="management_cluster"} offset 1h >= 1 AND ignoring(reason) kube_pod_container_status_last_terminated_reason{cluster_type="management_cluster", reason='OOMKilled'} > 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: kubernetes
+    - alert: NodeConnTrackAlmostExhausted
+      annotations:
+        description: '{{`Node {{ $labels.node }} reports a connection usage above 85% for the last 15 minutes.`}}'
+        opsrecipe: node-conntrack-limits/
+      expr: node_nf_conntrack_entries{cluster_type="management_cluster"} / node_nf_conntrack_entries_limit{cluster_type="management_cluster"} >= 0.85
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: kubernetes
+    - alert: MachineEntropyTooLow
+      annotations:
+        description: '{{`Machine {{ $labels.instance }} entropy is too low.`}}'
+        opsrecipe: low-entropy/
+      expr: node_entropy_available_bits{cluster_type="management_cluster"} < 250
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: infrastructure
+    - alert: MachineAllocatedFileDescriptorsTooHigh
+      annotations:
+        description: '{{`Machine {{ $labels.instance }} has too many allocated file descriptors.`}}'
+        opsrecipe: high-number-file-descriptors/
+      expr: node_filefd_allocated{cluster_type="management_cluster"} / node_filefd_maximum{cluster_type="management_cluster"} * 100 > 80
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: infrastructure
+    # Alert if load average is 2 times the number of CPUs.
+    - alert: MachineLoadTooHigh
+      annotations:
+        description: '{{`Machine {{ $labels.node }} CPU load is too high.`}}'
+      expr: |
+        sum(node_load5{cluster_type="management_cluster", service="node-exporter"})
+          by (node, cluster_id, installation, pipeline, provider) > 2
+        * count(rate(node_cpu_seconds_total{cluster_type="management_cluster", mode="idle", service="node-exporter"}[5m]))
+          by (node, cluster_id, installation, pipeline, provider)
+      for: 3m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: infrastructure
+    - alert: MachineMemoryUsageTooHigh
+      annotations:
+        description: '{{`Machine {{ $labels.instance }} memory usage is too high (less than 10% and 2G of allocatable memory).`}}'
+      expr: (((node_memory_MemTotal_bytes{cluster_type="management_cluster"} - node_memory_MemFree_bytes{cluster_type="management_cluster"} - node_memory_Cached_bytes{cluster_type="management_cluster"}) / (node_memory_MemTotal_bytes{cluster_type="management_cluster"}) * 100)) > 90 and (node_memory_MemFree_bytes{cluster_type="management_cluster"} + node_memory_Cached_bytes{cluster_type="management_cluster"}) < 2147483648
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: infrastructure

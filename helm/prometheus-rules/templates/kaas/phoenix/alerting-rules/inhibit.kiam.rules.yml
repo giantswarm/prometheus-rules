@@ -1,0 +1,25 @@
+{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+## TODO Remove when all vintage installations are gone
+# This rule applies to vintage aws clusters
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: inhibit.kiam.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: inhibit.kiam
+    rules:
+    - alert: InhibitionKiamErrors
+      annotations:
+        description: '{{`Kiam on cluster {{ $labels.cluster_id }} has increased error rate.`}}'
+      expr: increase(kiam_metadata_credential_fetch_errors_total[10m]) > 0 or increase(kiam_metadata_find_role_errors_total[10m]) > 0 or increase(kiam_sts_issuing_errors_total[10m]) > 0
+      labels:
+        area: kaas
+        kiam_has_errors: "true"
+        team: phoenix
+        topic: kiam
+{{- end }}

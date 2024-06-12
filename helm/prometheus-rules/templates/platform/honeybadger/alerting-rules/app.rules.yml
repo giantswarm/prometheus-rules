@@ -20,7 +20,7 @@ spec:
       expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"(control-plane-.*|default)",team!~"^$|noteam", namespace=~".*giantswarm"} == 1
       for: 30m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -32,10 +32,10 @@ spec:
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
         opsrecipe: app-pending-update/
-      expr: app_operator_app_info{catalog=~"(control-plane-.*|default)", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam", namespace=~".*giantswarm"} == 1
+      expr: app_operator_app_info{catalog=~"(control-plane-.*|default)", deployed_version!="", status="deployed", version_mismatch="true", team!~"^$|noteam", namespace=~".*giantswarm"} == 1
       for: 40m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
@@ -54,7 +54,7 @@ spec:
       {{- end }}
       for: 30m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -74,7 +74,7 @@ spec:
       {{- end }}
       for: 30m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -94,7 +94,7 @@ spec:
       {{- end }}
       for: 40m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
@@ -113,14 +113,14 @@ spec:
       {{- end }}
       for: 40m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: atlas
+        team: honeybadger
         topic: releng
     - alert: CordonedAppExpired
       annotations:
@@ -129,7 +129,7 @@ spec:
       expr: (app_operator_app_cordon_expire_time_seconds - time()) < 0
       for: 30m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         topic: releng
@@ -140,7 +140,7 @@ spec:
       expr: app_operator_ready_total != 1
       for: 15m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_outside_working_hours: "true"
         severity: page
         team: honeybadger
@@ -152,12 +152,11 @@ spec:
       expr: (up{app="app-exporter"} == 0) and (up{service="app-exporter"} == 0)
       for: 15m
       labels:
-        area: managedservices
+        area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_scrape_timeout: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: honeybadger

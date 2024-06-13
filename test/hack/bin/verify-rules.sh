@@ -60,7 +60,7 @@ main() {
 
     for provider in "${providers[@]}"; do
         # We need to copy the global test files in every provider directory
-        rsync -a "$GIT_WORKDIR/test/tests/providers/global/" "$outputPath/generated/$provider"
+        cp -r "$GIT_WORKDIR/test/tests/providers/global/." "$outputPath/generated/$provider"
 
         echo "### Running tests for provider: $provider"
 
@@ -93,7 +93,7 @@ main() {
                 "$GIT_WORKDIR/$YQ" '.spec' "$outputPath/helm-chart/$provider/prometheus-rules/templates/$file" > "$outputPath/generated/$provider/$file"
             else
                 # Fail when file is not found
-                echo "###    Failed extracting rules file $file"
+                echo "###  Warning: Failed extracting rules file $file"
                 failing_extraction+=("$provider:$file")
                 continue
             fi
@@ -106,7 +106,7 @@ main() {
             local promtool_check_output
             if ! promtool_check_output="$("$GIT_WORKDIR/$PROMTOOL" check rules "$outputPath/generated/$provider/$file" 2>&1)";
             then
-                echo "###   Syntax check failing for $file:"
+                echo "###  Warning: Syntax check failing for $file:"
                 echo "$promtool_check_output"
                 promtool_check_errors+=("$promtool_check_output")
                 continue

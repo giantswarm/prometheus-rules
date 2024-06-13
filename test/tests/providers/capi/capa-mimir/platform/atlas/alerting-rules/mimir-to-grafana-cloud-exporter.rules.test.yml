@@ -138,6 +138,10 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               pod: "prometheus-mimir-to-grafana-cloud-0"
+              cluster_id: "golem"
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
             exp_annotations:
               dashboard: "promRW001/prometheus-remote-write"
               description: "Prometheus Mimir to Grafana-Cloud is restarting too much."

@@ -35,7 +35,28 @@ spec:
       annotations:
         description: '{{`Grafana Folder could not be updated.`}}'
         opsrecipe: grafana-perms/
-      expr: sum by(cluster_id, installation, provider, pipeline) (increase(grafana_http_request_duration_seconds_count{handler="/api/folders/:uid/permissions/", method="POST", namespace="monitoring", service="grafana", status_code="200", cluster_type="management_cluster"}[2h])) < 1 or absent(grafana_http_request_duration_seconds_count{handler="/api/folders/:uid/permissions/", method="POST", namespace="monitoring", service="grafana", status_code="200", cluster_type="management_cluster"})
+      expr: |
+        sum by(cluster_id, installation, provider, pipeline) (
+          increase(grafana_http_request_duration_seconds_count{
+            handler="/api/folders/:uid/permissions/",
+            method="POST",
+            namespace="monitoring",
+            service="grafana",
+            status_code="200",
+            cluster_type="management_cluster"
+          }[2h])) < 1 
+          or absent(grafana_http_request_duration_seconds_count{
+            handler="/api/folders/:uid/permissions/",
+            method="POST",
+            namespace="monitoring",
+            service="grafana",
+            status_code="200",
+            cluster_type="management_cluster",
+            cluster_id="{{ .Values.managementCluster.name }}",
+            installation="{{ .Values.managementCluster.name }}",
+            provider="{{ .Values.managementCluster.provider.kind }}",
+            pipeline="{{ .Values.managementCluster.pipeline }}"
+          })
       for: 6h
       labels:
         area: platform

@@ -48,7 +48,7 @@ spec:
       annotations:
         description: '{{`ETCD backup metrics are missing`}}'
         opsrecipe: etcd-backup-metrics-missing/
-      expr: absent(etcd_backup_latest_attempt)
+      expr: absent(etcd_backup_latest_attempt{cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
       for: 12h
       labels:
         area: kaas

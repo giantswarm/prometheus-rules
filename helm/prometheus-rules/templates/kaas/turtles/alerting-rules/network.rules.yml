@@ -12,7 +12,7 @@ spec:
     rules:
     - alert: NetworkErrorRateTooHigh
       annotations:
-        description: '{{`Network error rate is too high for {{ or $labels.pod_name $labels.instance }} to {{ $labels.host }}.`}}'
+        description: '{{`Network error rate is too high for {{ or $labels.pod $labels.instance }} to {{ $labels.host }}.`}}'
         opsrecipe: network-error/
       expr: rate(network_dial_error_total[15m]) > 0.002
       for: 15m
@@ -56,7 +56,7 @@ spec:
         topic: network
     - alert: NetworkCheckErrorRateTooHigh
       annotations:
-        description: '{{`Network check error rate is too high for {{ or $labels.pod_name $labels.instance }}.`}}'
+        description: '{{`Network check error rate is too high for {{ or $labels.pod $labels.instance }}.`}}'
       expr: rate(network_error_total{}[15m]) > 0
       for: 15m
       labels:
@@ -78,7 +78,7 @@ spec:
         topic: network
     - alert: SYNRetransmissionRateTooHigh
       annotations:
-        description: '{{`SYN retransmission rate is too high for {{ or $labels.pod_name $labels.instance }}.`}}'
+        description: '{{`SYN retransmission rate is too high for {{ or $labels.pod $labels.instance }}.`}}'
       expr: rate(node_netstat_TcpExt_TCPSynRetrans{}[15m]) > 3
       for: 5m
       labels:

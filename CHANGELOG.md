@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Finish reviewing `turles` alerts for multi-provider MCs and Mimir.
+  - Prefix all vintage alerts with `vintage` to facilitate maintenance.
+  - Fix kubelet container runtime alerts.
+  - Fix pod_name label to use pod instead.
+
 ## [4.2.0] - 2024-06-13
 
 ### Added

@@ -45,7 +45,7 @@ spec:
       annotations:
         description: '{{`Control plane node in HA setup is down for a long time.`}}'
         opsrecipe: master-node-missing/
-      expr: sum by (cluster_id, installation, pipeline, provider) (kubernetes_build_info{app="kubelet"} * on (node) kube_node_role{role="control-plane"}) == 2 or sum by (cluster_id, installation, pipeline, provider) (kubernetes_build_info{app="kubelet"} * on (node) kube_node_role{role="master"}) == 2
+      expr: sum by (cluster_id, installation, pipeline, provider) (kubernetes_build_info{app="kubelet"} * on (cluster_id, node) group_left kube_node_role{role="control-plane"}) == 2 or sum by (cluster_id, installation, pipeline, provider) (kubernetes_build_info{app="kubelet"} * on (cluster_id, node) group_left kube_node_role{role="master"}) == 2
       for: 30m
       labels:
         area: kaas

@@ -47,9 +47,9 @@ spec:
         description: '{{`Deployment {{ $labels.deployment }} is missing.`}}'
         opsrecipe: management-cluster-deployment-is-missing/
       expr: |
-        absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capi-controller-manager", cluster_type="management_cluster"})
-        or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capi-kubeadm-bootstrap-controller-manager", cluster_type="management_cluster"})
-        or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capi-kubeadm-control-plane-controller-manager", cluster_type="management_cluster"})
+        absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capi-controller-manager", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
+        or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capi-kubeadm-bootstrap-controller-manager", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
+        or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capi-kubeadm-control-plane-controller-manager", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
       for: 15m
       labels:
         area: kaas

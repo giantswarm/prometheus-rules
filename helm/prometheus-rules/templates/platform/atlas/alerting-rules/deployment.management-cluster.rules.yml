@@ -17,7 +17,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"alertmanager.*|grafana.*|prometheus.*|promxy.*|mimir.*|loki.*|object-storage.*|logging-operator.*|silence-operator.*|sloth.*"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"alertmanager.*|grafana.*|prometheus.*|promxy.*|mimir.*|loki.*|tempo.*|pyroscope.*|object-storage.*|logging-operator.*|silence-operator.*|sloth.*"} > 0
       for: 30m
       labels:
         area: platform
@@ -58,22 +58,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"kyverno.*", cluster_id!~"argali|giraffe"} > 0
-      for: 30m
-      labels:
-        area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: page
-        team: shield
-        topic: managementcluster
-    - alert: DeploymentNotSatisfiedShieldChina
-      annotations:
-        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"kyverno.*", cluster_id=~"argali|giraffe"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"kyverno.*"} > 0
       for: 30m
       labels:
         area: platform
@@ -88,10 +73,10 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator-.+|cluster-operator-.+|cluster-api-core-webhook.*|event-exporter-.*|etcd-kubernetes-resources-count-exporter-.*|upgrade-schedule-operator.*|worker-.+|master-.+", cluster_id!~"argali|giraffe"}, "service", "/", "namespace", "deployment") > 0
+      expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator-.*|cluster-operator-.*|cluster-api-core-webhook.*|event-exporter-.*|upgrade-schedule-operator.*|event-exporter-app.*|etcd-kubernetes-resources-count-exporter.*", cluster_id!~"argali|giraffe"}, "service", "/", "namespace", "deployment") > 0
       for: 30m
       labels:
-        area: platform
+        area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
@@ -102,14 +87,15 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied-china/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-operator-.+|cluster-operator-.+|coredns-.+|event-exporter-.+|etcd-kubernetes-resources-count-exporter.*", cluster_id=~"argali|giraffe"} > 0
+      expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator-.*|cluster-operator-.*|cluster-api-core-webhook.*|event-exporter-.*|upgrade-schedule-operator.*|event-exporter-app.*|etcd-kubernetes-resources-count-exporter.*", cluster_id=~"argali|giraffe"}, "service", "/", "namespace", "deployment") > 0
       for: 3h
       labels:
-        area: platform
+        area: kaas
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: phoenix
         topic: managementcluster
-    {{- if eq .Values.managementCluster.provider.kind "aws" }}
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+    ## TODO Remove when all vintage clusters are gone
     - alert: AWSManagementClusterDeploymentScaledDownToZero
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} on AWS has been scaled down to zero for prolonged period of time.`}}'
@@ -120,26 +106,12 @@ spec:
         severity: notify
         team: phoenix
         topic: managementcluster
-    - alert: DeploymentNotSatisfiedChina
-      annotations:
-        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator.*|cluster-operator.*|cluster-api-core-webhook.*|event-exporter-.*|upgrade-schedule-operator.*|event-exporter-app.*", cluster_id=~"argali|giraffe"} > 0
-      for: 3h
-      labels:
-        area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: page
-        team: phoenix
-        topic: managementcluster
     {{- end }}
     - alert: DeploymentNotSatisfiedCabbage
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"(ingress-nginx|nginx-ingress-controller)-.+", cluster_id!~"argali|giraffe"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"(ingress-nginx|nginx-ingress-controller|external-dns|coredns|kong)-.+", cluster_id!~"argali|giraffe"} > 0
       for: 30m
       labels:
         area: platform
@@ -153,7 +125,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied-china/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"(ingress-nginx|nginx-ingress-controller|coredns)-.+", cluster_id=~"argali|giraffe"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"(ingress-nginx|nginx-ingress-controller|external-dns|coredns|kong)-.+", cluster_id=~"argali|giraffe"} > 0
       for: 3h
       labels:
         area: platform
@@ -171,7 +143,7 @@ spec:
       {{- end }}
       for: 30m
       labels:
-        area: platform
+        area: kaas
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"

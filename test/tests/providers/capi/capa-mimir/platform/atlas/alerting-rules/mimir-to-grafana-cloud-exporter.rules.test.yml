@@ -112,13 +112,21 @@ tests:
   - interval: 1m
     input_series:
       # remote read is working for 2 hours and then fails for 1 hour
-      - series: 'kube_pod_status_ready{condition="true", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="golem", customer="giantswarm", installation="golem", namespace="mimir", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "_x60 1+0x60 0+0x2 1+0x2 0+0x2 1+0x2 0+0x2 1+0x60"
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-8e08b9c64ea5", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="golem", customer="giantswarm", installation="golem", namespace="mimir", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "_x60 1+0x60 _x80"
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-8e08b9c64ea6", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="golem", customer="giantswarm", installation="golem", namespace="mimir", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "_x122 1+0x2 _x78"
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-8e08b9c64ea7", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="golem", customer="giantswarm", installation="golem", namespace="mimir", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "_x124 1+0x2 _x76"
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-8e08b9c64ea8", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="golem", customer="giantswarm", installation="golem", namespace="mimir", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "_x126 1+0x2 _x74"
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-8e08b9c64ea9", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="golem", customer="giantswarm", installation="golem", namespace="mimir", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "_x128 1+0x72"
     alert_rule_test:
       - alertname: MimirToGrafanaCloudExporterTooManyRestarts
         eval_time: 70m
       - alertname: MimirToGrafanaCloudExporterTooManyRestarts
-        eval_time: 175m
+        eval_time: 140m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -129,16 +137,10 @@ tests:
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
-              cluster_id: "golem"
-              customer: "giantswarm"
-              installation: "golem"
-              namespace: "mimir"
-              pipeline: "testing"
-              provider: "capa"
-              region: "eu-west-2"
+              pod: "prometheus-mimir-to-grafana-cloud-0"
             exp_annotations:
               dashboard: "promRW001/prometheus-remote-write"
               description: "Prometheus Mimir to Grafana-Cloud is restarting too much."
-              opsrecipe: "mimir-grafana-cloud-exporter-failing/"
+              opsrecipe: "mimir-grafana-cloud-exporter/"
       - alertname: MimirToGrafanaCloudExporterTooManyRestarts
         eval_time: 180m

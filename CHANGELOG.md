@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- removed duplicate slo-target on AWS
+
 ### Changed
 
 - Finish reviewing `turles` alerts for multi-provider MCs and Mimir.

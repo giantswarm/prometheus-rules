@@ -145,6 +145,6 @@ tests:
             exp_annotations:
               dashboard: "promRW001/prometheus-remote-write"
               description: "Prometheus Mimir to Grafana-Cloud is restarting too much."
-              opsrecipe: "mimir-grafana-cloud-exporter/"
+              opsrecipe: "mimir-grafana-cloud-exporter-failing/"
       - alertname: MimirToGrafanaCloudExporterTooManyRestarts
         eval_time: 180m

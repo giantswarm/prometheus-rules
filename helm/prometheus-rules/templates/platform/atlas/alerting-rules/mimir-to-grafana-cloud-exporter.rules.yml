@@ -53,7 +53,7 @@ spec:
     - alert: MimirToGrafanaCloudExporterTooManyRestarts
       annotations:
         description: '{{`Prometheus Mimir to Grafana-Cloud is restarting too much.`}}'
-        opsrecipe: mimir-grafana-cloud-exporter/
+        opsrecipe: mimir-grafana-cloud-exporter-failing/
         dashboard: promRW001/prometheus-remote-write
       expr: |
         count by (pod, cluster_id, installation, provider, pipeline) (changes(kube_pod_status_ready{condition="true", namespace="mimir", pod=~"prometheus-mimir-to-grafana-cloud-.*"}[20m])) > 3

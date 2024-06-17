@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove old kaas daemonset slos as they are now in sloth slos.
+
 ## [4.3.0] - 2024-06-17
 
 ### Removed

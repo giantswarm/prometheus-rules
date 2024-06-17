@@ -87,7 +87,7 @@ spec:
       record: raw_slo_errors
       # -- 99% availability
       # -- this expression collects all the daemonsets and assigns the same slo target to all of them
-    - expr: sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, service, area) (raw_slo_errors{area="empowerment", service="cilium"}) + 1-0.99
+    - expr: sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, service, area) (raw_slo_errors{area="empowerment", service="cilium"} - raw_slo_errors{area="empowerment", service="cilium"}) + 1-0.99
       labels:
         area: empowerment
         label_application_giantswarm_io_team: cabbage
@@ -291,50 +291,6 @@ spec:
       labels:
         area: kaas
         label_application_giantswarm_io_team: {{ include "providerTeam" . }}
-      record: slo_target
-
-    # core k8s components azure API requests
-    # record number of requests.
-    - expr: label_replace(sum(cloudprovider_azure_api_request_duration_seconds_count{job=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, job), "service", "$1", "job", "(.*)")
-      labels:
-        class: MEDIUM
-        area: kaas
-        label_application_giantswarm_io_team: phoenix
-      record: raw_slo_requests
-      # record number of errors.
-    - expr: label_replace(sum(cloudprovider_azure_api_request_errors{job=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, job), "service", "$1", "job", "(.*)")
-      labels:
-        area: kaas
-        class: MEDIUM
-        label_application_giantswarm_io_team: phoenix
-      record: raw_slo_errors
-      # -- 99% availability
-    - expr: label_replace(group(cloudprovider_azure_api_request_duration_seconds_count{job=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, job), "service", "$1", "job", "(.*)") * 0 + 1 - 0.99
-      labels:
-        area: kaas
-        label_application_giantswarm_io_team: phoenix
-      record: slo_target
-
-    # core k8s components aws API requests
-    # record number of requests.
-    - expr: label_replace(sum(cloudprovider_aws_api_request_duration_seconds_count{job=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, job), "service", "$1", "job", "(.*)")
-      labels:
-        class: MEDIUM
-        area: kaas
-        label_application_giantswarm_io_team: phoenix
-      record: raw_slo_requests
-      # record number of errors.
-    - expr: label_replace(sum(cloudprovider_aws_api_request_errors{job=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, job), "service", "$1", "job", "(.*)")
-      labels:
-        area: kaas
-        class: MEDIUM
-        label_application_giantswarm_io_team: phoenix
-      record: raw_slo_errors
-      # -- 99% availability
-    - expr: label_replace(group(cloudprovider_aws_api_request_duration_seconds_count{job=~"kube-controller-manager|kube-scheduler"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, job), "service", "$1", "job", "(.*)") * 0 + 1 - 0.99
-      labels:
-        area: kaas
-        label_application_giantswarm_io_team: phoenix
       record: slo_target
 
       # -- generic stuff

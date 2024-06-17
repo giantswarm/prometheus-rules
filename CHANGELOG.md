@@ -7,12 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove old cloud-api slos as they are now in sloth slos.
+
+## [4.2.1] - 2024-06-14
+
+### Changed
+
+- Finish reviewing `turles` alerts for multi-provider MCs and Mimir.
+  - Prefix all vintage alerts with `vintage` to facilitate maintenance.
+  - Fix kubelet container runtime alerts.
+  - Fix pod_name label to use pod instead.
+
+### Fixed
+
+- removed duplicate slo-target on AWS
+
+## [4.2.0] - 2024-06-13
+
 ### Added
 
 - Added a new alerting rule to `falco.rules.yml` to fire an alert for XZ-backdoor.
 - Added new alerting rules to monitor the Prometheus reading data from Mimir and sending them to Grafana Cloud.
 - Added `CiliumAPITooSlow`.
 - Added `CODEOWNERS` files.
+- Added `MimirIngesterNeedsToBeScaledUp` and `MimirIngesterNeedsToBeScaledDown` alerting rules to `mimir-rules.yml`.
 
 ### Changed
 
@@ -47,6 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed and improve the check-opsrecipes.sh script to support <directory>/_index.md based ops-recipes.
 - Fixed all area alert labels.
 - Fixed `cert-exporter` alerts to page on all providers.
+- Fixed `cilium` SLO recording rule, setting a proper threshold for the alert.
 
 ### Removed
 
@@ -2818,7 +2839,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.1.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.2.1...HEAD
+[4.2.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.2.0...v4.2.1
+[4.2.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.1.2...v4.2.0
 [4.1.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.1.1...v4.1.2
 [4.1.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.0.0...v4.1.0

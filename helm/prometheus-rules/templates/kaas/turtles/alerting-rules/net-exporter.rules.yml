@@ -13,7 +13,7 @@ spec:
     - alert: ClusterNetExporterCPUUsageTooHigh
       annotations:
         description: '{{`net-exporter cpu usage is too high.`}}'
-      expr: rate(container_cpu_user_seconds_total{pod_name=~"net-exporter-.*"}[5m]) > 0.015
+      expr: rate(container_cpu_user_seconds_total{pod=~"net-exporter-.*"}[5m]) > 0.015
       for: 5m
       labels:
         area: kaas

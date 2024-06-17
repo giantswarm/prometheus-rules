@@ -7,11 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove old cloud-api slos as they are now in sloth slos.
+
 ## [4.2.1] - 2024-06-14
-
-### Fixed
-
-- removed duplicate slo-target on AWS
 
 ### Changed
 
@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Prefix all vintage alerts with `vintage` to facilitate maintenance.
   - Fix kubelet container runtime alerts.
   - Fix pod_name label to use pod instead.
+
+### Fixed
+
+- removed duplicate slo-target on AWS
 
 ## [4.2.0] - 2024-06-13
 

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Remove old cloud-api slos as they are now in sloth slos.
+- Remove old kaas daemonset slos as they are now in sloth slos.
 
 ## [4.2.1] - 2024-06-14
 

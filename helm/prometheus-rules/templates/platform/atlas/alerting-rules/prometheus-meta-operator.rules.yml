@@ -9,6 +9,7 @@ spec:
   groups:
   - name: observability
     rules:
+    {{- if not .Values.mimir.enabled }}
     - alert: "Heartbeat"
       expr: up{job=~".*prometheus/prometheus.*",instance!="prometheus-agent"} == 1
       labels:
@@ -58,6 +59,7 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    {{- end }}
     - alert: "PrometheusMetaOperatorReconcileErrors"
       annotations:
         description: '{{`prometheus-meta-operator controller {{ $labels.controller }} too many reconcile errors.`}}'

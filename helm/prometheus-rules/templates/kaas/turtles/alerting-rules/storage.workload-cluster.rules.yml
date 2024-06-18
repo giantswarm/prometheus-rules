@@ -18,7 +18,7 @@ spec:
         description: '{{`Docker volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
         opsrecipe: low-disk-space/#docker-volume
       expr: node_filesystem_free_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/lib/docker"} < (2 * 1024 * 1024 * 1024)
-      for: 10m
+      for: 30m
       labels:
         area: kaas
         severity: page
@@ -46,7 +46,7 @@ spec:
       # Note that we add 1 to the disk free space so we still get alerted when the free bytes are 0.
       # We are also alerted if the free space is less than 2GB for 30 minutes.
       expr: (( node_filesystem_free_bytes{cluster_type="workload_cluster",mountpoint=~"(/rootfs)?/var/lib/kubelet"} +1 < (2 * 1024 * 1024 * 1024)) * on (node, cluster_type, cluster_id, installation, organization, pipeline, region, customer) (1 - problem_gauge{reason="KubeletDiskIsFull"}) or sum (node_filesystem_free_bytes{cluster_type="workload_cluster",mountpoint=~"(/rootfs)?/var/lib/kubelet"} +1 < (2 * 1024 * 1024 * 1024)) by (node, cluster_type, cluster_id, installation, organization, pipeline, region, customer)) > 0
-      for: 30m
+      for: 60m
       labels:
         area: kaas
         severity: page
@@ -59,7 +59,7 @@ spec:
       # See above comment for the KubeletVolumeSpaceTooLow alert regarding the node-problem-detector.
       # We are also alerted if the free space is less than 10% for 30 minutes.
       expr: (( 100 * (node_filesystem_free_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/log"} +1) / node_filesystem_size_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/log"} < 10) * on (node, cluster_type, cluster_id, installation, organization, pipeline, region, customer) (1 - problem_gauge{reason="VarLogDiskIsFull"}) or sum ((100 * node_filesystem_free_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/log"} +1)/ node_filesystem_size_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/log"} < 10) by (node, cluster_type, cluster_id, installation, organization, pipeline, region, customer)) > 0
-      for: 30m
+      for: 60m
       labels:
         area: kaas
         severity: page

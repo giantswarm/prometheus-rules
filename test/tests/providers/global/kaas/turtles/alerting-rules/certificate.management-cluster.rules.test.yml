@@ -5,9 +5,9 @@ rule_files:
 tests:
   - interval: 5m
     input_series:
-      - series: 'cert_exporter_secret_not_after{secretkey="tls.crt", certificatename="aws-admission-controller-certificates"}'
+      - series: 'cert_exporter_secret_not_after{secretkey="tls.crt", certificatename="aws-admission-controller-certificates", exported_namespace="giantswarm"}'
         values: "1+0x20 0+0x100"
-      - series: 'cert_exporter_certificate_cr_not_after{name="aws-admission-controller-certificates"}'
+      - series: 'cert_exporter_certificate_cr_not_after{name="aws-admission-controller-certificates", exported_namespace="giantswarm"}'
         values: "1+0x20 0+0x100"
     alert_rule_test:
       - alertname: ManagementClusterCertificateIsMissing

@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Increase time in volume filled related alerts to allow node-problem-detector to shut down nodes properly.
 
+### Fixed
+
+- Fix cert-exporter alerts to render the secret namespace and not the cert-exporter namespace in the alert description.
+
 ### Removed
 
 - Remove old kaas daemonset slos as they are now in sloth slos.

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Updated `monitoring.resource-usage-estimation.recording.rules` to support mimir.
+
 ### Removed
 
 - Remove old cloud-api slos as they are now in sloth slos.

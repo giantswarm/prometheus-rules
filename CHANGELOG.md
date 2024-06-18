@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `zot` related alerts
+  - Add `ZotPersistentVolumeFillingUp` when storage is beyond 80% used and projected to fill up in 4 hours.
+
 ## [4.3.1] - 2024-06-18
 
 ### Changed

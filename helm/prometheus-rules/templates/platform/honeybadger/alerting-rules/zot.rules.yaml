@@ -9,6 +9,21 @@ spec:
   groups:
     - name: zot
       rules:
+        - alert: DeploymentNotSatisfiedZot
+          annotations:
+            description: '{{`Zot deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+            opsrecipe: zot/
+          expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster",namespace="zot",deployment="zot-zot"} > 0
+          for: 30m
+          labels:
+            area: platform
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_cluster_status_updating: "true"
+            cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+            severity: page
+            team: honeybadger
+            topic: managementcluster
         - alert: ZotPersistentVolumeFillingUp
           annotations:
             description: '{{`The Zot PersistentVolume claimed by {{ $labels.persistentvolumeclaim}} in namespace {{ $labels.namespace }} is at least 80% full and projected to fill up soon.`}}'

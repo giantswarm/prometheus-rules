@@ -371,6 +371,14 @@ spec:
       record: aggregation:prometheus:memory_percentage
     - expr: sum(label_replace(container_memory_working_set_bytes{container='prometheus', namespace=~'.*-prometheus'}, "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)")) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:prometheus:memory_usage
+  - name: mimir.grafana-cloud.recording
+    rules:
+    - expr: sum(container_memory_working_set_bytes{namespace='mimir', cluster_type="management_cluster", container=~'.+'}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:mimir:memory_usage
+    - expr: sum(scrape_samples_post_metric_relabeling{}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:mimir:scrape_samples_post_metric_relabeling
+    - expr: sum(scrape_series_added{}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:mimir:scrape_series_added
   - name: dex.grafana-cloud.recording
     rules:    
     # Dex activity and status based on ingress controller data

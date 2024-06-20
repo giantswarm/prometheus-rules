@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Recording rule to send mimir memory usage to grafana cloud
+
 ## [4.3.1] - 2024-06-18
 
 ### Changed

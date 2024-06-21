@@ -37,7 +37,7 @@ spec:
       # For remote write, we are looking the rate (on 10 minutes) of failed samples are not greater than 0 for 30 minutes
       expr: |
         sum by (cluster_id, installation, provider, pipeline) (
-          rate(prometheus_remote_storage_read_queries_total{job="mimir/mimir-to-grafana-cloud"}[10m]) == 0
+          rate(prometheus_remote_storage_read_queries_total{job="mimir/mimir-to-grafana-cloud", code=~"2.."}[10m]) == 0
           or rate(prometheus_remote_storage_samples_failed_total{job="mimir/mimir-to-grafana-cloud"}[10m]) > 0
         )
       for: 30m

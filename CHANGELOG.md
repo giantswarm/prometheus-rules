@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed MimirToGrafanaCloudExporterFailures alerts
+
 ## [4.3.3] - 2024-06-21
 
 ### Fixed

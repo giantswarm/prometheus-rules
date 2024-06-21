@@ -51,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added a new alerting rule to `falco.rules.yml` to fire an alert for XZ-backdoor.
+- Added new alerting rules to monitor the Prometheus reading data from Mimir and sending them to Grafana Cloud.
 - Added `CiliumAPITooSlow`.
 - Added `CODEOWNERS` files.
 - Added `MimirIngesterNeedsToBeScaledUp` and `MimirIngesterNeedsToBeScaledDown` alerting rules to `mimir-rules.yml`.

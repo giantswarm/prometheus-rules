@@ -58,7 +58,7 @@ tests:
   - interval: 1m
     input_series:
       # remote read is working for 2 hours and then fails for 1 hour
-      - series: 'prometheus_remote_storage_read_queries_total{job="mimir/mimir-to-grafana-cloud", cluster_id="golem", customer="giantswarm", installation="golem", namespace="mimir", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'prometheus_remote_storage_read_queries_total{code="200", job="mimir/mimir-to-grafana-cloud", cluster_id="golem", customer="giantswarm", installation="golem", namespace="mimir", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "_x60 0+10x60 0+0x60 0+10x180"
       # remote write has no failure for 4 hours and then fails for 2 hours
       - series: 'prometheus_remote_storage_samples_failed_total{job="mimir/mimir-to-grafana-cloud", cluster_id="golem", customer="giantswarm", installation="golem", namespace="mimir", pipeline="testing", provider="capa", region="eu-west-2"}'

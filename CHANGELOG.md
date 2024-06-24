@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.3.5] - 2024-06-24
+
 ### Fixed
 
 - Fixed MimirToGrafanaCloudExporterFailures alerts: labels cleanup
@@ -2879,7 +2881,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.4...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.5...HEAD
+[4.3.5]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.4...v4.3.5
 [4.3.4]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.3...v4.3.4
 [4.3.3]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.2...v4.3.3
 [4.3.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.1...v4.3.2

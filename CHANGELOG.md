@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed alert `DeploymentNotSatisfiedCrossplane` to `CrossplaneDeploymentNotSatisfied`
 - Renamed alert `DeploymentNotSatisfiedExternalSecrets` to `ExternalSecretsDeploymentNotSatisfied`
 - Renamed alert `DeploymentNotSatisfiedFlux` to `FluxDeploymentNotSatisfied`
+- Add extra pint validations.
 
 ## [4.3.5] - 2024-06-24
 

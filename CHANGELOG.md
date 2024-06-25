@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add Atlas app-configuration alerts to check unexpected configmaps and secrets.
+
 ## [4.3.5] - 2024-06-24
 
 ### Fixed

@@ -3,11 +3,11 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: app-configuration.rules
+  name: atlas-app-configuration.rules
   namespace: {{ .Values.namespace }}
 spec:
   groups:
-  - name: app-configuration
+  - name: atlas-app-configuration
     rules:
     # Coming from https://gigantic.slack.com/archives/C07A03AN9JM
     # This alert ensures our app has no unexpected configmaps.
@@ -17,7 +17,7 @@ spec:
         opsrecipe: atlas-app-configuration/
       expr: |
         kube_configmap_info{cluster_type="management_cluster", configmap=~"loki-user-values|mimir-user-values"} > 0
-      for: 12h
+      for: 2d
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
@@ -31,7 +31,7 @@ spec:
         opsrecipe: atlas-app-configuration/
       expr: |
         kube_secret_info{cluster_type="management_cluster", secret=~"loki-user-values|mimir-user-values"} > 0
-      for: 12h
+      for: 2d
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"

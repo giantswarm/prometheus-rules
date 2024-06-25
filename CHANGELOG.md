@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `zot` related alerts
   - Add `ZotPersistentVolumeFillingUp` when storage is beyond 80% used and projected to fill up in 4 hours.
-  - Add `DeploymentNotSatisfiedZot` when there are not enough available replicas for the main Zot deployment on the MC.
+  - Add `ZotDeploymentNotSatisfied` when there are not enough available replicas for the main Zot deployment on the MC.
 
 ## [4.3.1] - 2024-06-18
 

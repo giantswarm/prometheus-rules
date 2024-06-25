@@ -8,11 +8,11 @@ tests:
       - series: 'kube_deployment_status_replicas_unavailable{cluster_type="management_cluster",namespace="zot",deployment="zot-zot"}'
         values: '_x5 0x10 1x45'
     alert_rule_test:
-      - alertname: DeploymentNotSatisfiedZot
+      - alertname: ZotDeploymentNotSatisfied
         eval_time: 46m
         exp_alerts:
           - exp_labels:
-              alertname: "DeploymentNotSatisfiedZot"
+              alertname: "ZotDeploymentNotSatisfied"
               area: "platform"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"

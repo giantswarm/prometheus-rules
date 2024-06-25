@@ -9,7 +9,7 @@ spec:
   groups:
     - name: zot
       rules:
-        - alert: DeploymentNotSatisfiedZot
+        - alert: ZotDeploymentNotSatisfied
           annotations:
             description: '{{`Zot deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
             opsrecipe: zot/

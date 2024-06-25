@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Add `ZotPersistentVolumeFillingUp` when storage is beyond 80% used and projected to fill up in 4 hours.
   - Add `ZotDeploymentNotSatisfied` when there are not enough available replicas for the main Zot deployment on the MC.
 
+### Changed
+
+- Renamed alert `DeploymentNotSatisfiedCrossplane` to `CrossplaneDeploymentNotSatisfied`
+- Renamed alert `DeploymentNotSatisfiedExternalSecrets` to `ExternalSecretsDeploymentNotSatisfied`
+- Renamed alert `DeploymentNotSatisfiedFlux` to `FluxDeploymentNotSatisfied`
+
 ## [4.3.1] - 2024-06-18
 
 ### Changed

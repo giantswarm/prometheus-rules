@@ -1,0 +1,48 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: zot.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    - name: zot
+      rules:
+        - alert: ZotDeploymentNotSatisfied
+          annotations:
+            description: '{{`Zot deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+            opsrecipe: zot/
+          expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster",namespace="zot",deployment="zot-zot"} > 0
+          for: 30m
+          labels:
+            area: platform
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_cluster_status_updating: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: honeybadger
+            topic: managementcluster
+        - alert: ZotPersistentVolumeFillingUp
+          annotations:
+            description: '{{`The Zot PersistentVolume claimed by {{ $labels.persistentvolumeclaim}} in namespace {{ $labels.namespace }} is at least 80% full and projected to fill up soon.`}}'
+            opsrecipe: zot/
+          expr: |-
+            (
+              kubelet_volume_stats_available_bytes{namespace="zot", persistentvolumeclaim="zot-zot-pvc"}
+              /
+              kubelet_volume_stats_capacity_bytes{namespace="zot", persistentvolumeclaim="zot-zot-pvc"}
+            ) < 0.2
+            and
+            predict_linear(kubelet_volume_stats_available_bytes{namespace="zot", persistentvolumeclaim="zot-zot-pvc"}[1h], 4 * 3600) < 0
+          for: 1h
+          labels:
+            area: platform
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_cluster_status_updating: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: honeybadger
+            topic: managementcluster

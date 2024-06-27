@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- fluentbit alerts now have a dashboard
 - Get rid of the `app`, `role` and `node` external labels in Phoenix rules.
 
 ## [4.4.0] - 2024-06-26

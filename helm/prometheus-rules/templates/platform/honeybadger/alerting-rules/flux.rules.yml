@@ -10,7 +10,7 @@ spec:
   groups:
   - name: fluxcd
     rules:
-    - alert: DeploymentNotSatisfiedFlux
+    - alert: FluxDeploymentNotSatisfied
       annotations:
         description: '{{`Flux deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/

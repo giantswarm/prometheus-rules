@@ -42,7 +42,7 @@ spec:
       expr: avg_over_time(aggregation:kubernetes:pod_resource_requests_cpu_cores{cluster_type="management_cluster"}[2d]) / on (cluster_id) group_left avg_over_time(aggregation:kubernetes:node_allocatable_cpu_cores_total{cluster_type="management_cluster"}[2d]) > 0.93
       for: 1h
       labels:
-        area: kass
+        area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
         team: {{ include "providerTeam" . }}
@@ -54,7 +54,7 @@ spec:
       expr: avg_over_time(aggregation:kubernetes:pod_resource_requests_memory_bytes{cluster_type="management_cluster"}[2d]) / on (cluster_id) group_left avg_over_time(aggregation:kubernetes:node_allocatable_memory_bytes{cluster_type="management_cluster"}[2d]) > 0.93
       for: 1h
       labels:
-        area: kass
+        area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
         team: {{ include "providerTeam" . }}

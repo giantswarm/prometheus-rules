@@ -40,9 +40,9 @@ spec:
         topic: vault
     - alert: ClusterServiceVaultTokenAlmostExpired
       annotations:
-        description: '{{`Vault token for {{ $labels.app }} ({{ $labels.instance }}) is about to expire.`}}'
+        description: '{{`Vault token for {{ $labels.job }} ({{ $labels.instance }}) is about to expire.`}}'
         opsrecipe: recreate-vault-tokens/
-      expr: sum((cluster_service_vault_token_expire_time - time()) < (60 * 60 * 24 * 7)) BY (app, instance)
+      expr: sum((cluster_service_vault_token_expire_time - time()) < (60 * 60 * 24 * 7)) BY (job, instance)
       for: 5m
       labels:
         area: kaas
@@ -65,9 +65,9 @@ spec:
         topic: vault
     - alert: CertOperatorVaultTokenAlmostExpired
       annotations:
-        description: '{{`Vault token for {{ $labels.app }} ({{ $labels.instance }}) is about to expire.`}}'
+        description: '{{`Vault token for {{ $labels.job }} ({{ $labels.instance }}) is about to expire.`}}'
         opsrecipe: cert-operator-vault-token-expired/
-      expr: sum((cert_operator_vault_token_expire_time_seconds - time()) < (60 * 60 * 24 * 7)) BY (app, instance)
+      expr: sum((cert_operator_vault_token_expire_time_seconds - time()) < (60 * 60 * 24 * 7)) BY (job, instance)
       for: 5m
       labels:
         area: kaas

@@ -20,6 +20,7 @@ main() {
       --set="managementCluster.provider.flavor=${BASH_REMATCH[1]}" \
       --set="managementCluster.provider.kind=${BASH_REMATCH[2]}" \
       --set="managementCluster.name=myinstall" \
+      --set="managementCluster.pipeline=stable" \
       --set="mimir.enabled=$mimir_enabled" \
       --output-dir "$GIT_WORKDIR"/test/hack/output/helm-chart/"$provider"
 

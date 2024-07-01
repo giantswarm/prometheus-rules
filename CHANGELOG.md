@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fluentbit alerts now have a dashboard
 
+### Fixed
+
+- Add missing labels to `MimirToGrafanaCloudExporterDown` alert
+
 ## [4.4.0] - 2024-06-26
 
 ### Added

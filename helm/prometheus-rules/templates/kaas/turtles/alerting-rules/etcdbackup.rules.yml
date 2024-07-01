@@ -27,7 +27,7 @@ spec:
         topic: etcd-backup
     - alert: LatestETCDBackup2DaysOld
       annotations:
-        description: '{{`Latest successfull ETCD backup for {{ $labels.cluster_id }}/{{ $labels.tenant_cluster_id }} was more than 48h ago.`}}'
+        description: '{{`Latest successful ETCD backup for {{ $labels.cluster_id }}/{{ $labels.tenant_cluster_id }} was more than 48h ago.`}}'
         opsrecipe: etcd-backup-failed/
       {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: count(label_replace(capi_cluster_created, "tenant_cluster_id", "$1", "name", "(.*)")) by (cluster_id, installation, pipeline, provider, tenant_cluster_id)  > 48 * 60 * 60 unless count((time() - etcd_backup_latest_success{tenant_cluster_id!="Control Plane"}) > 48 * 60 * 60) by (cluster_id, installation, pipeline, provider, tenant_cluster_id)

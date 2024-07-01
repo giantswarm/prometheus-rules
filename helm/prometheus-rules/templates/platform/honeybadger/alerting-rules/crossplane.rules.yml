@@ -11,7 +11,7 @@ spec:
     rules:
     # This alert is for any deployment being in failed status in the `crossplane` namespace.
     # This usually includes Crossplane core components themselves, installed provider(s) and the metrics exporter.
-    - alert: DeploymentNotSatisfiedCrossplane
+    - alert: CrossplaneDeploymentNotSatisfied
       annotations:
         description: '{{`Crossplane related deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/

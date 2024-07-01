@@ -14,6 +14,7 @@ spec:
       annotations:
         description: '{{`Fluentbit ({{ $labels.instance }}) is erroring.`}}'
         opsrecipe: fluentbit-too-many-erros/
+        dashboard: fluentbit/fluentbit
       # If we have some failures sending data, raise an alert
       expr: rate(fluentbit_output_retries_failed_total[10m]) > 0
       for: 20m
@@ -30,6 +31,7 @@ spec:
       annotations:
         description: '{{`Fluentbit ({{ $labels.instance }}) is dropping more than 1% records.`}}'
         opsrecipe: fluentbit-too-many-erros/
+        dashboard: fluentbit/fluentbit
       # Check the ratio of dropped records over the total number of records.
       expr: rate(fluentbit_output_dropped_records_total[10m]) / (rate(fluentbit_output_proc_records_total[10m]) + rate(fluentbit_output_dropped_records_total[10m])) > 0.01
       for: 20m
@@ -46,6 +48,7 @@ spec:
       annotations:
         description: '{{`Fluentbit is down on node ({{ $labels.node }}).`}}'
         opsrecipe: fluentbit-down/
+        dashboard: fluentbit/fluentbit
       expr: sum(up{job="fluent-logshipping-app"}) by (job, cluster_id, installation, provider, pipeline, namespace, node) == 0
       for: 15m
       labels:
@@ -61,6 +64,7 @@ spec:
       annotations:
         description: '{{`Daemonset {{ $labels.namespace}}/{{ $labels.daemonset }} is not satisfied.`}}'
         opsrecipe: daemonset-not-satisfied/
+        dashboard: fluentbit/fluentbit
       expr: kube_daemonset_status_number_unavailable{daemonset="fluent-logshipping-app"} > 0
       for: 1h
       labels:

@@ -7,11 +7,93 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- fluentbit alerts now have a dashboard
+
+## [4.4.0] - 2024-06-26
+
+### Added
+
+- Added `zot` related alerts
+  - Added `ZotPersistentVolumeFillingUp` when storage is beyond 80% used and projected to fill up in 4 hours.
+  - Added `ZotDeploymentNotSatisfied` when there are not enough available replicas for the main Zot deployment on the MC.
+
+### Changed
+
+- Renamed alert `DeploymentNotSatisfiedCrossplane` to `CrossplaneDeploymentNotSatisfied`
+- Renamed alert `DeploymentNotSatisfiedExternalSecrets` to `ExternalSecretsDeploymentNotSatisfied`
+- Renamed alert `DeploymentNotSatisfiedFlux` to `FluxDeploymentNotSatisfied`
+- Add extra pint validations.
+
+## [4.3.5] - 2024-06-24
+
+### Fixed
+
+- Fixed MimirToGrafanaCloudExporterFailures alerts: labels cleanup
+
+## [4.3.4] - 2024-06-21
+
+### Fixed
+
+- Fixed MimirToGrafanaCloudExporterFailures alerts
+
+## [4.3.3] - 2024-06-21
+
+### Fixed
+
+- Fixed mimir recording rules to grafana cloud so they only run on mimir and they are safer when labels are missing.
+
+## [4.3.2] - 2024-06-21
+
+### Added
+
+- Added new alerting rules to monitor the Prometheus reading data from Mimir and sending them to Grafana Cloud.
+- Recording rule to send mimir memory usage and metrics amount to grafana cloud
+
+## [4.3.1] - 2024-06-18
+
+### Changed
+
+- Increase time in volume filled related alerts to allow node-problem-detector to shut down nodes properly.
+
+### Fixed
+
+- Fix cert-exporter alerts to render the secret namespace and not the cert-exporter namespace in the alert description.
+
+### Removed
+
+- Remove old kaas daemonset slos as they are now in sloth slos.
+- Remove old cilium daemonset slos as they are now in sloth slos.
+
+## [4.3.0] - 2024-06-17
+
+### Removed
+
+- Remove old cloud-api slos as they are now in sloth slos.
+- Remove old `Heartbeat` and `MatchingNumberOfPrometheusAndCluster` on mimir-equipped installations.
+
+## [4.2.1] - 2024-06-14
+
+### Changed
+
+- Finish reviewing `turles` alerts for multi-provider MCs and Mimir.
+  - Prefix all vintage alerts with `vintage` to facilitate maintenance.
+  - Fix kubelet container runtime alerts.
+  - Fix pod_name label to use pod instead.
+
+### Fixed
+
+- removed duplicate slo-target on AWS
+
+## [4.2.0] - 2024-06-13
+
 ### Added
 
 - Added a new alerting rule to `falco.rules.yml` to fire an alert for XZ-backdoor.
 - Added `CiliumAPITooSlow`.
 - Added `CODEOWNERS` files.
+- Added `MimirIngesterNeedsToBeScaledUp` and `MimirIngesterNeedsToBeScaledDown` alerting rules to `mimir-rules.yml`.
 
 ### Changed
 
@@ -2819,7 +2901,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.1.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.4.0...HEAD
+[4.4.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.5...v4.4.0
+[4.3.5]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.4...v4.3.5
+[4.3.4]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.3...v4.3.4
+[4.3.3]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.2...v4.3.3
+[4.3.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.1...v4.3.2
+[4.3.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.0...v4.3.1
+[4.3.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.2.1...v4.3.0
+[4.2.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.2.0...v4.2.1
+[4.2.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.1.2...v4.2.0
 [4.1.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.1.1...v4.1.2
 [4.1.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.0.0...v4.1.0

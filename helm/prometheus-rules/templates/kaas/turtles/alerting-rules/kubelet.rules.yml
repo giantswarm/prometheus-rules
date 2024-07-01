@@ -46,8 +46,8 @@ spec:
         topic: kubernetes
     - alert: KubeletDockerOperationsErrorsTooHigh
       annotations:
-        description: '{{`Kubelet ({{ $labels.instance }}) is reporting errors rates while performing Docker {{ $labels.operation_type }} operations.`}}'
-      expr: rate(kubelet_docker_operations_errors[5m]) > 1
+        description: '{{`Kubelet ({{ $labels.instance }}) is reporting errors rates while performing runtime {{ $labels.operation_type }} operation.`}}'
+      expr: rate(kubelet_runtime_operations_errors_total[5m]) > 1
       for: 10m
       labels:
         area: kaas
@@ -60,8 +60,8 @@ spec:
         topic: kubernetes
     - alert: KubeletDockerOperationsLatencyTooHigh
       annotations:
-        description: '{{`Kubelet ({{ $labels.instance }}) is taking too long to perform Docker {{ $labels.operation_type }} operations.`}}'
-      expr: kubelet_docker_operations_latency_microseconds{quantile="0.9", operation_type!="pull_image"} > 115000000
+        description: '{{`Kubelet ({{ $labels.instance }}) is taking too long to perform runtime {{ $labels.operation_type }} operations.`}}'
+      expr: histogram_quantile(0.9, rate(kubelet_runtime_operations_duration_seconds_bucket{operation_type!="pull_image"}[5m])) > 120
       for: 10m
       labels:
         area: kaas

@@ -89,4 +89,52 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: MimirIngesterNeedsToBeScaledUp
+      annotations:
+        description: 'Mimir ingester is consuming too much resources and needs to be scaled up.'
+        opsrecipe: mimir-ingester/
+      expr: |-
+        sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir"}) 
+          / 
+        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte"}) 
+          >= 0.90 
+        or 
+        sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir"}[5m])) by (cluster_id, installation, namespace, pipeline, provider) 
+          / 
+        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core"}) 
+          >= 0.90
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirIngesterNeedsToBeScaledDown
+      annotations:
+        description: 'Mimir ingester is consuming very few resources and needs to be scaled down.'
+        opsrecipe: mimir-ingester/
+      expr: |-
+        sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir"}) 
+          / 
+        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte"}) 
+          <= 0.30 
+        and
+        sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir"}[5m])) by (cluster_id, installation, namespace, pipeline, provider) 
+          / 
+        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core"}) 
+          <= 0.30
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
 {{- end }}

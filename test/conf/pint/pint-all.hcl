@@ -42,10 +42,17 @@ rule {
     required = true
   }
 
-  # Each alert must have a 'severity' annotation that's either 'page' or 'notify'.
+  # Each alert must have a 'severity' label that's either 'page' or 'notify'.
   label "severity" {
     severity = "bug"
     value    = "(page|notify)"
+    required = true
+  }
+
+  # Each alert must have an `area' label that's either 'kaas' or 'platform'.
+  label "area" {
+    severity = "bug"
+    value    = "(kaas|platform)"
     required = true
   }
 

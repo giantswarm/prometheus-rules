@@ -60,7 +60,7 @@ spec:
         topic: cert-manager
     - alert: GiantswarmManagedCertificateCRWillExpireInLessThanTwoWeeks
       annotations:
-        description: '{{`Certificate CR {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
+        description: '{{`Certificate CR {{ $labels.exported_namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
         opsrecipe: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
       expr: (cert_exporter_certificate_cr_not_after{managed_issuer="true",exported_namespace=~"kube-system|giantswarm|monitoring"} - time()) < 13 * 24 * 60 * 60
       labels:
@@ -71,7 +71,7 @@ spec:
         topic: cert-manager
     - alert: CustomerManagedCertificateCRWillExpireInLessThanTwoWeeks
       annotations:
-        description: '{{`Certificate CR {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
+        description: '{{`Certificate CR {{ $labels.exported_namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
         opsrecipe: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
       expr: (cert_exporter_certificate_cr_not_after{managed_issuer="true",cluster_type="workload_cluster",exported_namespace!~"kube-system|giantswarm|monitoring"} - time()) < 13 * 24 * 60 * 60
       labels:

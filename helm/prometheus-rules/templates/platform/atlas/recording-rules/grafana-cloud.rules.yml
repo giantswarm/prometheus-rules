@@ -364,6 +364,7 @@ spec:
     rules:
     - expr: sum(ALERTS{alertstate="firing"}) by (alertname, cluster_id, cluster_type, customer, installation, pipeline, provider, region, area, severity, team, topic)
       record: aggregation:prometheus:alerts
+    {{- if not .Values.mimir.enabled }}
     # Metric container_memory_working_set_bytes comes from the cAdvisor component scraped on management clusters which is then scraped by the management cluster prometheus.
     # This means the cluster_id label on this metric will be the cluster_id of the management cluster for all the series, not the workload cluster id.
     # As we want to record the memory usage of the prometheis per cluster, we need to extract the cluster id from the prometheus pod name (i.e. pod=prometheus-xyz-ordinal => cluster_id=xyz).
@@ -371,6 +372,17 @@ spec:
       record: aggregation:prometheus:memory_percentage
     - expr: sum(label_replace(container_memory_working_set_bytes{container='prometheus', namespace=~'.*-prometheus'}, "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)")) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:prometheus:memory_usage
+    {{- end }}
+  {{- if .Values.mimir.enabled }}
+  - name: mimir.grafana-cloud.recording
+    rules:
+    - expr: sum(container_memory_working_set_bytes{namespace='mimir', cluster_type="management_cluster", container=~'.+'}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:mimir:memory_usage
+    - expr: sum(scrape_samples_post_metric_relabeling{cluster_id=~'.+'}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:mimir:scrape_samples_post_metric_relabeling
+    - expr: sum(scrape_series_added{cluster_id=~'.+'}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:mimir:scrape_series_added
+  {{- end }}
   - name: dex.grafana-cloud.recording
     rules:    
     # Dex activity and status based on ingress controller data

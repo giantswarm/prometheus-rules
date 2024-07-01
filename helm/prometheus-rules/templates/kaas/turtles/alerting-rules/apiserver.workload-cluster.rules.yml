@@ -44,7 +44,6 @@ spec:
         team: {{ include "providerTeam" . }}
         topic: kubernetes
 
-    ## TODO Split this alert into multiple alerts for each webhook.
     # Webhooks that are not explicitely owner by any team (customer owned ones).
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutSolutionEngineers
       annotations:

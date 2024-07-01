@@ -39,10 +39,10 @@ spec:
       annotations:
         description: '{{`Management cluster {{ $labels.cluster_id }} cpu usage is too high.`}}'
         opsrecipe: management-cluster-resource-limit-reached/
-      expr: avg_over_time(aggregation:kubernetes:pod_resource_requests_cpu_cores{cluster_type="management_cluster"}[2d]) / avg_over_time(aggregation:kubernetes:node_allocatable_cpu_cores_total{cluster_type="management_cluster"}[2d]) > 0.93
+      expr: avg_over_time(aggregation:kubernetes:pod_resource_requests_cpu_cores{cluster_type="management_cluster"}[2d]) / on (cluster_id) group_left avg_over_time(aggregation:kubernetes:node_allocatable_cpu_cores_total{cluster_type="management_cluster"}[2d]) > 0.93
       for: 1h
       labels:
-        area: kass
+        area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
         team: {{ include "providerTeam" . }}
@@ -51,10 +51,10 @@ spec:
       annotations:
         description: '{{`Management cluster {{ $labels.cluster_id }} memory usage is too high.`}}'
         opsrecipe: management-cluster-resource-limit-reached/
-      expr: avg_over_time(aggregation:kubernetes:pod_resource_requests_memory_bytes{cluster_type="management_cluster"}[2d]) / avg_over_time(aggregation:kubernetes:node_allocatable_memory_bytes{cluster_type="management_cluster"}[2d]) > 0.93
+      expr: avg_over_time(aggregation:kubernetes:pod_resource_requests_memory_bytes{cluster_type="management_cluster"}[2d]) / on (cluster_id) group_left avg_over_time(aggregation:kubernetes:node_allocatable_memory_bytes{cluster_type="management_cluster"}[2d]) > 0.93
       for: 1h
       labels:
-        area: kass
+        area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
         team: {{ include "providerTeam" . }}
@@ -73,8 +73,8 @@ spec:
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: managementcluster
-    {{- if (eq .Values.managementCluster.provider.kind "aws") }}
-    ## TODO Remove when all vintage clusters are gone
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+    ## TODO(@giantswarm/team-atlas) Remove when all vintage clusters are gone
     - alert: ManagementClusterCriticalPodNotRunning
       annotations:
         description: '{{`Critical pod {{ $labels.namespace }}/{{ $labels.pod }} is not running.`}}'

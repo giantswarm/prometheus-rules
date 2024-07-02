@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [4.4.1] - 2024-07-02
+## [4.4.2] - 2024-07-02
 
 ### Added
 
 - Add Atlas app-configuration alerts to check unexpected configmaps and secrets.
+
+## [4.4.1] - 2024-07-02
+
+### Added
+
 - add new node inhibitions to avoid paging for daemonsets when nodes are not ready/unschedulable.
 
 ### Changed
@@ -2913,7 +2918,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.4.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.4.2...HEAD
+[4.4.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.4.1...v4.4.2
 [4.4.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.4.0...v4.4.1
 [4.4.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.5...v4.4.0
 [4.3.5]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.4...v4.3.5

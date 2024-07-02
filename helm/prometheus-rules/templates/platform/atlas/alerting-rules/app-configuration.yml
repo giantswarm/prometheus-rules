@@ -16,12 +16,12 @@ spec:
         description: '{{`{{ $labels.configmap }} configmap is not expected.`}}'
         opsrecipe: atlas-app-configuration/
       expr: |
-        kube_configmap_info{cluster_type="management_cluster", configmap=~"loki-user-values|mimir-user-values"} > 0
+        kube_configmap_info{cluster_type="management_cluster", configmap=~"loki-user-values|mimir-user-values|.*prometheus-agent-user-values"} > 0
       for: 2d
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: notify
         team: atlas
         topic: observability
     # This alert ensures our app has no unexpected secrets.
@@ -30,11 +30,11 @@ spec:
         description: '{{`{{ $labels.secret }} secret is not expected.`}}'
         opsrecipe: atlas-app-configuration/
       expr: |
-        kube_secret_info{cluster_type="management_cluster", secret=~"loki-user-values|mimir-user-values"} > 0
+        kube_secret_info{cluster_type="management_cluster", secret=~"loki-user-values|mimir-user-values|.*prometheus-agent-user-values"} > 0
       for: 2d
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: notify
         team: atlas
         topic: observability

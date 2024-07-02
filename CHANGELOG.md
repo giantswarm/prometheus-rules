@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- add new node inhibitions to avoid paging for daemonsets when nodes are not ready/unschedulable.
+
 ### Changed
 
 - fluentbit alerts now have a dashboard

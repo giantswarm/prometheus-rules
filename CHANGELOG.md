@@ -10,10 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add Atlas app-configuration alerts to check unexpected configmaps and secrets.
+- add new node inhibitions to avoid paging for daemonsets when nodes are not ready/unschedulable.
 
 ### Changed
 
 - fluentbit alerts now have a dashboard
+- add alert on sloth restarting too often (https://github.com/giantswarm/giantswarm/issues/31133)
+
+### Fixed
+
+- Add missing labels to `MimirToGrafanaCloudExporterDown` alert
 
 ## [4.4.0] - 2024-06-26
 

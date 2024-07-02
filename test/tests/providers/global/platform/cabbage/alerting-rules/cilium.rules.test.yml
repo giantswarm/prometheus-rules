@@ -101,13 +101,11 @@ tests:
               opsrecipe: "unsupported-cilium-network-policy/"
   - interval: 1m
     input_series:
-      - series: 'kube_daemonset_status_number_unavailable{cluster_id="test01", installation="test", pipeline="stable", provider="thecloud"}'
-        values: "_x20 1+0x15 0+0x20"
+      - series: 'kube_daemonset_status_number_unavailable{cluster_id="test01", installation="test", pipeline="stable", provider="thecloud", daemonset="cilium"}'
+        values: "_x20 1+0x30 0+0x20"
     alert_rule_test:
       - alertname: CiliumAgentPodUnavailable
         eval_time: 10m
-      - alertname: CiliumAgentPodUnavailable
-        eval_time: 40m
       - alertname: CiliumAgentPodUnavailable
         eval_time: 50m
         exp_alerts:
@@ -116,6 +114,12 @@ tests:
               severity: page
               team: cabbage
               topic: cilium
+              cluster_id: test01
+              installation: test
+              pipeline: stable
+              provider: thecloud
+              cancel_if_cluster_status_deleting: true
+              cancel_if_cluster_status_creating: true
             exp_annotations:
               description: "At least one cilium-agent pod not running for 15mins."
               opsrecipe: "cilium-troubleshooting/"

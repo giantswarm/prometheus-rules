@@ -61,7 +61,7 @@ spec:
         topic: cilium
     - alert: CiliumAgentPodUnavailable
       annotations:
-        description: '{{`At least one cilium-agent pod is not running for 15mins.`}}'
+        description: '{{`At least one cilium-agent pod not running for 15mins.`}}'
         opsrecipe: cilium-troubleshooting/
       expr: sum by (cluster_id, installation, pipeline, provider) (kube_daemonset_status_number_unavailable{daemonset="cilium"}) > 0
       for: 15m

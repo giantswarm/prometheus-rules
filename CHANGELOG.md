@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add new node inhibitions to avoid paging for daemonsets when nodes are not ready/unschedulable.
+- Add alert for cilium-agent replacing SLO.
 
 ### Changed
 

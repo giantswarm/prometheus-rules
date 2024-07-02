@@ -99,3 +99,23 @@ tests:
             exp_annotations:
               description: "Too many Cilium Network Policy errors."
               opsrecipe: "unsupported-cilium-network-policy/"
+  - interval: 1m
+    input_series:
+      - series: 'kube_daemonset_status_number_unavailable{cluster_id="test01", installation="test", pipeline="stable", provider="thecloud"}'
+        values: "_x20 1+0x15 0+0x20"
+    alert_rule_test:
+      - alertname: CiliumAgentPodUnavailable
+        eval_time: 10m
+      - alertname: CiliumAgentPodUnavailable
+        eval_time: 30m
+      - alertname: CiliumAgentPodUnavailable
+        eval_time: 70m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+            exp_annotations:
+              description: "At least one cilium-agent pod not running for 15mins."
+              opsrecipe: "cilium-troubleshooting/"

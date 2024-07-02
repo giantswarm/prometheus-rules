@@ -1,0 +1,40 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: atlas-app-configuration.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+  - name: atlas-app-configuration
+    rules:
+    # Coming from https://gigantic.slack.com/archives/C07A03AN9JM
+    # This alert ensures our app has no unexpected configmaps.
+    - alert: ConfigmapUnexpected
+      annotations:
+        description: '{{`{{ $labels.configmap }} configmap is not expected.`}}'
+        opsrecipe: atlas-app-configuration/
+      expr: |
+        kube_configmap_info{cluster_type="management_cluster", configmap=~".*(loki|mimir|prometheus-agent)-user-values"} > 0
+      for: 2d
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: atlas
+        topic: observability
+    # This alert ensures our app has no unexpected secrets.
+    - alert: SecretUnexpected
+      annotations:
+        description: '{{`{{ $labels.secret }} secret is not expected.`}}'
+        opsrecipe: atlas-app-configuration/
+      expr: |
+        kube_secret_info{cluster_type="management_cluster", secret=~".*(loki|mimir|prometheus-agent)-user-values"} > 0
+      for: 2d
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: atlas
+        topic: observability

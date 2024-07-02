@@ -107,9 +107,9 @@ tests:
       - alertname: CiliumAgentPodUnavailable
         eval_time: 10m
       - alertname: CiliumAgentPodUnavailable
-        eval_time: 30m
+        eval_time: 40m
       - alertname: CiliumAgentPodUnavailable
-        eval_time: 70m
+        eval_time: 50m
         exp_alerts:
           - exp_labels:
               area: platform

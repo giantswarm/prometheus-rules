@@ -146,6 +146,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed and improve the check-opsrecipes.sh script to support <directory>/_index.md based ops-recipes.
 - Fixed all area alert labels.
 - Fixed `cert-exporter` alerts to page on all providers.
+- Fix PromtailDown alert to fire only when the node is ready.
 - Fixed `cilium` SLO recording rule, setting a proper threshold for the alert.
 
 ### Removed

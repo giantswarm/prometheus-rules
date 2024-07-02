@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated `monitoring.resource-usage-estimation.recording.rules` to support mimir.
 - fluentbit alerts now have a dashboard
 - add alert on sloth restarting too often (https://github.com/giantswarm/giantswarm/issues/31133)
 

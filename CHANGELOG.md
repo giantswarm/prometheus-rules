@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix PromtailDown alert to fire only when the node is ready.
 
+## [4.5.0] - 2024-07-03
+
+### Changed
+
+- Get rid of the `app`, `role` and `node` external labels in Phoenix rules.
+
 ## [4.4.2] - 2024-07-02
 
 ### Added
@@ -2922,7 +2928,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.4.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.5.0...HEAD
+[4.5.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.4.2...v4.5.0
 [4.4.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.4.1...v4.4.2
 [4.4.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.4.0...v4.4.1
 [4.4.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.5...v4.4.0

@@ -18,9 +18,24 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    # Coming from https://github.com/giantswarm/giantswarm/issues/31133
+    # This alert ensures sloth container are not restarting too often (flappiness).
+    - alert: SlothRestartingTooOften
+      annotations:
+        description: '{{`Sloth is restarting too often.`}}'
+        opsrecipe: sloth-down/
+      expr: |
+        increase(
+          kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="monitoring", container="sloth"}[1h]
+        ) > 5
+      for: 5m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas

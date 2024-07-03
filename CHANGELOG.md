@@ -9,8 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- fluentbit alerts now have a dashboard
 - Get rid of the `app`, `role` and `node` external labels in Phoenix rules.
+
+## [4.4.2] - 2024-07-02
+
+### Added
+
+- Add Atlas app-configuration alerts to check unexpected configmaps and secrets.
+
+## [4.4.1] - 2024-07-02
+
+### Added
+
+- add new node inhibitions to avoid paging for daemonsets when nodes are not ready/unschedulable.
+
+### Changed
+
+- Updated `monitoring.resource-usage-estimation.recording.rules` to support mimir.
+- fluentbit alerts now have a dashboard
+- add alert on sloth restarting too often (https://github.com/giantswarm/giantswarm/issues/31133)
+
+### Fixed
+
+- Add missing labels to `MimirToGrafanaCloudExporterDown` alert
 
 ## [4.4.0] - 2024-06-26
 
@@ -2901,7 +2922,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.4.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.4.2...HEAD
+[4.4.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.4.1...v4.4.2
+[4.4.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.4.0...v4.4.1
 [4.4.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.5...v4.4.0
 [4.3.5]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.4...v4.3.5
 [4.3.4]: https://github.com/giantswarm/prometheus-rules/compare/v4.3.3...v4.3.4

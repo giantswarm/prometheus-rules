@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Get rid of the `app`, `role` and `node` external labels in Phoenix rules.
+
 ## [4.4.2] - 2024-07-02
 
 ### Added

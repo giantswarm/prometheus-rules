@@ -18,7 +18,7 @@ spec:
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} creation is taking longer than expected.`}}'
         opsrecipe: cluster-creation-failed/
-      expr: (statusresource_cluster_status{app=~"aws-operator.*", status="Creating"} == 1 or cluster_operator_cluster_status{app=~"cluster-operator.*", status="Creating", provider="aws"} == 1)
+      expr: (statusresource_cluster_status{pod=~"aws-operator.*", status="Creating"} == 1 or cluster_operator_cluster_status{pod=~"cluster-operator.*", status="Creating", provider="aws"} == 1)
       for: 30m
       labels:
         area: kaas
@@ -31,7 +31,7 @@ spec:
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} update is taking longer than expected.`}}'
         opsrecipe: cluster-update-failed/
-      expr: (statusresource_cluster_status{app=~"aws-operator.*", status="Updating"} == 1 or cluster_operator_cluster_status{app=~"cluster-operator.*", status="Updating", provider="aws"} == 1)
+      expr: (statusresource_cluster_status{pod=~"aws-operator.*", status="Updating"} == 1 or cluster_operator_cluster_status{pod=~"cluster-operator.*", status="Updating", provider="aws"} == 1)
       for: 3h
       labels:
         area: kaas
@@ -44,7 +44,7 @@ spec:
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} deletion is taking longer than expected.`}}'
         opsrecipe: cluster-deletion-failed/
-      expr: (statusresource_cluster_status{app=~"aws-operator.*", status="Deleting"} == 1 or cluster_operator_cluster_status{app=~"cluster-operator.*", status="Deleting", provider="aws"} == 1)
+      expr: (statusresource_cluster_status{pod=~"aws-operator.*", status="Deleting"} == 1 or cluster_operator_cluster_status{pod=~"cluster-operator.*", status="Deleting", provider="aws"} == 1)
       for: 1h
       labels:
         area: kaas

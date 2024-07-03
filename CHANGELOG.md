@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix PromtailDown alert to fire only when the node is ready.
+
 ## [4.4.2] - 2024-07-02
 
 ### Added
@@ -146,17 +150,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed and improve the check-opsrecipes.sh script to support <directory>/_index.md based ops-recipes.
 - Fixed all area alert labels.
 - Fixed `cert-exporter` alerts to page on all providers.
-- Fix PromtailDown alert to fire only when the node is ready.
 - Fixed `cilium` SLO recording rule, setting a proper threshold for the alert.
 
 ### Removed
 
 - cleanup: get rid of microendpoint alerts as it never fired and probably never will
 - cleanup: remove scrape timeout inhibition leftovers (documentation and labels)
-
-### Fixed
-
-- Fix PromtailDown alert to fire only when the node is ready.
 
 ## [4.1.2] - 2024-05-31
 

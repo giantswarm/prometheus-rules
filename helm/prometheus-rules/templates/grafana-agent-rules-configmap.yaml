@@ -1,41 +1,13 @@
 {{- if .Values.mimir.enabled }}
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alloy-rules-config
+  namespace: giantswarm
 data:
   values: |
-    networkPolicy:
-      cilium:
-        egress:
-        - toEntities:
-          - kube-apiserver
-          - world
-        - toEndpoints:
-          - matchLabels:
-              io.kubernetes.pod.namespace: kube-system
-              k8s-app: coredns
-          - matchLabels:
-              io.kubernetes.pod.namespace: kube-system
-              k8s-app: k8s-dns-node-cache
-          toPorts:
-          - ports:
-            - port: "1053"
-              protocol: UDP
-            - port: "1053"
-              protocol: TCP
-            - port: "53"
-              protocol: UDP
-            - port: "53"
-              protocol: TCP
-        - toEndpoints:
-          - matchLabels:
-              app.kubernetes.io/component: ruler
-              app.kubernetes.io/name: mimir
-              io.kubernetes.pod.namespace: mimir
-          toPorts:
-          - ports:
-            - port: "8080"
-              protocol: TCP
-    grafana-agent:
-      agent:
+    alloy:
+      alloy:
         configMap:
           content: |
             mimir.rules.kubernetes "local" {
@@ -44,10 +16,7 @@ data:
             }
       controller:
         type: "deployment"
+        replicas: 1
       crds:
         create: false
-kind: ConfigMap
-metadata:
-  name: grafana-agent-rules-config
-  namespace: giantswarm
 {{- end -}}

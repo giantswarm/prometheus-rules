@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Replace grafana-agent with alloy to import PrometheusRules into Mimir.
+
 ## [4.5.0] - 2024-07-03
 
 ### Changed

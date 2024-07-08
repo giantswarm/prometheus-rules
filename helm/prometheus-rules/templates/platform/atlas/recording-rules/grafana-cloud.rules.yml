@@ -430,23 +430,24 @@ spec:
     - expr: sum(kyverno_policy) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, background, category, kind, policy, rule, type, validationFailureAction)
       record: aggregation:kyverno_policy_status
     # Kyverno policy workload status by team - Deployments
-    - expr: |-
-        label_join(
-          sum(
-            label_join(policy_report_result{
-              policy!="check-deprecated-apis-1-25",
-              cluster_type="management_cluster",
-              kind="Deployment"
-            }, "deployment", ",", "name")
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, deployment, category, policy, status)
-          * on(deployment) group_left(team, app) sum(
-            label_join(label_join(kube_deployment_labels{
-              cluster_type="management_cluster",
-              label_application_giantswarm_io_team!=""
-            }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, team, app, deployment),
-        "name", ",", "deployment")
-      record: aggregation:kyverno_policy_deployment_status_team
+    # This rule has been temporaly disabled to save on Grafana Cloud costs.
+    # - expr: |-
+    #     label_join(
+    #       sum(
+    #         label_join(policy_report_result{
+    #           policy!="check-deprecated-apis-1-25",
+    #           cluster_type="management_cluster",
+    #           kind="Deployment"
+    #         }, "deployment", ",", "name")
+    #       ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, deployment, category, policy, status)
+    #       * on(deployment) group_left(team, app) sum(
+    #         label_join(label_join(kube_deployment_labels{
+    #           cluster_type="management_cluster",
+    #           label_application_giantswarm_io_team!=""
+    #         }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
+    #       ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, team, app, deployment),
+    #     "name", ",", "deployment")
+    #   record: aggregation:kyverno_policy_deployment_status_team
     # Kyverno policy workload status by team - DaemonSets
     - expr: |-
         label_join(

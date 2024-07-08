@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Disabled `aggregation:kyverno_policy_deployment_status_team` recording rule to save on Grafana Cloud cost.
+
 ## [4.5.0] - 2024-07-03
 
 ### Changed

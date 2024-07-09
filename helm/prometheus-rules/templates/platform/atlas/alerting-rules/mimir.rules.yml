@@ -59,11 +59,11 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    - alert: GrafanaAgentForPrometheusRulesDown
+    - alert: AlloyForPrometheusRulesDown
       annotations:
-        description: 'Grafana-agent sending PrometheusRules to Mimir ruler is down.'
+        description: 'Alloy sending PrometheusRules to Mimir ruler is down.'
         opsrecipe: mimir/
-      expr: count(up{job="grafana-agent-rules", namespace="mimir"} == 0) by (cluster_id, installation, provider, pipeline) > 0
+      expr: count(up{job="alloy-rules", namespace="mimir"} == 0) by (cluster_id, installation, provider, pipeline) > 0
       for: 1h
       labels:
         area: platform

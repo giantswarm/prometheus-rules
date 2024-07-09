@@ -88,14 +88,14 @@ tests:
   - interval: 1m
     input_series:
       # test with 1 pod: none, up, down
-      - series: 'up{job="grafana-agent-rules", cluster_type="management_cluster", cluster_id="golem", provider="capa", pipeline="testing", installation="golem", namespace="mimir"}'
+      - series: 'up{job="alloy-rules", cluster_type="management_cluster", cluster_id="golem", provider="capa", pipeline="testing", installation="golem", namespace="mimir"}'
         values: "_x20 1+0x70 0+0x70"
     alert_rule_test:
-      - alertname: GrafanaAgentForPrometheusRulesDown
+      - alertname: AlloyForPrometheusRulesDown
         eval_time: 10m
-      - alertname: GrafanaAgentForPrometheusRulesDown
+      - alertname: AlloyForPrometheusRulesDown
         eval_time: 80m
-      - alertname: GrafanaAgentForPrometheusRulesDown
+      - alertname: AlloyForPrometheusRulesDown
         eval_time: 160m
         exp_alerts:
           - exp_labels:
@@ -112,7 +112,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              description: "Grafana-agent sending PrometheusRules to Mimir ruler is down."
+              description: "Alloy sending PrometheusRules to Mimir ruler is down."
               opsrecipe: "mimir/"
   - interval: 1m
     input_series:

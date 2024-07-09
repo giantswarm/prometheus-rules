@@ -5,13 +5,13 @@ metadata:
   labels:
     app-operator.giantswarm.io/version: 0.0.0
     {{- include "labels.common" . | nindent 4 }}
-  name: grafana-agent-rules
+  name: alloy-rules
   namespace: giantswarm
 spec:
   catalog: giantswarm
   config:
     configMap:
-      name: grafana-agent-rules-config
+      name: alloy-rules-config
       namespace: giantswarm
     secret:
       name: ""
@@ -23,9 +23,9 @@ spec:
     secret:
       name: ""
       namespace: ""
-  name: grafana-agent
+  name: alloy
   namespace: mimir
   # used by renovate
-  # repo: giantswarm/grafana-agent-app
-  version: 0.4.4
+  # repo: giantswarm/alloy
+  version: 0.2.0
 {{- end -}}

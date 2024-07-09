@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- link AlloyForPrometheusRulesDown alert to mimir-rules ops-recipe
+
 ## [4.6.1] - 2024-07-09
 
 ## [4.6.0] - 2024-07-09

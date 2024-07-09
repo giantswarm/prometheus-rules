@@ -62,7 +62,7 @@ spec:
     - alert: AlloyForPrometheusRulesDown
       annotations:
         description: 'Alloy sending PrometheusRules to Mimir ruler is down.'
-        opsrecipe: mimir/
+        opsrecipe: mimir-rules/
       expr: count(up{job="alloy-rules", namespace="mimir"} == 0) by (cluster_id, installation, provider, pipeline) > 0
       for: 1h
       labels:

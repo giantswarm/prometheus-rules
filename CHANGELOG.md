@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Removed `aggregation:container:images` recording rule to save on Grafana Cloud cost.
+
 ## [4.5.1] - 2024-07-08
 
 ### Changed

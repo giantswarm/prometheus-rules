@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.6.2] - 2024-07-09
+
 ### Changed
 
 - Removed `aggregation:container:images` recording rule to save on Grafana Cloud cost.
@@ -2942,7 +2944,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.6.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.6.2...HEAD
+[4.6.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.6.1...v4.6.2
 [4.6.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.6.0...v4.6.1
 [4.6.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.5.1...v4.6.0
 [4.5.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.5.0...v4.5.1

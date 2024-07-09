@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Make sure prometheus-operator alerts page for all clusters.
+
 ## [4.5.1] - 2024-07-08
 
 ### Changed

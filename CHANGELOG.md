@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Removed `aggregation:container:images` recording rule to save on Grafana Cloud cost.
 
+### Fixed
+
+- Make sure prometheus-operator alerts page for all clusters.
+
 ## [4.6.1] - 2024-07-09
 
 ## [4.6.0] - 2024-07-09

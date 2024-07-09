@@ -1,0 +1,22 @@
+{{- if .Values.mimir.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alloy-rules-config
+  namespace: giantswarm
+data:
+  values: |
+    alloy:
+      alloy:
+        configMap:
+          content: |
+            mimir.rules.kubernetes "local" {
+              address = "http://mimir-ruler.mimir.svc:8080/"
+              tenant_id = "anonymous"
+            }
+      controller:
+        type: "deployment"
+        replicas: 1
+      crds:
+        create: false
+{{- end -}}

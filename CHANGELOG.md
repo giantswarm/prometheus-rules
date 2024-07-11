@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `CiliumNetworkPolicy` for `alloy`.
+
 ## [4.6.2] - 2024-07-09
 
 ### Changed

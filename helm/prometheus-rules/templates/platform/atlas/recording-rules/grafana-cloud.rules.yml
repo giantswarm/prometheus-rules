@@ -138,29 +138,6 @@ spec:
       record: aggregation:docker:containers_using_dockerhub_image
     - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) / sum(kube_pod_container_info{} or kube_pod_init_container_info{}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:docker:containers_using_dockerhub_image_relative
-    - expr: |-
-        count by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, image, team) (
-          label_replace(
-            label_replace(
-                  count by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, pod, image, namespace) (kube_pod_init_container_info{image=~".*giantswarm.*"})
-                * on (cluster_id, cluster_type, customer, installation, pipeline, provider, region, pod, namespace) group_left (label_application_giantswarm_io_team)
-                  kube_pod_labels
-              or
-                  count by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, pod, image, namespace) (kube_pod_container_info{image=~".*giantswarm.*"})
-                * on (cluster_id, cluster_type, customer, installation, pipeline, provider, region, pod, namespace) group_left (label_application_giantswarm_io_team)
-                  kube_pod_labels,
-              "team",
-              "$2",
-              "label_application_giantswarm_io_team",
-              "(team-)?(.*)"
-            ),
-            "label_application_giantswarm_io_team",
-            "",
-            "label_application_giantswarm_io_team",
-            ".*"
-          )
-        )
-      record: aggregation:container:images
   - name: certificates.grafana-cloud.recording
     rules:
     - expr: min(cert_exporter_not_after) by (app, job, cluster_id, cluster_type, customer, installation, pipeline, provider, region)

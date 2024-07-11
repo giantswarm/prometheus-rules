@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix PromtailDown alert to fire only when the node is ready.
+
 ## [4.6.3] - 2024-07-11
 
 ### Changed

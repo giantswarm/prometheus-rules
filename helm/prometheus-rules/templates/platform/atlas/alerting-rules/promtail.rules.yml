@@ -13,7 +13,12 @@ spec:
           annotations:
             description: '{{`Scraping of all promtail pods to check if one failed every 30 minutes.`}}'
             opsrecipe: promtail/
-          expr: count(up{container="promtail"} == 0) by (cluster_id, installation, provider, pipeline) > 0
+          expr: |-
+            # List promtail pods to be able to get the node label and join with the node status to not alert if the node is not ready
+            kube_pod_info{pod=~"promtail.*"}
+            * on(cluster_id, pod)
+              group_left ()
+              up{container="promtail"} == 0 # List promtail containers that are not running
           for: 30m
           labels:
             area: platform
@@ -24,6 +29,8 @@ spec:
             cancel_if_cluster_status_creating: "true"
             cancel_if_cluster_status_deleting: "true"
             cancel_if_cluster_status_updating: "true"
+            cancel_if_node_unschedulable: "true"
+            cancel_if_node_not_ready: "true"
         # Not tested
         - alert: PromtailRequestsErrors
           annotations:

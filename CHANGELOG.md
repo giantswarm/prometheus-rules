@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Support for loki rules to management clusters in alloy config
+
 ### Fixed
 
 - Fix PromtailDown alert to fire only when the node is ready.

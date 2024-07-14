@@ -45,6 +45,24 @@ data:
             mimir.rules.kubernetes "local" {
               address = "http://mimir-ruler.mimir.svc:8080/"
               tenant_id = "anonymous"
+              rule_selector {
+                  match_expression {
+                    key = "application.giantswarm.io/prometheus-rule-kind"
+                    operator = "NotIn"
+                    values = ["loki"]
+                  }
+              }
+            }
+            loki.rules.kubernetes "local" {
+              address = "http://loki-backend.loki.svc:3100/"
+              tenant_id = "{{ .Values.managementCluster.name }}"
+              rule_selector {
+                  match_expression {
+                    key = "application.giantswarm.io/prometheus-rule-kind"
+                    operator = "In"
+                    values = ["loki"]
+                  }
+              }
             }
       controller:
         type: "deployment"

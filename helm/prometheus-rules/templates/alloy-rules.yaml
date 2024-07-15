@@ -24,7 +24,7 @@ spec:
       name: ""
       namespace: ""
   name: alloy
-  namespace: mimir
+  namespace: monitoring
   # used by renovate
   # repo: giantswarm/alloy
   version: 0.2.0

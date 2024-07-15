@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for loki rules to management clusters in alloy config
 - grafana datasource for MC loki ruler
 
+### Changed
+
+- Move alloy to monitoring namespace
+
 ### Fixed
 
 - Make dns-operator-azure capz only.

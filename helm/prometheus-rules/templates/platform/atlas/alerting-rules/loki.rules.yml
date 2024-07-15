@@ -97,7 +97,7 @@ spec:
           / 
         sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="loki", namespace="loki", unit="core"}) 
           <= 0.30
-      for: 60m
+      for: 1d
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"

@@ -1,0 +1,23 @@
+{{- if .Values.mimir.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: loki-ruler-datasource-{{ .Values.managementCluster.name }}
+  namespace: monitoring
+  labels:
+    app.giantswarm.io/kind: datasource
+data:
+  loki-ruler-{{ .Values.managementCluster.name }}.yaml: |
+    apiVersion: 1
+    datasources:
+    - access: proxy
+      editable: false
+      jsonData:
+        manageAlerts: true
+        httpHeaderName1: X-Scope-OrgID
+      secureJsonData:
+        httpHeaderValue1: {{ .Values.managementCluster.name }}
+      name: Loki-ruler-{{ .Values.managementCluster.name }}
+      type: loki
+      url: http://loki-backend.loki.svc:3100
+{{- end -}}

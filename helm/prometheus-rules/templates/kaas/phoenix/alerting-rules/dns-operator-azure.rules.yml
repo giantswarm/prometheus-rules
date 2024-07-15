@@ -1,3 +1,4 @@
+{{- if eq .Values.managementCluster.provider.kind "capz" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -38,3 +39,4 @@ spec:
             severity: notify
             team: phoenix
             topic: managementcluster
+{{- end }}

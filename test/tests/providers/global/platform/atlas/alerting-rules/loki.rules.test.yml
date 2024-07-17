@@ -134,3 +134,59 @@ tests:
       - alertname: LokiRestartingTooOften
         eval_time: 140m  # After 140m minutes, all should be back to normal
         exp_alerts:
+  - interval: 1m
+    input_series:
+      # loki-backend real memory usage gradually decreases until it goes below 30% of the memory requests.
+      - series: 'container_memory_working_set_bytes{pod="loki-backend-0", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "8+0x20 2+0x40 8+0x140 2+0x40 8+0x60"
+      - series: 'container_memory_working_set_bytes{pod="loki-backend-1", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "8+0x20 2+0x40 8+0x140 2+0x40 8+0x60"
+      # loki-backend memory requests stay the same for the entire duration of the test.
+      - series: 'kube_pod_container_resource_requests{pod="loki-backend-0", container="loki", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "12+0x300"
+      - series: 'kube_pod_container_resource_requests{pod="loki-backend-1", container="loki", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "12+0x300"       
+      # loki-backend real cpu usage gradually increases until it goes below 30% of the cpu requests.                        
+      - series: 'container_cpu_usage_seconds_total{pod="loki-backend-0", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "0+60x100 6000+10x40 6400+60x60 10000+10x40 10400+60x60"
+      - series: 'container_cpu_usage_seconds_total{pod="loki-backend-1", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "0+30x300"
+      # loki-backend cpu requests stay the same for the entire duration of the test
+      - series: 'kube_pod_container_resource_requests{pod="loki-backend-0", container="loki", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "1.5+0x300"                                 
+      - series: 'kube_pod_container_resource_requests{pod="loki-backend-1", container="loki", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "1.5+0x300"  
+    alert_rule_test:
+      - alertname: LokiNeedsToBeScaledDown
+        eval_time: 15m 
+      - alertname: LokiNeedsToBeScaledDown
+        eval_time: 55m 
+      - alertname: LokiNeedsToBeScaledDown
+        eval_time: 100m
+      - alertname: LokiNeedsToBeScaledDown
+        eval_time: 135m
+      - alertname: LokiNeedsToBeScaledDown
+        eval_time: 180m 
+      - alertname: LokiNeedsToBeScaledDown
+        eval_time: 240m 
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: golem
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+              namespace: loki
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Loki component loki-backend is consuming very few resources and needs to be scaled down.
+              opsrecipe: "loki/"
+      - alertname: LokiNeedsToBeScaledDown
+        eval_time: 280m 

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove Linkerd alerts.
 
+### Added 
+
+- Add `LokiNeedsToBeScaledUp` alerting rule.
+
 ## [4.8.0] - 2024-07-15
 
 ### Changed

@@ -88,14 +88,14 @@ spec:
         description: 'Loki is consuming very few resources and needs to be scaled down.'
         opsrecipe: loki/
       expr: |-
-        sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="loki", namespace="loki"}) 
+        sum by (cluster_id, installation, namespace, pipeline, provider, labelpod) (label_replace(container_memory_working_set_bytes{container="loki", namespace="loki"}, "labelpod", "$1", "pod", "(loki-[[:alnum:]]*)-.*")) 
           / 
-        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="loki", namespace="loki", unit="byte"}) 
+        sum by(cluster_id, installation, namespace, pipeline, provider, labelpod) (label_replace(kube_pod_container_resource_requests{container="loki", namespace="loki", unit="byte"}, "labelpod", "$1", "pod", "(loki-[[:alnum:]]*)-.*")) 
           <= 0.30 
         and
-        sum(rate(container_cpu_usage_seconds_total{container="loki", namespace="loki"}[5m])) by (cluster_id, installation, namespace, pipeline, provider) 
+        sum(label_replace(rate(container_cpu_usage_seconds_total{container="loki", namespace="loki"}[5m]), "labelpod", "$1", "pod", "(loki-[[:alnum:]]*)-.*")) by (cluster_id, installation, namespace, pipeline, provider, labelpod) 
           / 
-        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="loki", namespace="loki", unit="core"}) 
+        sum by(cluster_id, installation, namespace, pipeline, provider, labelpod) (label_replace(kube_pod_container_resource_requests{container="loki", namespace="loki", unit="core"}, "labelpod", "$1", "pod", "(loki-[[:alnum:]]*)-.*")) 
           <= 0.30
       for: 1d
       labels:

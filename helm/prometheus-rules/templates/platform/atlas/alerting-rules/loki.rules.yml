@@ -85,7 +85,7 @@ spec:
         topic: observability
     - alert: LokiNeedsToBeScaledDown
       annotations:
-        description: 'Loki is consuming very few resources and needs to be scaled down.'
+        description: '{{`Loki component {{ $labels.labelpod }} is consuming very few resources and needs to be scaled down.`}}'
         opsrecipe: loki/
       expr: |-
         sum by (cluster_id, installation, namespace, pipeline, provider, labelpod) (label_replace(container_memory_working_set_bytes{container="loki", namespace="loki"}, "labelpod", "$1", "pod", "(loki-[[:alnum:]]*)-.*")) 

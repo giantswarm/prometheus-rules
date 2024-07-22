@@ -138,24 +138,24 @@ tests:
     input_series:
       # loki-backend real memory usage gradually decreases until it goes below 30% of the memory requests.
       - series: 'container_memory_working_set_bytes{pod="loki-backend-0", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "8+0x20 2+0x40 8+0x140 2+0x40 8+0x60"
+        values: "8+0x20 2+0x1450 8+0x2900 2+0x1450 8+0x1450"
       - series: 'container_memory_working_set_bytes{pod="loki-backend-1", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "8+0x20 2+0x40 8+0x140 2+0x40 8+0x60"
+        values: "8+0x20 2+0x1450 8+0x2900 2+0x1450 8+0x1450"
       # loki-backend memory requests stay the same for the entire duration of the test.
       - series: 'kube_pod_container_resource_requests{pod="loki-backend-0", container="loki", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "12+0x300"
+        values: "12+0x7270"
       - series: 'kube_pod_container_resource_requests{pod="loki-backend-1", container="loki", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "12+0x300"       
+        values: "12+0x7270"       
       # loki-backend real cpu usage gradually increases until it goes below 30% of the cpu requests.                        
       - series: 'container_cpu_usage_seconds_total{pod="loki-backend-0", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "0+60x100 6000+10x40 6400+60x60 10000+10x40 10400+60x60"
+        values: "0+60x1470 0+10x1450 0+60x1450 0+10x1450 0+60x1450"
       - series: 'container_cpu_usage_seconds_total{pod="loki-backend-1", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "0+30x300"
+        values: "0+30x7270"
       # loki-backend cpu requests stay the same for the entire duration of the test
       - series: 'kube_pod_container_resource_requests{pod="loki-backend-0", container="loki", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "1.5+0x300"                                 
+        values: "1.5+0x7270"                                 
       - series: 'kube_pod_container_resource_requests{pod="loki-backend-1", container="loki", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "1.5+0x300"  
+        values: "1.5+0x7270"  
     alert_rule_test:
       - alertname: LokiNeedsToBeScaledDown
         eval_time: 15m 
@@ -168,7 +168,7 @@ tests:
       - alertname: LokiNeedsToBeScaledDown
         eval_time: 180m 
       - alertname: LokiNeedsToBeScaledDown
-        eval_time: 240m 
+        eval_time: 5820m 
         exp_alerts:
           - exp_labels:
               area: platform
@@ -179,6 +179,7 @@ tests:
               cancel_if_outside_working_hours: "true"
               cluster_id: golem
               installation: "golem"
+              labelpod: "loki-backend"
               pipeline: "testing"
               provider: "capa"
               namespace: loki
@@ -189,4 +190,4 @@ tests:
               description: Loki component loki-backend is consuming very few resources and needs to be scaled down.
               opsrecipe: "loki/"
       - alertname: LokiNeedsToBeScaledDown
-        eval_time: 280m 
+        eval_time: 7265m 

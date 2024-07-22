@@ -38,6 +38,15 @@ data:
           - ports:
             - port: "8080"
               protocol: TCP
+        - toEndpoints:
+          - matchLabels:
+              app.kubernetes.io/component: backend
+              app.kubernetes.io/name: loki
+              io.kubernetes.pod.namespace: loki
+          toPorts:
+          - ports:
+            - port: "3100"
+              protocol: TCP
     alloy:
       alloy:
         configMap:

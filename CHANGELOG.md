@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Make dns-operator-azure capz only.
 - Fix PromtailDown alert to fire only when the node is ready.
+- alloy-rules CNP allows loading rules to loki-backend
 
 ## [4.6.3] - 2024-07-11
 

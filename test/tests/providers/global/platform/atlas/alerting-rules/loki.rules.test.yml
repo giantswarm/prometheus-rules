@@ -138,14 +138,14 @@ tests:
     input_series:
       # loki-backend real memory usage gradually decreases until it goes below 30% of the memory requests.
       - series: 'kube_horizontalpodautoscaler_status_desired_replicas{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "2+0x20 3+0x20 2+0x20"
+        values: "2+0x20 3+0x250 2+0x250"
       - series: 'kube_horizontalpodautoscaler_status_current_replicas{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "2+0x60"
+        values: "2+0x520"
     alert_rule_test:
-      - alertname: LokiNeedsToBeScaledUp
+      - alertname: LokiHpaReachedMaxReplicas
         eval_time: 15m
-      - alertname: LokiNeedsToBeScaledUp
-        eval_time: 35m
+      - alertname: LokiHpaReachedMaxReplicas
+        eval_time: 265m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -166,5 +166,5 @@ tests:
             exp_annotations:
               description: Loki component loki-backend needs to be scaled up.
               opsrecipe: loki/
-      - alertname: LokiNeedsToBeScaledUp
-        eval_time: 55m 
+      - alertname: LokiHpaReachedMaxReplicas
+        eval_time: 515m 

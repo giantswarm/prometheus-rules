@@ -83,15 +83,15 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    - alert: LokiNeedsToBeScaledUp
+    - alert: LokiHpaReachedMaxReplicas
       annotations:
-        description: '{{`Loki component {{ $labels.horizontalpodautoscaler }} needs to be scaled up.`}}'
+        description: '{{`Loki component {{ $labels.horizontalpodautoscaler }} has reached its maxReplicas number but still needs to be scaled up.`}}'
         opsrecipe: loki/
       expr: |
         sum by (cluster_id, installation, namespace, pipeline, provider, horizontalpodautoscaler) (kube_horizontalpodautoscaler_status_desired_replicas{namespace="loki", horizontalpodautoscaler=~"loki-backend|loki-write|loki-read"})
           != 
         sum by (cluster_id, installation, namespace, pipeline, provider, horizontalpodautoscaler) (kube_horizontalpodautoscaler_status_current_replicas{namespace="loki", horizontalpodautoscaler=~"loki-backend|loki-write|loki-read"})
-      for: 10m
+      for: 4h
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"

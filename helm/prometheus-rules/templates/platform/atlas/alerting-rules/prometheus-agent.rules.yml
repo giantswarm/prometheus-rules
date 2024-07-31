@@ -112,7 +112,7 @@ spec:
             or prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
           ) by (cluster_id, installation, provider, pipeline)
         )[5m:])
-      for: 20m
+      for: 40m
       labels:
         area: platform
         severity: page

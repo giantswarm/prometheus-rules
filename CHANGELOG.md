@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `LokiHpaReachedMaxReplicas` alerting rule.
+- Add `LokiNeedsToBeScaledDown` alert.
+
 ## [4.8.2] - 2024-07-31
 
 ### Changed
@@ -35,7 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Support for loki rules to management clusters in alloy config
 - grafana datasource for MC loki ruler
-- Add `LokiNeedsToBeScaledDown` alert.
 
 ### Fixed
 

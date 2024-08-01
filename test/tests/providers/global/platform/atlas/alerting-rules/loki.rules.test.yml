@@ -191,3 +191,37 @@ tests:
               opsrecipe: "loki/"
       - alertname: LokiNeedsToBeScaledDown
         eval_time: 7265m 
+  - interval: 1m
+    input_series:
+      # loki-backend real memory usage gradually decreases until it goes below 30% of the memory requests.
+      - series: 'kube_horizontalpodautoscaler_status_desired_replicas{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "2+0x20 3+0x250 2+0x250"
+      - series: 'kube_horizontalpodautoscaler_status_current_replicas{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "2+0x520"
+    alert_rule_test:
+      - alertname: LokiHpaReachedMaxReplicas
+        eval_time: 15m
+      - alertname: LokiHpaReachedMaxReplicas
+        eval_time: 265m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              severity: page
+              team: atlas
+              topic: observability
+              namespace: loki
+              cluster_id: golem
+              horizontalpodautoscaler: loki-backend
+              installation: golem
+              pipeline: testing
+              provider: capa
+            exp_annotations:
+              description: Loki component loki-backend has reached its maxReplicas number but still needs to be scaled up.
+              opsrecipe: loki/
+      - alertname: LokiHpaReachedMaxReplicas
+        eval_time: 515m 

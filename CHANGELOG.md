@@ -7,13 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `LokiHpaReachedMaxReplicas` alerting rule.
+- Add `LokiNeedsToBeScaledDown` alert.
+
+## [4.8.2] - 2024-07-31
+
+### Changed
+
+- Update PrometheusAgentShardsMissing sensitivity.
+
+## [4.8.1] - 2024-07-22
+
 ### Changed
 
 - Remove Linkerd alerts.
 
-### Added 
+### Fixed
 
-- Add `LokiNeedsToBeScaledUp` alerting rule.
+- alloy-rules CNP allows loading rules to loki-backend
 
 ## [4.8.0] - 2024-07-15
 
@@ -2984,7 +2997,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.8.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.8.2...HEAD
+[4.8.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.8.1...v4.8.2
+[4.8.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.8.0...v4.8.1
 [4.8.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.7.0...v4.8.0
 [4.7.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.6.3...v4.7.0
 [4.6.3]: https://github.com/giantswarm/prometheus-rules/compare/v4.6.2...v4.6.3

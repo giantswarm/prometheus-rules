@@ -221,7 +221,7 @@ tests:
               pipeline: testing
               provider: capa
             exp_annotations:
-              description: Loki component loki-backend needs to be scaled up.
+              description: Loki component loki-backend has reached its maxReplicas number but still needs to be scaled up.
               opsrecipe: loki/
       - alertname: LokiHpaReachedMaxReplicas
         eval_time: 515m 

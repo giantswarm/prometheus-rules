@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Restricted range of `LokiHpaReachedMaxReplicas` and `LokiNeedsToBeScaledDown` rules to management clusters.
+
 ## [4.9.0] - 2024-08-01
 
 ### Added

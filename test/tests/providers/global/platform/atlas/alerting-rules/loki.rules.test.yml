@@ -177,8 +177,8 @@ tests:
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem
               installation: "golem"
+              cluster_id: "golem"
               labelpod: "loki-backend"
               pipeline: "testing"
               provider: "capa"
@@ -215,9 +215,9 @@ tests:
               team: atlas
               topic: observability
               namespace: loki
-              cluster_id: golem
               horizontalpodautoscaler: loki-backend
               installation: golem
+              cluster_id: golem
               pipeline: testing
               provider: capa
             exp_annotations:

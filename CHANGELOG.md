@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Removed `cluster_id` label from `LokiHpaReachedMaxReplicas` and `LokiNeedsToBeScaledDown` rules.
+- Restricted range of `LokiHpaReachedMaxReplicas` and `LokiNeedsToBeScaledDown` rules to management clusters.
 
 ## [4.9.0] - 2024-08-01
 

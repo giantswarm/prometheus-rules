@@ -15,7 +15,7 @@ spec:
     rules:
     - alert: WorkloadClusterEtcdDown
       annotations:
-        description: '{{`Etcd ({{ $labels.instance }}) on workload cluster {{ $labels.cluster_id }} is down.`}}'
+        description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} is down.`}}'
         opsrecipe: etcd-down/
       expr: up{cluster_type="workload_cluster", app="etcd", provider!="eks"} == 0
       for: 20m
@@ -31,7 +31,7 @@ spec:
         topic: etcd
     - alert: WorkloadClusterEtcdCommitDurationTooHigh
       annotations:
-        description: '{{`Etcd ({{ $labels.instance }}) has a too high commit duration.`}}'
+        description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has a too high commit duration.`}}'
         opsrecipe: etcd-high-commit-duration/
       expr: histogram_quantile(0.95, rate(etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="workload_cluster", provider!="eks"}[5m])) > 1.0
       for: 15m
@@ -43,7 +43,7 @@ spec:
         topic: etcd
     - alert: WorkloadClusterEtcdDBSizeTooLarge
       annotations:
-        description: '{{`Etcd ({{ $labels.instance }}) has a too large database.`}}'
+        description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has a too large database.`}}'
         opsrecipe: etcd-db-size-too-large/
       expr: (etcd_mvcc_db_total_size_in_bytes{cluster_type="workload_cluster", provider!="eks"} / etcd_server_quota_backend_bytes{cluster_type="workload_cluster", provider!="eks"}) * 100 > 80
       for: 15m
@@ -55,7 +55,7 @@ spec:
         topic: etcd
     - alert: WorkloadClusterEtcdNumberOfLeaderChangesTooHigh
       annotations:
-        description: '{{`Etcd has too many leader changes.`}}'
+        description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has too many leader changes.`}}'
       expr: increase(etcd_server_leader_changes_seen_total{cluster_type="workload_cluster", provider!="eks"}[1h]) > 8
       labels:
         area: kaas
@@ -64,7 +64,7 @@ spec:
         topic: etcd
     - alert: WorkloadClusterEtcdHasNoLeader
       annotations:
-        description: '{{`Etcd has no leader.`}}'
+        description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has no leader.`}}'
         opsrecipe: etcd-has-no-leader/
       expr: etcd_server_has_leader{cluster_type="workload_cluster", container!~"loki|promtail", provider!="eks"} == 0
       for: 35m
@@ -76,7 +76,7 @@ spec:
         topic: etcd
     - alert: WorkloadClusterEtcdMetricsMissing
       annotations:
-        description: '{{`Etcd metrics missing for {{ $labels.cluster_id }}.`}}'
+        description: '{{`Etcd metrics missing for cluster {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'
         opsrecipe: etcd-metrics-missing/
       expr: count(up{cluster_type="workload_cluster", provider!="eks"}) by (cluster_id, installation, pipeline, provider) unless count(etcd_server_id{cluster_type="workload_cluster", provider!="eks"}) by (cluster_id, installation, pipeline, provider)
       for: 1h

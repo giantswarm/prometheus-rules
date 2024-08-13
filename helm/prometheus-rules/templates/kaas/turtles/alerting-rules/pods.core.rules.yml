@@ -15,7 +15,7 @@ spec:
     rules:
     - alert: ContainerIsRestartingTooFrequently
       annotations:
-        description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
+        description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often in cluster {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'
         opsrecipe: container-is-restarting-too-often/
       expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"cluster-autoscaler.*|etcd-kubernetes-resources-count-exporter.*"}[1h]), "service", "/", "namespace", "pod") > 10
       for: 10m
@@ -31,7 +31,7 @@ spec:
         topic: kubernetes
     - alert: PodPending
       annotations:
-        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
+        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending in cluster {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'
         opsrecipe: pod-stuck-in-pending/
       expr: kube_pod_status_phase{namespace="kube-system",pod=~"(cluster-autoscaler.*)",phase="Pending"} == 1
       for: 15m

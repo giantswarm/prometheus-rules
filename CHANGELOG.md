@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update `clusters.grafana-cloud.recording` recording rules to work with capi.
+
 ## [4.9.1] - 2024-08-06
 
 ### Changed

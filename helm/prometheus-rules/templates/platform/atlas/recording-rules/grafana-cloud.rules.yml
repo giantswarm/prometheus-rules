@@ -121,19 +121,27 @@ spec:
           {{- end }}
         )
       record: aggregation:giantswarm:cluster_info
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
     - expr: sum(cluster_service_cluster_info) by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region) / 2 or sum(cluster_operator_cluster_status{release_version!=""}) by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:giantswarm:cluster_release_version
     - expr: avg_over_time(cluster_operator_cluster_create_transition[1w])
       record: aggregation:giantswarm:cluster_transition_create
     - expr: avg_over_time(cluster_operator_cluster_update_transition[1w])
       record: aggregation:giantswarm:cluster_transition_update
+    {{- else }}
+    # TODO
+    {{- end }}
     # Scheduled cluster upgrade times
     - expr: upgrade_schedule_operator_cluster_scheduled_upgrades_time
       record: aggregation:giantswarm:cluster_scheduled_upgrades_time
   - name: docker.grafana-cloud.recording
     rules:
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
     - expr: sum(engine_daemon_image_actions_seconds_count) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, action)
       record: aggregation:docker:action_count
+    {{- else }}
+    # TODO
+    {{- end }}
     - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) 
       record: aggregation:docker:containers_using_dockerhub_image
     - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) / sum(kube_pod_container_info{} or kube_pod_init_container_info{}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)

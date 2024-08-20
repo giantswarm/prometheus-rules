@@ -9,7 +9,7 @@ tests:
     input_series:
       - series: 'up{instance="prometheus-agent",cluster_id="gauss", cluster_type="workload_cluster", installation="myinstall", customer="giantswarm", pipeline="testing", provider="capa", region="eu-west-2", job="prometheus-agent"}'
         values: "_x60  0+0x60 1+0x60"
-      - series: 'capi_cluster_status_condition{ cluster_id="gauss", cluster_type="workload_cluster", installation="myinstall", customer="giantswarm", pipeline="testing", provider="capa", region="eu-west-2", status="True", type="ControlPlaneReady", name="gauss"}'
+      - series: 'capi_cluster_status_condition{cluster_id="gauss", cluster_type="workload_cluster", installation="myinstall", customer="giantswarm", pipeline="testing", provider="capa", region="eu-west-2", status="True", type="ControlPlaneReady", name="gauss"}'
         values: "1+0x180"
     alert_rule_test:
       - alertname: PrometheusAgentFailing

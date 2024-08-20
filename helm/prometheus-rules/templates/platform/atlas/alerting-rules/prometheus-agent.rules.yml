@@ -37,8 +37,8 @@ spec:
             "name",
             "(.*)"
           ) == 1
-        ) unless on (cluster_id, customer, installation, pipeline, provider, region) (
-          count(up{job="prometheus-agent"} > 0) by (cluster_id, customer, installation, pipeline, provider, region)
+        ) unless on (cluster_id) (
+          count(up{job="prometheus-agent"} > 0) by (cluster_id)
         )
       {{- end }}
       for: 20m
@@ -78,8 +78,8 @@ spec:
             "name",
             "(.*)"
           ) == 1
-        ) unless on (cluster_id, customer, installation, pipeline, provider, region) (
-          count(up{job="prometheus-agent"} > 0) by (cluster_id, customer, installation, pipeline, provider, region)
+        ) unless on (cluster_id) (
+          count(up{job="prometheus-agent"} > 0) by (cluster_id)
         )
       {{- end }}
       for: 2m

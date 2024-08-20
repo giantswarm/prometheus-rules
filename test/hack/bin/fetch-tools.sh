@@ -2,12 +2,12 @@
 set -euo pipefail
 
 # let's have reproducable tests - pin to specific versions
-ARCHITECT_VERSION="6.8.0"
-PROMETHEUS_VERSION="2.41.0"
-HELM_VERSION="3.9.0"
-YQ_VERSION="4.26.1"
+ARCHITECT_VERSION="6.17.0"
+PROMETHEUS_VERSION="2.54.0"
+HELM_VERSION="3.1.0"
+YQ_VERSION="4.44.3"
 JQ_VERSION="1.7.1"
-PINT_VERSION="0.58.1"
+PINT_VERSION="0.64.0"
 
 GIT_WORKDIR=$(git rev-parse --show-toplevel)
 

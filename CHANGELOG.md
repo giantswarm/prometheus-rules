@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Upgrade Alloy to 0.3.1
 
+### Fixed
+
+- Fix Prometheus Agent Failing alert for Multi-provider MCs.
+
 ## [4.9.1] - 2024-08-06
 
 ### Changed

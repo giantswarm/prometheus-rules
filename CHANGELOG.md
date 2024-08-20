@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.10.0] - 2024-08-20
+
 ### Changed
 
 - Upgrade Alloy to 0.4.1
@@ -3013,7 +3015,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.9.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.10.0...HEAD
+[4.10.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.9.1...v4.10.0
 [4.9.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.9.0...v4.9.1
 [4.9.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.8.2...v4.9.0
 [4.8.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.8.1...v4.8.2

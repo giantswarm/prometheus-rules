@@ -22,7 +22,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: storage
     - alert: EtcdVolumeSpaceTooLow
       annotations:
@@ -34,7 +34,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: storage
     - alert: KubeletVolumeSpaceTooLow
       annotations:
@@ -50,7 +50,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: storage
     - alert: LogVolumeSpaceTooLow
       annotations:
@@ -63,7 +63,7 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: storage
     - alert: RootVolumeSpaceTooLow
       annotations:
@@ -74,5 +74,5 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: storage

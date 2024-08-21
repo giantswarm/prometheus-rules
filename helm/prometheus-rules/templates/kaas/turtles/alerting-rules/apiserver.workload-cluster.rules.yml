@@ -28,7 +28,7 @@ spec:
         cancel_if_cluster_with_notready_nodepools: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: kubernetes
 
     - alert: WorkloadClusterAPIServerAdmissionWebhookErrors
@@ -41,7 +41,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: kubernetes
 
     # Webhooks that are not explicitely owner by any team (customer owned ones).

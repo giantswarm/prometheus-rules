@@ -23,7 +23,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: etcd-backup
     - alert: LatestETCDBackup2DaysOld
       annotations:
@@ -42,7 +42,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: etcd-backup
     - alert: ETCDBackupMetricsMissing
       annotations:
@@ -54,5 +54,5 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: etcd-backup

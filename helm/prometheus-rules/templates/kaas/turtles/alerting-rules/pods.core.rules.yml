@@ -27,7 +27,7 @@ spec:
         cancel_if_outside_working_hours: "true"
         cancel_if_cluster_has_no_workers: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: kubernetes
     - alert: PodPending
       annotations:
@@ -44,5 +44,5 @@ spec:
         cancel_if_kube_state_metrics_down: "true"
         cancel_if_cluster_has_no_workers: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: turtles
 

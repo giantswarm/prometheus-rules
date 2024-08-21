@@ -27,7 +27,7 @@ spec:
         cancel_if_control_plane_node_down: "true"
         cancel_if_kubelet_down: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: etcd
     - alert: WorkloadClusterEtcdCommitDurationTooHigh
       annotations:
@@ -39,7 +39,7 @@ spec:
         area: kaas
         severity: page
         cancel_if_outside_working_hours: "true"
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: etcd
     - alert: WorkloadClusterEtcdDBSizeTooLarge
       annotations:
@@ -51,7 +51,7 @@ spec:
         area: kaas
         severity: page
         cancel_if_outside_working_hours: "true"
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: etcd
     - alert: WorkloadClusterEtcdNumberOfLeaderChangesTooHigh
       annotations:
@@ -60,7 +60,7 @@ spec:
       labels:
         area: kaas
         severity: notify
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: etcd
     - alert: WorkloadClusterEtcdHasNoLeader
       annotations:
@@ -72,7 +72,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: etcd
     - alert: WorkloadClusterEtcdMetricsMissing
       annotations:
@@ -84,5 +84,5 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{ include "providerTeam" . }}
+        team: turtles
         topic: etcd

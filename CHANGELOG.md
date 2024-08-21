@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Assign alerts on core components directly to turtles.
+
 ## [4.10.0] - 2024-08-20
 
 ### Changed

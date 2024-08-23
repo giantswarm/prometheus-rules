@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Assign alerts on core components directly to turtles.
 
+### Fixed
+
+- Ignore new `watchdog` collector of node-exporter since our clusters will not have data for these devices and therefore the `node_scrape_collector_success` metric would be 0
+
 ## [4.10.0] - 2024-08-20
 
 ### Changed

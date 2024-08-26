@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add CAPI cluster namespace to recording rule `aggregation:giantswarm:cluster_info` for use by [`resource-police`](https://github.com/giantswarm/resource-police/) to find out to whom each test cluster belongs
+
 ## [4.11.0] - 2024-08-26
 
 ### Changed

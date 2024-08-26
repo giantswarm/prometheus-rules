@@ -63,7 +63,7 @@ spec:
     rules:
     # This recording rule is used to list all clusters. The last expression is used to list vintage MCs
     - expr: |-
-        avg by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+        avg by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, exported_namespace) (
           label_replace(
             capi_cluster_info,
             "cluster_id",
@@ -76,7 +76,7 @@ spec:
           or label_replace(cluster_service_cluster_info, "cluster_type", "workload_cluster", "", "") >= 1
           or
             label_replace(
-              label_replace( 
+              label_replace(
                 label_replace(
                   label_replace(
                     label_replace(
@@ -134,7 +134,7 @@ spec:
     rules:
     - expr: sum(engine_daemon_image_actions_seconds_count) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, action)
       record: aggregation:docker:action_count
-    - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) 
+    - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:docker:containers_using_dockerhub_image
     - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) / sum(kube_pod_container_info{} or kube_pod_init_container_info{}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:docker:containers_using_dockerhub_image_relative
@@ -361,7 +361,7 @@ spec:
       record: aggregation:mimir:scrape_series_added
   {{- end }}
   - name: dex.grafana-cloud.recording
-    rules:    
+    rules:
     # Dex activity and status based on ingress controller data
     - expr: sum(nginx_ingress_controller_requests{namespace="giantswarm",ingress="dex",status=~"5.."}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:dex_requests_status_5xx
@@ -369,7 +369,7 @@ spec:
       record: aggregation:dex_requests_status_4xx
     - expr: sum(nginx_ingress_controller_requests{namespace="giantswarm",ingress="dex",status=~"[23].."}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:dex_requests_status_ok
-    # Dex operator metrics for expiry time of identity provider oauth app secrets 
+    # Dex operator metrics for expiry time of identity provider oauth app secrets
     - expr: dex_operator_idp_secret_expiry_time
       record: aggregation:dex_operator_idp_secret_expiry_time
     # Requests to the deprecated k8s authenticator. TODO(@team-bigmac): Get rid of this recording rule when the component is no longer used.

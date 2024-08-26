@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.12.0] - 2024-08-26
+
 ### Added
 
 - Add CAPI cluster namespace to recording rule `aggregation:giantswarm:cluster_info` for use by [`resource-police`](https://github.com/giantswarm/resource-police/) to find out to whom each test cluster belongs
@@ -3029,7 +3031,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.11.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.12.0...HEAD
+[4.12.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.11.0...v4.12.0
 [4.11.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.10.0...v4.11.0
 [4.10.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.9.1...v4.10.0
 [4.9.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.9.0...v4.9.1

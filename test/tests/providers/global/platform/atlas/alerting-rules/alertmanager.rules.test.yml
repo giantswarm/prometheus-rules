@@ -25,6 +25,7 @@ tests:
               area: platform
               cancel_if_outside_working_hours: "true"
               cluster_type: management_cluster
+              dashboard: alertmanager-overview/alertmanager-overview
               integration: slack
               severity: page
               team: atlas
@@ -51,6 +52,7 @@ tests:
           - exp_labels:
               area: platform
               cluster_type: management_cluster
+              dashboard: alertmanager-overview/alertmanager-overview
               integration: opsgenie
               severity: notify
               team: atlas

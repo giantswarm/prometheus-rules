@@ -21,6 +21,7 @@ spec:
       for: 45m
       labels:
         area: platform
+        dashboard: alertmanager-overview/alertmanager-overview
         severity: page
         team: atlas
         topic: monitoring
@@ -34,6 +35,7 @@ spec:
       for: 30m
       labels:
         area: platform
+        dashboard: alertmanager-overview/alertmanager-overview
         severity: notify
         team: atlas
         topic: monitoring

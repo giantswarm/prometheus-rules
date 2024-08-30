@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- alertmanager alerts: add link to dashboard
+
 ### Fixed
 
 - Fix PromtailRequestError to also account for 4xx and -1 errors (https://github.com/giantswarm/giantswarm/issues/31387).

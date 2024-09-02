@@ -143,9 +143,9 @@ spec:
         opsrecipe: mimir-ingester/
       expr: |-
         (
-          kube_horizontalpodautoscaler_status_desired_replicas{namespace="mimir"} /
+          kube_horizontalpodautoscaler_status_desired_replicas{namespace="mimir"} >=
           on(cluster_id, customer, installation, namespace, horizontalpodautoscaler)
-          kube_horizontalpodautoscaler_spec_max_replicas{namespace="mimir"} >= 1.0
+          kube_horizontalpodautoscaler_spec_max_replicas{namespace="mimir"}
         )
         and on(cluster_id, customer, installation, namespace, horizontalpodautoscaler)
         (

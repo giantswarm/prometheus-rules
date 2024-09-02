@@ -8,7 +8,7 @@ metadata:
   name: alloy-rules
   namespace: giantswarm
 spec:
-  catalog: giantswarm-test
+  catalog: giantswarm
   config:
     configMap:
       name: alloy-rules-config
@@ -27,5 +27,5 @@ spec:
   namespace: monitoring
   # used by renovate
   # repo: giantswarm/alloy
-  version: 0.5.0-a7ba7c6d3dceedcc3e858ae4eacc873a5405b91e
+  version: 0.5.1
 {{- end -}}

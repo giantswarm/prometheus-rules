@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.13.1] - 2024-09-03
+
 ### Fixed
 
 Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so actual errors are hidden.
@@ -3046,7 +3048,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.1...HEAD
+[4.13.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.0...v4.13.1
 [4.13.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.12.0...v4.13.0
 [4.12.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.11.0...v4.12.0
 [4.11.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.10.0...v4.11.0

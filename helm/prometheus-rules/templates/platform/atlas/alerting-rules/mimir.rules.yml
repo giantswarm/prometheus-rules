@@ -137,7 +137,7 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    - alert: MimirHPANeedsToBeScaledUp
+    - alert: MimirHPAReachedMaxReplicas
       annotations:
         description: '{{`Mimir ${ labels.horizontalpodautoscaler } HPA has reached maximum replicas and consume too much resources, it needs to be scaled up.`}}'
         opsrecipe: mimir-ingester/

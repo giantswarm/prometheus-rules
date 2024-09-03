@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add `MimirHPANeedsToBeScaledUp` alert, to detect when Mimir's HPAs have reached maximum capacity.
+- Add `MimirHPAReachedMaxReplicas` alert, to detect when Mimir's HPAs have reached maximum capacity.
 
 ### Changed
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so actual errors are hidden.
+
 ## [4.13.0] - 2024-09-03
 
 ### Changed

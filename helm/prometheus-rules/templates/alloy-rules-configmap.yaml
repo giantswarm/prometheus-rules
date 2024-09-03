@@ -78,4 +78,6 @@ data:
         replicas: 1
       crds:
         create: false
+    verticalPodAutoscaler:
+      enabled: true
 {{- end -}}

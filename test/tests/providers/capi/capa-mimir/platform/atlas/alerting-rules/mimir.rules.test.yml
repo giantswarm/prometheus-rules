@@ -318,3 +318,38 @@ tests:
               opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledDown
         eval_time: 280m 
+  # Test for MimirCompactorFailedCompaction alert
+  - interval: 1m
+    input_series:
+      # mimir-ingester real memory usage gradually decreases until it goes below 30% of the memory requests.
+      - series: 'cortex_compactor_runs_failed_total{reason="error", installation="golem", cluster_id="golem", namespace="mimir", pipeline="testing", provider="capa"}'
+        values: "8+0x20 1+0x40 0+0x20 4+0x130 0+0x190"                             
+    alert_rule_test:
+      - alertname: MimirCompactorFailedCompaction
+        eval_time: 15m 
+      - alertname: MimirCompactorFailedCompaction
+        eval_time: 55m 
+      - alertname: MimirCompactorFailedCompaction
+        eval_time: 120m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: golem
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+              namespace: mimir
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Mimir compactor has been failing its compactions for 2 hours.
+              opsrecipe: "mimir/"
+      - alertname: MimirCompactorFailedCompaction
+        eval_time: 205m 
+      - alertname: MimirCompactorFailedCompaction
+        eval_time: 350m

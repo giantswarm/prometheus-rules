@@ -175,29 +175,29 @@ tests:
     input_series:
       # mimir-ingester real memory usage gradually increases until it goes beyond 90% of the memory requests.
       - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "8+0x20 11+0x40 8+0x140 11+0x40 8+0x60"
+        values: "8+0x20 11+0x70 8+0x140 11+0x70 8+0x60"
       - series: 'container_memory_working_set_bytes{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "8+0x20 11+0x40 8+0x140 11+0x40 8+0x60"
+        values: "8+0x20 11+0x70 8+0x140 11+0x70 8+0x60"
       # mimir-ingester memory requests stay the same for the entire duration of the test.
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "12+0x300"
+        values: "12+0x400"
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "12+0x300"
+        values: "12+0x400"
       # mimir-ingester real cpu usage gradually increases until it goes beyond 90% of the cpu requests.                              
       - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "0+60x100 6000+110x40 10400+60x60 14000+110x40 18400+60x60"
+        values: "0+60x100 6000+110x70 10400+60x60 14000+110x70 18400+60x60"
       - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "0+60x300"
+        values: "0+60x400"
       # mimir-ingester cpu requests stay the same for the entire duration of the test.
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "1.5+0x300"                                 
+        values: "1.5+0x400"                                 
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "1.5+0x300"                                 
+        values: "1.5+0x400"                                 
     alert_rule_test:
       - alertname: MimirIngesterNeedsToBeScaledUp
         eval_time: 15m
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 55m
+        eval_time: 85m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -217,9 +217,9 @@ tests:
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
               opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 100m
+        eval_time: 130m
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 140m 
+        eval_time: 170m 
         exp_alerts:
           - exp_labels:
               area: platform
@@ -239,9 +239,9 @@ tests:
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
               opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 180m
+        eval_time: 210m
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 235m
+        eval_time: 295m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -261,7 +261,7 @@ tests:
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
               opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 280m
+        eval_time: 350m
   # Test for MimirIngesterNeedsToBeScaledDown alert
   - interval: 1m
     input_series:
@@ -318,3 +318,38 @@ tests:
               opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledDown
         eval_time: 280m 
+  # Test for MimirCompactorFailedCompaction alert
+  - interval: 1m
+    input_series:
+      # mimir-ingester real memory usage gradually decreases until it goes below 30% of the memory requests.
+      - series: 'cortex_compactor_runs_failed_total{reason="error", installation="golem", cluster_id="golem", namespace="mimir", pipeline="testing", provider="capa"}'
+        values: "8+0x20 1+0x40 0+0x20 4+0x130 0+0x190"                             
+    alert_rule_test:
+      - alertname: MimirCompactorFailedCompaction
+        eval_time: 15m 
+      - alertname: MimirCompactorFailedCompaction
+        eval_time: 55m 
+      - alertname: MimirCompactorFailedCompaction
+        eval_time: 120m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: golem
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+              namespace: mimir
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Mimir compactor has been failing its compactions for 2 hours.
+              opsrecipe: "mimir/"
+      - alertname: MimirCompactorFailedCompaction
+        eval_time: 205m 
+      - alertname: MimirCompactorFailedCompaction
+        eval_time: 350m

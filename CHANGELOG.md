@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.14.0] - 2024-09-05
+
 ### Added
 
 - Add `MimirCompactorFailedCompaction` alert.
@@ -3064,7 +3066,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.3...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.14.0...HEAD
+[4.14.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.3...v4.14.0
 [4.13.3]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.2...v4.13.3
 [4.13.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.1...v4.13.2
 [4.13.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.0...v4.13.1

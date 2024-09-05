@@ -137,4 +137,19 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: MimirCompactorFailedCompaction
+      annotations:
+        description: 'Mimir compactor has been failing its compactions for 2 hours.'
+        opsrecipe: mimir/
+      # Query is based on the following upstream mixin alerting rule : https://github.com/grafana/mimir/blob/main/operations/mimir-mixin-compiled/alerts.yaml#L858
+      expr: sum(increase(cortex_compactor_runs_failed_total{reason!="shutdown"}[2h])) by (cluster_id, installation, namespace, pipeline, provider) > 2
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
 {{- end }}

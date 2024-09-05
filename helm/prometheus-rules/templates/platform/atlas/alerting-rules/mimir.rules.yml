@@ -137,4 +137,19 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: MimirCompactorFailedCompaction
+      annotations:
+        description: 'Mimir compactor has been failing its compactions for 2 hours.'
+        opsrecipe: mimir/
+      expr: sum(increase(cortex_compactor_runs_failed_total[1h])) by (cluster_id, installation, namespace, pipeline, provider) > 0
+      for: 2h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
 {{- end }}

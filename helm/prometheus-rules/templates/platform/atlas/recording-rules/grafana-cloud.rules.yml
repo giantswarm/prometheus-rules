@@ -549,7 +549,7 @@ spec:
 {{- end }}
   - name: slos.grafana-cloud.recording
     rules:
-      # Let's not send the slo:sli_error:ratio_rate30d rule to Grafana Cloud as it's not useful for the SLOs dashboard.
+      # Let's not send the slo:sli_error:ratio_rate30d nor the slo:sli_error:ratio_rate3d rule to Grafana Cloud as it's not useful for the SLOs dashboard.
       - expr: sum(slo:current_burn_rate:ratio) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
         record: aggregation:slo:current_burn_rate:ratio
       - expr: |-
@@ -688,23 +688,6 @@ spec:
             )
           ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
         record: aggregation:slo:sli_error:ratio_rate30m
-      - expr: |-
-          sum(
-            label_replace(
-              label_replace(
-                slo:sli_error:ratio_rate3d,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
-              "$1",
-              "sloth_service",
-              "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
-        record: aggregation:slo:sli_error:ratio_rate3d
       - expr: |-
           sum(
             label_replace(

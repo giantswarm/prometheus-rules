@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `MimirCompactorFailedCompaction` alert.
 
+## [4.13.3] - 2024-09-05
+
+### Changed
+
+- Increase `MimirIngesterNeedsToBeScaledUp` alert's time to trigger from 30m to 1h.
+
 ## [4.13.2] - 2024-09-03
 
 ### Changed
@@ -3058,7 +3064,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.3...HEAD
+[4.13.3]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.2...v4.13.3
 [4.13.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.1...v4.13.2
 [4.13.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.0...v4.13.1
 [4.13.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.12.0...v4.13.0

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add aggregations for slo metrics to export them to grafana cloud
 
+### Changed
+
+- Added dashboards to several mimir alerts
+
 ## [4.14.0] - 2024-09-05
 
 ### Added

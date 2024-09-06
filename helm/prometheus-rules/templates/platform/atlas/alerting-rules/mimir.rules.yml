@@ -41,6 +41,7 @@ spec:
         # This label is used to ensure the alert go through even for non-stable installations
         all_pipelines: "true"
         cancel_if_outside_working_hours: "true"
+        dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview
         severity: page
         team: atlas
         topic: observability
@@ -56,6 +57,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
+        dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview
         severity: page
         team: atlas
         topic: observability
@@ -86,6 +88,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
+        dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler
         severity: page
         team: atlas
         topic: observability
@@ -149,6 +152,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
+        dashboard: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources
         severity: page
         team: atlas
         topic: observability

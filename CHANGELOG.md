@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `MimirHPAReachedMaxReplicas` alert, to detect when Mimir's HPAs have reached maximum capacity.
+
 ### Changed
 
 - Added dashboards to several mimir alerts

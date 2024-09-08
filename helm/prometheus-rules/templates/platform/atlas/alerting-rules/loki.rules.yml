@@ -112,10 +112,18 @@ spec:
       annotations:
         description: '{{`Loki component {{ $labels.horizontalpodautoscaler }} has reached its maxReplicas number but still needs to be scaled up.`}}'
         opsrecipe: loki/
-      expr: |
-        sum by (cluster_id, installation, namespace, pipeline, provider, horizontalpodautoscaler) (kube_horizontalpodautoscaler_status_desired_replicas{namespace="loki", horizontalpodautoscaler=~"loki-backend|loki-write|loki-read", cluster_type="management_cluster"})
-          != 
-        sum by (cluster_id, installation, namespace, pipeline, provider, horizontalpodautoscaler) (kube_horizontalpodautoscaler_status_current_replicas{namespace="loki", horizontalpodautoscaler=~"loki-backend|loki-write|loki-read", cluster_type="management_cluster"})
+      expr: |-
+        (
+          kube_horizontalpodautoscaler_status_desired_replicas{namespace="loki"} >=
+          on(cluster_id, customer, installation, namespace, horizontalpodautoscaler)
+          kube_horizontalpodautoscaler_spec_max_replicas{namespace="loki"}
+        )
+        and on(cluster_id, customer, installation, namespace, horizontalpodautoscaler)
+        (
+          kube_horizontalpodautoscaler_status_target_metric{namespace="loki"} >
+          on(cluster_id, customer, installation, namespace, horizontalpodautoscaler, metric_name, metric_target_type)
+          kube_horizontalpodautoscaler_spec_target_metric{namespace="loki"}
+        )
       for: 4h
       labels:
         area: platform

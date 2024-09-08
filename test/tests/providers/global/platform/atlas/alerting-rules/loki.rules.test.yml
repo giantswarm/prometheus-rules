@@ -196,8 +196,12 @@ tests:
       # loki-backend real memory usage gradually decreases until it goes below 30% of the memory requests.
       - series: 'kube_horizontalpodautoscaler_status_desired_replicas{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "2+0x20 3+0x250 2+0x250"
-      - series: 'kube_horizontalpodautoscaler_status_current_replicas{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "2+0x520"
+      - series: 'kube_horizontalpodautoscaler_status_target_metric{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "60+0x20 120+0x250 60+0x250"
+      - series: 'kube_horizontalpodautoscaler_spec_target_metric{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "90+0x520"
     alert_rule_test:
       - alertname: LokiHpaReachedMaxReplicas
         eval_time: 15m
@@ -218,8 +222,6 @@ tests:
               horizontalpodautoscaler: loki-backend
               installation: golem
               cluster_id: golem
-              pipeline: testing
-              provider: capa
             exp_annotations:
               description: Loki component loki-backend has reached its maxReplicas number but still needs to be scaled up.
               opsrecipe: loki/

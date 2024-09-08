@@ -321,6 +321,7 @@ tests:
               opsrecipe: "mimir-ingester/"
       - alertname: MimirIngesterNeedsToBeScaledDown
         eval_time: 280m 
+  # Test for MimirHPAReachedMaxReplicas alert
   - interval: 1m
     input_series:
       # HPA max replicas = 3 for the whole test

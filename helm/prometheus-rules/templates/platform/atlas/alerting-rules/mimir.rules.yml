@@ -140,6 +140,32 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: MimirHPAReachedMaxReplicas
+      annotations:
+        description: '{{`Mimir ${ labels.horizontalpodautoscaler } HPA has reached maximum replicas and consume too much resources, it needs to be scaled up.`}}'
+        opsrecipe: mimir-ingester/
+      expr: |-
+        (
+          kube_horizontalpodautoscaler_status_desired_replicas{namespace="mimir"} >=
+          on(cluster_id, customer, installation, namespace, horizontalpodautoscaler)
+          kube_horizontalpodautoscaler_spec_max_replicas{namespace="mimir"}
+        )
+        and on(cluster_id, customer, installation, namespace, horizontalpodautoscaler)
+        (
+          kube_horizontalpodautoscaler_status_target_metric{namespace="mimir"} >
+          on(cluster_id, customer, installation, namespace, horizontalpodautoscaler, metric_name, metric_target_type)
+          kube_horizontalpodautoscaler_spec_target_metric{namespace="mimir"}
+        )
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
     - alert: MimirCompactorFailedCompaction
       annotations:
         description: 'Mimir compactor has been failing its compactions for 2 hours.'

@@ -182,4 +182,38 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: MimirContinuousTestFailingOnWrites
+      annotations:
+        description: 'Mimir continous-test detected errors in the write path.'
+        opsrecipe: mimir/
+      # Query is based on the following upstream mixin alerting rule : https://github.com/grafana/mimir/blob/main/operations/mimir-mixin-compiled/alerts.yaml#L1097
+      expr: sum by(cluster_id, installation, namespace, pipeline, provider, test) (rate(mimir_continuous_test_writes_failed_total[5m])) > 0
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        #TODO dashboard:
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirContinuousTestFailingOnReads
+      annotations:
+        description: 'Mimir continous-test detected errors in the write path.'
+        opsrecipe: mimir/
+      # Query is based on the following upstream mixin alerting rule : https://github.com/grafana/mimir/blob/main/operations/mimir-mixin-compiled/alerts.yaml#L1097
+      expr: sum by(cluster_id, installation, namespace, pipeline, provider, test) (rate(mimir_continuous_test_queries_failed_total[5m])) > 0
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        # TODO dashboard: 
+        severity: page
+        team: atlas
+        topic: observability
 {{- end }}

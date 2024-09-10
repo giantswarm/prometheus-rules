@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Added dashboards to several mimir alerts
+- Change `IRSAACMCertificateExpiringInLessThan60Days` to
+  `IRSAACMCertificateExpiringInLessThan45Days`. The ACM certificate is renewed
+  60 days before expiration and the alert can fire prematurely.
 
 ## [4.14.0] - 2024-09-05
 

@@ -364,7 +364,7 @@ tests:
                namespace: mimir
              exp_annotations:
                description: "Mimir ${ labels.horizontalpodautoscaler } HPA has reached maximum replicas and consume too much resources, it needs to be scaled up."
-               opsrecipe: "mimir-ingester/"
+               opsrecipe: "mimir-hpa/"
       - alertname: MimirHPAReachedMaxReplicas
         eval_time: 246m
       - alertname: MimirHPAReachedMaxReplicas
@@ -383,7 +383,7 @@ tests:
                namespace: mimir
              exp_annotations:
                description: "Mimir ${ labels.horizontalpodautoscaler } HPA has reached maximum replicas and consume too much resources, it needs to be scaled up."
-               opsrecipe: "mimir-ingester/"
+               opsrecipe: "mimir-hpa/"
   # Test for MimirCompactorFailedCompaction alert
   - interval: 1m
     input_series:

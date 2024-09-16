@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.15.1] - 2024-09-16
+
 ### Removed
 
 - Remove aggregation of slo:period_error_budget_remaining:ratio` as this value can be easily computed and creates a lot of time series in Grafana Cloud
@@ -3084,7 +3086,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.15.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.15.1...HEAD
+[4.15.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.15.0...v4.15.1
 [4.15.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.14.0...v4.15.0
 [4.14.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.3...v4.14.0
 [4.13.3]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.2...v4.13.3

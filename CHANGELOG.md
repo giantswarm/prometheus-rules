@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove aggregation of slo:period_error_budget_remaining:ratio` as this value can be easily computed and creates a lot of time series in Grafana Cloud
+
 ## [4.15.0] - 2024-09-16
 
 ### Added

@@ -607,23 +607,6 @@ spec:
           sum(
             label_replace(
               label_replace(
-                slo:period_error_budget_remaining:ratio,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
-              "$1",
-              "sloth_service",
-              "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
-        record: aggregation:slo:period_error_budget_remaining:ratio
-      - expr: |-
-          sum(
-            label_replace(
-              label_replace(
                 slo:sli_error:ratio_rate5m,
                 "slo",
                 "$1",

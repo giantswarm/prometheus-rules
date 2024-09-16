@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Update `MimirHPAReachedMaxReplicas` opsrecipe link
+- Fix aggregation rule of the `slo:current_burn_rate:ratio` slo.
 
 ## [4.15.1] - 2024-09-16
 

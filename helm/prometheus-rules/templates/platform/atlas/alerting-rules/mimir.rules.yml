@@ -143,7 +143,7 @@ spec:
     - alert: MimirHPAReachedMaxReplicas
       annotations:
         description: '{{`Mimir ${ labels.horizontalpodautoscaler } HPA has reached maximum replicas and consume too much resources, it needs to be scaled up.`}}'
-        opsrecipe: mimir-ingester/
+        opsrecipe: mimir-hpa/
       expr: |-
         (
           kube_horizontalpodautoscaler_status_desired_replicas{namespace="mimir"} >=

@@ -29,6 +29,7 @@ spec:
     # This alert will not page for the prometheus-buddy.
     - alert: MimirRestartingTooOften
       annotations:
+        dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview
         description: '{{`Mimir containers are restarting too often.`}}'
         opsrecipe: mimir/
       expr: |
@@ -41,12 +42,12 @@ spec:
         # This label is used to ensure the alert go through even for non-stable installations
         all_pipelines: "true"
         cancel_if_outside_working_hours: "true"
-        dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview
         severity: page
         team: atlas
         topic: observability
     - alert: MimirComponentDown
       annotations:
+        dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview
         description: '{{`Mimir component : {{ $labels.service }} is down.`}}'
         opsrecipe: mimir/
       expr: count(up{job=~"mimir/.*", container!="prometheus"} == 0) by (cluster_id, installation, provider, pipeline, service) > 0
@@ -57,7 +58,6 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
-        dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview
         severity: page
         team: atlas
         topic: observability
@@ -78,6 +78,7 @@ spec:
         topic: observability
     - alert: MimirRulerEventsFailed
       annotations:
+        dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler
         description: 'Mimir ruler is failing to process PrometheusRules.'
         opsrecipe: mimir/
       expr: rate(mimir_rules_events_failed_total{cluster_type="management_cluster", namespace="mimir"}[5m]) > 0
@@ -88,7 +89,6 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
-        dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler
         severity: page
         team: atlas
         topic: observability
@@ -168,6 +168,7 @@ spec:
         topic: observability
     - alert: MimirCompactorFailedCompaction
       annotations:
+        dashboard: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources
         description: 'Mimir compactor has been failing its compactions for 2 hours.'
         opsrecipe: mimir/
       # Query is based on the following upstream mixin alerting rule : https://github.com/grafana/mimir/blob/main/operations/mimir-mixin-compiled/alerts.yaml#L858
@@ -178,7 +179,6 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
-        dashboard: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources
         severity: page
         team: atlas
         topic: observability

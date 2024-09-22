@@ -7,10 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade Alloy to 0.5.2 which brings no value to this repo.
+
+### Fixed
+
+- Dashboard links in alertmanager and mimir rules
+- Fix falco events alerts node label to hostname as node does not exist.
+
+## [4.15.2] - 2024-09-17
+
 ### Fixed
 
 - Update `MimirHPAReachedMaxReplicas` opsrecipe link
-- Fix falco events alerts node label to hostname as node does not exist.
+- Fix aggregation rule of the `slo:current_burn_rate:ratio` slo.
 
 ## [4.15.1] - 2024-09-16
 
@@ -3091,7 +3102,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.15.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.15.2...HEAD
+[4.15.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.15.1...v4.15.2
 [4.15.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.15.0...v4.15.1
 [4.15.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.14.0...v4.15.0
 [4.14.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.3...v4.14.0

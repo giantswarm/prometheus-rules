@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Dashboard links in alertmanager and mimir rules
+- Fix cert-manager down alert.
 
 ## [4.15.2] - 2024-09-17
 

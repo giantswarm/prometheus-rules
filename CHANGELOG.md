@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Update `MimirHPAReachedMaxReplicas` opsrecipe link
+- Fix falco events alerts node label to hostname as node does not exist.
 
 ## [4.15.1] - 2024-09-16
 

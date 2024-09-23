@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Dashboard links in alertmanager and mimir rules
 - Fix cert-manager down alert.
+- Fix falco events alerts node label to hostname as node does not exist.
 
 ## [4.15.2] - 2024-09-17
 

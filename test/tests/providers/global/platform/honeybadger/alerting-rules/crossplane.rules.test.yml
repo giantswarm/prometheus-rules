@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'kube_deployment_status_replicas_unavailable{app="kube-state-metrics", cluster_id="gauss", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="crossplane", installation="gauss", instance="100.64.5.122:8080", job="gauss-prometheus/workload-gauss/0", namespace="crossplane", node="ip-10-0-5-119.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-95bbb4bd7-v6hvh", provider="aws", service_priority="highest"}'
+      - series: 'kube_deployment_status_replicas_unavailable{job="kube-state-metrics", cluster_id="gauss", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="crossplane", installation="gauss", instance="100.64.5.122:8080", namespace="crossplane", node="ip-10-0-5-119.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-95bbb4bd7-v6hvh", provider="aws", service_priority="highest"}'
         values: "0+0x20 1+0x100"
     alert_rule_test:
       - alertname: CrossplaneDeploymentNotSatisfied
@@ -13,7 +13,7 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: CrossplaneDeploymentNotSatisfied
-              app: kube-state-metrics
+              job: kube-state-metrics
               area: platform
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
@@ -26,7 +26,6 @@ tests:
               deployment: crossplane
               installation: gauss
               instance: 100.64.5.122:8080
-              job: gauss-prometheus/workload-gauss/0
               namespace: crossplane
               node: ip-10-0-5-119.eu-west-1.compute.internal
               organization: giantswarm
@@ -41,7 +40,7 @@ tests:
               opsrecipe: "deployment-not-satisfied/"
   - interval: 1m
     input_series:
-      - series: 'kube_deployment_status_replicas_unavailable{app="kube-state-metrics", cluster_id="gauss", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="caicloud-event-exporter", installation="gauss", instance="100.64.5.122:8080", job="gauss-prometheus/workload-gauss/0", namespace="crossplane", node="ip-10-0-5-119.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-95bbb4bd7-v6hvh", provider="aws", service_priority="highest"}'
+      - series: 'kube_deployment_status_replicas_unavailable{job="kube-state-metrics", cluster_id="gauss", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="caicloud-event-exporter", installation="gauss", instance="100.64.5.122:8080", namespace="crossplane", node="ip-10-0-5-119.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-95bbb4bd7-v6hvh", provider="aws", service_priority="highest"}'
         values: "0+0x20 1+0x100"
     alert_rule_test:
       - alertname: CrossplaneDeploymentNotSatisfied
@@ -49,7 +48,7 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: CrossplaneDeploymentNotSatisfied
-              app: kube-state-metrics
+              job: kube-state-metrics
               area: platform
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
@@ -62,7 +61,6 @@ tests:
               deployment: caicloud-event-exporter
               installation: gauss
               instance: 100.64.5.122:8080
-              job: gauss-prometheus/workload-gauss/0
               namespace: crossplane
               node: ip-10-0-5-119.eu-west-1.compute.internal
               organization: giantswarm

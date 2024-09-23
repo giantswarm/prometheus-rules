@@ -142,7 +142,7 @@ spec:
         topic: observability
     - alert: MimirHPAReachedMaxReplicas
       annotations:
-        description: '{{`Mimir ${ labels.horizontalpodautoscaler } HPA has reached maximum replicas and consume too much resources, it needs to be scaled up.`}}'
+        description: '{{`Mimir {{ $labels.horizontalpodautoscaler }} HPA has reached maximum replicas and consume too much resources, it needs to be scaled up.`}}'
         opsrecipe: mimir-hpa/
       expr: |-
         (

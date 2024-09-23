@@ -18,7 +18,7 @@ tests:
     alert_rule_test:
       - alertname: LokiRequestPanics
         eval_time: 15m  # should be OK after 15 minutes
-        exp_alerts:
+        exp_alerts: []
       - alertname: LokiRequestPanics
         eval_time: 25m  # After 25 minutes, should fire an alert for the t+20 error
         exp_alerts:
@@ -43,11 +43,11 @@ tests:
               opsrecipe: loki/
       - alertname: LokiRequestPanics
         eval_time: 40m  # After 40 minutes, all should be back to normal
-        exp_alerts:
+        exp_alerts: []
 
       - alertname: LokiRequestErrors
         eval_time: 15m  # should be OK after 15 minutes
-        exp_alerts:
+        exp_alerts: []
       - alertname: LokiRequestErrors
         eval_time: 160m  # Alert after more than 120m of incident
         exp_alerts:
@@ -74,13 +74,13 @@ tests:
 
       - alertname: LokiRingUnhealthy
         eval_time: 15m  # should be OK after 15 minutes
-        exp_alerts:
+        exp_alerts: []
       - alertname: LokiRingUnhealthy
         eval_time: 25m  # after 25 minutes we have an unhealthy member, but we want to filter too short events. So no alert yet.
-        exp_alerts:
+        exp_alerts: []
       - alertname: LokiRingUnhealthy
         eval_time: 35m  # special case to validate when a new pod is unhealthy (no data at the beginning)
-        exp_alerts:
+        exp_alerts: []
       - alertname: LokiRingUnhealthy
         eval_time: 60m  # now the event has been there for 20 minutes, we should have an alert.
         exp_alerts:
@@ -115,7 +115,7 @@ tests:
     alert_rule_test:
       - alertname: LokiRestartingTooOften
         eval_time: 15m  # should be OK after 15 minutes
-        exp_alerts:
+        exp_alerts: []
       - alertname: LokiRestartingTooOften
         eval_time: 85m  # After 85 minutes, should fire an alert for the t+85 error
         exp_alerts:
@@ -133,7 +133,7 @@ tests:
               opsrecipe: loki/
       - alertname: LokiRestartingTooOften
         eval_time: 140m  # After 140m minutes, all should be back to normal
-        exp_alerts:
+        exp_alerts: []
   - interval: 1m
     input_series:
       # loki-backend real memory usage gradually decreases until it goes below 30% of the memory requests.

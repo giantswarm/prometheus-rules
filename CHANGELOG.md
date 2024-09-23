@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove deprecated app labels for `external-dns` and `ingress-nginx` alerts.
 - Remove deprecated app labels for `kube-state-metrics` alerts.
 - Fix falco events alerts node label to hostname as node does not exist.
+- Fix `MimirHPAReachedMaxReplicas` description to render the horizontalpodautoscaler label.
 
 ## [4.15.2] - 2024-09-17
 

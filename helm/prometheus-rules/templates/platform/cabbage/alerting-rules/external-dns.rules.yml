@@ -47,7 +47,7 @@ spec:
       annotations:
         description: '{{`external-dns in namespace {{ $labels.namespace }}) is down.`}}'
         opsrecipe: external-dns-down/
-      expr: label_replace(up{container=~"external-dns", provider=~"aws|capa|capz|eks"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
+      expr: label_replace(up{container="external-dns", provider=~"aws|capa|capz|eks"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:
         area: platform

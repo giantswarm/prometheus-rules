@@ -17,7 +17,7 @@ spec:
       annotations:
         description: '{{`external-dns in namespace {{ $labels.namespace }}) can''t access registry (cloud service provider DNS service).`}}'
         opsrecipe: external-dns-cant-access-registry/
-      expr: rate(external_dns_registry_errors_total{provider="aws|capa|capz|eks"}[2m]) > 0
+      expr: rate(external_dns_registry_errors_total{provider=~"aws|capa|capz|eks"}[2m]) > 0
       for: 15m
       labels:
         area: platform
@@ -32,7 +32,7 @@ spec:
       annotations:
         description: '{{`external-dns in namespace {{ $labels.namespace }}) can''t access source (Service or Ingress resource).`}}'
         opsrecipe: external-dns-cant-access-source/
-      expr: rate(external_dns_source_errors_total{provider="aws|capa|capz|eks"}[2m]) > 0
+      expr: rate(external_dns_source_errors_total{provider=~"aws|capa|capz|eks"}[2m]) > 0
       for: 15m
       labels:
         area: platform
@@ -47,7 +47,7 @@ spec:
       annotations:
         description: '{{`external-dns in namespace {{ $labels.namespace }}) is down.`}}'
         opsrecipe: external-dns-down/
-      expr: label_replace(up{app=~"external-dns-(app|monitoring)", provider="aws|capa|capz|eks"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
+      expr: label_replace(up{container="external-dns", provider=~"aws|capa|capz|eks"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:
         area: platform

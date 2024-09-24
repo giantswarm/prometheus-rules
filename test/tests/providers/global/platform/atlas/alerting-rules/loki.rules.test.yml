@@ -227,3 +227,35 @@ tests:
               opsrecipe: loki/
       - alertname: LokiHpaReachedMaxReplicas
         eval_time: 515m 
+
+  # Test for LokiCompactorFailedCompaction alert
+  - interval: 1m
+    input_series:
+      - series: 'loki_compactor_apply_retention_last_successful_run_timestamp_seconds{cluster_id="golem", installation="golem", namespace="loki", pipeline="testing", provider="capa"}'
+        values: "0x240 14400+60x100" # time() returns eval_time so we return 0 for the first 4 hours and then 14400 (240 minutes) for the next 100 minutes
+    alert_rule_test:
+      - alertname: LokiCompactorFailedCompaction
+        eval_time: 15m
+      - alertname: LokiCompactorFailedCompaction
+        eval_time: 230m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: golem
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+              namespace: loki
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: loki-retention/loki-retention
+              description: Loki compactor has been failing compactions for more than 2 hours.
+              opsrecipe: "loki#lokicompactorfailedcompaction"
+      - alertname: LokiCompactorFailedCompaction
+        eval_time: 300m

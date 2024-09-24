@@ -135,3 +135,22 @@ spec:
         severity: page
         team: atlas
         topic: observability
+  - name: loki.compactor
+    rules:
+    - alert: LokiCompactorFailedCompaction
+      annotations:
+        dashboard: loki-retention/loki-retention
+        description: 'Loki compactor has been failing compactions for more than 2 hours.'
+        opsrecipe: loki#lokicompactorfailedcompaction
+      # This alert checks if Loki's the last successful compaction run is older than 2 hours
+      expr: (time() - loki_compactor_apply_retention_last_successful_run_timestamp_seconds > 60 * 60 * 2)
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability

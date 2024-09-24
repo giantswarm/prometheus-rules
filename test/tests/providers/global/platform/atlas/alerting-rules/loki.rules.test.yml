@@ -232,7 +232,7 @@ tests:
   - interval: 1m
     input_series:
       - series: 'loki_compactor_apply_retention_last_successful_run_timestamp_seconds{cluster_id="golem", installation="golem", namespace="loki", pipeline="testing", provider="capa"}'
-        values: "0x240 14400+60x100" # time() returns eval_time so we return 0 for the first 4 hours and then 14400 (240 minutes) for the next 100 minutes
+        values: "0x240 14400+60x100" # compactions don't work for the first 240 minutes so the timestamp stays still, then it gets continuously updated after 240 minutes to a valid timestamp (which is number of seconds since start for the test).
     alert_rule_test:
       - alertname: LokiCompactorFailedCompaction
         eval_time: 15m

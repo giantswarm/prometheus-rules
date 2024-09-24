@@ -387,7 +387,6 @@ tests:
   # Test for MimirCompactorFailedCompaction alert
   - interval: 1m
     input_series:
-      # mimir-ingester real memory usage gradually decreases until it goes below 30% of the memory requests.
       - series: 'cortex_compactor_runs_failed_total{reason="error", installation="golem", cluster_id="golem", namespace="mimir", pipeline="testing", provider="capa"}'
         values: "8+0x20 1+0x40 0+0x20 4+0x130 0+0x190"
     alert_rule_test:

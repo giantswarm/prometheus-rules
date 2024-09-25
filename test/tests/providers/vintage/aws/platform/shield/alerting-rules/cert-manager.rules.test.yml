@@ -32,7 +32,7 @@ tests:
               installation: gollem
               service_priority: highest
               severity: page
-              team: shiel
+              team: shield
               topic: cert-manager
             exp_annotations:
               description: "cert-manager in namespace kube-system is down."

@@ -34,7 +34,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: bigmac
+        team: shield
         topic: teleport
     - alert: TeleportKubeAgentConfigMapMismatch
       annotations:
@@ -60,5 +60,5 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
-        team: bigmac
+        team: shield
         topic: teleport

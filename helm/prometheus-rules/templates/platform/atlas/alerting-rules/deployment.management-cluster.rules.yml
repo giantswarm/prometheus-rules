@@ -132,7 +132,7 @@ spec:
         severity: page
         team: cabbage
         topic: managementcluster
-    - alert: DeploymentNotSatisfiedBigMac
+    - alert: DeploymentNotSatisfiedsShield
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
@@ -149,5 +149,5 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: bigmac
+        team: shield
         topic: managementcluster

@@ -72,7 +72,7 @@ spec:
         severity: notify
         team: shield
         topic: releng
-    - alert: WorkloadClusterDeploymentNotSatisfiedBigMac
+    - alert: WorkloadClusterDeploymentNotSatisfiedShield
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} has been scaled down to zero for prolonged period of time.`}}'
         opsrecipe: workload-cluster-deployment-not-satisfied/
@@ -85,5 +85,5 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: bigmac
+        team: shield
         topic: workloadcluster

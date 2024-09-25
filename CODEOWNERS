@@ -1,5 +1,4 @@
 * @giantswarm/team-atlas
-/helm/prometheus-rules/templates/kaas/bigmac/ @giantswarm/team-bigmac
 /helm/prometheus-rules/templates/kaas/phoenix/ @giantswarm/team-phoenix
 /helm/prometheus-rules/templates/kaas/rocket/ @giantswarm/team-rocket
 /helm/prometheus-rules/templates/kaas/turtles/ @giantswarm/team-tenet

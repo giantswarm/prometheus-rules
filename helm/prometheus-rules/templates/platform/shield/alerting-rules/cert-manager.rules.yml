@@ -23,7 +23,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: shiel
+        team: shield
         topic: observability
     - alert: CertManagerDown
       annotations:

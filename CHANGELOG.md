@@ -11,6 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove CRsync alerting rules.
 
+### Changed
+
+- Upgrade Alloy to 0.5.2 which brings no value to this repo.
+
+### Fixed
+
+- Dashboard links in alertmanager and mimir rules
+- Fix cert-manager down alert.
+- Remove deprecated app labels for `external-dns` and `ingress-nginx` alerts.
+- Remove deprecated app labels for `kube-state-metrics` alerts.
+- Fix falco events alerts node label to hostname as node does not exist.
+- Fix `MimirHPAReachedMaxReplicas` description to render the horizontalpodautoscaler label.
+
 ## [4.15.2] - 2024-09-17
 
 ### Fixed

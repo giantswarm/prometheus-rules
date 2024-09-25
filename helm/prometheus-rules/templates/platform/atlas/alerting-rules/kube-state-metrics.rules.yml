@@ -16,16 +16,7 @@ spec:
         opsrecipe: kube-state-metrics-down/
       {{- if not .Values.mimir.enabled }}
       expr: |-
-        (
-          # modern clusters
-          label_replace(up{job="kube-state-metrics",instance=~".*:8080"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{job="kube-state-metrics",instance=~".*:8080"} == 1)
-        )
-        and
-        (
-          # vintage clusters without servicemonitor
-          # We need to keep the app label until all clusters are migrated to a release >= 18.2. TODO(@giantswarm/team-atlas): Remove when this is the case
-          label_replace(up{app="kube-state-metrics",container=""}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{app="kube-state-metrics",container=""} == 1)
-        )
+        label_replace(up{job="kube-state-metrics",instance=~".*:8080"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{job="kube-state-metrics",instance=~".*:8080"} == 1)
       {{- else }}
       expr: |-
         count by (cluster_id, installation, provider, pipeline) (label_replace(up{job="kube-state-metrics", instance=~".*:8080"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*")) == 0
@@ -79,8 +70,7 @@ spec:
         opsrecipe: kube-state-metrics-down/
       expr: |-
         # When it looks up but we don't have metrics
-        # We need to keep the app label until all clusters are migrated to a release >= 18.2. TODO(@giantswarm/team-atlas): Remove when this is the case
-        count({job="kube-state-metrics", __name__=~"kube_.+"} or {app="kube-state-metrics", __name__=~"kube_.+"}) by (cluster_id, installation, provider, pipeline) <= 100
+        count({job="kube-state-metrics", __name__=~"kube_.+"}) by (cluster_id, installation, provider, pipeline) <= 100
       for: 20m
       labels:
         area: platform

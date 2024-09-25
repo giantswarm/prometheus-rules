@@ -143,7 +143,7 @@ spec:
         description: 'Loki compactor has been failing compactions for more than 2 hours.'
         opsrecipe: loki#lokicompactorfailedcompaction
       # This alert checks if Loki's the last successful compaction run is older than 2 hours
-      expr: (time() - loki_compactor_apply_retention_last_successful_run_timestamp_seconds > 60 * 60 * 2)
+      expr: (time() - (loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds > 0) > 60 * 60 * 2)
       for: 1h
       labels:
         area: platform

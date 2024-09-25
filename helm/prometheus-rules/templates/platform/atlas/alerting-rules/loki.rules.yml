@@ -140,10 +140,27 @@ spec:
     - alert: LokiCompactorFailedCompaction
       annotations:
         dashboard: loki-retention/loki-retention
-        description: 'Loki compactor has been failing compactions for more than 2 hours.'
+        description: 'Loki compactor has been failing compactions for more than 2 hours since last compaction.'
         opsrecipe: loki#lokicompactorfailedcompaction
       # This alert checks if Loki's the last successful compaction run is older than 2 hours
       expr: (time() - (loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds > 0) > 60 * 60 * 2)
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: LokiCompactorFailedCompaction
+      annotations:
+        dashboard: loki-retention/loki-retention
+        description: 'Loki compactor has been failing compactions for more than 2 hours since start-up.'
+        opsrecipe: loki#lokicompactorfailedcompaction
+      # This alert checks if Loki's first compaction successfully ran it's first compaction compaction run is older than 2 hours
+      expr: max(max_over_time(loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{}[2h])) by (cluster_id, installation, provider, pipeline) == 0
       for: 1h
       labels:
         area: platform

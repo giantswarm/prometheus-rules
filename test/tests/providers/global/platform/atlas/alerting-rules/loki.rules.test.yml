@@ -228,10 +228,10 @@ tests:
       - alertname: LokiHpaReachedMaxReplicas
         eval_time: 515m 
 
-  # Test for LokiCompactorFailedCompaction alert
+  # Test for LokiCompactorFailedCompaction since last compaction alert
   - interval: 1m
     input_series:
-      - series: 'loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{cluster_id="golem", installation="golem", namespace="loki", pipeline="testing", provider="capa"}'
+      - series: 'loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{cluster_id="golem", installation="golem", pipeline="testing", provider="capa"}'
         values: "1x240 14400+60x100" # compactions worked once at the first second the does not work for the first 240 minutes so the timestamp stays still, then it gets continuously updated after 240 minutes to a valid timestamp (which is number of seconds since start for the test).
     alert_rule_test:
       - alertname: LokiCompactorFailedCompaction
@@ -249,13 +249,43 @@ tests:
               installation: "golem"
               pipeline: "testing"
               provider: "capa"
-              namespace: loki
               severity: page
               team: atlas
               topic: observability
             exp_annotations:
               dashboard: loki-retention/loki-retention
-              description: Loki compactor has been failing compactions for more than 2 hours.
+              description: Loki compactor has been failing compactions for more than 2 hours since last compaction.
+              opsrecipe: "loki#lokicompactorfailedcompaction"
+      - alertname: LokiCompactorFailedCompaction
+        eval_time: 300m
+
+  # Test for LokiCompactorFailedCompaction since start-up alert
+  - interval: 1m
+    input_series:
+      - series: 'loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{cluster_id="grizzly", installation="grizzly", pipeline="testing", provider="capz"}'
+        values: "0x240 14400+60x100" # compactions did not worked since start-up for the first 240 minutes so the timestamp stays still, then it gets continuously updated after 240 minutes to a valid timestamp (which is number of seconds since start for the test).
+    alert_rule_test:
+      - alertname: LokiCompactorFailedCompaction
+        eval_time: 15m
+      - alertname: LokiCompactorFailedCompaction
+        eval_time: 230m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: grizzly
+              installation: "grizzly"
+              pipeline: "testing"
+              provider: "capz"
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: loki-retention/loki-retention
+              description: Loki compactor has been failing compactions for more than 2 hours since start-up.
               opsrecipe: "loki#lokicompactorfailedcompaction"
       - alertname: LokiCompactorFailedCompaction
         eval_time: 300m

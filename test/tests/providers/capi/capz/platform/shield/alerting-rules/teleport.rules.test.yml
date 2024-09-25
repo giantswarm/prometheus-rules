@@ -18,7 +18,7 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: TeleportJoinTokenSecretMismatch
-              area: kaas
+              area: platform
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_cluster_status_deleting: "true"
@@ -26,7 +26,7 @@ tests:
               cluster_id: my-cluster
               installation: golem
               severity: notify
-              team: bigmac
+              team: shield
               topic: teleport
             exp_annotations:
               description: "Mismatch in number of teleport-join-token secrets and clusters"
@@ -45,7 +45,7 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: TeleportKubeAgentConfigMapMismatch
-              area: kaas
+              area: platform
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_cluster_status_deleting: "true"
@@ -53,7 +53,7 @@ tests:
               cluster_id: my-cluster
               installation: grizzly
               severity: notify
-              team: bigmac
+              team: shield
               topic: teleport
             exp_annotations:
               description: "Mismatch in number of teleport-kube-agent-config secrets and clusters"

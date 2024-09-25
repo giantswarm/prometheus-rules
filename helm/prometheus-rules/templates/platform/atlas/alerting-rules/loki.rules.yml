@@ -159,7 +159,7 @@ spec:
         dashboard: loki-retention/loki-retention
         description: 'Loki compactor has been failing compactions for more than 2 hours since start-up.'
         opsrecipe: loki#lokicompactorfailedcompaction
-      # This alert checks if Loki's first compaction successfully ran it's first compaction compaction run is older than 2 hours
+      # This alert checks if Loki successfully ran it's first compaction less than 2 hours after startup
       expr: max(max_over_time(loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{}[2h])) by (cluster_id, installation, provider, pipeline) == 0
       for: 1h
       labels:

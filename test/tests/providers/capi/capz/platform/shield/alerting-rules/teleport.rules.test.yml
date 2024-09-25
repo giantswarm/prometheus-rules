@@ -18,7 +18,7 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: TeleportJoinTokenSecretMismatch
-              area: kaas
+              area: platform
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_cluster_status_deleting: "true"
@@ -45,7 +45,7 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: TeleportKubeAgentConfigMapMismatch
-              area: kaas
+              area: platform
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_cluster_status_deleting: "true"

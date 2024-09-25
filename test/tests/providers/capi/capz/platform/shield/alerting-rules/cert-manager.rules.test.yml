@@ -13,7 +13,7 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: CertManagerDown
-              area: kaas
+              area: platform
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_kubelet_down: "true"

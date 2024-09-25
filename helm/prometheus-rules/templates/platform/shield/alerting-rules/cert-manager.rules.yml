@@ -20,7 +20,7 @@ spec:
       expr: (sum by (cluster_id, installation, pipeline, provider, pod, namespace, container) (container_memory_working_set_bytes{container=~"(cert-manager|cert-manager-app-controller)"}) / 1024 / 1024 / 1024) >= 0.85
       for: 10m
       labels:
-        area: kaas
+        area: platform
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: shield
@@ -32,7 +32,7 @@ spec:
       expr: label_replace(up{container=~"cert-manager(-app-controller)?"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:
-        area: kaas
+        area: platform
         cancel_if_outside_working_hours: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
@@ -47,7 +47,7 @@ spec:
       expr: sum by (cluster_id, installation, pipeline, provider) (etcd_kubernetes_resources_count{kind="certificaterequests.cert-manager.io"}) > 10000
       for: 15m
       labels:
-        area: kaas
+        area: platform
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: shield

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `LokiFailedCompaction` alert to know when Loki did not manage to run a successfull compaction in the last 2 hours.
 
+### Removed
+
+- Remove CRsync alerting rules.
+
 ### Changed
 
 - Upgrade Alloy to 0.5.2 which brings no value to this repo.

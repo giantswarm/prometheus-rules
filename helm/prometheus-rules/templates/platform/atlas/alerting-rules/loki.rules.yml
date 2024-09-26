@@ -139,7 +139,7 @@ spec:
     rules:
     - alert: LokiCompactorFailedCompaction
       annotations:
-        dashboard: loki-retention/loki-retention
+        dashboard: retention/loki-retention
         description: 'Loki compactor has been failing compactions for more than 2 hours since last compaction.'
         opsrecipe: loki#lokicompactorfailedcompaction
       # This alert checks if Loki's the last successful compaction run is older than 2 hours
@@ -156,7 +156,7 @@ spec:
         topic: observability
     - alert: LokiCompactorFailedCompaction
       annotations:
-        dashboard: loki-retention/loki-retention
+        dashboard: retention/loki-retention
         description: 'Loki compactor has been failing compactions for more than 2 hours since start-up.'
         opsrecipe: loki#lokicompactorfailedcompaction
       # This alert covers the special case at compactor startup, where the "normal" alert would always consider time `0` is more than 2 hours ago, yet we want to let it 2 hours + `for` duration.

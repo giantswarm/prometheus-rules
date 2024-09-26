@@ -253,7 +253,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: loki-retention/loki-retention
+              dashboard: retention/loki-retention
               description: Loki compactor has been failing compactions for more than 2 hours since last compaction.
               opsrecipe: "loki#lokicompactorfailedcompaction"
       - alertname: LokiCompactorFailedCompaction
@@ -284,7 +284,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: loki-retention/loki-retention
+              dashboard: retention/loki-retention
               description: Loki compactor has been failing compactions for more than 2 hours since start-up.
               opsrecipe: "loki#lokicompactorfailedcompaction"
       - alertname: LokiCompactorFailedCompaction

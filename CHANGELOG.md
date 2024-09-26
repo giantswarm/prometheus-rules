@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.16.0] - 2024-09-26
+
 ### Added
 
 - Add `LokiFailedCompaction` alert to know when Loki did not manage to run a successfull compaction in the last 2 hours.
@@ -3115,7 +3117,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.15.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.16.0...HEAD
+[4.16.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.15.2...v4.16.0
 [4.15.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.15.1...v4.15.2
 [4.15.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.15.0...v4.15.1
 [4.15.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.14.0...v4.15.0

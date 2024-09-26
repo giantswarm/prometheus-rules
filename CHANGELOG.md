@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- fix `LokiFailedCompaction` to take latest successfull compaction across multiple compactor/backend pods
+
 ## [4.16.0] - 2024-09-26
 
 ### Added

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Alerting rule for Loki missing logs at ingestion
+
 ## [4.16.1] - 2024-09-26
 
 ### Fixed

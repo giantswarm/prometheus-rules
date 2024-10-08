@@ -171,3 +171,27 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: LokiMissingLogs
+      annotations:
+        dashboard: loki-canary/loki-canary
+        description: This alert checks that loki is not missing canary logs
+        opsrecipe: loki/
+      expr: |
+        (
+          sum by (cluster_id, pod, installation, pipeline, provider)
+              (increase(loki_canary_missing_entries_total{cluster_type="management_cluster",namespace="loki"}[5m]))
+          /
+          sum by (cluster_id, pod, installation, pipeline, provider)
+              (increase(loki_canary_entries_total{cluster_type="management_cluster",namespace="loki"}[5m]))
+        ) > 0
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability

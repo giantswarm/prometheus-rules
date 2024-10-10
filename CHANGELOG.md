@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update alloy-app to 0.6.1. This includes:
+  - an upgrade to upstream version 1.4.2
+  - a ciliumnetworkpolicy fix for clustering.
+
 ## [4.18.0] - 2024-10-08
 
 ### Added

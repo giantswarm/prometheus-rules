@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Alert `StatefulsetNotSatisfiedAtlas`
+
 ### Changed
 
 - Update alloy-app to 0.6.1. This includes:

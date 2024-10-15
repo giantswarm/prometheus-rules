@@ -80,6 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add aggregations for slo metrics to export them to grafana cloud
 - Add `MimirHPAReachedMaxReplicas` alert, to detect when Mimir's HPAs have reached maximum capacity.
+- Add `MimirContinuousTestFailingOnWrites` and `MimirContinuousTestFailingOnReads` alerts.
 
 ### Changed
 

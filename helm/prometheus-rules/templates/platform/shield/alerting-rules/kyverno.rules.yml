@@ -14,7 +14,7 @@ spec:
       annotations:
         description: 'Kyverno has no available replicas but webhooks are present.'
         opsrecipe: kyverno-webhooks/
-      expr: sum(kube_validatingwebhookconfiguration_info{validatingwebhookconfiguration=~"kyverno-.*"}) by (cluster_id, installation, pipeline, provider) > 0 and sum(kube_deployment_status_replicas_ready{deployment=~"kyverno|kyverno-admission-controller"}) by (cluster_id, installation, pipeline, provider) == 0
+      expr: sum(kube_validatingwebhookconfiguration_info{validatingwebhookconfiguration=~"kyverno-resource-.*"}) by (cluster_id, installation, pipeline, provider) > 0 and sum(kube_deployment_status_replicas_ready{deployment=~"kyverno|kyverno-admission-controller"}) by (cluster_id, installation, pipeline, provider) == 0
       for: 15m
       labels:
         area: platform

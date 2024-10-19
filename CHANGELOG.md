@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Modify `KyvernoWebhookHasNoAvailableReplicas` to check specifically for Kyverno resource webhook.
+- Inhibit prometheas-agent alerts when a cluster has no worker nodes (AWS vintage only for now)
 
 ## [4.19.0] - 2024-10-15
 

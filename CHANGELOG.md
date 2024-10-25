@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Updated `aggregation:giantswarm:cluster_release_version` expression to support CAPI clusters
+
 ## [4.21.0] - 2024-10-25
 
 ### Changed

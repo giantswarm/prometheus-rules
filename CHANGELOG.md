@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Set the `InhibitionControlPlaneUnhealthy` to be valid for all CAPI clusters, not just MCs.
+
 ## [4.20.0] - 2024-10-22
 
 ### Added

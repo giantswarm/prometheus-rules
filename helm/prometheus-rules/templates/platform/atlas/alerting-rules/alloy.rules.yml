@@ -17,10 +17,11 @@ spec:
     # We added the alert labels and added the missing labels from the aggregations.
     - name: alloy.controller
       rules:
-        - alert: SlowComponentEvaluations
+        - alert: AlloySlowComponentEvaluations
           annotations:
-            description: Component evaluations are taking too long under job {{ $labels.job }}, component_path {{ $labels.component_path }}, component_id {{ $labels.component_id }}.
+            description: '{{`Component evaluations are taking too long under job {{ $labels.job }}, component_path {{ $labels.component_path }}, component_id {{ $labels.component_id }}.`}}'
             summary: Component evaluations are taking too long.
+            opsrecipe: alloy-components/
           expr: sum by (cluster_id, installation, provider, pipeline, namespace, job, component_path, component_id) (rate(alloy_component_evaluation_slow_seconds[10m])) > 0
           for: 15m
           labels:
@@ -32,10 +33,11 @@ spec:
             cancel_if_cluster_status_creating: "true"
             cancel_if_cluster_status_deleting: "true"
             cancel_if_cluster_status_updating: "true"
-        - alert: UnhealthyComponents
+        - alert: AlloyUnhealthyComponents
           annotations:
-            description: Unhealthy components detected under job {{ $labels.job }}
+            description: '{{`Unhealthy components detected under job {{ $labels.job }}`}}'
             summary: Unhealthy components detected.
+            opsrecipe: alloy-components/
           expr: sum by (cluster_id, installation, provider, pipeline, namespace, job) (alloy_component_controller_running_components{health_type!="healthy"}) > 0
           for: 15m
           labels:

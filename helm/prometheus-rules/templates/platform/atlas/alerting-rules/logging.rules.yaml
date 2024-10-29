@@ -1,0 +1,114 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: logging.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    ## TODO(quentin) add tests for the alerts
+    ## TODO(quentin) add opsrecipe for the alerts
+    ## TODO(quentin) add dashboard annotation for the alerts
+    - name: logging-agent
+      rules:
+        # This alert lists the existing logging-agent pods (to extract the node label and inhibit if the node is not ready)
+        # and join the pods with the not running containers
+        - alert: LoggingAgentDown
+          annotations:
+            description: '{{`Scraping of all logging-agent pods to check if one failed every 30 minutes.`}}'
+            opsrecipe: logging-agent/
+          expr: |-
+            kube_pod_info{pod=~"alloy-logs.*"}
+            * on(cluster_id, pod)
+              group_left ()
+              up{job="alloy-logs", container="alloy"} == 0
+          for: 30m
+          labels:
+            area: platform
+            severity: page
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_cluster_status_updating: "true"
+            cancel_if_node_unschedulable: "true"
+            cancel_if_node_not_ready: "true"
+    - name: log-ingestion
+      rules:
+        # Any alloy component that uses the loki.write component can throw such errors.
+        # This includes alloy-logs and the observability-gateway
+        - alert: LogForwardingErrors
+          annotations:
+            description: '{{`More that 10% of the requests to Loki are failing.`}}'
+            opsrecipe: logging-errors/
+          expr: |-
+            (
+              100
+              *
+                (
+                    (
+                      sum by (cluster_id, installation, provider, pipeline, namespace, job, instance) (
+                        rate (
+                          loki_write_request_duration_seconds_count{status_code!~"2.."}[5m:]
+                        )
+                      )
+                    )
+                  /
+                    (
+                      sum by (cluster_id, installation, provider, pipeline, namespace, job, instance) (
+                        rate (
+                          loki_write_request_duration_seconds_count[5m:]
+                        )
+                      )
+                    )
+                )
+            )
+            > 10
+          for: 15m
+          labels:
+            area: platform
+            severity: page
+            team: atlas
+            topic: observability
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_cluster_status_updating: "true"
+        # This alert pages when the loki source api component of the observability gateway is throwing errors
+        - alert: LogReceivingErrors
+          annotations:
+            description: '{{`More that 10% of the loki requests to the observability gateway are failing.`}}'
+            opsrecipe: logging-errors/
+          expr: |-
+            (
+              100
+              *
+                (
+                    (
+                      sum by (cluster_id, installation, provider, pipeline, namespace, job, instance, route) (
+                        rate (
+                          loki_source_api_request_duration_seconds_count{route=~"(loki_)?api_v1_push", status_code!~"2.."}[5m:]
+                        )
+                      )
+                    )
+                  /
+                    (
+                      sum by (cluster_id, installation, provider, pipeline, namespace, job, instance, route) (
+                        rate (
+                          loki_source_api_request_duration_seconds_count{route=~"(loki_)?api_v1_push"}[5m:]
+                        )
+                      )
+                    )
+                )
+            )
+            > 10
+          for: 15m
+          labels:
+            area: platform
+            severity: page
+            team: atlas
+            topic: observability
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_cluster_status_updating: "true"

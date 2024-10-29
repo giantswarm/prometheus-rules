@@ -1,157 +1,156 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
   name: prometheus-agent.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: prometheus-agent
-    rules:
-    ## Page Atlas if prometheus agent fails to send samples to MC prometheus.
-    - alert: PrometheusAgentFailing
-      annotations:
-        description: '{{`Prometheus agent remote write is failing.`}}'
-        summary: Prometheus agent fails to send samples to remote write endpoint.
-        opsrecipe: prometheus-agent/
-        dashboard: promRW001/prometheus-remote-write
-      {{- if not .Values.mimir.enabled }}
-      expr: |-
-        max_over_time(
-          sum by (cluster_type, cluster_id, installation, instance, service)
+    - name: prometheus-agent
+      rules:
+      ## This alert pages if prometheus-agent fails to send samples to its remote write endpoint.
+      - alert: PrometheusAgentFailing
+        annotations:
+          description: '{{`Prometheus agent remote write is failing.`}}'
+          summary: Prometheus agent fails to send samples to remote write endpoint.
+          opsrecipe: prometheus-agent/
+          dashboard: promRW001/prometheus-remote-write
+        {{- if not .Values.mimir.enabled }}
+        expr: |-
+          max_over_time(
+            sum by (cluster_type, cluster_id, installation, instance, service)
+            (
+              up{instance="prometheus-agent"} == 0
+              or
+              absent(up{instance="prometheus-agent"}) == 1
+            )[5m:]
+          )
+        {{- else }}
+        expr: |-
           (
-            up{instance="prometheus-agent"} == 0
-            or
-            absent(up{instance="prometheus-agent"}) == 1
-          )[5m:]
-        )
-      {{- else }}
-      expr: |-
-        (
-          label_replace(
-            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
-            "cluster_id",
-            "$1",
-            "name",
-            "(.*)"
-          ) == 1
-        ) unless on (cluster_id) (
-          count(up{job="prometheus-agent"} > 0) by (cluster_id)
-        )
-      {{- end }}
-      for: 20m
-      labels:
-        area: platform
-        severity: page
-        team: atlas
-        topic: observability
-        inhibit_prometheus_agent_down: "true"
-        cancel_if_cluster_is_not_running_prometheus_agent: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_has_no_workers: "true"
-    ## Same as PrometheusAgentFailing, but triggers inhibition earlier and does not page.
-    - alert: PrometheusAgentFailingInhibition
-      annotations:
-        description: '{{`Prometheus agent remote write is failing.`}}'
-        summary: Prometheus agent fails to send samples to remote write endpoint.
-        opsrecipe: prometheus-agent/
-        dashboard: promRW001/prometheus-remote-write
-      {{- if not .Values.mimir.enabled }}
-      expr: |-
-        max_over_time(
-          sum by (cluster_type, cluster_id, installation, instance, service)
+            label_replace(
+              capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+              "cluster_id",
+              "$1",
+              "name",
+              "(.*)"
+            ) == 1
+          ) unless on (cluster_id) (
+            count(up{job="prometheus-agent"} > 0) by (cluster_id)
+          )
+        {{- end }}
+        for: 20m
+        labels:
+          area: platform
+          severity: page
+          team: atlas
+          topic: observability
+          inhibit_monitoring_agent_down: "true"
+          cancel_if_cluster_is_not_running_monitoring_agent: "true"
+          cancel_if_cluster_status_creating: "true"
+          cancel_if_cluster_status_deleting: "true"
+          cancel_if_cluster_has_no_workers: "true"
+      ## Same as PrometheusAgentFailing, but triggers inhibition earlier and does not page.
+      - alert: PrometheusAgentFailingInhibition
+        annotations:
+          description: '{{`Prometheus agent remote write is failing.`}}'
+          summary: Prometheus agent fails to send samples to remote write endpoint.
+          opsrecipe: prometheus-agent/
+          dashboard: promRW001/prometheus-remote-write
+        {{- if not .Values.mimir.enabled }}
+        expr: |-
+          max_over_time(
+            sum by (cluster_type, cluster_id, installation, instance, service)
+            (
+              up{instance="prometheus-agent"} == 0
+              or
+              absent(up{instance="prometheus-agent"}) == 1
+            )[5m:]
+          )
+        {{- else }}
+        expr: |-
           (
-            up{instance="prometheus-agent"} == 0
-            or
-            absent(up{instance="prometheus-agent"}) == 1
-          )[5m:]
-        )
-      {{- else }}
-      expr: |-
-        (
-          label_replace(
-            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
-            "cluster_id",
-            "$1",
-            "name",
-            "(.*)"
-          ) == 1
-        ) unless on (cluster_id) (
-          count(up{job="prometheus-agent"} > 0) by (cluster_id)
-        )
-      {{- end }}
-      for: 2m
-      labels:
-        area: platform
-        severity: none
-        team: atlas
-        topic: observability
-        inhibit_prometheus_agent_down: "true"
-        cancel_if_cluster_is_not_running_prometheus_agent: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-    ## Page Atlas if prometheus agent is missing shards to send samples to MC prometheus.
-    - alert: PrometheusAgentShardsMissing
-      annotations:
-        description: '{{`Prometheus agent is missing shards.`}}'
-        summary: Prometheus agent is missing shards.
-        opsrecipe: prometheus-agent/
-      expr: |-
-        max_over_time(sum by (cluster_id, installation, provider, pipeline)(
-          count(
-            ## number of remotes that are not mimir or grafana-cloud
-            prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir.*"}
-          ) by (cluster_id, installation, provider, pipeline)
-          !=
-          sum(
-            ## number of shards defined in the Prometheus CR
-            prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"}
-            # if there is only 1 shard, there is no shard metric so we use the replicas metric
-            or prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
-          ) by (cluster_id, installation, provider, pipeline)
-        )[5m:])
-      for: 40m
-      labels:
-        area: platform
-        severity: page
-        team: atlas
-        topic: observability
-        inhibit_prometheus_agent_down: "true"
-        cancel_if_cluster_is_not_running_prometheus_agent: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_outside_working_hours: "true"
-    ## Same as PrometheusAgentShardsMissing but triggers inhibition earlier, and does not page.
-    - alert: PrometheusAgentShardsMissingInhibition
-      annotations:
-        description: '{{`Prometheus agent is missing shards.`}}'
-        summary: Prometheus agent is missing shards.
-        opsrecipe: prometheus-agent/
-      expr: |-
-        max_over_time(sum by (cluster_id, installation, provider, pipeline)(
-          count(
-            ## number of remotes that are not mimir or grafana-cloud
-            prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir.*"}
-          ) by (cluster_id, installation, provider, pipeline)
-          !=
-          sum(
-            ## number of shards defined in the Prometheus CR
-            prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"}
-            # if there is only 1 shard, there is no shard metric so we use the replicas metric
-            or prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
-          ) by (cluster_id, installation, provider, pipeline)
-        )[5m:])
-      for: 2m
-      labels:
-        area: platform
-        severity: none
-        team: atlas
-        topic: observability
-        inhibit_prometheus_agent_down: "true"
-        cancel_if_cluster_is_not_running_prometheus_agent: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_outside_working_hours: "true"
+            label_replace(
+              capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+              "cluster_id",
+              "$1",
+              "name",
+              "(.*)"
+            ) == 1
+          ) unless on (cluster_id) (
+            count(up{job="prometheus-agent"} > 0) by (cluster_id)
+          )
+        {{- end }}
+        for: 2m
+        labels:
+          area: platform
+          severity: none
+          team: atlas
+          topic: observability
+          inhibit_monitoring_agent_down: "true"
+          cancel_if_cluster_is_not_running_monitoring_agent: "true"
+          cancel_if_cluster_status_creating: "true"
+          cancel_if_cluster_status_deleting: "true"
+      ## This alert pages if one of the prometheus-agent shard is not running.
+      - alert: PrometheusAgentShardsMissing
+        annotations:
+          description: '{{`Prometheus agent is missing shards.`}}'
+          summary: Prometheus agent is missing shards.
+          opsrecipe: prometheus-agent/
+        expr: |-
+          max_over_time(sum by (cluster_id, installation, provider, pipeline)(
+            count(
+              ## number of remotes that are not mimir or grafana-cloud
+              prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir.*"}
+            ) by (cluster_id, installation, provider, pipeline)
+            !=
+            sum(
+              ## number of shards defined in the Prometheus CR
+              prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"}
+              # if there is only 1 shard, there is no shard metric so we use the replicas metric
+              or prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
+            ) by (cluster_id, installation, provider, pipeline)
+          )[5m:])
+        for: 40m
+        labels:
+          area: platform
+          severity: page
+          team: atlas
+          topic: observability
+          inhibit_monitoring_agent_down: "true"
+          cancel_if_cluster_is_not_running_monitoring_agent: "true"
+          cancel_if_cluster_status_creating: "true"
+          cancel_if_cluster_status_deleting: "true"
+          cancel_if_outside_working_hours: "true"
+      ## Same as PrometheusAgentShardsMissing but triggers inhibition earlier, and does not page.
+      - alert: PrometheusAgentShardsMissingInhibition
+        annotations:
+          description: '{{`Prometheus agent is missing shards.`}}'
+          summary: Prometheus agent is missing shards.
+          opsrecipe: prometheus-agent/
+        expr: |-
+          max_over_time(sum by (cluster_id, installation, provider, pipeline)(
+            count(
+              ## number of remotes that are not mimir or grafana-cloud
+              prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir.*"}
+            ) by (cluster_id, installation, provider, pipeline)
+            !=
+            sum(
+              ## number of shards defined in the Prometheus CR
+              prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"}
+              # if there is only 1 shard, there is no shard metric so we use the replicas metric
+              or prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
+            ) by (cluster_id, installation, provider, pipeline)
+          )[5m:])
+        for: 2m
+        labels:
+          area: platform
+          severity: none
+          team: atlas
+          topic: observability
+          inhibit_monitoring_agent_down: "true"
+          cancel_if_cluster_is_not_running_monitoring_agent: "true"
+          cancel_if_cluster_status_creating: "true"
+          cancel_if_cluster_status_deleting: "true"
+          cancel_if_outside_working_hours: "true"

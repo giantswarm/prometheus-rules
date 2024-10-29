@@ -1,0 +1,49 @@
+# This files describe common alloy alerting rules
+# For alerts regarding monitoring and logging agents, please go to the respective files (logging.rules.yml and monitoring.rules.yml).
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: alloy.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    ## TODO(quentin) add tests for the alerts
+    ## TODO(quentin) add opsrecipe for the alerts
+    ## TODO(quentin) add dashboard annotation for the alerts
+    # List of alerts for on the state of the alloy components.
+    # Alerts are coming from https://github.com/grafana/alloy/blob/ed52746567d2469a6a97a592ac5aec807646b327/operations/alloy-mixin/alerts/controller.libsonnet
+    # We added the alert labels and added the missing labels from the aggregations.
+    - name: alloy.controller
+      rules:
+        - alert: SlowComponentEvaluations
+          annotations:
+            description: Component evaluations are taking too long under job {{ $labels.job }}, component_path {{ $labels.component_path }}, component_id {{ $labels.component_id }}.
+            summary: Component evaluations are taking too long.
+          expr: sum by (cluster_id, installation, provider, pipeline, namespace, job, component_path, component_id) (rate(alloy_component_evaluation_slow_seconds[10m])) > 0
+          for: 15m
+          labels:
+            area: platform
+            severity: notify
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_cluster_status_updating: "true"
+        - alert: UnhealthyComponents
+          annotations:
+            description: Unhealthy components detected under job {{ $labels.job }}
+            summary: Unhealthy components detected.
+          expr: sum by (cluster_id, installation, provider, pipeline, namespace, job) (alloy_component_controller_running_components{health_type!="healthy"}) > 0
+          for: 15m
+          labels:
+            area: platform
+            severity: page
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_cluster_status_updating: "true"

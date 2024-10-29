@@ -1,0 +1,136 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: monitoring.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    ## TODO(quentin) add tests for the monitoring agent alerts
+    ## TODO(quentin) add opsrecipe for the monitoring agent alerts
+    ## TODO(quentin) add dashboard annotation for the monitoring agent alerts
+    ## TODO(quentin) replace MonitoringAgentShardsMissing for alloy-metrics
+    ## TODO(quentin) add component specific errors to replace the ones in the prometheus.rules.yml
+    - name: monitoring-agent
+      rules:
+          ## This alert pages if the monitoring-agent fails to send samples to its remote write endpoint.
+        - alert: MonitoringAgentFailing
+          annotations:
+            description: '{{`Monitoring agent fails to send its data via remote write.`}}'
+            summary: Monitoring agent fails to send samples to its configured remote write endpoint.
+            opsrecipe: monitoring-agent/
+          expr: |-
+            (
+              label_replace(
+                capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+                "cluster_id",
+                "$1",
+                "name",
+                "(.*)"
+              ) == 1
+            ) unless on (cluster_id) (
+              count(up{job="alloy-metrics"} > 0) by (cluster_id)
+            )
+          for: 20m
+          labels:
+            area: platform
+            severity: page
+            team: atlas
+            topic: observability
+            inhibit_monitoring_agent_down: "true"
+            cancel_if_cluster_is_not_running_monitoring_agent: "true"
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_cluster_has_no_workers: "true"
+        ## Same as MonitoringAgentFailing, but triggers inhibition earlier and does not page.
+        - alert: MonitoringAgentFailingInhibition
+          annotations:
+            description: '{{`Monitoring agent fails to send its data via remote write.`}}'
+            summary: Monitoring agent fails to send samples to its configured remote write endpoint.
+            opsrecipe: monitoring-agent/
+          expr: |-
+            (
+              label_replace(
+                capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+                "cluster_id",
+                "$1",
+                "name",
+                "(.*)"
+              ) == 1
+            ) unless on (cluster_id) (
+              count(up{job="prometheus-agent"} > 0) by (cluster_id)
+            )
+          for: 2m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: observability
+            inhibit_monitoring_agent_down: "true"
+            cancel_if_cluster_is_not_running_monitoring_agent: "true"
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+        ## This alert pages if some of the monitoring agent shards are not running.
+        - alert: MonitoringAgentShardsMissing
+          annotations:
+            description: '{{`At least one of the monitoring agent shard is missing.`}}'
+            summary: Monitoring agent is missing some shards.
+            opsrecipe: monitoring-agent/
+          expr: |-
+            max_over_time(sum by (cluster_id, installation, provider, pipeline)(
+              count(
+                ## number of remotes that are not mimir or grafana-cloud
+                prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir.*"}
+              ) by (cluster_id, installation, provider, pipeline)
+              !=
+              sum(
+                ## number of shards defined in the Prometheus CR
+                prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"}
+                # if there is only 1 shard, there is no shard metric so we use the replicas metric
+                or prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
+              ) by (cluster_id, installation, provider, pipeline)
+            )[5m:])
+          for: 40m
+          labels:
+            area: platform
+            severity: page
+            team: atlas
+            topic: observability
+            inhibit_monitoring_agent_down: "true"
+            cancel_if_cluster_is_not_running_monitoring_agent: "true"
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_outside_working_hours: "true"
+        ## Same as MonitoringAgentShardsMissing but triggers inhibition earlier, and does not page.
+        - alert: MonitoringAgentShardsMissingInhibition
+          annotations:
+            description: '{{`At least one of the monitoring agent shard is missing.`}}'
+            summary: Monitoring agent is missing some shards.
+            opsrecipe: monitoring-agent/
+          expr: |-
+            max_over_time(sum by (cluster_id, installation, provider, pipeline)(
+              count(
+                ## number of remotes that are not mimir or grafana-cloud
+                prometheus_remote_storage_metadata_total{remote_name!~"grafana-cloud|mimir.*"}
+              ) by (cluster_id, installation, provider, pipeline)
+              !=
+              sum(
+                ## number of shards defined in the Prometheus CR
+                prometheus_operator_spec_shards{controller="prometheus",name="prometheus-agent"}
+                # if there is only 1 shard, there is no shard metric so we use the replicas metric
+                or prometheus_operator_spec_replicas{controller="prometheus",name="prometheus-agent"}
+              ) by (cluster_id, installation, provider, pipeline)
+            )[5m:])
+          for: 2m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: observability
+            inhibit_monitoring_agent_down: "true"
+            cancel_if_cluster_is_not_running_monitoring_agent: "true"
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_outside_working_hours: "true"
+

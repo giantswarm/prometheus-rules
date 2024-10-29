@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.22.0] - 2024-10-29
+
 ### Changed
 
 - Change `KubeletVolumeSpaceTooLow` to only page when there are 500MB or less of space left, letting the node-problem-detector handle the rest.
@@ -3174,7 +3176,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.21.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.22.0...HEAD
+[4.22.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.21.1...v4.22.0
 [4.21.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.21.0...v4.21.1
 [4.21.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.20.0...v4.21.0
 [4.20.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.19.0...v4.20.0

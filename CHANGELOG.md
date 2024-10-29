@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Rename all `prometheus-agent` related inhibitions to `monitoring-agent` inhibitions.
+
 ## [4.21.1] - 2024-10-25
 
 ### Fixed
@@ -1459,7 +1463,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Deprecate `role=master` in favor of `role=control-plane`.
 - Rename alerts containing `Master` with `ControlPlane`
-- Added "cancel_if_prometheus_agent_down" for phoenix alerts ManagementClusterCriticalPodMetricMissing, ManagementClusterDeploymentMissingAWS, WorkloadClusterNonCriticalDeploymentNotSatisfiedKaas
+- Added `cancel_if_prometheus_agent_down` for phoenix alerts ManagementClusterCriticalPodMetricMissing, ManagementClusterDeploymentMissingAWS, WorkloadClusterNonCriticalDeploymentNotSatisfiedKaas
 
 ## [2.94.0] - 2023-04-26
 

@@ -1,6 +1,6 @@
 ---
 rule_files:
-  - statefulset.management-cluster.rules.yml
+  - statefulset.rules.yml
 
 tests:
   - interval: 1m

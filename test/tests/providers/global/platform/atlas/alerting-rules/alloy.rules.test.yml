@@ -1,0 +1,74 @@
+---
+rule_files:
+  - alloy.rules.yml
+
+tests:
+  # Test AlloySlowComponentEvaluations
+  - interval: 1m
+    input_series:
+      - series: 'alloy_component_evaluation_slow_seconds{cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", namespace="default", job="alloy-controller", component_path="path1", component_id="comp1"}'
+        values: "0+0x10 0+1x50 0x50"
+    alert_rule_test:
+      - alertname: AlloySlowComponentEvaluations
+        eval_time: 10m
+      - alertname: AlloySlowComponentEvaluations
+        eval_time: 50m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: gauss
+              installation: gauss
+              provider: aws
+              pipeline: testing
+              namespace: default
+              job: alloy-controller
+              component_path: path1
+              component_id: comp1
+              severity: notify
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller
+              description: "Component evaluations are taking too long under job alloy-controller, component_path path1, component_id comp1."
+              opsrecipe: "alloy-components/"
+              summary: "Component evaluations are taking too long."
+      - alertname: AlloySlowComponentEvaluations
+        eval_time: 80m
+
+  # Test AlloyUnhealthyComponents
+  - interval: 1m
+    input_series:
+      - series: 'alloy_component_controller_running_components{health_type="unhealthy", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", namespace="default", job="alloy-controller"}'
+        values: "0+0x10 1+0x50 0x50"
+    alert_rule_test:
+      - alertname: AlloyUnhealthyComponents
+        eval_time: 10m
+      - alertname: AlloyUnhealthyComponents
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: gauss
+              installation: gauss
+              provider: aws
+              pipeline: testing
+              namespace: default
+              job: alloy-controller
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller
+              description: "Unhealthy components detected under job alloy-controller"
+              opsrecipe: "alloy-components/"
+              summary: "Unhealthy components detected."
+      - alertname: AlloyUnhealthyComponents
+        eval_time: 80m

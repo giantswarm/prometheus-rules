@@ -20,9 +20,9 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
+              inhibit_monitoring_agent_down: "true"
               cancel_if_cluster_has_no_workers: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cluster_id: "gauss"
@@ -48,8 +48,8 @@ tests:
               severity: none
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cluster_id: "gauss"
@@ -77,10 +77,10 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
+              inhibit_monitoring_agent_down: "true"
               installation: myinstall
               cancel_if_cluster_has_no_workers: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               customer: "giantswarm"
@@ -105,9 +105,9 @@ tests:
               severity: none
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
+              inhibit_monitoring_agent_down: "true"
               installation: myinstall
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               customer: "giantswarm"
@@ -156,8 +156,8 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
@@ -177,8 +177,8 @@ tests:
               severity: none
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
@@ -198,8 +198,8 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
@@ -219,8 +219,8 @@ tests:
               severity: none
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
@@ -260,8 +260,8 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
@@ -281,8 +281,8 @@ tests:
               severity: none
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
@@ -302,8 +302,8 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
@@ -323,8 +323,8 @@ tests:
               severity: none
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"

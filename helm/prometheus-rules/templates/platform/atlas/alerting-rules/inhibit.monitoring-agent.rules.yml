@@ -5,11 +5,11 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: inhibit.prometheus-agent.rules
+  name: inhibit.monitoring-agent.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: inhibit.prometheus-agent
+  - name: inhibit.monitoring-agent
     rules:
     # this inhibition fires when a cluster is not running prometheus-agent.
     # we retrieve the list of existing cluster IDs from `kube_namespace_created`
@@ -38,7 +38,7 @@ spec:
           )
         ) by (cluster_id)
       labels:
-        cluster_is_not_running_prometheus_agent: "true"
+        cluster_is_not_running_monitoring_agent: "true"
         area: platform
         team: atlas
         topic: monitoring

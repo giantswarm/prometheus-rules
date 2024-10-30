@@ -27,7 +27,7 @@ tests:
               area: platform
               team: atlas
               topic: monitoring
-              cluster_is_not_running_prometheus_agent: "true"
+              cluster_is_not_running_monitoring_agent: "true"
               cluster_id: "clu02"
             exp_annotations:
               description: "Cluster (clu02) is not running Prometheus Agent."

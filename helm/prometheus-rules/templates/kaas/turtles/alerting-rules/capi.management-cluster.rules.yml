@@ -22,7 +22,7 @@ spec:
       labels:
         area: kaas
         cancel_if_kube_state_metrics_down: "true"
-        cancel_if_prometheus_agent_down: "true"
+        cancel_if_monitoring_agent_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: {{ include "providerTeam" . }}
@@ -37,7 +37,7 @@ spec:
       labels:
         area: kaas
         cancel_if_kube_state_metrics_down: "true"
-        cancel_if_prometheus_agent_down: "true"
+        cancel_if_monitoring_agent_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: {{ include "providerTeam" . }}
@@ -54,7 +54,7 @@ spec:
       labels:
         area: kaas
         cancel_if_kube_state_metrics_down: "true"
-        cancel_if_prometheus_agent_down: "true"
+        cancel_if_monitoring_agent_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: {{ include "providerTeam" . }}

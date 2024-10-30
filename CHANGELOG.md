@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Rename all `prometheus-agent` related inhibitions to `monitoring-agent` inhibitions.
+- Move `Inhibition` from a suffix to a prefix for the prometheus-agent inhibitions to match with the other inhibition alerts:
+- `PrometheusAgentFailingInhibition`       => `InhibitionPrometheusAgentFailing`
+- `PrometheusAgentShardsMissingInhibition` => `InhibitionPrometheusAgentShardsMissing`
+
+### Fixed
+
+- Fixes the statefulset.rules name as it is currently replacing the deployment.rules alerts.
 
 ## [4.22.0] - 2024-10-29
 

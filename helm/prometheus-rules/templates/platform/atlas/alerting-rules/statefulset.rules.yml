@@ -7,7 +7,7 @@ metadata:
 {{- if not .Values.mimir.enabled }}
     cluster_type: "management_cluster"
 {{- end }}
-  name: deployment.management-cluster.rules
+  name: statefulset.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
@@ -18,8 +18,8 @@ spec:
         description: '{{`Statefulset {{ $labels.namespace}}/{{ $labels.statefulset }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
       expr: |-
-        kube_statefulset_status_replicas{cluster_type="management_cluster", statefulset=~"loki.*|mimir.*"}
-        - kube_statefulset_status_replicas_ready{cluster_type="management_cluster", statefulset=~"loki.*|mimir.*"}
+        kube_statefulset_status_replicas{cluster_type="management_cluster", statefulset=~"loki.*|mimir.*|pyroscope.*|tempo.*"}
+        - kube_statefulset_status_replicas_ready{cluster_type="management_cluster", statefulset=~"loki.*|mimir.*|pyroscope.*|tempo.*"}
         > 0
       for: 30m
       labels:

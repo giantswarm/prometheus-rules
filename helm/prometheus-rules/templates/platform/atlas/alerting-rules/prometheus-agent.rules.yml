@@ -53,7 +53,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_has_no_workers: "true"
     ## Same as PrometheusAgentFailing, but triggers inhibition earlier and does not page.
-    - alert: PrometheusAgentFailingInhibition
+    - alert: InhibitionPrometheusAgentFailing
       annotations:
         description: '{{`Prometheus agent remote write is failing.`}}'
         summary: Prometheus agent fails to send samples to remote write endpoint.
@@ -125,7 +125,7 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"
     ## Same as PrometheusAgentShardsMissing but triggers inhibition earlier, and does not page.
-    - alert: PrometheusAgentShardsMissingInhibition
+    - alert: InhibitionPrometheusAgentShardsMissing
       annotations:
         description: '{{`Prometheus agent is missing shards.`}}'
         summary: Prometheus agent is missing shards.

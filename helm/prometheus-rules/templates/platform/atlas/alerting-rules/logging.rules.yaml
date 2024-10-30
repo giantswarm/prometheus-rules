@@ -7,7 +7,6 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-    ## TODO(quentin) add opsrecipe for the alerts
     - name: logging-agent
       rules:
         # This alert lists the existing logging-agent pods (to extract the node label and inhibit if the node is not ready)

@@ -31,7 +31,7 @@ tests:
               description: "Prometheus agent remote write is failing."
               opsrecipe: "prometheus-agent/"
               summary: "Prometheus agent fails to send samples to remote write endpoint."
-      - alertname: PrometheusAgentFailingInhibition
+      - alertname: InhibitionPrometheusAgentFailing
         eval_time: 30m
         exp_alerts:
           - exp_labels:
@@ -71,7 +71,7 @@ tests:
               description: "Prometheus agent remote write is failing."
               opsrecipe: "prometheus-agent/"
               summary: "Prometheus agent fails to send samples to remote write endpoint."
-      - alertname: PrometheusAgentFailingInhibition
+      - alertname: InhibitionPrometheusAgentFailing
         eval_time: 90m
         exp_alerts:
           - exp_labels:
@@ -94,7 +94,7 @@ tests:
               summary: "Prometheus agent fails to send samples to remote write endpoint."
       - alertname: PrometheusAgentFailing
         eval_time: 150m
-      - alertname: PrometheusAgentFailingInhibition
+      - alertname: InhibitionPrometheusAgentFailing
         eval_time: 150m
   # Tests for `PrometheusAgentShardsMissing` alert
   - interval: 1m
@@ -112,7 +112,7 @@ tests:
     alert_rule_test:
       - alertname: PrometheusAgentShardsMissing
         eval_time: 40m
-      - alertname: PrometheusAgentShardsMissingInhibition
+      - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 40m
       - alertname: PrometheusAgentShardsMissing
         eval_time: 120m
@@ -135,7 +135,7 @@ tests:
               description: "Prometheus agent is missing shards."
               opsrecipe: "prometheus-agent/"
               summary: "Prometheus agent is missing shards."
-      - alertname: PrometheusAgentShardsMissingInhibition
+      - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 100m
         exp_alerts:
           - exp_labels:
@@ -177,7 +177,7 @@ tests:
               description: "Prometheus agent is missing shards."
               opsrecipe: "prometheus-agent/"
               summary: "Prometheus agent is missing shards."
-      - alertname: PrometheusAgentShardsMissingInhibition
+      - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 125m
         exp_alerts:
           - exp_labels:
@@ -200,7 +200,7 @@ tests:
               summary: "Prometheus agent is missing shards."
       - alertname: PrometheusAgentShardsMissing
         eval_time: 130m
-      - alertname: PrometheusAgentShardsMissingInhibition
+      - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 130m
   # Tests for `PrometheusAgentShardsMissing` alert with missing `prometheus_operator_spec_shards` metric
   - interval: 1m
@@ -216,7 +216,7 @@ tests:
     alert_rule_test:
       - alertname: PrometheusAgentShardsMissing
         eval_time: 40m
-      - alertname: PrometheusAgentShardsMissingInhibition
+      - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 40m
       - alertname: PrometheusAgentShardsMissing
         eval_time: 120m
@@ -239,7 +239,7 @@ tests:
               description: "Prometheus agent is missing shards."
               opsrecipe: "prometheus-agent/"
               summary: "Prometheus agent is missing shards."
-      - alertname: PrometheusAgentShardsMissingInhibition
+      - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 100m
         exp_alerts:
           - exp_labels:
@@ -281,7 +281,7 @@ tests:
               description: "Prometheus agent is missing shards."
               opsrecipe: "prometheus-agent/"
               summary: "Prometheus agent is missing shards."
-      - alertname: PrometheusAgentShardsMissingInhibition
+      - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 125m
         exp_alerts:
           - exp_labels:
@@ -304,5 +304,5 @@ tests:
               summary: "Prometheus agent is missing shards."
       - alertname: PrometheusAgentShardsMissing
         eval_time: 130m
-      - alertname: PrometheusAgentShardsMissingInhibition
+      - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 130m

@@ -7,15 +7,14 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-    ## TODO(quentin) add tests for the alerts
     ## TODO(quentin) add opsrecipe for the alerts
-    ## TODO(quentin) add dashboard annotation for the alerts
     - name: logging-agent
       rules:
         # This alert lists the existing logging-agent pods (to extract the node label and inhibit if the node is not ready)
         # and join the pods with the not running containers
         - alert: LoggingAgentDown
           annotations:
+            dashboard: 53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview
             description: '{{`Scraping of all logging-agent pods to check if one failed every 30 minutes.`}}'
             opsrecipe: logging-agent/
           expr: |-
@@ -41,8 +40,9 @@ spec:
         # This includes alloy-logs and the observability-gateway
         - alert: LogForwardingErrors
           annotations:
+            dashboard: 53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview
             description: '{{`More that 10% of the requests to Loki are failing.`}}'
-            opsrecipe: logging-errors/
+            opsrecipe: log-shipping-errors/
           expr: |-
             (
               100
@@ -78,8 +78,9 @@ spec:
         # This alert pages when the loki source api component of the observability gateway is throwing errors
         - alert: LogReceivingErrors
           annotations:
+            dashboard: 53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview
             description: '{{`More that 10% of the loki requests to the observability gateway are failing.`}}'
-            opsrecipe: logging-errors/
+            opsrecipe: log-shipping-errors/
           expr: |-
             (
               100

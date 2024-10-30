@@ -1,0 +1,229 @@
+---
+rule_files:
+  - logging.rules.yml
+
+tests:
+  # Test LoggingAgentDown
+  - interval: 1m
+    input_series:
+      # For the first 60min: test with 1 pod: none, up, down
+      - series: 'up{container="alloy", cluster_id="gauss", cluster_type="management_cluster", installation="gauss", job="alloy-logs", pod="alloy-1xxxx", provider="aws", pipeline="testing"}'
+        values: "_x20 1+0x20 0+0x40"
+      - series: kube_pod_info{cluster_id="gauss", cluster_type="management_cluster", installation="gauss", pod="alloy-1xxxx", node="ip-10-0-5-1.eu-west-1.compute.internal", provider="aws", pipeline="testing"}
+        values: "1x180"
+      # From 60min: test with 2 pods: 1 up and 1 down, 2 up, 2 down.
+      - series: 'up{container="alloy", cluster_id="gauss", cluster_type="management_cluster", installation="gauss", job="alloy-logs", pod="alloy-2xxxx", provider="aws", pipeline="testing"}'
+        values: "_x80 1+0x40 1+0x20 0+0x40"
+      - series: kube_pod_info{cluster_id="gauss", cluster_type="management_cluster", installation="gauss", pod="alloy-2xxxx", node="ip-10-0-5-2.eu-west-1.compute.internal", provider="aws", pipeline="testing"}
+        values: "1x180"
+      - series: 'up{container="alloy", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", job="alloy-logs", pod="alloy-3xxxx", provider="aws", pipeline="testing"}'
+        values: "_x80 0+0x40 1+0x20 0+0x40"
+      - series: kube_pod_info{cluster_id="gauss", cluster_type="management_cluster", installation="gauss", pod="alloy-3xxxx", node="ip-10-0-5-3.eu-west-1.compute.internal", provider="aws", pipeline="testing"}
+        values: "1x180"
+    alert_rule_test:
+      - alertname: LoggingAgentDown
+        eval_time: 10m
+      - alertname: LoggingAgentDown
+        eval_time: 30m
+      - alertname: LoggingAgentDown
+        eval_time: 71m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_node_unschedulable: "true"
+              cancel_if_node_not_ready: "true"
+              cluster_id: gauss
+              cluster_type: management_cluster
+              installation: gauss
+              node: ip-10-0-5-1.eu-west-1.compute.internal
+              pipeline: testing
+              pod: alloy-1xxxx
+              provider: aws
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
+              opsrecipe: "logging-agent/"
+      # Tests with 2 pods
+      - alertname: LoggingAgentDown
+        eval_time: 111m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_node_unschedulable: "true"
+              cancel_if_node_not_ready: "true"
+              cluster_id: gauss
+              cluster_type: management_cluster
+              installation: gauss
+              node: ip-10-0-5-3.eu-west-1.compute.internal
+              pipeline: testing
+              pod: alloy-3xxxx
+              provider: aws
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
+              opsrecipe: "logging-agent/"
+      - alertname: LoggingAgentDown
+        eval_time: 121m
+      - alertname: LoggingAgentDown
+        eval_time: 180m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_node_unschedulable: "true"
+              cancel_if_node_not_ready: "true"
+              cluster_id: gauss
+              cluster_type: management_cluster
+              installation: gauss
+              node: ip-10-0-5-2.eu-west-1.compute.internal
+              pipeline: testing
+              pod: alloy-2xxxx
+              provider: aws
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
+              opsrecipe: "logging-agent/"
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_node_unschedulable: "true"
+              cancel_if_node_not_ready: "true"
+              cluster_id: gauss
+              cluster_type: management_cluster
+              installation: gauss
+              node: ip-10-0-5-3.eu-west-1.compute.internal
+              pipeline: testing
+              pod: alloy-3xxxx
+              provider: aws
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
+              opsrecipe: "logging-agent/"
+  # Test LogForwardingErrors
+  - interval: 1m
+    input_series:
+      # Tests with multiple cases: no metrics, no requests, only status_code 204 ones, 204 ones and 500 that are less than 10% of the the total, 500 request that represent more than 10% of the total, only 500 ones
+      - series: 'loki_write_request_duration_seconds_count{status_code="500", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", pod="alloy-2j7z7"}'
+        values: "_x60 0+0x60 0+0x60   0+50x60      3000+100x60  9000+600x60"
+      - series: 'loki_write_request_duration_seconds_count{status_code="204", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", pod="alloy-2j7z7"}'
+        values: "_x60 0+0x60 0+600x60 36000+600x60 72000+600x60 108000+0x60"
+    alert_rule_test:
+      - alertname: LogForwardingErrors
+        eval_time: 30m
+      - alertname: LogForwardingErrors
+        eval_time: 90m
+      - alertname: LogForwardingErrors
+        eval_time: 150m
+      - alertname: LogForwardingErrors
+        eval_time: 210m
+      - alertname: LogForwardingErrors
+        eval_time: 270m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: gauss
+              installation: gauss
+              provider: aws
+              pipeline: testing
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "More that 10% of the requests to Loki are failing."
+              opsrecipe: "log-shipping-errors/"
+      - alertname: LogForwardingErrors
+        eval_time: 330m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: gauss
+              installation: gauss
+              provider: aws
+              pipeline: testing
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "More that 10% of the requests to Loki are failing."
+              opsrecipe: "log-shipping-errors/"
+  # Test LogReceivingErrors
+  - interval: 1m
+    input_series:
+      # Tests with multiple cases: no metrics, no requests, only status_code 204 ones, 204 ones and 500 that are less than 10% of the the total, 500 request that represent more than 10% of the total, only 500 ones
+      - series: 'loki_source_api_request_duration_seconds_count{status_code="500", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", route="api_v1_push", pod="alloy-2j7z7"}'
+        values: "_x60 0+0x60 0+0x60   0+50x60      3000+100x60  9000+600x60"
+      - series: 'loki_source_api_request_duration_seconds_count{status_code="204", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", route="api_v1_push", pod="alloy-2j7z7"}'
+        values: "_x60 0+0x60 0+600x60 36000+600x60 72000+600x60 108000+0x60"
+    alert_rule_test:
+      - alertname: LogReceivingErrors
+        eval_time: 30m
+      - alertname: LogReceivingErrors
+        eval_time: 90m
+      - alertname: LogReceivingErrors
+        eval_time: 150m
+      - alertname: LogReceivingErrors
+        eval_time: 210m
+      - alertname: LogReceivingErrors
+        eval_time: 270m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: gauss
+              installation: gauss
+              provider: aws
+              pipeline: testing
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "More that 10% of the loki requests to the observability gateway are failing."
+              opsrecipe: "log-shipping-errors/"
+      - alertname: LogReceivingErrors
+        eval_time: 330m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: gauss
+              installation: gauss
+              provider: aws
+              pipeline: testing
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "More that 10% of the loki requests to the observability gateway are failing."
+              opsrecipe: "log-shipping-errors/"

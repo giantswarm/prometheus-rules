@@ -11,7 +11,6 @@ spec:
   groups:
     ## TODO(quentin) add tests for the alerts
     ## TODO(quentin) add opsrecipe for the alerts
-    ## TODO(quentin) add dashboard annotation for the alerts
     # List of alerts for on the state of the alloy components.
     # Alerts are coming from https://github.com/grafana/alloy/blob/ed52746567d2469a6a97a592ac5aec807646b327/operations/alloy-mixin/alerts/controller.libsonnet
     # We added the alert labels and added the missing labels from the aggregations.
@@ -19,9 +18,10 @@ spec:
       rules:
         - alert: AlloySlowComponentEvaluations
           annotations:
+            dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller
             description: '{{`Component evaluations are taking too long under job {{ $labels.job }}, component_path {{ $labels.component_path }}, component_id {{ $labels.component_id }}.`}}'
-            summary: Component evaluations are taking too long.
             opsrecipe: alloy-components/
+            summary: Component evaluations are taking too long.
           expr: sum by (cluster_id, installation, provider, pipeline, namespace, job, component_path, component_id) (rate(alloy_component_evaluation_slow_seconds[10m])) > 0
           for: 15m
           labels:
@@ -35,9 +35,10 @@ spec:
             cancel_if_cluster_status_updating: "true"
         - alert: AlloyUnhealthyComponents
           annotations:
+            dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller
             description: '{{`Unhealthy components detected under job {{ $labels.job }}`}}'
-            summary: Unhealthy components detected.
             opsrecipe: alloy-components/
+            summary: Unhealthy components detected.
           expr: sum by (cluster_id, installation, provider, pipeline, namespace, job) (alloy_component_controller_running_components{health_type!="healthy"}) > 0
           for: 15m
           labels:

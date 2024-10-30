@@ -38,3 +38,12 @@ pint: install-tools template-chart ## Run pint
 pint-all: install-tools template-chart ## Run pint with extra checks
 	GENERATE_ONLY=true bash test/hack/bin/verify-rules.sh
 	./test/hack/bin/run-pint.sh test/conf/pint/pint-all.hcl ${PINT_TEAM_FILTER}
+
+##@ Mixins
+update-mimir-mixin: install-tools ##        Update Mimir mixins
+	./mimir/update.sh
+
+update-loki-mixin: install-tools ##        Update Loki mixins
+	./loki/update.sh
+
+update-mixin: update-mimir-mixin update-loki-mixin ##        Update all mixins

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Move `Inhibition` from a prefix to a suffix for the prometheus-agent inhibitions to match with the other inhibition alerts:
+- Move `Inhibition` from a suffix to a prefix for the prometheus-agent inhibitions to match with the other inhibition alerts:
 - `PrometheusAgentFailingInhibition`       => `InhibitionPrometheusAgentFailing`
 - `PrometheusAgentShardsMissingInhibition` => `InhibitionPrometheusAgentShardsMissing`
 

@@ -23,6 +23,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `alloy-rules`
   - `observability-gateway`
 
+## [4.23.0] - 2024-10-30
+
+### Changed
+
+- Rename all `prometheus-agent` related inhibitions to `monitoring-agent` inhibitions.
+- Move `Inhibition` from a suffix to a prefix for the prometheus-agent inhibitions to match with the other inhibition alerts:
+- `PrometheusAgentFailingInhibition`       => `InhibitionPrometheusAgentFailing`
+- `PrometheusAgentShardsMissingInhibition` => `InhibitionPrometheusAgentShardsMissing`
+
+### Fixed
+
+- Fixes the statefulset.rules name as it is currently replacing the deployment.rules alerts.
+
 ## [4.22.0] - 2024-10-29
 
 ### Changed
@@ -1481,7 +1494,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Deprecate `role=master` in favor of `role=control-plane`.
 - Rename alerts containing `Master` with `ControlPlane`
-- Added "cancel_if_prometheus_agent_down" for phoenix alerts ManagementClusterCriticalPodMetricMissing, ManagementClusterDeploymentMissingAWS, WorkloadClusterNonCriticalDeploymentNotSatisfiedKaas
+- Added `cancel_if_prometheus_agent_down` for phoenix alerts ManagementClusterCriticalPodMetricMissing, ManagementClusterDeploymentMissingAWS, WorkloadClusterNonCriticalDeploymentNotSatisfiedKaas
 
 ## [2.94.0] - 2023-04-26
 
@@ -3192,7 +3205,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.22.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.23.0...HEAD
+[4.23.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.22.0...v4.23.0
 [4.22.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.21.1...v4.22.0
 [4.21.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.21.0...v4.21.1
 [4.21.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.20.0...v4.21.0

@@ -20,9 +20,9 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
+              inhibit_monitoring_agent_down: "true"
               cancel_if_cluster_has_no_workers: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cluster_id: "gauss"
@@ -40,7 +40,7 @@ tests:
               description: "Prometheus agent remote write is failing."
               opsrecipe: "prometheus-agent/"
               summary: "Prometheus agent fails to send samples to remote write endpoint."
-      - alertname: PrometheusAgentFailingInhibition
+      - alertname: InhibitionPrometheusAgentFailing
         eval_time: 30m
         exp_alerts:
           - exp_labels:
@@ -48,8 +48,8 @@ tests:
               severity: none
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cluster_id: "gauss"
@@ -77,10 +77,10 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
+              inhibit_monitoring_agent_down: "true"
               installation: myinstall
               cancel_if_cluster_has_no_workers: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               customer: "giantswarm"
@@ -95,7 +95,7 @@ tests:
               description: "Prometheus agent remote write is failing."
               opsrecipe: "prometheus-agent/"
               summary: "Prometheus agent fails to send samples to remote write endpoint."
-      - alertname: PrometheusAgentFailingInhibition
+      - alertname: InhibitionPrometheusAgentFailing
         eval_time: 90m
         exp_alerts:
           - exp_labels:
@@ -105,9 +105,9 @@ tests:
               severity: none
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
+              inhibit_monitoring_agent_down: "true"
               installation: myinstall
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               customer: "giantswarm"
@@ -124,7 +124,7 @@ tests:
               summary: "Prometheus agent fails to send samples to remote write endpoint."
       - alertname: PrometheusAgentFailing
         eval_time: 150m
-      - alertname: PrometheusAgentFailingInhibition
+      - alertname: InhibitionPrometheusAgentFailing
         eval_time: 150m
   # Tests for `PrometheusAgentShardsMissing` alert
   - interval: 1m
@@ -156,8 +156,8 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
@@ -177,8 +177,8 @@ tests:
               severity: none
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
@@ -198,8 +198,8 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
@@ -219,8 +219,8 @@ tests:
               severity: none
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
@@ -260,8 +260,8 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
@@ -281,8 +281,8 @@ tests:
               severity: none
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
@@ -302,8 +302,8 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
@@ -323,8 +323,8 @@ tests:
               severity: none
               team: atlas
               topic: observability
-              inhibit_prometheus_agent_down: "true"
-              cancel_if_cluster_is_not_running_prometheus_agent: "true"
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"

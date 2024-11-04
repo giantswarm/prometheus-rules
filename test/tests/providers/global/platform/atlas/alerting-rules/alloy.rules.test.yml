@@ -34,7 +34,7 @@ tests:
             exp_annotations:
               dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller
               description: "Component evaluations are taking too long under job alloy-controller, component_path path1, component_id comp1."
-              opsrecipe: "alloy-components/"
+              opsrecipe: "alloy/"
               summary: "Component evaluations are taking too long."
       - alertname: AlloySlowComponentEvaluations
         eval_time: 80m
@@ -68,7 +68,7 @@ tests:
             exp_annotations:
               dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller
               description: "Unhealthy components detected under job alloy-controller"
-              opsrecipe: "alloy-components/"
+              opsrecipe: "alloy/"
               summary: "Unhealthy components detected."
       - alertname: AlloyUnhealthyComponents
         eval_time: 80m

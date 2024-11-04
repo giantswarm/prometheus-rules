@@ -1,6 +1,6 @@
 ---
 rule_files:
-  - logging.rules.yml
+  - logging-pipeline.rules.yml
 
 tests:
   # Test LoggingAgentDown
@@ -47,8 +47,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              opsrecipe: "logging-agent/"
+              description: "Scraping of all alloy pods to check if one failed every 30 minutes."
+              opsrecipe: "alloy/"
       # Tests with 2 pods
       - alertname: LoggingAgentDown
         eval_time: 111m
@@ -72,8 +72,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              opsrecipe: "logging-agent/"
+              description: "Scraping of all alloy pods to check if one failed every 30 minutes."
+              opsrecipe: "alloy/"
       - alertname: LoggingAgentDown
         eval_time: 121m
       - alertname: LoggingAgentDown
@@ -98,8 +98,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              opsrecipe: "logging-agent/"
+              description: "Scraping of all alloy pods to check if one failed every 30 minutes."
+              opsrecipe: "alloy/"
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
@@ -119,8 +119,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              opsrecipe: "logging-agent/"
+              description: "Scraping of all alloy pods to check if one failed every 30 minutes."
+              opsrecipe: "alloy/"
   # Test LogForwardingErrors
   - interval: 1m
     input_series:
@@ -155,7 +155,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "More that 10% of the requests to Loki are failing."
-              opsrecipe: "log-shipping-errors/"
+              opsrecipe: "logging-pipeline/"
       - alertname: LogForwardingErrors
         eval_time: 330m
         exp_alerts:
@@ -173,7 +173,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "More that 10% of the requests to Loki are failing."
-              opsrecipe: "log-shipping-errors/"
+              opsrecipe: "logging-pipeline/"
   # Test LogReceivingErrors
   - interval: 1m
     input_series:
@@ -208,7 +208,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "More that 10% of the loki requests to the observability gateway are failing."
-              opsrecipe: "log-shipping-errors/"
+              opsrecipe: "logging-pipeline/"
       - alertname: LogReceivingErrors
         eval_time: 330m
         exp_alerts:
@@ -226,4 +226,4 @@ tests:
               topic: observability
             exp_annotations:
               description: "More that 10% of the loki requests to the observability gateway are failing."
-              opsrecipe: "log-shipping-errors/"
+              opsrecipe: "logging-pipeline/"

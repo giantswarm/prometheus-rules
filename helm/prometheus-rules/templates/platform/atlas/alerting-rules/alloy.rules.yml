@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
   name: alloy.rules
-  namespace: {{ .Values.namespace  }}
+  namespace: {{ .Values.namespace }}
 spec:
   groups:
     # List of alerts for on the state of the alloy components.
@@ -48,7 +48,24 @@ spec:
             cancel_if_cluster_status_creating: "true"
             cancel_if_cluster_status_deleting: "true"
             cancel_if_cluster_status_updating: "true"
-    - name: logging-agent
+    - name: alloy.rules
+      rules:
+        - alert: AlloyForPrometheusRulesDown
+          annotations:
+            description: 'Alloy sending PrometheusRules to Loki and Mimir ruler is down.'
+            opsrecipe: prometheus-rules/
+          expr: count(up{job="alloy-rules", namespace="monitoring"} == 0) by (cluster_id, installation, provider, pipeline) > 0
+          for: 1h
+          labels:
+            area: platform
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_cluster_status_updating: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: atlas
+            topic: observability
+    - name: alloy.logs
       rules:
         # This alert lists the existing logging-agent pods (to extract the node label and inhibit if the node is not ready)
         # and join the pods with the not running containers

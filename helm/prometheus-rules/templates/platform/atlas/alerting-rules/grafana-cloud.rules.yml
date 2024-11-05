@@ -1,13 +1,35 @@
-{{- if .Values.mimir.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: mimir-to-grafana-cloud-exporter.rules
-  namespace: {{ .Values.namespace }}
+    {{- if not .Values.mimir.enabled }}
+    cluster_type: "management_cluster"
+    {{- end }}
+  name: grafana-cloud.rules
+  namespace: {{ .Values.namespace  }}
 spec:
   groups:
+  - name: grafana-cloud
+    rules:
+    ## Pages Atlas when prometheus fails to send samples to cortex
+    - alert: PrometheusMissingGrafanaCloud
+      annotations:
+        description: 'Prometheus is not sending data to Grafana Cloud.'
+        opsrecipe: prometheus-grafanacloud/
+      {{- if .Values.mimir.enabled }}
+      expr: absent(prometheus_remote_storage_samples_total{remote_name="grafana-cloud", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
+      {{- else }}
+      expr: absent(prometheus_remote_storage_samples_total{remote_name="grafana-cloud"})
+      {{- end }}
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+  {{- if .Values.mimir.enabled }}
   - name: mimir-to-grafana-cloud-exporter
     rules:
     - alert: MimirToGrafanaCloudExporterDown
@@ -73,4 +95,4 @@ spec:
         severity: page
         team: atlas
         topic: observability
-{{- end }}
+  {{- end }}

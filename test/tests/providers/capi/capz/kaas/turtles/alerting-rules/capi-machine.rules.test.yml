@@ -16,7 +16,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: kaas
-              cancel_if_prometheus_agent_down: "true"
+              cancel_if_monitoring_agent_down: "true"
               cancel_if_outside_working_hours: "true"
               severity: page
               team: phoenix
@@ -34,7 +34,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: kaas
-              cancel_if_prometheus_agent_down: "true"
+              cancel_if_monitoring_agent_down: "true"
               cancel_if_outside_working_hours: "true"
               severity: notify
               team: phoenix

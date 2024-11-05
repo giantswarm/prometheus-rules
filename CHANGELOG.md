@@ -7,14 +7,129 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.23.0] - 2024-10-30
+
+### Changed
+
+- Rename all `prometheus-agent` related inhibitions to `monitoring-agent` inhibitions.
+- Move `Inhibition` from a suffix to a prefix for the prometheus-agent inhibitions to match with the other inhibition alerts:
+- `PrometheusAgentFailingInhibition`       => `InhibitionPrometheusAgentFailing`
+- `PrometheusAgentShardsMissingInhibition` => `InhibitionPrometheusAgentShardsMissing`
+
+### Fixed
+
+- Fixes the statefulset.rules name as it is currently replacing the deployment.rules alerts.
+
+## [4.22.0] - 2024-10-29
+
+### Changed
+
+- Change `KubeletVolumeSpaceTooLow` to only page when there are 500MB or less of space left, letting the node-problem-detector handle the rest.
+
+## [4.21.1] - 2024-10-25
+
+### Fixed
+
+- Updated `aggregation:giantswarm:cluster_release_version` expression to support CAPI clusters
+
+## [4.21.0] - 2024-10-25
+
+### Changed
+
+- Set the `InhibitionControlPlaneUnhealthy` to be valid for all CAPI clusters, not just MCs.
+
+## [4.20.0] - 2024-10-22
+
 ### Added
 
+- Added InhibitionClusterWithoutWorkerNodes for CAPA
+
+### Changed
+
+- Modify `KyvernoWebhookHasNoAvailableReplicas` to check specifically for Kyverno resource webhook.
+- Inhibit prometheas-agent alerts when a cluster has no worker nodes (AWS vintage only for now)
+
+## [4.19.0] - 2024-10-15
+
+### Added
+
+- Alert `StatefulsetNotSatisfiedAtlas`
+
+### Changed
+
+- Update alloy-app to 0.6.1. This includes:
+  - an upgrade to upstream version 1.4.2
+  - a ciliumnetworkpolicy fix for clustering.
+
+## [4.18.0] - 2024-10-08
+
+### Added
+
+- Alerting rule for Loki missing logs at ingestion
+
+## [4.17.0] - 2024-10-03
+
+### Removed
+
+- Remove legacy in-house slo framework.
+
+## [4.16.1] - 2024-09-26
+
+### Fixed
+
+- fix `LokiFailedCompaction` to take latest successfull compaction across multiple compactor/backend pods
+
+## [4.16.0] - 2024-09-26
+
+### Added
+
+- Add `LokiFailedCompaction` alert to know when Loki did not manage to run a successfull compaction in the last 2 hours.
+
+### Removed
+
+- Remove CRsync alerting rules.
+
+### Changed
+
+- Migrate BigMac alerts to Shield
+- Upgrade Alloy to 0.5.2 which brings no value to this repo.
+
+### Fixed
+
+- Dashboard links in alertmanager and mimir rules
+- Fix cert-manager down alert.
+- Remove deprecated app labels for `external-dns` and `ingress-nginx` alerts.
+- Remove deprecated app labels for `kube-state-metrics` alerts.
+- Fix falco events alerts node label to hostname as node does not exist.
+- Fix `MimirHPAReachedMaxReplicas` description to render the horizontalpodautoscaler label.
+
+## [4.15.2] - 2024-09-17
+
+### Fixed
+
+- Update `MimirHPAReachedMaxReplicas` opsrecipe link
+- Fix aggregation rule of the `slo:current_burn_rate:ratio` slo.
+
+## [4.15.1] - 2024-09-16
+
+### Removed
+
+- Remove aggregation of slo:period_error_budget_remaining:ratio` as this value can be easily computed and creates a lot of time series in Grafana Cloud
+
+## [4.15.0] - 2024-09-16
+
+### Added
+
+- Add aggregations for slo metrics to export them to grafana cloud
 - Add `MimirHPAReachedMaxReplicas` alert, to detect when Mimir's HPAs have reached maximum capacity.
 - Add `MimirContinuousTestFailingOnWrites` and `MimirContinuousTestFailingOnReads` alerts.
 
 ### Changed
 
 - Added dashboards to several mimir alerts
+- Change `IRSAACMCertificateExpiringInLessThan60Days` to
+  `IRSAACMCertificateExpiringInLessThan45Days`. The ACM certificate is renewed
+  60 days before expiration and the alert can fire prematurely.
 
 ## [4.14.0] - 2024-09-05
 
@@ -1364,7 +1479,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Deprecate `role=master` in favor of `role=control-plane`.
 - Rename alerts containing `Master` with `ControlPlane`
-- Added "cancel_if_prometheus_agent_down" for phoenix alerts ManagementClusterCriticalPodMetricMissing, ManagementClusterDeploymentMissingAWS, WorkloadClusterNonCriticalDeploymentNotSatisfiedKaas
+- Added `cancel_if_prometheus_agent_down` for phoenix alerts ManagementClusterCriticalPodMetricMissing, ManagementClusterDeploymentMissingAWS, WorkloadClusterNonCriticalDeploymentNotSatisfiedKaas
 
 ## [2.94.0] - 2023-04-26
 
@@ -3075,7 +3190,20 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.14.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.23.0...HEAD
+[4.23.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.22.0...v4.23.0
+[4.22.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.21.1...v4.22.0
+[4.21.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.21.0...v4.21.1
+[4.21.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.20.0...v4.21.0
+[4.20.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.19.0...v4.20.0
+[4.19.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.18.0...v4.19.0
+[4.18.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.17.0...v4.18.0
+[4.17.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.16.1...v4.17.0
+[4.16.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.16.0...v4.16.1
+[4.16.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.15.2...v4.16.0
+[4.15.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.15.1...v4.15.2
+[4.15.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.15.0...v4.15.1
+[4.15.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.14.0...v4.15.0
 [4.14.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.3...v4.14.0
 [4.13.3]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.2...v4.13.3
 [4.13.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.13.1...v4.13.2

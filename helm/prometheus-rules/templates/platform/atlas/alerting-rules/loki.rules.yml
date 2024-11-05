@@ -135,3 +135,63 @@ spec:
         severity: page
         team: atlas
         topic: observability
+  - name: loki.compactor
+    rules:
+    - alert: LokiCompactorFailedCompaction
+      annotations:
+        dashboard: loki-retention/loki-retention
+        description: 'Loki compactor has been failing compactions for more than 2 hours since last compaction.'
+        opsrecipe: loki#lokicompactorfailedcompaction
+      # This alert checks if Loki's the last successful compaction run is older than 2 hours
+      expr: (min by (cluster_id, installation, provider, pipeline) (time() - (loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds > 0)) > 60 * 60 * 2)
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: LokiCompactorFailedCompaction
+      annotations:
+        dashboard: loki-retention/loki-retention
+        description: 'Loki compactor has been failing compactions for more than 2 hours since start-up.'
+        opsrecipe: loki#lokicompactorfailedcompaction
+      # This alert covers the special case at compactor startup, where the "normal" alert would always consider time `0` is more than 2 hours ago, yet we want to let it 2 hours + `for` duration.
+      expr: max(max_over_time(loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{}[2h])) by (cluster_id, installation, provider, pipeline) == 0
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: LokiMissingLogs
+      annotations:
+        dashboard: loki-canary/loki-canary
+        description: This alert checks that loki is not missing canary logs
+        opsrecipe: loki/
+      expr: |
+        (
+          sum by (cluster_id, pod, installation, pipeline, provider)
+              (increase(loki_canary_missing_entries_total{cluster_type="management_cluster",namespace="loki"}[5m]))
+          /
+          sum by (cluster_id, pod, installation, pipeline, provider)
+              (increase(loki_canary_entries_total{cluster_type="management_cluster",namespace="loki"}[5m]))
+        ) > 0
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability

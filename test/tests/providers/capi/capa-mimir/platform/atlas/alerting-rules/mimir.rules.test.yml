@@ -79,11 +79,11 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: gauss
-              dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview
               installation: gauss
               provider: aws
               pipeline: testing
             exp_annotations:
+              dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview
               description: "Mimir component : mimir-ingester is down."
               opsrecipe: "mimir/"
   - interval: 1m
@@ -134,13 +134,13 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cluster_id: golem
               cluster_type: management_cluster
-              dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler
               installation: golem
               namespace: mimir
               severity: page
               team: atlas
               topic: observability
             exp_annotations:
+              dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler
               description: "Mimir ruler is failing to process PrometheusRules."
               opsrecipe: "mimir/"
       - alertname: MimirRulerEventsFailed
@@ -163,12 +163,12 @@ tests:
               cancel_if_outside_working_hours: "true"
               cluster_type: management_cluster
               container: mimir-ingester
-              dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview
               namespace: mimir
               severity: page
               team: atlas
               topic: observability
             exp_annotations:
+              dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview
               description: Mimir containers are restarting too often.
               opsrecipe: "mimir/"
       - alertname: MimirRestartingTooOften
@@ -363,8 +363,8 @@ tests:
                horizontalpodautoscaler: mimir-distributor
                namespace: mimir
              exp_annotations:
-               description: "Mimir ${ labels.horizontalpodautoscaler } HPA has reached maximum replicas and consume too much resources, it needs to be scaled up."
-               opsrecipe: "mimir-ingester/"
+               description: "Mimir mimir-distributor HPA has reached maximum replicas and consume too much resources, it needs to be scaled up."
+               opsrecipe: "mimir-hpa/"
       - alertname: MimirHPAReachedMaxReplicas
         eval_time: 246m
       - alertname: MimirHPAReachedMaxReplicas
@@ -382,14 +382,13 @@ tests:
                horizontalpodautoscaler: mimir-distributor
                namespace: mimir
              exp_annotations:
-               description: "Mimir ${ labels.horizontalpodautoscaler } HPA has reached maximum replicas and consume too much resources, it needs to be scaled up."
-               opsrecipe: "mimir-ingester/"
+               description: "Mimir mimir-distributor HPA has reached maximum replicas and consume too much resources, it needs to be scaled up."
+               opsrecipe: "mimir-hpa/"
   # Test for MimirCompactorFailedCompaction alert
   - interval: 1m
     input_series:
-      # mimir-ingester real memory usage gradually decreases until it goes below 30% of the memory requests.
       - series: 'cortex_compactor_runs_failed_total{reason="error", installation="golem", cluster_id="golem", namespace="mimir", pipeline="testing", provider="capa"}'
-        values: "8+0x20 1+0x40 0+0x20 4+0x130 0+0x190"                             
+        values: "8+0x20 1+0x40 0+0x20 4+0x130 0+0x190"
     alert_rule_test:
       - alertname: MimirCompactorFailedCompaction
         eval_time: 15m 
@@ -405,7 +404,6 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: golem
-              dashboard: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources
               installation: "golem"
               pipeline: "testing"
               provider: "capa"
@@ -414,8 +412,9 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
+              dashboard: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources
               description: Mimir compactor has been failing its compactions for 2 hours.
-              opsrecipe: "mimir/"
+              opsrecipe: "mimir#mimircompactorfailedcompaction"
       - alertname: MimirCompactorFailedCompaction
         eval_time: 205m 
       - alertname: MimirCompactorFailedCompaction

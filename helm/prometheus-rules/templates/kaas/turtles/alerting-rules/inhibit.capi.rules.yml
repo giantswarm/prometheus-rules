@@ -1,14 +1,11 @@
 {{- if eq .Values.managementCluster.provider.flavor "capi" }}
-# This rule applies to all capi management clusters
+# This rule applies to all capi clusters
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-{{- if not .Values.mimir.enabled }}
-    cluster_type: "management_cluster"
-{{- end }}
   name: inhibit.capi.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -19,12 +16,12 @@ spec:
       annotations:
         description: '{{`Control plane of cluster {{ $labels.cluster_id }} is not healthy.`}}'
       expr: |-
-        capi_kubeadmcontrolplane_status_condition{cluster_type="management_cluster", type="ControlPlaneComponentsHealthy", status="False"} == 1
-        or capi_kubeadmcontrolplane_status_condition{cluster_type="management_cluster", type="EtcdClusterHealthy", status="False"} == 1
-        or capi_kubeadmcontrolplane_status_condition{cluster_type="management_cluster", type="Available", status="False"} == 1
+        capi_kubeadmcontrolplane_status_condition{type="ControlPlaneComponentsHealthy", status="False"} == 1
+        or capi_kubeadmcontrolplane_status_condition{type="EtcdClusterHealthy", status="False"} == 1
+        or capi_kubeadmcontrolplane_status_condition{type="Available", status="False"} == 1
       labels:
         area: kaas
         cluster_control_plane_unhealthy: "true"
-        team: turtles
+        team: tenet
         topic: status
 {{- end }}

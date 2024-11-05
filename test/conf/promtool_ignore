@@ -1,6 +1,3 @@
-kaas/bigmac/alerting-rules/cert-manager.rules.yml
-kaas/bigmac/alerting-rules/dex.rules.yml
-kaas/bigmac/alerting-rules/teleport.rules.yml
 kaas/phoenix/alerting-rules/aws-load-balancer-controller.rules.yml
 kaas/phoenix/alerting-rules/aws.node.workload-cluster.rules.yml
 kaas/phoenix/alerting-rules/aws.workload-cluster.rules.yml
@@ -77,3 +74,6 @@ platform/honeybadger/alerting-rules/helm.rules.yml
 platform/honeybadger/alerting-rules/secret.rules.yml
 platform/honeybadger/recording-rules/helm-operations.rules.yml
 platform/shield/alerting-rules/falco.rules.yml
+platform/shield/alerting-rules/cert-manager.rules.yml
+platform/shield/alerting-rules/dex.rules.yml
+platform/shield/alerting-rules/teleport.rules.yml

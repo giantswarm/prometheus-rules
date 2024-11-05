@@ -18,7 +18,7 @@ tests:
     alert_rule_test:
       - alertname: LokiRequestPanics
         eval_time: 15m  # should be OK after 15 minutes
-        exp_alerts:
+        exp_alerts: []
       - alertname: LokiRequestPanics
         eval_time: 25m  # After 25 minutes, should fire an alert for the t+20 error
         exp_alerts:
@@ -43,11 +43,11 @@ tests:
               opsrecipe: loki/
       - alertname: LokiRequestPanics
         eval_time: 40m  # After 40 minutes, all should be back to normal
-        exp_alerts:
+        exp_alerts: []
 
       - alertname: LokiRequestErrors
         eval_time: 15m  # should be OK after 15 minutes
-        exp_alerts:
+        exp_alerts: []
       - alertname: LokiRequestErrors
         eval_time: 160m  # Alert after more than 120m of incident
         exp_alerts:
@@ -74,13 +74,13 @@ tests:
 
       - alertname: LokiRingUnhealthy
         eval_time: 15m  # should be OK after 15 minutes
-        exp_alerts:
+        exp_alerts: []
       - alertname: LokiRingUnhealthy
         eval_time: 25m  # after 25 minutes we have an unhealthy member, but we want to filter too short events. So no alert yet.
-        exp_alerts:
+        exp_alerts: []
       - alertname: LokiRingUnhealthy
         eval_time: 35m  # special case to validate when a new pod is unhealthy (no data at the beginning)
-        exp_alerts:
+        exp_alerts: []
       - alertname: LokiRingUnhealthy
         eval_time: 60m  # now the event has been there for 20 minutes, we should have an alert.
         exp_alerts:
@@ -115,7 +115,7 @@ tests:
     alert_rule_test:
       - alertname: LokiRestartingTooOften
         eval_time: 15m  # should be OK after 15 minutes
-        exp_alerts:
+        exp_alerts: []
       - alertname: LokiRestartingTooOften
         eval_time: 85m  # After 85 minutes, should fire an alert for the t+85 error
         exp_alerts:
@@ -133,7 +133,7 @@ tests:
               opsrecipe: loki/
       - alertname: LokiRestartingTooOften
         eval_time: 140m  # After 140m minutes, all should be back to normal
-        exp_alerts:
+        exp_alerts: []
   - interval: 1m
     input_series:
       # loki-backend real memory usage gradually decreases until it goes below 30% of the memory requests.
@@ -227,3 +227,100 @@ tests:
               opsrecipe: loki/
       - alertname: LokiHpaReachedMaxReplicas
         eval_time: 515m 
+
+  # Test for LokiCompactorFailedCompaction since last compaction alert
+  - interval: 1m
+    input_series:
+      - series: 'loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{cluster_id="golem", installation="golem", pipeline="testing", provider="capa"}'
+        values: "1x240 14400+60x100" # compactions worked once at the first second the does not work for the first 240 minutes so the timestamp stays still, then it gets continuously updated after 240 minutes to a valid timestamp (which is number of seconds since start for the test).
+    alert_rule_test:
+      - alertname: LokiCompactorFailedCompaction
+        eval_time: 15m
+      - alertname: LokiCompactorFailedCompaction
+        eval_time: 230m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: golem
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: loki-retention/loki-retention
+              description: Loki compactor has been failing compactions for more than 2 hours since last compaction.
+              opsrecipe: "loki#lokicompactorfailedcompaction"
+      - alertname: LokiCompactorFailedCompaction
+        eval_time: 300m
+
+  # Test for LokiCompactorFailedCompaction since start-up alert
+  - interval: 1m
+    input_series:
+      - series: 'loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{cluster_id="grizzly", installation="grizzly", pipeline="testing", provider="capz"}'
+        values: "0x240 14400+60x100" # compactions did not work since start-up for the first 240 minutes so the timestamp stays at 0, then it gets continuously updated after 240 minutes to a valid timestamp (which is number of seconds since start for the test).
+    alert_rule_test:
+      - alertname: LokiCompactorFailedCompaction
+        eval_time: 15m
+      - alertname: LokiCompactorFailedCompaction
+        eval_time: 230m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: grizzly
+              installation: "grizzly"
+              pipeline: "testing"
+              provider: "capz"
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: loki-retention/loki-retention
+              description: Loki compactor has been failing compactions for more than 2 hours since start-up.
+              opsrecipe: "loki#lokicompactorfailedcompaction"
+      - alertname: LokiCompactorFailedCompaction
+        eval_time: 300m
+
+  # Test for LokiMissingLogs alert
+  - interval: 1m
+    input_series:
+      - series: 'loki_canary_entries_total{app="loki", cluster="loki", cluster_id="grizzly", cluster_type="management_cluster", container="loki-canary", customer="giantswarm", endpoint="http-metrics", installation="grizzly", namespace="loki", pod="loki-canary-5649fbcb65-lkdkq", pipeline="testing", provider="capz", service="loki-canary", service_priority="highest"}'
+        values: 0+1x1000
+      - series: 'loki_canary_missing_entries_total{app="loki", cluster="loki", cluster_id="grizzly", cluster_type="management_cluster", container="loki-canary", customer="giantswarm", endpoint="http-metrics", installation="grizzly", namespace="loki", pod="loki-canary-5649fbcb65-lkdkq", pipeline="testing", provider="capz", service="loki-canary", service_priority="highest"}'
+        values: "0+0x120 0+1x120 120+0x120"
+    alert_rule_test:
+      - alertname: LokiMissingLogs
+        eval_time: 60m
+      - alertname: LokiMissingLogs
+        eval_time: 200m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: grizzly
+              installation: "grizzly"
+              pipeline: "testing"
+              pod: "loki-canary-5649fbcb65-lkdkq"
+              provider: "capz"
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: loki-canary/loki-canary
+              description: This alert checks that loki is not missing canary logs
+              opsrecipe: "loki/"
+      - alertname: LokiMissingLogs
+        eval_time: 300m

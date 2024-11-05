@@ -7,7 +7,7 @@ toolchain go1.23.2
 require (
 	// Try to keep version in sync with our prometheus rule CRD version.
 	// see https://github.com/giantswarm/prometheus-operator-crd/blob/master/helm/prometheus-operator-crd/Chart.yaml#L11
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.77.2
+	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.78.0
 	sigs.k8s.io/yaml v1.4.0
 )
 
@@ -50,8 +50,8 @@ require (
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	k8s.io/api v0.31.1 // indirect
-	k8s.io/apimachinery v0.31.1 // indirect
+	k8s.io/api v0.31.2 // indirect
+	k8s.io/apimachinery v0.31.2 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/utils v0.0.0-20240902221715-702e33fdd3c3 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect

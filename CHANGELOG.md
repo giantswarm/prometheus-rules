@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `LoggingAgentDown` to be alerted when the logging agent is down.
   - `LogForwardingErrors` to be alerted when the `loki.write` component is failing.
   - `LogReceivingErrors` to be alerted when the `loki.source.api` components of the gateway is failing.
+  - `MonitoringAgentDown` to be alerted when the monitoring agent is down.
+  - `MonitoringAgentShardsNotSatisfied` to be alerted when the monitoring agent is missing any number of desired shards.
 
 ### Changed
 
@@ -23,6 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `observability-gateway`
 - Move all `grafana-cloud` related alerts to their own file.
 - Move all alloy related alerts to the alloy alert file and fix alloy-logs tests.
+- Rename and move the following alerts as they are not specific to Prometheus:
+  - `PrometheusCriticalJobScrapingFailure` => `CriticalJobScrapingFailure`
+  - `PrometheusJobScrapingFailure` => `JobScrapingFailure`
+  - `PrometheusFailsToCommunicateWithRemoteStorageAPI` => `MetricForwardingErrors`
 
 ## [4.23.0] - 2024-10-30
 

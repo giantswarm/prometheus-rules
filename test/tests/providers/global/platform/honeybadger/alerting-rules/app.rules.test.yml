@@ -17,6 +17,7 @@ tests:
               app: cilium
               app_version: 1.11.2
               area: platform
+              cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"

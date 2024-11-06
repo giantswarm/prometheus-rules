@@ -2,7 +2,7 @@ module checkLabels
 
 go 1.23
 
-toolchain go1.23.2
+toolchain go1.23.3
 
 require (
 	// Try to keep version in sync with our prometheus rule CRD version.

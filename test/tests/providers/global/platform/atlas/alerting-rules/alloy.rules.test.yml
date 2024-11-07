@@ -355,8 +355,6 @@ tests:
         eval_time: 10m
       - alertname: MonitoringAgentShardsNotSatisfied
         eval_time: 30m
-      - alertname: MonitoringAgentShardsNotSatisfied
-        eval_time: 30m
       - alertname: InhibitionMonitoringAgentShardsNotSatisfied
         eval_time: 30m
         exp_alerts:

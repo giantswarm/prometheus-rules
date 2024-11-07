@@ -6,21 +6,21 @@ metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
   name: alloy.rules
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.namespace  }}
 spec:
   groups:
-    # List of alerts for on the state of the alloy components.
+    # List of alerts on the state of the alloy components.
     # Alerts are coming from https://github.com/grafana/alloy/blob/ed52746567d2469a6a97a592ac5aec807646b327/operations/alloy-mixin/alerts/controller.libsonnet
-    # We added the alert labels and added the missing labels from the aggregations.
+    # We added the aggregations and our internal labels.
     - name: alloy.controller
       rules:
         - alert: AlloySlowComponentEvaluations
           annotations:
             dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller
-            description: '{{`Component evaluations are taking too long under job {{ $labels.job }}, component_path {{ $labels.component_path }}, component_id {{ $labels.component_id }}.`}}'
+            description: '{{`Component evaluations are taking too long under job {{ $labels.job }}, component_id {{ $labels.component_id }}.`}}'
             opsrecipe: alloy/
             summary: Component evaluations are taking too long.
-          expr: sum by (cluster_id, installation, provider, pipeline, namespace, job, component_path, component_id) (rate(alloy_component_evaluation_slow_seconds[10m])) > 0
+          expr: sum by (cluster_id, installation, provider, pipeline, namespace, job, component_id) (rate(alloy_component_evaluation_slow_seconds[10m])) > 0
           for: 15m
           labels:
             area: platform

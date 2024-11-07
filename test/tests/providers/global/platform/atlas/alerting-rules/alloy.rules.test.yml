@@ -6,7 +6,7 @@ tests:
   # Test AlloySlowComponentEvaluations
   - interval: 1m
     input_series:
-      - series: 'alloy_component_evaluation_slow_seconds{cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", namespace="default", job="alloy-controller", component_path="path1", component_id="comp1"}'
+      - series: 'alloy_component_evaluation_slow_seconds{cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", namespace="default", job="alloy-controller", component_id="comp1"}'
         values: "0+0x10 0+1x50 0x50"
     alert_rule_test:
       - alertname: AlloySlowComponentEvaluations
@@ -26,14 +26,13 @@ tests:
               pipeline: testing
               namespace: default
               job: alloy-controller
-              component_path: path1
               component_id: comp1
               severity: notify
               team: atlas
               topic: observability
             exp_annotations:
               dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller
-              description: "Component evaluations are taking too long under job alloy-controller, component_path path1, component_id comp1."
+              description: "Component evaluations are taking too long under job alloy-controller, component_id comp1."
               opsrecipe: "alloy/"
               summary: "Component evaluations are taking too long."
       - alertname: AlloySlowComponentEvaluations
@@ -107,12 +106,12 @@ tests:
   # Test LoggingAgentDown
   - interval: 1m
     input_series:
-      # For the first 60min: test with 1 pod: none, up, down
+      # For the first 80min: test with 1 pod: none, up, down
       - series: 'up{container="alloy", cluster_id="gauss", cluster_type="management_cluster", installation="gauss", job="alloy-logs", pod="alloy-logs-1xxxx", provider="aws", pipeline="testing"}'
         values: "_x20 1+0x20 0+0x40"
       - series: kube_pod_info{cluster_id="gauss", cluster_type="management_cluster", installation="gauss", pod="alloy-logs-1xxxx", node="ip-10-0-5-1.eu-west-1.compute.internal", provider="aws", pipeline="testing"}
         values: "1x180"
-      # From 60min: test with 2 pods: 1 up and 1 down, 2 up, 2 down.
+      # From 80min: test with 2 pods: 1 up and 1 down, 2 up, 2 down.
       - series: 'up{container="alloy", cluster_id="gauss", cluster_type="management_cluster", installation="gauss", job="alloy-logs", pod="alloy-logs-2xxxx", provider="aws", pipeline="testing"}'
         values: "_x80 1+0x40 1+0x20 0+0x40"
       - series: kube_pod_info{cluster_id="gauss", cluster_type="management_cluster", installation="gauss", pod="alloy-logs-2xxxx", node="ip-10-0-5-2.eu-west-1.compute.internal", provider="aws", pipeline="testing"}

@@ -230,13 +230,76 @@ tests:
   - interval: 1m
     input_series:
       - series: 'up{job="alloy-metrics", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing"}'
-        values: "_x20 1+0x70 0+0x70"
+        values: "_x40 1+0x50 0+0x70"
       - series: 'capi_cluster_status_condition{type="ControlPlaneReady", status="True", name="gauss", installation="gauss", provider="aws", pipeline="testing"}'
         values: "1x150"
     alert_rule_test:
       - alertname: MonitoringAgentDown
         eval_time: 10m
+      - alertname: InhibitionMonitoringAgentDown
+        eval_time: 10m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              inhibit_monitoring_agent_down: "true"
+              cluster_id: gauss
+              installation: gauss
+              provider: aws
+              pipeline: testing
+              severity: none
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Monitoring agent fails to send samples."
+              opsrecipe: "alloy/#monitoring-agent-down"
+              dashboard: "promRW001/prometheus-remote-write"
+              summary: "Monitoring agent fails to send samples to remote write endpoint."
       - alertname: MonitoringAgentDown
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              inhibit_monitoring_agent_down: "true"
+              cluster_id: gauss
+              installation: gauss
+              provider: aws
+              pipeline: testing
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Monitoring agent fails to send samples."
+              opsrecipe: "alloy/#monitoring-agent-down"
+              dashboard: "promRW001/prometheus-remote-write"
+              summary: "Monitoring agent fails to send samples to remote write endpoint."
+      - alertname: InhibitionMonitoringAgentDown
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              inhibit_monitoring_agent_down: "true"
+              cluster_id: gauss
+              installation: gauss
+              provider: aws
+              pipeline: testing
+              severity: none
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Monitoring agent fails to send samples."
+              opsrecipe: "alloy/#monitoring-agent-down"
+              dashboard: "promRW001/prometheus-remote-write"
+              summary: "Monitoring agent fails to send samples to remote write endpoint."
+      - alertname: MonitoringAgentDown
+        eval_time: 80m
+      - alertname: InhibitionMonitoringAgentDown
         eval_time: 80m
       - alertname: MonitoringAgentDown
         eval_time: 140m
@@ -252,6 +315,26 @@ tests:
               provider: aws
               pipeline: testing
               severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Monitoring agent fails to send samples."
+              opsrecipe: "alloy/#monitoring-agent-down"
+              dashboard: "promRW001/prometheus-remote-write"
+              summary: "Monitoring agent fails to send samples to remote write endpoint."
+      - alertname: InhibitionMonitoringAgentDown
+        eval_time: 140m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              inhibit_monitoring_agent_down: "true"
+              cluster_id: gauss
+              installation: gauss
+              provider: aws
+              pipeline: testing
+              severity: none
               team: atlas
               topic: observability
             exp_annotations:

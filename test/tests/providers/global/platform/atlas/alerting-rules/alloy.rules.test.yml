@@ -75,7 +75,7 @@ tests:
   # Test LoggingAgentDown
   - interval: 1m
     input_series:
-      # For the first 60min: test with 1 pod: none, up, down
+      # For the first 80min: test with 1 pod: none, up, down
       - series: 'up{container="alloy", cluster_id="gauss", cluster_type="management_cluster", installation="gauss", job="alloy-logs", pod="alloy-logs-1xxxx", provider="aws", pipeline="testing"}'
         values: "_x20 1+0x20 0+0x40"
       - series: kube_pod_info{cluster_id="gauss", cluster_type="management_cluster", installation="gauss", pod="alloy-logs-1xxxx", node="ip-10-0-5-1.eu-west-1.compute.internal", provider="aws", pipeline="testing"}

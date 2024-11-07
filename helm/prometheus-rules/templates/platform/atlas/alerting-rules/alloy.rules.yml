@@ -9,7 +9,7 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-    # List of alerts for on the state of the alloy components.
+    # List of alerts on the state of the alloy components.
     # Alerts are coming from https://github.com/grafana/alloy/blob/ed52746567d2469a6a97a592ac5aec807646b327/operations/alloy-mixin/alerts/controller.libsonnet
     # We added the alert labels and added the missing labels from the aggregations.
     - name: alloy.controller

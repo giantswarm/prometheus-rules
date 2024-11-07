@@ -61,21 +61,6 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    - alert: AlloyForPrometheusRulesDown
-      annotations:
-        description: 'Alloy sending PrometheusRules to Mimir ruler is down.'
-        opsrecipe: prometheus-rules/
-      expr: count(up{job="alloy-rules", namespace="mimir"} == 0) by (cluster_id, installation, provider, pipeline) > 0
-      for: 1h
-      labels:
-        area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
     - alert: MimirRulerEventsFailed
       annotations:
         dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler

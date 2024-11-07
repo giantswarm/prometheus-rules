@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `observability-operator`
   - `alloy-rules`
   - `observability-gateway`
+- Move all `grafana-cloud` related alerts to their own file.
+- Move all alloy related alerts to the alloy alert file.
 
 ## [4.23.0] - 2024-10-30
 

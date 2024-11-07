@@ -85,7 +85,6 @@ spec:
         severity: page
         team: atlas
         topic: observability
-
     - alert: KubeConfigMapCreatedMetricMissing
       annotations:
         description: '{{`kube_configmap_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'

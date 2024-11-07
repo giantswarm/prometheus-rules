@@ -26,7 +26,6 @@ tests:
               pipeline: testing
               namespace: default
               job: alloy-controller
-              component_path: path1
               component_id: comp1
               severity: notify
               team: atlas

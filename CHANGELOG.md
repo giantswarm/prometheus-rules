@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add a set of sensible alerts to monitor alloy.
+  - `AlloySlowComponentEvaluations` and `AlloyUnhealthyComponents` to report about alloy component state.
+  - `LoggingAgentDown` to be alerted when the logging agent is down.
+  - `LogForwardingErrors` to be alerted when the `loki.write` component is failing.
+  - `LogReceivingErrors` to be alerted when the `loki.source.api` components of the gateway is failing.
+
+### Changed
+
+- Update `DeploymentNotSatisfiedAtlas` to take into account the following components:
+  - `observability-operator`
+  - `alloy-rules`
+  - `observability-gateway`
+
 ## [4.23.0] - 2024-10-30
 
 ### Changed

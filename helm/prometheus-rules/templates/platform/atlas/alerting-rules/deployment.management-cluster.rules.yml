@@ -17,7 +17,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"alertmanager.*|grafana.*|prometheus.*|promxy.*|mimir.*|loki.*|tempo.*|pyroscope.*|object-storage.*|logging-operator.*|silence-operator.*|sloth.*"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"alloy-rules.*|alertmanager.*|grafana.*|logging-operator.*|loki.*|mimir.*|oauth2-proxy.*|object-storage.*|observability-gateway.*|observability-operator.*|prometheus.*|promxy.*|tempo.*|pyroscope.*|silence-operator.*|sloth.*"} > 0
       for: 30m
       labels:
         area: platform
@@ -95,7 +95,7 @@ spec:
         team: phoenix
         topic: managementcluster
     {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    ## TODO Remove when all vintage clusters are gone
+    ## TODO(@giantswarm/team-atlas) Remove when all vintage clusters are gone
     - alert: AWSManagementClusterDeploymentScaledDownToZero
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} on AWS has been scaled down to zero for prolonged period of time.`}}'

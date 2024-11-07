@@ -1,7 +1,6 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
   name: prometheus-agent.rules
@@ -10,7 +9,7 @@ spec:
   groups:
   - name: prometheus-agent
     rules:
-    ## Page Atlas if prometheus agent fails to send samples to MC prometheus.
+    ## This alert pages if prometheus-agent fails to send samples to its remote write endpoint.
     - alert: PrometheusAgentFailing
       annotations:
         description: '{{`Prometheus agent remote write is failing.`}}'
@@ -93,7 +92,7 @@ spec:
         cancel_if_cluster_is_not_running_monitoring_agent: "true"
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
-    ## Page Atlas if prometheus agent is missing shards to send samples to MC prometheus.
+    ## This alert pages if one of the prometheus-agent shard is not running.
     - alert: PrometheusAgentShardsMissing
       annotations:
         description: '{{`Prometheus agent is missing shards.`}}'

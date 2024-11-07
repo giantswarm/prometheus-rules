@@ -9,16 +9,17 @@ spec:
   groups:
     - name: promtail
       rules:
+        # This alert lists the existing promtail pods (to extract the node label and inhibit if the node is not ready)
+        # and join the pods with the not running containers
         - alert: PromtailDown
           annotations:
             description: '{{`Scraping of all promtail pods to check if one failed every 30 minutes.`}}'
             opsrecipe: promtail/
           expr: |-
-            # List promtail pods to be able to get the node label and join with the node status to not alert if the node is not ready
             kube_pod_info{pod=~"promtail.*"}
             * on(cluster_id, pod)
               group_left ()
-              up{container="promtail"} == 0 # List promtail containers that are not running
+              up{container="promtail"} == 0
           for: 30m
           labels:
             area: platform

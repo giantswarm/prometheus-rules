@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.23.1] - 2024-11-07
 
+### Fixed
+
+- Extends AppCR-related alerts with cancelation for CAPI clusters with unavailable control plane.
+
 ## [4.23.0] - 2024-10-30
 
 ### Changed
@@ -21,7 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixes the statefulset.rules name as it is currently replacing the deployment.rules alerts.
-- Extends AppCR-related alerts with cancelation for CAPI clusters with unavailable control plane.
 
 ## [4.22.0] - 2024-10-29
 

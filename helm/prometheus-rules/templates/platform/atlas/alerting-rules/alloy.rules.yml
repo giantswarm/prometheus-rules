@@ -17,10 +17,10 @@ spec:
         - alert: AlloySlowComponentEvaluations
           annotations:
             dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller
-            description: '{{`Component evaluations are taking too long under job {{ $labels.job }}, component_path {{ $labels.component_path }}, component_id {{ $labels.component_id }}.`}}'
+            description: '{{`Component evaluations are taking too long under job {{ $labels.job }}, component_id {{ $labels.component_id }}.`}}'
             opsrecipe: alloy/
             summary: Component evaluations are taking too long.
-          expr: sum by (cluster_id, installation, provider, pipeline, namespace, job, component_path, component_id) (rate(alloy_component_evaluation_slow_seconds[10m])) > 0
+          expr: sum by (cluster_id, installation, provider, pipeline, namespace, job, component_id) (rate(alloy_component_evaluation_slow_seconds[10m])) > 0
           for: 15m
           labels:
             area: platform

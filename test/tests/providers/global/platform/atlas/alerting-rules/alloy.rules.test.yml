@@ -347,7 +347,7 @@ tests:
   - interval: 1m
     input_series:
       - series: 'kube_statefulset_status_replicas{statefulset="alloy-metrics", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing"}'
-        values: "3+0x50 3+0x50 3+0x50"
+        values: "3+0x10 3+0x90 3+0x50"
       - series: 'kube_statefulset_status_replicas_ready{statefulset="alloy-metrics", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing"}'
         values: "3+0x10 2+0x90 3+0x50"
     alert_rule_test:

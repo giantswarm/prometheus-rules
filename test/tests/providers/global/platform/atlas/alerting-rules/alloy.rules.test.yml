@@ -32,7 +32,7 @@ tests:
               topic: observability
             exp_annotations:
               dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller
-              description: "Component evaluations are taking too long under job alloy-controller, component_path path1, component_id comp1."
+              description: "Component evaluations are taking too long under job alloy-controller, component_id comp1."
               opsrecipe: "alloy/"
               summary: "Component evaluations are taking too long."
       - alertname: AlloySlowComponentEvaluations

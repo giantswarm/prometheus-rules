@@ -6,7 +6,7 @@ tests:
   # Test AlloySlowComponentEvaluations
   - interval: 1m
     input_series:
-      - series: 'alloy_component_evaluation_slow_seconds{cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", namespace="default", job="alloy-controller", component_path="path1", component_id="comp1"}'
+      - series: 'alloy_component_evaluation_slow_seconds{cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", namespace="default", job="alloy-controller", component_id="comp1"}'
         values: "0+0x10 0+1x50 0x50"
     alert_rule_test:
       - alertname: AlloySlowComponentEvaluations

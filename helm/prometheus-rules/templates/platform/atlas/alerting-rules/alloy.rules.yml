@@ -156,7 +156,7 @@ spec:
         - alert: MonitoringAgentShardsNotSatisfied
           annotations:
             description: '{{`At least one of the monitoring agent shard is missing.`}}'
-            summary: Missing agent is missing shards.
+            summary: Monitoring agent is missing shards.
             opsrecipe: alloy/#monitoring-agent-down
           expr: |-
             kube_statefulset_status_replicas{statefulset="alloy-metrics"}
@@ -176,7 +176,7 @@ spec:
         - alert: InhibitionMonitoringAgentShardsNotSatisfied
           annotations:
             description: '{{`At least one of the monitoring agent shard is missing.`}}'
-            summary: Missing agent is missing shards.
+            summary: Monitoring agent is missing shards.
             opsrecipe: alloy/#monitoring-agent-down
           expr: |-
             kube_statefulset_status_replicas{statefulset="alloy-metrics"}

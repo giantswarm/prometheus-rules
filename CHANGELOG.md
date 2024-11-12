@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `MimirContinuousTestFailingOnWrites` and `MimirContinuousTestFailingOnReads` alerts.
+
 ### Removed
 
 - Remove the `mimir.enabled` property to replace it with the MC flavor as all CAPI MCs now run Mimir.
@@ -16,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix `MonitoringAgentDown` to page when both prometheus-agent and alloy-metrics jobs are missing.
-
+https://github.com/search?q=repo%3Agiantswarm%2Fmc-bootstrap%20urandom&type=codeCon
 ## [4.24.0] - 2024-11-12
 
 ### Added
@@ -158,7 +162,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add aggregations for slo metrics to export them to grafana cloud
 - Add `MimirHPAReachedMaxReplicas` alert, to detect when Mimir's HPAs have reached maximum capacity.
-- Add `MimirContinuousTestFailingOnWrites` and `MimirContinuousTestFailingOnReads` alerts.
 
 ### Changed
 

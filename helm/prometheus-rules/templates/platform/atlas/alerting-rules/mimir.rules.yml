@@ -169,9 +169,11 @@ spec:
         severity: page
         team: atlas
         topic: observability
+  - name: mimir.continuous-test
+    rules:
     - alert: MimirContinuousTestFailingOnWrites
       annotations:
-        dashboard: bdxh7hszfgmbkc/mimir-continous-test
+        dashboard: mimir-continous-test/mimir-continous-test
         description: 'Mimir continous-test detected errors in the write path.'
         opsrecipe: mimir/
       # Query is based on the following upstream mixin alerting rule : https://github.com/grafana/mimir/blob/main/operations/mimir-mixin-compiled/alerts.yaml#L1097
@@ -188,7 +190,7 @@ spec:
         topic: observability
     - alert: MimirContinuousTestFailingOnReads
       annotations:
-        dashboard: bdxh7hszfgmbkc/mimir-continous-test
+        dashboard: mimir-continous-test/mimir-continous-test
         description: 'Mimir continous-test detected errors in the write path.'
         opsrecipe: mimir/
       # Query is based on the following upstream mixin alerting rule : https://github.com/grafana/mimir/blob/main/operations/mimir-mixin-compiled/alerts.yaml#L1097

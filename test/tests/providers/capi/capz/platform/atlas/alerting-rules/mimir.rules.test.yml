@@ -390,3 +390,105 @@ tests:
         eval_time: 205m 
       - alertname: MimirCompactorFailedCompaction
         eval_time: 350m
+
+  # Test for MimirContinuousTestFailingOnWrites alert
+  - interval: 1m
+    input_series:
+      # Test: none, rate > 0, rate = 0
+      - series: 'mimir_continuous_test_writes_failed_total{cluster_id="golem", test="continuous-test", installation="golem", namespace="mimir", pipeline="testing", provider="capa"}'
+        values: "_x20 1+1x80 0+0x70"
+    alert_rule_test:
+      - alertname: MimirContinuousTestFailingOnWrites
+        eval_time: 40m
+      - alertname: MimirContinuousTestFailingOnWrites
+        eval_time: 95m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: golem
+              installation: golem
+              namespace: mimir
+              pipeline: testing
+              provider: capa
+              severity: page
+              team: atlas
+              test: continuous-test
+              topic: observability
+            exp_annotations:
+              dashboard: mimir-continous-test/mimir-continous-test
+              description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because writes are failing."
+              opsrecipe: "mimir/"
+      - alertname: MimirContinuousTestFailingOnWrites
+        eval_time: 160m
+
+  # Test for MimirContinuousTestFailingOnReads alert
+  - interval: 1m
+    input_series:
+      # Test: none, rate > 0, rate = 0
+      - series: 'mimir_continuous_test_queries_failed_total{cluster_id="golem", test="continuous-test", installation="golem", namespace="mimir", pipeline="testing", provider="capa"}'
+        values: "_x20 1+1x80 0+0x70"
+    alert_rule_test:
+      - alertname: MimirContinuousTestFailingOnReads
+        eval_time: 40m
+      - alertname: MimirContinuousTestFailingOnReads
+        eval_time: 95m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: golem
+              installation: golem
+              namespace: mimir
+              pipeline: testing
+              provider: capa
+              severity: page
+              team: atlas
+              test: continuous-test
+              topic: observability
+            exp_annotations:
+              dashboard: mimir-continous-test/mimir-continous-test
+              description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because queries are failing."
+              opsrecipe: "mimir/"
+      - alertname: MimirContinuousTestFailingOnReads
+        eval_time: 160m
+
+  # Test for MimirContinuousTestFailed alert
+  - interval: 1m
+    input_series:
+      # Test: none, rate > 0, rate = 0
+      - series: 'mimir_continuous_test_query_result_checks_failed_total{cluster_id="golem", test="continuous-test", installation="golem", namespace="mimir", pipeline="testing", provider="capa"}'
+        values: "_x20 1+1x80 0+0x70"
+    alert_rule_test:
+      - alertname: MimirContinuousTestFailed
+        eval_time: 40m
+      - alertname: MimirContinuousTestFailed
+        eval_time: 95m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: golem
+              installation: golem
+              namespace: mimir
+              pipeline: testing
+              provider: capa
+              severity: page
+              team: atlas
+              topic: observability
+              test: continuous-test
+            exp_annotations:
+              dashboard: mimir-continous-test/mimir-continous-test
+              description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because queries are failing."
+              opsrecipe: "mimir/"
+      - alertname: MimirContinuousTestFailed
+        eval_time: 160m

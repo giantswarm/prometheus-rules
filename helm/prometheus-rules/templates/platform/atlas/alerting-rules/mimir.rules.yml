@@ -174,9 +174,9 @@ spec:
     - alert: MimirContinuousTestFailingOnWrites
       annotations:
         dashboard: mimir-continous-test/mimir-continous-test
-        description: 'Mimir continous-test detected errors in the write path.'
+        description: '{{`Mimir continuous test {{ $labels.test }} in {{ $labels.cluster_id }}/{{ $labels.namespace }} is not effectively running because writes are failing.`}}'
         opsrecipe: mimir/
-      # Query is based on the following upstream mixin alerting rule : https://github.com/grafana/mimir/blob/main/operations/mimir-mixin-compiled/alerts.yaml#L1097
+      # Query is based on the following upstream mixin alerting rule: https://github.com/grafana/mimir/blob/b873372adbf0996bff70de55934f3dd4a10c7b89/operations/mimir-mixin-compiled/alerts.yaml#L1196
       expr: sum by(cluster_id, installation, namespace, pipeline, provider, test) (rate(mimir_continuous_test_writes_failed_total[5m])) > 0
       for: 1h
       labels:
@@ -191,10 +191,27 @@ spec:
     - alert: MimirContinuousTestFailingOnReads
       annotations:
         dashboard: mimir-continous-test/mimir-continous-test
-        description: 'Mimir continous-test detected errors in the write path.'
+        description: '{{`Mimir continuous test {{ $labels.test }} in {{ $labels.cluster_id }}/{{ $labels.namespace }} is not effectively running because queries are failing.`}}'
         opsrecipe: mimir/
-      # Query is based on the following upstream mixin alerting rule : https://github.com/grafana/mimir/blob/main/operations/mimir-mixin-compiled/alerts.yaml#L1097
+      # Query is based on the following upstream mixin alerting rule: https://github.com/grafana/mimir/blob/b873372adbf0996bff70de55934f3dd4a10c7b89/operations/mimir-mixin-compiled/alerts.yaml#L1185
       expr: sum by(cluster_id, installation, namespace, pipeline, provider, test) (rate(mimir_continuous_test_queries_failed_total[5m])) > 0
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirContinuousTestFailed
+      annotations:
+        dashboard: mimir-continous-test/mimir-continous-test
+        description: '{{`Mimir continuous test {{ $labels.test }} in {{ $labels.cluster_id }}/{{ $labels.namespace }} is not effectively running because queries are failing.`}}'
+        opsrecipe: mimir/
+      # Query is based on the following upstream mixin alerting rule: https://github.com/grafana/mimir/blob/b873372adbf0996bff70de55934f3dd4a10c7b89/operations/mimir-mixin-compiled/alerts.yaml#L1205
+      expr: sum by(cluster_id, installation, pipeline, provider, namespace, test) (rate(mimir_continuous_test_query_result_checks_failed_total[10m])) > 0
       for: 1h
       labels:
         area: platform

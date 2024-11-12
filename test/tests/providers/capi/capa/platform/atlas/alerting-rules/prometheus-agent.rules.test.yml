@@ -1,4 +1,5 @@
 ---
+# These tests differ between prometheus and mimir installations: the resulting labels are different
 rule_files:
 - prometheus-agent.rules.yml
 

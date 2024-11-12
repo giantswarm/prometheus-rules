@@ -1,5 +1,5 @@
 # This files describe common alloy alerting rules
-# For alerts regarding monitoring and logging agents, please go to the respective files (logging.rules.yml and monitoring.rules.yml).
+# For alerts regarding the monitoring pipeline and the logging pipeline, please go to the respective files (logging-pipeline.rules.yml and monitoring-pipeline.rules.yml).
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -91,3 +91,103 @@ spec:
             cancel_if_cluster_status_updating: "true"
             cancel_if_node_unschedulable: "true"
             cancel_if_node_not_ready: "true"
+    - name: alloy.metrics
+      rules:
+        # This alert pages if monitoring-agent fails to send samples to its remote write endpoint.
+        - alert: MonitoringAgentDown
+          annotations:
+            description: '{{`Monitoring agent fails to send samples.`}}'
+            summary: Monitoring agent fails to send samples to remote write endpoint.
+            opsrecipe: alloy/#monitoring-agent-down
+            dashboard: promRW001/prometheus-remote-write
+          expr: |-
+            count(
+              label_replace(
+                capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+                "cluster_id",
+                "$1",
+                "name",
+                "(.*)"
+              ) == 1
+            ) by (cluster_id, installation, pipeline, provider) > 0
+              unless on (cluster_id) (
+              count(up{job="alloy-metrics"} > 0) by (cluster_id)
+            )
+          for: 20m
+          labels:
+            area: platform
+            severity: page
+            team: atlas
+            topic: observability
+            inhibit_monitoring_agent_down: "true"
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_cluster_has_no_workers: "true"
+        ## Same as MonitoringAgentDown, but triggers inhibition earlier and does not page.
+        - alert: InhibitionMonitoringAgentDown
+          annotations:
+            description: '{{`Monitoring agent fails to send samples.`}}'
+            summary: Monitoring agent fails to send samples to remote write endpoint.
+            opsrecipe: alloy/#monitoring-agent-down
+            dashboard: promRW001/prometheus-remote-write
+          expr: |-
+            count(
+              label_replace(
+                capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+                "cluster_id",
+                "$1",
+                "name",
+                "(.*)"
+              ) == 1
+            ) by (cluster_id, installation, pipeline, provider) > 0
+              unless on (cluster_id) (
+              count(up{job="alloy-metrics"} > 0) by (cluster_id)
+            )
+          for: 2m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: observability
+            inhibit_monitoring_agent_down: "true"
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+        ## This alert pages if any of the monitoring-agent shard is not running.
+        - alert: MonitoringAgentShardsNotSatisfied
+          annotations:
+            description: '{{`At least one of the monitoring agent shard is missing.`}}'
+            summary: Monitoring agent is missing shards.
+            opsrecipe: alloy/#monitoring-agent-down
+          expr: |-
+            kube_statefulset_status_replicas{statefulset="alloy-metrics"}
+              - kube_statefulset_status_replicas_ready{statefulset="alloy-metrics"}
+              > 0
+          for: 40m
+          labels:
+            area: platform
+            severity: page
+            team: atlas
+            topic: observability
+            inhibit_monitoring_agent_down: "true"
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_outside_working_hours: "true"
+        ## Same as MonitoringAgentShardsNotSatisfied but triggers inhibition earlier, and does not page.
+        - alert: InhibitionMonitoringAgentShardsNotSatisfied
+          annotations:
+            description: '{{`At least one of the monitoring agent shard is missing.`}}'
+            summary: Monitoring agent is missing shards.
+            opsrecipe: alloy/#monitoring-agent-down
+          expr: |-
+            kube_statefulset_status_replicas{statefulset="alloy-metrics"}
+              - kube_statefulset_status_replicas_ready{statefulset="alloy-metrics"}
+              > 0
+          for: 2m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: observability
+            inhibit_monitoring_agent_down: "true"
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"

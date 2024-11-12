@@ -1,3 +1,4 @@
+# TODO(@giantswarm/team-atlas): revisit once vintage is gone
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -26,19 +27,6 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    - alert: PrometheusFailsToCommunicateWithRemoteStorageAPI
-      annotations:
-        description: '{{`Prometheus can''t communicate with Remote Storage API at {{ $labels.url }}.`}}'
-        opsrecipe: prometheus-cant-communicate-with-remote-storage-api/
-        dashboard: promRW001/prometheus-remote-write
-      expr: rate(prometheus_remote_storage_samples_failed_total[10m]) > 0.1 or rate(prometheus_remote_storage_samples_total[10m]) == 0 or rate(prometheus_remote_storage_metadata_retried_total[10m]) > 0
-      for: 1h
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
     - alert: PrometheusRuleFailures
       annotations:
         description: {{`Prometheus {{$labels.installation}}/{{$labels.cluster_id}} has failed to evaluate rule(s) {{ printf "%.2f" $value }} time(s).`}}
@@ -52,48 +40,3 @@ spec:
         team: atlas
         topic: observability
         cancel_if_outside_working_hours: "true"
-    - alert: PrometheusJobScrapingFailure
-      annotations:
-        description: {{`Prometheus {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}
-        summary: Prometheus fails to scrape all targets in a job.
-        opsrecipe: prometheus-job-scraping-failure/
-      expr: (count(up == 0) BY (job, installation, cluster_id, provider, pipeline) / count(up) BY (job, installation, cluster_id, provider, pipeline)) == 1
-      for: 1d
-      labels:
-        area: platform
-        severity: notify
-        team: atlas
-        topic: observability
-        cancel_if_outside_working_hours: "true"
-    - alert: PrometheusCriticalJobScrapingFailure
-      annotations:
-        description: {{`Prometheus {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}
-        summary: Prometheus fails to scrape all targets in a job.
-        opsrecipe: prometheus-job-scraping-failure/
-      ## We ignore bastion hosts node exporters
-      expr: |-
-        (
-          count(
-            (
-              up{job=~"apiserver|kube-controller-manager|kube-scheduler|node-exporter|kube-state-metrics"}
-              or
-              up{job="kubelet", metrics_path="/metrics"}
-            ) == 0
-          ) BY (job, installation, cluster_id, provider, pipeline)
-          /
-          count(
-            up{job=~"apiserver|kube-controller-manager|kube-scheduler|node-exporter|kube-state-metrics"}
-            or
-            up{job="kubelet", metrics_path="/metrics"}
-          ) BY (job, installation, cluster_id, provider, pipeline)
-        ) == 1
-      for: 3d
-      labels:
-        area: platform
-        severity: page
-        team: atlas
-        topic: observability
-        cancel_if_outside_working_hours: "true"
-        cancel_if_cluster_is_not_running_monitoring_agent: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"

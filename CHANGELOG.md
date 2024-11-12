@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `MonitoringAgentDown` to page when both prometheus-agent and alloy-metrics jobs are missing.
+
 ## [4.24.0] - 2024-11-12
 
 ### Added

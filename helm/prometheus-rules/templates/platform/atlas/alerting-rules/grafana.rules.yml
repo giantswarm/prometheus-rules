@@ -3,7 +3,7 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if not .Values.mimir.enabled }}
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
     cluster_type: "management_cluster"
     {{- end }}
   name: grafana.rules

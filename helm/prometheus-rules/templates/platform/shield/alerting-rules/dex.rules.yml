@@ -4,9 +4,9 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-{{- if not .Values.mimir.enabled }}
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
     cluster_type: "management_cluster"
-{{- end }}
+    {{- end }}
   name: dex.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -41,7 +41,7 @@ spec:
       annotations:
         description: '{{`dex-operator did not register a dex-app in giantswarm namespace.`}}'
         opsrecipe: dex-operator/
-      {{- if .Values.mimir.enabled }}
+      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: absent(dex_operator_idp_secret_expiry_time{app_namespace="giantswarm", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
       {{- else }}
       expr: absent(dex_operator_idp_secret_expiry_time{app_namespace="giantswarm", cluster_type="management_cluster"}) == 1

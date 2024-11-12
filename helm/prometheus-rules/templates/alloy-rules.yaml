@@ -1,4 +1,4 @@
-{{- if .Values.mimir.enabled }}
+{{- if eq .Values.managementCluster.provider.flavor "capi" }}
 apiVersion: application.giantswarm.io/v1alpha1
 kind: App
 metadata:

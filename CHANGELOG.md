@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove the `mimir.enabled` property to replace it with the MC flavor as all CAPI MCs now run Mimir.
+
 ## [4.24.1] - 2024-11-12
 
 ### Fixed

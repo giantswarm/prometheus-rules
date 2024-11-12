@@ -9,7 +9,7 @@ spec:
   groups:
   - name: observability
     rules:
-    {{- if not .Values.mimir.enabled }}
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
     - alert: "Heartbeat"
       expr: up{job=~".*prometheus/prometheus.*",instance!="prometheus-agent"} == 1
       labels:

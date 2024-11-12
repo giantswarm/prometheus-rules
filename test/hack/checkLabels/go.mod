@@ -2,12 +2,12 @@ module checkLabels
 
 go 1.23
 
-toolchain go1.23.2
+toolchain go1.23.3
 
 require (
 	// Try to keep version in sync with our prometheus rule CRD version.
 	// see https://github.com/giantswarm/prometheus-operator-crd/blob/master/helm/prometheus-operator-crd/Chart.yaml#L11
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.78.0
+	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.78.1
 	sigs.k8s.io/yaml v1.4.0
 )
 

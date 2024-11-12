@@ -1,4 +1,4 @@
-{{- if .Values.mimir.enabled }}
+{{- if eq .Values.managementCluster.provider.flavor "capi" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -52,21 +52,6 @@ spec:
         opsrecipe: mimir/
       expr: count(up{job=~"mimir/.*", container!="prometheus"} == 0) by (cluster_id, installation, provider, pipeline, service) > 0
       for: 5m
-      labels:
-        area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
-    - alert: AlloyForPrometheusRulesDown
-      annotations:
-        description: 'Alloy sending PrometheusRules to Mimir ruler is down.'
-        opsrecipe: prometheus-rules/
-      expr: count(up{job="alloy-rules", namespace="mimir"} == 0) by (cluster_id, installation, provider, pipeline) > 0
-      for: 1h
       labels:
         area: platform
         cancel_if_cluster_status_creating: "true"

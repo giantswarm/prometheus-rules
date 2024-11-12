@@ -1,6 +1,6 @@
 ---
 rule_files:
-- mimir-to-grafana-cloud-exporter.rules.yml
+- grafana-cloud.rules.yml
 
 tests:
   # Tests for `MimirToGrafanaCloudExporterDown` alert

@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove the `mimir.enabled` property to replace it with the MC flavor as all CAPI MCs now run Mimir.
+
+## [4.24.1] - 2024-11-12
+
+### Fixed
+
+- Fix `MonitoringAgentDown` to page when both prometheus-agent and alloy-metrics jobs are missing.
+
+## [4.24.0] - 2024-11-12
+
+### Added
+
+- Add a set of sensible alerts to monitor alloy.
+  - `AlloySlowComponentEvaluations` and `AlloyUnhealthyComponents` to report about alloy component state.
+  - `LoggingAgentDown` to be alerted when the logging agent is down.
+  - `LogForwardingErrors` to be alerted when the `loki.write` component is failing.
+  - `LogReceivingErrors` to be alerted when the `loki.source.api` components of the gateway is failing.
+  - `MonitoringAgentDown` to be alerted when the monitoring agent is down.
+  - `MonitoringAgentShardsNotSatisfied` to be alerted when the monitoring agent is missing any number of desired shards.
+
+### Changed
+
+- Update `DeploymentNotSatisfiedAtlas` to take into account the following components:
+  - `observability-operator`
+  - `alloy-rules`
+  - `observability-gateway`
+- Move all `grafana-cloud` related alerts to their own file.
+- Move all alloy related alerts to the alloy alert file.
+- Rename and move the following alerts as they are not specific to Prometheus:
+  - `PrometheusCriticalJobScrapingFailure` => `CriticalJobScrapingFailure`
+  - `PrometheusJobScrapingFailure` => `JobScrapingFailure`
+  - `PrometheusFailsToCommunicateWithRemoteStorageAPI` => `MetricForwardingErrors`
+
 ## [4.23.0] - 2024-10-30
 
 ### Changed
@@ -19,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixes the statefulset.rules name as it is currently replacing the deployment.rules alerts.
+- Extends AppCR-related alerts with cancelation for CAPI clusters with unavailable control plane.
 
 ## [4.22.0] - 2024-10-29
 
@@ -3190,7 +3226,9 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.23.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.24.1...HEAD
+[4.24.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.24.0...v4.24.1
+[4.24.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.23.0...v4.24.0
 [4.23.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.22.0...v4.23.0
 [4.22.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.21.1...v4.22.0
 [4.21.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.21.0...v4.21.1

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.24.0] - 2024-11-12
+
 ### Added
 
 - Add a set of sensible alerts to monitor alloy.
@@ -3213,7 +3215,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.23.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.24.0...HEAD
+[4.24.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.23.0...v4.24.0
 [4.23.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.22.0...v4.23.0
 [4.22.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.21.1...v4.22.0
 [4.21.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.21.0...v4.21.1

@@ -1,4 +1,4 @@
-{{- if .Values.mimir.enabled }}
+{{- if eq .Values.managementCluster.provider.flavor "capi" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

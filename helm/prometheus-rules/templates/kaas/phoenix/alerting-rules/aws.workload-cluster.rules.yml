@@ -5,7 +5,7 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if not .Values.mimir.enabled }}
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
     cluster_type: "workload_cluster"
     {{- end }}
   name: aws.workload-cluster.rules

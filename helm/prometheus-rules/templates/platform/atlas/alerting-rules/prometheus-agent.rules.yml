@@ -9,7 +9,7 @@ spec:
   groups:
   - name: prometheus-agent
     rules:
-    {{- if not .Values.mimir.enabled }}
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
     ## This alert pages if prometheus-agent fails to send samples to its remote write endpoint.
     - alert: PrometheusAgentFailing
       annotations:

@@ -168,11 +168,11 @@ There are 2 kinds of tests on rules:
    ```
    [...]
    ###  Testing platform/atlas/alerting-rules/prometheus-operator.rules.yml
-   ###    promtool check rules /home/marie/github-repo/prometheus-rules/test/hack/output/generated/capi/capa-mimir/platform/atlas/alerting-rules/prometheus-operator.rules.yml
+   ###    promtool check rules /home/marie/github-repo/prometheus-rules/test/hack/output/generated/capi/capa/platform/atlas/alerting-rules/prometheus-operator.rules.yml
    ###    Skipping platform/atlas/alerting-rules/prometheus-operator.rules.yml: listed in test/conf/promtool_ignore
    ###  Testing platform/atlas/alerting-rules/prometheus.rules.yml
-   ###    promtool check rules /home/marie/github-repo/prometheus-rules/test/hack/output/generated/capi/capa-mimir/platform/atlas/alerting-rules/prometheus.rules.yml
-   ###    promtool test rules prometheus.rules.test.yml - capi/capa-mimir
+   ###    promtool check rules /home/marie/github-repo/prometheus-rules/test/hack/output/generated/capi/capa/platform/atlas/alerting-rules/prometheus.rules.yml
+   ###    promtool test rules prometheus.rules.test.yml - capi/capa
    [...]
    09:06:29 promtool: end (Elapsed time: 1s)
    Congratulations!  Prometheus rules have been promtool checked and tested

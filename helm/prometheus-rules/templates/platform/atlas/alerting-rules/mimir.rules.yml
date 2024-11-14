@@ -222,4 +222,32 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: MimirContinuousTestMissing
+      annotations:
+        dashboard: mimir-continous-test/mimir-continous-test
+        description: '{{`Mimir continuous test {{ $labels.cluster_id }} is not producing metrics.`}}'
+        opsrecipe: mimir/
+      expr: |
+        sum by(cluster_id, installation, pipeline, provider) (
+          rate(mimir_continuous_test_writes_total[10m]) == 0
+          or absent(
+            mimir_continuous_test_writes_total{
+              cluster_type="management_cluster",
+              cluster_id="{{ .Values.managementCluster.name }}",
+              installation="{{ .Values.managementCluster.name }}",
+              provider="{{ .Values.managementCluster.provider.kind }}",
+              pipeline="{{ .Values.managementCluster.pipeline }}"
+            }
+          )
+        )
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
 {{- end }}

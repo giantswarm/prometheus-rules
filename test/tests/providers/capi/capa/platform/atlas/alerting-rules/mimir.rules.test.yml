@@ -525,7 +525,7 @@ tests:
       - alertname: MimirContinuousTestMissing
         eval_time: 150m
       - alertname: MimirContinuousTestMissing
-        eval_time: 205m
+        eval_time: 230m
         exp_alerts:
           - exp_labels:
               area: platform

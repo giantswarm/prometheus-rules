@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add `MimirContinuousTestFailingOnWrites`, `MimirContinuousTestFailingOnReads` and `MimirContinuousTestFailed` alerts.
+- Add new mimir continuous test alerts:
+  - `MimirContinuousTestFailingOnWrites`
+  - `MimirContinuousTestFailingOnReads`
+  - `MimirContinuousTestMissing`
+  - `MimirContinuousTestFailing`
 
 ### Removed
 

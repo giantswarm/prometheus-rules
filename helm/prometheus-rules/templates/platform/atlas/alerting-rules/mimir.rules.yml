@@ -205,7 +205,7 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    - alert: MimirContinuousTestFailed
+    - alert: MimirContinuousTestFailing
       annotations:
         dashboard: mimir-continous-test/mimir-continous-test
         description: '{{`Mimir continuous test {{ $labels.test }} in {{ $labels.cluster_id }}/{{ $labels.namespace }} is not effectively running because queries are failing.`}}'

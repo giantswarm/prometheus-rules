@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- simplified loki-compactor alert
+
 ### Added
 
 - Add new mimir continuous test alerts:

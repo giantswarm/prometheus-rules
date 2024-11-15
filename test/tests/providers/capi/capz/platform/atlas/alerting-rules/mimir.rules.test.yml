@@ -148,24 +148,24 @@ tests:
   - interval: 1m
     input_series:
       # mimir-ingester real memory usage gradually increases until it goes beyond 90% of the memory requests.
-      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "8+0x20 11+0x70 8+0x140 11+0x70 8+0x60"
-      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "8+0x20 11+0x70 8+0x140 11+0x70 8+0x60"
       # mimir-ingester memory requests stay the same for the entire duration of the test.
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "12+0x400"
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "12+0x400"
       # mimir-ingester real cpu usage gradually increases until it goes beyond 90% of the cpu requests.                              
-      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "0+60x100 6000+110x70 10400+60x60 14000+110x70 18400+60x60"
-      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "0+60x400"
       # mimir-ingester cpu requests stay the same for the entire duration of the test.
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "1.5+0x400"                                 
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "1.5+0x400"                                 
     alert_rule_test:
       - alertname: MimirIngesterNeedsToBeScaledUp
@@ -182,7 +182,7 @@ tests:
               cluster_id: golem
               installation: "golem"
               pipeline: "testing"
-              provider: "capa"
+              provider: "capz"
               namespace: mimir
               severity: page
               team: atlas
@@ -204,7 +204,7 @@ tests:
               cluster_id: golem
               installation: "golem"
               pipeline: "testing"
-              provider: "capa"
+              provider: "capz"
               namespace: mimir
               severity: page
               team: atlas
@@ -226,7 +226,7 @@ tests:
               cluster_id: golem
               installation: "golem"
               pipeline: "testing"
-              provider: "capa"
+              provider: "capz"
               namespace: mimir
               severity: page
               team: atlas
@@ -240,24 +240,24 @@ tests:
   - interval: 1m
     input_series:
       # mimir-ingester real memory usage gradually decreases until it goes below 30% of the memory requests.
-      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "8+0x20 2+0x40 8+0x140 2+0x40 8+0x60"
-      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "8+0x20 2+0x40 8+0x140 2+0x40 8+0x60"
       # mimir-ingester memory requests stay the same for the entire duration of the test.
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "12+0x300"
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "12+0x300"       
       # mimir-ingester real cpu usage gradually increases until it goes below 30% of the cpu requests.                        
-      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "0+60x100 6000+10x40 6400+60x60 10000+10x40 10400+60x60"
-      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "0+30x300"
       # mimir-ingester cpu requests stay the same for the entire duration of the test
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "1.5+0x300"                                 
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "1.5+0x300"                                 
     alert_rule_test:
       - alertname: MimirIngesterNeedsToBeScaledDown
@@ -282,7 +282,7 @@ tests:
               cluster_id: golem
               installation: "golem"
               pipeline: "testing"
-              provider: "capa"
+              provider: "capz"
               namespace: mimir
               severity: page
               team: atlas
@@ -358,7 +358,7 @@ tests:
   # Test for MimirCompactorFailedCompaction alert
   - interval: 1m
     input_series:
-      - series: 'cortex_compactor_runs_failed_total{reason="error", installation="golem", cluster_id="golem", namespace="mimir", pipeline="testing", provider="capa"}'
+      - series: 'cortex_compactor_runs_failed_total{reason="error", installation="golem", cluster_id="golem", namespace="mimir", pipeline="testing", provider="capz"}'
         values: "8+0x20 1+0x40 0+0x20 4+0x130 0+0x190"
     alert_rule_test:
       - alertname: MimirCompactorFailedCompaction
@@ -377,7 +377,7 @@ tests:
               cluster_id: golem
               installation: "golem"
               pipeline: "testing"
-              provider: "capa"
+              provider: "capz"
               namespace: mimir
               severity: page
               team: atlas
@@ -390,3 +390,157 @@ tests:
         eval_time: 205m 
       - alertname: MimirCompactorFailedCompaction
         eval_time: 350m
+
+  # Test for MimirContinuousTestFailingOnWrites alert
+  - interval: 1m
+    input_series:
+      # Test: none, rate > 0, rate = 0
+      - series: 'mimir_continuous_test_writes_failed_total{cluster_id="golem", test="continuous-test", installation="golem", namespace="mimir", pipeline="testing", provider="capz"}'
+        values: "_x20 1+1x80 0+0x70"
+    alert_rule_test:
+      - alertname: MimirContinuousTestFailingOnWrites
+        eval_time: 40m
+      - alertname: MimirContinuousTestFailingOnWrites
+        eval_time: 95m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: golem
+              installation: golem
+              namespace: mimir
+              pipeline: testing
+              provider: capz
+              severity: page
+              team: atlas
+              test: continuous-test
+              topic: observability
+            exp_annotations:
+              dashboard: mimir-continous-test/mimir-continous-test
+              description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because writes are failing."
+              opsrecipe: "mimir/"
+      - alertname: MimirContinuousTestFailingOnWrites
+        eval_time: 160m
+
+  # Test for MimirContinuousTestFailingOnReads alert
+  - interval: 1m
+    input_series:
+      # Test: none, rate > 0, rate = 0
+      - series: 'mimir_continuous_test_queries_failed_total{cluster_id="golem", test="continuous-test", installation="golem", namespace="mimir", pipeline="testing", provider="capz"}'
+        values: "_x20 1+1x80 0+0x70"
+    alert_rule_test:
+      - alertname: MimirContinuousTestFailingOnReads
+        eval_time: 40m
+      - alertname: MimirContinuousTestFailingOnReads
+        eval_time: 95m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: golem
+              installation: golem
+              namespace: mimir
+              pipeline: testing
+              provider: capz
+              severity: page
+              team: atlas
+              test: continuous-test
+              topic: observability
+            exp_annotations:
+              dashboard: mimir-continous-test/mimir-continous-test
+              description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because queries are failing."
+              opsrecipe: "mimir/"
+      - alertname: MimirContinuousTestFailingOnReads
+        eval_time: 160m
+
+  # Test for MimirContinuousTestFailing alert
+  - interval: 1m
+    input_series:
+      # Test: none, rate > 0, rate = 0
+      - series: 'mimir_continuous_test_query_result_checks_failed_total{cluster_id="golem", test="continuous-test", installation="golem", namespace="mimir", pipeline="testing", provider="capz"}'
+        values: "_x20 1+1x80 0+0x70"
+    alert_rule_test:
+      - alertname: MimirContinuousTestFailing
+        eval_time: 40m
+      - alertname: MimirContinuousTestFailing
+        eval_time: 95m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: golem
+              installation: golem
+              namespace: mimir
+              pipeline: testing
+              provider: capz
+              severity: page
+              team: atlas
+              topic: observability
+              test: continuous-test
+            exp_annotations:
+              dashboard: mimir-continous-test/mimir-continous-test
+              description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because queries are failing."
+              opsrecipe: "mimir/"
+      - alertname: MimirContinuousTestFailing
+        eval_time: 160m
+
+  # Test for MimirContinuousTestMissing alert
+  - interval: 1m
+    input_series:
+      # Test: none, rate > 0, rate = 0
+      - series: 'mimir_continuous_test_writes_total{cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", namespace="mimir", pipeline="stable", provider="capz"}'
+        values: "_x80 1+1x80 0+0x80"
+    alert_rule_test:
+      - alertname: MimirContinuousTestMissing
+        eval_time: 40m
+      - alertname: MimirContinuousTestMissing
+        eval_time: 70m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: myinstall
+              installation: myinstall
+              pipeline: stable
+              provider: capz
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: mimir-continous-test/mimir-continous-test
+              description: "Mimir continuous test myinstall is not producing metrics."
+              opsrecipe: "mimir/"
+      - alertname: MimirContinuousTestMissing
+        eval_time: 150m
+      - alertname: MimirContinuousTestMissing
+        eval_time: 230m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: myinstall
+              installation: myinstall
+              pipeline: stable
+              provider: capz
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: mimir-continous-test/mimir-continous-test
+              description: "Mimir continuous test myinstall is not producing metrics."
+              opsrecipe: "mimir/"

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add new mimir continuous test alerts:
+  - `MimirContinuousTestFailingOnWrites`
+  - `MimirContinuousTestFailingOnReads`
+  - `MimirContinuousTestMissing`
+  - `MimirContinuousTestFailing`
+
 ### Removed
 
 - Remove the `mimir.enabled` property to replace it with the MC flavor as all CAPI MCs now run Mimir.

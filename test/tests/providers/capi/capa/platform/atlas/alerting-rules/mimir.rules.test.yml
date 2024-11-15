@@ -367,8 +367,6 @@ tests:
       - alertname: MimirCompactorFailedCompaction
         eval_time: 60m 
       - alertname: MimirCompactorFailedCompaction
-        eval_time: 120m
-      - alertname: MimirCompactorFailedCompaction
         eval_time: 130m 
         exp_alerts:
           - exp_labels:
@@ -387,7 +385,7 @@ tests:
               topic: observability
             exp_annotations:
               dashboard: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources
-              description: Mimir compactor has been failing its compactions for 2 hours.
+              description: Mimir compactor has been failing compactions for more than 2 hours since start-up.
               opsrecipe: "mimir#mimircompactorfailedcompaction"
       - alertname: MimirCompactorFailedCompaction
         eval_time: 250m

@@ -27,5 +27,5 @@ spec:
   namespace: monitoring
   # used by renovate
   # repo: giantswarm/alloy
-  version: 0.6.1
+  version: 0.7.0
 {{- end -}}

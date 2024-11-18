@@ -266,4 +266,32 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: MimirObjectStorageLowRate
+      annotations:
+        dashboard: 8280707b8f16e7b87b840fc1cc92d4c5/mimir-writes
+        description: '{{`Mimir object storage write rate is down.`}}'
+        opsrecipe: mimir/
+      expr: |
+        irate(cortex_bucket_store_sent_chunk_size_bytes_count[5m]) == 0
+        or (
+            label_replace(
+              capi_cluster_status_condition{type="ControlPlaneReady", status="True", cluster_type="management_cluster"},
+              "cluster_id",
+              "$1",
+              "name",
+              "(.*)"
+            ) == 1
+          ) unless on (cluster_id) (
+            count(cortex_bucket_store_sent_chunk_size_bytes_count) by (cluster_id)
+          )
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
 {{- end }}

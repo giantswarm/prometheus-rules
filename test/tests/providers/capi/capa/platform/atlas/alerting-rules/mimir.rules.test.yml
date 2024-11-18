@@ -360,13 +360,39 @@ tests:
     input_series:
       - series: 'cortex_compactor_runs_failed_total{reason="error", installation="golem", cluster_id="golem", namespace="mimir", pipeline="testing", provider="capa"}'
         values: "8+0x20 1+0x40 0+0x20 4+0x130 0+0x190"
+      - series: 'cortex_compactor_last_successful_run_timestamp_seconds{installation="golem", cluster_id="golem", namespace="mimir", pipeline="testing", provider="capa"}'
+        # No compactions for 2 hours, then 1 successful one at t+3h, another one at t+4h, then 2 more hours with no successful compaction.
+        values: '0+0x240 14400+0x60 18000x60 21600+0x240'
     alert_rule_test:
       - alertname: MimirCompactorFailedCompaction
-        eval_time: 15m 
+        eval_time: 60m 
       - alertname: MimirCompactorFailedCompaction
-        eval_time: 55m 
+        eval_time: 130m 
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: golem
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+              namespace: mimir
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources
+              description: Mimir compactor has been failing compactions for more than 2 hours since start-up.
+              opsrecipe: "mimir#mimircompactorfailedcompaction"
       - alertname: MimirCompactorFailedCompaction
-        eval_time: 120m
+        eval_time: 250m
+      - alertname: MimirCompactorFailedCompaction
+        eval_time: 480m 
+      - alertname: MimirCompactorFailedCompaction
+        eval_time: 600m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -386,10 +412,6 @@ tests:
               dashboard: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources
               description: Mimir compactor has been failing its compactions for 2 hours.
               opsrecipe: "mimir#mimircompactorfailedcompaction"
-      - alertname: MimirCompactorFailedCompaction
-        eval_time: 205m 
-      - alertname: MimirCompactorFailedCompaction
-        eval_time: 350m
 
   # Test for MimirContinuousTestFailingOnWrites alert
   - interval: 1m

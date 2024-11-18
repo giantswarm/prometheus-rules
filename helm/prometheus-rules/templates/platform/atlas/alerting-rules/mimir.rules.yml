@@ -273,6 +273,7 @@ spec:
         opsrecipe: mimir/
       expr: |
         irate(cortex_bucket_store_sent_chunk_size_bytes_count[5m]) == 0
+        # This part will fire the alert when the metric does not exist
         or (
             label_replace(
               capi_cluster_status_condition{type="ControlPlaneReady", status="True", cluster_type="management_cluster"},

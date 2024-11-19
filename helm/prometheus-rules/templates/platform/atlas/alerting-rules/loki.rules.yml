@@ -201,7 +201,7 @@ spec:
         description: '{{`Loki object storage write rate is down.`}}'
         opsrecipe: loki/
       expr: |
-        irate(loki_rate_store_stream_rate_bytes_count[5m]) == 0
+        rate(loki_rate_store_stream_rate_bytes_count{cluster_type="management_cluster"}[30m]) == 0
         # This part will fire the alert when the metric does not exist
         or (
             label_replace(
@@ -212,7 +212,7 @@ spec:
               "(.*)"
             ) == 1
           ) unless on (cluster_id) (
-            count(loki_rate_store_stream_rate_bytes_count) by (cluster_id)
+            count(loki_rate_store_stream_rate_bytes_count{cluster_type="management_cluster"}) by (cluster_id)
           )
       for: 1h
       labels:

@@ -272,7 +272,7 @@ spec:
         description: '{{`Mimir object storage write rate is down.`}}'
         opsrecipe: mimir/
       expr: |
-        irate(cortex_bucket_store_sent_chunk_size_bytes_count[5m]) == 0
+        rate(cortex_bucket_store_sent_chunk_size_bytes_count{cluster_type="management_cluster"}[30m]) == 0
         # This part will fire the alert when the metric does not exist
         or (
             label_replace(
@@ -283,7 +283,7 @@ spec:
               "(.*)"
             ) == 1
           ) unless on (cluster_id) (
-            count(cortex_bucket_store_sent_chunk_size_bytes_count) by (cluster_id)
+            count(cortex_bucket_store_sent_chunk_size_bytes_count{cluster_type="management_cluster"}) by (cluster_id)
           )
       for: 1h
       labels:

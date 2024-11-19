@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add alert to monitor the HelmRelease for vertical-pod-autoscaler-crd app.
+
 ## [4.26.1] - 2024-11-19
 
 ### Changed

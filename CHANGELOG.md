@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `aws-cloud-components.rules` to monitor the AWS cloud-controller and the ebs-csi-driver.
+
 ## [4.26.1] - 2024-11-19
 
 ### Changed

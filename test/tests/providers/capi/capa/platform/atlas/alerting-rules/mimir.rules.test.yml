@@ -571,9 +571,9 @@ tests:
   - interval: 1m
     input_series:
       - series: 'cortex_bucket_store_sent_chunk_size_bytes_count{cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", namespace="mimir", pipeline="stable", provider="capa"}'
-        values: "_x90 1+1x90 90+0x90"
+        values: "_x90 1+1x90 90+0x200"
       - series: 'capi_cluster_status_condition{cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", namespace="mimir", pipeline="stable", provider="capa", name="myinstall", type="ControlPlaneReady", status="True"}'
-        values: "1+0x270"
+        values: "1+0x380"
     alert_rule_test:
       - alertname: MimirObjectStorageLowRate
         eval_time: 40m
@@ -608,7 +608,7 @@ tests:
       - alertname: MimirObjectStorageLowRate
         eval_time: 200m
       - alertname: MimirObjectStorageLowRate
-        eval_time: 250m
+        eval_time: 300m
         exp_alerts:
           - exp_labels:
               area: platform

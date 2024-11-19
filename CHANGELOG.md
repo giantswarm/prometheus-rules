@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- MimirObjectStorageLowRate and LokiObjectStorageLowRate only check management cluster apps
+- MimirObjectStorageLowRate and LokiObjectStorageLowRate are less sensitive
+
 ## [4.26.0] - 2024-11-19
 
 ### Changed

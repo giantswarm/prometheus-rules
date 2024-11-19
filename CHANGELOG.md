@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add `aws-cloud-components.rules` to monitor the AWS cloud-controller and the ebs-csi-driver.
+- Add `azure-cloud-components.rules` to monitor the Azure cloud-controller and the azure csi drivers.
 
 ## [4.26.1] - 2024-11-19
 

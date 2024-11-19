@@ -195,3 +195,32 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: LokiObjectStorageLowRate
+      annotations:
+        dashboard: loki-operational/loki-operational
+        description: '{{`Loki object storage write rate is down.`}}'
+        opsrecipe: loki/
+      expr: |
+        irate(loki_rate_store_stream_rate_bytes_count[5m]) == 0
+        # This part will fire the alert when the metric does not exist
+        or (
+            label_replace(
+              capi_cluster_status_condition{type="ControlPlaneReady", status="True", cluster_type="management_cluster"},
+              "cluster_id",
+              "$1",
+              "name",
+              "(.*)"
+            ) == 1
+          ) unless on (cluster_id) (
+            count(loki_rate_store_stream_rate_bytes_count) by (cluster_id)
+          )
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability

@@ -566,3 +566,66 @@ tests:
               dashboard: mimir-continous-test/mimir-continous-test
               description: "Mimir continuous test myinstall is not producing metrics."
               opsrecipe: "mimir/"
+
+  # Test for MimirObjectStorageLowRate alert
+  - interval: 1m
+    input_series:
+      - series: 'cortex_bucket_store_sent_chunk_size_bytes_count{cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", namespace="mimir", pipeline="stable", provider="capa"}'
+        values: "_x90 1+1x90 90+0x90"
+      - series: 'capi_cluster_status_condition{cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", namespace="mimir", pipeline="stable", provider="capa", name="myinstall", type="ControlPlaneReady", status="True"}'
+        values: "1+0x270"
+    alert_rule_test:
+      - alertname: MimirObjectStorageLowRate
+        eval_time: 40m
+      - alertname: MimirObjectStorageLowRate
+        eval_time: 70m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: myinstall
+              cluster_type: management_cluster
+              installation: myinstall
+              name: myinstall
+              namespace: mimir
+              pipeline: stable
+              provider: capa
+              severity: page
+              status: "True"
+              team: atlas
+              topic: observability
+              type: ControlPlaneReady
+            exp_annotations:
+              dashboard: 8280707b8f16e7b87b840fc1cc92d4c5/mimir-writes
+              description: "Mimir object storage write rate is down."
+              opsrecipe: "mimir/"
+      - alertname: MimirObjectStorageLowRate
+        eval_time: 100m
+      - alertname: MimirObjectStorageLowRate
+      - alertname: MimirObjectStorageLowRate
+        eval_time: 200m
+      - alertname: MimirObjectStorageLowRate
+        eval_time: 250m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: myinstall
+              cluster_type: management_cluster
+              installation: myinstall
+              namespace: mimir
+              pipeline: stable
+              provider: capa
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: 8280707b8f16e7b87b840fc1cc92d4c5/mimir-writes
+              description: "Mimir object storage write rate is down."
+              opsrecipe: "mimir/"

@@ -25,6 +25,25 @@ spec:
         severity: page
         team: cabbage
         topic: dns
+    {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+    - alert: FluxHelmReleaseFailed
+      annotations:
+        description: |-
+          {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
+        opsrecipe: fluxcd-failing-helmrelease/
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", name=~".*coredns"} > 0
+      for: 20m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_monitoring_agent_down: "true"
+        severity: page
+        team: cabbage
+        topic: dns
+        namespace: |-
+          {{`{{ $labels.exported_namespace }}`}}
+    {{- end -}}
     - alert: CoreDNSMaxHPAReplicasReached
       expr: |
         (

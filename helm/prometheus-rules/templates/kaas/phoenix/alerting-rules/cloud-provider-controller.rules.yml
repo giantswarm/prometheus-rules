@@ -1,23 +1,23 @@
-{{- if eq .Values.managementCluster.provider.kind "capa" }}
-# This rule applies to capa management clusters only
+{{- if eq .Values.managementCluster.provider.flavor "capi" }}
+# This rule applies to CAPI management clusters only
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: aws-cloud-components.rules
+  name: cloud-provider-controller.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: aws-cloud-components
+  - name: cloud-provider-controller
     rules:
     - alert: FluxHelmReleaseFailed
       annotations:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         opsrecipe: fluxcd-failing-helmrelease/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", name=~".*(aws-ebs-csi-driver|cloud-provider-aws)"} > 0
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", name=~".*(aws-ebs-csi-driver|cloud-provider-aws|azure-cloud-controller-manager|azure-cloud-node-manager|azuredisk-csi-driver|azurefile-csi-driver|cloud-provider-vsphere|cloud-provider-cloud-director)"} > 0
       for: 20m
       labels:
         area: kaas
@@ -25,7 +25,7 @@ spec:
         cancel_if_kube_state_metrics_down: "true"
         cancel_if_monitoring_agent_down: "true"
         severity: page
-        team: phoenix
+        team: {{ include "providerTeam" . }}
         topic: managementcluster
         namespace: |-
           {{`{{ $labels.exported_namespace }}`}}

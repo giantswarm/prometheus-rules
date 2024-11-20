@@ -43,7 +43,7 @@ spec:
         topic: dns
         namespace: |-
           {{`{{ $labels.exported_namespace }}`}}
-    {{- end -}}
+    {{- end }}
     - alert: CoreDNSMaxHPAReplicasReached
       expr: |
         (

@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix dashboard link for `MimirContinuousTestFailing` alert
+- Fix tests so they fail if some helm template fails to render
 
 ## [4.26.1] - 2024-11-19
 

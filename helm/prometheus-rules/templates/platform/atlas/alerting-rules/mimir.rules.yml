@@ -189,7 +189,7 @@ spec:
     rules:
     - alert: MimirContinuousTestFailingOnWrites
       annotations:
-        dashboard: mimir-continous-test/mimir-continous-test
+        dashboard: mimir-continuous-test/mimir-continuous-test
         description: '{{`Mimir continuous test {{ $labels.test }} in {{ $labels.cluster_id }}/{{ $labels.namespace }} is not effectively running because writes are failing.`}}'
         opsrecipe: mimir/
       # Query is based on the following upstream mixin alerting rule: https://github.com/grafana/mimir/blob/b873372adbf0996bff70de55934f3dd4a10c7b89/operations/mimir-mixin-compiled/alerts.yaml#L1196
@@ -206,7 +206,7 @@ spec:
         topic: observability
     - alert: MimirContinuousTestFailingOnReads
       annotations:
-        dashboard: mimir-continous-test/mimir-continous-test
+        dashboard: mimir-continuous-test/mimir-continuous-test
         description: '{{`Mimir continuous test {{ $labels.test }} in {{ $labels.cluster_id }}/{{ $labels.namespace }} is not effectively running because queries are failing.`}}'
         opsrecipe: mimir/
       # Query is based on the following upstream mixin alerting rule: https://github.com/grafana/mimir/blob/b873372adbf0996bff70de55934f3dd4a10c7b89/operations/mimir-mixin-compiled/alerts.yaml#L1185
@@ -223,7 +223,7 @@ spec:
         topic: observability
     - alert: MimirContinuousTestFailing
       annotations:
-        dashboard: mimir-continous-test/mimir-continous-test
+        dashboard: mimir-continuous-test/mimir-continuous-test
         description: '{{`Mimir continuous test {{ $labels.test }} in {{ $labels.cluster_id }}/{{ $labels.namespace }} is not effectively running because queries are failing.`}}'
         opsrecipe: mimir/
       # Query is based on the following upstream mixin alerting rule: https://github.com/grafana/mimir/blob/b873372adbf0996bff70de55934f3dd4a10c7b89/operations/mimir-mixin-compiled/alerts.yaml#L1205
@@ -240,7 +240,7 @@ spec:
         topic: observability
     - alert: MimirContinuousTestMissing
       annotations:
-        dashboard: mimir-continous-test/mimir-continous-test
+        dashboard: mimir-continuous-test/mimir-continuous-test
         description: '{{`Mimir continuous test {{ $labels.cluster_id }} is not producing metrics.`}}'
         opsrecipe: mimir/
       expr: |

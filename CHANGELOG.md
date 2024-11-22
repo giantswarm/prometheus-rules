@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add alerts to monitor the `HelmReleases` for `cilium` and `coredns`.
 - Add alert to monitor the `HelmRelease` for the `vertical-pod-autoscaler-crd` app.
 
+### Fixed
+
+- Fix dashboard link for `MimirContinuousTestFailing` alert
+
 ## [4.26.1] - 2024-11-19
 
 ### Changed

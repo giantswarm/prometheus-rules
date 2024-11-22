@@ -298,13 +298,13 @@ spec:
     - alert: MimirRulerTooManyFailedQueries
       annotations:
         dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler
-        description: '{{`Mimir Ruler {{ $labels.pod }} in ${{ $labels.cluster_id }} cluster is experiencing {{ printf "%.2f" $value }}$ errors while evaluating rules.`}}'
+        description: '{{`Mimir Ruler {{ $labels.pod }} is experiencing {{ printf "%.2f" $value }}$ errors while evaluating rules.`}}'
         opsrecipe: mimir/
       expr: |
         100 * (
-        sum by (cluster_id, namespace, pod) (rate(cortex_ruler_queries_failed_total[1m]))
+        sum by (installation, cluster_id, namespace, pod) (rate(cortex_ruler_queries_failed_total[1m]))
           /
-        sum by (cluster_id, namespace, pod) (rate(cortex_ruler_queries_total[1m]))
+        sum by (installation, cluster_id, namespace, pod) (rate(cortex_ruler_queries_total[1m]))
         ) > 1
       for: 1h
       labels:

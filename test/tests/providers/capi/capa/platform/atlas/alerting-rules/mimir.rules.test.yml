@@ -656,7 +656,9 @@ tests:
               cluster_id: myinstall
               installation: myinstall
               namespace: mimir
+              pipeline: stable
               pod: mimir-ruler-aaaaaaaaaa-bbbbb
+              provider: capa
               severity: page
               team: atlas
               topic: observability

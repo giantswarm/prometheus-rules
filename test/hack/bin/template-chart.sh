@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 main() {
   local GIT_WORKDIR

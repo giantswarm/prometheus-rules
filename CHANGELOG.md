@@ -12,7 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `cloud-provider-controller.rules` to monitor the cloud-provider-controller components across providers.
 - Add alerts to monitor the `HelmReleases` for `cilium` and `coredns`.
 - Add alert to monitor the `HelmRelease` for the `vertical-pod-autoscaler-crd` app.
+- Add alert to monitor Shield pods restarts.
 - Add `MimirRulerTooManyFailedQueries` alert to detect when Mimir ruler is failing to evaluate rules
+
 
 ### Fixed
 

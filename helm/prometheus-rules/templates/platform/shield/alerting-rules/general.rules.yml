@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: kyverno.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: general
+    rules:
+    - alert: ShieldComponentRestartingTooOften
+      annotations:
+        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
+        opsrecipe: shield-pod-failing
+      expr: increase(kube_pod_container_status_restarts_total{cluster_type="workload_cluster", pod=~"trivy-.*|kyverno-.*|falco-*|"}[1h]) > 5
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: shield
+        topic: security

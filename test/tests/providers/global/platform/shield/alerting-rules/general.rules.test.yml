@@ -6,7 +6,7 @@ tests:
     input_series:
       # Kyverno validating webhooks
       - series: 'kube_pod_container_status_restarts_total{app="kube-state-metrics", cluster_id="golem", cluster_type="workload_cluster", container="main", customer="giantswarm", endpoint="http", installation="golem", instance="100.94.2.68:8080", job="kube-state-metrics", namespace="security", node="master-0001", organization="giantswarm", pipeline="stable", pod="trivy-0", provider="capa", region="eu-west-1", service="kube-prometheus-stack-kube-state-metrics", service_priority="medium", uid="a38e8606-416d-4d6c-a7ea-2745078de330"}'
-        values: "0+1x60 60+0x30"
+        values: "0+1x120"
     alert_rule_test:
       # Trivy pod
       - alertname: ShieldComponentRestartingTooOften

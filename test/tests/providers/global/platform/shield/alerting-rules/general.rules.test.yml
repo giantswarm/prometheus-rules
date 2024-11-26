@@ -10,7 +10,7 @@ tests:
     alert_rule_test:
       # Trivy pod
       - alertname: ShieldComponentRestartingTooOften
-        eval_time: 70m
+        eval_time: 91m
         exp_alerts:
           - exp_labels:
               area: platform

@@ -629,3 +629,40 @@ tests:
               dashboard: 8280707b8f16e7b87b840fc1cc92d4c5/mimir-writes
               description: "Mimir object storage write rate is down."
               opsrecipe: "mimir/"
+
+  # Test for MimirRulerTooManyFailedQueries alert
+  - interval: 1m
+    input_series:
+      - series: 'cortex_ruler_queries_total{cluster_id="myinstall", installation="myinstall", namespace="mimir", pipeline="stable", pod="mimir-ruler-aaaaaaaaaa-bbbbb", provider="capa"}'
+        values: "0x90 0+1x90 90+100x90"
+      - series: 'cortex_ruler_queries_failed_total{cluster_id="myinstall", installation="myinstall", namespace="mimir", pipeline="stable", pod="mimir-ruler-aaaaaaaaaa-bbbbb", provider="capa", name="myinstall", type="ControlPlaneReady", status="True"}'
+        values: "0x180 0+2x90"
+    alert_rule_test:
+      - alertname: MimirRulerTooManyFailedQueries
+        eval_time: 90m
+      - alertname: MimirRulerTooManyFailedQueries
+        eval_time: 180m
+      - alertname: MimirRulerTooManyFailedQueries
+        eval_time: 240m
+      - alertname: MimirRulerTooManyFailedQueries
+        eval_time: 242m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: myinstall
+              installation: myinstall
+              namespace: mimir
+              pipeline: stable
+              pod: mimir-ruler-aaaaaaaaaa-bbbbb
+              provider: capa
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler
+              description: "Mimir Ruler mimir-ruler-aaaaaaaaaa-bbbbb is experiencing 2.00% errors while evaluating rules."
+              opsrecipe: "mimir/"

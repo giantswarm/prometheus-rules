@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Remove `label_replace` from `app_operator_app_info` based alerts and use the `cluster_id` from the metric on CAPI.
+
 ### Added
 
 - Add `cloud-provider-controller.rules` to monitor the cloud-provider-controller components across providers.

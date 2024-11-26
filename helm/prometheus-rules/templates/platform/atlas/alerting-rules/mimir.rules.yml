@@ -151,6 +151,27 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: MimirRulerTooManyFailedQueries
+      annotations:
+        dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler
+        description: '{{`Mimir Ruler {{ $labels.pod }} is experiencing {{ printf "%.2f" $value }}% errors while evaluating rules.`}}'
+        opsrecipe: mimir/
+      expr: |
+        100 * (
+        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_failed_total[1m]))
+          /
+        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_total[1m]))
+        ) > 1
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
   - name: mimir.compactor
     rules:
     - alert: MimirCompactorFailedCompaction
@@ -285,27 +306,6 @@ spec:
           ) unless on (cluster_id) (
             count(cortex_bucket_store_sent_chunk_size_bytes_count{cluster_type="management_cluster"}) by (cluster_id)
           )
-      for: 1h
-      labels:
-        area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
-    - alert: MimirRulerTooManyFailedQueries
-      annotations:
-        dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler
-        description: '{{`Mimir Ruler {{ $labels.pod }} is experiencing {{ printf "%.2f" $value }}% errors while evaluating rules.`}}'
-        opsrecipe: mimir/
-      expr: |
-        100 * (
-        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_failed_total[1m]))
-          /
-        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_total[1m]))
-        ) > 1
       for: 1h
       labels:
         area: platform

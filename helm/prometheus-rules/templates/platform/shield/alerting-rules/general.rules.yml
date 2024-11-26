@@ -8,13 +8,13 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: trivy
+  - name: general
     rules:
-    - alert: TrivyComponentRestartingTooOften
+    - alert: ShieldComponentRestartingTooOften
       annotations:
-        description: 'Trivy pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often'
-        opsrecipe: trivy-pod-failing
-      expr: increase(kube_pod_container_status_restarts_total{cluster_type="workload_cluster", pod=~"trivy-.*"}[1h]) > 5
+        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
+        opsrecipe: shield-pod-failing
+      expr: increase(kube_pod_container_status_restarts_total{cluster_type="workload_cluster", pod=~"trivy-.*|kyverno-.*|falco-*|"}[1h]) > 5
       for: 30m
       labels:
         area: platform
@@ -24,4 +24,4 @@ spec:
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: shield
-        topic: trivy
+        topic: security

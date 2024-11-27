@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `KongProductionDeploymentNotSatisfied` to alert on clusters starting with `p`.
+
+### Changed
+
+- `KongDeploymentNotSatisfied` to alert on clusters not starting with `p` and not outside business hours.
+
 ## [4.26.2] - 2024-11-27
 
 ### Changed

@@ -30,7 +30,21 @@ spec:
       annotations:
         description: '{{`Kong Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         opsrecipe: workload-cluster-managed-deployment-not-satisfied/
-      expr: managed_app_deployment_status_replicas_available{managed_app=~"kong.*"} / (managed_app_deployment_status_replicas_available{managed_app=~"kong.*"} + managed_app_deployment_status_replicas_unavailable{managed_app=~"kong.*"}) < 0.6
+      expr: managed_app_deployment_status_replicas_available{managed_app=~"kong.*", cluster_id!~"p.*"} / (managed_app_deployment_status_replicas_available{managed_app=~"kong.*", cluster_id!~"p.*"} + managed_app_deployment_status_replicas_unavailable{managed_app=~"kong.*", cluster_id!~"p.*"}) < 0.6
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: kong
+    - alert: KongProductionDeploymentNotSatisfied
+      annotations:
+        description: '{{`Kong Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        opsrecipe: workload-cluster-managed-deployment-not-satisfied/
+      expr: managed_app_deployment_status_replicas_available{managed_app=~"kong.*", cluster_id=~"p.*"} / (managed_app_deployment_status_replicas_available{managed_app=~"kong.*", cluster_id=~"p.*"} + managed_app_deployment_status_replicas_unavailable{managed_app=~"kong.*", cluster_id=~"p.*"}) < 0.6
       for: 30m
       labels:
         area: platform

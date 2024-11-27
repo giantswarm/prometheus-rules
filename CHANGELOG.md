@@ -10,10 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `KongProductionDeploymentNotSatisfied` to alert on clusters starting with `p`.
+- `KongNonProdDeploymentNotSatisfied` to alert on clusters not starting with `p`.
 
-### Changed
+### Removed
 
-- `KongDeploymentNotSatisfied` to alert on clusters not starting with `p` and not outside business hours.
+- Split `KongDeploymentNotSatisfied` into `KongProductionDeploymentNotSatisfied` and `KongNonProdDeploymentNotSatisfied` to be able to control alerting in- and outside business hours.
 
 ## [4.26.2] - 2024-11-27
 

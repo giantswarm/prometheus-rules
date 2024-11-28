@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add alert to monitor the `KubeadmConfig` CRs having trouble generating bootstrap data.
 
+## [4.27.0] - 2024-11-27
+
+### Added
+
+- `KongProductionDeploymentNotSatisfied` to alert on clusters starting with `p`.
+- `KongNonProdDeploymentNotSatisfied` to alert on clusters not starting with `p`.
+
+### Removed
+
+- Split `KongDeploymentNotSatisfied` into `KongProductionDeploymentNotSatisfied` and `KongNonProdDeploymentNotSatisfied` to be able to control alerting in- and outside business hours.
+
 ## [4.26.2] - 2024-11-27
 
 ### Changed
@@ -3282,7 +3293,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.26.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.27.0...HEAD
+[4.27.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.26.2...v4.27.0
 [4.26.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.26.1...v4.26.2
 [4.26.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.26.0...v4.26.1
 [4.26.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.25.0...v4.26.0

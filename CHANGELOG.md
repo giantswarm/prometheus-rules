@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add alert to monitor the `KubeadmConfig` CRs having trouble generating bootstrap data.
 
+### Changed
+
+- Ignore HelmReleases in e2e test organization namespaces for cabbage `FluxHelmReleaseFailed` (cilium, network-policies, coredns)
+
 ## [4.27.0] - 2024-11-27
 
 ### Added

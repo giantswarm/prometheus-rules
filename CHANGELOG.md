@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add alert to monitor the `KubeadmConfig` CRs having trouble generating bootstrap data.
+
 ## [4.27.0] - 2024-11-27
 
 ### Added

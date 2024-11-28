@@ -1,0 +1,26 @@
+{{- if eq .Values.managementCluster.provider.flavor "capi" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels: {{- include "labels.common" . | nindent 4}}
+  name: capi-kubeadmconfig.rules
+  namespace: {{.Values.namespace}}
+spec:
+  groups:
+    - name: capi-kubeadmconfig
+      rules:
+        - alert: KubeadmConfigNotReady
+          expr: capi_kubeadmconfig_status_condition{type="Ready", status="False"} > 0
+          for: 1h
+          labels:
+            area: kaas
+            cancel_if_monitoring_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: {{ include "providerTeam" . }}
+            topic: managementcluster
+          annotations:
+            description: |-
+              {{`KubeadmConfig {{$labels.exported_namespace}}/{{$labels.name}} in cluster {{$labels.cluster_name}} encountered errors while generating a data secret`}}
+            opsrecipe: capi-kubeadmconfig/
+{{- end }}

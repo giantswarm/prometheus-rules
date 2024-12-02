@@ -1,0 +1,54 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    labels: {{- include "labels.common" . | nindent 4}}
+    name: karpenter.rules
+    namespace: {{.Values.namespace}}
+  name: karpenter
+spec:
+  groups:
+    - name: karpenter
+      rules:
+        - alert: KarpenterCanNotRegisterNewNodes
+          annotations:
+            description: |
+              Karpenter provisioner {{`{{ $labels.provisioner }}`}} launched new nodes, but some of nodes did not registered in the cluster
+            opsrecipe: karpenter/
+          expr: sum by (provisioner) (karpenter_machines_launched) - sum by (provisioner)(karpenter_machines_registered) != 0
+          for: 1h
+          labels:
+            area: kaas
+            cancel_if_monitoring_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: {{ include "providerTeam" . }}
+            topic: karpenter
+        - alert: KarpenterProvisionerAlmostFull
+          annotations:
+            description: |
+              Provisioner {{`{{ $labels.provisioner }}`}} is almost full.
+            opsrecipe: karpenter/
+          expr: karpenter_provisioner_usage_pct > 90
+          for: 72h
+          labels:
+            area: kaas
+            cancel_if_monitoring_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: {{ include "providerTeam" . }}
+            topic: karpenter
+        - alert: KarpenterCloudproviderErrors
+          annotations:
+            description: |
+              Karpenter is getting errors during API calls to the cloud provider.
+            opsrecipe: karpenter/
+          expr: rate(karpenter_cloudprovider_errors_total{}[5m]) > 0.1
+          for: 10m
+          labels:
+            area: kaas
+            cancel_if_monitoring_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: {{ include "providerTeam" . }}
+            topic: karpenter

@@ -39,3 +39,12 @@ spec:
         severity: notify
         team: atlas
         topic: monitoring
+    - alert: TestAlert
+      annotations:
+        description: '{{`TestAlert`}}'
+      expr: 1
+      labels:
+        area: platform
+        severity: page
+        team: atlas
+        topic: monitoring

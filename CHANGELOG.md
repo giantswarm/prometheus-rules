@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Increase time to trigger `PromtailRequestsErrors` alert from 15 to 25m.
+
 ## [4.28.0] - 2024-12-02
 
 ### Added

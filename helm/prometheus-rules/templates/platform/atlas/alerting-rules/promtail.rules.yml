@@ -38,7 +38,7 @@ spec:
             opsrecipe: promtail/
           expr: |
             100 * (sum(rate(promtail_request_duration_seconds_count{status_code!~"2.."}[5m])) by (cluster_id, installation, provider, pipeline, namespace, job, route, instance) / sum(rate(promtail_request_duration_seconds_count[5m])) by (cluster_id, installation, provider, pipeline, namespace, job, route, instance)) > 10
-          for: 15m
+          for: 25m
           labels:
             area: platform
             severity: page

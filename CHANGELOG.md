@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add alerts for `karpenter` issues.
+
 ## [4.29.0] - 2024-12-09
 
 ### Changed

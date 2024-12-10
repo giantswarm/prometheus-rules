@@ -39,9 +39,9 @@ spec:
         severity: notify
         team: atlas
         topic: monitoring
-    - alert: TestAlert
+    - alert: TheoTestAlert
       annotations:
-        description: '{{`TestAlert`}}'
+        description: '{{`TheoTestAlert`}}'
       expr: 1
       labels:
         area: platform

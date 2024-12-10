@@ -39,3 +39,12 @@ spec:
         severity: notify
         team: atlas
         topic: monitoring
+    - alert: TheoTestAlert
+      annotations:
+        description: '{{`TheoTestAlert`}}'
+      expr: 1
+      labels:
+        area: platform
+        severity: page
+        team: atlas
+        topic: monitoring

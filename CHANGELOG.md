@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.30.0] - 2024-12-10
+
 ### Added
 
 - Add alerts for `karpenter` issues.
@@ -3309,7 +3311,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.29.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.30.0...HEAD
+[4.30.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.29.0...v4.30.0
 [4.29.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.28.0...v4.29.0
 [4.28.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.27.0...v4.28.0
 [4.27.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.26.2...v4.27.0

@@ -47,7 +47,7 @@ spec:
       expr: "1"
       labels:
         area: platform
-        installation: golem
+        installation: glasgow
         cluster_id: theo
         service: test-service
         severity: page

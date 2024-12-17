@@ -44,7 +44,7 @@ spec:
         description: '{{`TheoTestAlert`}}'
         dashboard: alertmanager-overview/alertmanager-overview
         opsrecipe: alert-manager-notifications-failing/
-      expr: 1
+      expr: "1"
       labels:
         area: platform
         installation: golem

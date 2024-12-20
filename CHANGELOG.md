@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix duplicate series in `PromtailDown` alert.
+
 ## [4.30.0] - 2024-12-10
 
 ### Added

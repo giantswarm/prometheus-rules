@@ -16,10 +16,10 @@ spec:
             description: '{{`Scraping of all promtail pods to check if one failed every 30 minutes.`}}'
             opsrecipe: promtail/
           expr: |-
-            kube_pod_info{pod=~"promtail.*"}
+            kube_pod_info{pod=~"promtail.*", namespace="kube-system"}
             * on(cluster_id, pod)
               group_left ()
-              up{container="promtail"} == 0
+              up{container="promtail", namespace="kube-system"} == 0
           for: 30m
           labels:
             area: platform
@@ -38,7 +38,7 @@ spec:
             opsrecipe: promtail/
           expr: |
             100 * (sum(rate(promtail_request_duration_seconds_count{status_code!~"2.."}[5m])) by (cluster_id, installation, provider, pipeline, namespace, job, route, instance) / sum(rate(promtail_request_duration_seconds_count[5m])) by (cluster_id, installation, provider, pipeline, namespace, job, route, instance)) > 10
-          for: 15m
+          for: 25m
           labels:
             area: platform
             severity: page

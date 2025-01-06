@@ -46,7 +46,7 @@ spec:
         opsrecipe: alert-manager-notifications-failing/
       expr: "1"
       labels:
-        all_pipelines: true
+        all_pipelines: "true"
         area: platform
         installation: golem
         cluster_id: theo

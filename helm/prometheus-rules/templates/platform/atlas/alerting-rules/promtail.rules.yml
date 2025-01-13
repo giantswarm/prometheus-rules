@@ -34,6 +34,7 @@ spec:
             cancel_if_node_not_ready: "true"
         - alert: PromtailRequestsErrors
           annotations:
+            dashboard: promtail-overview/promtail-overview
             description: This alert checks if that the amount of failed requests is below 10% for promtail
             opsrecipe: promtail/
           expr: |

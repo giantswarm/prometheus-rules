@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add dashboard annotation for `PromtailRequestsErrors` alert.
+
 ### Fixed
 
 - Fix duplicate series in `PromtailDown` alert.

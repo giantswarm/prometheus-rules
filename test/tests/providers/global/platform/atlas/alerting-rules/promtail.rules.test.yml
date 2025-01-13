@@ -156,6 +156,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
+              dashboard: promtail-overview/promtail-overview
               description: "This alert checks if that the amount of failed requests is below 10% for promtail"
               opsrecipe: "promtail/"
       - alertname: PromtailRequestsErrors
@@ -174,5 +175,6 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
+              dashboard: promtail-overview/promtail-overview
               description: "This alert checks if that the amount of failed requests is below 10% for promtail"
               opsrecipe: "promtail/"

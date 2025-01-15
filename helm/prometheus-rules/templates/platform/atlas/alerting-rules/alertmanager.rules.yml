@@ -39,3 +39,17 @@ spec:
         severity: notify
         team: atlas
         topic: monitoring
+    - alert: TheoTestAlert
+      annotations:
+        description: '{{`TheoTestAlert`}}'
+        dashboard: alertmanager-overview/alertmanager-overview
+        opsrecipe: alert-manager-notifications-failing/
+      expr: "1"
+      labels:
+        area: platform
+        installation: goat
+        cluster_id: theo
+        service: test-service
+        severity: page
+        team: atlas
+        topic: monitoring

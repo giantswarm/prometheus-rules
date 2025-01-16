@@ -1,3 +1,4 @@
+{{- if not (or (eq .Values.managementCluster.provider.kind "vsphere") (eq .Values.managementCluster.provider.kind "cloud-director")) }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -76,3 +77,4 @@ spec:
         severity: page
         team: atlas
         topic: observability
+{{- end }}

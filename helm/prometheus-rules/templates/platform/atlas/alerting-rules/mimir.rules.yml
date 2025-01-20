@@ -316,4 +316,59 @@ spec:
         severity: page
         team: atlas
         topic: observability
+  # The following alerts are taken from upstream Mimir https://github.com/grafana/mimir/blob/59868b5e4ad5562a836e057a21c37b7e8067ae7d/operations/mimir-mixin-compiled/alerts.yaml#L617
+  # Feel free to adapt as you see fit.
+  - name: mimir-alertmanager
+    rules:
+    - alert: MimirAlertmanagerSyncConfigsFailing
+      annotations:
+        dashboard: b0d38d318bbddd80476246d4930f9e55
+        description: '{{`Mimir Alertmanager {{ $labels.job }}/{{ $labels.pod }} is failing to read tenant configurations from storage.`}}'
+        opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
+      expr: |
+        rate(cortex_alertmanager_sync_configs_failed_total[5m]) > 0
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirAlertmanagerRingCheckFailing
+      annotations:
+        dashboard: b0d38d318bbddd80476246d4930f9e55
+        description: '{{`Mimir Alertmanager {{ $labels.job }}/{{ $labels.pod }} is unable to check tenants ownership via the ring.`}}'
+        opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
+      expr: |
+        rate(cortex_alertmanager_ring_check_errors_total[2m]) > 0
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirAlertmanagerReplicationFailing
+      annotations:
+        dashboard: b0d38d318bbddd80476246d4930f9e55
+        description: '{{`Mimir Alertmanager {{ $labels.job }}/{{ $labels.pod }} is failing to replicating partial state to its replicas.`}}'
+        opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
+      expr: |
+        rate(cortex_alertmanager_state_replication_failed_total[2m]) > 0
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
 {{- end }}

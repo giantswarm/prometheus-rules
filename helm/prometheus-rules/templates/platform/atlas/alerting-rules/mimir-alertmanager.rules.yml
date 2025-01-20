@@ -8,6 +8,8 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   groups:
+  # The following alerts are taken from upstream Mimir https://github.com/grafana/mimir/blob/59868b5e4ad5562a836e057a21c37b7e8067ae7d/operations/mimir-mixin-compiled/alerts.yaml#L617
+  # Feel free to adapt as you see fit.
   - name: mimir-alertmanager
     rules:
     - alert: MimirAlertmanagerSyncConfigsFailing

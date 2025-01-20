@@ -137,6 +137,7 @@ main() {
             fi
 
             # Let's check if the opsrecipe is in our list of existing opsrecipes
+            # or is a valid URL starting with http
             if ! isInArray "$opsrecipe" "${opsRecipes[@]}" && [[ "$opsrecipe" != http* ]]; then
                 local message="file $prettyRulesFilename / alert \"$alertname\" links to unexisting opsrecipe (\"$opsrecipe\")"
                 E_unexistingrecipe+=("$message")

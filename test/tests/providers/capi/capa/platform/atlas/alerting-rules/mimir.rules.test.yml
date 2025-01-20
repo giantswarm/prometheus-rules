@@ -666,3 +666,96 @@ tests:
               dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler
               description: "Mimir Ruler mimir-ruler-aaaaaaaaaa-bbbbb is experiencing 2.00% errors while evaluating rules."
               opsrecipe: "mimir/"
+
+  # Test for MimirAlertmanagerSyncConfigsFailing alert
+  - interval: 1m
+    input_series:
+      - series: 'cortex_alertmanager_sync_configs_failed_total{cluster_id="myinstall", installation="myinstall", namespace="mimir", pipeline="stable", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb", provider="capa"}'
+        values: "0x90 0+1x90"
+    alert_rule_test:
+      - alertname: MimirAlertmanagerSyncConfigsFailing
+        eval_time: 90m
+      - alertname: MimirAlertmanagerSyncConfigsFailing
+        eval_time: 125m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: myinstall
+              installation: myinstall
+              namespace: mimir
+              pipeline: stable
+              pod: mimir-alertmanager-aaaaaaaaaa-bbbbb
+              provider: capa
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: b0d38d318bbddd80476246d4930f9e55
+              description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to read tenant configurations from storage."
+              opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
+
+  # Test for MimirAlertmanagerRingCheckFailing alert
+  - interval: 1m
+    input_series:
+      - series: 'cortex_alertmanager_ring_check_errors_total{cluster_id="myinstall", installation="myinstall", namespace="mimir", pipeline="stable", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb", provider="capa"}'
+        values: "0x90 0+1x90"
+    alert_rule_test:
+      - alertname: MimirAlertmanagerRingCheckFailing
+        eval_time: 90m
+      - alertname: MimirAlertmanagerRingCheckFailing
+        eval_time: 105m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: myinstall
+              installation: myinstall
+              namespace: mimir
+              pipeline: stable
+              pod: mimir-alertmanager-aaaaaaaaaa-bbbbb
+              provider: capa
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: b0d38d318bbddd80476246d4930f9e55
+              description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is unable to check tenants ownership via the ring."
+              opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
+
+  # Test for MimirAlertmanagerReplicationFailing alert
+  - interval: 1m
+    input_series:
+      - series: 'cortex_alertmanager_state_replication_failed_total{cluster_id="myinstall", installation="myinstall", namespace="mimir", pipeline="stable", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb", provider="capa"}'
+        values: "0x90 0+1x90"
+    alert_rule_test:
+      - alertname: MimirAlertmanagerReplicationFailing
+        eval_time: 90m
+      - alertname: MimirAlertmanagerReplicationFailing
+        eval_time: 105m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: myinstall
+              installation: myinstall
+              namespace: mimir
+              pipeline: stable
+              pod: mimir-alertmanager-aaaaaaaaaa-bbbbb
+              provider: capa
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              dashboard: b0d38d318bbddd80476246d4930f9e55
+              description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to replicating partial state to its replicas."
+              opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing

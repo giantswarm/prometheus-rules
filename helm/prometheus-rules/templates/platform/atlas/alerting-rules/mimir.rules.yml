@@ -323,7 +323,7 @@ spec:
     - alert: MimirAlertmanagerSyncConfigsFailing
       annotations:
         dashboard: b0d38d318bbddd80476246d4930f9e55
-        description: '{{`Mimir Alertmanager {{ $labels.job }}/{{ $labels.pod }} is failing to read tenant configurations from storage.`}}'
+        description: '{{`Mimir Alertmanager {{ $labels.pod }} is failing to read tenant configurations from storage.`}}'
         opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
       expr: |
         rate(cortex_alertmanager_sync_configs_failed_total[5m]) > 0
@@ -340,7 +340,7 @@ spec:
     - alert: MimirAlertmanagerRingCheckFailing
       annotations:
         dashboard: b0d38d318bbddd80476246d4930f9e55
-        description: '{{`Mimir Alertmanager {{ $labels.job }}/{{ $labels.pod }} is unable to check tenants ownership via the ring.`}}'
+        description: '{{`Mimir Alertmanager {{ $labels.pod }} is unable to check tenants ownership via the ring.`}}'
         opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
       expr: |
         rate(cortex_alertmanager_ring_check_errors_total[2m]) > 0
@@ -357,7 +357,7 @@ spec:
     - alert: MimirAlertmanagerReplicationFailing
       annotations:
         dashboard: b0d38d318bbddd80476246d4930f9e55
-        description: '{{`Mimir Alertmanager {{ $labels.job }}/{{ $labels.pod }} is failing to replicating partial state to its replicas.`}}'
+        description: '{{`Mimir Alertmanager {{ $labels.pod }} is failing to replicating partial state to its replicas.`}}'
         opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
       expr: |
         rate(cortex_alertmanager_state_replication_failed_total[2m]) > 0

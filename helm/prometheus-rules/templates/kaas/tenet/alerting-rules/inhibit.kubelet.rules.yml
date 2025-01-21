@@ -19,4 +19,4 @@ spec:
         kubelet_down: "true"
         area: kaas
         topic: kubernetes
-        team: turtles
+        team: tenet

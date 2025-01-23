@@ -165,3 +165,14 @@ spec:
         severity: page
         team: se
         topic: infrastructure
+    - alert: WorkloadClusterNodeUnexpectedTaintNodeCAPIUninitialized
+      annotations:
+        description: '{{`Node {{ $labels.node }} in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has CAPI taint node.cluster.x-k8s.io/uninitialized for too long`}}'
+        opsrecipe: unexpected-taint-capi/
+      expr: kube_node_spec_taint{key="node.cluster.x-k8s.io/uninitialized"} > 0
+      for: 15m
+      labels:
+        area: kaas
+        severity: page
+        team: phoenix
+        topic: kubernetes

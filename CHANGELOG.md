@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `WorkloadClusterNodeUnexpectedTaintNodeCAPIUninitialized` alert.
+
 ## [4.34.0] - 2025-01-21
 
 ### Changed

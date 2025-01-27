@@ -174,5 +174,5 @@ spec:
       labels:
         area: kaas
         severity: page
-        team: phoenix
+        team: tenet
         topic: kubernetes

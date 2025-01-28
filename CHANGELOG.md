@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add dashboard link to `ServiceLevelBurnRateTooHigh` alert.
 - Ship Kyverno policy enforcement status to Grafana Cloud.
 
+### Changed
+
+- Modify Kong recipes to the new URL.
+
 ## [2.108.0] - 2023-06-28
 
 ### Changed
@@ -34,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add alerts for legacy vault's etcd backups. 
+- Add alerts for legacy vault's etcd backups.
 
 ## [2.105.0] - 2023-06-22
 

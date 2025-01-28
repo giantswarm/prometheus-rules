@@ -31,4 +31,4 @@ tests:
               topic: kong
             exp_annotations:
               description: "Datastore of Kong in namespace kong-internal is not reachable."
-              opsrecipe: managed-app-kong/#kong-datastore-not-reachable
+              opsrecipe: kong/debugging/#kong-datastore-not-reachable

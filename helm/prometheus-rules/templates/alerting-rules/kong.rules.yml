@@ -15,7 +15,7 @@ spec:
     - alert: KongDatastoreNotReachable
       annotations:
         description: '{{`Datastore of Kong in namespace {{ $labels.namespace }} is not reachable.`}}'
-        opsrecipe: managed-app-kong/#kong-datastore-not-reachable
+        opsrecipe: kong/debugging/#kong-datastore-not-reachable
       expr: kong_datastore_reachable == 0
       for: 10m
       labels:

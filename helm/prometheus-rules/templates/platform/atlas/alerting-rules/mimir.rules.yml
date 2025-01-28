@@ -1,0 +1,374 @@
+{{- if eq .Values.managementCluster.provider.flavor "capi" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: mimir.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+  - name: mimir
+    rules:
+    # This alert is meant to always fire, to ensure the entire alerting pipeline is functional.
+    - alert: "Heartbeat"
+      annotations:
+        description: This alert is used to ensure the entire alerting pipeline is functional.
+        opsrecipe: mimir/
+      expr: up{job=~"mimir/.*", container!="prometheus"} > 0
+      labels:
+        area: platform
+        installation: {{ .Values.managementCluster.name }}
+        # TODO(@giantswarm/team-atlas): We need this label as long as we have the old and new heartbeats. Let's remove once the legacy monitoring is gone
+        type: mimir-heartbeat
+        team: atlas
+        topic: observability
+    # Coming from https://github.com/giantswarm/giantswarm/issues/30124
+    # This alert ensures Mimir containers are not restarting too often (flappiness).
+    # If it is not the the case, this can incur high costs by cloud providers (s3 api calls are quite expensive).
+    # This alert will not page for the prometheus-buddy.
+    - alert: MimirRestartingTooOften
+      annotations:
+        dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview
+        description: '{{`Mimir containers are restarting too often.`}}'
+        opsrecipe: mimir/
+      expr: |
+        increase(
+          kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container!="prometheus"}[1h]
+        ) > 5
+      for: 5m
+      labels:
+        area: platform
+        # This label is used to ensure the alert go through even for non-stable installations
+        all_pipelines: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirComponentDown
+      annotations:
+        dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview
+        description: '{{`Mimir component : {{ $labels.service }} is down.`}}'
+        opsrecipe: mimir/
+      expr: count(up{job=~"mimir/.*", container!="prometheus"} == 0) by (cluster_id, installation, provider, pipeline, service) > 0
+      for: 5m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirRulerEventsFailed
+      annotations:
+        dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler
+        description: 'Mimir ruler is failing to process PrometheusRules.'
+        opsrecipe: mimir/
+      expr: rate(mimir_rules_events_failed_total{cluster_type="management_cluster", namespace="mimir"}[5m]) > 0
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirIngesterNeedsToBeScaledUp
+      annotations:
+        description: 'Mimir ingester is consuming too much resources and needs to be scaled up.'
+        opsrecipe: mimir-ingester/
+      expr: |-
+        sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir"}) 
+          / 
+        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte"}) 
+          >= 0.90 
+        or 
+        sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir"}[5m])) by (cluster_id, installation, namespace, pipeline, provider) 
+          / 
+        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core"}) 
+          >= 0.90
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirIngesterNeedsToBeScaledDown
+      annotations:
+        description: 'Mimir ingester is consuming very few resources and needs to be scaled down.'
+        opsrecipe: mimir-ingester/
+      expr: |-
+        sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir"}) 
+          / 
+        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte"}) 
+          <= 0.30 
+        and
+        sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir"}[5m])) by (cluster_id, installation, namespace, pipeline, provider) 
+          / 
+        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core"}) 
+          <= 0.30
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirHPAReachedMaxReplicas
+      annotations:
+        description: '{{`Mimir {{ $labels.horizontalpodautoscaler }} HPA has reached maximum replicas and consume too much resources, it needs to be scaled up.`}}'
+        opsrecipe: mimir-hpa/
+      expr: |-
+        (
+          kube_horizontalpodautoscaler_status_desired_replicas{namespace="mimir"} >=
+          on(cluster_id, customer, installation, namespace, horizontalpodautoscaler)
+          kube_horizontalpodautoscaler_spec_max_replicas{namespace="mimir"}
+        )
+        and on(cluster_id, customer, installation, namespace, horizontalpodautoscaler)
+        (
+          kube_horizontalpodautoscaler_status_target_metric{namespace="mimir"} >
+          on(cluster_id, customer, installation, namespace, horizontalpodautoscaler, metric_name, metric_target_type)
+          kube_horizontalpodautoscaler_spec_target_metric{namespace="mimir"}
+        )
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirRulerTooManyFailedQueries
+      annotations:
+        dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler
+        description: '{{`Mimir Ruler {{ $labels.pod }} is experiencing {{ printf "%.2f" $value }}% errors while evaluating rules.`}}'
+        opsrecipe: mimir/
+      expr: |
+        100 * (
+        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_failed_total[1m]))
+          /
+        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_total[1m]))
+        ) > 1
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+  - name: mimir.compactor
+    rules:
+    - alert: MimirCompactorFailedCompaction
+      annotations:
+        dashboard: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources
+        description: 'Mimir compactor has been failing its compactions for 2 hours.'
+        opsrecipe: mimir#mimircompactorfailedcompaction
+      expr: min by (cluster_id, installation, namespace, provider, pipeline) (time() - (cortex_compactor_last_successful_run_timestamp_seconds > 0 ) ) > 60 * 60 * 2
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirCompactorFailedCompaction
+      annotations:
+        dashboard: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources
+        description: 'Mimir compactor has been failing compactions for more than 2 hours since start-up.'
+        opsrecipe: mimir#mimircompactorfailedcompaction
+      # This alert covers the special case at compactor startup, where the "normal" alert would always consider time `0` is more than 2 hours ago, yet we want to let it 2 hours + `for` duration.
+      expr: max(max_over_time(cortex_compactor_last_successful_run_timestamp_seconds{}[2h])) by (cluster_id, installation, namespace, provider, pipeline) == 0
+      for: 2h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+  - name: mimir.continuous-test
+    rules:
+    - alert: MimirContinuousTestFailingOnWrites
+      annotations:
+        dashboard: mimir-continuous-test/mimir-continuous-test
+        description: '{{`Mimir continuous test {{ $labels.test }} in {{ $labels.cluster_id }}/{{ $labels.namespace }} is not effectively running because writes are failing.`}}'
+        opsrecipe: mimir/
+      # Query is based on the following upstream mixin alerting rule: https://github.com/grafana/mimir/blob/b873372adbf0996bff70de55934f3dd4a10c7b89/operations/mimir-mixin-compiled/alerts.yaml#L1196
+      expr: sum by(cluster_id, installation, namespace, pipeline, provider, test) (rate(mimir_continuous_test_writes_failed_total[5m])) > 0
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirContinuousTestFailingOnReads
+      annotations:
+        dashboard: mimir-continuous-test/mimir-continuous-test
+        description: '{{`Mimir continuous test {{ $labels.test }} in {{ $labels.cluster_id }}/{{ $labels.namespace }} is not effectively running because queries are failing.`}}'
+        opsrecipe: mimir/
+      # Query is based on the following upstream mixin alerting rule: https://github.com/grafana/mimir/blob/b873372adbf0996bff70de55934f3dd4a10c7b89/operations/mimir-mixin-compiled/alerts.yaml#L1185
+      expr: sum by(cluster_id, installation, namespace, pipeline, provider, test) (rate(mimir_continuous_test_queries_failed_total[5m])) > 0
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirContinuousTestFailing
+      annotations:
+        dashboard: mimir-continuous-test/mimir-continuous-test
+        description: '{{`Mimir continuous test {{ $labels.test }} in {{ $labels.cluster_id }}/{{ $labels.namespace }} is not effectively running because queries are failing.`}}'
+        opsrecipe: mimir/
+      # Query is based on the following upstream mixin alerting rule: https://github.com/grafana/mimir/blob/b873372adbf0996bff70de55934f3dd4a10c7b89/operations/mimir-mixin-compiled/alerts.yaml#L1205
+      expr: sum by(cluster_id, installation, pipeline, provider, namespace, test) (rate(mimir_continuous_test_query_result_checks_failed_total[10m])) > 0
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirContinuousTestMissing
+      annotations:
+        dashboard: mimir-continuous-test/mimir-continuous-test
+        description: '{{`Mimir continuous test {{ $labels.cluster_id }} is not producing metrics.`}}'
+        opsrecipe: mimir/
+      expr: |
+        sum by(cluster_id, installation, pipeline, provider) (
+          rate(mimir_continuous_test_writes_total[10m]) == 0
+          or absent(
+            mimir_continuous_test_writes_total{
+              cluster_type="management_cluster",
+              cluster_id="{{ .Values.managementCluster.name }}",
+              installation="{{ .Values.managementCluster.name }}",
+              provider="{{ .Values.managementCluster.provider.kind }}",
+              pipeline="{{ .Values.managementCluster.pipeline }}"
+            }
+          )
+        )
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirObjectStorageLowRate
+      annotations:
+        dashboard: 8280707b8f16e7b87b840fc1cc92d4c5/mimir-writes
+        description: '{{`Mimir object storage write rate is down.`}}'
+        opsrecipe: mimir/
+      expr: |
+        rate(cortex_bucket_store_sent_chunk_size_bytes_count{cluster_type="management_cluster"}[30m]) == 0
+        # This part will fire the alert when the metric does not exist
+        or (
+            label_replace(
+              capi_cluster_status_condition{type="ControlPlaneReady", status="True", cluster_type="management_cluster"},
+              "cluster_id",
+              "$1",
+              "name",
+              "(.*)"
+            ) == 1
+          ) unless on (cluster_id) (
+            count(cortex_bucket_store_sent_chunk_size_bytes_count{cluster_type="management_cluster"}) by (cluster_id)
+          )
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+  # The following alerts are taken from upstream Mimir https://github.com/grafana/mimir/blob/59868b5e4ad5562a836e057a21c37b7e8067ae7d/operations/mimir-mixin-compiled/alerts.yaml#L617
+  # Feel free to adapt as you see fit.
+  - name: mimir-alertmanager
+    rules:
+    - alert: MimirAlertmanagerSyncConfigsFailing
+      annotations:
+        dashboard: b0d38d318bbddd80476246d4930f9e55
+        description: '{{`Mimir Alertmanager {{ $labels.pod }} is failing to read tenant configurations from storage.`}}'
+        opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
+      expr: |
+        rate(cortex_alertmanager_sync_configs_failed_total[5m]) > 0
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirAlertmanagerRingCheckFailing
+      annotations:
+        dashboard: b0d38d318bbddd80476246d4930f9e55
+        description: '{{`Mimir Alertmanager {{ $labels.pod }} is unable to check tenants ownership via the ring.`}}'
+        opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
+      expr: |
+        rate(cortex_alertmanager_ring_check_errors_total[2m]) > 0
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirAlertmanagerReplicationFailing
+      annotations:
+        dashboard: b0d38d318bbddd80476246d4930f9e55
+        description: '{{`Mimir Alertmanager {{ $labels.pod }} is failing to replicating partial state to its replicas.`}}'
+        opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
+      expr: |
+        rate(cortex_alertmanager_state_replication_failed_total[2m]) > 0
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+{{- end }}

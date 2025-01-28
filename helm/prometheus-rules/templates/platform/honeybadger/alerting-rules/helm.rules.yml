@@ -1,0 +1,27 @@
+# TODO - This is only used by the chart-operator, let's get rid of it when the chart operator is gone.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: helm.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: helm
+    rules:
+    - alert: RepeatedHelmOperation
+      annotations:
+        description: '{{`Helm release {{ $labels.release }} in cluster {{ $labels.cluster_id }} is being repeated {{ $labels.event }} for {{ $value | printf "%.1f" }} times.`}}'
+      expr: increase(monitoring:helm:number_of_operations_on_release[15m]) > 5
+      for: 5m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: honeybadger
+        topic: releng

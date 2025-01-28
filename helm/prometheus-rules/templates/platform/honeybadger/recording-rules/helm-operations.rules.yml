@@ -1,0 +1,14 @@
+# TODO - This is only used by the chart-operator, let's get rid of it when the chart operator is gone.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: helm-operations.recording.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: helm-operations.recording
+    rules:
+    - expr: "sum by (cluster_id, installation, pipeline, provider, release, event) (helmclient_library_event_total{release!=''})"
+      record: monitoring:helm:number_of_operations_on_release

@@ -1,0 +1,34 @@
+{{- if eq .Values.managementCluster.provider.kind "capa" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    cluster_type: "management_cluster"
+  name: capa.inhibitions.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: capa.inhibitions
+    rules:
+    - alert: InhibitionClusterWithoutWorkerNodes
+      annotations:
+        description: '{{`Cluster ({{ $labels.cluster_id }}) has no worker nodes.`}}'
+      expr: |-
+        label_replace(
+            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+                "cluster_id",
+                "$1",
+                "name",
+                "(.*)"
+            ) == 1
+        unless on (cluster_id) (
+            sum(capi_machinepool_spec_replicas{} > 0) by (cluster_id)
+        )
+      labels:
+        area: kaas
+        has_worker_nodes: "false"
+        team: phoenix
+        topic: status
+{{- end }}

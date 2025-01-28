@@ -1,0 +1,202 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+    cluster_type: "management_cluster"
+    {{- end }}
+  name: app.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: app
+    rules:
+    - alert: ManagementClusterAppFailed
+      annotations:
+        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        opsrecipe: app-failed/
+      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"(control-plane-.*|default)",team!~"^$|noteam", namespace=~".*giantswarm"} == 1
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        sig: none
+        topic: releng
+    - alert: ManagementClusterAppPendingUpdate
+      annotations:
+        description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
+        opsrecipe: app-pending-update/
+      expr: app_operator_app_info{catalog=~"(control-plane-.*|default)", deployed_version!="", status="deployed", version_mismatch="true", team!~"^$|noteam", namespace=~".*giantswarm"} == 1
+      for: 40m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        topic: releng
+    - alert: WorkloadClusterAppFailed
+      annotations:
+        description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        opsrecipe: app-failed/
+      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+      expr: |-
+        (
+          app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog=~"giantswarm|cluster|default", team!~"^$|noteam"}
+          * on(cluster_id) group_left(provider) 
+          sum(
+              label_replace(
+                capi_cluster_info, "provider", "vsphere", "infrastructure_reference_kind", "VSphereCluster"
+              )
+          ) by (cluster_id, provider)
+        ) == 1
+      {{- else }}
+      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog=~"giantswarm|default", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
+      {{- end }}
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        sig: none
+        topic: releng
+    # If apps can't be installed - only for supported apps
+    - alert: WorkloadClusterAppNotInstalled
+      annotations:
+        description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        opsrecipe: app-failed/
+      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+      expr: |-
+        (
+          app_operator_app_info{status="not-installed", catalog=~"giantswarm|cluster|default", team!~"^$|noteam"} 
+          * on(cluster_id) group_left(provider) 
+          sum(
+              label_replace(
+                capi_cluster_info, "provider", "vsphere", "infrastructure_reference_kind", "VSphereCluster"
+              )
+          ) by (cluster_id, provider)
+        ) == 1
+      {{- else }}
+      expr: label_replace(app_operator_app_info{status="not-installed", catalog=~"giantswarm|default", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
+      {{- end }}
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        severity: page
+        sig: none
+        topic: releng
+    - alert: WorkloadClusterAppPendingUpdate
+      annotations:
+        description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
+        opsrecipe: app-pending-update/
+      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+      expr: |-
+        (
+          app_operator_app_info{catalog=~"giantswarm|cluster|default", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}
+          * on(cluster_id) group_left(provider)
+          sum(
+              label_replace(
+                capi_cluster_info, "provider", "vsphere", "infrastructure_reference_kind", "VSphereCluster"
+              )
+          ) by (cluster_id, provider)
+        ) == 1
+      {{- else }}
+      expr: label_replace(app_operator_app_info{catalog=~"giantswarm|default", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
+      {{- end }}
+      for: 40m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        topic: releng
+    - alert: AppWithoutTeamAnnotation
+      annotations:
+        description: '{{`App {{ $labels.name }} has no team label.`}}'
+        opsrecipe: app-without-team-annotation/
+      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+      expr: |-
+        (
+          app_operator_app_info{app!~"api-spec(-app)?", team=~"^$|noteam", catalog=~"giantswarm.*|control-plane(-test)?-catalog|cluster(-test)?|default(-test)?|releases(-test)?"}
+          * on(cluster_id) group_left(provider) 
+          sum(
+              label_replace(
+                capi_cluster_info, "provider", "vsphere", "infrastructure_reference_kind", "VSphereCluster"
+              )
+          ) by (cluster_id, provider)
+        ) == 1
+      {{- else }}
+      expr: label_replace(app_operator_app_info{app!~"api-spec(-app)?", team=~"^$|noteam", catalog=~"giantswarm.*|control-plane(-test)?-catalog|cluster(-test)?|default(-test)?|releases(-test)?"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
+      {{- end }}
+      for: 40m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: honeybadger
+        topic: releng
+    - alert: CordonedAppExpired
+      annotations:
+        description: '{{`Cordoned app {{ $labels.name }} in {{ $labels.namespace}} is expired.`}}'
+        opsrecipe: expired-cordon-charts/
+      expr: (app_operator_app_cordon_expire_time_seconds - time()) < 0
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        topic: releng
+    - alert: AppOperatorNotReady
+      annotations:
+        description: '{{`app CR version ({{ $labels.version }}) in namespace {{ $labels.namespace }} has no ready app-operator.`}}'
+        opsrecipe: app-operator-not-ready/
+      expr: app_operator_ready_total != 1
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: honeybadger
+        topic: releng
+    - alert: AppExporterDown
+      annotations:
+        description: '{{`App-exporter ({{ $labels.instance }}) is down.`}}'
+        opsrecipe: app-exporter-down/
+      expr: up{job="app-exporter"} == 0
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: honeybadger
+        topic: releng

@@ -1,0 +1,33 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+    cluster_type: "management_cluster"
+    {{- end }}
+  name: inhibit.nodes.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: inhibit.nodes
+    rules:
+    - alert: InhibitionNodeNotReady
+      annotations:
+        description: '{{`Node {{ $labels.node }} is not ready.`}}'
+      expr: kube_node_status_condition{condition="Ready", status!="true"} > 0
+      labels:
+        area: kaas
+        node_not_ready: "true"
+        team: turtles
+        topic: kubernetes
+    - alert: InhibitionNodeUnschedulable
+      annotations:
+        description: '{{`Node {{ $labels.node }} is unschedulable.`}}'
+      expr: kube_node_spec_unschedulable > 0
+      labels:
+        area: kaas
+        node_unschedulable: "true"
+        team: turtles
+        topic: kubernetes

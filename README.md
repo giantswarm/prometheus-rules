@@ -9,7 +9,7 @@ This repository contains Giant Swarm alerting and recording rules
 
 ### Alerting
 
-The alerting rules are located in `helm/prometheus-rules/templates/alerting-rules`
+The alerting rules are located in `helm/prometheus-rules/templates/<area>/<team>/alerting-rules` in the specific area/team to which they belong.
 
 #### How alerts are structured
 
@@ -29,7 +29,7 @@ here is an example:
         expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="atlas"}
         for: 30m
         labels:
-            area: managedservices
+            area: platform
             cancel_if_cluster_status_creating: "true"
             cancel_if_cluster_status_deleting: "true"
             cancel_if_cluster_status_updating: "true"
@@ -54,11 +54,26 @@ Any Alert includes:
    - `area`
    - `team`
    - `severity`
+   - `cluster_id`
+   - `installation`
+   - `pipeline`
+   - `provider`
 
 * Optional labels:
    - `sig`
    - `cancel_if_.*`
 
+
+#### Specific alert labels
+
+- `all_pipelines: "true"`: When adding this label to an alert, you are sure the alert will be send to opsgenie, even if the installation is not a stable installation.
+
+#### `Absent` function
+
+If you want to make sure a metrics exists on one cluster, you can't just use the `absent` function anymore.
+With `mimir` we have metrics for all the clusters on a single database, and it makes detecting the absence of one metrics on one cluster much harder.
+
+To achieve such a test, you should do like [`PrometheusAgentFailing`](https://github.com/giantswarm/prometheus-rules/blob/master/helm/prometheus-rules/templates/alerting-rules/areas/platform/atlas/prometheus-agent.rules.yml) alert does.
 
 #### Routing
 
@@ -93,36 +108,42 @@ Official documentation for inhibit rules can be found here: https://www.promethe
 
 ### Recording rules
 
-The recording rules are located `helm/prometheus-rules/templates/recording-rules`
-
+The recording rules are located in `helm/prometheus-rules/templates/<area>/<team>/recording-rules` in the specific area/team to which they belong.
 
 ### Mixin
 
-#### kubermetes-mixins
+#### kubernetes-mixins
 
 To Update `kubernetes-mixins` recording rules:
 
 * Follow the instructions in [giantswarm-kubernetes-mixin](https://github.com/giantswarm/giantswarm-kubernetes-mixin)
-* Run `./scripts/sync-kube-mixin.sh (?my-fancy-branch-or-tag)` to updated the `helm/prometheus-rules/templates/recording-rules/kubernetes-mixins.rules.yml` folder.
+* Run `./scripts/sync-kube-mixin.sh (?my-fancy-branch-or-tag)` to updated the `helm/prometheus-rules/templates/shared/recording-rules/kubernetes-mixins.rules.yml` folder.
 * make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards/tree/master/helm/dashboards/dashboards/mixin)
 
 #### mimir-mixins
 
-Come as-is from https://github.com/grafana/mimir/tree/main/operations/mimir-mixin-compiled ; just added helm headers (metadata, spec...)
+To update `mimir-mixins` recording rules:
+
+* Run `./mimir/update.sh`
+* make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards)
 
 #### loki-mixins
 
-Come as-is from https://github.com/grafana/loki/tree/main/production/loki-mixin-compiled-ssd ; just added helm headers (metadata, spec...)
+To update `loki-mixins` recording rules:
+
+* Run `./loki/update.sh`
+* make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards)
 
 ### Testing
 
 You can run all tests by running `make test`.
 
-There are 3 different types tests implemented:
+There are 4 different types tests implemented:
 
 - [Prometheus rules unit tests](#prometheus-rules-unit-tests)
 - [Alertmanager inhibition dependency check](#alertmanager-inhibition-dependency-check)
 - [Opsrecipe check](#opsrecipe-check)
+- [Prometheus Linter](#prometheus-linter)
 
 ---
 
@@ -146,19 +167,12 @@ There are 2 kinds of tests on rules:
 
    ```
    [...]
-   ### Skipping templates/alerting-rules/calico.rules.yml
-   ### Testing templates/alerting-rules/capi.rules.yml
-   ###    Provider: openstack
-   ###    extracting /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/providers/openstack/capi.rules.yml
-   ###    promtool check rules /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/tests/providers/openstack/capi.rules.yml
-   ###    promtool test rules capi.rules.test.yml
-   ### Testing templates/alerting-rules/capo.rules.yml
-   ###    Provider: openstack
-   ###    extracting /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/providers/openstack/capo.rules.yml
-   ###    promtool check rules /home/marioc/go/src/github.com/giantswarm/prometheus-rules/test/tests/providers/openstack/capo.rules.yml
-   ###    promtool test rules capo.rules.test.yml
-   ### Skipping templates/alerting-rules/cert-manager.rules.yml
-   ### Skipping templates/alerting-rules/certificate.all.rules.yml
+   ###  Testing platform/atlas/alerting-rules/prometheus-operator.rules.yml
+   ###    promtool check rules /home/marie/github-repo/prometheus-rules/test/hack/output/generated/capi/capa/platform/atlas/alerting-rules/prometheus-operator.rules.yml
+   ###    Skipping platform/atlas/alerting-rules/prometheus-operator.rules.yml: listed in test/conf/promtool_ignore
+   ###  Testing platform/atlas/alerting-rules/prometheus.rules.yml
+   ###    promtool check rules /home/marie/github-repo/prometheus-rules/test/hack/output/generated/capi/capa/platform/atlas/alerting-rules/prometheus.rules.yml
+   ###    promtool test rules prometheus.rules.test.yml - capi/capa
    [...]
    09:06:29 promtool: end (Elapsed time: 1s)
    Congratulations!  Prometheus rules have been promtool checked and tested
@@ -183,7 +197,7 @@ tests:
 ```
 
 Let's breakdown the above example:
-* For the first input series, the prometheus timesies returns an `empty query result` for 20 minutes (20*interval), then it is returning the value `1` for 20 minutes. Finally, it is returning the value `0` for 20 minutes.
+* For the first input series, the prometheus timeseries returns an `empty query result` for 20 minutes (20*interval), then it is returning the value `1` for 20 minutes. Finally, it is returning the value `0` for 20 minutes.
 This is a good example of an input series for testing an `up` query.
 * The second series introduce a timeseries which first returns a `0` value and which adds `600` every minutes (=interval) for 40 minutes. After 40 minutes it has reached a value of `24000` (600x40) and goes on by adding `400` every minutes for 40 more minutes.
 This is a good example of an input series for testing a `range` query.
@@ -196,15 +210,15 @@ This is a good example of an input series for testing a `range` query.
 #### Limitation
 
 * The current implementation only renders rules for different providers via the helm value `managementCluster.provider.kind`.
-Any other decision in the current helm chart is ignored for now (e.g. `helm/prometheus-rules/templates/alerting-rules/alertmanager-dashboard.rules.yml`)
 
 #### A word on the testing logic
 
 Here is a simplistic pseudocode view of the generate&test loop:
 ```
 for each provider from test/conf/providers:
-  for each file in helm/prometheus-rules/templates/alerting-rules:
-    generate the rule using helm template
+  for each file in test/hack/output/helm-chart/<provider>/prometheus-rules/templates/<area>/<team>/alerting-rules:
+    copy the test rules file in test/hack/output/generated/<provider>/<area>/<team>/alerting-rules
+    generate the rule using helm template in the same directory test/hack/output/generated/<provider>/<area>/<team>/alerting-rules
     if generation fails:
       we will try with next provider
     else:
@@ -251,7 +265,7 @@ In order to incorporate the SLO Framework in the Prometheus rules, several rules
 Those rules can be written according to this template :
 ```
 # Amout of requests for VPA
-- expr: "count(up{app=~'vertical-pod-autoscaler.*'}) by (cluster_type,cluster_id)"
+- expr: "count(up{job=~'vertical-pod-autoscaler.*'}) by (cluster_type,cluster_id)"
   labels:
     class: MEDIUM
     area: platform
@@ -264,7 +278,7 @@ Those rules can be written according to this template :
 # and summed with 1 so the final result is 0 : no error recorded.
 # If up was unsuccessful, there is an error. Up returns 0, multiplied by -1 and summed
 # with 1 so the final result is 1 : 1 error is recorded .
-- expr: "sum((up{app=~'vertical-pod-autoscaler.*'} * -1) + 1) by (cluster_id, cluster_type)"
+- expr: "sum((up{job=~'vertical-pod-autoscaler.*'} * -1) + 1) by (cluster_id, cluster_type)"
   labels:
     class: MEDIUM
     area: platform
@@ -288,9 +302,9 @@ In order for Alertmanager inhibition to work we need 3 elements:
   - an Inhibition definition mapping source labels to target labels in the alertmanager config file
   - an Alert rule with some target labels
 
-An alert having a target label will be inhibited whenever the condition specified in the target label's name is fulfilled. This is why target labels' names are most of the time prefixed by "cancel_if_" (e.g "cancel_if_scrape_timeout").
+An alert having a target label will be inhibited whenever the condition specified in the target label's name is fulfilled. This is why target labels' names are most of the time prefixed by "cancel_if_" (e.g "cancel_if_outside_working_hours").
 
-An alert with a source label will define the conditions under which the target label is effective. For example, if an alert with the "scrape_timeout" label were to fire, all other alerts having the corresponding target label, i.e "cancel_if_scrape_timeout" would be inhibited.
+An alert with a source label will define the conditions under which the target label is effective. For example, if an alert with the "outside_working_hours" label were to fire, all other alerts having the corresponding target label, i.e "cancel_if_outside_working_hours" would be inhibited.
 
 This is possible thanks to the alertmanager config file stored in the Prometheus-Meta-operator which defines the target/source labels coupling.
 
@@ -316,3 +330,16 @@ The inhibition labels checking script is also run automatically at PR's creation
 You can run `make test-opsrecipes` to check if linked opsrecipes are valid.
 
 This check is not part of the global `make test` command until we fix all missing / wrong opsrecipes.
+
+## Prometheus Linter
+
+We are using [pint](https://cloudflare.github.io/pint/) to run some static checks on the rules.
+
+You can run them manually with `make pint`.
+
+### Pint specific cases
+
+If you want to run `pint` against a specific team's rules, you can run: `make pint PINT_TEAM_FILTER=myteam`
+
+We also have a target that runs extra checks (that we hope to make default in the future).
+This one runs with `make pint-all`.

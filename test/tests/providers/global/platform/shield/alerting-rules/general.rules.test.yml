@@ -1,0 +1,33 @@
+---
+rule_files:
+  - general.rules.yml
+tests:
+  - interval: 1m
+    input_series:
+      # Kyverno validating webhooks
+      - series: 'kube_pod_container_status_restarts_total{cluster_id="golem", cluster_type="workload_cluster", installation="golem", namespace="security", pipeline="stable", pod="trivy-0", provider="capa"}'
+        values: "0+1x120"
+    alert_rule_test:
+      # Trivy pod
+      - alertname: ShieldComponentRestartingTooOften
+        eval_time: 91m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cluster_id: golem
+              cluster_type: workload_cluster
+              installation: golem
+              pipeline: stable
+              provider: capa
+              severity: notify
+              team: shield
+              topic: security
+              namespace: security
+              pod: trivy-0
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "false"
+            exp_annotations:
+              description: 'Pod security/trivy-0 is restarting too often.'
+              opsrecipe: "shield-pod-failing"

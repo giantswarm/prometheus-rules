@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: job.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: job
+    rules:
+    - alert: ManagementClusterJobFailed
+      annotations:
+        description: '{{`Job {{ $labels.namespace }}/{{ $labels.job_name }} is failed.`}}'
+      expr: kube_job_failed{cluster_type="management_cluster", condition="true", job_name!~"silence-operator-sync.+|grafana-permission.+"} == 1
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: {{ include "providerTeam" . }}
+        topic: managementcluster

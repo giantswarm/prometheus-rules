@@ -1,0 +1,64 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: teleport.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: teleport
+    rules:
+    - alert: TeleportJoinTokenSecretMismatch
+      annotations:
+        description: '{{`Mismatch in number of teleport-join-token secrets and clusters`}}'
+      expr: |
+        count (
+            label_replace(
+              kube_secret_created{secret=~".*-teleport-join-token"},
+              "cluster_id",
+              "$1",
+              "secret",
+              "(.*)-teleport-join-token"
+            )
+        ) by (pipeline, cluster_id, installation, provider)
+        != sum (
+            capi_cluster_status_phase{phase="Provisioned"}
+        ) by (pipeline, cluster_id, installation, provider)
+      for: 60m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: shield
+        topic: teleport
+    - alert: TeleportKubeAgentConfigMapMismatch
+      annotations:
+        description: '{{`Mismatch in number of teleport-kube-agent-config secrets and clusters`}}'
+      expr: |
+        count (
+            label_replace(
+              kube_configmap_info{configmap=~".*-teleport-kube-agent-config"},
+              "cluster_id",
+              "$1",
+              "configmap",
+              "(.*)-teleport-kube-agent-config"
+            )
+        ) by (pipeline, cluster_id, installation, provider)
+        != sum (
+            capi_cluster_status_phase{phase="Provisioned"}
+        ) by (pipeline, cluster_id, installation, provider)
+      for: 60m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: shield
+        topic: teleport

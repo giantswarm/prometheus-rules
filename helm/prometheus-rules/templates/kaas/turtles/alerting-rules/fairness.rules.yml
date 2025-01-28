@@ -1,0 +1,35 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: fairness.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: fairness
+    rules:
+    - alert: FlowcontrolRejectedRequests
+      annotations:
+        description: '{{`Cluster {{ $labels.installation }}/{{ $labels.cluster_id }}: k8s API fairness is rejecting calls in flow schema {{ $labels.flow_schema }}.`}}'
+        opsrecipe: flowcontrol-rejected-requests/
+      expr: (increase(apiserver_flowcontrol_rejected_requests_total[1m]) > 0)
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: turtles
+        topic: kubernetes
+    - alert: FlowcontrolTooManyRequests
+      annotations:
+        description: '{{`Cluster {{ $labels.installation }}/{{ $labels.cluster_id }}: there are too many API requests for flow schema {{ $labels.flow_schema }}.`}}'
+        opsrecipe: flowcontrol-rejected-requests/
+      expr: sum(irate(apiserver_flowcontrol_dispatched_requests_total[1m])) by (cluster_id, installation, pipeline, provider, flow_schema, priority_level) > (min by(cluster_id, installation, pipeline, provider, flow_schema, priority_level) (apiserver_flowcontrol_request_concurrency_limit_overwrite) OR min by(cluster_id, installation, pipeline, provider, flow_schema, priority_level) (apiserver_flowcontrol_request_concurrency_limit))
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: turtles
+        topic: kubernetes

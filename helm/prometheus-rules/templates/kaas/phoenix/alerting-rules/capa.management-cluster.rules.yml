@@ -1,0 +1,66 @@
+{{- if eq .Values.managementCluster.provider.kind "capa" }}
+# This rule applies to capa management clusters only
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+    cluster_type: "management_cluster"
+    {{- end }}
+  name: capa.management-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: capa.management-cluster
+    rules:
+    - alert: ManagementClusterPodPendingCAPA
+      annotations:
+        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
+        opsrecipe: pod-stuck-in-pending/
+      expr: kube_pod_status_phase{namespace="giantswarm", provider="capa", pod=~"(aws.*|capa.*|irsa-operator.*)", phase="Pending", cluster_type="management_cluster"} == 1
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_monitoring_agent_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: managementcluster
+    - alert: ManagementClusterContainerIsRestartingTooFrequentlyCAPA
+      annotations:
+        description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
+        opsrecipe: container-is-restarting-too-often/
+        dashboard: bdiako8tt1b7kc/capa-agregated-error-logs-for-capa-controllers
+      expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"(aws.*|capa-.*|irsa-operator.*)", cluster_type="management_cluster"}[1h]), "service", "/", "namespace", "pod") > 6
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_monitoring_agent_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: kubernetes
+    - alert: ManagementClusterDeploymentMissingCAPA
+      annotations:
+        description: '{{`Deployment {{ $labels.deployment }} is missing.`}}'
+        opsrecipe: management-cluster-deployment-is-missing/
+      expr: |
+        absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-resolver-rules-operator", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
+          or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-vpc-operator", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
+          or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capa-controller-manager", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
+          or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capa-iam-operator", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
+          or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="irsa-operator", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_monitoring_agent_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: kubernetes
+{{- end }}

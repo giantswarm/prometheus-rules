@@ -1,0 +1,70 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: coredns.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: coredns
+    rules:
+    - alert: CoreDNSDeploymentNotSatisfied
+      annotations:
+        description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        opsrecipe: core-dns-deployment-not-satisfied/
+      expr: |
+        sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider) / (sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider) + sum(kube_deployment_status_replicas_unavailable{deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider))* 100 < 51
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: cabbage
+        topic: dns
+    {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+    - alert: FluxHelmReleaseFailed
+      annotations:
+        description: |-
+          {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}-{{ $labels.cluster_id }} is stuck in Failed state.`}}
+        opsrecipe: fluxcd-failing-helmrelease/
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", exported_namespace!~"org-t-.*", name=~".*coredns"} > 0
+      for: 20m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_monitoring_agent_down: "true"
+        severity: page
+        team: cabbage
+        topic: dns
+        namespace: |-
+          {{`{{ $labels.exported_namespace }}`}}
+    {{- end }}
+    - alert: CoreDNSMaxHPAReplicasReached
+      expr: |
+        (
+          # This is using the deprecated HPA metric names https://github.com/kubernetes/kube-state-metrics/commit/eb01334f2d03ebc3ab25cd7b29d0ff28f6ca5ee0
+          # TODO(@team-cabbage) remove once kube-state-metrics is updated to use the new metric names everywhere
+          kube_hpa_status_current_replicas{hpa="coredns"} == kube_hpa_spec_max_replicas{hpa="coredns"}
+          and
+          kube_hpa_spec_min_replicas{hpa="coredns"} != kube_hpa_spec_max_replicas{hpa="coredns"}
+        ) or (
+          # This is using the new HPA metric names
+          kube_horizontalpodautoscaler_status_current_replicas{horizontalpodautoscaler="coredns"} == kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="coredns"}
+          and
+          kube_horizontalpodautoscaler_spec_min_replicas{horizontalpodautoscaler="coredns"} != kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="coredns"}
+        )
+      for: 120m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: dns
+      annotations:
+        description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} has been scaled to its maximum replica count for too long.`}}'
+        opsrecipe: core-dns-max-replicas/

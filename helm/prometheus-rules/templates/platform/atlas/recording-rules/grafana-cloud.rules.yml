@@ -1,0 +1,656 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    giantswarm.io/remote-write-target: grafana-cloud
+  name: grafana-cloud.recording.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: alertmanager.grafana-cloud.recording
+    rules:
+    - expr: sum(alertmanager_alerts{state="active"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:alertmanager:alerts_active_total
+    - expr: sum(alertmanager_alerts{state="suppressed"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:alertmanager:alerts_suppressed_total
+    - expr: sum(alertmanager_silences{state="active"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:alertmanager:silences_active_total
+    - expr: sum(alertmanager_silences{state="expired"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:alertmanager:silences_expired_total
+    - expr: sum(alertmanager_silences{state="pending"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:alertmanager:silences_pending_total
+{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+  - name: aws.grafana-cloud.recording
+    rules:
+    # Instance types used
+    - expr: count(sum(aws_operator_ec2_instance_status) by (ec2_instance, instance_type)) by (instance_type)
+      record: aggregation:aws:instance_types
+    # Available IPs
+    - expr: min(aws_operator_subnet_available_ips_percentage{subnet_type="aws-cni"}) by (cluster_type, cluster_id, availability_zone)
+      record: aggregation:aws:available_ip_percentage
+    - expr: min(aws_operator_subnet_available_ips{subnet_type="aws-cni"}) by (cluster_type, cluster_id, availability_zone)
+      record: aggregation:aws:available_ip_count
+    # Spot Instances being used
+    - expr: count(sum(aws_operator_ec2_instance_status{lifecycle != ""}) by (ec2_instance, lifecycle)) by  (lifecycle)
+      record: aggregation:aws:instance_lifecycle
+  - name: api.grafana-cloud.recording
+    rules:
+    # REST API usage: authentications successful via the "giantswarm" token method
+    - expr: sum(rate(api_service_authentication_giantswarm_successful_attempts_total[5m]))
+      record: aggregation:giantswarm:api_auth_giantswarm_successful_attempts_total
+    # REST API usage: authentication fails via the "giantswarm" token method
+    - expr: sum(rate(api_service_authentication_giantswarm_failed_attempts_total[5m]))
+      record: aggregation:giantswarm:api_auth_giantswarm_failed_attempts_total
+    # API usage: authentication fails via the "Bearer" auth method (SSO)
+    - expr: sum(rate(api_service_authentication_jwt_failed_attempts_total[5m]))
+      record: aggregation:giantswarm:api_auth_jwt_failed_attempts_total
+    # GS Rest API requests
+    - expr: sum(rate(nginx_ingress_controller_requests{namespace="giantswarm", ingress="api"}[5m])) by (status)
+      record: aggregation:giantswarm:api_requests
+{{- end }}
+  - name: app-operator.grafana-cloud.recording
+    rules:
+    - expr: app_operator_app_info
+      record: aggregation:giantswarm:app_info
+    - expr: count(app_operator_app_info{status="deployed",namespace="giantswarm"}) by (app, name, version, catalog, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:giantswarm:app_deployed_management_cluster_total
+    - expr: count(app_operator_app_info{status=~"deployed|DEPLOYED",namespace!="giantswarm"}) by (app, app_version, name, version, catalog, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:giantswarm:app_deployed_workload_cluster_total
+    - expr: count(app_operator_app_info{upgrade_available="true",namespace!="giantswarm"}) by (app, catalog, latest_version, namespace, version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:giantswarm:app_upgrade_available
+  - name: clusters.grafana-cloud.recording
+    rules:
+    # This recording rule is used to list all clusters. The last expression is used to list vintage MCs
+    - expr: |-
+        avg by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, exported_namespace) (
+          label_replace(
+            capi_cluster_info,
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          ) >= 1
+          {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+          or label_replace(cluster_operator_cluster_status, "cluster_type", "workload_cluster", "", "") >= 1
+          or label_replace(cluster_service_cluster_info, "cluster_type", "workload_cluster", "", "") >= 1
+          or
+            label_replace(
+              label_replace(
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        label_replace(
+                          vector(1),
+                          "cluster_id",
+                          {{ .Values.managementCluster.name | quote }},
+                          "",
+                          ""
+                        ),
+                        "customer",
+                        {{ .Values.managementCluster.customer | quote }},
+                        "",
+                        ""
+                      ),
+                      "installation",
+                      {{ .Values.managementCluster.name | quote }},
+                      "",
+                      ""
+                    ),
+                    "cluster_type",
+                    "management_cluster",
+                    "",
+                    ""
+                  ),
+                  "provider",
+                  {{ .Values.managementCluster.provider.kind | quote }},
+                  "",
+                  ""
+                ),
+                "pipeline",
+                {{ .Values.managementCluster.pipeline | quote }},
+                "",
+                ""
+              ),
+              "region",
+              {{ .Values.managementCluster.provider.region | quote }},
+              "",
+              ""
+            )
+          {{- end }}
+        )
+      record: aggregation:giantswarm:cluster_info
+    - expr: |-
+        sum(cluster_service_cluster_info) by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region) / 2
+        or sum(cluster_operator_cluster_status{release_version!=""}) by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+        or sum(capi_cluster_info) by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:giantswarm:cluster_release_version
+    - expr: avg_over_time(cluster_operator_cluster_create_transition[1w])
+      record: aggregation:giantswarm:cluster_transition_create
+    - expr: avg_over_time(cluster_operator_cluster_update_transition[1w])
+      record: aggregation:giantswarm:cluster_transition_update
+    # Scheduled cluster upgrade times
+    - expr: upgrade_schedule_operator_cluster_scheduled_upgrades_time
+      record: aggregation:giantswarm:cluster_scheduled_upgrades_time
+  - name: docker.grafana-cloud.recording
+    rules:
+    - expr: sum(engine_daemon_image_actions_seconds_count) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, action)
+      record: aggregation:docker:action_count
+    - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:docker:containers_using_dockerhub_image
+    - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) / sum(kube_pod_container_info{} or kube_pod_init_container_info{}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:docker:containers_using_dockerhub_image_relative
+  - name: certificates.grafana-cloud.recording
+    rules:
+    - expr: min(cert_exporter_not_after) by (app, job, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:giantswarm:cluster_certificate_not_after_seconds
+  - name: happa.grafana-cloud.recording
+    rules:
+    # Happa requests
+    - expr: sum(rate(nginx_ingress_controller_requests{namespace="giantswarm", ingress="happa"}[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, status)
+      record: aggregation:giantswarm:happa_requests
+{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+  - name: nodepools.grafana-cloud.recording
+    rules:
+    - expr: sum(cluster_operator_node_pool_count)
+      record: aggregation:giantswarm:node_pool_total
+    - expr: sum(cluster_operator_node_pool_ready_workers)
+      record: aggregation:giantswarm:node_pool_worker_ready_total
+{{- end }}
+  - name: nginx-ingress-controller.grafana-cloud.recording
+    rules:
+    - expr: sum(rate(nginx_ingress_controller_requests{namespace="giantswarm", ingress="passage"}[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, status)
+      record: aggregation:giantswarm:passage_requests
+    - expr: kube_deployment_status_replicas{deployment=~"(ingress-nginx|nginx-ingress-controller-app)", cluster_type="management_cluster"}
+      record: aggregation:ingress:management_cluster_replicas
+    - expr: sum(rate(nginx_ingress_controller_nginx_process_requests_total[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:ingress:requests_total
+    {{- with .Values.Installation.V1.Guest.Kubernetes.IngressController.BaseDomain }}
+    - expr: count(count(kube_ingress_path{host=~".*{{ . }}"}) by (ingress,cluster_id)) by (cluster_id)
+      record: aggregation:ingress:base_domain_total
+    {{- end }}
+  - name: kubelet.grafana-cloud.recording
+    rules:
+    - expr: sum(kubelet_running_container_count or kubelet_running_containers{container_state="running"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubelet:running_container_total
+    - expr: sum(kubelet_running_pod_count or kubelet_running_pods) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubelet:running_pod_total
+    - expr: sum by(cluster_id, cluster_type, customer, installation, pipeline, provider, region, git_version) (label_replace(kubernetes_build_info{app="kubelet"}, "git_version", "$1", "gitVersion", "(.+)"))
+      record: aggregation:kubelet:version
+  - name: kubernetes.api-server.grafana-cloud.recording
+    rules:
+    - expr: sum(apiserver_request_total) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:apiserver_request_count
+    - expr: sum(apiserver_request_duration_seconds_bucket) by (le, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:apiserver_request_duration_seconds_bucket
+  - name: kubernetes.audit.grafana-cloud.recording
+    rules:
+    - expr: sum(apiserver_audit_event_total) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:audit_event_total
+  - name: kubernetes.availability.grafana-cloud.recording
+    rules:
+    - expr: sum(up{app="kubernetes"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:up
+    - expr: sum(up{app="kubernetes"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) / count(up{app="kubernetes"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:up_bool
+    - expr: sum by(cluster_id, cluster_type, customer, installation, pipeline, provider, region, git_version) (label_replace(kubernetes_build_info{app="kubernetes"}, "git_version", "$1", "gitVersion", "(.+)"))
+      record: aggregation:kubernetes:version
+  - name: configmap.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: count(kube_configmap_created) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:configmap_total
+  - name: cronjobs.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: count(kube_cronjob_created) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:cronjob_total
+  - name: daemonsets.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: sum(kube_daemonset_status_number_ready) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:daemonset_ready
+    - expr: count(kube_daemonset_created) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:daemonset_total
+  - name: deployments.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: sum(kube_deployment_status_replicas_available) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:deployment_replicas_available
+    - expr: sum(kube_deployment_spec_replicas) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:deployment_replicas_desired
+    - expr: count(kube_deployment_created) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:deployment_total
+  - name: endpoints.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: count(kube_endpoint_created) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:endpoint_total
+  - name: ingresses.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: count(kube_ingress_created) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:ingress_total
+  - name: jobs.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: sum(kube_job_status_active) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:job_active
+    - expr: sum(kube_job_complete) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:job_complete
+    - expr: count(kube_job_created) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:job_total
+  - name: nodes.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: min((kube_node_created) and on (node) (label_replace(kube_pod_created{instance=~".*master.*", pod=~"k8s-api-server.*"}, "node", "$1", "pod", "k8s-api-server-(.*)"))) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:master_node_created
+    - expr: sum(kube_node_role) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, role)
+      record: aggregation:kubernetes:node_total
+  - name: node-allocatable-resources.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: sum(kube_node_status_allocatable{resource="cpu", unit="core"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:node_allocatable_cpu_cores_total
+    - expr: sum(kube_node_status_allocatable{resource="memory", unit="byte"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:node_allocatable_memory_bytes
+    - expr: sum(kube_node_status_allocatable{resource="pods", unit="integer"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:node_allocatable_pods_total
+  - name: node-capacity-resources.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: sum(kube_node_status_capacity{resource="cpu", unit="core"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:node_capacity_cpu_cores_total
+    - expr: sum(kube_node_status_capacity{resource="memory", unit="byte"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:node_capacity_memory_bytes
+    - expr: sum(kube_node_status_capacity{resource="pods", unit="integer"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:node_capacity_pods_total
+  - name: node-conditions.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: sum(kube_node_status_condition{condition="DiskPressure", status="true"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:node_disk_pressure_total
+    - expr: sum(kube_node_status_condition{condition="MemoryPressure", status="true"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:node_memory_pressure_total
+    - expr: sum(kube_node_status_condition{condition="Ready", status="false"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:node_not_ready_total
+    - expr: sum(kube_node_status_condition{condition="PIDPressure", status="true"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:node_pid_pressure_total
+  - name: namespaces.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: count(kube_namespace_created) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:namespace_total
+  - name: volumes.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: sum(kube_persistentvolume_capacity_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:persistentvolume_capacity_bytes
+    - expr: count(kube_persistentvolume_info) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:persistentvolume_total
+    - expr: sum(kube_persistentvolumeclaim_resource_requests_storage_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:persistentvolumeclaim_resource_requests_storage_bytes
+    - expr: count(kube_persistentvolumeclaim_info) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:persistentvolumeclaim_total
+  - name: pods.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: sum(kube_pod_container_resource_limits{resource="cpu", unit="core", organization="giantswarm"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, container)
+      record: aggregation:kubernetes:pod_resource_limits_cpu_cores
+    - expr: sum(kube_pod_container_resource_limits{resource="memory", unit="byte", organization="giantswarm"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, container)
+      record: aggregation:kubernetes:pod_resource_limits_memory_bytes
+    - expr: sum(kube_pod_container_resource_requests{resource="cpu", unit="core", organization="giantswarm"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, container)
+      record: aggregation:kubernetes:pod_resource_requests_cpu_cores
+    - expr: sum(kube_pod_container_resource_requests{resource="memory", unit="byte", organization="giantswarm"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, container)
+      record: aggregation:kubernetes:pod_resource_requests_memory_bytes
+    - expr: count(kube_pod_created) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:pod_total
+    - expr: sum(kube_pod_status_ready{condition="false"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:pod_status_not_ready_total
+    - expr: sum(kube_pod_status_ready{condition="true"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:pod_status_ready_total
+  - name: replicasets.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: sum(kube_replicaset_spec_replicas) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:replicaset_replicas_desired
+    - expr: sum(kube_replicaset_status_ready_replicas) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:replicaset_replicas_ready
+    - expr: count(kube_replicaset_created) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:replicaset_total
+  - name: secrets.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: count(kube_secret_created) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:secret_total
+  - name: services.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: count(kube_service_created) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:service_total
+    - expr: count(kube_service_spec_type{type="LoadBalancer"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:service_type_loadbalancer
+  - name: storageclasses.kube-state-metrics.grafana-cloud.recording
+    rules:
+    - expr: count(kube_storageclass_created) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:kubernetes:storageclass_total
+  - name: node-exporter.grafana-cloud.recording
+    rules:
+    - expr: count(node_cpu_seconds_total{mode="idle"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:node:cpu_cores_total
+    - expr: 100 - (avg by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) (irate(node_cpu_seconds_total{app="node-exporter", mode="idle"}[5m])) * 100)
+      record: aggregation:node:cpu_utilization_percentage
+    - expr: sum(node_filesystem_avail_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:node:filesystem_avail_bytes_total
+    - expr: sum(node_filesystem_size_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:node:filesystem_size_bytes_total
+    - expr: sum(node_uname_info) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, release)
+      record: aggregation:node:kernel_version
+    - expr: sum(node_memory_MemAvailable_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:node:memory_memavailable_bytes_total
+    - expr: sum(node_memory_MemFree_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:node:memory_memfree_bytes_total
+    - expr: sum(node_memory_MemTotal_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:node:memory_memtotal_bytes_total
+    - expr: sum(rate(node_network_receive_bytes_total[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:node:network_receive_bytes_total
+    - expr: sum(rate(node_network_transmit_bytes_total[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:node:network_transmit_bytes_total
+  - name: prometheus.grafana-cloud.recording
+    rules:
+    - expr: sum(ALERTS{alertstate="firing"}) by (alertname, cluster_id, cluster_type, customer, installation, pipeline, provider, region, area, severity, team, topic)
+      record: aggregation:prometheus:alerts
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+    # Metric container_memory_working_set_bytes comes from the cAdvisor component scraped on management clusters which is then scraped by the management cluster prometheus.
+    # This means the cluster_id label on this metric will be the cluster_id of the management cluster for all the series, not the workload cluster id.
+    # As we want to record the memory usage of the prometheis per cluster, we need to extract the cluster id from the prometheus pod name (i.e. pod=prometheus-xyz-ordinal => cluster_id=xyz).
+    - expr: sum(label_replace(container_memory_working_set_bytes{container='prometheus', namespace=~'.*-prometheus'}, "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)") / on(node) group_left node_memory_MemTotal_bytes{role!="bastion"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, node) * 100
+      record: aggregation:prometheus:memory_percentage
+    - expr: sum(label_replace(container_memory_working_set_bytes{container='prometheus', namespace=~'.*-prometheus'}, "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)")) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:prometheus:memory_usage
+    {{- end }}
+  {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+  - name: mimir.grafana-cloud.recording
+    rules:
+    - expr: sum(container_memory_working_set_bytes{namespace='mimir', cluster_type="management_cluster", container=~'.+'}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:mimir:memory_usage
+    - expr: sum(scrape_samples_post_metric_relabeling{cluster_id=~'.+'}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:mimir:scrape_samples_post_metric_relabeling
+    - expr: sum(scrape_series_added{cluster_id=~'.+'}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:mimir:scrape_series_added
+  {{- end }}
+  - name: dex.grafana-cloud.recording
+    rules:
+    # Dex activity and status based on ingress controller data
+    - expr: sum(nginx_ingress_controller_requests{namespace="giantswarm",ingress="dex",status=~"5.."}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:dex_requests_status_5xx
+    - expr: sum(nginx_ingress_controller_requests{namespace="giantswarm",ingress="dex",status=~"4.."}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:dex_requests_status_4xx
+    - expr: sum(nginx_ingress_controller_requests{namespace="giantswarm",ingress="dex",status=~"[23].."}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:dex_requests_status_ok
+    # Dex operator metrics for expiry time of identity provider oauth app secrets
+    - expr: dex_operator_idp_secret_expiry_time
+      record: aggregation:dex_operator_idp_secret_expiry_time
+    # Requests to the deprecated k8s authenticator. TODO(@team-bigmac): Get rid of this recording rule when the component is no longer used.
+    - expr: nginx_ingress_controller_requests{ingress="dex-k8s-authenticator"}
+      record: aggregation:dex_k8s_authenticator_requests
+  - name: grafana.grafana-cloud.recording
+    rules:
+    - expr: sum(increase(grafana_analytics_sessions_total[60s]) / (132 / 99))without (user_email, user_name)
+      record: aggregation:grafana_analytics_sessions_total
+  - name: dipstick.grafana-cloud.recording
+    rules:
+    # Ship dipstick policy metrics.
+    - expr: sum(dipstick_policyreport_policy_summary) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, policy_name, result)
+      record: aggregation:dipstick_policy_results
+    - expr: sum(dipstick_policyreport_policy_report_count) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:dipstick_policy_report_count
+    - expr: sum(dipstick_policyreport_last_update_duration_seconds) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:dipstick_policy_scrape_duration_seconds
+    - expr: sum(dipstick_policyreport_last_update_timestamp_seconds) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:dipstick_policy_last_scrape_timestamp_seconds
+  - name: falco.grafana-cloud.recording
+    rules:
+    # Falco event counts
+    - expr: sum(falco_events{priority=~"0|1|2|3|4|5|6|7"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, priority, rule)
+      record: aggregation:falco_events
+  - name: kyverno.grafana-cloud.recording
+    rules:
+    # Kyverno failing policies
+    - expr: sum(kyverno_policy_results_total{rule_result="fail"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, policy_type, policy_name)
+      record: aggregation:kyverno_policy_failures
+    # Kyverno-related resource counts by kind
+    - expr: sum(etcd_kubernetes_resources_count{kind=~".*.kyverno.io|clusterpolicyreports.wgpolicyk8s.io|policyreports.wgpolicyk8s.io"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, kind)
+      record: aggregation:kyverno_resource_counts
+    # Kyverno policy enforcement status
+    - expr: sum(kyverno_policy) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, background, category, kind, policy, rule, type, validationFailureAction)
+      record: aggregation:kyverno_policy_status
+    # Kyverno policy workload status by team - Deployments
+    # This rule has been temporaly disabled to save on Grafana Cloud costs.
+    # - expr: |-
+    #     label_join(
+    #       sum(
+    #         label_join(policy_report_result{
+    #           policy!="check-deprecated-apis-1-25",
+    #           cluster_type="management_cluster",
+    #           kind="Deployment"
+    #         }, "deployment", ",", "name")
+    #       ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, deployment, category, policy, status)
+    #       * on(deployment) group_left(team, app) sum(
+    #         label_join(label_join(kube_deployment_labels{
+    #           cluster_type="management_cluster",
+    #           label_application_giantswarm_io_team!=""
+    #         }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
+    #       ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, team, app, deployment),
+    #     "name", ",", "deployment")
+    #   record: aggregation:kyverno_policy_deployment_status_team
+    # Kyverno policy workload status by team - DaemonSets
+    - expr: |-
+        label_join(
+          sum(
+            label_join(policy_report_result{
+              policy!="check-deprecated-apis-1-25",
+              cluster_type="management_cluster",
+              kind="DaemonSet"
+            }, "daemonset", ",", "name")
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, daemonset, category, policy, status)
+          * on(daemonset) group_left(team, app) sum(
+            label_join(label_join(kube_daemonset_labels{
+              cluster_type="management_cluster",
+              label_application_giantswarm_io_team!=""
+            }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, team, app, daemonset),
+        "name", ",", "daemonset")
+      record: aggregation:kyverno_policy_daemonset_status_team
+    # Kyverno policy workload status by team - StatefulSets
+    - expr: |-
+        label_join(
+          sum(
+            label_join(policy_report_result{
+              policy!="check-deprecated-apis-1-25",
+              cluster_type="management_cluster",
+              kind="StatefulSet"
+            }, "statefulset", ",", "name")
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, statefulset, category, policy, status)
+          * on(statefulset) group_left(team, app) sum(
+            label_join(label_join(kube_statefulset_labels{
+              cluster_type="management_cluster",
+              label_application_giantswarm_io_team!=""
+            }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, team, app, statefulset),
+        "name", ",", "statefulset")
+      record: aggregation:kyverno_policy_statefulset_status_team
+    # Kyverno policy workload status by team - Job
+    - expr: |-
+        label_join(
+          sum(
+            label_join(policy_report_result{
+              policy!="check-deprecated-apis-1-25",
+              cluster_type="management_cluster",
+              kind="Job"
+            }, "job", ",", "name")
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, job, category, policy, status)
+          * on(job) group_left(team, app) sum(
+            label_join(label_join(label_join(kube_job_labels{
+              cluster_type="management_cluster",
+              label_application_giantswarm_io_team!=""
+            }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team"), "job", ",", "job_name")
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, team, app, job),
+        "name", ",", "job")
+      record: aggregation:kyverno_policy_job_status_team
+    # Kyverno policy workload status by team - CronJob
+    - expr: |-
+        label_join(
+          sum(
+            label_join(policy_report_result{
+              policy!="check-deprecated-apis-1-25",
+              cluster_type="management_cluster",
+              kind="CronJob"
+            }, "cronjob", ",", "name")
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, cronjob, category, policy, status)
+          * on(cronjob) group_left(team, app) sum(
+            label_join(label_join(kube_cronjob_labels{
+              cluster_type="management_cluster",
+              label_application_giantswarm_io_team!=""
+            }, "app", ",", "label_app_kubernetes_io_name"), "team", ",", "label_application_giantswarm_io_team")
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, team, app, cronjob),
+        "name", ",", "cronjob")
+      record: aggregation:kyverno_policy_cronjob_status_team
+  - name: starboard.grafana-cloud.recording
+    rules:
+    # Starboard unique vulnerability counts by severity
+    - expr: count(count by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, vulnerability_id, severity) (starboard_exporter_vulnerabilityreport_image_vulnerability)) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, severity)
+      record: aggregation:starboard_unique_vulnerability_count
+  - name: kong.grafana-cloud.recording
+    rules:
+    # Kong metrics
+    - expr: kong_nginx_http_current_connections
+      record: aggregation:kong:nginx_http_current_connections
+    - expr: container_memory_usage_bytes{namespace=~"kong.*", container=~"proxy|ingress-controller"}
+      record: aggregation:kong:memory_usage_bytes
+  - name: irsa.aws.grafana-cloud.recording
+    rules:
+    # IAM roles for Service Accounts metrics
+    - expr: sum(irsa_operator_cluster_errors) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, account_id, cluster_namespace)
+      record: aggregation:giantswarm:irsa_operator_cluster_errors
+  - name: limits.aws.grafana-cloud.recording
+    rules:
+    # AWS service quotas metrics
+    - expr: sum(aws_servicequotas_operator_quota_increase_request_errors) by (account_id,cluster_id, cluster_type, customer, installation, pipeline, provider, region,cluster_namespace,service_name,quota_description,quota_code,quota_value)
+      record: aggregation:giantswarm:aws_servicequotas_operator_quota_increase_request_errors
+    - expr: sum(aws_servicequotas_operator_quota_history_request_errors) by (account_id,cluster_id, cluster_type, customer, installation, pipeline, provider, region,cluster_namespace,service_name,quota_description,quota_code,quota_value)
+      record: aggregation:giantswarm:aws_servicequotas_operator_quota_history_request_errors
+    - expr: sum(aws_servicequotas_operator_quota_applied_request_errors) by (account_id,cluster_id, cluster_type, customer, installation, pipeline, provider, region,cluster_namespace,service_name,quota_description,quota_code,quota_value)
+      record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_request_errors
+    - expr: sum(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region) / count(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_values
+  - name: management-clusters.aws.grafana-cloud.recording
+    rules:
+    # Management Cluster Usage
+    - expr: sum(container_memory_usage_bytes{cluster_type="management_cluster"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, container)
+      record: aggregation:container:memory_usage_bytes
+    - expr: sum(rate(container_cpu_usage_seconds_total{cluster_type="management_cluster"}[2m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, container)
+      record: aggregation:container:cpu_usage_cores
+  - name: cluster_compliance.grafana-cloud.recording
+    rules:
+      - expr: sum(trivy_cluster_compliance{title!~".*Pod.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, title, status)
+        record: aggregation:cluster_compliance
+  - name: cluster_compliance_info.grafana-cloud.recording
+    rules:
+      - expr: sum(trivy_compliance_info{title!~".*Pod.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, compliance_id, compliance_name, severity, title, status)
+        record: aggregation:cluster_compliance_info
+{{- if eq .Values.managementCluster.provider.kind "capa" }}
+  # Keeps track of the versions of the CAPI infrastructure CRDs in the management cluster. Currently only used for CAPA.
+  - name: capi_crds.grafana-cloud.recording
+    rules:
+      - expr: sum(capi_crd_info{resource_name=~".*infrastructure.cluster.x-k8s.io.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, version)
+        record: aggregation:capi_infrastructure_crd_versions
+{{- end }}
+  - name: slos.grafana-cloud.recording
+    rules:
+      # Let's not send any of the slo:sli_error:ratio_ratexxx metrics but the slo:sli_error:ratio_rate5m rule to Grafana Cloud as it's not useful for the SLOs dashboard.
+      - expr: sum(
+            label_replace(
+              label_replace(
+                slo:current_burn_rate:ratio,
+                "slo",
+                "$1",
+                "sloth_id",
+                "(.*)"
+              ),
+              "service",
+              "$1",
+              "sloth_service",
+              "(.*)"
+            )
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+        record: aggregation:slo:current_burn_rate:ratio
+      - expr: |-
+          sum(
+            label_replace(
+              label_replace(
+                slo:error_budget:ratio,
+                "slo",
+                "$1",
+                "sloth_id",
+                "(.*)"
+              ),
+              "service",
+              "$1",
+              "sloth_service",
+              "(.*)"
+            )
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+        record: aggregation:slo:error_budget:ratio
+      - expr: |-
+          sum(
+            label_replace(
+              label_replace(
+                slo:objective:ratio,
+                "slo",
+                "$1",
+                "sloth_id",
+                "(.*)"
+              ),
+              "service",
+              "$1",
+              "sloth_service",
+              "(.*)"
+            )
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+        record: aggregation:slo:objective:ratio
+      - expr: |-
+          sum(
+            label_replace(
+              label_replace(
+                slo:period_burn_rate:ratio,
+                "slo",
+                "$1",
+                "sloth_id",
+                "(.*)"
+              ),
+              "service",
+              "$1",
+              "sloth_service",
+              "(.*)"
+            )
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+        record: aggregation:slo:period_burn_rate:ratio
+      - expr: |-
+          sum(
+            label_replace(
+              label_replace(
+                slo:sli_error:ratio_rate5m,
+                "slo",
+                "$1",
+                "sloth_id",
+                "(.*)"
+              ),
+              "service",
+              "$1",
+              "sloth_service",
+              "(.*)"
+            )
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+        record: aggregation:slo:sli_error:ratio_rate5m
+      - expr: |-
+          sum(
+            label_replace(
+              label_replace(
+                slo:time_period:days,
+                "slo",
+                "$1",
+                "sloth_id",
+                "(.*)"
+              ),
+              "service",
+              "$1",
+              "sloth_service",
+              "(.*)"
+            )
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+        record: aggregation:slo:time_period:days

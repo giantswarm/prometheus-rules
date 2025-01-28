@@ -1,0 +1,226 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: loki.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+  - name: loki
+    rules:
+    # Coming from https://github.com/giantswarm/giantswarm/issues/30124
+    # This alert ensures Loki containers are not restarting too often (flappiness).
+    # If it is not the the case, this can incur high costs by cloud providers (s3 api calls are quite expensive).
+    - alert: LokiRestartingTooOften
+      annotations:
+        description: '{{`Loki containers are restarting too often.`}}'
+        opsrecipe: loki/
+      expr: |
+        increase(
+          kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="loki"}[1h]
+        ) > 5
+      for: 5m
+      labels:
+        area: platform
+        # This label is used to ensure the alert go through even for non-stable installations
+        all_pipelines: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    # Rules inspired from loki-mixins - https://github.com/grafana/loki/blob/main/production/loki-mixin-compiled/alerts.yaml
+    - alert: LokiRequestErrors
+      annotations:
+        description: This alert checks that we have less than 10% errors on Loki requests.
+        opsrecipe: loki/
+      expr: |
+        100 * sum(rate(loki_request_duration_seconds_count{status_code=~"5.."}[2m])) by (cluster_id, installation, provider, pipeline, namespace, job, route)
+          /
+        sum(rate(loki_request_duration_seconds_count[2m])) by (cluster_id, installation, provider, pipeline, namespace, job, route)
+          > 10
+      for: 120m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: LokiRequestPanics
+      annotations:
+        description: This alert checks that we have no panic errors on Loki.
+        opsrecipe: loki/
+      expr: |
+        sum(increase(loki_panic_total[10m])) by (cluster_id, installation, provider, pipeline, namespace, job) > 0
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: LokiRingUnhealthy
+      annotations:
+        description: '{{`Loki pod {{ $labels.pod }} (namespace {{ $labels.namespace }}) sees {{ $value }} unhealthy ring members`}}'
+        opsrecipe: loki/
+      expr: |
+        sum by (job, cluster_id, container, customer, installation, provider, pipeline, name, namespace, organization, pod) (cortex_ring_members{state="Unhealthy", job=~"loki/.*"}) > 0
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: LokiNeedsToBeScaledDown
+      annotations:
+        description: '{{`Loki component {{ $labels.labelpod }} is consuming very few resources and needs to be scaled down.`}}'
+        opsrecipe: loki/
+      expr: |-
+        sum by (cluster_id, installation, namespace, pipeline, provider, labelpod) (label_replace(container_memory_working_set_bytes{container="loki", namespace="loki", cluster_type="management_cluster"}, "labelpod", "$1", "pod", "(loki-[[:alnum:]]*)-.*")) 
+          / 
+        sum by(cluster_id, installation, namespace, pipeline, provider, labelpod) (label_replace(kube_pod_container_resource_requests{container="loki", namespace="loki", unit="byte", cluster_type="management_cluster"}, "labelpod", "$1", "pod", "(loki-[[:alnum:]]*)-.*")) 
+          <= 0.30 
+        and
+        sum(label_replace(rate(container_cpu_usage_seconds_total{container="loki", namespace="loki", cluster_type="management_cluster"}[5m]), "labelpod", "$1", "pod", "(loki-[[:alnum:]]*)-.*")) by (cluster_id, installation, namespace, pipeline, provider, labelpod) 
+          / 
+        sum by(cluster_id, installation, namespace, pipeline, provider, labelpod) (label_replace(kube_pod_container_resource_requests{container="loki", namespace="loki", unit="core", cluster_type="management_cluster"}, "labelpod", "$1", "pod", "(loki-[[:alnum:]]*)-.*")) 
+          <= 0.30
+      for: 1d
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: LokiHpaReachedMaxReplicas
+      annotations:
+        description: '{{`Loki component {{ $labels.horizontalpodautoscaler }} has reached its maxReplicas number but still needs to be scaled up.`}}'
+        opsrecipe: loki/
+      expr: |-
+        (
+          kube_horizontalpodautoscaler_status_desired_replicas{namespace="loki"} >=
+          on(cluster_id, customer, installation, namespace, horizontalpodautoscaler)
+          kube_horizontalpodautoscaler_spec_max_replicas{namespace="loki"}
+        )
+        and on(cluster_id, customer, installation, namespace, horizontalpodautoscaler)
+        (
+          kube_horizontalpodautoscaler_status_target_metric{namespace="loki"} >
+          on(cluster_id, customer, installation, namespace, horizontalpodautoscaler, metric_name, metric_target_type)
+          kube_horizontalpodautoscaler_spec_target_metric{namespace="loki"}
+        )
+      for: 4h
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+  - name: loki.compactor
+    rules:
+    - alert: LokiCompactorFailedCompaction
+      annotations:
+        dashboard: loki-retention/loki-retention
+        description: 'Loki compactor has been failing compactions for more than 2 hours since last compaction.'
+        opsrecipe: loki#lokicompactorfailedcompaction
+      # This alert checks if Loki's the last successful compaction run is older than 2 hours
+      expr: (min by (cluster_id, installation, provider, pipeline) (time() - (loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds > 0)) > 60 * 60 * 2)
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: LokiCompactorFailedCompaction
+      annotations:
+        dashboard: loki-retention/loki-retention
+        description: 'Loki compactor has been failing compactions for more than 2 hours since start-up.'
+        opsrecipe: loki#lokicompactorfailedcompaction
+      # This alert covers the special case at compactor startup, where the "normal" alert would always consider time `0` is more than 2 hours ago, yet we want to let it 2 hours + `for` duration.
+      expr: max(max_over_time(loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{}[2h])) by (cluster_id, installation, provider, pipeline) == 0
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: LokiMissingLogs
+      annotations:
+        dashboard: loki-canary/loki-canary
+        description: This alert checks that loki is not missing canary logs
+        opsrecipe: loki/
+      expr: |
+        (
+          sum by (cluster_id, pod, installation, pipeline, provider)
+              (increase(loki_canary_missing_entries_total{cluster_type="management_cluster",namespace="loki"}[5m]))
+          /
+          sum by (cluster_id, pod, installation, pipeline, provider)
+              (increase(loki_canary_entries_total{cluster_type="management_cluster",namespace="loki"}[5m]))
+        ) > 0
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: LokiObjectStorageLowRate
+      annotations:
+        dashboard: loki-operational/loki-operational
+        description: '{{`Loki object storage write rate is down.`}}'
+        opsrecipe: loki/
+      expr: |
+        rate(loki_rate_store_stream_rate_bytes_count{cluster_type="management_cluster"}[30m]) == 0
+        # This part will fire the alert when the metric does not exist
+        or (
+            label_replace(
+              capi_cluster_status_condition{type="ControlPlaneReady", status="True", cluster_type="management_cluster"},
+              "cluster_id",
+              "$1",
+              "name",
+              "(.*)"
+            ) == 1
+          ) unless on (cluster_id) (
+            count(loki_rate_store_stream_rate_bytes_count{cluster_type="management_cluster"}) by (cluster_id)
+          )
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability

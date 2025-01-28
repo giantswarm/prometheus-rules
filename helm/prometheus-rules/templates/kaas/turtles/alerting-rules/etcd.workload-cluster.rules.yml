@@ -1,0 +1,88 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+    cluster_type: "workload_cluster"
+    {{- end }}
+  name: etcd.workload-cluster.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: etcd
+    rules:
+    - alert: WorkloadClusterEtcdDown
+      annotations:
+        description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} is down.`}}'
+        opsrecipe: etcd-down/
+      expr: up{cluster_type="workload_cluster", app="etcd", provider!="eks"} == 0
+      for: 20m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_control_plane_node_down: "true"
+        cancel_if_kubelet_down: "true"
+        severity: page
+        team: turtles
+        topic: etcd
+    - alert: WorkloadClusterEtcdCommitDurationTooHigh
+      annotations:
+        description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has a too high commit duration.`}}'
+        opsrecipe: etcd-high-commit-duration/
+      expr: histogram_quantile(0.95, rate(etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="workload_cluster", provider!="eks"}[5m])) > 1.0
+      for: 15m
+      labels:
+        area: kaas
+        severity: page
+        cancel_if_outside_working_hours: "true"
+        team: turtles
+        topic: etcd
+    - alert: WorkloadClusterEtcdDBSizeTooLarge
+      annotations:
+        description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has a too large database.`}}'
+        opsrecipe: etcd-db-size-too-large/
+      expr: (etcd_mvcc_db_total_size_in_bytes{cluster_type="workload_cluster", provider!="eks"} / etcd_server_quota_backend_bytes{cluster_type="workload_cluster", provider!="eks"}) * 100 > 80
+      for: 15m
+      labels:
+        area: kaas
+        severity: page
+        cancel_if_outside_working_hours: "true"
+        team: turtles
+        topic: etcd
+    - alert: WorkloadClusterEtcdNumberOfLeaderChangesTooHigh
+      annotations:
+        description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has too many leader changes.`}}'
+      expr: increase(etcd_server_leader_changes_seen_total{cluster_type="workload_cluster", provider!="eks"}[1h]) > 8
+      labels:
+        area: kaas
+        severity: notify
+        team: turtles
+        topic: etcd
+    - alert: WorkloadClusterEtcdHasNoLeader
+      annotations:
+        description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has no leader.`}}'
+        opsrecipe: etcd-has-no-leader/
+      expr: etcd_server_has_leader{cluster_type="workload_cluster", container!~"loki|promtail", provider!="eks"} == 0
+      for: 35m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: turtles
+        topic: etcd
+    - alert: WorkloadClusterEtcdMetricsMissing
+      annotations:
+        description: '{{`Etcd metrics missing for cluster {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'
+        opsrecipe: etcd-metrics-missing/
+      expr: count(up{cluster_type="workload_cluster", provider!="eks"}) by (cluster_id, installation, pipeline, provider) unless count(etcd_server_id{cluster_type="workload_cluster", provider!="eks"}) by (cluster_id, installation, pipeline, provider)
+      for: 1h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: turtles
+        topic: etcd

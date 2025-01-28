@@ -1,0 +1,54 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: cert-manager.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: cert-manager
+    rules:
+    - alert: CertManagerPodHighMemoryUsage
+      annotations:
+        description: |-
+          {{`High memory usage ({{ $value }}) for container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }}.
+          If memory usage value is equal to memory limit value then it is likely the pod will be evicted.
+          If no limits are set then the pod will burst.
+          `}}
+      expr: (sum by (cluster_id, installation, pipeline, provider, pod, namespace, container) (container_memory_working_set_bytes{container=~"(cert-manager|cert-manager-app-controller)"}) / 1024 / 1024 / 1024) >= 0.85
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: shield
+        topic: observability
+    - alert: CertManagerDown
+      annotations:
+        description: '{{`cert-manager in namespace {{ $labels.namespace }} is down.`}}'
+        opsrecipe: cert-manager-down/
+      expr: label_replace(up{container=~"cert-manager(-app-controller)?"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_kubelet_down: "true"
+        severity: page
+        team: shield
+        topic: cert-manager
+    - alert: CertManagerTooManyCertificateRequests
+      annotations:
+        description: '{{`There are too many CertificateRequests in cluster {{ $labels.cluster_id }}.`}}'
+        opsrecipe: cert-requests-too-many/
+      expr: sum by (cluster_id, installation, pipeline, provider) (etcd_kubernetes_resources_count{kind="certificaterequests.cert-manager.io"}) > 10000
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: shield
+        topic: cert-manager

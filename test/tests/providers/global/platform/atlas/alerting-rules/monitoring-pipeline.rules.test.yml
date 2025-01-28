@@ -1,0 +1,121 @@
+---
+rule_files:
+  - monitoring-pipeline.rules.yml
+
+# Setting evaluation interval to 1h
+# to make it faster on long test duration.
+evaluation_interval: 1h
+
+tests:
+  # Test JobScrapingFailure and CriticalJobScrapingFailure
+  - interval: 1h
+    input_series:
+      - series: 'up{job="apiserver", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
+        values: "1+0x240"
+      # critcal target up for 5d and down for 5d
+      - series: 'up{job="kube-controller-manager", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
+        values: "1+0x120 0+0x120"
+      - series: 'up{job="kube-scheduler", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
+        values: "1+0x240"
+      - series: 'up{job="kubelet", metrics_path="/metrics", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
+        values: "1+0x240"
+      - series: 'up{job="node-exporter", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
+        values: "1+0x240"
+      - series: 'up{job="kube-state-metrics", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
+        values: "1+0x240"
+      # Add bastion host test to ensure we do not page
+      - series: 'up{job="node-exporter", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
+        values: "1+0x240"
+      # non-critcal target up for 5d and down for 5d
+      - series: 'up{job="app-exporter", installation="gauss", cluster_id="gauss", provider="aws", pipeline="testing"}'
+        values: "1+0x120 0+0x120"
+    alert_rule_test:
+      - alertname: CriticalJobScrapingFailure
+        eval_time: 30m
+      - alertname: JobScrapingFailure
+        eval_time: 1d
+      - alertname: CriticalJobScrapingFailure
+        eval_time: 4d
+      # This alert fires for both critical and non-critical targets
+      - alertname: JobScrapingFailure
+        eval_time: 7d
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: notify
+              team: atlas
+              topic: observability
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "gauss"
+              installation: "gauss"
+              provider: "aws"
+              pipeline: "testing"
+              job: "kube-controller-manager"
+            exp_annotations:
+              dashboard: servicemonitors-details/servicemonitors-details
+              opsrecipe: "monitoring-job-scraping-failure/"
+              summary: "Monitoring agent failed to scrape all targets in a job."
+              description: "Monitoring agents for cluster gauss/gauss has failed to scrape all targets in kube-controller-manager job."
+          - exp_labels:
+              area: platform
+              severity: notify
+              team: atlas
+              topic: observability
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "gauss"
+              installation: "gauss"
+              provider: "aws"
+              pipeline: "testing"
+              job: "app-exporter"
+            exp_annotations:
+              dashboard: servicemonitors-details/servicemonitors-details
+              opsrecipe: "monitoring-job-scraping-failure/"
+              summary: "Monitoring agent failed to scrape all targets in a job."
+              description: "Monitoring agents for cluster gauss/gauss has failed to scrape all targets in app-exporter job."
+  
+      # This fires only for critical target down.
+      - alertname: CriticalJobScrapingFailure
+        eval_time: 9d
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: atlas
+              topic: observability
+              cluster_id: "gauss"
+              installation: "gauss"
+              provider: "aws"
+              pipeline: "testing"
+              job: "kube-controller-manager"
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_is_not_running_monitoring_agent: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+            exp_annotations:
+              dashboard: servicemonitors-details/servicemonitors-details
+              opsrecipe: "monitoring-job-scraping-failure/"
+              summary: "Monitoring agent failed to scrape all targets in a job."
+              description: "Monitoring agents for cluster gauss/gauss has failed to scrape all targets in kube-controller-manager job."
+
+
+  # Test MetricForwardingErrors
+  - interval: 1m
+    input_series:
+      # remote write has no failure for 1 hour and then fails for 2 hours
+      - series: 'prometheus_remote_storage_samples_failed_total{url="http://remote-storage_samples_failed_total"}'
+        values: "0+0x60 0+100x120"
+    alert_rule_test:
+      - alertname: MetricForwardingErrors
+        eval_time: 180m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: atlas
+              topic: observability
+              cancel_if_outside_working_hours: "true"
+              url: "http://remote-storage_samples_failed_total"
+            exp_annotations:
+              description: "Monitoring agent can't communicate with Remote Storage API at http://remote-storage_samples_failed_total."
+              opsrecipe: "monitoring-pipeline/"
+              dashboard: "promRW001/prometheus-remote-write"

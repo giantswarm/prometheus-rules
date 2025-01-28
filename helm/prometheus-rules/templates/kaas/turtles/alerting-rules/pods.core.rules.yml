@@ -1,0 +1,48 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+    cluster_type: "workload_cluster"
+    {{- end }}
+  name: pods.core.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: pods.core
+    rules:
+    - alert: ContainerIsRestartingTooFrequently
+      annotations:
+        description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often in cluster {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'
+        opsrecipe: container-is-restarting-too-often/
+      expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"cluster-autoscaler.*|etcd-kubernetes-resources-count-exporter.*"}[1h]), "service", "/", "namespace", "pod") > 10
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        severity: page
+        team: turtles
+        topic: kubernetes
+    - alert: PodPending
+      annotations:
+        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending in cluster {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'
+        opsrecipe: pod-stuck-in-pending/
+      expr: kube_pod_status_phase{namespace="kube-system",pod=~"(cluster-autoscaler.*)",phase="Pending"} == 1
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        severity: page
+        team: turtles
+

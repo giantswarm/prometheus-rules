@@ -1,0 +1,80 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: cilium.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: cilium
+    rules:
+    - alert: CiliumBPFMapAlmostFull
+      annotations:
+        description: '{{`Cilium BPF map is about to fill up.`}}'
+        opsrecipe: cilium-bpf-map/
+      expr: avg(cilium_bpf_map_pressure) by (cluster_id, installation, pipeline, provider, map_name) * 100 > 80
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: cilium
+    - alert: CiliumBPFMapFull
+      annotations:
+        description: '{{`Cilium BPF map is about filled up.`}}'
+        opsrecipe: cilium-bpf-map/
+      expr: avg(cilium_bpf_map_pressure) by (cluster_id, installation, pipeline, provider, map_name) * 100 > 95
+      for: 15m
+      labels:
+        area: platform
+        severity: page
+        team: cabbage
+        topic: cilium
+    - alert: CiliumAPITooSlow
+      annotations:
+        description: '{{`Cilium API processing time is >50s pod="{{ $labels.pod }}" node="{{ $labels.node }}" method="{{ $labels.method}}" path="{{ $labels.path }}"`}}'
+        opsrecipe: cilium-performance-issues/#slow-cilium-api
+      expr: avg(rate(cilium_agent_api_process_time_seconds_sum{}[5m])/rate(cilium_agent_api_process_time_seconds_count{}[5m]) > 50) by (cluster_id, node, pod, method, path, installation, pipeline, provider)
+      for: 20m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: cilium
+    - alert: CiliumNetworkPolicyFailed
+      annotations:
+        description: '{{`Too many Cilium Network Policy errors.`}}'
+        opsrecipe: unsupported-cilium-network-policy/
+      # cilium_policy_change_total - for cilium >=1.15
+      # cilium_policy_import_errors_total - for cilium <1.15
+      expr: max(rate(cilium_policy_change_total{outcome=~"fail.*"}[20m]) OR rate(cilium_policy_import_errors_total[20m])) by (cluster_id, installation, pipeline, provider) > 0
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: cilium
+    {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+    - alert: FluxHelmReleaseFailed
+      annotations:
+        description: |-
+          {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}-{{ $labels.cluster_id }} is stuck in Failed state.`}}
+        opsrecipe: fluxcd-failing-helmrelease/
+      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", exported_namespace!~"org-t-.*", name=~".*(cilium|network-policies)"} > 0
+      for: 20m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_monitoring_agent_down: "true"
+        severity: page
+        team: cabbage
+        topic: cilium
+        namespace: |-
+          {{`{{ $labels.exported_namespace }}`}}
+    {{- end -}}

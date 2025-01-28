@@ -1,0 +1,57 @@
+---
+rule_files:
+  - sloth.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      # For the first 60min: test with 1 pod: none, up, down
+      - series: 'up{job="monitoring/sloth", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing"}'
+        values: "_x20 1+0x20 0+0x20"
+    alert_rule_test:
+      - alertname: SlothDown
+        eval_time: 10m
+      - alertname: SlothDown
+        eval_time: 30m
+      - alertname: SlothDown
+        eval_time: 50m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cluster_id: gauss
+              installation: gauss
+              provider: aws
+              pipeline: testing
+              severity: page
+              team: atlas
+              topic: observability
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_outside_working_hours: "true"
+            exp_annotations:
+              description: "Sloth is down."
+              opsrecipe: sloth-down/
+  - interval: 1m
+    input_series:
+      - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="monitoring", container="sloth"}'
+        values: "0+0x20 0+5x20 100+0x140" # 0 restarts after 20 minutes then we restart 5 times per minute for 20 minutes then we stop restarting for 140 minutes
+    alert_rule_test:
+      - alertname: SlothRestartingTooOften
+        eval_time: 15m  # should be OK after 15 minutes
+      - alertname: SlothRestartingTooOften
+        eval_time: 85m  # After 85 minutes, should fire an alert for the t+85 error
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_type: management_cluster
+              container: sloth
+              namespace: monitoring
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Sloth is restarting too often.
+              opsrecipe: sloth-down/
+      - alertname: SlothRestartingTooOften
+        eval_time: 140m  # After 140m minutes, all should be back to normal

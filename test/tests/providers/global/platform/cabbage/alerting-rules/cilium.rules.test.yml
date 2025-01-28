@@ -1,0 +1,101 @@
+---
+rule_files:
+  - cilium.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      # For the first 60min: test with 1 pod: none, up, down
+      - series: 'cilium_bpf_map_pressure{map_name="policy_00001"}'
+        values: "_x20 20+0x20 90+0x20"
+    alert_rule_test:
+      - alertname: CiliumBPFMapAlmostFull
+        eval_time: 10m
+      - alertname: CiliumBPFMapAlmostFull
+        eval_time: 30m
+      - alertname: CiliumBPFMapAlmostFull
+        eval_time: 50m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_outside_working_hours: "true"
+              map_name: "policy_00001"
+            exp_annotations:
+              description: "Cilium BPF map is about to fill up."
+              opsrecipe: "cilium-bpf-map/"
+  - interval: 1m
+    input_series:
+      - series: 'cilium_bpf_map_pressure{map_name="policy_00001"}'
+        values: "_x20 20+0x20 90+0x20 98+0x20"
+    alert_rule_test:
+      - alertname: CiliumBPFMapFull
+        eval_time: 10m
+      - alertname: CiliumBPFMapFull
+        eval_time: 30m
+      - alertname: CiliumBPFMapFull
+        eval_time: 70m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              map_name: "policy_00001"
+            exp_annotations:
+              description: "Cilium BPF map is about filled up."
+              opsrecipe: "cilium-bpf-map/"
+  # CiliumNetworkPolicyFailed for 1.15+ (cilium_policy_change_total{outcome="fail.*"})
+  - interval: 1m
+    input_series:
+      # For the first 60min: test with 1 pod: none, up, down
+      - series: 'cilium_policy_change_total{outcome="fail"}'
+        values: "_x20 0+0x20 0+100x30 _x1000"
+      - series: 'cilium_policy_change_total{outcome="success"}'
+        values: "_x120 1+10000x50 _x1000"
+      - series: 'cilium_policy_import_errors_total{}'
+        values: "_x220 0+0x20 0+100x30 _x1000"
+    alert_rule_test:
+      # cilium_policy_change_total{outcome="fail"}
+      - alertname: CiliumNetworkPolicyFailed
+        eval_time: 10m
+      - alertname: CiliumNetworkPolicyFailed
+        eval_time: 30m
+      - alertname: CiliumNetworkPolicyFailed
+        eval_time: 60m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_outside_working_hours: "true"
+            exp_annotations:
+              description: "Too many Cilium Network Policy errors."
+              opsrecipe: "unsupported-cilium-network-policy/"
+      # cilium_policy_change_total{outcome="success"}
+      - alertname: CiliumNetworkPolicyFailed
+        eval_time: 110m
+      - alertname: CiliumNetworkPolicyFailed
+        eval_time: 130m
+      - alertname: CiliumNetworkPolicyFailed
+        eval_time: 160m
+      # cilium_policy_import_errors_total{}
+      - alertname: CiliumNetworkPolicyFailed
+        eval_time: 210m
+      - alertname: CiliumNetworkPolicyFailed
+        eval_time: 230m
+      - alertname: CiliumNetworkPolicyFailed
+        eval_time: 260m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_outside_working_hours: "true"
+            exp_annotations:
+              description: "Too many Cilium Network Policy errors."
+              opsrecipe: "unsupported-cilium-network-policy/"

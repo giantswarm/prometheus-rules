@@ -1,0 +1,42 @@
+{{- if eq .Values.managementCluster.provider.flavor "capi" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels: {{- include "labels.common" . | nindent 4}}
+  name: capi-machinedeployment.rules
+  namespace: {{.Values.namespace}}
+spec:
+  groups:
+    - name: capi-machinedeployment
+      rules:
+        - alert: MachineDeploymentIsNotHealthy
+          expr: capi_machinedeployment_status_phase{phase="Failed"} > 0
+          for: 15m
+          labels:
+            area: kaas
+            cancel_if_monitoring_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: notify
+            team: {{ include "providerTeam" . }}
+            topic: managementcluster
+          annotations:
+            description: |-
+              {{`The clusters {{$labels.cluster_name}} machinedeployment {{$labels.exported_namespace}}/{{$labels.name}} is not healthy.`}}
+            opsrecipe: capi-machinedeployment/
+            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
+        - alert: MachineDeploymentPaused
+          expr: capi_machinedeployment_annotation_paused{paused_value="true"} > 0
+          for: 1h
+          labels:
+            area: kaas
+            cancel_if_monitoring_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: notify
+            team: {{ include "providerTeam" . }}
+            topic: managementcluster
+          annotations:
+            description: |-
+              {{`The clusters {{$labels.cluster_name}} machinedeployment {{$labels.exported_namespace}}/{{$labels.name}} is paused.`}}
+            opsrecipe: capi-machinedeployment/
+            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
+{{- end }}

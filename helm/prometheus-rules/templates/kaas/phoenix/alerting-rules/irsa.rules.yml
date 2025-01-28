@@ -1,0 +1,47 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+    cluster_type: "management_cluster"
+    {{- end }}
+  name: irsa.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: irsa-operator
+    rules:
+    - alert: IRSATooManyErrors
+      annotations:
+        description: '{{`IRSA bootstrap for Cluster {{ $labels.cluster_id }} failed.`}}'
+        opsrecipe: irsa-operator-error/
+        ## TODO Remove this if all vintage installations are gone
+        {{- if eq .Values.managementCluster.provider.flavor "capi" }}
+        dashboard: bdiako8tt1b7kc/capa-agregated-error-logs-for-capa-controllers
+        {{- end }}
+      expr: irsa_operator_cluster_errors{cluster_type="management_cluster"} > 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: aws
+    - alert: IRSAACMCertificateExpiringInLessThan45Days
+      annotations:
+        description: '{{`IRSA ACM certificate for Cluster {{ $labels.cluster_id }} ({{ $labels.certificate_name }}) will expire in less than 2 months.`}}'
+        opsrecipe: irsa-acm-certificate-expiring/
+      expr: min(irsa_operator_acm_certificate_not_after{cluster_type="management_cluster"}) by (cluster_id, installation, pipeline, provider, certificate_name) - time() < 3888000
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: aws

@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: node-exporter.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: node-exporter
+    rules:
+    - alert: NodeExporterCollectorFailed
+      annotations:
+        description: '{{`NodeExporter Collector {{ $labels.collector }} on {{ $labels.instance }} is failed.`}}'
+        opsrecipe: node-exporter-device-error/
+      expr: node_scrape_collector_success{collector!~"conntrack|bonding|hwmon|powersupplyclass|mdadm|nfs|nfsd|tapestats|fibrechannel|nvme|watchdog"} == 0
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: turtles
+        topic: observability

@@ -1,0 +1,80 @@
+{{- if not (or (eq .Values.managementCluster.provider.kind "vsphere") (eq .Values.managementCluster.provider.kind "cloud-director")) }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: fluentbit.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: fluentbit
+    rules:
+    - alert: FluentbitTooManyErrors
+      annotations:
+        description: '{{`Fluentbit ({{ $labels.instance }}) is erroring.`}}'
+        opsrecipe: fluentbit-too-many-erros/
+        dashboard: fluentbit/fluentbit
+      # If we have some failures sending data, raise an alert
+      expr: rate(fluentbit_output_retries_failed_total[10m]) > 0
+      for: 20m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: FluentbitDropRatio
+      annotations:
+        description: '{{`Fluentbit ({{ $labels.instance }}) is dropping more than 1% records.`}}'
+        opsrecipe: fluentbit-too-many-erros/
+        dashboard: fluentbit/fluentbit
+      # Check the ratio of dropped records over the total number of records.
+      expr: rate(fluentbit_output_dropped_records_total[10m]) / (rate(fluentbit_output_proc_records_total[10m]) + rate(fluentbit_output_dropped_records_total[10m])) > 0.01
+      for: 20m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: FluentbitDown
+      annotations:
+        description: '{{`Fluentbit is down on node ({{ $labels.node }}).`}}'
+        opsrecipe: fluentbit-down/
+        dashboard: fluentbit/fluentbit
+      expr: sum(up{job="fluent-logshipping-app"}) by (job, cluster_id, installation, provider, pipeline, namespace, node) == 0
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: FluentbitDaemonSetNotSatisfied
+      annotations:
+        description: '{{`Daemonset {{ $labels.namespace}}/{{ $labels.daemonset }} is not satisfied.`}}'
+        opsrecipe: daemonset-not-satisfied/
+        dashboard: fluentbit/fluentbit
+      expr: kube_daemonset_status_number_unavailable{daemonset="fluent-logshipping-app"} > 0
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+{{- end }}

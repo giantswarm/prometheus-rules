@@ -1,0 +1,40 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: kong.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: kong
+    rules:
+    - alert: KongNonProdDeploymentNotSatisfied
+      annotations:
+        description: '{{`Kong Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        opsrecipe: workload-cluster-managed-deployment-not-satisfied/
+      expr: managed_app_deployment_status_replicas_available{managed_app=~"kong.*", cluster_id!~"p.*"} / (managed_app_deployment_status_replicas_available{managed_app=~"kong.*", cluster_id!~"p.*"} + managed_app_deployment_status_replicas_unavailable{managed_app=~"kong.*", cluster_id!~"p.*"}) < 0.6
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: kong
+    - alert: KongProductionDeploymentNotSatisfied
+      annotations:
+        description: '{{`Kong Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        opsrecipe: workload-cluster-managed-deployment-not-satisfied/
+      expr: managed_app_deployment_status_replicas_available{managed_app=~"kong.*", cluster_id=~"p.*"} / (managed_app_deployment_status_replicas_available{managed_app=~"kong.*", cluster_id=~"p.*"} + managed_app_deployment_status_replicas_unavailable{managed_app=~"kong.*", cluster_id=~"p.*"}) < 0.6
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: cabbage
+        topic: kong

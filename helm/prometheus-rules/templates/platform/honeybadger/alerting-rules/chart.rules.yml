@@ -1,0 +1,44 @@
+# TODO - This is only used by the chart-operator, let's get rid of it when the chart operator is gone.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: chart.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: chart
+    rules:
+    - alert: ChartOperatorDown
+      annotations:
+        description: '{{`ChartOperator ({{ $labels.instance }}) is down.`}}'
+        opsrecipe: chart-operator-down/
+      expr: label_replace(up{app=~"chart-operator.*"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_kubelet_down: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_monitoring_agent_down: "true"
+        severity: notify
+        team: honeybadger
+        topic: releng
+    - alert: ChartOrphanConfigMap
+      annotations:
+        description: '{{`Chart configmaps have not been deleted.`}}'
+        opsrecipe: chart-orphan-resources/
+      expr: chart_operator_configmap_orphan > 0
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: honeybadger
+        topic: releng

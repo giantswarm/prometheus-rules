@@ -6,6 +6,11 @@ set -euo pipefail
 
 set -eu
 
+# Global options
+
+## GENERATE_ONLY: if set to true, the script will only generate the rules files
+GENERATE_ONLY="${GENERATE_ONLY:-false}"
+
 array_contains() {
     local search="$1" && shift
 
@@ -34,15 +39,6 @@ main() {
     expected_failure_relative_file_global="test/conf/promtool_ignore"
     expected_failure_file_global="$GIT_WORKDIR/$expected_failure_relative_file_global"
 
-    # Retrieve all files we're going to check
-    local -a all_files
-    mapfile -t all_files < <(
-        cd "$GIT_WORKDIR" || return 1
-        # filter alerting-rules files, and remove prefix `helm/prometheus-rules/`
-        git ls-files |
-            sed -En 's_^helm/prometheus-rules/(templates/(alerting|recording)-rules/.*\.ya?ml)$_\1_p' || echo error
-    )
-
     # Get prefixes whitelisted via the failure_file
     local -a expected_failure_prefixes_global=()
     [[ -f "$expected_failure_file_global" ]] \
@@ -55,7 +51,17 @@ main() {
     local -a promtool_test_errors=()
     local -a failing_extraction=()
 
+    # Clean and create generated directory with all test files
+    local outputPath="$GIT_WORKDIR/test/hack/output"
+    rm -rf "$outputPath/generated"
+    cp -r "$GIT_WORKDIR/test/tests/providers/." "$outputPath/generated/"
+    # We remove the global directory
+    rm -rf "$outputPath/generated/global"
+
     for provider in "${providers[@]}"; do
+        # We need to copy the global test files in every provider directory
+        cp -r "$GIT_WORKDIR/test/tests/providers/global/." "$outputPath/generated/$provider"
+
         echo "### Running tests for provider: $provider"
 
         # Get the list of whitelisted files for this provider
@@ -65,43 +71,48 @@ main() {
         [[ -f "$expected_failure_file_provider" ]] \
             && mapfile -t expected_failure_prefixes_provider <"$expected_failure_file_provider"
 
-        for file in "${all_files[@]}"; do
+        # Look at each rules file for current provider
+        cd "$outputPath/helm-chart/$provider/prometheus-rules/templates" || return 1
+        while IFS= read -r -d '' file; do
+            # Remove "./" at the vbeggining of the file path
+            file="${file#./}"
 
             [[ ! "$file" =~ .*$filter.* ]] && continue
 
             echo "###  Testing $file"
 
-            # retrieve basename in pure bash
+            # retrieve basename and dirname in pure bash
             local filename="${file##*/}"
-
+            local dirname="${file%/*}"
+            local filenameWithoutExtension="${filename%.*}"
 
             # Extract rules file from helm template
-            echo "###    extracting $GIT_WORKDIR/test/tests/providers/$provider/$filename"
-            if [[ -f "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/alerting-rules/$filename" ]]
+            if [[ -f "$outputPath/helm-chart/$provider/prometheus-rules/templates/$file" ]]
             then
-                "$GIT_WORKDIR/$YQ" '.spec' "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/alerting-rules/$filename" > "$GIT_WORKDIR/test/tests/providers/$provider/$filename"
-            elif [[ -f "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/recording-rules/$filename" ]]
-            then
-                "$GIT_WORKDIR/$YQ" '.spec' "$GIT_WORKDIR/test/hack/output/$provider/prometheus-rules/templates/recording-rules/$filename" > "$GIT_WORKDIR/test/tests/providers/$provider/$filename"
+                [[ -d "$outputPath/generated/$provider/$dirname" ]] || mkdir -p "$outputPath/generated/$provider/$dirname"
+                "$GIT_WORKDIR/$YQ" '.spec' "$outputPath/helm-chart/$provider/prometheus-rules/templates/$file" > "$outputPath/generated/$provider/$file"
             else
-                echo "###    Failed extracting rules file $file"
+                # Fail when file is not found
+                echo "###  Warning: Failed extracting rules file $file"
                 failing_extraction+=("$provider:$file")
                 continue
             fi
 
+            # Skip next steps if GENERATE_ONLY is set
+            if [[ "$GENERATE_ONLY" == "true" ]]; then continue; fi
+
             # Syntax check of rules file
-            echo "###    promtool check rules $GIT_WORKDIR/test/tests/providers/$provider/$filename"
+            echo "###    promtool check rules $outputPath/generated/$provider/$file"
             local promtool_check_output
-            if ! promtool_check_output="$("$GIT_WORKDIR/$PROMTOOL" check rules "$GIT_WORKDIR/test/tests/providers/$provider/$filename" 2>&1)";
+            if ! promtool_check_output="$("$GIT_WORKDIR/$PROMTOOL" check rules "$outputPath/generated/$provider/$file" 2>&1)";
             then
-                echo "###   Syntax check failing for $file:"
+                echo "###  Warning: Syntax check failing for $file:"
                 echo "$promtool_check_output"
                 promtool_check_errors+=("$promtool_check_output")
                 continue
             fi
 
-            local global_testfile="$GIT_WORKDIR/test/tests/providers/global/${filename%.yml}.test.yml"
-            local provider_testfile="$GIT_WORKDIR/test/tests/providers/$provider/${filename%.yml}.test.yml"
+            local provider_testfile="$outputPath/generated/$provider/$dirname/$filenameWithoutExtension.test.yml"
 
 
             # if the file is whitelisted via the global ignore file
@@ -117,15 +128,8 @@ main() {
                 continue
             fi
 
-            # don't run tests if no provider specific tests are defined
-            if [[ ! -d "$GIT_WORKDIR/test/tests/providers/$provider" ]]; then
-                echo "###   No tests for provider $provider - skipping"
-                continue
-            fi
-
             # Fail if no testfile found
-            if [[ ! -f "$global_testfile" ]] \
-                && [[ ! -f "$provider_testfile" ]]
+            if [[ ! -f "$provider_testfile" ]]
             then
                 echo "###  Warning: no testfile found for $filename"
                 continue
@@ -133,20 +137,13 @@ main() {
 
             local promtool_test_output
 
-            if [[ -f "$global_testfile" ]]; then
-                echo "###    promtool test rules ${filename%.yml}.test.yml - global"
-                cp "$global_testfile" "$provider_testfile"_global
-                promtool_test_output="$("$GIT_WORKDIR/$PROMTOOL" test rules "$provider_testfile"_global 2>&1)" ||
-                    promtool_test_errors+=("$promtool_test_output")
-            fi
-
             if [[ -f "$provider_testfile" ]]; then
-                echo "###    promtool test rules ${filename%.yml}.test.yml - $provider"
+                echo "###    promtool test rules $filenameWithoutExtension.test.yml - $provider"
                 promtool_test_output="$("$GIT_WORKDIR/$PROMTOOL" test rules "$provider_testfile" 2>&1)" ||
                     promtool_test_errors+=("$promtool_test_output")
             fi
 
-        done
+        done < <(find . -type f -name "*rules.yml" -print0)
     done
 
     # Job is done, print end time

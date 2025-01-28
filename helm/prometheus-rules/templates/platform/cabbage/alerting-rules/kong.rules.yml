@@ -10,22 +10,6 @@ spec:
   groups:
   - name: kong
     rules:
-    # Kong uses either an internal (memory) or external (postgres) datastore to store internal state.
-    # In case the datastore is not reachable, new pods cannot restore previous state.
-    - alert: KongDatastoreNotReachable
-      annotations:
-        description: '{{`Datastore of Kong in namespace {{ $labels.namespace }} is not reachable.`}}'
-        opsrecipe: managed-app-kong/#kong-datastore-not-reachable
-      expr: kong_datastore_reachable == 0
-      for: 10m
-      labels:
-        area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: page
-        team: cabbage
-        topic: kong
     - alert: KongNonProdDeploymentNotSatisfied
       annotations:
         description: '{{`Kong Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'

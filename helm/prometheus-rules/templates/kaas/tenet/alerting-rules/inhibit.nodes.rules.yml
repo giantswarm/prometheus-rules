@@ -20,7 +20,7 @@ spec:
       labels:
         area: kaas
         node_not_ready: "true"
-        team: turtles
+        team: tenet
         topic: kubernetes
     - alert: InhibitionNodeUnschedulable
       annotations:
@@ -29,5 +29,5 @@ spec:
       labels:
         area: kaas
         node_unschedulable: "true"
-        team: turtles
+        team: tenet
         topic: kubernetes

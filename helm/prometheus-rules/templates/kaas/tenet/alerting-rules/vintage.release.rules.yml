@@ -24,6 +24,6 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: turtles
+        team: tenet
         topic: managementcluster
 {{- end }}

@@ -23,7 +23,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: turtles
+        team: tenet
         topic: storage
     - alert: ContainerdVolumeSpaceTooLow
       annotations:
@@ -37,7 +37,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: turtles
+        team: tenet
         topic: storage
     - alert: EtcdVolumeSpaceTooLow
       annotations:
@@ -49,7 +49,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: turtles
+        team: tenet
         topic: storage
     - alert: KubeletVolumeSpaceTooLow
       annotations:
@@ -66,7 +66,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: turtles
+        team: tenet
         topic: storage
     - alert: LogVolumeSpaceTooLow
       annotations:
@@ -80,7 +80,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: turtles
+        team: tenet
         topic: storage
     - alert: RootVolumeSpaceTooLow
       annotations:
@@ -92,7 +92,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: turtles
+        team: tenet
         topic: storage
     - alert: PersistentVolumeSpaceTooLow
       annotations:
@@ -131,5 +131,5 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: turtles
+        team: tenet
         topic: storage

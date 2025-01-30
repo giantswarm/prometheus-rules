@@ -30,7 +30,7 @@ spec:
         cancel_if_cluster_with_notready_nodepools: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: turtles
+        team: tenet
         topic: managementcluster
     - alert: ManagementClusterAPIServerAdmissionWebhookErrors
       annotations:
@@ -42,7 +42,7 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: turtles
+        team: tenet
         topic: managementcluster
     - alert: ManagementClusterWebhookDurationExceedsTimeout
       annotations:
@@ -54,5 +54,5 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: turtles
+        team: tenet
         topic: managementcluster

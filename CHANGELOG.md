@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add alert `ClusterCrossplaneResourcesNotReady` for Crossplane resources that are critical for clusters
+
 ### Changed
 
 - Change team label `turtles` to `tenet`.

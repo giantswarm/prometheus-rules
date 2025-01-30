@@ -19,5 +19,5 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
-        team: turtles
+        team: tenet
         topic: observability

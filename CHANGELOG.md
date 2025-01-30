@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Change team label `turtles` to `tenet`.
 
+### Fixed
+
+- Fix the `MimirObjectStorageLowRate` alert to be based on a better aligned metric to avoid false positives when Mimir restarts (c.f. https://github.com/giantswarm/giantswarm/issues/32419).
+
 ## [4.35.0] - 2025-01-28
 
 ### Added

@@ -172,6 +172,30 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: MimirObjectStorageLowRate
+      annotations:
+        dashboard: 8280707b8f16e7b87b840fc1cc92d4c5/mimir-writes
+        description: '{{`Mimir object storage write rate is down.`}}'
+        opsrecipe: mimir/
+      expr: |
+        sum by (component, installation, cluster_id, cluster_type, pipeline, provider) (
+          rate(thanos_objstore_bucket_operation_failures_total{cluster_type="management_cluster", namespace=~"mimir"}[30m])
+        )
+        /
+        sum by (component, installation, cluster_id, cluster_type, pipeline, provider) (
+          rate(thanos_objstore_bucket_operations_total{cluster_type="management_cluster", namespace=~"mimir"}[30m])
+        )
+        > 0
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
   - name: mimir.compactor
     rules:
     - alert: MimirCompactorFailedCompaction
@@ -277,35 +301,6 @@ spec:
             }
           )
         )
-      for: 1h
-      labels:
-        area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
-    - alert: MimirObjectStorageLowRate
-      annotations:
-        dashboard: 8280707b8f16e7b87b840fc1cc92d4c5/mimir-writes
-        description: '{{`Mimir object storage write rate is down.`}}'
-        opsrecipe: mimir/
-      expr: |
-        rate(cortex_bucket_store_sent_chunk_size_bytes_count{cluster_type="management_cluster"}[30m]) == 0
-        # This part will fire the alert when the metric does not exist
-        or (
-            label_replace(
-              capi_cluster_status_condition{type="ControlPlaneReady", status="True", cluster_type="management_cluster"},
-              "cluster_id",
-              "$1",
-              "name",
-              "(.*)"
-            ) == 1
-          ) unless on (cluster_id) (
-            count(cortex_bucket_store_sent_chunk_size_bytes_count{cluster_type="management_cluster"}) by (cluster_id)
-          )
       for: 1h
       labels:
         area: platform

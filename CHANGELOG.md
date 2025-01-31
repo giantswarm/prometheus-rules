@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add alert `ClusterCrossplaneResourcesNotReady` for Crossplane resources that are critical for clusters
 
+## [4.36.0] - 2025-01-30
+
 ### Changed
 
 - Change team label `turtles` to `tenet`.
@@ -3357,7 +3359,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.35.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.36.0...HEAD
+[4.36.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.35.0...v4.36.0
 [4.35.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.34.0...v4.35.0
 [4.34.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.33.0...v4.34.0
 [4.33.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.32.0...v4.33.0

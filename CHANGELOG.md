@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Change alertmanager config in CI for inhibitions test
+- Change alertmanager config url in CI and README
 
 ## [4.36.0] - 2025-01-30
 

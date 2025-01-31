@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change alertmanager config url in CI and README
+
 ## [4.37.0] - 2025-01-31
 
 ### Changed

@@ -96,7 +96,7 @@ Opsgenie route alerts based on the `team` label.
 
 #### Inhibitions
 
-The `cancel_if_*` labels are used to inhibit alerts, they are defined in [Alertmanager's config](https://github.com/giantswarm/prometheus-meta-operator/blob/master/files/templates/alertmanager/alertmanager.yaml#L341).
+The `cancel_if_*` labels are used to inhibit alerts, they are defined in [Alertmanager's config](https://github.com/giantswarm/observability-operator/blob/main/helm/observability-operator/files/alertmanager/alertmanager.yaml.helm-template#L325).
 
 The base principle is: if an alert is currently firing with a `source_matcher` label, then all alerts that have a `target_matcher` label are inhibited (or muted).
 
@@ -306,7 +306,7 @@ An alert having a target label will be inhibited whenever the condition specifie
 
 An alert with a source label will define the conditions under which the target label is effective. For example, if an alert with the "outside_working_hours" label were to fire, all other alerts having the corresponding target label, i.e "cancel_if_outside_working_hours" would be inhibited.
 
-This is possible thanks to the alertmanager config file stored in the Prometheus-Meta-operator which defines the target/source labels coupling.
+This is possible thanks to the alertmanager config file stored in the [observability-operator](https://github.com/giantswarm/observability-operator/blob/main/helm/observability-operator/files/alertmanager/alertmanager.yaml.helm-template) which defines the target/source labels coupling.
 
 This is what we call the inhibition dependency chain.
 

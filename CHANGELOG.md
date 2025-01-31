@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Change alertmanager config url in CI and README
 
+## [4.37.0] - 2025-01-31
+
+### Changed
+
+- Ignore webhook rejection for `Kyverno` webhooks.
+- Exclude `CONNECT` for API server request duration due to long-lived connections.
+- Increase timeout for unexpected taints on CAPI nodes.
+
 ## [4.36.0] - 2025-01-30
 
 ### Changed
@@ -3359,7 +3367,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.36.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.37.0...HEAD
+[4.37.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.36.0...v4.37.0
 [4.36.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.35.0...v4.36.0
 [4.35.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.34.0...v4.35.0
 [4.34.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.33.0...v4.34.0

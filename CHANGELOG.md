@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Change alertmanager config url in CI and README
+- Exclude `CONNECT` for API server request duration due to long-lived connections in management clusters.
 
 ## [4.37.0] - 2025-01-31
 

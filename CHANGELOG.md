@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Ignore webhook rejection for `Kyverno` webhooks.
+- Exclude `CONNECT` for API server request duration due to long-lived connections.
+- Increase timeout for unexpected taints on CAPI nodes.
+
 ## [4.36.0] - 2025-01-30
 
 ### Changed

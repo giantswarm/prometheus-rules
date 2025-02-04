@@ -36,7 +36,7 @@ spec:
       annotations:
         description: '{{`Kubernetes API Server {{ $labels.cluster_id }} having admission webhook errors (webhook: {{ $labels.name }}).`}}'
         opsrecipe: apiserver-admission-webhook-errors/
-      expr: rate(apiserver_admission_webhook_rejection_count{cluster_type="workload_cluster",error_type=~"calling_webhook_error|apiserver_internal_error",name!~"validate\\.kyverno\\.svc-fail|mutate\\.kyverno\\.svc-fail"}[5m]) > 0
+      expr: rate(apiserver_admission_webhook_rejection_count{cluster_type="workload_cluster",error_type=~"calling_webhook_error|apiserver_internal_error",name!~"validate\\.kyverno\\.svc-fail|mutate\\.kyverno\\.svc-fail|validations\\.kong\\.konghq\\.com"}[5m]) > 0
       for: 5m
       labels:
         area: kaas

@@ -14,7 +14,7 @@ spec:
       annotations:
         description: '{{`NodeExporter Collector {{ $labels.collector }} on {{ $labels.instance }} is failed.`}}'
         opsrecipe: node-exporter-device-error/
-      expr: node_scrape_collector_success{collector!~"conntrack|bonding|hwmon|powersupplyclass|mdadm|nfs|nfsd|tapestats|fibrechannel|nvme|watchdog"} == 0
+      expr: node_scrape_collector_success{collector!~"conntrack|bonding|hwmon|powersupplyclass|mdadm|nfs|nfsd|tapestats|fibrechannel|nvme|watchdog", namespace="kube-system"} == 0
       for: 5m
       labels:
         area: kaas

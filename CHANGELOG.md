@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Change alertmanager config url in CI and README
 - Exclude `CONNECT` for API server request duration due to long-lived connections in management clusters.
+- Exclude `exec_sync` from `KubeletDockerOperationsLatencyTooHigh` because they are operations which can be long-running.
+- Exclude Kong validation webhook from `WorkloadClusterAPIServerAdmissionWebhookErrors`.
 
 ## [4.37.0] - 2025-01-31
 

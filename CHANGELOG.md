@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `NodeExporterCollectorFailed` alert being received for customer workload.
+
 ## [4.38.0] - 2025-02-04
 
 ### Changed

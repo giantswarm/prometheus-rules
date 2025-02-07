@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- fix capi-kubeadmconfig rule for hybrid providers
+
 ## [4.38.1] - 2025-02-06
 
 ### Fixed

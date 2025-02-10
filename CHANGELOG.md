@@ -11,11 +11,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add alert `ClusterCrossplaneResourcesNotReady` for Crossplane resources that are critical for clusters
 
+### Fixed
+
+- fix capi-kubeadmconfig rule for hybrid providers
+
+## [4.38.1] - 2025-02-06
+
+### Fixed
+
+- Fix `NodeExporterCollectorFailed` alert being received for customer workload.
+
+## [4.38.0] - 2025-02-04
+
+### Changed
+
+- Change alertmanager config url in CI and README
+- Exclude `CONNECT` for API server request duration due to long-lived connections in management clusters.
+- Exclude `exec_sync` from `KubeletDockerOperationsLatencyTooHigh` because they are operations which can be long-running.
+- Exclude Kong validation webhook from `WorkloadClusterAPIServerAdmissionWebhookErrors`.
+
+## [4.37.0] - 2025-01-31
+
+### Changed
+
+- Ignore webhook rejection for `Kyverno` webhooks.
+- Exclude `CONNECT` for API server request duration due to long-lived connections.
+- Increase timeout for unexpected taints on CAPI nodes.
+
 ## [4.36.0] - 2025-01-30
 
 ### Changed
 
 - Change team label `turtles` to `tenet`.
+
+### Fixed
+
+- Fix the `MimirObjectStorageLowRate` alert to be based on a better aligned metric to avoid false positives when Mimir restarts (c.f. https://github.com/giantswarm/giantswarm/issues/32419).
 
 ## [4.35.0] - 2025-01-28
 
@@ -3359,7 +3390,10 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.36.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.38.1...HEAD
+[4.38.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.38.0...v4.38.1
+[4.38.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.37.0...v4.38.0
+[4.37.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.36.0...v4.37.0
 [4.36.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.35.0...v4.36.0
 [4.35.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.34.0...v4.35.0
 [4.34.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.33.0...v4.34.0

@@ -58,10 +58,12 @@ spec:
         severity: notify
         team: tenet
         topic: kubernetes
+    # operation type exec_type Because "exec_sync" operations can be long-running, 
+    # they inflate the 90th-percentile runtime duration above the 120-second threshold, causing the alert to constantly fire. Excluding "exec_sync" or raising the threshold can reduce false positives. 
     - alert: KubeletDockerOperationsLatencyTooHigh
       annotations:
         description: '{{`Kubelet ({{ $labels.instance }}) is taking too long to perform runtime {{ $labels.operation_type }} operations.`}}'
-      expr: histogram_quantile(0.9, rate(kubelet_runtime_operations_duration_seconds_bucket{operation_type!="pull_image"}[5m])) > 120
+      expr: histogram_quantile(0.9, rate(kubelet_runtime_operations_duration_seconds_bucket{operation_type!~"pull_image|exec_sync"}[5m])) > 120
       for: 10m
       labels:
         area: kaas

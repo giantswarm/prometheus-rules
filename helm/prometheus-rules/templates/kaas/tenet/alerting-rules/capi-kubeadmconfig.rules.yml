@@ -10,7 +10,16 @@ spec:
     - name: capi-kubeadmconfig
       rules:
         - alert: KubeadmConfigNotReady
-          expr: capi_kubeadmconfig_status_condition{type="Ready", status="False"} > 0
+          expr: |-
+            (
+              capi_kubeadmconfig_status_condition{type="Ready", status="False"}
+              * on(cluster_id) group_left(provider)
+              sum(
+                  label_replace(
+                    capi_cluster_info, "provider", "vsphere", "infrastructure_reference_kind", "VSphereCluster"
+                  )
+              ) by (cluster_id, provider)
+            ) > 0
           for: 1h
           labels:
             area: kaas

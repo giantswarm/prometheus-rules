@@ -12,7 +12,7 @@ spec:
         - alert: KubeadmConfigNotReady
           expr: |-
             (
-              app_operator_app_info{status="not-installed", catalog=~"giantswarm|cluster|default", team!~"^$|noteam"}
+              capi_kubeadmconfig_status_condition{type="Ready", status="False"}
               * on(cluster_id) group_left(provider)
               sum(
                   label_replace(

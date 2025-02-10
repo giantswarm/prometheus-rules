@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: cluster-crossplane.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: cluster-crossplane
+    rules:
+    - alert: ClusterCrossplaneResourcesNotReady
+      annotations:
+        # Crossplane doesn't offer object names and the objects are stored on the MC, so right
+        # now (2025-01), we can't make this alert WC-specific.
+        description: '{{`Not all managed Crossplane resources of type "{{ $labels.gvk }}" on {{ $labels.cluster_id }} are ready. This could affect creation or health of workload clusters.`}}'
+        opsrecipe: cluster-crossplane-resources
+      # Match critical resources deployed by cluster-aws via aws-nth-crossplane-resources,
+      # cilium-crossplane-resources, ...
+      expr: crossplane_managed_resource_exists{gvk=~".*Kind=(Queue|QueuePolicy|Role|Rule|SecurityGroup|SecurityGroupEgressRule|SecurityGroupIngressRule|Target)"} != crossplane_managed_resource_ready{gvk=~".*Kind=(Queue|QueuePolicy|Role|Rule|SecurityGroup|SecurityGroupEgressRule|SecurityGroupIngressRule|Target)"}
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: phoenix

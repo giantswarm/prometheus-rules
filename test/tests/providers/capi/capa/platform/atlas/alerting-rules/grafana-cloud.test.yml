@@ -28,7 +28,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: "iWowmlSmk/prometheus?var-cluster=mimir-to-grafana-cloud"
+              dashboard: "iWowmlSmk/prometheus?orgId=1&var-cluster=mimir-to-grafana-cloud"
               description: "Prometheus Mimir to Grafana-Cloud is down."
               opsrecipe: "mimir-grafana-cloud-exporter-failing/"
       - alertname: MimirToGrafanaCloudExporterDown
@@ -55,7 +55,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: "iWowmlSmk/prometheus?var-cluster=mimir-to-grafana-cloud"
+              dashboard: "iWowmlSmk/prometheus?orgId=1&var-cluster=mimir-to-grafana-cloud"
               description: "Prometheus Mimir to Grafana-Cloud is down."
               opsrecipe: "mimir-grafana-cloud-exporter-failing/"
       - alertname: MimirToGrafanaCloudExporterDown
@@ -89,7 +89,7 @@ tests:
               pipeline: "testing"
               provider: "capa"
             exp_annotations:
-              dashboard: "promRW001/prometheus-remote-write"
+              dashboard: "promRW001/prometheus-remote-write?orgId=1"
               description: "Prometheus Mimir to Grafana-Cloud is failing to read or write data."
               opsrecipe: "mimir-grafana-cloud-exporter-failing/"
       - alertname: MimirToGrafanaCloudExporterFailures
@@ -111,7 +111,7 @@ tests:
               pipeline: "testing"
               provider: "capa"
             exp_annotations:
-              dashboard: "promRW001/prometheus-remote-write"
+              dashboard: "promRW001/prometheus-remote-write?orgId=1"
               description: "Prometheus Mimir to Grafana-Cloud is failing to read or write data."
               opsrecipe: "mimir-grafana-cloud-exporter-failing/"
   # Tests for `MimirToGrafanaCloudExporterTooManyRestarts` alert
@@ -149,7 +149,7 @@ tests:
               pipeline: "testing"
               provider: "capa"
             exp_annotations:
-              dashboard: "promRW001/prometheus-remote-write"
+              dashboard: "promRW001/prometheus-remote-write?orgId=1"
               description: "Prometheus Mimir to Grafana-Cloud is restarting too much."
               opsrecipe: "mimir-grafana-cloud-exporter-failing/"
       - alertname: MimirToGrafanaCloudExporterTooManyRestarts

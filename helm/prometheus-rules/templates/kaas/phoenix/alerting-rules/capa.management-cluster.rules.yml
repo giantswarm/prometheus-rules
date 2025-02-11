@@ -33,7 +33,7 @@ spec:
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         opsrecipe: container-is-restarting-too-often/
-        dashboard: bdiako8tt1b7kc/capa-agregated-error-logs-for-capa-controllers
+        dashboard: bdiako8tt1b7kc/capa-aggregated-error-logs-for-capa-controllers?orgId=2
       expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"(aws.*|capa-.*|irsa-operator.*)", cluster_type="management_cluster"}[1h]), "service", "/", "namespace", "pod") > 6
       for: 5m
       labels:

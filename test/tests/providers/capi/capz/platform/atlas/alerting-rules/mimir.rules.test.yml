@@ -83,7 +83,7 @@ tests:
               provider: aws
               pipeline: testing
             exp_annotations:
-              dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview
+              dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview?orgId=2
               description: "Mimir component : mimir-ingester is down."
               opsrecipe: "mimir/"
   - interval: 1m
@@ -111,7 +111,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler
+              dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler?orgId=2
               description: "Mimir ruler is failing to process PrometheusRules."
               opsrecipe: "mimir/"
       - alertname: MimirRulerEventsFailed
@@ -139,7 +139,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview
+              dashboard: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview?orgId=2
               description: Mimir containers are restarting too often.
               opsrecipe: "mimir/"
       - alertname: MimirRestartingTooOften
@@ -384,7 +384,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources
+              dashboard: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources?orgId=2
               description: Mimir compactor has been failing compactions for more than 2 hours since start-up.
               opsrecipe: "mimir#mimircompactorfailedcompaction"
       - alertname: MimirCompactorFailedCompaction
@@ -409,7 +409,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources
+              dashboard: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources?orgId=2
               description: Mimir compactor has been failing its compactions for 2 hours.
               opsrecipe: "mimir#mimircompactorfailedcompaction"
 
@@ -441,7 +441,7 @@ tests:
               test: continuous-test
               topic: observability
             exp_annotations:
-              dashboard: mimir-continuous-test/mimir-continuous-test
+              dashboard: mimir-continuous-test/mimir-continuous-test?orgId=2
               description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because writes are failing."
               opsrecipe: "mimir/"
       - alertname: MimirContinuousTestFailingOnWrites
@@ -475,7 +475,7 @@ tests:
               test: continuous-test
               topic: observability
             exp_annotations:
-              dashboard: mimir-continuous-test/mimir-continuous-test
+              dashboard: mimir-continuous-test/mimir-continuous-test?orgId=2
               description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because queries are failing."
               opsrecipe: "mimir/"
       - alertname: MimirContinuousTestFailingOnReads
@@ -509,7 +509,7 @@ tests:
               topic: observability
               test: continuous-test
             exp_annotations:
-              dashboard: mimir-continuous-test/mimir-continuous-test
+              dashboard: mimir-continuous-test/mimir-continuous-test?orgId=2
               description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because queries are failing."
               opsrecipe: "mimir/"
       - alertname: MimirContinuousTestFailing
@@ -541,7 +541,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: mimir-continuous-test/mimir-continuous-test
+              dashboard: mimir-continuous-test/mimir-continuous-test?orgId=2
               description: "Mimir continuous test myinstall is not producing metrics."
               opsrecipe: "mimir/"
       - alertname: MimirContinuousTestMissing
@@ -563,7 +563,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: mimir-continuous-test/mimir-continuous-test
+              dashboard: mimir-continuous-test/mimir-continuous-test?orgId=2
               description: "Mimir continuous test myinstall is not producing metrics."
               opsrecipe: "mimir/"
 
@@ -596,7 +596,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: 8280707b8f16e7b87b840fc1cc92d4c5/mimir-writes
+              dashboard: 8280707b8f16e7b87b840fc1cc92d4c5/mimir-writes?orgId=2
               description: "Mimir object storage write rate is down."
               opsrecipe: "mimir/"
       - alertname: MimirObjectStorageLowRate
@@ -635,7 +635,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler
+              dashboard: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler?orgId=2
               description: "Mimir Ruler mimir-ruler-aaaaaaaaaa-bbbbb is experiencing 2.00% errors while evaluating rules."
               opsrecipe: "mimir/"
 
@@ -666,7 +666,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: b0d38d318bbddd80476246d4930f9e55
+              dashboard: b0d38d318bbddd80476246d4930f9e55/mimir-alertmanager?orgId=2
               description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to read tenant configurations from storage."
               opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
 
@@ -697,7 +697,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: b0d38d318bbddd80476246d4930f9e55
+              dashboard: b0d38d318bbddd80476246d4930f9e55/mimir-alertmanager?orgId=2
               description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is unable to check tenants ownership via the ring."
               opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
 
@@ -728,6 +728,6 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: b0d38d318bbddd80476246d4930f9e55
+              dashboard: b0d38d318bbddd80476246d4930f9e55/mimir-alertmanager?orgId=2
               description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to replicating partial state to its replicas."
               opsrecipe: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing

@@ -23,7 +23,7 @@ spec:
             description: |-
               {{`The clusters {{$labels.cluster_name}} machinedeployment {{$labels.exported_namespace}}/{{$labels.name}} is not healthy.`}}
             opsrecipe: capi-machinedeployment/
-            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
+            dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
         - alert: MachineDeploymentPaused
           expr: capi_machinedeployment_annotation_paused{paused_value="true"} > 0
           for: 1h
@@ -38,5 +38,5 @@ spec:
             description: |-
               {{`The clusters {{$labels.cluster_name}} machinedeployment {{$labels.exported_namespace}}/{{$labels.name}} is paused.`}}
             opsrecipe: capi-machinedeployment/
-            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
+            dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
 {{- end }}

@@ -24,7 +24,7 @@ spec:
             description: |-
               {{`The clusters {{$labels.cluster_name}} kubeadmcontrolplane {{$labels.exported_namespace}}/{{$labels.name}} does not match the expected number of replicas for longer than 90 minutes.`}}
             opsrecipe: capi-kubeadmcontrolplane/
-            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
+            dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
         - alert: KubeadmControlPlanePaused
           expr: capi_kubeadmcontrolplane_annotation_paused{paused_value="true"} > 0
           for: 1h
@@ -39,5 +39,5 @@ spec:
             description: |-
               {{`The clusters {{$labels.cluster_name}} kubeadmcontrolplane {{$labels.exported_namespace}}/{{$labels.name}} is paused.`}}
             opsrecipe: capi-kubeadmcontrolplane/
-            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
+            dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
 {{- end }}

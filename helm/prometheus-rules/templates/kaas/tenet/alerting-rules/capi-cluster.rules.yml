@@ -23,7 +23,7 @@ spec:
             description: |-
               {{`Cluster {{ $labels.exported_namespace }}/{{ $labels.name }} stuck in {{ $labels.phase }} phase.`}}
             opsrecipe: capi-cluster/
-            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
+            dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
         - alert: ClusterStatusNotReady
           expr: capi_cluster_status_condition{status="False", type="Ready"} > 0
           for: 1h
@@ -38,8 +38,7 @@ spec:
             description: |-
               {{`Cluster {{ $labels.exported_namespace }}/{{ $labels.name }} is not ready.`}}
             opsrecipe: capi-cluster/
-            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
-
+            dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
         - alert: ClusterPaused
           expr: capi_cluster_annotation_paused{paused_value="true"} > 0
           for: 1h
@@ -54,5 +53,5 @@ spec:
             description: |-
               {{`The cluster {{ $labels.exported_namespace }}/{{ $labels.name }} is paused.`}}
             opsrecipe: capi-cluster/
-            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
+            dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
 {{- end }}

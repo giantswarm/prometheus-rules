@@ -26,7 +26,7 @@ tests:
             exp_annotations:
               description: "The clusters clippaxy machinepool giantswarm/clippaxy-def00 is not healthy."
               opsrecipe: capi-machinepool/
-              dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
+              dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
       - alertname: MachinePoolPaused
         eval_time: 75m
         exp_alerts:
@@ -44,4 +44,4 @@ tests:
             exp_annotations:
               description: "The clusters grumpy machinepool giantswarm/grumpy-72r5c is paused."
               opsrecipe: capi-machinepool/
-              dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
+              dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2

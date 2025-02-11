@@ -139,7 +139,7 @@ spec:
     rules:
     - alert: LokiCompactorFailedCompaction
       annotations:
-        dashboard: loki-retention/loki-retention
+        dashboard: loki-retention/loki-retention{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
         description: 'Loki compactor has been failing compactions for more than 2 hours since last compaction.'
         opsrecipe: loki#lokicompactorfailedcompaction
       # This alert checks if Loki's the last successful compaction run is older than 2 hours
@@ -156,7 +156,7 @@ spec:
         topic: observability
     - alert: LokiCompactorFailedCompaction
       annotations:
-        dashboard: loki-retention/loki-retention
+        dashboard: loki-retention/loki-retention{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
         description: 'Loki compactor has been failing compactions for more than 2 hours since start-up.'
         opsrecipe: loki#lokicompactorfailedcompaction
       # This alert covers the special case at compactor startup, where the "normal" alert would always consider time `0` is more than 2 hours ago, yet we want to let it 2 hours + `for` duration.
@@ -173,7 +173,7 @@ spec:
         topic: observability
     - alert: LokiMissingLogs
       annotations:
-        dashboard: loki-canary/loki-canary
+        dashboard: loki-canary/loki-canary{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
         description: This alert checks that loki is not missing canary logs
         opsrecipe: loki/
       expr: |
@@ -197,7 +197,7 @@ spec:
         topic: observability
     - alert: LokiObjectStorageLowRate
       annotations:
-        dashboard: loki-operational/loki-operational
+        dashboard: loki-operational/loki-operational{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
         description: '{{`Loki object storage write rate is down.`}}'
         opsrecipe: loki/
       expr: |

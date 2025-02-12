@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.39.1] - 2025-02-12
+
 ### Fixed
 
 - fix all capi alerts for hybrid providers
@@ -3396,7 +3398,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.39.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.39.1...HEAD
+[4.39.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.39.0...v4.39.1
 [4.39.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.38.1...v4.39.0
 [4.38.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.38.0...v4.38.1
 [4.38.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.37.0...v4.38.0

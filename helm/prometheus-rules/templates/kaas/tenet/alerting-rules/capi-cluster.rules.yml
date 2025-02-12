@@ -10,7 +10,16 @@ spec:
     - name: capi-cluster
       rules:
         - alert: ClusterUnhealthyPhase
-          expr: capi_cluster_status_phase{phase!="Provisioned"} > 0
+          expr: |-
+            (
+              capi_cluster_status_phase{phase!="Provisioned"}
+              * on(cluster_id) group_left(provider)
+              sum(
+                  label_replace(
+                    capi_cluster_info, "provider", "vsphere", "infrastructure_reference_kind", "VSphereCluster"
+                  )
+              ) by (cluster_id, provider)
+            ) > 0
           for: 1h
           labels:
             area: kaas
@@ -25,7 +34,16 @@ spec:
             opsrecipe: capi-cluster/
             dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
         - alert: ClusterStatusNotReady
-          expr: capi_cluster_status_condition{status="False", type="Ready"} > 0
+          expr: |-
+            (
+              capi_cluster_status_condition{status="False", type="Ready"}
+              * on(cluster_id) group_left(provider)
+              sum(
+                  label_replace(
+                    capi_cluster_info, "provider", "vsphere", "infrastructure_reference_kind", "VSphereCluster"
+                  )
+              ) by (cluster_id, provider)
+            ) > 0
           for: 1h
           labels:
             area: kaas
@@ -40,7 +58,16 @@ spec:
             opsrecipe: capi-cluster/
             dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
         - alert: ClusterPaused
-          expr: capi_cluster_annotation_paused{paused_value="true"} > 0
+          expr: |-
+            (
+              capi_cluster_annotation_paused{paused_value="true"}
+              * on(cluster_id) group_left(provider)
+              sum(
+                  label_replace(
+                    capi_cluster_info, "provider", "vsphere", "infrastructure_reference_kind", "VSphereCluster"
+                  )
+              ) by (cluster_id, provider)
+            ) > 0
           for: 1h
           labels:
             area: kaas

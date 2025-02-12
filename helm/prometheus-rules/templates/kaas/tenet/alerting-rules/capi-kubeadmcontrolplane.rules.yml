@@ -10,7 +10,16 @@ spec:
     - name: capi-kubeadmcontrolplane
       rules:
         - alert: KubeadmControlPlaneReplicasMismatch
-          expr: capi_kubeadmcontrolplane_spec_replicas != capi_kubeadmcontrolplane_status_replicas_ready
+          expr: |-
+            (
+              capi_kubeadmcontrolplane_spec_replicas != capi_kubeadmcontrolplane_status_replicas_ready
+              * on(cluster_id) group_left(provider)
+              sum(
+                  label_replace(
+                    capi_cluster_info, "provider", "vsphere", "infrastructure_reference_kind", "VSphereCluster"
+                  )
+              ) by (cluster_id, provider)
+            )
           # 90min at max 3 replicas results in maximum of 30 minutes per control-plane machine.
           for: 90m
           labels:
@@ -26,7 +35,16 @@ spec:
             opsrecipe: capi-kubeadmcontrolplane/
             dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
         - alert: KubeadmControlPlanePaused
-          expr: capi_kubeadmcontrolplane_annotation_paused{paused_value="true"} > 0
+          expr: |-
+            (
+              capi_kubeadmcontrolplane_annotation_paused{paused_value="true"}
+              * on(cluster_id) group_left(provider)
+              sum(
+                  label_replace(
+                    capi_cluster_info, "provider", "vsphere", "infrastructure_reference_kind", "VSphereCluster"
+                  )
+              ) by (cluster_id, provider)
+            ) > 0
           for: 1h
           labels:
             area: kaas

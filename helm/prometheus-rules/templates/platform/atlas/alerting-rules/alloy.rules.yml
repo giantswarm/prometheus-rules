@@ -16,7 +16,7 @@ spec:
       rules:
         - alert: AlloySlowComponentEvaluations
           annotations:
-            dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller
+            dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
             description: '{{`Component evaluations are taking too long under job {{ $labels.job }}, component_id {{ $labels.component_id }}.`}}'
             opsrecipe: alloy/
             summary: Component evaluations are taking too long.
@@ -33,7 +33,7 @@ spec:
             cancel_if_cluster_status_updating: "true"
         - alert: AlloyUnhealthyComponents
           annotations:
-            dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller
+            dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
             description: '{{`Unhealthy components detected under job {{ $labels.job }}`}}'
             opsrecipe: alloy/
             summary: Unhealthy components detected.
@@ -71,7 +71,7 @@ spec:
         # and join the pods with the not running containers
         - alert: LoggingAgentDown
           annotations:
-            dashboard: 53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview
+            dashboard: 53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
             description: '{{`Scraping of all logging-agent pods to check if one failed every 30 minutes.`}}'
             opsrecipe: alloy/
           expr: |-
@@ -99,7 +99,7 @@ spec:
             description: '{{`Monitoring agent fails to send samples.`}}'
             summary: Monitoring agent fails to send samples to remote write endpoint.
             opsrecipe: alloy/#monitoring-agent-down
-            dashboard: promRW001/prometheus-remote-write
+            dashboard: promRW001/prometheus-remote-write{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=1{{ end }}
           expr: |-
             count(
               label_replace(
@@ -129,7 +129,7 @@ spec:
             description: '{{`Monitoring agent fails to send samples.`}}'
             summary: Monitoring agent fails to send samples to remote write endpoint.
             opsrecipe: alloy/#monitoring-agent-down
-            dashboard: promRW001/prometheus-remote-write
+            dashboard: promRW001/prometheus-remote-write{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=1{{ end }}
           expr: |-
             count(
               label_replace(

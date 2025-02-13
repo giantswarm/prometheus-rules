@@ -32,7 +32,7 @@ spec:
             description: |-
               {{`The clusters {{ $labels.cluster_name }} machinepool {{ $labels.exported_namespace }}/{{ $labels.name }} is not healthy.`}}
             opsrecipe: capi-machinepool/
-            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
+            dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
         - alert: MachinePoolPaused
           expr: |-
             (
@@ -56,5 +56,5 @@ spec:
             description: |-
               {{`The clusters {{ $labels.cluster_name }} machinepool {{ $labels.exported_namespace }}/{{ $labels.name }} is paused.`}}
             opsrecipe: capi-machinepool/
-            dashboard: bdi7iswg81czkcasd/capi-agregated-error-logs-for-capi-controllers
+            dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
 {{- end }}

@@ -36,7 +36,7 @@ spec:
       annotations:
         description: '{{`Prometheus Mimir to Grafana-Cloud is down.`}}'
         opsrecipe: mimir-grafana-cloud-exporter-failing/
-        dashboard: iWowmlSmk/prometheus?var-cluster=mimir-to-grafana-cloud
+        dashboard: iWowmlSmk/prometheus?orgId=1&var-cluster=mimir-to-grafana-cloud
       # We can use absent function here because the prometheus mimir-to-grafana-cloud is a MC component only
       expr: up{job="mimir/mimir-to-grafana-cloud"} == 0 or absent(up{job="mimir/mimir-to-grafana-cloud", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
       for: 30m
@@ -53,7 +53,7 @@ spec:
       annotations:
         description: '{{`Prometheus Mimir to Grafana-Cloud is failing to read or write data.`}}'
         opsrecipe: mimir-grafana-cloud-exporter-failing/
-        dashboard: promRW001/prometheus-remote-write
+        dashboard: promRW001/prometheus-remote-write?orgId=1
       # We can have encountered failures with remote read and/or remote write
       # For remote read, we are looking the number of read queries are increasing
       # For remote write, we are looking the rate (on 10 minutes) of failed samples are not greater than 0 for 30 minutes
@@ -83,7 +83,7 @@ spec:
       annotations:
         description: '{{`Prometheus Mimir to Grafana-Cloud is restarting too much.`}}'
         opsrecipe: mimir-grafana-cloud-exporter-failing/
-        dashboard: promRW001/prometheus-remote-write
+        dashboard: promRW001/prometheus-remote-write?orgId=1
       expr: |
         count by (pod, cluster_id, installation, provider, pipeline) (changes(kube_pod_status_ready{condition="true", namespace="mimir", pod=~"prometheus-mimir-to-grafana-cloud-.*"}[20m])) > 3
       labels:

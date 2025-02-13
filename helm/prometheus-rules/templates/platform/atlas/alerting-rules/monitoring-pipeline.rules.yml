@@ -13,7 +13,7 @@ spec:
       annotations:
         description: '{{`Monitoring agent can''t communicate with Remote Storage API at {{ $labels.url }}.`}}'
         opsrecipe: monitoring-pipeline/
-        dashboard: promRW001/prometheus-remote-write
+        dashboard: promRW001/prometheus-remote-write{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=1{{ end }}
       expr: |-
         rate(prometheus_remote_storage_samples_failed_total[10m]) > 0.1
           or rate(prometheus_remote_storage_samples_total[10m]) == 0
@@ -27,7 +27,7 @@ spec:
         topic: observability
     - alert: JobScrapingFailure
       annotations:
-        dashboard: servicemonitors-details/servicemonitors-details
+        dashboard: servicemonitors-details/servicemonitors-details{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=1{{ end }}
         description: '{{`Monitoring agents for cluster {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}'
         summary: Monitoring agent failed to scrape all targets in a job.
         opsrecipe: monitoring-job-scraping-failure/
@@ -46,7 +46,7 @@ spec:
         cancel_if_outside_working_hours: "true"
     - alert: CriticalJobScrapingFailure
       annotations:
-        dashboard: servicemonitors-details/servicemonitors-details
+        dashboard: servicemonitors-details/servicemonitors-details{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=1{{ end }}
         description: '{{`Monitoring agents for cluster {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}'
         summary: Monitoring agent failed to scrape all targets in a job.
         opsrecipe: monitoring-job-scraping-failure/

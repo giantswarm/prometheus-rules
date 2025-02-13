@@ -18,7 +18,7 @@ spec:
         opsrecipe: irsa-operator-error/
         ## TODO Remove this if all vintage installations are gone
         {{- if eq .Values.managementCluster.provider.flavor "capi" }}
-        dashboard: bdiako8tt1b7kc/capa-agregated-error-logs-for-capa-controllers
+        dashboard: bdiako8tt1b7kc/capa-aggregated-error-logs-for-capa-controllers?orgId=2
         {{- end }}
       expr: irsa_operator_cluster_errors{cluster_type="management_cluster"} > 0
       for: 10m

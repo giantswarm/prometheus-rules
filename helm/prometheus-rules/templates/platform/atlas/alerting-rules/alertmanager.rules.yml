@@ -12,7 +12,7 @@ spec:
     rules:
     - alert: AlertmanagerNotifyNotificationsFailing
       annotations:
-        dashboard: alertmanager-overview/alertmanager-overview
+        dashboard: alertmanager-overview/alertmanager-overview{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=1{{ end }}
         description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
         opsrecipe: alert-manager-notifications-failing/
       # Interval = 20m because currently AlertManager config set `group_interval=15m` that means that if a notification fails, it will be retried after 15m
@@ -28,7 +28,7 @@ spec:
         cancel_if_outside_working_hours: "true"
     - alert: AlertmanagerPageNotificationsFailing
       annotations:
-        dashboard: alertmanager-overview/alertmanager-overview
+        dashboard: alertmanager-overview/alertmanager-overview{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=1{{ end }}
         description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
         opsrecipe: alert-manager-notifications-failing/
       # Here, we decide to notify after 2 successive failures (opsgenie notification), so we need to wait 2*15m = 30m before notifying.

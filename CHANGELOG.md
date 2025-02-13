@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+Add the necessary orgIds to public and private dashboards (https://github.com/giantswarm/roadmap/issues/3826)
+
 ## [4.39.1] - 2025-02-12
 
 ### Fixed
 
-- fix all capi alerts for hybrid providers
+- fix all capi alerts for hybrid provider
 
 ## [4.39.0] - 2025-02-11
 

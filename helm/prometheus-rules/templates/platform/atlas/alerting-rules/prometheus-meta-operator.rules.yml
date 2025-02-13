@@ -1,3 +1,4 @@
+{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -9,7 +10,6 @@ spec:
   groups:
   - name: observability
     rules:
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
     - alert: "Heartbeat"
       expr: up{job=~".*prometheus/prometheus.*",instance!="prometheus-agent"} == 1
       labels:
@@ -59,7 +59,6 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    {{- end }}
     - alert: "PrometheusMetaOperatorReconcileErrors"
       annotations:
         description: '{{`prometheus-meta-operator controller {{ $labels.controller }} too many reconcile errors.`}}'
@@ -77,3 +76,4 @@ spec:
         severity: page
         team: atlas
         topic: observability
+{{- end }}

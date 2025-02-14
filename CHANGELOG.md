@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update grafana permission cronjob related alerts to only run on vintage installations
+
 ## [4.41.0] - 2025-02-14
 
 ### Removed

@@ -28,6 +28,7 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
     - alert: GrafanaFolderPermissionsDown
       # Monitors that folder permissions have been updated at least once in the last 6 hours.
       # We have a cronjob (grafana-permissions) that runs every 20 minutes.
@@ -103,3 +104,4 @@ spec:
         team: atlas
         topic: managementcluster
         cancel_if_outside_working_hours: "true"
+    {{- end }}

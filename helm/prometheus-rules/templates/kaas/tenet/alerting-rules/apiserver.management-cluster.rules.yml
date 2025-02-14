@@ -13,26 +13,6 @@ spec:
   groups:
   - name: apiserver
     rules:
-    # expr produces 95th percentile latency for requests to the api server, by request verb.
-    # verb WATCH is excluded because it produces a flat line and is not relevant.
-    # verb CONNECT requests often stay open for streaming or tunneling, avoid counting those long-lived connections.
-    # apiserver_request_latencies_bucket are expressed in microseconds, dividing by 1e+06 bring this to seconds.
-    - alert: ManagementClusterAPIServerLatencyTooHigh
-      annotations:
-        description: '{{`Kubernetes API Server {{ $labels.verb }} request latency is too high.`}}'
-        opsrecipe: apiserver-overloaded/
-      expr: histogram_quantile(0.95, sum(rate(apiserver_request_duration_seconds_bucket{cluster_type="management_cluster", verb=~"DELETE|GET|PATCH|POST|PUT"}[1h])) by (cluster_id, installation, pipeline, provider, verb, le)) > 1
-      for: 1h
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_cluster_with_notready_nodepools: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
-        team: tenet
-        topic: managementcluster
     - alert: ManagementClusterAPIServerAdmissionWebhookErrors
       annotations:
         description: '{{`Kubernetes API Server {{ $labels.cluster_id }} having admission webhook errors.`}}'

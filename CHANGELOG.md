@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove `ManagementClusterAPIServerLatencyTooHigh` and `KubeletDockerOperationsLatencyTooHigh` noisy notifying alerts.
+
 ## [4.40.0] - 2025-02-13
 
 ### Changed

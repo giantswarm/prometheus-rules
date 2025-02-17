@@ -172,11 +172,11 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    - alert: MimirObjectStorageLowRate
+    - alert: MimirObjectStoreLowRate
       annotations:
-        dashboard: 8280707b8f16e7b87b840fc1cc92d4c5/mimir-writes?orgId=2
-        description: '{{`Mimir object storage write rate is down.`}}'
-        opsrecipe: mimir/
+        dashboard: e1324ee2a434f4158c00a9ee279d3292/mimir-object-store?orgId=2
+        description: '{{`Low rate of writes to the Mimir object store.`}}'
+        opsrecipe: mimir/#mimirobjectstorelowrate
       expr: |
         sum by (component, installation, cluster_id, cluster_type, pipeline, provider) (
           rate(thanos_objstore_bucket_operation_failures_total{cluster_type="management_cluster", namespace="mimir"}[30m])

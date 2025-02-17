@@ -174,7 +174,7 @@ spec:
         topic: observability
     - alert: MimirObjectStorageLowRate
       annotations:
-        dashboard: 8280707b8f16e7b87b840fc1cc92d4c5/mimir-writes?orgId=2
+        dashboard: e1324ee2a434f4158c00a9ee279d3292/mimir-object-store?orgId=2
         description: '{{`Mimir object storage write rate is down.`}}'
         opsrecipe: mimir/
       expr: |

@@ -16,9 +16,9 @@ spec:
       rules:
         - alert: AlloySlowComponentEvaluations
           annotations:
-            dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
+            dashboardUid: bf9f456aad7108b2c808dbd9973e386f/alloy-controller{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
             description: '{{`Component evaluations are taking too long under job {{ $labels.job }}, component_id {{ $labels.component_id }}.`}}'
-            opsrecipe: alloy/
+            runbook_url: alloy/
             summary: Component evaluations are taking too long.
           expr: sum by (cluster_id, installation, provider, pipeline, namespace, job, component_id) (rate(alloy_component_evaluation_slow_seconds[10m])) > 0
           for: 15m
@@ -33,9 +33,9 @@ spec:
             cancel_if_cluster_status_updating: "true"
         - alert: AlloyUnhealthyComponents
           annotations:
-            dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
+            dashboardUid: bf9f456aad7108b2c808dbd9973e386f/alloy-controller{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
             description: '{{`Unhealthy components detected under job {{ $labels.job }}`}}'
-            opsrecipe: alloy/
+            runbook_url: alloy/
             summary: Unhealthy components detected.
           expr: sum by (cluster_id, installation, provider, pipeline, namespace, job) (alloy_component_controller_running_components{health_type!="healthy"}) > 0
           for: 15m
@@ -53,7 +53,7 @@ spec:
         - alert: AlloyForPrometheusRulesDown
           annotations:
             description: 'Alloy sending PrometheusRules to Loki and Mimir ruler is down.'
-            opsrecipe: prometheus-rules/
+            runbook_url: prometheus-rules/
           expr: count(up{job="alloy-rules", namespace="monitoring"} == 0) by (cluster_id, installation, provider, pipeline) > 0
           for: 1h
           labels:
@@ -71,9 +71,9 @@ spec:
         # and join the pods with the not running containers
         - alert: LoggingAgentDown
           annotations:
-            dashboard: 53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
+            dashboardUid: 53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
             description: '{{`Scraping of all logging-agent pods to check if one failed every 30 minutes.`}}'
-            opsrecipe: alloy/
+            runbook_url: alloy/
           expr: |-
             kube_pod_info{pod=~"alloy-logs.*"}
             * on(cluster_id, pod)
@@ -98,8 +98,8 @@ spec:
           annotations:
             description: '{{`Monitoring agent fails to send samples.`}}'
             summary: Monitoring agent fails to send samples to remote write endpoint.
-            opsrecipe: alloy/#monitoring-agent-down
-            dashboard: promRW001/prometheus-remote-write{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=1{{ end }}
+            runbook_url: alloy/#monitoring-agent-down
+            dashboardUid: promRW001/prometheus-remote-write{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=1{{ end }}
           expr: |-
             count(
               label_replace(
@@ -128,8 +128,8 @@ spec:
           annotations:
             description: '{{`Monitoring agent fails to send samples.`}}'
             summary: Monitoring agent fails to send samples to remote write endpoint.
-            opsrecipe: alloy/#monitoring-agent-down
-            dashboard: promRW001/prometheus-remote-write{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=1{{ end }}
+            runbook_url: alloy/#monitoring-agent-down
+            dashboardUid: promRW001/prometheus-remote-write{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=1{{ end }}
           expr: |-
             count(
               label_replace(
@@ -157,7 +157,7 @@ spec:
           annotations:
             description: '{{`At least one of the monitoring agent shard is missing.`}}'
             summary: Monitoring agent is missing shards.
-            opsrecipe: alloy/#monitoring-agent-down
+            runbook_url: alloy/#monitoring-agent-down
           expr: |-
             kube_statefulset_status_replicas{statefulset="alloy-metrics"}
               - kube_statefulset_status_replicas_ready{statefulset="alloy-metrics"}
@@ -177,7 +177,7 @@ spec:
           annotations:
             description: '{{`At least one of the monitoring agent shard is missing.`}}'
             summary: Monitoring agent is missing shards.
-            opsrecipe: alloy/#monitoring-agent-down
+            runbook_url: alloy/#monitoring-agent-down
           expr: |-
             kube_statefulset_status_replicas{statefulset="alloy-metrics"}
               - kube_statefulset_status_replicas_ready{statefulset="alloy-metrics"}

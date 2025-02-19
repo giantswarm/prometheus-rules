@@ -16,7 +16,7 @@ spec:
     - alert: ManagementClusterEtcdDown
       annotations:
         description: '{{`Etcd ({{ $labels.pod }}) in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} is down.`}}'
-        opsrecipe: etcd-down/
+        runbook_url: etcd-down/
       expr: up{app="etcd", cluster_type="management_cluster"} == 0
       for: 10m
       labels:
@@ -31,7 +31,7 @@ spec:
     - alert: ManagementClusterEtcdCommitDurationTooHigh
       annotations:
         description: '{{`Etcd ({{ $labels.pod }}) in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has a too high commit duration.`}}'
-        opsrecipe: etcd-high-commit-duration/
+        runbook_url: etcd-high-commit-duration/
       expr: histogram_quantile(0.95, rate(etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="management_cluster", provider!="eks"}[5m])) > 1.0
       for: 15m
       labels:
@@ -43,7 +43,7 @@ spec:
     - alert: ManagementClusterEtcdDBSizeTooLarge
       annotations:
         description: '{{`Etcd ({{ $labels.pod }}) in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has a too large database.`}}'
-        opsrecipe: etcd-db-size-too-large/
+        runbook_url: etcd-db-size-too-large/
       expr: (etcd_mvcc_db_total_size_in_bytes{cluster_type="management_cluster", provider!="eks"} / etcd_server_quota_backend_bytes{cluster_type="management_cluster", provider!="eks"}) * 100 > 80
       for: 90m
       labels:
@@ -65,7 +65,7 @@ spec:
     - alert: ManagementClusterEtcdHasNoLeader
       annotations:
         description: '{{`Etcd ({{ $labels.pod }}) in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has no leader.`}}'
-        opsrecipe: etcd-has-no-leader/
+        runbook_url: etcd-has-no-leader/
       expr: etcd_server_has_leader{cluster_type="management_cluster", provider!="eks"} == 0
       for: 5m
       labels:
@@ -77,7 +77,7 @@ spec:
     - alert: ManagementClusterEtcdMetricsMissing
       annotations:
         description: '{{`Etcd metrics missing for {{ $labels.cluster_id }}.`}}'
-        opsrecipe: etcd-metrics-missing/
+        runbook_url: etcd-metrics-missing/
       expr: count(up{cluster_type="management_cluster", provider!="eks"}) by (cluster_id, installation, pipeline, provider) unless count(etcd_server_id{cluster_type="management_cluster", provider!="eks"}) by (cluster_id, installation, pipeline, provider)
       for: 1h
       labels:

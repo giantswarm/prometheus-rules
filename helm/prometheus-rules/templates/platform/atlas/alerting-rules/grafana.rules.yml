@@ -15,8 +15,8 @@ spec:
     - alert: GrafanaDown
       annotations:
         description: '{{`Grafana ({{ $labels.instance }}) is down.`}}'
-        opsrecipe: grafana-down/
-        dashboard: qRQXmRnik/Grafana{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
+        runbook_url: grafana-down/
+        dashboardUid: qRQXmRnik/Grafana{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
       expr: up{service="grafana", cluster_type="management_cluster"} == 0
       for: 1h
       labels:
@@ -35,7 +35,7 @@ spec:
       # When successfully run, folders permissions successful updates counter increases.
       annotations:
         description: '{{`Grafana Folder could not be updated.`}}'
-        opsrecipe: grafana-perms/
+        runbook_url: grafana-perms/
       expr: |
         sum by(cluster_id, installation, provider, pipeline) (
           increase(grafana_http_request_duration_seconds_count{
@@ -74,7 +74,7 @@ spec:
       # Here we check the kubernetes job status
       annotations:
         description: '{{`Grafana permissions updates cronjob failed to run.`}}'
-        opsrecipe: grafana-perms/
+        runbook_url: grafana-perms/
       # expression explanation:
       # - we create cronjob label from cron name (label_replace)
       # - we sum number of failed to have one global value
@@ -93,7 +93,7 @@ spec:
     - alert: GrafanaPermissionJobHasNotBeenScheduledForTooLong
       annotations:
         description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 1 day.`}}'
-        opsrecipe: job-has-not-been-scheduled-for-too-long/
+        runbook_url: job-has-not-been-scheduled-for-too-long/
       # This alert triggers when the grafana permission job did not schedule for more than 1 day
       # or if the job did not run successfully at least once in the last day
       expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="grafana-permissions", cluster_type="management_cluster"}) > 86400

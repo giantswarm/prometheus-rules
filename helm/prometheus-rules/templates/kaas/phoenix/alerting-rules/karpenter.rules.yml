@@ -14,7 +14,7 @@ spec:
           annotations:
             description: |
               Karpenter provisioner {{`{{ $labels.provisioner }}`}} on cluster {{`{{ $labels.cluster_id }}`}} launched new nodes, but some of nodes did not registered in the cluster
-            opsrecipe: karpenter/
+            runbook_url: karpenter/
           expr: sum by (provisioner, cluster_id, installation, pipeline, provider) (karpenter_machines_launched) - sum by (provisioner, cluster_id, installation, pipeline, provider)(karpenter_machines_registered) != 0
           for: 1h
           labels:
@@ -28,7 +28,7 @@ spec:
           annotations:
             description: |
               Provisioner {{`{{ $labels.provisioner }}`}} on cluster {{`{{ $labels.cluster_id }}`}} is almost full.
-            opsrecipe: karpenter/
+            runbook_url: karpenter/
           expr: karpenter_provisioner_usage_pct > 90
           for: 72h
           labels:
@@ -42,7 +42,7 @@ spec:
           annotations:
             description: |
               Karpenter on cluster {{`{{ $labels.cluster_id }}`}} is getting errors during API calls to the cloud provider.
-            opsrecipe: karpenter/
+            runbook_url: karpenter/
           expr: rate(karpenter_cloudprovider_errors_total{}[5m]) > 0.1
           for: 10m
           labels:

@@ -30,9 +30,9 @@ tests:
               team: atlas
               topic: monitoring
             exp_annotations:
-              dashboard: alertmanager-overview/alertmanager-overview?orgId=1
+              dashboardUid: alertmanager-overview/alertmanager-overview?orgId=1
               description: "AlertManager slack notifications are failing."
-              opsrecipe: alert-manager-notifications-failing/
+              runbook_url: alert-manager-notifications-failing/
       - alertname:  AlertmanagerNotifyNotificationsFailing
         eval_time: 240m
   - interval: 1m
@@ -57,9 +57,9 @@ tests:
               team: atlas
               topic: monitoring
             exp_annotations:
-              dashboard: alertmanager-overview/alertmanager-overview?orgId=1
+              dashboardUid: alertmanager-overview/alertmanager-overview?orgId=1
               description: "AlertManager opsgenie notifications are failing."
-              opsrecipe: alert-manager-notifications-failing/
+              runbook_url: alert-manager-notifications-failing/
       - alertname:  AlertmanagerPageNotificationsFailing
         eval_time: 180m
       - alertname:  AlertmanagerPageNotificationsFailing

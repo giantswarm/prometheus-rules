@@ -30,14 +30,14 @@ rule {
     required = true
   }
 
-  # Each alert must have a 'opsrecipe' annotation.
-  annotation "opsrecipe" {
+  # Each alert must have a 'runbook_url' annotation.
+  annotation "runbook_url" {
     severity = "bug"
     required = true
   }
 
-  # Each alert should have a 'dashboard' annotation.
-  annotation "dashboard" {
+  # Each alert should have a 'dashboardUid' annotation.
+  annotation "dashboardUid" {
     severity = "warning"
     required = true
   }

@@ -10,7 +10,7 @@ clean: ## Clean the git work dir and remove all untracked files
 ##@ Testing
 
 .PHONY: test
-test: install-tools template-chart test-rules test-inhibitions test-opsrecipes ## Run all tests
+test: install-tools template-chart test-rules test-inhibitions test-runbooks ## Run all tests
 
 install-tools:
 	./test/hack/bin/fetch-tools.sh
@@ -25,11 +25,11 @@ test-inhibitions: install-tools template-chart ## test whether inhibition labels
 	bash test/hack/bin/get-inhibition.sh
 	cd test/hack/checkLabels; go run main.go
 
-test-opsrecipes: install-tools template-chart ## Check if opsrecipes are valid
-	bash test/hack/bin/check-opsrecipes.sh
+test-runbooks: install-tools template-chart ## Check if runbooks are valid
+	bash test/hack/bin/check-runbooks.sh
 
-test-ci-opsrecipes: install-tools template-chart ## Check if opsrecipes are valid in CI
-	test/hack/bin/check-opsrecipes.sh --ci
+test-ci-runbooks: install-tools template-chart ## Check if runbooks are valid in CI
+	test/hack/bin/check-runbooks.sh --ci
 
 pint: install-tools template-chart ## Run pint
 	GENERATE_ONLY=true bash test/hack/bin/verify-rules.sh

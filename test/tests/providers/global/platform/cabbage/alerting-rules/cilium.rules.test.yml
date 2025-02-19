@@ -25,7 +25,7 @@ tests:
               map_name: "policy_00001"
             exp_annotations:
               description: "Cilium BPF map is about to fill up."
-              opsrecipe: "cilium-bpf-map/"
+              runbook_url: "cilium-bpf-map/"
   - interval: 1m
     input_series:
       - series: 'cilium_bpf_map_pressure{map_name="policy_00001"}'
@@ -46,7 +46,7 @@ tests:
               map_name: "policy_00001"
             exp_annotations:
               description: "Cilium BPF map is about filled up."
-              opsrecipe: "cilium-bpf-map/"
+              runbook_url: "cilium-bpf-map/"
   # CiliumNetworkPolicyFailed for 1.15+ (cilium_policy_change_total{outcome="fail.*"})
   - interval: 1m
     input_series:
@@ -74,7 +74,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Too many Cilium Network Policy errors."
-              opsrecipe: "unsupported-cilium-network-policy/"
+              runbook_url: "unsupported-cilium-network-policy/"
       # cilium_policy_change_total{outcome="success"}
       - alertname: CiliumNetworkPolicyFailed
         eval_time: 110m
@@ -98,4 +98,4 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Too many Cilium Network Policy errors."
-              opsrecipe: "unsupported-cilium-network-policy/"
+              runbook_url: "unsupported-cilium-network-policy/"

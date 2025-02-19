@@ -15,7 +15,7 @@ spec:
         # Crossplane doesn't offer object names and the objects are stored on the MC, so right
         # now (2025-01), we can't make this alert WC-specific.
         description: '{{`Not all managed Crossplane resources of type "{{ $labels.gvk }}" on {{ $labels.cluster_id }} are ready. This could affect creation or health of workload clusters.`}}'
-        opsrecipe: cluster-crossplane-resources
+        runbook_url: cluster-crossplane-resources
       # Match critical resources deployed by cluster-aws via aws-nth-crossplane-resources,
       # cilium-crossplane-resources, ...
       expr: crossplane_managed_resource_exists{gvk=~".*Kind=(Queue|QueuePolicy|Role|Rule|SecurityGroup|SecurityGroupEgressRule|SecurityGroupIngressRule|Target)"} != crossplane_managed_resource_ready{gvk=~".*Kind=(Queue|QueuePolicy|Role|Rule|SecurityGroup|SecurityGroupEgressRule|SecurityGroupIngressRule|Target)"}

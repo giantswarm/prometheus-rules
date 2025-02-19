@@ -37,7 +37,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "More that 10% of the requests to Loki are failing."
-              opsrecipe: "logging-pipeline/"
+              runbook_url: "logging-pipeline/"
       - alertname: LogForwardingErrors
         eval_time: 330m
         exp_alerts:
@@ -55,7 +55,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "More that 10% of the requests to Loki are failing."
-              opsrecipe: "logging-pipeline/"
+              runbook_url: "logging-pipeline/"
   # Test LogReceivingErrors
   - interval: 1m
     input_series:
@@ -90,7 +90,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "More that 10% of the loki requests to the observability gateway are failing."
-              opsrecipe: "logging-pipeline/"
+              runbook_url: "logging-pipeline/"
       - alertname: LogReceivingErrors
         eval_time: 330m
         exp_alerts:
@@ -108,4 +108,4 @@ tests:
               topic: observability
             exp_annotations:
               description: "More that 10% of the loki requests to the observability gateway are failing."
-              opsrecipe: "logging-pipeline/"
+              runbook_url: "logging-pipeline/"

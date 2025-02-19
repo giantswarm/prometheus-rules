@@ -28,7 +28,7 @@ tests:
               topic: "releng"
             exp_annotations:
               description: "CrSync deployment crsync-giantswarm-azurecr-io is not satisfied in gazelle / operations at the crsync namespace."
-              opsrecipe: "deployment-not-satisfied/"
+              runbook_url: "deployment-not-satisfied/"
   - interval: 1m
     input_series:
       - series: 'crsync_sync_tags_total{registry="quay.io", cluster_id="example", repository="giantswarm/example"}'
@@ -51,4 +51,4 @@ tests:
               topic: "releng"
             exp_annotations:
               description: "Too many tags are not synchronised to registry mirrors."
-              opsrecipe: "crsync-too-many-tags-missing/"
+              runbook_url: "crsync-too-many-tags-missing/"

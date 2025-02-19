@@ -67,7 +67,7 @@ tests:
               pipeline: "testing"
             exp_annotations:
               description: "KubeStateMetrics () is down."
-              opsrecipe: "kube-state-metrics-down/"
+              runbook_url: "kube-state-metrics-down/"
       # - 00:30 Both ports up and enough metrics
       - alertname: KubeStateMetricsDown
         eval_time: 55m
@@ -94,7 +94,7 @@ tests:
               pipeline: "testing"
             exp_annotations:
               description: "KubeStateMetrics () is down."
-              opsrecipe: "kube-state-metrics-down/"
+              runbook_url: "kube-state-metrics-down/"
       # - 01:30 All is up again
       - alertname: KubeStateMetricsDown
         eval_time: 115m
@@ -127,7 +127,7 @@ tests:
               pipeline: "testing"
             exp_annotations:
               description: "KubeStateMetrics () is down."
-              opsrecipe: "kube-state-metrics-down/"
+              runbook_url: "kube-state-metrics-down/"
       # - 03:30 all is up again
       - alertname: KubeStateMetricsDown
         eval_time: 235m
@@ -185,7 +185,7 @@ tests:
               pipeline: "testing"
             exp_annotations:
               description: "KubeStateMetrics () is down."
-              opsrecipe: "kube-state-metrics-down/"
+              runbook_url: "kube-state-metrics-down/"
       # - 00:30 all goes up
       - alertname: KubeStateMetricsDown
         eval_time: 55m
@@ -212,7 +212,7 @@ tests:
               pipeline: "testing"
             exp_annotations:
               description: "KubeStateMetrics () is down."
-              opsrecipe: "kube-state-metrics-down/"
+              runbook_url: "kube-state-metrics-down/"
       # - 01:30 All is up again
       - alertname: KubeStateMetricsDown
         eval_time: 115m

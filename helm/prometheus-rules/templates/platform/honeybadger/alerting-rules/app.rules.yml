@@ -16,7 +16,7 @@ spec:
     - alert: ManagementClusterAppFailed
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
+        runbook_url: app-failed/
       expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"(control-plane-.*|default)",team!~"^$|noteam", namespace=~".*giantswarm"} == 1
       for: 30m
       labels:
@@ -32,7 +32,7 @@ spec:
     - alert: ManagementClusterAppPendingUpdate
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
-        opsrecipe: app-pending-update/
+        runbook_url: app-pending-update/
       expr: app_operator_app_info{catalog=~"(control-plane-.*|default)", deployed_version!="", status="deployed", version_mismatch="true", team!~"^$|noteam", namespace=~".*giantswarm"} == 1
       for: 40m
       labels:
@@ -47,7 +47,7 @@ spec:
     - alert: WorkloadClusterAppFailed
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
+        runbook_url: app-failed/
       {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: |-
         (
@@ -77,7 +77,7 @@ spec:
     - alert: WorkloadClusterAppNotInstalled
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        opsrecipe: app-failed/
+        runbook_url: app-failed/
       {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: |-
         (
@@ -107,7 +107,7 @@ spec:
     - alert: WorkloadClusterAppPendingUpdate
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
-        opsrecipe: app-pending-update/
+        runbook_url: app-pending-update/
       {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: |-
         (
@@ -135,7 +135,7 @@ spec:
     - alert: AppWithoutTeamAnnotation
       annotations:
         description: '{{`App {{ $labels.name }} has no team label.`}}'
-        opsrecipe: app-without-team-annotation/
+        runbook_url: app-without-team-annotation/
       {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: |-
         (
@@ -164,7 +164,7 @@ spec:
     - alert: CordonedAppExpired
       annotations:
         description: '{{`Cordoned app {{ $labels.name }} in {{ $labels.namespace}} is expired.`}}'
-        opsrecipe: expired-cordon-charts/
+        runbook_url: expired-cordon-charts/
       expr: (app_operator_app_cordon_expire_time_seconds - time()) < 0
       for: 30m
       labels:
@@ -175,7 +175,7 @@ spec:
     - alert: AppOperatorNotReady
       annotations:
         description: '{{`app CR version ({{ $labels.version }}) in namespace {{ $labels.namespace }} has no ready app-operator.`}}'
-        opsrecipe: app-operator-not-ready/
+        runbook_url: app-operator-not-ready/
       expr: app_operator_ready_total != 1
       for: 15m
       labels:
@@ -187,7 +187,7 @@ spec:
     - alert: AppExporterDown
       annotations:
         description: '{{`App-exporter ({{ $labels.instance }}) is down.`}}'
-        opsrecipe: app-exporter-down/
+        runbook_url: app-exporter-down/
       expr: up{job="app-exporter"} == 0
       for: 15m
       labels:

@@ -13,7 +13,7 @@ spec:
     - alert: CiliumBPFMapAlmostFull
       annotations:
         description: '{{`Cilium BPF map is about to fill up.`}}'
-        opsrecipe: cilium-bpf-map/
+        runbook_url: cilium-bpf-map/
       expr: avg(cilium_bpf_map_pressure) by (cluster_id, installation, pipeline, provider, map_name) * 100 > 80
       for: 15m
       labels:
@@ -25,7 +25,7 @@ spec:
     - alert: CiliumBPFMapFull
       annotations:
         description: '{{`Cilium BPF map is about filled up.`}}'
-        opsrecipe: cilium-bpf-map/
+        runbook_url: cilium-bpf-map/
       expr: avg(cilium_bpf_map_pressure) by (cluster_id, installation, pipeline, provider, map_name) * 100 > 95
       for: 15m
       labels:
@@ -36,7 +36,7 @@ spec:
     - alert: CiliumAPITooSlow
       annotations:
         description: '{{`Cilium API processing time is >50s pod="{{ $labels.pod }}" node="{{ $labels.node }}" method="{{ $labels.method}}" path="{{ $labels.path }}"`}}'
-        opsrecipe: cilium-performance-issues/#slow-cilium-api
+        runbook_url: cilium-performance-issues/#slow-cilium-api
       expr: avg(rate(cilium_agent_api_process_time_seconds_sum{}[5m])/rate(cilium_agent_api_process_time_seconds_count{}[5m]) > 50) by (cluster_id, node, pod, method, path, installation, pipeline, provider)
       for: 20m
       labels:
@@ -48,7 +48,7 @@ spec:
     - alert: CiliumNetworkPolicyFailed
       annotations:
         description: '{{`Too many Cilium Network Policy errors.`}}'
-        opsrecipe: unsupported-cilium-network-policy/
+        runbook_url: unsupported-cilium-network-policy/
       # cilium_policy_change_total - for cilium >=1.15
       # cilium_policy_import_errors_total - for cilium <1.15
       expr: max(rate(cilium_policy_change_total{outcome=~"fail.*"}[20m]) OR rate(cilium_policy_import_errors_total[20m])) by (cluster_id, installation, pipeline, provider) > 0
@@ -64,7 +64,7 @@ spec:
       annotations:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}-{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        opsrecipe: fluxcd-failing-helmrelease/
+        runbook_url: fluxcd-failing-helmrelease/
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", exported_namespace!~"org-t-.*", name=~".*(cilium|network-policies)"} > 0
       for: 20m
       labels:

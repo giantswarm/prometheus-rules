@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- rename `check-opsrecipes.sh` to `check-runbooks.sh`
+
 ## [4.42.1] - 2025-02-17
 
 ### Fixed
@@ -1783,7 +1787,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Added
 
 - Alert `LinkerdDeploymentNotSatisfied` for managed Linkerd deployments.
-- New `make test-opsrecipes` target
+- New `make test-runbooks` target
 - Alert `SlothDown` for Sloth app
 
 ### Changed

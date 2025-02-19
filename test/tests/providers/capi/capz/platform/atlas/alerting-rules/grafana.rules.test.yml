@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'up{service="grafana", cluster_id="glean", cluster_type="management_cluster", installation="glean", instance="grafana"}'
+      - series: 'up{cluster_id="glean", cluster_type="management_cluster", installation="glean", instance="grafana"}'
         values: "1+0x20 0+0x100"
     alert_rule_test:
       - alertname: GrafanaDown
@@ -21,7 +21,6 @@ tests:
               cluster_type: management_cluster
               installation: "glean"
               instance: "grafana"
-              service: "grafana"
               severity: page
               team: atlas
               topic: observability

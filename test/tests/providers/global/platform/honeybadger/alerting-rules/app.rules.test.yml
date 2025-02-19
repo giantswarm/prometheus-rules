@@ -57,7 +57,7 @@ tests:
     input_series:
       - series: 'app_operator_app_info{app="cilium", app_version="1.11.2", catalog="giantswarm", cluster_id="gauss", cluster_missing="false", cluster_type="management_cluster", customer="giantswarm", deployed_version="0.2.6", installation="gauss", instance="100.64.2.221:8000", job="gauss-prometheus/app-exporter-gauss/0", name="cilium", namespace="giantswarm", node="ip-10-0-5-93.eu-west-1.compute.internal", organization="giantswarm", pod="app-exporter-7f8c5d7dd5-9dh4r", provider="capa", service_priority="highest", status="pending-upgrade", team="rocket", upgrade_available="false", version="0.2.6", version_mismatch="false"}'
         values: "1+0x100"
-      - series: 'app_operator_app_info{app="userd", catalog="control-plane-catalog", cluster_id="gauss", cluster_missing="false", cluster_type="management_cluster", customer="vodafone", deployed_version="1.2.1", endpoint="web", installation="gauss", instance="app-exporter", job="app-exporter", name="userd", namespace="giantswarm", node="ip-10-0-5-93.eu-west-1.compute.internal", organization="giantswarm", pod="app-exporter-64f9c4fb7b-d77pv", provider="capa", service="app-exporter", service_priority="highest", status="deployed", team="noteam", upgrade_available="false", version="1.2.1", version_mismatch="false"}'
+      - series: 'app_operator_app_info{app="userd", catalog="control-plane-catalog", cluster_id="gauss", cluster_missing="false", cluster_type="management_cluster", customer="vodafone", deployed_version="1.2.1", endpoint="web", installation="gauss", instance="app-exporter", job="app-exporter", name="userd", namespace="giantswarm", node="ip-10-0-5-93.eu-west-1.compute.internal", organization="giantswarm", pod="app-exporter-64f9c4fb7b-d77pv", provider="capa", service_priority="highest", status="deployed", team="noteam", upgrade_available="false", version="1.2.1", version_mismatch="false"}'
         values: "1+0x100"
       - series: 'capi_cluster_info{cluster_id="gauss", infrastructure_reference_kind="AWSCluster", provider="capa"}'
         values: "1+0x120"
@@ -93,7 +93,6 @@ tests:
               organization: giantswarm
               pod: app-exporter-64f9c4fb7b-d77pv
               provider: capa
-              service: app-exporter
               service_priority: highest
               severity: notify
               status: deployed

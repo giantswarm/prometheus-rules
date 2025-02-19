@@ -6,12 +6,11 @@
 
 This repository contains Giant Swarm alerting and recording rules
 
-
-### Alerting
+## Alerting
 
 The alerting rules are located in `helm/prometheus-rules/templates/<area>/<team>/alerting-rules` in the specific area/team to which they belong.
 
-#### How alerts are structured
+### How alerts are structured
 
 At Giant Swarm we follow some best practices to organize our alerts:
 
@@ -23,10 +22,12 @@ here is an example:
     rules:
     - alert: ManagementClusterAppFailedAtlas
         annotations:
+            summary: Managemetn cluster app not deployed correctly
             description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-            opsrecipe: app-failed/
-            # orgId=1 is for public dashboards and orgId=2 is for private dashboards
-            dashboard: UniqueID/app-failed?orgId=1|2
+            # orgId=1 is for public dashboards and orgId=2 is for Giant Swarm private dashboards
+            dashboardUid: UniqueID/app-failed?orgId=1|2
+            panelId: id of the panel in the dashboard
+            runbook_url: app-failed/
         expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="atlas"}
         for: 30m
         labels:
@@ -43,13 +44,14 @@ here is an example:
 Any Alert includes:
 
 * Mandatory annotations:
-  - `description`
+  - `description`: A detailed description of what happened and what the alert does.
+  - [runbook_url](https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/): The runbook page to guide operators managing a potential incident.
 
-* Recommended annotations:
-  - [opsrecipe](https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/)
-  - `dashboard` reference, built from `uid`/`title` in dashboard definition or copied from existing link.
-      - If you dashboard has no `uid` make sure to update it with one, otherwise `uid` will differ between installations.
-      - Title is not used as-is: punctuation, spaces, upper case letters are changed. Look at the name in the dashboard URL on a grafana instance to check the right syntax.
+*Recommended annotations (c.f. [here](https://grafana.com/docs/grafana-cloud/alerting-and-irm/alerting/fundamentals/alert-rules/annotation-label/#annotations) for more context):
+  - `dashboardUid` and `panelId`: Link to a dashboard and panel to facilitate alert investigation.
+    - The `dashboardUid` should be in the form of `dashboardUid/dashboardTitle?orgId=1|2`. It should be taken from the dashboard definition or copied from existing link in Grafana.
+  - `panelId` reference to the panel in the dashboard referenced by the `dashboardUid` annotation.
+  - `summary` A short summary of what the alert has detected and why.
 
 * Mandatory labels:
    - `area`
@@ -61,9 +63,7 @@ Any Alert includes:
    - `provider`
 
 * Optional labels:
-   - `sig`
    - `cancel_if_.*`
-
 
 #### Specific alert labels
 
@@ -76,7 +76,13 @@ With `mimir` we have metrics for all the clusters on a single database, and it m
 
 To achieve such a test, you should do like [`PrometheusAgentFailing`](https://github.com/giantswarm/prometheus-rules/blob/master/helm/prometheus-rules/templates/alerting-rules/areas/platform/atlas/prometheus-agent.rules.yml) alert does.
 
-#### Routing
+#### Useful links
+
+* [PromQL cheatsheet](https://promlabs.com/promql-cheat-sheet/)
+* [Promlens](https://demo.promlens.com/) - explain promql queries
+* [Awesome prometheus alerts](https://awesome-prometheus-alerts.grep.to/) - library of queries
+
+### Alert routing
 
 Alertmanager does the routing based on the labels menitoned above.
 You can see the routing rules in alertmanager's config (opsctl open `alertmanager`, then go to `Status`), section `route:`.
@@ -87,15 +93,13 @@ You can see the routing rules in alertmanager's config (opsctl open `alertmanage
   * `severity=page` or `severity=notify`
   * `team` defines which channel to route to.
 
-
-##### Opsgenie routing
+#### Opsgenie routing
 
 Opsgenie routing is defined in the `Teams` section of the Opsgenie application.
 
 Opsgenie route alerts based on the `team` label.
 
-
-#### Inhibitions
+### Inhibitions
 
 The `cancel_if_*` labels are used to inhibit alerts, they are defined in [Alertmanager's config](https://github.com/giantswarm/observability-operator/blob/main/helm/observability-operator/files/alertmanager/alertmanager.yaml.helm-template#L325).
 
@@ -111,7 +115,7 @@ Official documentation for inhibit rules can be found here: https://www.promethe
 
 The recording rules are located in `helm/prometheus-rules/templates/<area>/<team>/recording-rules` in the specific area/team to which they belong.
 
-### Mixin
+### Mixins
 
 #### kubernetes-mixins
 
@@ -135,7 +139,7 @@ To update `loki-mixins` recording rules:
 * Run `./loki/update.sh`
 * make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards)
 
-### Testing
+## Testing
 
 You can run all tests by running `make test`.
 
@@ -143,9 +147,8 @@ There are 4 different types tests implemented:
 
 - [Prometheus rules unit tests](#prometheus-rules-unit-tests)
 - [Alertmanager inhibition dependency check](#alertmanager-inhibition-dependency-check)
-- [Opsrecipe check](#opsrecipe-check)
+- [Runbook check](#runbook-check)
 - [Prometheus Linter](#prometheus-linter)
-
 ---
 
 ### Prometheus rules unit tests
@@ -251,52 +254,11 @@ make test-rules test_filter=gr.*na
 
 #### Useful links
 
-* PromQL cheatsheet: https://promlabs.com/promql-cheat-sheet/
-* Promlens - explain promql queries: https://demo.promlens.com/
-* Awesome prometheus alerts - library of queries: https://awesome-prometheus-alerts.grep.to/
+* [unit testing rules](https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/)
 
-### SLO Framework integration
+## Linting
 
-In order to incorporate the SLO Framework in the Prometheus rules, several rules need to be implemented :
-* One which will record the amount of requests for the designated target
-* One recording the amount of errors for the same target
-* One recording the targeted availability (for exemple 99.9% availability)
-  * For more information concerning the SLO target availabity and corresponding uptime : https://uptime.is/99.9
-
-Those rules can be written according to this template :
-```
-# Amout of requests for VPA
-- expr: "count(up{job=~'vertical-pod-autoscaler.*'}) by (cluster_type,cluster_id)"
-  labels:
-    class: MEDIUM
-    area: platform
-    service: vertical-pod-autoscaler
-  record: raw_slo_requests
-
-# Amout of errors for VPA
-# Up metric is set to 1 for each successful scrape and set to 0 otherwise.
-# If up made a successful scrape, there is no error. Up returns 1, multiplied by -1
-# and summed with 1 so the final result is 0 : no error recorded.
-# If up was unsuccessful, there is an error. Up returns 0, multiplied by -1 and summed
-# with 1 so the final result is 1 : 1 error is recorded .
-- expr: "sum((up{job=~'vertical-pod-autoscaler.*'} * -1) + 1) by (cluster_id, cluster_type)"
-  labels:
-    class: MEDIUM
-    area: platform
-    service: vertical-pod-autoscaler
-  record: raw_slo_errors
-
-# SLO targets -- 99,9% availability
-- expr: "vector((1 - 0.999))"
-  labels:
-    area: platform
-    service: vertical-pod-autoscaler
-  record: slo_target
-```
-
-[unit testing rules]: https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/
-
-## Alertmanager inhibition dependency check
+### Alertmanager inhibition dependency check
 
 In order for Alertmanager inhibition to work we need 3 elements:
   - an Alerting rule with some source labels
@@ -320,25 +282,25 @@ If there is no labels outputed, this means tests passed and did not find missing
 
 The inhibition labels checking script is also run automatically at PR's creation and will block merging when it fails.
 
-### Limitations (might happen)
+#### Limitations (might happen)
 
 - Inhibition checking script does not trigger at PR's creation : stuck in `pending` state. Must push empty commit to trigger it
 - When ran for the first time in a PR (after empty commit) usually fails to retrieve the alertmanager config file's data and thus fires error stating that all labels are missing.
 - Must manually re-run the action for it to pass
 
-## Opsrecipe check
+### Runbook check
 
-You can run `make test-opsrecipes` to check if linked opsrecipes are valid.
+You can run `make test-runbooks` to check if linked runbooks are valid.
 
-This check is not part of the global `make test` command until we fix all missing / wrong opsrecipes.
+This check is not part of the global `make test` command until we fix all missing / wrong runbooks.
 
-## Prometheus Linter
+### Prometheus Linter
 
 We are using [pint](https://cloudflare.github.io/pint/) to run some static checks on the rules.
 
 You can run them manually with `make pint`.
 
-### Pint specific cases
+#### Pint specific cases
 
 If you want to run `pint` against a specific team's rules, you can run: `make pint PINT_TEAM_FILTER=myteam`
 

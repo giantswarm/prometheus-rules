@@ -171,7 +171,7 @@ main() {
     if [[ "$CHECK_NORUNBOOK_ERRORS" != "false" ]]; then
         if [[ "${#E_norunbook[@]}" -gt 0 ]]; then
             echo ""
-            echo "Alerts missing recipe: ${#E_norunbook[@]}"
+            echo "Alerts missing runbook: ${#E_norunbook[@]}"
             for message in "${E_norunbook[@]}"; do
                 echo "$message"
             done
@@ -181,7 +181,7 @@ main() {
     if [[ "$CHECK_UNEXISTINGRUNBOOK_ERRORS" != "false" ]]; then
         if [[ "${#E_unexistingrunbook[@]}" -gt 0 ]]; then
             echo ""
-            echo "Alerts using unexisting recipe: ${#E_unexistingrunbook[@]}"
+            echo "Alerts using unexisting runbook: ${#E_unexistingrunbook[@]}"
             for message in "${E_unexistingrunbook[@]}"; do
                 echo "$message"
             done

@@ -22,7 +22,7 @@ here is an example:
     rules:
     - alert: ManagementClusterAppFailedAtlas
         annotations:
-            summary: Managemetn cluster app not deployed correctly
+            summary: Management cluster app not deployed correctly
             description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
             # orgId=1 is for public dashboards and orgId=2 is for Giant Swarm private dashboards
             dashboardUid: UniqueID/app-failed?orgId=1|2

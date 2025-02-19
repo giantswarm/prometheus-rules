@@ -2,9 +2,41 @@
 
 # Prometheus rules chart
 
-**What is this app?**
+## Table of Contents
 
-This repository contains Giant Swarm alerting and recording rules
+- [Introduction](#introduction)
+- [Alerting](#alerting)
+  - [How alerts are structured](#how-alerts-are-structured)
+  - [Alert routing](#alert-routing)
+    - [Opsgenie routing](#opsgenie-routing)
+    - [Inhibitions](#inhibitions)
+  - [Recording rules](#recording-rules)
+- [Mixins management](#mixins)
+  - [kubernetes-mixins](#kubernetes-mixins)
+  - [mimir-mixins](#mimir-mixins)
+  - [loki-mixins](#loki-mixins)
+- [Testing](#testing)
+  - [Prometheus rules unit tests](#prometheus-rules-unit-tests)
+  - [Test syntax](#test-syntax)
+  - [Test exceptions](#test-exceptions)
+  - [Test "no data" case](#test-no-data-case)
+  - [Hints & tips](#hints--tips)
+- [Linting](#linting)
+  - [Alertmanager inhibition dependency check](#alertmanager-inhibition-dependency-check)
+  - [Runbook check](#runbook-check)
+  - [Prometheus Linter](#prometheus-linter)
+
+## Introduction
+
+This repository serves as a centralized collection of Prometheus configurations for Giant Swarm's monitoring system. It includes:
+
+- **Alerting Rules**: Definitions for monitoring and alerting across different teams and platforms
+- **Recording Rules**: Pre-computed expressions for efficient querying
+- **Mixin Configurations**: Integration with kubernetes, mimir, and loki mixins
+- **Testing Framework**: Comprehensive testing utilities for rules validation
+- **Quality Checks**: Linting and validation tools to ensure rule consistency
+
+The repository is structured to support multi-team collaboration while maintaining high standards through automated testing, proper documentation, and standardized alert routing.
 
 ## Alerting
 
@@ -115,7 +147,7 @@ Official documentation for inhibit rules can be found here: https://www.promethe
 
 The recording rules are located in `helm/prometheus-rules/templates/<area>/<team>/recording-rules` in the specific area/team to which they belong.
 
-### Mixins
+### Mixins management
 
 #### kubernetes-mixins
 
@@ -296,13 +328,15 @@ This check is not part of the global `make test` command until we fix all missin
 
 ### Prometheus Linter
 
-We are using [pint](https://cloudflare.github.io/pint/) to run some static checks on the rules.
+[pint](https://cloudflare.github.io/pint/) performs static analysis on Prometheus rules.
 
-You can run them manually with `make pint`.
+```bash
+# Run basic checks
+make pint
 
-#### Pint specific cases
+# Test specific team's rules
+make pint PINT_TEAM_FILTER=myteam
 
-If you want to run `pint` against a specific team's rules, you can run: `make pint PINT_TEAM_FILTER=myteam`
-
-We also have a target that runs extra checks (that we hope to make default in the future).
-This one runs with `make pint-all`.
+# Run extended checks
+make pint-all
+```

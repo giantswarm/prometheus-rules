@@ -2,15 +2,47 @@
 
 # Prometheus rules chart
 
-**What is this app?**
+## Table of Contents
 
-This repository contains Giant Swarm alerting and recording rules
+- [Introduction](#introduction)
+- [Alerting](#alerting)
+  - [How alerts are structured](#how-alerts-are-structured)
+  - [Alert routing](#alert-routing)
+    - [Opsgenie routing](#opsgenie-routing)
+    - [Inhibitions](#inhibitions)
+  - [Recording rules](#recording-rules)
+- [Mixins management](#mixins)
+  - [kubernetes-mixins](#kubernetes-mixins)
+  - [mimir-mixins](#mimir-mixins)
+  - [loki-mixins](#loki-mixins)
+- [Testing](#testing)
+  - [Prometheus rules unit tests](#prometheus-rules-unit-tests)
+  - [Test syntax](#test-syntax)
+  - [Test exceptions](#test-exceptions)
+  - [Test "no data" case](#test-no-data-case)
+  - [Hints & tips](#hints--tips)
+- [Linting](#linting)
+  - [Alertmanager inhibition dependency check](#alertmanager-inhibition-dependency-check)
+  - [Runbook check](#runbook-check)
+  - [Prometheus Linter](#prometheus-linter)
 
-### Alerting
+## Introduction
+
+This repository serves as a centralized collection of Prometheus configurations for Giant Swarm's monitoring system. It includes:
+
+- **Alerting Rules**: Definitions for monitoring and alerting across different teams and platforms
+- **Recording Rules**: Pre-computed expressions for efficient querying
+- **Mixin Configurations**: Integration with kubernetes, mimir, and loki mixins
+- **Testing Framework**: Comprehensive testing utilities for rules validation
+- **Quality Checks**: Linting and validation tools to ensure rule consistency
+
+The repository is structured to support multi-team collaboration while maintaining high standards through automated testing, proper documentation, and standardized alert routing.
+
+## Alerting
 
 The alerting rules are located in `helm/prometheus-rules/templates/<area>/<team>/alerting-rules` in the specific area/team to which they belong.
 
-#### How alerts are structured
+### How alerts are structured
 
 At Giant Swarm we follow some best practices to organize our alerts:
 
@@ -65,7 +97,6 @@ Any Alert includes:
 * Optional labels:
    - `cancel_if_.*`
 
-
 #### Specific alert labels
 
 - `all_pipelines: "true"`: When adding this label to an alert, you are sure the alert will be send to opsgenie, even if the installation is not a stable installation.
@@ -77,7 +108,13 @@ With `mimir` we have metrics for all the clusters on a single database, and it m
 
 To achieve such a test, you should do like [`PrometheusAgentFailing`](https://github.com/giantswarm/prometheus-rules/blob/master/helm/prometheus-rules/templates/alerting-rules/areas/platform/atlas/prometheus-agent.rules.yml) alert does.
 
-#### Routing
+#### Useful links
+
+* [PromQL cheatsheet](https://promlabs.com/promql-cheat-sheet/)
+* [Promlens](https://demo.promlens.com/) - explain promql queries
+* [Awesome prometheus alerts](https://awesome-prometheus-alerts.grep.to/) - library of queries
+
+### Alert routing
 
 Alertmanager does the routing based on the labels menitoned above.
 You can see the routing rules in alertmanager's config (opsctl open `alertmanager`, then go to `Status`), section `route:`.
@@ -88,14 +125,13 @@ You can see the routing rules in alertmanager's config (opsctl open `alertmanage
   * `severity=page` or `severity=notify`
   * `team` defines which channel to route to.
 
-
-##### Opsgenie routing
+#### Opsgenie routing
 
 Opsgenie routing is defined in the `Teams` section of the Opsgenie application.
 
 Opsgenie route alerts based on the `team` label.
 
-#### Inhibitions
+### Inhibitions
 
 The `cancel_if_*` labels are used to inhibit alerts, they are defined in [Alertmanager's config](https://github.com/giantswarm/observability-operator/blob/main/helm/observability-operator/files/alertmanager/alertmanager.yaml.helm-template#L325).
 
@@ -111,7 +147,7 @@ Official documentation for inhibit rules can be found here: https://www.promethe
 
 The recording rules are located in `helm/prometheus-rules/templates/<area>/<team>/recording-rules` in the specific area/team to which they belong.
 
-### Mixin
+### Mixins management
 
 #### kubernetes-mixins
 
@@ -135,7 +171,7 @@ To update `loki-mixins` recording rules:
 * Run `./loki/update.sh`
 * make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards)
 
-### Testing
+## Testing
 
 You can run all tests by running `make test`.
 
@@ -250,52 +286,11 @@ make test-rules test_filter=gr.*na
 
 #### Useful links
 
-* PromQL cheatsheet: https://promlabs.com/promql-cheat-sheet/
-* Promlens - explain promql queries: https://demo.promlens.com/
-* Awesome prometheus alerts - library of queries: https://awesome-prometheus-alerts.grep.to/
+* [unit testing rules](https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/)
 
-### SLO Framework integration
+## Linting
 
-In order to incorporate the SLO Framework in the Prometheus rules, several rules need to be implemented :
-* One which will record the amount of requests for the designated target
-* One recording the amount of errors for the same target
-* One recording the targeted availability (for exemple 99.9% availability)
-  * For more information concerning the SLO target availabity and corresponding uptime : https://uptime.is/99.9
-
-Those rules can be written according to this template :
-```
-# Amout of requests for VPA
-- expr: "count(up{job=~'vertical-pod-autoscaler.*'}) by (cluster_type,cluster_id)"
-  labels:
-    class: MEDIUM
-    area: platform
-    service: vertical-pod-autoscaler
-  record: raw_slo_requests
-
-# Amout of errors for VPA
-# Up metric is set to 1 for each successful scrape and set to 0 otherwise.
-# If up made a successful scrape, there is no error. Up returns 1, multiplied by -1
-# and summed with 1 so the final result is 0 : no error recorded.
-# If up was unsuccessful, there is an error. Up returns 0, multiplied by -1 and summed
-# with 1 so the final result is 1 : 1 error is recorded .
-- expr: "sum((up{job=~'vertical-pod-autoscaler.*'} * -1) + 1) by (cluster_id, cluster_type)"
-  labels:
-    class: MEDIUM
-    area: platform
-    service: vertical-pod-autoscaler
-  record: raw_slo_errors
-
-# SLO targets -- 99,9% availability
-- expr: "vector((1 - 0.999))"
-  labels:
-    area: platform
-    service: vertical-pod-autoscaler
-  record: slo_target
-```
-
-[unit testing rules]: https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/
-
-## Alertmanager inhibition dependency check
+### Alertmanager inhibition dependency check
 
 In order for Alertmanager inhibition to work we need 3 elements:
   - an Alerting rule with some source labels
@@ -319,27 +314,29 @@ If there is no labels outputed, this means tests passed and did not find missing
 
 The inhibition labels checking script is also run automatically at PR's creation and will block merging when it fails.
 
-### Limitations (might happen)
+#### Limitations (might happen)
 
 - Inhibition checking script does not trigger at PR's creation : stuck in `pending` state. Must push empty commit to trigger it
 - When ran for the first time in a PR (after empty commit) usually fails to retrieve the alertmanager config file's data and thus fires error stating that all labels are missing.
 - Must manually re-run the action for it to pass
 
-## Runbook check
+### Runbook check
 
 You can run `make test-runbooks` to check if linked runbooks are valid.
 
 This check is not part of the global `make test` command until we fix all missing / wrong runbooks.
 
-## Prometheus Linter
+### Prometheus Linter
 
-We are using [pint](https://cloudflare.github.io/pint/) to run some static checks on the rules.
+[pint](https://cloudflare.github.io/pint/) performs static analysis on Prometheus rules.
 
-You can run them manually with `make pint`.
+```bash
+# Run basic checks
+make pint
 
-### Pint specific cases
+# Test specific team's rules
+make pint PINT_TEAM_FILTER=myteam
 
-If you want to run `pint` against a specific team's rules, you can run: `make pint PINT_TEAM_FILTER=myteam`
-
-We also have a target that runs extra checks (that we hope to make default in the future).
-This one runs with `make pint-all`.
+# Run extended checks
+make pint-all
+```

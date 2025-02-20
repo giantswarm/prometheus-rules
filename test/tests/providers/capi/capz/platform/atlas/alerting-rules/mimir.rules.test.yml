@@ -58,7 +58,7 @@ tests:
   - interval: 1m
     input_series:
       # For the first 60min: test with 1 pod: none, up, down
-      - series: 'up{job="mimir/ingester", container="ingester", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing"}'
+      - series: 'up{job="mimir/ingester", container="ingester", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", service="mimir-ingester"}'
         values: "_x20 1+0x20 0+0x20"
     alert_rule_test:
       - alertname:  MimirComponentDown

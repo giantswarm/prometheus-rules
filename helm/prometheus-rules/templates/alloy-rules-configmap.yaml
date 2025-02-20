@@ -64,7 +64,7 @@ data:
             }
             loki.rules.kubernetes "local" {
               address = "http://loki-backend.loki.svc:3100/"
-              tenant_id = "{{ .Values.managementCluster.name }}"
+              tenant_id = "giantswarm"
               rule_selector {
                   match_expression {
                     key = "application.giantswarm.io/prometheus-rule-kind"

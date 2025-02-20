@@ -14,7 +14,7 @@ spec:
     - alert: ClusterCriticalSystemdUnitFailed
       annotations:
         description: '{{`Critical systemd unit {{ $labels.name }} is failed on {{ $labels.instance }}.`}}'
-        opsrecipe: critical-systemd-unit-failed/
+        runbook_url: critical-systemd-unit-failed/
       expr: node_systemd_unit_state{name=~"k8s-addons.service|systemd-networkd.service", state="failed"} == 1
       for: 5m
       labels:
@@ -26,7 +26,7 @@ spec:
     - alert: ClusterDisabledSystemdUnitActive
       annotations:
         description: '{{`Disabled Systemd unit {{ $labels.name }} is active on {{ $labels.ip }}.`}}'
-        opsrecipe: disabled-systemd-unit-active/
+        runbook_url: disabled-systemd-unit-active/
       expr: node_systemd_unit_state{name=~"locksmithd.service|update-engine.service", state="active"} == 1
       for: 5m
       labels:

@@ -16,7 +16,7 @@ spec:
     - alert: ETCDBackupJobFailedOrStuck
       annotations:
         description: '{{`Job {{ $labels.job }} failed or has not been completed for more than 30 minutes.`}}'
-        opsrecipe: etcd-backup-failed/
+        runbook_url: etcd-backup-failed/
       expr: kube_job_failed{cluster_type="management_cluster",condition="true",job=~"etcd-backup.+"} == 1 or kube_pod_status_phase{cluster_type="management_cluster",phase="Pending",pod=~"etcd-backup.+"} == 1 or kube_job_status_succeeded{cluster_type="management_cluster",job=~"etcd-backup.+"} == 0
       for: 30m
       labels:
@@ -28,7 +28,7 @@ spec:
     - alert: LatestETCDBackup2DaysOld
       annotations:
         description: '{{`Latest successful ETCD backup for {{ $labels.cluster_id }}/{{ $labels.tenant_cluster_id }} was more than 48h ago.`}}'
-        opsrecipe: etcd-backup-failed/
+        runbook_url: etcd-backup-failed/
       {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: count(label_replace(capi_cluster_created, "tenant_cluster_id", "$1", "name", "(.*)")) by (cluster_id, installation, pipeline, provider, tenant_cluster_id)  > 48 * 60 * 60 unless count((time() - etcd_backup_latest_success{tenant_cluster_id!="Control Plane"}) > 48 * 60 * 60) by (cluster_id, installation, pipeline, provider, tenant_cluster_id)
       {{- else }}
@@ -47,7 +47,7 @@ spec:
     - alert: ETCDBackupMetricsMissing
       annotations:
         description: '{{`ETCD backup metrics are missing`}}'
-        opsrecipe: etcd-backup-metrics-missing/
+        runbook_url: etcd-backup-metrics-missing/
       expr: absent(etcd_backup_latest_attempt{cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
       for: 12h
       labels:

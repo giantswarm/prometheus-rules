@@ -18,7 +18,7 @@ spec:
         description: |-
           {{`{{ if eq $labels.k8s_pod_name "<NA>" }}The Falco rule {{ $labels.rule }} was triggered on the node {{ $labels.hostname }}.
           {{else}}Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }} on the node {{ $labels.hostname }}.{{ end }}`}}
-        opsrecipe: falco-alert/
+        runbook_url: falco-alert/
       expr: increase(falco_events{priority=~"0|1|2|3"}[10m] ) > 0
       labels:
         area: platform
@@ -34,7 +34,7 @@ spec:
         description: |-
           {{`{{ if eq $labels.k8s_pod_name "<NA>" }}The Falco rule {{ $labels.rule }} was triggered on the node {{ $labels.hostname }}.
           {{else}}Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }} on the node {{ $labels.hostname }}.{{ end }}`}}
-        opsrecipe: falco-alert/
+        runbook_url: falco-alert/
       expr: increase(falco_events{priority=~"4|5"}[10m] ) > 0
       labels:
         area: platform
@@ -49,7 +49,7 @@ spec:
         description: |-
           {{`{{ if eq $labels.k8s_pod_name "<NA>" }}The Falco rule {{ $labels.rule }} was triggered on the node {{ $labels.hostname }}.
           {{else}}Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }} on the node {{ $labels.hostname }}.{{ end }}`}}
-        opsrecipe: falco-alert/
+        runbook_url: falco-alert/
       expr: increase(falco_events{priority="6"}[10m] ) > 0
       labels:
         area: platform
@@ -64,7 +64,7 @@ spec:
         description: |-
           {{`{{ if eq $labels.k8s_pod_name "<NA>" }}The Falco rule {{ $labels.rule }} was triggered on the node {{ $labels.hostname }}.
           {{else}}Pod {{ $labels.k8s_ns_name }}/{{ $labels.k8s_pod_name }} triggered the Falco rule {{ $labels.rule }} on the node {{ $labels.hostname }}.{{ end }}`}}
-        opsrecipe: falco-alert/
+        runbook_url: falco-alert/
       expr: falco_events{rule="Backdoored library loaded into SSHD (CVE-2024-3094)"} > 0
       labels:
         area: platform

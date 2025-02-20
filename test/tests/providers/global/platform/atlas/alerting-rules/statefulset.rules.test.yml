@@ -40,6 +40,6 @@ tests:
               topic: managementcluster
             exp_annotations:
               description: "Statefulset loki/loki-write is not satisfied."
-              opsrecipe: "deployment-not-satisfied/"
+              runbook_url: "deployment-not-satisfied/"
       - alertname: StatefulsetNotSatisfiedAtlas
         eval_time: 150m

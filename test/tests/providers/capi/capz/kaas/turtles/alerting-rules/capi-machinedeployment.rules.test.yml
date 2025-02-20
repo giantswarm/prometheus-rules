@@ -25,8 +25,8 @@ tests:
               exported_namespace: giantswarm
             exp_annotations:
               description: "The clusters clippaxy machinedeployment giantswarm/clippaxy-def00 is not healthy."
-              opsrecipe: capi-machinedeployment/
-              dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
+              runbook_url: capi-machinedeployment/
+              dashboardUid: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
       - alertname: MachineDeploymentPaused
         eval_time: 75m
         exp_alerts:
@@ -43,5 +43,5 @@ tests:
               paused_value: "true"
             exp_annotations:
               description: "The clusters grumpy machinedeployment giantswarm/grumpy-def99 is paused."
-              opsrecipe: capi-machinedeployment/
-              dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
+              runbook_url: capi-machinedeployment/
+              dashboardUid: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2

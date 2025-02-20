@@ -37,7 +37,7 @@ tests:
               topic: cert-manager
             exp_annotations:
               description: "Certificate stored in Secret giantswarm/athena-certs-secret on gollem will expire in less than two weeks."
-              opsrecipe: "managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/"
+              runbook_url: "managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/"
   # CertificateSecretWillExpireInLessThanTwoWeeks not within 2 weeks of expiration
   - interval: 1d
     input_series:
@@ -82,7 +82,7 @@ tests:
               managed_issuer: "true"
             exp_annotations:
               description: "Certificate CR kube-system/kiam-agent on 12345 will expire in less than two weeks."
-              opsrecipe: "managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/"
+              runbook_url: "managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/"
   # GiantswarmManagedCertificateCRWillExpireInLessThanTwoWeeks not within 2 weeks of expiration
   - interval: 1d
     input_series:

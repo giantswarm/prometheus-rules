@@ -17,7 +17,7 @@ spec:
     - alert: NoHealthyJumphost
       annotations:
         description: '{{`There are no healthy jumphosts available.`}}'
-        opsrecipe: no-healthy-jumphost/
+        runbook_url: no-healthy-jumphost/
       expr: (up{app="node-exporter",role="bastion"} == 1 OR on() vector(0)) == 0
       for: 15m
       labels:

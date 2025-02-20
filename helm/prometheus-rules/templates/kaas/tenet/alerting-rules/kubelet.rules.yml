@@ -13,7 +13,7 @@ spec:
       - alert: CadvisorDown
         annotations:
           description: '{{`Cadvisor ({{ $labels.instance }}) is down.`}}'
-          opsrecipe: kubelet-is-down/
+          runbook_url: kubelet-is-down/
         expr: label_replace(up{job="kubelet", metrics_path="/metrics/cadvisor"}, "ip", "$1", "instance", "(.+):\\d+") == 0
         for: 1h
         labels:

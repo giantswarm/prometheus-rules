@@ -19,7 +19,7 @@ spec:
     - alert: WorkloadClusterAPIServerLatencyTooHigh
       annotations:
         description: '{{`Kubernetes API Server {{ $labels.verb }} request latency is too high.`}}'
-        opsrecipe: apiserver-overloaded/
+        runbook_url: apiserver-overloaded/
       expr: histogram_quantile(0.95, sum(rate(apiserver_request_duration_seconds_bucket{cluster_type="workload_cluster", verb=~"DELETE|GET|PATCH|POST|PUT"}[1h])) by (cluster_id, installation, pipeline, provider, verb, le)) > 1
       for: 1h
       labels:
@@ -35,7 +35,7 @@ spec:
     - alert: WorkloadClusterAPIServerAdmissionWebhookErrors
       annotations:
         description: '{{`Kubernetes API Server {{ $labels.cluster_id }} having admission webhook errors (webhook: {{ $labels.name }}).`}}'
-        opsrecipe: apiserver-admission-webhook-errors/
+        runbook_url: apiserver-admission-webhook-errors/
       expr: rate(apiserver_admission_webhook_rejection_count{cluster_type="workload_cluster",error_type=~"calling_webhook_error|apiserver_internal_error",name!~"validate\\.kyverno\\.svc-fail|mutate\\.kyverno\\.svc-fail|validations\\.kong\\.konghq\\.com"}[5m]) > 0
       for: 5m
       labels:
@@ -49,7 +49,7 @@ spec:
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutSolutionEngineers
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
-        opsrecipe: apiserver-admission-webhook-errors/
+        runbook_url: apiserver-admission-webhook-errors/
       expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name!~".*(prometheus|vpa.k8s.io|linkerd|validate.nginx.ingress.kubernetes.io|kong.konghq.com|cert-manager.io|kyverno|app-admission-controller).*"}[5m])) by (cluster_id, installation, pipeline, provider, name, job, le)) > 5
       for: 15m
       labels:
@@ -63,7 +63,7 @@ spec:
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutHoneybadger
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
-        opsrecipe: apiserver-admission-webhook-errors/
+        runbook_url: apiserver-admission-webhook-errors/
       expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(kyverno|app-admission-controller).*"}[5m])) by (cluster_id, installation, pipeline, provider, name, job, le)) > 5
       for: 15m
       labels:
@@ -77,7 +77,7 @@ spec:
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutCabbage
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
-        opsrecipe: apiserver-admission-webhook-errors/
+        runbook_url: apiserver-admission-webhook-errors/
       expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(linkerd|validate.nginx.ingress.kubernetes.io|kong.konghq.com|cert-manager.io).*"}[5m])) by (cluster_id, installation, pipeline, provider, name, job, le)) > 5
       for: 15m
       labels:
@@ -91,7 +91,7 @@ spec:
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutPhoenix
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
-        opsrecipe: apiserver-admission-webhook-errors/
+        runbook_url: apiserver-admission-webhook-errors/
       expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(vpa.k8s.io).*"}[5m])) by (cluster_id, installation, pipeline, provider, name, job, le)) > 5
       for: 15m
       labels:
@@ -105,7 +105,7 @@ spec:
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutAtlas
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
-        opsrecipe: apiserver-admission-webhook-errors/
+        runbook_url: apiserver-admission-webhook-errors/
       expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(prometheus).*"}[5m])) by (cluster_id, installation, pipeline, provider, name, job, le)) > 5
       for: 15m
       labels:

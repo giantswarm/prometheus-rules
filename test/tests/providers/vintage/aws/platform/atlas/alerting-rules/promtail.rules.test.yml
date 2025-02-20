@@ -48,7 +48,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 30 minutes."
-              opsrecipe: "promtail/"
+              runbook_url: "promtail/"
       # Tests with 2 pods
       - alertname: PromtailDown
         eval_time: 111m
@@ -74,7 +74,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 30 minutes."
-              opsrecipe: "promtail/"
+              runbook_url: "promtail/"
       - alertname: PromtailDown
         eval_time: 121m
       - alertname: PromtailDown
@@ -101,7 +101,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 30 minutes."
-              opsrecipe: "promtail/"
+              runbook_url: "promtail/"
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
@@ -123,7 +123,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 30 minutes."
-              opsrecipe: "promtail/"
+              runbook_url: "promtail/"
   - interval: 1m
     input_series:
       # Tests with multiple cases: no metrics, no requests, only status_code 204 ones, 204 ones and 500 that are less than 10% of the the total, 500 request that represent more than 10% of the total, only 500 ones
@@ -156,9 +156,9 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: promtail-overview/promtail-overview
+              dashboardUid: promtail-overview/promtail-overview
               description: "This alert checks if that the amount of failed requests is below 10% for promtail"
-              opsrecipe: "promtail/"
+              runbook_url: "promtail/"
       - alertname: PromtailRequestsErrors
         eval_time: 330m
         exp_alerts:
@@ -175,6 +175,6 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: promtail-overview/promtail-overview
+              dashboardUid: promtail-overview/promtail-overview
               description: "This alert checks if that the amount of failed requests is below 10% for promtail"
-              opsrecipe: "promtail/"
+              runbook_url: "promtail/"

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- clean up our alert annotations to match with best practices
+- rename `check-opsrecipes.sh` to `check-runbooks.sh`
+- rename make target `test-opsrecipes` to `test-runbooks`
+
 ## [4.43.0] - 2025-02-20
 
 ### Changed

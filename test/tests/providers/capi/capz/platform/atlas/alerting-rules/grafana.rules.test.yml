@@ -27,5 +27,5 @@ tests:
               topic: observability
             exp_annotations:
               description: "Grafana (grafana) is down."
-              opsrecipe: "grafana-down/"
-              dashboard: "qRQXmRnik/Grafana?orgId=2"
+              runbook_url: "grafana-down/"
+              dashboardUid: "qRQXmRnik/Grafana?orgId=2"

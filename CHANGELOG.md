@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Load loki rules into the giantswarm tenant.
+
 ## [4.42.1] - 2025-02-17
 
 ### Fixed

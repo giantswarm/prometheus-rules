@@ -21,6 +21,7 @@ tests:
               cluster_type: management_cluster
               installation: "gauss"
               instance: "grafana"
+              service: "grafana"
               severity: page
               team: atlas
               topic: observability

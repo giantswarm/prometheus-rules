@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.43.0] - 2025-02-20
+
+### Changed
+
+- Load loki rules into the giantswarm tenant.
+
 ## [4.42.1] - 2025-02-17
 
 ### Fixed
@@ -3422,7 +3428,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.42.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.43.0...HEAD
+[4.43.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.42.1...v4.43.0
 [4.42.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.42.0...v4.42.1
 [4.42.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.41.0...v4.42.0
 [4.41.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.40.0...v4.41.0

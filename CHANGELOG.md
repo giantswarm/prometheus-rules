@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- clean up the loki ruler datasource as we now have a datasource per tenant
+
 ## [4.44.0] - 2025-02-20
 
 ### Changed

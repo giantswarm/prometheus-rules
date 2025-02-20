@@ -31,9 +31,9 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller?orgId=2
+              dashboardUid: bf9f456aad7108b2c808dbd9973e386f/alloy-controller?orgId=2
               description: "Component evaluations are taking too long under job alloy-controller, component_id comp1."
-              opsrecipe: "alloy/"
+              runbook_url: "alloy/"
               summary: "Component evaluations are taking too long."
       - alertname: AlloySlowComponentEvaluations
         eval_time: 80m
@@ -65,9 +65,9 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: bf9f456aad7108b2c808dbd9973e386f/alloy-controller?orgId=2
+              dashboardUid: bf9f456aad7108b2c808dbd9973e386f/alloy-controller?orgId=2
               description: "Unhealthy components detected under job alloy-controller"
-              opsrecipe: "alloy/"
+              runbook_url: "alloy/"
               summary: "Unhealthy components detected."
       - alertname: AlloyUnhealthyComponents
         eval_time: 80m
@@ -101,7 +101,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Alloy sending PrometheusRules to Loki and Mimir ruler is down."
-              opsrecipe: "prometheus-rules/"
+              runbook_url: "prometheus-rules/"
 
   # Test LoggingAgentDown
   - interval: 1m
@@ -147,9 +147,9 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: "53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview?orgId=2"
+              dashboardUid: "53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview?orgId=2"
               description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              opsrecipe: "alloy/"
+              runbook_url: "alloy/"
       # Tests with 2 pods
       - alertname: LoggingAgentDown
         eval_time: 111m
@@ -173,9 +173,9 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: "53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview?orgId=2"
+              dashboardUid: "53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview?orgId=2"
               description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              opsrecipe: "alloy/"
+              runbook_url: "alloy/"
       - alertname: LoggingAgentDown
         eval_time: 121m
       - alertname: LoggingAgentDown
@@ -200,9 +200,9 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: "53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview?orgId=2"
+              dashboardUid: "53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview?orgId=2"
               description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              opsrecipe: "alloy/"
+              runbook_url: "alloy/"
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
@@ -222,9 +222,9 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboard: "53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview?orgId=2"
+              dashboardUid: "53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview?orgId=2"
               description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              opsrecipe: "alloy/"
+              runbook_url: "alloy/"
 
   # Test MonitoringAgentDown
   - interval: 1m
@@ -253,8 +253,8 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              opsrecipe: "alloy/#monitoring-agent-down"
-              dashboard: "promRW001/prometheus-remote-write?orgId=1"
+              runbook_url: "alloy/#monitoring-agent-down"
+              dashboardUid: "promRW001/prometheus-remote-write?orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
       - alertname: MonitoringAgentDown
         eval_time: 30m
@@ -274,8 +274,8 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              opsrecipe: "alloy/#monitoring-agent-down"
-              dashboard: "promRW001/prometheus-remote-write?orgId=1"
+              runbook_url: "alloy/#monitoring-agent-down"
+              dashboardUid: "promRW001/prometheus-remote-write?orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
       - alertname: InhibitionMonitoringAgentDown
         eval_time: 30m
@@ -294,8 +294,8 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              opsrecipe: "alloy/#monitoring-agent-down"
-              dashboard: "promRW001/prometheus-remote-write?orgId=1"
+              runbook_url: "alloy/#monitoring-agent-down"
+              dashboardUid: "promRW001/prometheus-remote-write?orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
       - alertname: MonitoringAgentDown
         eval_time: 80m
@@ -319,8 +319,8 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              opsrecipe: "alloy/#monitoring-agent-down"
-              dashboard: "promRW001/prometheus-remote-write?orgId=1"
+              runbook_url: "alloy/#monitoring-agent-down"
+              dashboardUid: "promRW001/prometheus-remote-write?orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
       - alertname: InhibitionMonitoringAgentDown
         eval_time: 140m
@@ -339,8 +339,8 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              opsrecipe: "alloy/#monitoring-agent-down"
-              dashboard: "promRW001/prometheus-remote-write?orgId=1"
+              runbook_url: "alloy/#monitoring-agent-down"
+              dashboardUid: "promRW001/prometheus-remote-write?orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
 
   # Test MonitoringAgentShardsNotSatisfied
@@ -374,7 +374,7 @@ tests:
             exp_annotations:
               description: "At least one of the monitoring agent shard is missing."
               summary: "Monitoring agent is missing shards."
-              opsrecipe: "alloy/#monitoring-agent-down"
+              runbook_url: "alloy/#monitoring-agent-down"
       - alertname: MonitoringAgentShardsNotSatisfied
         eval_time: 60m
         exp_alerts:
@@ -395,7 +395,7 @@ tests:
             exp_annotations:
               description: "At least one of the monitoring agent shard is missing."
               summary: "Monitoring agent is missing shards."
-              opsrecipe: "alloy/#monitoring-agent-down"
+              runbook_url: "alloy/#monitoring-agent-down"
       - alertname: InhibitionMonitoringAgentShardsNotSatisfied
         eval_time: 60m
         exp_alerts:
@@ -415,7 +415,7 @@ tests:
             exp_annotations:
               description: "At least one of the monitoring agent shard is missing."
               summary: "Monitoring agent is missing shards."
-              opsrecipe: "alloy/#monitoring-agent-down"
+              runbook_url: "alloy/#monitoring-agent-down"
       - alertname: MonitoringAgentShardsNotSatisfied
         eval_time: 130m
       - alertname: InhibitionMonitoringAgentShardsNotSatisfied

@@ -25,6 +25,6 @@ tests:
               topic: "observability"
             exp_annotations:
               description: "silence-operator controller silence-controller too many reconcile errors."
-              opsrecipe: "operator-not-reconciling/"
+              runbook_url: "operator-not-reconciling/"
       - alertname: SilenceOperatorReconcileErrors
         eval_time: 215m

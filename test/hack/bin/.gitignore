@@ -6,4 +6,4 @@
 !fetch-tools.sh
 !template-chart.sh
 !get-inhibition.sh
-!check-opsrecipes.sh
+!check-runbooks.sh

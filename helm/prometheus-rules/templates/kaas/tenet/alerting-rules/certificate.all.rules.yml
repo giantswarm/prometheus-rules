@@ -14,7 +14,7 @@ spec:
     - alert: KiamCertificateSecretWillExpireInLessThanTwoWeeks
       annotations:
         description: '{{`Kiam Certificate stored in Secret {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
-        opsrecipe: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
+        runbook_url: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
       expr: (cert_exporter_secret_not_after{name=~"kiam.*"} - time()) < 13 * 24 * 60 * 60
       for: 5m
       labels:
@@ -27,7 +27,7 @@ spec:
     - alert: IRSACertificateSecretWillExpireInLessThanTwoWeeks
       annotations:
         description: '{{`IRSA Pod Identity Webhook Certificate stored in Secret {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
-        opsrecipe: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
+        runbook_url: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
       expr: (cert_exporter_secret_not_after{name=~"aws-pod-identity-webhook.*"} - time()) < 13 * 24 * 60 * 60
       for: 5m
       labels:
@@ -39,7 +39,7 @@ spec:
     - alert: KyvernoCertificateSecretWillExpireInLessThanTwoDays
       annotations:
         description: '{{`Kyverno Certificate stored in Secret {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two days.`}}'
-        opsrecipe: kyverno-certificate-secret-will-expire-in-less-than-two-days/
+        runbook_url: kyverno-certificate-secret-will-expire-in-less-than-two-days/
       expr: (cert_exporter_secret_not_after{name=~".*kyverno.*"} - time()) < 2 * 24 * 60 * 60
       labels:
         area: platform
@@ -50,7 +50,7 @@ spec:
     - alert: CertificateSecretWillExpireInLessThanTwoWeeks
       annotations:
         description: '{{`Certificate stored in Secret {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
-        opsrecipe: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
+        runbook_url: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
       expr: (cert_exporter_secret_not_after{name!~"kiam.*|.*kyverno.*",cluster_type="management_cluster"} - time()) < 13 * 24 * 60 * 60
       labels:
         area: kaas
@@ -61,7 +61,7 @@ spec:
     - alert: GiantswarmManagedCertificateCRWillExpireInLessThanTwoWeeks
       annotations:
         description: '{{`Certificate CR {{ $labels.exported_namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
-        opsrecipe: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
+        runbook_url: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
       expr: (cert_exporter_certificate_cr_not_after{managed_issuer="true",exported_namespace=~"kube-system|giantswarm|monitoring"} - time()) < 13 * 24 * 60 * 60
       labels:
         area: kaas
@@ -72,7 +72,7 @@ spec:
     - alert: CustomerManagedCertificateCRWillExpireInLessThanTwoWeeks
       annotations:
         description: '{{`Certificate CR {{ $labels.exported_namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
-        opsrecipe: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
+        runbook_url: managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
       expr: (cert_exporter_certificate_cr_not_after{managed_issuer="true",cluster_type="workload_cluster",exported_namespace!~"kube-system|giantswarm|monitoring"} - time()) < 13 * 24 * 60 * 60
       labels:
         area: kaas

@@ -25,4 +25,4 @@ tests:
               team: phoenix
             exp_annotations:
               description: 'Not all managed Crossplane resources of type "cloudwatchevents.aws.upbound.io/v1beta1, Kind=Rule" on mymc are ready. This could affect creation or health of workload clusters.'
-              opsrecipe: cluster-crossplane-resources
+              runbook_url: cluster-crossplane-resources

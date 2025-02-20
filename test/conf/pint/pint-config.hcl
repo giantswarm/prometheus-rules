@@ -30,6 +30,13 @@ rule {
     required = true
   }
 
+  # Each alert must have an `area' label that's either 'kaas' or 'platform'.
+  label "area" {
+    severity = "bug"
+    value    = "(kaas|platform)"
+    required = true
+  }
+
   # Check how many times each alert would fire in the last 1d.
   alerts {
     range   = "1d"

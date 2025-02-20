@@ -25,4 +25,4 @@ tests:
               topic: "releng"
             exp_annotations:
               description: "Flux Kustomization flux in ns flux-giantswarm on test has been suspended for 24h."
-              opsrecipe: "fluxcd-suspended-for-too-long/"
+              runbook_url: "fluxcd-suspended-for-too-long/"

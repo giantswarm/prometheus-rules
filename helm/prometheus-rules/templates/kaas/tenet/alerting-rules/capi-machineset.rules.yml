@@ -31,6 +31,6 @@ spec:
           annotations:
             description: |-
               {{`Machineset {{ $labels.exported_namespace }}/{{ $labels.name }} is paused.`}}
-            opsrecipe: capi-machineset/
-            dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
+            runbook_url: capi-machineset/
+            dashboardUid: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
 {{- end }}

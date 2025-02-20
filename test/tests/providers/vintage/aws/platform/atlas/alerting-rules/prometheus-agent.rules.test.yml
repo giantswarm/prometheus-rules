@@ -27,9 +27,9 @@ tests:
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
             exp_annotations:
-              dashboard: "promRW001/prometheus-remote-write"
+              dashboardUid: "promRW001/prometheus-remote-write"
               description: "Prometheus agent remote write is failing."
-              opsrecipe: "prometheus-agent/"
+              runbook_url: "prometheus-agent/"
               summary: "Prometheus agent fails to send samples to remote write endpoint."
       - alertname: InhibitionPrometheusAgentFailing
         eval_time: 30m
@@ -45,9 +45,9 @@ tests:
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
             exp_annotations:
-              dashboard: "promRW001/prometheus-remote-write"
+              dashboardUid: "promRW001/prometheus-remote-write"
               description: "Prometheus agent remote write is failing."
-              opsrecipe: "prometheus-agent/"
+              runbook_url: "prometheus-agent/"
               summary: "Prometheus agent fails to send samples to remote write endpoint."
       - alertname: PrometheusAgentFailing
         eval_time: 90m
@@ -67,9 +67,9 @@ tests:
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
             exp_annotations:
-              dashboard: "promRW001/prometheus-remote-write"
+              dashboardUid: "promRW001/prometheus-remote-write"
               description: "Prometheus agent remote write is failing."
-              opsrecipe: "prometheus-agent/"
+              runbook_url: "prometheus-agent/"
               summary: "Prometheus agent fails to send samples to remote write endpoint."
       - alertname: InhibitionPrometheusAgentFailing
         eval_time: 90m
@@ -88,9 +88,9 @@ tests:
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
             exp_annotations:
-              dashboard: "promRW001/prometheus-remote-write"
+              dashboardUid: "promRW001/prometheus-remote-write"
               description: "Prometheus agent remote write is failing."
-              opsrecipe: "prometheus-agent/"
+              runbook_url: "prometheus-agent/"
               summary: "Prometheus agent fails to send samples to remote write endpoint."
       - alertname: PrometheusAgentFailing
         eval_time: 150m
@@ -133,7 +133,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              opsrecipe: "prometheus-agent/"
+              runbook_url: "prometheus-agent/"
               summary: "Prometheus agent is missing shards."
       - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 100m
@@ -154,7 +154,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              opsrecipe: "prometheus-agent/"
+              runbook_url: "prometheus-agent/"
               summary: "Prometheus agent is missing shards."
       - alertname: PrometheusAgentShardsMissing
         eval_time: 125m
@@ -175,7 +175,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              opsrecipe: "prometheus-agent/"
+              runbook_url: "prometheus-agent/"
               summary: "Prometheus agent is missing shards."
       - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 125m
@@ -196,7 +196,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              opsrecipe: "prometheus-agent/"
+              runbook_url: "prometheus-agent/"
               summary: "Prometheus agent is missing shards."
       - alertname: PrometheusAgentShardsMissing
         eval_time: 130m
@@ -237,7 +237,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              opsrecipe: "prometheus-agent/"
+              runbook_url: "prometheus-agent/"
               summary: "Prometheus agent is missing shards."
       - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 100m
@@ -258,7 +258,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              opsrecipe: "prometheus-agent/"
+              runbook_url: "prometheus-agent/"
               summary: "Prometheus agent is missing shards."
       - alertname: PrometheusAgentShardsMissing
         eval_time: 125m
@@ -279,7 +279,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              opsrecipe: "prometheus-agent/"
+              runbook_url: "prometheus-agent/"
               summary: "Prometheus agent is missing shards."
       - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 125m
@@ -300,7 +300,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              opsrecipe: "prometheus-agent/"
+              runbook_url: "prometheus-agent/"
               summary: "Prometheus agent is missing shards."
       - alertname: PrometheusAgentShardsMissing
         eval_time: 130m

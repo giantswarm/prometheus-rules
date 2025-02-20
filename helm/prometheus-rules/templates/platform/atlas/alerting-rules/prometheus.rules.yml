@@ -13,7 +13,7 @@ spec:
     - alert: PrometheusCantCommunicateWithKubernetesAPI
       annotations:
         description: '{{`Prometheus can''t communicate with Kubernetes API.`}}'
-        opsrecipe: prometheus-cant-communicate/
+        runbook_url: prometheus-cant-communicate/
       expr: rate(prometheus_sd_kubernetes_http_request_total{job!="promxy-app", status_code="<error>"}[15m]) > 0.25
       for: 30m
       labels:
@@ -31,7 +31,7 @@ spec:
       annotations:
         description: {{`Prometheus {{$labels.installation}}/{{$labels.cluster_id}} has failed to evaluate rule(s) {{ printf "%.2f" $value }} time(s).`}}
         summary: Prometheus is failing rule evaluations.
-        opsrecipe: prometheus-rule-failures/
+        runbook_url: prometheus-rule-failures/
       expr: rate(prometheus_rule_evaluation_failures_total[5m]) > 0
       for: 1h
       labels:

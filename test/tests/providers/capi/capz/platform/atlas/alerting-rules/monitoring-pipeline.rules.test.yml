@@ -52,8 +52,8 @@ tests:
               pipeline: "testing"
               job: "kube-controller-manager"
             exp_annotations:
-              dashboard: servicemonitors-details/servicemonitors-details?orgId=1
-              opsrecipe: "monitoring-job-scraping-failure/"
+              dashboardUid: servicemonitors-details/servicemonitors-details?orgId=1
+              runbook_url: "monitoring-job-scraping-failure/"
               summary: "Monitoring agent failed to scrape all targets in a job."
               description: "Monitoring agents for cluster glean/glean has failed to scrape all targets in kube-controller-manager job."
           - exp_labels:
@@ -68,8 +68,8 @@ tests:
               pipeline: "testing"
               job: "app-exporter"
             exp_annotations:
-              dashboard: servicemonitors-details/servicemonitors-details?orgId=1
-              opsrecipe: "monitoring-job-scraping-failure/"
+              dashboardUid: servicemonitors-details/servicemonitors-details?orgId=1
+              runbook_url: "monitoring-job-scraping-failure/"
               summary: "Monitoring agent failed to scrape all targets in a job."
               description: "Monitoring agents for cluster glean/glean has failed to scrape all targets in app-exporter job."
   
@@ -92,8 +92,8 @@ tests:
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
             exp_annotations:
-              dashboard: servicemonitors-details/servicemonitors-details?orgId=1
-              opsrecipe: "monitoring-job-scraping-failure/"
+              dashboardUid: servicemonitors-details/servicemonitors-details?orgId=1
+              runbook_url: "monitoring-job-scraping-failure/"
               summary: "Monitoring agent failed to scrape all targets in a job."
               description: "Monitoring agents for cluster glean/glean has failed to scrape all targets in kube-controller-manager job."
 
@@ -117,5 +117,5 @@ tests:
               url: "http://remote-storage_samples_failed_total"
             exp_annotations:
               description: "Monitoring agent can't communicate with Remote Storage API at http://remote-storage_samples_failed_total."
-              opsrecipe: "monitoring-pipeline/"
-              dashboard: "promRW001/prometheus-remote-write?orgId=1"
+              runbook_url: "monitoring-pipeline/"
+              dashboardUid: "promRW001/prometheus-remote-write?orgId=1"

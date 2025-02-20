@@ -7,8 +7,8 @@ RULES_FILES=(./test/hack/output/helm-chart)
 DEBUG_MODE=false
 
 CHECK_EXTRADATA_ERRORS=true
-CHECK_NORECIPE_ERRORS=true
-CHECK_UNEXISTINGRECIPE_ERRORS=true
+CHECK_NORUNBOOK_ERRORS=true
+CHECK_UNEXISTINGRUNBOOK_ERRORS=true
 
 # Parameters:
 # - an element
@@ -40,30 +40,30 @@ merge_docs() {
         xargs sed -s -i'' '0,/^---.*$/s//---\nsourceOrigin: handbook/'
 }
 
-listOpsRecipes () {
+listRunbooks () {
     local runInCi="$1" && shift
-    privateOpsrecipesParentDirectory="./giantswarm"
-    privateOpsrecipesHandbookParentDirectory="./handbook"
+    privateRunbooksParentDirectory="./giantswarm"
+    privateRunbooksHandbookParentDirectory="./handbook"
     # CI clones git dependencies, but if we run it locally we have to do it ourselves
     if [[ "$runInCi" == false ]]; then
         tmpDir="$(mktemp -d)"
         tmpDirHandbook="$(mktemp -d)"
         git clone --depth 1 --single-branch -b main -q git@github.com:giantswarm/giantswarm.git "$tmpDir"
         git clone --depth=1 --single-branch -b main -q git@github.com:giantswarm/handbook.git "$tmpDirHandbook"
-        privateOpsrecipesParentDirectory="$tmpDir"
-        privateOpsrecipesHandbookParentDirectory="$tmpDirHandbook"
+        privateRunbooksParentDirectory="$tmpDir"
+        privateRunbooksHandbookParentDirectory="$tmpDirHandbook"
     fi
 
     # perform merge as done by intranet build
-    merge_docs "$privateOpsrecipesHandbookParentDirectory" "$privateOpsrecipesParentDirectory"
+    merge_docs "$privateRunbooksHandbookParentDirectory" "$privateRunbooksParentDirectory"
 
-    # find all ops-recipes ".md" files, and keep only the opsrecipe name (may contain a path, like "rolling-nodes/rolling-nodes")
-    find "$privateOpsrecipesParentDirectory"/content/docs/support-and-ops/ops-recipes -type f -name \*.md \
-        | sed -n 's_'"$privateOpsrecipesParentDirectory"'/content/docs/support-and-ops/ops-recipes/\(.*\).md_\1_p' \
+    # find all runbooks ".md" files, and keep only the runbook name (may contain a path, like "rolling-nodes/rolling-nodes")
+    find "$privateRunbooksParentDirectory"/content/docs/support-and-ops/ops-recipes -type f -name \*.md \
+        | sed -n 's_'"$privateRunbooksParentDirectory"'/content/docs/support-and-ops/ops-recipes/\(.*\).md_\1_p' \
         | sed 's/\/_index//g' # Removes the _index.md files and keep the directory name
-    rm -rf "$privateOpsrecipesParentDirectory"
+    rm -rf "$privateRunbooksParentDirectory"
 
-    # Add extra opsrecipes
+    # Add extra runbooks
     # These ones are defined as aliases of `deployment-not-satisfied`:
     echo "workload-cluster-managed-deployment-not-satisfied"
     echo "workload-cluster-deployment-not-satisfied"
@@ -80,10 +80,10 @@ main() {
     done
 
     local -a checkedRules=()
-    local -a opsRecipes=()
+    local -a runbooks=()
     local -a E_extradata=()
-    local -a E_norecipe=()
-    local -a E_unexistingrecipe=()
+    local -a E_norunbook=()
+    local -a E_unexistingrunbook=()
     local returncode=0
 
     local -r GIT_WORKDIR="$(git rev-parse --show-toplevel)"
@@ -93,13 +93,13 @@ main() {
     # Investigation section
     ########################
 
-    # Retrieve list of opsrecipes
-    mapfile -t opsRecipes < <(listOpsRecipes "$runInCi")
+    # Retrieve list of runbooks
+    mapfile -t runbooks < <(listRunbooks "$runInCi")
 
     if [[ "$DEBUG_MODE" != "false" ]]; then
-        echo "List of opsrecipe:"
-        for recipe in "${opsRecipes[@]}"; do
-            echo " - \"$recipe\""
+        echo "List of runbooks:"
+        for runbook in "${runbooks[@]}"; do
+            echo " - \"$runbook\""
         done
     fi
 
@@ -111,45 +111,45 @@ main() {
         isInArray "$prettyRulesFilename" "${checkedRules[@]}" \
             && continue
 
-        while read -r alertname opsrecipe severity overflow ; do
+        while read -r alertname runbook severity overflow ; do
 
             # Discard non-paging alerts
             [[ "$severity" != "page" ]] && continue
 
             # Get rid of anchors
-            opsrecipe="${opsrecipe%%#*}"
+            runbook="${runbook%%#*}"
             # Get rid of trailing slash
-            opsrecipe="${opsrecipe%/}"
+            runbook="${runbook%/}"
 
             # There should be no data in $overflow
             # If there is, it means something went wrong with the parsing
             if [[ "$overflow" != "" ]]; then
-                local message="file: $prettyRulesFilename / alert \"$alertname\" / recipe \"$opsrecipe\": extra data \"$overflow\""
+                local message="file: $prettyRulesFilename / alert \"$alertname\" / runbook \"$runbook\": extra data \"$overflow\""
                 E_extradata+=("$message")
                 continue
             fi
 
-            # When there is no opsrecipe annotation, yq outputs "null"
-            if [[ "$opsrecipe" == "null" ]]; then
-                local message="file $prettyRulesFilename / alert \"$alertname\" has no opsrecipe"
-                E_norecipe+=("$message")
+            # When there is no runbook annotation, yq outputs "null"
+            if [[ "$runbook" == "null" ]]; then
+                local message="file $prettyRulesFilename / alert \"$alertname\" has no runbook"
+                E_norunbook+=("$message")
                 continue
             fi
 
-            # Let's check if the opsrecipe is in our list of existing opsrecipes
+            # Let's check if the runbook is in our list of existing runbooks
             # or is a valid URL starting with http
-            if ! isInArray "$opsrecipe" "${opsRecipes[@]}" && [[ "$opsrecipe" != http* ]]; then
-                local message="file $prettyRulesFilename / alert \"$alertname\" links to unexisting opsrecipe (\"$opsrecipe\")"
-                E_unexistingrecipe+=("$message")
+            if ! isInArray "$runbook" "${runbooks[@]}" && [[ "$runbook" != http* ]]; then
+                local message="file $prettyRulesFilename / alert \"$alertname\" links to unexisting runbook (\"$runbook\")"
+                E_unexistingrunbook+=("$message")
                 continue
             fi
 
             if [[ "$DEBUG_MODE" != "false" ]]; then
-                echo "file $prettyRulesFilename / alert: $alertname / recipe: $opsrecipe - OK"
+                echo "file $prettyRulesFilename / alert: $alertname / runbook: $runbook - OK"
             fi
 
-        # parse rules yaml files, and for each rule found output alertname, opsrecipe, and severity, space-separated, on one line.
-        done < <("$GIT_WORKDIR/$YQ" -o json "$rulesFile" | "$GIT_WORKDIR/$JQ" -j '.spec.groups[]?.rules[] | .alert, " ", .annotations.opsrecipe, " ", .labels.severity, "\n"')
+        # parse rules yaml files, and for each rule found output alertname, runbook, and severity, space-separated, on one line.
+        done < <("$GIT_WORKDIR/$YQ" -o json "$rulesFile" | "$GIT_WORKDIR/$JQ" -j '.spec.groups[]?.rules[] | .alert, " ", .annotations.runbook_url, " ", .labels.severity, "\n"')
 
         checkedRules+=("$rulesFile")
     done < <(find "${RULES_FILES[@]}" -type f -print0)
@@ -168,21 +168,21 @@ main() {
             returncode=1
         fi
     fi
-    if [[ "$CHECK_NORECIPE_ERRORS" != "false" ]]; then
-        if [[ "${#E_norecipe[@]}" -gt 0 ]]; then
+    if [[ "$CHECK_NORUNBOOK_ERRORS" != "false" ]]; then
+        if [[ "${#E_norunbook[@]}" -gt 0 ]]; then
             echo ""
-            echo "Alerts missing recipe: ${#E_norecipe[@]}"
-            for message in "${E_norecipe[@]}"; do
+            echo "Alerts missing runbook: ${#E_norunbook[@]}"
+            for message in "${E_norunbook[@]}"; do
                 echo "$message"
             done
             returncode=1
         fi
     fi
-    if [[ "$CHECK_UNEXISTINGRECIPE_ERRORS" != "false" ]]; then
-        if [[ "${#E_unexistingrecipe[@]}" -gt 0 ]]; then
+    if [[ "$CHECK_UNEXISTINGRUNBOOK_ERRORS" != "false" ]]; then
+        if [[ "${#E_unexistingrunbook[@]}" -gt 0 ]]; then
             echo ""
-            echo "Alerts using unexisting recipe: ${#E_unexistingrecipe[@]}"
-            for message in "${E_unexistingrecipe[@]}"; do
+            echo "Alerts using unexisting runbook: ${#E_unexistingrunbook[@]}"
+            for message in "${E_unexistingrunbook[@]}"; do
                 echo "$message"
             done
             returncode=1

@@ -17,7 +17,7 @@ spec:
     - alert: WorkloadClusterDeploymentNotSatisfied
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        opsrecipe: workload-cluster-deployment-not-satisfied/
+        runbook_url: workload-cluster-deployment-not-satisfied/
       expr: kube_deployment_status_replicas_unavailable{cluster_type="workload_cluster", deployment="chart-operator"} > 0
       for: 30m
       labels:
@@ -29,7 +29,7 @@ spec:
     - alert: WorkloadClusterDeploymentNotSatisfiedKaas
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        opsrecipe: workload-cluster-deployment-not-satisfied/
+        runbook_url: workload-cluster-deployment-not-satisfied/
       expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="workload_cluster", deployment=~"metrics-server|vertical-pod-autoscaler(-app)?-admission-controller|vertical-pod-autoscaler(-app)?-recommender|vertical-pod-autoscaler(-app)?-updater|aws-pod-identity-webhook.*|cluster-autoscaler|aws-load-balancer-controller"}, "service", "/", "namespace", "deployment") > 0
       for: 30m
       labels:
@@ -41,7 +41,7 @@ spec:
     - alert: WorkloadClusterNonCriticalDeploymentNotSatisfiedKaas
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        opsrecipe: workload-cluster-deployment-not-satisfied/
+        runbook_url: workload-cluster-deployment-not-satisfied/
       expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="workload_cluster", deployment="etcd-kubernetes-resources-count-exporter"}, "service", "/", "namespace", "deployment") > 0
       for: 30m
       labels:
@@ -76,7 +76,7 @@ spec:
     - alert: WorkloadClusterDeploymentNotSatisfiedShield
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} has been scaled down to zero for prolonged period of time.`}}'
-        opsrecipe: workload-cluster-deployment-not-satisfied/
+        runbook_url: workload-cluster-deployment-not-satisfied/
       expr: kube_deployment_status_replicas_unavailable{cluster_type="workload_cluster", deployment=~"cert-manager-*|teleport-*|dex*|athena*|rbac-operator|credentiald"} > 0
       for: 30m
       labels:

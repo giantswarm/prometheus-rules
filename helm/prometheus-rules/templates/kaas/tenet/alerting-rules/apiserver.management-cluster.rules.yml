@@ -16,7 +16,7 @@ spec:
     - alert: ManagementClusterAPIServerAdmissionWebhookErrors
       annotations:
         description: '{{`Kubernetes API Server {{ $labels.cluster_id }} having admission webhook errors.`}}'
-        opsrecipe: apiserver-admission-webhook-errors/
+        runbook_url: apiserver-admission-webhook-errors/
       expr: label_replace(rate(apiserver_admission_webhook_rejection_count{cluster_type="management_cluster", error_type=~"calling_webhook_error|apiserver_internal_error"}[5m]), "service", "$1", "name", "(.*)") > 1
       for: 15m
       labels:
@@ -28,7 +28,7 @@ spec:
     - alert: ManagementClusterWebhookDurationExceedsTimeout
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
-        opsrecipe: apiserver-admission-webhook-errors/
+        runbook_url: apiserver-admission-webhook-errors/
       expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="management_cluster"}[5m])) by (cluster_id, installation, pipeline, provider, name, job, le)) > 5
       for: 15m
       labels:

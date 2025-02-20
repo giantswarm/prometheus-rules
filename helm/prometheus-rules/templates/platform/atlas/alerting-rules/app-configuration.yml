@@ -14,7 +14,7 @@ spec:
     - alert: ConfigmapUnexpected
       annotations:
         description: '{{`{{ $labels.configmap }} configmap is not expected.`}}'
-        opsrecipe: atlas-app-configuration/
+        runbook_url: atlas-app-configuration/
       expr: |
         kube_configmap_info{cluster_type="management_cluster", configmap=~".*(loki|mimir|prometheus-agent)-user-values"} > 0
       for: 2d
@@ -28,7 +28,7 @@ spec:
     - alert: SecretUnexpected
       annotations:
         description: '{{`{{ $labels.secret }} secret is not expected.`}}'
-        opsrecipe: atlas-app-configuration/
+        runbook_url: atlas-app-configuration/
       expr: |
         kube_secret_info{cluster_type="management_cluster", secret=~".*(loki|mimir|prometheus-agent)-user-values"} > 0
       for: 2d

@@ -27,8 +27,8 @@ tests:
               phase: Failed
             exp_annotations:
               description: "Machine giantswarm/clippaxy-72jq5 stuck in phase Failed for more than 30 minutes."
-              opsrecipe: capi-machine/
-              dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
+              runbook_url: capi-machine/
+              dashboardUid: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
       - alertname: MachinePaused
         eval_time: 75m
         exp_alerts:
@@ -45,5 +45,5 @@ tests:
               paused_value: "true"
             exp_annotations:
               description: "Machine giantswarm/grumpy-72r5c is paused."
-              opsrecipe: capi-machine/
-              dashboard: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
+              runbook_url: capi-machine/
+              dashboardUid: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2

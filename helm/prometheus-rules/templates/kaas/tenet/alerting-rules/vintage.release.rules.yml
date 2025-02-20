@@ -17,7 +17,7 @@ spec:
     - alert: ReleaseNotReady
       annotations:
         description: '{{`Release {{ $labels.name }} ({{ $labels.state }}) is not ready.`}}'
-        opsrecipe: release-operator-release-not-ready/
+        runbook_url: release-operator-release-not-ready/
       expr: release_operator_release_status{ready="false", inUse="true"} == 1
       for: 30m
       labels:

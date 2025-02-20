@@ -18,7 +18,7 @@ spec:
     - alert: AWSWorkloadClusterNodeTooManyAutoTermination
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} has too many nodes terminated by node auto termination feature in a short time.`}}'
-        opsrecipe: node-too-many-auto-termination-aws/
+        runbook_url: node-too-many-auto-termination-aws/
       expr: increase(aws_operator_unhealthy_node_termination_count[60m]) > 10
       for: 15m
       labels:
@@ -33,7 +33,7 @@ spec:
     - alert: WorkloadClusterNodeUnexpectedTaintNodeWithImpairedVolumes
       annotations:
         description: '{{`Node {{ $labels.node }} has unexpected taint NodeWithImpairedVolumes`}}'
-        opsrecipe: aws-node-taint-NodeWithImpairedVolumes/
+        runbook_url: aws-node-taint-NodeWithImpairedVolumes/
       expr: kube_node_spec_taint{key="NodeWithImpairedVolumes"} > 0
       for: 30m
       labels:

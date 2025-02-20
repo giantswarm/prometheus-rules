@@ -21,6 +21,7 @@ tests:
               cluster_type: management_cluster
               installation: "glean"
               instance: "grafana"
+              service: "grafana"
               severity: page
               team: atlas
               topic: observability

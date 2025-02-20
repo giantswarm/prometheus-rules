@@ -69,6 +69,7 @@ tests:
         eval_time: 50m
         exp_alerts:
           - exp_labels:
+              service: mimir-ingester
               area: platform
               severity: page
               team: atlas

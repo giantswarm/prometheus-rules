@@ -224,3 +224,19 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: LokiLogTenantIdMissing
+      annotations:
+        description: '{{`Log lines are being dropped due to missing tenant id.`}}'
+        runbook_url: loki/
+      expr: |
+        sum(rate(loki_process_dropped_lines_total{reason="no_tenant_id"}[5m])) by (cluster_id) > 0
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability

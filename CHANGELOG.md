@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `LokiLogTenantIdMissing` alert to detect dropped log lines due to missing tenant
+
 ### Removed
 
 - clean up the loki ruler datasource as we now have a datasource per tenant

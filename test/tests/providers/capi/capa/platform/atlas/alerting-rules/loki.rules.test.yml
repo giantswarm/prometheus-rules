@@ -384,3 +384,30 @@ tests:
               dashboardUid: loki-operational/loki-operational?orgId=2
               description: "Loki object storage write rate is down."
               runbook_url: "loki/"
+
+  # Test for LokiLogTenantIdMissing alert
+  - interval: 1m
+    input_series:
+      - series: 'loki_process_dropped_lines_total{cluster_id="foo", reason="no_tenant_id"}'
+        values: "0+0x60 0+300x120 0+0x60"
+    alert_rule_test:
+      - alertname: LokiLogTenantIdMissing
+        eval_time: 60m
+      - alertname: LokiLogTenantIdMissing
+        eval_time: 180m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: foo
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Log lines are being dropped due to missing tenant id."
+              runbook_url: "loki-log/"
+      - alertname: LokiLogTenantIdMissing
+        eval_time: 240m

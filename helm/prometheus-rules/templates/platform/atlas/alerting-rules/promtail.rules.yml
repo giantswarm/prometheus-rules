@@ -14,7 +14,7 @@ spec:
         - alert: PromtailDown
           annotations:
             description: '{{`Scraping of all promtail pods to check if one failed every 30 minutes.`}}'
-            runbook_url: promtail/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/
           expr: |-
             kube_pod_info{pod=~"promtail.*", namespace="kube-system"}
             * on(cluster_id, pod)
@@ -34,9 +34,12 @@ spec:
             cancel_if_node_not_ready: "true"
         - alert: PromtailRequestsErrors
           annotations:
-            dashboardUid: promtail-overview/promtail-overview{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
+            __dashboardUid__: promtail-overview
+            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
+            dashboardQueryParams: "orgId=2"
+            {{ end }}
             description: This alert checks if that the amount of failed requests is below 10% for promtail
-            runbook_url: promtail/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/
           expr: |
             100 * (sum(rate(promtail_request_duration_seconds_count{status_code!~"2.."}[5m])) by (cluster_id, installation, provider, pipeline, namespace, job, route, instance) / sum(rate(promtail_request_duration_seconds_count[5m])) by (cluster_id, installation, provider, pipeline, namespace, job, route, instance)) > 10
           for: 25m

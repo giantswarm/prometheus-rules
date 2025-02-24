@@ -13,7 +13,7 @@ spec:
     - alert: CoreDNSDeploymentNotSatisfied
       annotations:
         description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: core-dns-deployment-not-satisfied/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/core-dns-deployment-not-satisfied/
       expr: |
         sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider) / (sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider) + sum(kube_deployment_status_replicas_unavailable{deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider))* 100 < 51
       for: 10m
@@ -30,7 +30,7 @@ spec:
       annotations:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}-{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: fluxcd-failing-helmrelease/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-helmrelease/
       expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", exported_namespace!~"org-t-.*", name=~".*coredns"} > 0
       for: 20m
       labels:
@@ -67,4 +67,4 @@ spec:
         topic: dns
       annotations:
         description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} has been scaled to its maximum replica count for too long.`}}'
-        runbook_url: core-dns-max-replicas/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/core-dns-max-replicas/

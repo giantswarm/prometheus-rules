@@ -37,7 +37,7 @@ rule {
   }
 
   # Each alert should have a 'dashboardUid' annotation.
-  annotation "dashboardUid" {
+  annotation "__dashboardUid__" {
     severity = "warning"
     required = true
   }

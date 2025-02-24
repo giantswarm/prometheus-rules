@@ -30,7 +30,7 @@ tests:
               name: 8e8225b5
             exp_annotations:
               description: "No DNS-zone for cluster org-31f75bf9/8e8225b5 got created yet. Check dns-operator-azure logs in installation/puppy."
-              runbook_url: dns-operator-azure/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/dns-operator-azure/
       - alertname: AzureDNSOperatorAPIErrorRate
         eval_time: 30m
         exp_alerts:
@@ -44,4 +44,4 @@ tests:
               method: recordSets.CreateOrUpdate
             exp_annotations:
               description: "Error rate for recordSets.CreateOrUpdate is high. Check dns-operator-azure logs in installation/puppy."
-              runbook_url: dns-operator-azure/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/dns-operator-azure/

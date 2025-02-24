@@ -16,7 +16,7 @@ spec:
     - alert: WorkloadClusterNodeIsUnschedulable
       annotations:
         description: '{{`Node {{ $labels.node }} in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} is unschedulable.`}}'
-        runbook_url: node-is-unschedulable/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/node-is-unschedulable/
       expr: kube_node_spec_unschedulable != 0
       for: 45m
       labels:
@@ -30,7 +30,7 @@ spec:
     - alert: WorkloadClusterControlPlaneNodeMissing
       annotations:
         description: '{{`Control plane node in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} is missing.`}}'
-        runbook_url: master-node-missing/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/master-node-missing/
       expr: count by (cluster_id, installation, pipeline, provider) (kubernetes_build_info{app="kubelet"} unless on (node) kube_node_role{role!~"control-plane|master"}) == 0
       for: 30m
       labels:
@@ -44,7 +44,7 @@ spec:
     - alert: WorkloadClusterHAControlPlaneDownForTooLong
       annotations:
         description: '{{`Control plane node in HA cluster {{ $labels.installation }}/{{ $labels.cluster_id }} is down for a long time.`}}'
-        runbook_url: master-node-missing/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/master-node-missing/
       expr: sum by (cluster_id, installation, pipeline, provider) (kubernetes_build_info{app="kubelet"} * on (cluster_id, node) group_left kube_node_role{role="control-plane"}) == 2 or sum by (cluster_id, installation, pipeline, provider) (kubernetes_build_info{app="kubelet"} * on (cluster_id, node) group_left kube_node_role{role="master"}) == 2
       for: 30m
       labels:
@@ -106,7 +106,7 @@ spec:
     - alert: NodeConnTrackAlmostExhausted
       annotations:
         description: '{{`Node {{ $labels.node }} in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} reports a connection usage above 85% for the last 15 minutes.`}}'
-        runbook_url: node-conntrack-limits/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/node-conntrack-limits/
       expr: node_nf_conntrack_entries{cluster_type="workload_cluster"} / node_nf_conntrack_entries_limit{cluster_type="workload_cluster"} >= 0.85
       for: 15m
       labels:
@@ -118,7 +118,7 @@ spec:
     - alert: MachineEntropyTooLow
       annotations:
         description: '{{`Machine {{ $labels.instance }} in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} entropy is too low.`}}'
-        runbook_url: low-entropy/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/low-entropy/
       expr: node_entropy_available_bits{cluster_type="workload_cluster"} < 250
       for: 10m
       labels:
@@ -130,7 +130,7 @@ spec:
     - alert: MachineAllocatedFileDescriptorsTooHigh
       annotations:
         description: '{{`Machine {{ $labels.instance }} in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has too many allocated file descriptors.`}}'
-        runbook_url: high-number-file-descriptors/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/high-number-file-descriptors/
       expr: node_filefd_allocated{cluster_type="workload_cluster"} / node_filefd_maximum{cluster_type="workload_cluster"} * 100 > 80
       for: 15m
       labels:
@@ -142,7 +142,7 @@ spec:
     - alert: WorkloadClusterMasterMemoryUsageTooHigh
       annotations:
         description: '{{`Machine {{ $labels.instance }} in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} memory usage is too high (less than 10% and 2G of allocatable memory).`}}'
-        runbook_url: master-machine-usage-too-high/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/master-machine-usage-too-high/
       expr: |-
         ( ( (
               ( node_memory_MemTotal_bytes{cluster_type="workload_cluster"}
@@ -168,7 +168,7 @@ spec:
     - alert: WorkloadClusterNodeUnexpectedTaintNodeCAPIUninitialized
       annotations:
         description: '{{`Node {{ $labels.node }} in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has CAPI taint node.cluster.x-k8s.io/uninitialized for too long`}}'
-        runbook_url: unexpected-taint-capi/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/unexpected-taint-capi/
       expr: kube_node_spec_taint{key="node.cluster.x-k8s.io/uninitialized"} > 0
       for: 20m
       labels:

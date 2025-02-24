@@ -41,7 +41,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              runbook_url: "prometheus-agent/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
               summary: "Prometheus agent is missing shards."
       - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 100m
@@ -62,7 +62,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              runbook_url: "prometheus-agent/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
               summary: "Prometheus agent is missing shards."
       - alertname: PrometheusAgentShardsMissing
         eval_time: 125m
@@ -83,7 +83,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              runbook_url: "prometheus-agent/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
               summary: "Prometheus agent is missing shards."
       - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 125m
@@ -104,7 +104,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              runbook_url: "prometheus-agent/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
               summary: "Prometheus agent is missing shards."
       - alertname: PrometheusAgentShardsMissing
         eval_time: 130m
@@ -145,7 +145,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              runbook_url: "prometheus-agent/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
               summary: "Prometheus agent is missing shards."
       - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 100m
@@ -166,7 +166,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              runbook_url: "prometheus-agent/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
               summary: "Prometheus agent is missing shards."
       - alertname: PrometheusAgentShardsMissing
         eval_time: 125m
@@ -187,7 +187,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              runbook_url: "prometheus-agent/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
               summary: "Prometheus agent is missing shards."
       - alertname: InhibitionPrometheusAgentShardsMissing
         eval_time: 125m
@@ -208,7 +208,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
-              runbook_url: "prometheus-agent/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
               summary: "Prometheus agent is missing shards."
       - alertname: PrometheusAgentShardsMissing
         eval_time: 130m

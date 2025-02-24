@@ -36,7 +36,7 @@ tests:
               topic: cert-manager
             exp_annotations:
               description: "cert-manager in namespace kube-system is down."
-              runbook_url: "cert-manager-down/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cert-manager-down/
   - interval: 1m
     input_series:
       - series: 'up{cluster_id="12345", cluster_type="workload_cluster", container="cert-manager", customer="giantswarm", installation="gollem", instance="10.0.0.0:1234", job="12345-prometheus/workload-12345/0", namespace="kube-system", organization="giantswarm", pod="cert-manager-controller-7fcc585578-gnprd", provider="aws", service_priority="highest"}'

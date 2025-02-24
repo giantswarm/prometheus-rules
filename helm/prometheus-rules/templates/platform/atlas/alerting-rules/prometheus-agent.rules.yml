@@ -15,8 +15,11 @@ spec:
       annotations:
         description: '{{`Prometheus agent remote write is failing.`}}'
         summary: Prometheus agent fails to send samples to remote write endpoint.
-        runbook_url: prometheus-agent/
-        dashboardUid: promRW001/prometheus-remote-write
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
+        __dashboardUid__: promRW001
+        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
+        dashboardQueryParams: "orgId=1"
+        {{ end }}
       expr: |-
         max_over_time(
           sum by (cluster_type, cluster_id, installation, instance, service)
@@ -42,8 +45,11 @@ spec:
       annotations:
         description: '{{`Prometheus agent remote write is failing.`}}'
         summary: Prometheus agent fails to send samples to remote write endpoint.
-        runbook_url: prometheus-agent/
-        dashboardUid: promRW001/prometheus-remote-write
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
+        __dashboardUid__: promRW001
+        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
+        dashboardQueryParams: "orgId=1"
+        {{ end }}
       expr: |-
         max_over_time(
           sum by (cluster_type, cluster_id, installation, instance, service)
@@ -69,7 +75,7 @@ spec:
       annotations:
         description: '{{`Prometheus agent is missing shards.`}}'
         summary: Prometheus agent is missing shards.
-        runbook_url: prometheus-agent/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
       expr: |-
         max_over_time(sum by (cluster_id, installation, provider, pipeline)(
           count(
@@ -100,7 +106,7 @@ spec:
       annotations:
         description: '{{`Prometheus agent is missing shards.`}}'
         summary: Prometheus agent is missing shards.
-        runbook_url: prometheus-agent/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
       expr: |-
         max_over_time(sum by (cluster_id, installation, provider, pipeline)(
           count(

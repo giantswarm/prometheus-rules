@@ -35,7 +35,7 @@ merge_docs() {
     if [[ ! -d "$2/content/docs/." ]] ; then
         echo "Destination Hugo base directory not specified or invalid (must contain content/docs)!" >&2
     fi
-    find "$1/content/docs" -mindepth 1 -maxdepth 1 -type d | xargs cp -v -x -a -r -u -t "$2/content/docs/." | \
+    find "$1/content/docs" -mindepth 1 -maxdepth 1 -type d -print0 | xargs -0 cp -v -x -a -r -u -t "$2/content/docs/." | \
         grep -o -P "(?<= -> ').*\.md" | \
         xargs sed -s -i'' '0,/^---.*$/s//---\nsourceOrigin: handbook/'
 }
@@ -116,10 +116,13 @@ main() {
             # Discard non-paging alerts
             [[ "$severity" != "page" ]] && continue
 
+            # Get rid of url prefix
+            runbook=$(echo "$runbook" | sed 's/https\:\/\/intranet.giantswarm.io\/docs\/support-and-ops\/ops-recipes\///')
             # Get rid of anchors
             runbook="${runbook%%#*}"
             # Get rid of trailing slash
             runbook="${runbook%/}"
+
 
             # There should be no data in $overflow
             # If there is, it means something went wrong with the parsing

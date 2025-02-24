@@ -16,7 +16,7 @@ spec:
     - alert: DockerMemoryUsageTooHigh
       annotations:
         description: '{{`Docker memory usage on {{ $labels.instance }} is too high.`}}'
-        runbook_url: docker-memory-usage-high/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/docker-memory-usage-high/
       expr: process_resident_memory_bytes{job=~".*/docker-.*"} > (5 * 1024 * 1024 * 1024)
       for: 15m
       labels:

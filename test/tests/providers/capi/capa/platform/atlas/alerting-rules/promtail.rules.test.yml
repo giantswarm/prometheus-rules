@@ -48,7 +48,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 30 minutes."
-              runbook_url: "promtail/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/
       # Tests with 2 pods
       - alertname: PromtailDown
         eval_time: 111m
@@ -74,7 +74,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 30 minutes."
-              runbook_url: "promtail/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/
       - alertname: PromtailDown
         eval_time: 121m
       - alertname: PromtailDown
@@ -101,7 +101,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 30 minutes."
-              runbook_url: "promtail/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
@@ -123,7 +123,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Scraping of all promtail pods to check if one failed every 30 minutes."
-              runbook_url: "promtail/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/
   - interval: 1m
     input_series:
       # Tests with multiple cases: no metrics, no requests, only status_code 204 ones, 204 ones and 500 that are less than 10% of the the total, 500 request that represent more than 10% of the total, only 500 ones
@@ -156,9 +156,10 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: promtail-overview/promtail-overview?orgId=2
+              __dashboardUid__: promtail-overview
+              dashboardQueryParams: "orgId=2"
               description: "This alert checks if that the amount of failed requests is below 10% for promtail"
-              runbook_url: "promtail/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/
       - alertname: PromtailRequestsErrors
         eval_time: 330m
         exp_alerts:
@@ -175,6 +176,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: promtail-overview/promtail-overview?orgId=2
+              __dashboardUid__: promtail-overview
+              dashboardQueryParams: "orgId=2"
               description: "This alert checks if that the amount of failed requests is below 10% for promtail"
-              runbook_url: "promtail/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/

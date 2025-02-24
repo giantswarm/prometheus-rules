@@ -14,7 +14,7 @@ spec:
     - alert: "Heartbeat"
       annotations:
         description: This alert is used to ensure the entire alerting pipeline is functional.
-        runbook_url: mimir/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       expr: up{job=~"mimir/.*", container!="prometheus"} > 0
       labels:
         area: platform
@@ -29,9 +29,10 @@ spec:
     # This alert will not page for the prometheus-buddy.
     - alert: MimirRestartingTooOften
       annotations:
-        dashboardUid: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview?orgId=2
+        __dashboardUid__: ffcd83628d7d4b5a03d1cafd159e6c9c
+        dashboardQueryParams: "orgId=2"
         description: '{{`Mimir containers are restarting too often.`}}'
-        runbook_url: mimir/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       expr: |
         increase(
           kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container!="prometheus"}[1h]
@@ -47,9 +48,10 @@ spec:
         topic: observability
     - alert: MimirComponentDown
       annotations:
-        dashboardUid: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview?orgId=2
+        __dashboardUid__: ffcd83628d7d4b5a03d1cafd159e6c9c
+        dashboardQueryParams: "orgId=2"
         description: '{{`Mimir component : {{ $labels.service }} is down.`}}'
-        runbook_url: mimir/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       expr: count(up{job=~"mimir/.*", container!="prometheus"} == 0) by (cluster_id, installation, provider, pipeline, service) > 0
       for: 5m
       labels:
@@ -63,9 +65,10 @@ spec:
         topic: observability
     - alert: MimirRulerEventsFailed
       annotations:
-        dashboardUid: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler?orgId=2
+        __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
+        dashboardQueryParams: "orgId=2"
         description: 'Mimir ruler is failing to process PrometheusRules.'
-        runbook_url: mimir/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       expr: rate(mimir_rules_events_failed_total{cluster_type="management_cluster", namespace="mimir"}[5m]) > 0
       for: 1h
       labels:
@@ -80,7 +83,7 @@ spec:
     - alert: MimirIngesterNeedsToBeScaledUp
       annotations:
         description: 'Mimir ingester is consuming too much resources and needs to be scaled up.'
-        runbook_url: mimir-ingester/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       expr: |-
         sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir"}) 
           / 
@@ -104,7 +107,7 @@ spec:
     - alert: MimirIngesterNeedsToBeScaledDown
       annotations:
         description: 'Mimir ingester is consuming very few resources and needs to be scaled down.'
-        runbook_url: mimir-ingester/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       expr: |-
         sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir"}) 
           / 
@@ -128,7 +131,7 @@ spec:
     - alert: MimirHPAReachedMaxReplicas
       annotations:
         description: '{{`Mimir {{ $labels.horizontalpodautoscaler }} HPA has reached maximum replicas and consume too much resources, it needs to be scaled up.`}}'
-        runbook_url: mimir-hpa/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-hpa/
       expr: |-
         (
           kube_horizontalpodautoscaler_status_desired_replicas{namespace="mimir"} >=
@@ -153,9 +156,10 @@ spec:
         topic: observability
     - alert: MimirRulerTooManyFailedQueries
       annotations:
-        dashboardUid: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler?orgId=2
+        __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
+        dashboardQueryParams: "orgId=2"
         description: '{{`Mimir Ruler {{ $labels.pod }} is experiencing {{ printf "%.2f" $value }}% errors while evaluating rules.`}}'
-        runbook_url: mimir/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       expr: |
         100 * (
         sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_failed_total[1m]))
@@ -174,9 +178,10 @@ spec:
         topic: observability
     - alert: MimirObjectStoreLowRate
       annotations:
-        dashboardUid: e1324ee2a434f4158c00a9ee279d3292/mimir-object-store?orgId=2
+        __dashboardUid__: e1324ee2a434f4158c00a9ee279d3292
+        dashboardQueryParams: "orgId=2"
         description: '{{`Low rate of writes to the Mimir object store.`}}'
-        runbook_url: mimir/#mimirobjectstorelowrate
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimirobjectstorelowrate
       expr: |
         sum by (component, installation, cluster_id, cluster_type, pipeline, provider) (
           rate(thanos_objstore_bucket_operation_failures_total{cluster_type="management_cluster", namespace="mimir"}[30m])
@@ -200,9 +205,10 @@ spec:
     rules:
     - alert: MimirCompactorFailedCompaction
       annotations:
-        dashboardUid: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources?orgId=2
+        __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
+        dashboardQueryParams: "orgId=2"
         description: 'Mimir compactor has been failing its compactions for 2 hours.'
-        runbook_url: mimir#mimircompactorfailedcompaction
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir#mimircompactorfailedcompaction
       expr: min by (cluster_id, installation, namespace, provider, pipeline) (time() - (cortex_compactor_last_successful_run_timestamp_seconds > 0 ) ) > 60 * 60 * 2
       labels:
         area: platform
@@ -215,9 +221,10 @@ spec:
         topic: observability
     - alert: MimirCompactorFailedCompaction
       annotations:
-        dashboardUid: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources?orgId=2
+        __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
+        dashboardQueryParams: "orgId=2"
         description: 'Mimir compactor has been failing compactions for more than 2 hours since start-up.'
-        runbook_url: mimir#mimircompactorfailedcompaction
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir#mimircompactorfailedcompaction
       # This alert covers the special case at compactor startup, where the "normal" alert would always consider time `0` is more than 2 hours ago, yet we want to let it 2 hours + `for` duration.
       expr: max(max_over_time(cortex_compactor_last_successful_run_timestamp_seconds{}[2h])) by (cluster_id, installation, namespace, provider, pipeline) == 0
       for: 2h
@@ -234,9 +241,10 @@ spec:
     rules:
     - alert: MimirContinuousTestFailingOnWrites
       annotations:
-        dashboardUid: mimir-continuous-test/mimir-continuous-test?orgId=2
+        __dashboardUid__: mimir-continuous-test
+        dashboardQueryParams: "orgId=2"
         description: '{{`Mimir continuous test {{ $labels.test }} in {{ $labels.cluster_id }}/{{ $labels.namespace }} is not effectively running because writes are failing.`}}'
-        runbook_url: mimir/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       # Query is based on the following upstream mixin alerting rule: https://github.com/grafana/mimir/blob/b873372adbf0996bff70de55934f3dd4a10c7b89/operations/mimir-mixin-compiled/alerts.yaml#L1196
       expr: sum by(cluster_id, installation, namespace, pipeline, provider, test) (rate(mimir_continuous_test_writes_failed_total[5m])) > 0
       for: 1h
@@ -251,9 +259,10 @@ spec:
         topic: observability
     - alert: MimirContinuousTestFailingOnReads
       annotations:
-        dashboardUid: mimir-continuous-test/mimir-continuous-test?orgId=2
+        __dashboardUid__: mimir-continuous-test
+        dashboardQueryParams: "orgId=2"
         description: '{{`Mimir continuous test {{ $labels.test }} in {{ $labels.cluster_id }}/{{ $labels.namespace }} is not effectively running because queries are failing.`}}'
-        runbook_url: mimir/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       # Query is based on the following upstream mixin alerting rule: https://github.com/grafana/mimir/blob/b873372adbf0996bff70de55934f3dd4a10c7b89/operations/mimir-mixin-compiled/alerts.yaml#L1185
       expr: sum by(cluster_id, installation, namespace, pipeline, provider, test) (rate(mimir_continuous_test_queries_failed_total[5m])) > 0
       for: 1h
@@ -268,9 +277,10 @@ spec:
         topic: observability
     - alert: MimirContinuousTestFailing
       annotations:
-        dashboardUid: mimir-continuous-test/mimir-continuous-test?orgId=2
+        __dashboardUid__: mimir-continuous-test
+        dashboardQueryParams: "orgId=2"
         description: '{{`Mimir continuous test {{ $labels.test }} in {{ $labels.cluster_id }}/{{ $labels.namespace }} is not effectively running because queries are failing.`}}'
-        runbook_url: mimir/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       # Query is based on the following upstream mixin alerting rule: https://github.com/grafana/mimir/blob/b873372adbf0996bff70de55934f3dd4a10c7b89/operations/mimir-mixin-compiled/alerts.yaml#L1205
       expr: sum by(cluster_id, installation, pipeline, provider, namespace, test) (rate(mimir_continuous_test_query_result_checks_failed_total[10m])) > 0
       for: 1h
@@ -285,9 +295,10 @@ spec:
         topic: observability
     - alert: MimirContinuousTestMissing
       annotations:
-        dashboardUid: mimir-continuous-test/mimir-continuous-test?orgId=2
+        __dashboardUid__: mimir-continuous-test
+        dashboardQueryParams: "orgId=2"
         description: '{{`Mimir continuous test {{ $labels.cluster_id }} is not producing metrics.`}}'
-        runbook_url: mimir/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       expr: |
         sum by(cluster_id, installation, pipeline, provider) (
           rate(mimir_continuous_test_writes_total[10m]) == 0
@@ -317,9 +328,10 @@ spec:
     rules:
     - alert: MimirAlertmanagerSyncConfigsFailing
       annotations:
-        dashboardUid: b0d38d318bbddd80476246d4930f9e55/mimir-alertmanager?orgId=2
+        __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
+        dashboardQueryParams: "orgId=2"
         description: '{{`Mimir Alertmanager {{ $labels.pod }} is failing to read tenant configurations from storage.`}}'
-        runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
       expr: |
         rate(cortex_alertmanager_sync_configs_failed_total[5m]) > 0
       for: 30m
@@ -334,9 +346,10 @@ spec:
         topic: observability
     - alert: MimirAlertmanagerRingCheckFailing
       annotations:
-        dashboardUid: b0d38d318bbddd80476246d4930f9e55/mimir-alertmanager?orgId=2
+        __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
+        dashboardQueryParams: "orgId=2"
         description: '{{`Mimir Alertmanager {{ $labels.pod }} is unable to check tenants ownership via the ring.`}}'
-        runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
       expr: |
         rate(cortex_alertmanager_ring_check_errors_total[2m]) > 0
       for: 10m
@@ -351,9 +364,10 @@ spec:
         topic: observability
     - alert: MimirAlertmanagerReplicationFailing
       annotations:
-        dashboardUid: b0d38d318bbddd80476246d4930f9e55/mimir-alertmanager?orgId=2
+        __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
+        dashboardQueryParams: "orgId=2"
         description: '{{`Mimir Alertmanager {{ $labels.pod }} is failing to replicating partial state to its replicas.`}}'
-        runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
       expr: |
         rate(cortex_alertmanager_state_replication_failed_total[2m]) > 0
       for: 10m

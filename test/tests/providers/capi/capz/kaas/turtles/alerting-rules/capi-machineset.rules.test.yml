@@ -23,5 +23,6 @@ tests:
               paused_value: "true"
             exp_annotations:
               description: "Machineset giantswarm/grumpy-def99 is paused."
-              runbook_url: capi-machineset/
-              dashboardUid: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-machineset/
+              __dashboardUid__: bdi7iswg81czkcasd
+              dashboardQueryParams: "orgId=2"

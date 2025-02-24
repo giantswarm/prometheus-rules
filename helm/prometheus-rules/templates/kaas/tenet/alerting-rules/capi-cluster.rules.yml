@@ -31,8 +31,9 @@ spec:
           annotations:
             description: |-
               {{`Cluster {{ $labels.exported_namespace }}/{{ $labels.name }} stuck in {{ $labels.phase }} phase.`}}
-            runbook_url: capi-cluster/
-            dashboardUid: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+            __dashboardUid__: bdi7iswg81czkcasd
+            dashboardQueryParams: "orgId=2"
         - alert: ClusterStatusNotReady
           expr: |-
             (
@@ -55,8 +56,9 @@ spec:
           annotations:
             description: |-
               {{`Cluster {{ $labels.exported_namespace }}/{{ $labels.name }} is not ready.`}}
-            runbook_url: capi-cluster/
-            dashboardUid: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+            __dashboardUid__: bdi7iswg81czkcasd
+            dashboardQueryParams: "orgId=2"
         - alert: ClusterPaused
           expr: |-
             (
@@ -79,6 +81,7 @@ spec:
           annotations:
             description: |-
               {{`The cluster {{ $labels.exported_namespace }}/{{ $labels.name }} is paused.`}}
-            runbook_url: capi-cluster/
-            dashboardUid: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+            __dashboardUid__: bdi7iswg81czkcasd
+            dashboardQueryParams: "orgId=2"
 {{- end }}

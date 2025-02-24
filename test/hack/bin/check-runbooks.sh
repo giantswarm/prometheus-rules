@@ -117,7 +117,7 @@ main() {
             [[ "$severity" != "page" ]] && continue
 
             # Get rid of url prefix
-            runbook=$(echo "$runbook" | sed 's#https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/##'
+            runbook=${runbook//https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/}
             # Get rid of anchors
             runbook="${runbook%%#*}"
             # Get rid of trailing slash

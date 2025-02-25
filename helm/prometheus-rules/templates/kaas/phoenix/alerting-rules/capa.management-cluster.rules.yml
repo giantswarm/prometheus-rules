@@ -18,7 +18,7 @@ spec:
     - alert: ManagementClusterPodPendingCAPA
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
-        runbook_url: pod-stuck-in-pending/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/pod-stuck-in-pending/
       expr: kube_pod_status_phase{namespace="giantswarm", provider="capa", pod=~"(aws.*|capa.*|irsa-operator.*)", phase="Pending", cluster_type="management_cluster"} == 1
       for: 15m
       labels:
@@ -32,8 +32,9 @@ spec:
     - alert: ManagementClusterContainerIsRestartingTooFrequentlyCAPA
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
-        runbook_url: container-is-restarting-too-often/
-        dashboardUid: bdiako8tt1b7kc/capa-aggregated-error-logs-for-capa-controllers?orgId=2
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/container-is-restarting-too-often/
+        __dashboardUid__: bdiako8tt1b7kc
+        dashboardQueryParams: "orgId=2"
       expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"(aws.*|capa-.*|irsa-operator.*)", cluster_type="management_cluster"}[1h]), "service", "/", "namespace", "pod") > 6
       for: 5m
       labels:
@@ -47,7 +48,7 @@ spec:
     - alert: ManagementClusterDeploymentMissingCAPA
       annotations:
         description: '{{`Deployment {{ $labels.deployment }} is missing.`}}'
-        runbook_url: management-cluster-deployment-is-missing/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/management-cluster-deployment-is-missing/
       expr: |
         absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-resolver-rules-operator", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
           or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-vpc-operator", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})

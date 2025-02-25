@@ -21,4 +21,4 @@ tests:
               topic: security
             exp_annotations:
               description: 'Cannot renew Certificate for Secret giantswarm/aws-admission-controller-certificates on gauss because it is missing.'
-              runbook_url: managed-app-cert-manager/missing-certificate-for-secret/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/managed-app-cert-manager/missing-certificate-for-secret/

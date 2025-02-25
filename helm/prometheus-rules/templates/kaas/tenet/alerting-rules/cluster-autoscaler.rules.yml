@@ -17,7 +17,7 @@ spec:
     - alert: ClusterAutoscalerUnneededNodes
       annotations:
         description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has unneeded nodes.`}}'
-        runbook_url: cluster-autoscaler-scaling/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cluster-autoscaler-scaling/
       expr: cluster_autoscaler_unneeded_nodes_count{cluster_type="workload_cluster", provider=~"aws|capa|capz|eks"} > 0
       for: 240m
       labels:
@@ -33,7 +33,7 @@ spec:
     - alert: ClusterAutoscalerFailedScaling
       annotations:
         description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has failed scaling up.`}}'
-        runbook_url: cluster-autoscaler-scaling/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cluster-autoscaler-scaling/
       expr: increase(cluster_autoscaler_failed_scale_ups_total{cluster_type="workload_cluster", provider=~"aws|capa|capz|eks"}[5m]) > 1
       for: 15m
       labels:

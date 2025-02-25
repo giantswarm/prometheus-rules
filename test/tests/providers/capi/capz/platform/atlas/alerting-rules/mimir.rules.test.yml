@@ -22,7 +22,7 @@ tests:
               type: mimir-heartbeat
             exp_annotations:
               description: "This alert is used to ensure the entire alerting pipeline is functional."
-              runbook_url: "mimir/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       - alertname:  Heartbeat
         eval_time: 70m
       - alertname:  Heartbeat
@@ -38,7 +38,7 @@ tests:
               type: mimir-heartbeat
             exp_annotations:
               description: "This alert is used to ensure the entire alerting pipeline is functional."
-              runbook_url: "mimir/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       - alertname:  Heartbeat
         eval_time: 140m
       - alertname:  Heartbeat
@@ -54,7 +54,7 @@ tests:
               type: mimir-heartbeat
             exp_annotations:
               description: "This alert is used to ensure the entire alerting pipeline is functional."
-              runbook_url: "mimir/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
   - interval: 1m
     input_series:
       # For the first 60min: test with 1 pod: none, up, down
@@ -83,9 +83,10 @@ tests:
               provider: aws
               pipeline: testing
             exp_annotations:
-              dashboardUid: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview?orgId=2
+              __dashboardUid__: ffcd83628d7d4b5a03d1cafd159e6c9c
+              dashboardQueryParams: "orgId=2"
               description: "Mimir component : mimir-ingester is down."
-              runbook_url: "mimir/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
   - interval: 1m
     input_series:
       # test: none, rate > 0, rate = 0
@@ -111,9 +112,10 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler?orgId=2
+              __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
+              dashboardQueryParams: "orgId=2"
               description: "Mimir ruler is failing to process PrometheusRules."
-              runbook_url: "mimir/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       - alertname: MimirRulerEventsFailed
         eval_time: 160m
   - interval: 1m
@@ -139,9 +141,10 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: ffcd83628d7d4b5a03d1cafd159e6c9c/mimir-overview?orgId=2
+              __dashboardUid__: ffcd83628d7d4b5a03d1cafd159e6c9c
+              dashboardQueryParams: "orgId=2"
               description: Mimir containers are restarting too often.
-              runbook_url: "mimir/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       - alertname: MimirRestartingTooOften
         eval_time: 140m  # After 140m minutes, all should be back to normal
   # Test for MimirIngesterNeedsToBeScaledUp alert
@@ -189,7 +192,7 @@ tests:
               topic: observability
             exp_annotations:
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
-              runbook_url: "mimir-ingester/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       - alertname: MimirIngesterNeedsToBeScaledUp
         eval_time: 130m
       - alertname: MimirIngesterNeedsToBeScaledUp
@@ -211,7 +214,7 @@ tests:
               topic: observability
             exp_annotations:
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
-              runbook_url: "mimir-ingester/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       - alertname: MimirIngesterNeedsToBeScaledUp
         eval_time: 210m
       - alertname: MimirIngesterNeedsToBeScaledUp
@@ -233,7 +236,7 @@ tests:
               topic: observability
             exp_annotations:
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
-              runbook_url: "mimir-ingester/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       - alertname: MimirIngesterNeedsToBeScaledUp
         eval_time: 350m
   # Test for MimirIngesterNeedsToBeScaledDown alert
@@ -289,7 +292,7 @@ tests:
               topic: observability
             exp_annotations:
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
-              runbook_url: "mimir-ingester/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       - alertname: MimirIngesterNeedsToBeScaledDown
         eval_time: 280m 
   # Test for MimirHPAReachedMaxReplicas alert
@@ -335,7 +338,7 @@ tests:
                namespace: mimir
              exp_annotations:
                description: "Mimir mimir-distributor HPA has reached maximum replicas and consume too much resources, it needs to be scaled up."
-               runbook_url: "mimir-hpa/"
+               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-hpa/
       - alertname: MimirHPAReachedMaxReplicas
         eval_time: 246m
       - alertname: MimirHPAReachedMaxReplicas
@@ -354,7 +357,7 @@ tests:
                namespace: mimir
              exp_annotations:
                description: "Mimir mimir-distributor HPA has reached maximum replicas and consume too much resources, it needs to be scaled up."
-               runbook_url: "mimir-hpa/"
+               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-hpa/
   # Test for MimirCompactorFailedCompaction alert
   - interval: 1m
     input_series:
@@ -384,9 +387,10 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources?orgId=2
+              __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
+              dashboardQueryParams: "orgId=2"
               description: Mimir compactor has been failing compactions for more than 2 hours since start-up.
-              runbook_url: "mimir#mimircompactorfailedcompaction"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir#mimircompactorfailedcompaction
       - alertname: MimirCompactorFailedCompaction
         eval_time: 250m
       - alertname: MimirCompactorFailedCompaction
@@ -409,9 +413,10 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: 09a5c49e9cdb2f2b24c6d184574a07fd/mimir-compactor-resources?orgId=2
+              __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
+              dashboardQueryParams: "orgId=2"
               description: Mimir compactor has been failing its compactions for 2 hours.
-              runbook_url: "mimir#mimircompactorfailedcompaction"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir#mimircompactorfailedcompaction
 
   # Test for MimirContinuousTestFailingOnWrites alert
   - interval: 1m
@@ -441,9 +446,10 @@ tests:
               test: continuous-test
               topic: observability
             exp_annotations:
-              dashboardUid: mimir-continuous-test/mimir-continuous-test?orgId=2
+              __dashboardUid__: mimir-continuous-test
+              dashboardQueryParams: "orgId=2"
               description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because writes are failing."
-              runbook_url: "mimir/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       - alertname: MimirContinuousTestFailingOnWrites
         eval_time: 160m
 
@@ -475,9 +481,10 @@ tests:
               test: continuous-test
               topic: observability
             exp_annotations:
-              dashboardUid: mimir-continuous-test/mimir-continuous-test?orgId=2
+              __dashboardUid__: mimir-continuous-test
+              dashboardQueryParams: "orgId=2"
               description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because queries are failing."
-              runbook_url: "mimir/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       - alertname: MimirContinuousTestFailingOnReads
         eval_time: 160m
 
@@ -509,9 +516,10 @@ tests:
               topic: observability
               test: continuous-test
             exp_annotations:
-              dashboardUid: mimir-continuous-test/mimir-continuous-test?orgId=2
+              __dashboardUid__: mimir-continuous-test
+              dashboardQueryParams: "orgId=2"
               description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because queries are failing."
-              runbook_url: "mimir/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       - alertname: MimirContinuousTestFailing
         eval_time: 160m
 
@@ -541,9 +549,10 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: mimir-continuous-test/mimir-continuous-test?orgId=2
+              __dashboardUid__: mimir-continuous-test
+              dashboardQueryParams: "orgId=2"
               description: "Mimir continuous test myinstall is not producing metrics."
-              runbook_url: "mimir/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       - alertname: MimirContinuousTestMissing
         eval_time: 150m
       - alertname: MimirContinuousTestMissing
@@ -563,9 +572,10 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: mimir-continuous-test/mimir-continuous-test?orgId=2
+              __dashboardUid__: mimir-continuous-test
+              dashboardQueryParams: "orgId=2"
               description: "Mimir continuous test myinstall is not producing metrics."
-              runbook_url: "mimir/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
 
   # Test for MimirObjectStoreLowRate alert
   - interval: 1m
@@ -596,9 +606,10 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: e1324ee2a434f4158c00a9ee279d3292/mimir-object-store?orgId=2
+              __dashboardUid__: e1324ee2a434f4158c00a9ee279d3292
+              dashboardQueryParams: "orgId=2"
               description: "Low rate of writes to the Mimir object store."
-              runbook_url: "mimir/#mimirobjectstorelowrate"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimirobjectstorelowrate
       - alertname: MimirObjectStoreLowRate
         eval_time: 140m
 
@@ -635,9 +646,10 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: 631e15d5d85afb2ca8e35d62984eeaa0/mimir-ruler?orgId=2
+              __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
+              dashboardQueryParams: "orgId=2"
               description: "Mimir Ruler mimir-ruler-aaaaaaaaaa-bbbbb is experiencing 2.00% errors while evaluating rules."
-              runbook_url: "mimir/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
 
   # Test for MimirAlertmanagerSyncConfigsFailing alert
   - interval: 1m
@@ -666,9 +678,10 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: b0d38d318bbddd80476246d4930f9e55/mimir-alertmanager?orgId=2
+              __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
+              dashboardQueryParams: "orgId=2"
               description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to read tenant configurations from storage."
-              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
 
   # Test for MimirAlertmanagerRingCheckFailing alert
   - interval: 1m
@@ -697,9 +710,10 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: b0d38d318bbddd80476246d4930f9e55/mimir-alertmanager?orgId=2
+              __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
+              dashboardQueryParams: "orgId=2"
               description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is unable to check tenants ownership via the ring."
-              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
 
   # Test for MimirAlertmanagerReplicationFailing alert
   - interval: 1m
@@ -728,6 +742,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: b0d38d318bbddd80476246d4930f9e55/mimir-alertmanager?orgId=2
+              __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
+              dashboardQueryParams: "orgId=2"
               description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to replicating partial state to its replicas."
-              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing

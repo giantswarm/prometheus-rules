@@ -13,7 +13,7 @@ spec:
         - alert: ZotDeploymentNotSatisfied
           annotations:
             description: '{{`Zot deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-            runbook_url: zot/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/zot/
           expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster",namespace="zot",deployment="zot-zot"} > 0
           for: 30m
           labels:
@@ -28,7 +28,7 @@ spec:
         - alert: ZotPersistentVolumeFillingUp
           annotations:
             description: '{{`The Zot PersistentVolume claimed by {{ $labels.persistentvolumeclaim}} in namespace {{ $labels.namespace }} is at least 80% full and projected to fill up soon.`}}'
-            runbook_url: zot/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/zot/
           expr: |-
             (
               kubelet_volume_stats_available_bytes{namespace="zot", persistentvolumeclaim="zot-zot-pvc"}

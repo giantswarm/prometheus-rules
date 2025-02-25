@@ -17,7 +17,7 @@ spec:
     - alert: VaultIsDown
       annotations:
         description: '{{`Vault is down.`}}'
-        runbook_url: vault-is-down/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/vault-is-down/
       expr: vault_up == 0
       for: 40m
       labels:
@@ -29,7 +29,7 @@ spec:
     - alert: VaultIsSealed
       annotations:
         description: '{{`Vault is sealed.`}}'
-        runbook_url: vault-is-sealed/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/vault-is-sealed/
       expr: vault_sealed == 1
       for: 5m
       labels:
@@ -41,7 +41,7 @@ spec:
     - alert: ClusterServiceVaultTokenAlmostExpired
       annotations:
         description: '{{`Vault token for {{ $labels.job }} ({{ $labels.instance }}) is about to expire.`}}'
-        runbook_url: recreate-vault-tokens/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/recreate-vault-tokens/
       expr: sum((cluster_service_vault_token_expire_time - time()) < (60 * 60 * 24 * 7)) BY (job, instance)
       for: 5m
       labels:
@@ -53,7 +53,7 @@ spec:
     - alert: ClusterServiceVaultTokenAlmostExpiredMissing
       annotations:
         description: '{{`Metric cluster_service_vault_token_expire_time_seconds is missing.`}}'
-        runbook_url: absent-metrics/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/absent-metrics/
       expr: absent(cluster_service_vault_token_expire_time) == 1
       for: 120m
       labels:
@@ -66,7 +66,7 @@ spec:
     - alert: CertOperatorVaultTokenAlmostExpired
       annotations:
         description: '{{`Vault token for {{ $labels.container }} ({{ $labels.instance }}) is about to expire.`}}'
-        runbook_url: cert-operator-vault-token-expired/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cert-operator-vault-token-expired/
       expr: sum((cert_operator_vault_token_expire_time_seconds - time()) < (60 * 60 * 24 * 7)) BY (container, instance)
       for: 5m
       labels:
@@ -78,7 +78,7 @@ spec:
     - alert: CertOperatorVaultTokenAlmostExpiredMissing
       annotations:
         description: '{{`Metric cert_operator_vault_token_expire_time_seconds is missing.`}}'
-        runbook_url: absent-metrics/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/absent-metrics/
       expr: absent(cert_operator_vault_token_expire_time_seconds) == 1
       for: 120m
       labels:
@@ -90,7 +90,7 @@ spec:
     - alert: VaultLatestEtcdBackupTooOld
       annotations:
         description: '{{`Latest etcd backup for vault on {{ $labels.installation }} is more than 48h old.`}}'
-        runbook_url: vault-backup/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/vault-backup/
       expr: (time() - vault_etcd_backups_exporter_latest_successful_backup_time) / 60 / 60 > 48
       for: 5m
       labels:
@@ -102,7 +102,7 @@ spec:
     - alert: VaultLatestEtcdBackupMetricsMissing
       annotations:
         description: '{{`etcd backup metrics for vault absent.`}}'
-        runbook_url: vault-backup/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/vault-backup/
       expr: absent(vault_etcd_backups_exporter_latest_successful_backup_time) == 1
       for: 120m
       labels:

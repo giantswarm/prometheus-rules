@@ -13,8 +13,9 @@ spec:
           annotations:
             description: |-
               {{`Machine {{ $labels.exported_namespace}}/{{ $labels.name }} stuck in phase {{ $labels.phase }} for more than 30 minutes.`}}
-            runbook_url: capi-machine/
-            dashboardUid: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-machine/
+            __dashboardUid__: bdi7iswg81czkcasd
+            dashboardQueryParams: "orgId=2"
           expr: |-
             (
               capi_machine_status_phase{phase!="Running", name!~".*bastion.*"}
@@ -55,6 +56,7 @@ spec:
           annotations:
             description: |-
               {{`Machine {{ $labels.exported_namespace}}/{{ $labels.name }} is paused.`}}
-            runbook_url: capi-machine/
-            dashboardUid: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-machine/
+            __dashboardUid__: bdi7iswg81czkcasd
+            dashboardQueryParams: "orgId=2"
 {{- end }}

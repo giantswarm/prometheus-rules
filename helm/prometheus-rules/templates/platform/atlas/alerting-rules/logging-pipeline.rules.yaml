@@ -13,9 +13,12 @@ spec:
         # This includes alloy-logs and the observability-gateway
         - alert: LogForwardingErrors
           annotations:
-            dashboardUid: 53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview{{ if eq .Values.managementCluster.provider.flavor "capi" }}?orgId=2{{ end }}
+            __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
+            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
+            dashboardQueryParams: "orgId=2"
+            {{ end }}
             description: '{{`More that 10% of the requests to Loki are failing.`}}'
-            runbook_url: logging-pipeline/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
           expr: |-
             (
               100
@@ -51,9 +54,12 @@ spec:
         # This alert pages when the loki source api component of the observability gateway is throwing errors
         - alert: LogReceivingErrors
           annotations:
-            dashboardUid: 53c1ecddc3a1d5d4b8d6cd0c23676c31/alloy-logs-overview?orgId=2
+            __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
+            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
+            dashboardQueryParams: "orgId=2"
+            {{ end }}
             description: '{{`More that 10% of the loki requests to the observability gateway are failing.`}}'
-            runbook_url: logging-pipeline/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
           expr: |-
             (
               100

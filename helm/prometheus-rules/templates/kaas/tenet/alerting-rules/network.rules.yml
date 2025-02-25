@@ -13,7 +13,7 @@ spec:
     - alert: NetworkErrorRateTooHigh
       annotations:
         description: '{{`Network error rate is too high for {{ or $labels.pod $labels.instance }} to {{ $labels.host }}.`}}'
-        runbook_url: network-error/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/network-error/
       expr: rate(network_dial_error_total[15m]) > 0.002
       for: 15m
       labels:
@@ -31,7 +31,7 @@ spec:
     - alert: HighNumberOfAllocatedSockets
       annotations:
         description: '{{`Over 90 percent of sockets are allocated on {{ $labels.instance }}.`}}'
-        runbook_url: high-port-usage/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/high-port-usage/
       # This threshold value is based off net.ipv4.ip_local_port_range = 32768 60999
       expr: node_sockstat_TCP_alloc > ( 0.9 * ( 60999 - 32768 ) )
       for: 5m
@@ -44,7 +44,7 @@ spec:
     - alert: HighNumberOfOrphanedSockets
       annotations:
         description: '{{`Over 50 percent of ports are orphaned {{  $labels.instance }}.`}}'
-        runbook_url: high-port-usage/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/high-port-usage/
       # This threshold value is based off net.ipv4.ip_local_port_range = 32768 60999
       expr: node_sockstat_TCP_orphan > ( 0.5 * ( 60999 - 32768 ) )
       for: 5m

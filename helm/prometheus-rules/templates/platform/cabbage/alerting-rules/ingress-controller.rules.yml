@@ -13,7 +13,7 @@ spec:
     - alert: IngressControllerDeploymentNotSatisfied
       annotations:
         description: '{{`Ingress Controller Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: managed-app-nginx-ic/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/managed-app-nginx-ic/
       expr: managed_app_deployment_status_replicas_available{managed_app=~".*(ingress-nginx|nginx-ingress-controller).*"} / (managed_app_deployment_status_replicas_available{managed_app=~".*(ingress-nginx|nginx-ingress-controller).*"} + managed_app_deployment_status_replicas_unavailable{managed_app=~".*(ingress-nginx|nginx-ingress-controller).*"}) * 100 <= 50
       for: 10m
       labels:
@@ -27,7 +27,7 @@ spec:
     - alert: IngressControllerMemoryUsageTooHigh
       annotations:
         description: '{{`Ingress Controller {{ $labels.pod }} memory usage is too high.`}}'
-        runbook_url: ic-memory-too-high/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/ic-memory-too-high/
       expr: sum by (node, pod, cluster_id, installation, pipeline, provider) (container_memory_usage_bytes{pod=~".*(ingress-nginx|nginx-ingress-controller).*", container=""}) / ignoring (pod) group_left sum (node_memory_MemTotal_bytes) by (node, cluster_id, installation, pipeline, provider) * 100 > 33
       for: 3m
       labels:
@@ -39,7 +39,7 @@ spec:
     - alert: IngressControllerReplicaSetNumberTooHigh
       annotations:
         description: '{{`Ingress Controller in namespace {{ $labels.namespace}} has {{ $value }} replica sets.`}}'
-        runbook_url: high-number-replicasets/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/high-number-replicasets/
       expr: count(kube_replicaset_spec_replicas{replicaset=~".*(ingress-nginx|nginx-ingress-controller).*"}) by (cluster_id, installation, pipeline, provider, namespace) > 15
       for: 2m
       labels:
@@ -51,7 +51,7 @@ spec:
     - alert: IngressControllerServiceHasNoEndpoints
       annotations:
         description: '{{`Ingress Controller has no live endpoints.`}}'
-        runbook_url: ingress-controller-no-live-endpoints/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/ingress-controller-no-live-endpoints/
       expr: count by (cluster_id, installation, pipeline, provider) (kube_endpoint_address_available{endpoint=~".*(ingress-nginx|nginx-ingress-controller).*"}) == 0
       for: 2m
       labels:
@@ -65,7 +65,7 @@ spec:
     - alert: IngressControllerDown
       annotations:
         description: '{{`Ingress Controller in namespace {{ $labels.namespace }}) is down.`}}'
-        runbook_url: managed-app-nginx-ic/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/managed-app-nginx-ic/
       expr: label_replace(up{pod=~".*(ingress-nginx|nginx-ingress-controller).*"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:

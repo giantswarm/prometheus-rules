@@ -39,7 +39,7 @@ tests:
               cancel_if_outside_working_hours: "false"
             exp_annotations:
               description: "Kyverno has no available replicas but webhooks are present."
-              runbook_url: "kyverno-webhooks/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kyverno-webhooks/
       # Kyverno reports too high alert
       - alertname: KyvernoUpdateRequestsCountTooHigh
         eval_time: 45m
@@ -60,7 +60,7 @@ tests:
               kind: "updaterequests.kyverno.io"
             exp_annotations:
               description: "Kyverno updaterequests.kyverno.io are too high. This is an indicator that Kyverno's background controller may not be able to create some resources."
-              runbook_url: "kyverno-updaterequests/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kyverno-updaterequests/
       # Kyverno scaled down alert
       - alertname: KyvernoScaledDownTooLong
         eval_time: 240m
@@ -80,7 +80,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Kyverno has been scaled down for too long."
-              runbook_url: "kyverno-scaled-down/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kyverno-scaled-down/
       # Kyverno unsafe replica count alert
       - alertname: KyvernoUnsafeReplicaCount
         eval_time: 310m
@@ -100,4 +100,4 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Kyverno's admission controller deployment must use at least 3 replicas, or be scaled to 0."
-              runbook_url: "KyvernoWronglyScaled/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/KyvernoWronglyScaled/

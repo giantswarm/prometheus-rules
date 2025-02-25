@@ -31,8 +31,9 @@ spec:
           annotations:
             description: |-
               {{`The clusters {{ $labels.cluster_name }} machinepool {{ $labels.exported_namespace }}/{{ $labels.name }} is not healthy.`}}
-            runbook_url: capi-machinepool/
-            dashboardUid: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-machinepool/
+            __dashboardUid__: bdi7iswg81czkcasd
+            dashboardQueryParams: "orgId=2"
         - alert: MachinePoolPaused
           expr: |-
             (
@@ -55,6 +56,7 @@ spec:
           annotations:
             description: |-
               {{`The clusters {{ $labels.cluster_name }} machinepool {{ $labels.exported_namespace }}/{{ $labels.name }} is paused.`}}
-            runbook_url: capi-machinepool/
-            dashboardUid: bdi7iswg81czkcasd/capi-aggregated-error-logs-for-capi-controllers?orgId=2
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-machinepool/
+            __dashboardUid__: bdi7iswg81czkcasd
+            dashboardQueryParams: "orgId=2"
 {{- end }}

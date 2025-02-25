@@ -31,7 +31,7 @@ tests:
               topic: "observability"
             exp_annotations:
               description: "NodeExporter Collector cpu on 10.0.5.111:10300 is failed."
-              runbook_url: "node-exporter-device-error/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/node-exporter-device-error/
       - alertname: NodeExporterCollectorFailed
         eval_time: 70m
 

@@ -17,7 +17,7 @@ spec:
     - alert: KeyPairStorageAlmostFull
       annotations:
         description: '{{`Number of keypairs limit almost reached in cluster-service storageconfig`}}'
-        runbook_url: cluster-service-storageconfig-full/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cluster-service-storageconfig-full/
       # Observed max CR record was hit at ~2800 entries
       expr: cluster_service_key_pair_total > 2400
       for: 10m

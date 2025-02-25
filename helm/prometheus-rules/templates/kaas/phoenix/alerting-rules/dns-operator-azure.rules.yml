@@ -13,7 +13,7 @@ spec:
           annotations:
             description: |-
               {{`No DNS-zone for cluster {{ $labels.exported_namespace}}/{{ $labels.name }} got created yet. Check dns-operator-azure logs in installation/{{ $labels.installation}}.`}}
-            runbook_url: dns-operator-azure/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/dns-operator-azure/
           expr: |-
             capi_cluster_status_phase{phase="Provisioned"}
             unless on (cluster_id, name)
@@ -29,7 +29,7 @@ spec:
           annotations:
             description: |-
               {{`Error rate for {{ $labels.method }} is high. Check dns-operator-azure logs in installation/{{ $labels.installation }}.`}}
-            runbook_url: dns-operator-azure/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/dns-operator-azure/
           expr: |-
             sum by (cluster_id, installation, method, pipeline, provider) (rate(dns_operator_azure_api_request_errors_total[5m])) > 0
           for: 15m

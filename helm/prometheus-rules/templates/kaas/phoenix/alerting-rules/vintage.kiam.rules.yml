@@ -28,7 +28,7 @@ spec:
     - alert: KiamMetadataFindRoleErrors
       annotations:
         description: '{{`Kiam pod {{ $labels.namespace}}/{{ $labels.pod }} on {{ $labels.cluster_id}}/{{ $labels.cluster }} has increased metadata find role errors.`}}'
-        runbook_url: kiam-find-role-errors/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kiam-find-role-errors/
       expr: increase(kiam_metadata_find_role_errors_total[10m]) > 0
       for: 15m
       labels:

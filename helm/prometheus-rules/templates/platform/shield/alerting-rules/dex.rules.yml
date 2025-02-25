@@ -16,7 +16,7 @@ spec:
     - alert: DexErrorRateHigh
       annotations:
         description: '{{`Dex running on {{ $labels.cluster_id }} is reporting an increased error rate.`}}'
-        runbook_url: dex-error-rate-high/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/dex-error-rate-high/
       expr: sum(increase(http_requests_total{job="dex", handler!="/token", code=~"^[4]..$|[5]..$", cluster_type="management_cluster"}[5m])) by (cluster_id, installation, pipeline, provider) > 10
       for: 30m
       labels:
@@ -28,7 +28,7 @@ spec:
     - alert: DexSecretExpired
       annotations:
         description: '{{`dex-operator failed to renew secret of {{ $labels.app_registration_name }} for {{ $labels.app_owner }} on provider {{ $labels.provider_type }}.`}}'
-        runbook_url: dex-operator/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/dex-operator/
       expr: min by(app_registration_name, app_owner, app_namespace, provider_name, provider_type, installation, cluster_id, pipeline, provider) (aggregation:dex_operator_idp_secret_expiry_time{cluster_type="management_cluster"}) - time() < 60*60*12
       for: 30m
       labels:
@@ -40,7 +40,7 @@ spec:
     - alert: ManagementClusterDexAppMissing
       annotations:
         description: '{{`dex-operator did not register a dex-app in giantswarm namespace.`}}'
-        runbook_url: dex-operator/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/dex-operator/
       {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: absent(dex_operator_idp_secret_expiry_time{app_namespace="giantswarm", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
       {{- else }}

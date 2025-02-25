@@ -14,7 +14,7 @@ spec:
     - alert: ChartOperatorDown
       annotations:
         description: '{{`ChartOperator ({{ $labels.instance }}) is down.`}}'
-        runbook_url: chart-operator-down/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/chart-operator-down/
       expr: label_replace(up{app=~"chart-operator.*"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:
@@ -33,7 +33,7 @@ spec:
     - alert: ChartOrphanConfigMap
       annotations:
         description: '{{`Chart configmaps have not been deleted.`}}'
-        runbook_url: chart-orphan-resources/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/chart-orphan-resources/
       expr: chart_operator_configmap_orphan > 0
       for: 10m
       labels:

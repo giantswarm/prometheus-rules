@@ -40,7 +40,7 @@ tests:
               topic: observability
             exp_annotations:
               description: This alert checks that we have no panic errors on Loki.
-              runbook_url: loki/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
       - alertname: LokiRequestPanics
         eval_time: 40m  # After 40 minutes, all should be back to normal
         exp_alerts: []
@@ -70,7 +70,7 @@ tests:
               topic: observability
             exp_annotations:
               description: This alert checks that we have less than 10% errors on Loki requests.
-              runbook_url: loki/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
 
       - alertname: LokiRingUnhealthy
         eval_time: 15m  # should be OK after 15 minutes
@@ -107,7 +107,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Loki pod loki-read-b7d9b85d4-xxxxx (namespace loki) sees 1 unhealthy ring members"
-              runbook_url: "loki/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
   - interval: 1m
     input_series:
       - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="loki"}'
@@ -130,7 +130,7 @@ tests:
               topic: observability
             exp_annotations:
               description: Loki containers are restarting too often.
-              runbook_url: loki/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
       - alertname: LokiRestartingTooOften
         eval_time: 140m  # After 140m minutes, all should be back to normal
         exp_alerts: []
@@ -188,7 +188,7 @@ tests:
               topic: observability
             exp_annotations:
               description: Loki component loki-backend is consuming very few resources and needs to be scaled down.
-              runbook_url: "loki/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
       - alertname: LokiNeedsToBeScaledDown
         eval_time: 7265m 
   - interval: 1m
@@ -224,7 +224,7 @@ tests:
               cluster_id: golem
             exp_annotations:
               description: Loki component loki-backend has reached its maxReplicas number but still needs to be scaled up.
-              runbook_url: loki/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
       - alertname: LokiHpaReachedMaxReplicas
         eval_time: 515m 
 
@@ -253,9 +253,10 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: loki-retention/loki-retention?orgId=2
+              __dashboardUid__: loki-retention
+              dashboardQueryParams: "orgId=2"
               description: Loki compactor has been failing compactions for more than 2 hours since last compaction.
-              runbook_url: "loki#lokicompactorfailedcompaction"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki#lokicompactorfailedcompaction
       - alertname: LokiCompactorFailedCompaction
         eval_time: 300m
 
@@ -284,9 +285,10 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: loki-retention/loki-retention?orgId=2
+              __dashboardUid__: loki-retention
+              dashboardQueryParams: "orgId=2"
               description: Loki compactor has been failing compactions for more than 2 hours since start-up.
-              runbook_url: "loki#lokicompactorfailedcompaction"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki#lokicompactorfailedcompaction
       - alertname: LokiCompactorFailedCompaction
         eval_time: 300m
 
@@ -319,9 +321,10 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: loki-canary/loki-canary?orgId=2
+              __dashboardUid__: loki-canary
+              dashboardQueryParams: "orgId=2"
               description: This alert checks that loki is not missing canary logs
-              runbook_url: "loki/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
       - alertname: LokiMissingLogs
         eval_time: 300m
 
@@ -356,9 +359,10 @@ tests:
               topic: observability
               type: ControlPlaneReady
             exp_annotations:
-              dashboardUid: loki-operational/loki-operational?orgId=2
+              __dashboardUid__: loki-operational
+              dashboardQueryParams: "orgId=2"
               description: "Loki object storage write rate is down."
-              runbook_url: "loki/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
       - alertname: LokiObjectStorageLowRate
         eval_time: 100m
       - alertname: LokiObjectStorageLowRate
@@ -381,6 +385,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              dashboardUid: loki-operational/loki-operational?orgId=2
+              __dashboardUid__: loki-operational
+              dashboardQueryParams: "orgId=2"
               description: "Loki object storage write rate is down."
-              runbook_url: "loki/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/

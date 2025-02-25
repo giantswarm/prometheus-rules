@@ -13,7 +13,7 @@ spec:
     - alert: DNSErrorRateTooHigh
       annotations:
         description: '{{`DNS error rate is too high for {{ or $labels.pod $labels.instance }} to {{ $labels.host }}, using {{ $labels.proto }}.`}}'
-        runbook_url: network-error/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/network-error/
       expr: rate(dns_resolve_error_total[15m]) > 0.015
       for: 15m
       labels:
@@ -30,7 +30,7 @@ spec:
     - alert: DNSCheckErrorRateTooHigh
       annotations:
         description: '{{`DNS check error rate is too high for {{ or $labels.pod $labels.instance }}.`}}'
-        runbook_url: network-error/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/network-error/
       expr: rate(dns_error_total[15m]) > 0.015
       for: 15m
       labels:

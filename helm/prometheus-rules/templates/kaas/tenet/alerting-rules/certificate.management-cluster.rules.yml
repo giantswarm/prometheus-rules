@@ -16,7 +16,7 @@ spec:
     - alert: ManagementClusterCertificateIsMissing
       annotations:
         description: '{{`Cannot renew Certificate for Secret {{ $labels.exported_namespace }}/{{ $labels.certificatename }} because it is missing.`}}'
-        runbook_url: managed-app-cert-manager/missing-certificate-for-secret/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/managed-app-cert-manager/missing-certificate-for-secret/
       expr: count(cert_exporter_secret_not_after{cluster_type="management_cluster", secretkey="tls.crt", certificatename!=""}) by (cluster_id, installation, pipeline, provider, certificatename, exported_namespace) unless count(label_replace(cert_exporter_certificate_cr_not_after{cluster_type="management_cluster"}, "certificatename", "$1", "name", "(.*)")) by (cluster_id, installation, pipeline, provider, certificatename, exported_namespace)
       for: 5m
       labels:
@@ -28,7 +28,7 @@ spec:
     - alert: ManagementClusterCertificateWillExpireInLessThanOneMonth
       annotations:
         description: '{{`Certificate {{ $labels.path }} on {{ $labels.node }} will expire in less than one month.`}}'
-        runbook_url: renew-certificates/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/renew-certificates/
       expr: (cert_exporter_not_after{cluster_type="management_cluster", path!="/etc/kubernetes/ssl/service-account-crt.pem"} - time()) < 4 * 7 * 24 * 60 * 60
       for: 5m
       labels:

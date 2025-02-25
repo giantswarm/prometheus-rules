@@ -13,7 +13,7 @@ spec:
     - alert: KyvernoWebhookHasNoAvailableReplicas
       annotations:
         description: 'Kyverno has no available replicas but webhooks are present.'
-        runbook_url: kyverno-webhooks/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kyverno-webhooks/
       expr: sum(kube_validatingwebhookconfiguration_info{validatingwebhookconfiguration=~"kyverno-resource-.*"}) by (cluster_id, installation, pipeline, provider) > 0 and sum(kube_deployment_status_replicas_ready{deployment=~"kyverno|kyverno-admission-controller"}) by (cluster_id, installation, pipeline, provider) == 0
       for: 15m
       labels:
@@ -30,7 +30,7 @@ spec:
     - alert: KyvernoUpdateRequestsCountTooHigh
       annotations:
         description: "{{`Kyverno {{ $labels.kind }} are too high. This is an indicator that Kyverno's background controller may not be able to create some resources.`}}"
-        runbook_url: kyverno-updaterequests/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kyverno-updaterequests/
       expr: aggregation:kyverno_resource_counts{kind=~"(generate|update)requests.kyverno.io"} > 5000
       for: 15m
       labels:
@@ -47,7 +47,7 @@ spec:
     - alert: KyvernoScaledDownTooLong
       annotations:
         description: 'Kyverno has been scaled down for too long.'
-        runbook_url: kyverno-scaled-down/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kyverno-scaled-down/
       expr: sum(kube_deployment_spec_replicas{deployment=~"kyverno|kyverno-kyverno-plugin|kyverno-policy-reporter"}) by (cluster_id, installation, pipeline, provider) == 0
       for: 4h
       labels:
@@ -62,7 +62,7 @@ spec:
     - alert: KyvernoUnsafeReplicaCount
       annotations:
         description: "Kyverno's admission controller deployment must use at least 3 replicas, or be scaled to 0."
-        runbook_url: KyvernoWronglyScaled/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/KyvernoWronglyScaled/
       expr: sum(kube_deployment_spec_replicas{deployment="kyverno"}) by (cluster_id, installation, pipeline, provider) != 0 and sum(kube_deployment_spec_replicas{deployment="kyverno"}) by (cluster_id, installation, pipeline, provider) < 3
       for: 1h
       labels:

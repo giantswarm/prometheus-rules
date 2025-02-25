@@ -63,7 +63,7 @@ spec:
     - alert: NodeConnTrackAlmostExhausted
       annotations:
         description: '{{`Node {{ $labels.node }} reports a connection usage above 85% for the last 15 minutes.`}}'
-        runbook_url: node-conntrack-limits/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/node-conntrack-limits/
       expr: node_nf_conntrack_entries{cluster_type="management_cluster"} / node_nf_conntrack_entries_limit{cluster_type="management_cluster"} >= 0.85
       for: 15m
       labels:
@@ -75,7 +75,7 @@ spec:
     - alert: MachineEntropyTooLow
       annotations:
         description: '{{`Machine {{ $labels.instance }} entropy is too low.`}}'
-        runbook_url: low-entropy/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/low-entropy/
       expr: node_entropy_available_bits{cluster_type="management_cluster"} < 250
       for: 10m
       labels:
@@ -87,7 +87,7 @@ spec:
     - alert: MachineAllocatedFileDescriptorsTooHigh
       annotations:
         description: '{{`Machine {{ $labels.instance }} has too many allocated file descriptors.`}}'
-        runbook_url: high-number-file-descriptors/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/high-number-file-descriptors/
       expr: node_filefd_allocated{cluster_type="management_cluster"} / node_filefd_maximum{cluster_type="management_cluster"} * 100 > 80
       for: 15m
       labels:

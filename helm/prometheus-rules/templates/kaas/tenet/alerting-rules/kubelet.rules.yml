@@ -13,7 +13,7 @@ spec:
       - alert: CadvisorDown
         annotations:
           description: '{{`Cadvisor ({{ $labels.instance }}) is down.`}}'
-          runbook_url: kubelet-is-down/
+          runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kubelet-is-down/
         expr: label_replace(up{job="kubelet", metrics_path="/metrics/cadvisor"}, "ip", "$1", "instance", "(.+):\\d+") == 0
         for: 1h
         labels:

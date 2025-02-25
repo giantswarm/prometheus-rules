@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- update the alert annotation to match with the grafana built-in annotations to be able to link alerts with dashboards.
+  - `runbook_url` is now the full url to the runbook
+  - `dashboardUid` is now split between `__dashboardUid__` and `dashboardQueryParams` and `dashboardExternalUrl`
+
 ### Removed
 
 - clean up the loki ruler datasource as we now have a datasource per tenant

@@ -27,5 +27,5 @@ tests:
               topic: observability
             exp_annotations:
               description: "Grafana (grafana) is down."
-              runbook_url: "grafana-down/"
-              dashboardUid: "qRQXmRnik/Grafana"
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/"
+              __dashboardUid__: qRQXmRnik

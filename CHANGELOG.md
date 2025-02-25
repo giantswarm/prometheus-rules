@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add `LokiLogTenantIdMissing` alert to detect dropped log lines due to missing tenant
+- Add first log based alert to detect CIDRNotAvailable events.
 
 ## [4.45.0] - 2025-02-25
 

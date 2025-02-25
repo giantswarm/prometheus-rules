@@ -388,7 +388,7 @@ tests:
   # Test for LokiLogTenantIdMissing alert
   - interval: 1m
     input_series:
-      - series: 'loki_process_dropped_lines_total{cluster_id="foo", reason="no_tenant_id"}'
+      - series: 'loki_process_dropped_lines_total{cluster_id="foo", installation="bar", pipeline="testing", provider="capa", reason="no_tenant_id"}'
         values: "0+0x60 0+300x120 0+0x60"
     alert_rule_test:
       - alertname: LokiLogTenantIdMissing
@@ -403,6 +403,9 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: foo
+              installation: bar
+              pipeline: testing
+              provider: capa
               severity: page
               team: atlas
               topic: observability

@@ -229,7 +229,7 @@ spec:
         description: '{{`Log lines are being dropped due to missing tenant id.`}}'
         runbook_url: loki-log/
       expr: |
-        sum(rate(loki_process_dropped_lines_total{reason="no_tenant_id"}[5m])) by (cluster_id) > 0
+        sum(rate(loki_process_dropped_lines_total{reason="no_tenant_id"}[5m])) by (cluster_id, installation, pipeline, provider) > 0
       for: 1h
       labels:
         area: platform

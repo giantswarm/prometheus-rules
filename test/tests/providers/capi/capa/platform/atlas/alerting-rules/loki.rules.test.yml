@@ -416,6 +416,6 @@ tests:
               topic: observability
             exp_annotations:
               description: "Log lines are being dropped due to missing tenant id."
-              runbook_url: "loki-log/"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki-log/
       - alertname: LokiLogTenantIdMissing
         eval_time: 240m

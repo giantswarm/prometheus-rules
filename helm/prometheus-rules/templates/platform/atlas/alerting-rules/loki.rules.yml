@@ -239,7 +239,7 @@ spec:
     - alert: LokiLogTenantIdMissing
       annotations:
         description: '{{`Log lines are being dropped due to missing tenant id.`}}'
-        runbook_url: loki-log/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki-log/
       expr: |
         sum(rate(loki_process_dropped_lines_total{reason="no_tenant_id"}[5m])) by (cluster_id, installation, pipeline, provider) > 0
       for: 1h

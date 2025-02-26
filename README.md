@@ -1,12 +1,22 @@
 [![CircleCI](https://circleci.com/gh/giantswarm/prometheus-rules.svg?style=shield)](https://circleci.com/gh/giantswarm/prometheus-rules)
 
-# Prometheus rules chart
+# Giant Swarm alert and recording rules
 
 ## Table of Contents
 
 - [Introduction](#introduction)
 - [Alerting](#alerting)
-  - [How alerts are structured](#how-alerts-are-structured)
+  - [Alert structure](#alert-structure)
+    - [1. Metrics-based alerts](#1-metrics-based-alerts)
+    - [2. Logs-based alerts](#2-logs-based-alerts)
+  - [Best practices](#best-practices)
+    - [Mandatory annotations](#mandatory-annotations)
+    - [Recommended annotations](#recommended-annotations)
+    - [Dashboard URL construction](#dashboard-url-construction)
+    - [Mandatory labels](#mandatory-labels)
+    - [Optional labels](#optional-labels)
+    - [`Absent` function](#absent-function)
+    - [Useful links](#useful-links)
   - [Alert routing](#alert-routing)
     - [Opsgenie routing](#opsgenie-routing)
     - [Inhibitions](#inhibitions)
@@ -86,7 +96,7 @@ spec:
         team: atlas
 ```
 
-#### 2. Log-based alerts
+#### 2. Logs-based alerts
 
 These alerts are generated from log data using LogQL queries processed by Loki. To create a log-based alert:
 

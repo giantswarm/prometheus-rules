@@ -106,6 +106,7 @@ These alerts are generated from log data using LogQL queries processed by Loki. 
 Example:
 
 ```yaml
+# log-based-alerts-example.logs.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:

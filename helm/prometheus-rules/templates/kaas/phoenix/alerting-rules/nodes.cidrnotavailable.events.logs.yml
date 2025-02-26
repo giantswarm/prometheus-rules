@@ -12,13 +12,12 @@ spec:
       rules:
         - alert: NodeCIDRNotAvailable
           annotations:
-            description: |
-              Node(s) CIDR(s) are not available in the cluster {{`{{ $labels.cluster_id }}`}}.
+            description: Node(s) CIDR(s) are not available in the cluster {{`{{ $labels.cluster_id }}`}}.
           expr: |-
             sum (
-              count_over_time({scrape_job="kubernetes-events"} |= "CIDRNotAvailable" | logfmt [5m])
+              count_over_time({scrape_job="kubernetes-events"} |= "CIDRNotAvailable" | logfmt [30m])
             ) by (name, cluster_id, installation, pipeline, provider) > 0
-          for: 1h
+          for: 5m
           labels:
             area: kaas
             cancel_if_outside_working_hours: "true"

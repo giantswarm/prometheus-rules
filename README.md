@@ -128,6 +128,9 @@ spec:
       annotations:
         description: "High error rate detected in application logs"
         summary: "Log-based alert for errors"
+        __dashboardUid__: UniqueID of the dashboard
+        __panelId__: id of the panel in the dashboard
+        dashboardQueryParams: "orgid=1"
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/log-errors/
       expr: sum(rate({app="my-app"} |= "error" [5m])) > 100
       for: 10m

@@ -103,6 +103,7 @@ These alerts are generated from log data using LogQL queries processed by Loki. 
 - Add the label `application.giantswarm.io/prometheus-rule-kind: loki` to the alert
 - Ensure the `expr` field contains a valid LogQL query
 - Name the file with a `.logs.yaml` extension
+
 Example:
 
 ```yaml

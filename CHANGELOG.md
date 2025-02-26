@@ -9,8 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add `LokiLogTenantIdMissing` alert to detect dropped log lines due to missing tenant
+- Add `LokiLogTenantIdMissing` alert to detect dropped log lines due to missing tenant.
 - Add first log based alert to detect CIDRNotAvailable events.
+
+### Changed
+
+- Make `JobHasNotBeenScheduledForTooLong` alerts business hours only.
 
 ## [4.45.0] - 2025-02-25
 

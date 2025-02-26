@@ -175,4 +175,5 @@ spec:
         severity: page
         team: phoenix
         topic: managementcluster
+        cancel_if_outside_working_hours: "true"
 {{- end }}

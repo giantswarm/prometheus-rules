@@ -165,7 +165,6 @@ Alert manager generates dashboard URLs for Opsgenie and Slack alerts using these
 - `area`: Functional area (e.g., platform, apps)
 - `team`: Responsible team identifier
 - `severity`: Alert severity level (page, notify)
-- `provider`: Cloud provider
 
 #### Optional labels
 - `cancel_if_*`: Labels used for alert inhibitions

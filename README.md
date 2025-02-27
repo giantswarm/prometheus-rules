@@ -156,7 +156,7 @@ We follow standardized practices for organizing our alerts using PrometheusRule 
 
 ##### Dashboard URL construction
 
-Alert manager generates dashboard URLs for Opsgenie and Slack alerts using these rules:
+Alertmanager generates dashboard URLs for Opsgenie and Slack alerts using these rules:
 
 1. With only `__dashboardUid__`: `https://grafana.domain/__dashboardUid__`
 2. With both `__dashboardUid__` and `dashboardQueryParams`: `https://grafana.domain/__dashboardUid__?dashboardQueryParams`

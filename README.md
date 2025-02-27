@@ -56,7 +56,7 @@ The alerting rules are located in `helm/prometheus-rules/templates/<area>/<team>
 
 Giant Swarm supports two different types of alert rules:
 
-#### 1. Metrics-based alerts
+#### Metrics-based alerts
 
 These are standard Prometheus alerts based on PromQL queries against metrics data. They are stored in files ending with `.rules.yaml`.
 

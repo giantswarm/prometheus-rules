@@ -97,7 +97,7 @@ spec:
         team: atlas
 ```
 
-#### 2. Logs-based alerts
+#### Logs-based alerts
 
 These alerts are generated from log data using LogQL queries processed by Loki. To create a log-based alert:
 

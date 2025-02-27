@@ -80,7 +80,7 @@ spec:
         summary: Management cluster app not deployed correctly
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         __dashboardUid__: unique-id-of-the-dashboard
-        __panelId__: id of the panel in the dashboard
+        __panelId__: 42 # id of the panel in the dashboard
         dashboardQueryParams: "orgid=1"
         # dashboardExternalUrl: https://link-to-my-dashboard
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/

@@ -13,6 +13,7 @@ spec:
         - alert: NodeCIDRNotAvailable
           annotations:
             description: Node(s) CIDR(s) are not available in the cluster {{`{{ $labels.cluster_id }}`}}.
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cidr-not-available/
           expr: |-
             sum (
               count_over_time({scrape_job="kubernetes-events"} |= "CIDRNotAvailable" | logfmt [30m])

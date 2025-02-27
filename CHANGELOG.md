@@ -2,8 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
-[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
@@ -25,11 +25,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
-- update the alert annotation to match with the grafana built-in annotations to be able to link alerts with
-  dashboards.
+- update the alert annotation to match with the grafana built-in annotations to be able to link alerts with dashboards.
   - `runbook_url` is now the full url to the runbook
-  - `dashboardUid` is now split between `__dashboardUid__` and `dashboardQueryParams` and
-    `dashboardExternalUrl`
+  - `dashboardUid` is now split between `__dashboardUid__` and `dashboardQueryParams` and `dashboardExternalUrl`
 
 ### Removed
 
@@ -65,8 +63,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Removed
 
-- Remove `ManagementClusterAPIServerLatencyTooHigh` and `KubeletDockerOperationsLatencyTooHigh` noisy
-  notifying alerts.
+- Remove `ManagementClusterAPIServerLatencyTooHigh` and `KubeletDockerOperationsLatencyTooHigh` noisy notifying alerts.
 
 ## [4.40.0] - 2025-02-13
 
@@ -102,8 +99,7 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 
 - Change alertmanager config url in CI and README
 - Exclude `CONNECT` for API server request duration due to long-lived connections in management clusters.
-- Exclude `exec_sync` from `KubeletDockerOperationsLatencyTooHigh` because they are operations which can be
-  long-running.
+- Exclude `exec_sync` from `KubeletDockerOperationsLatencyTooHigh` because they are operations which can be long-running.
 - Exclude Kong validation webhook from `WorkloadClusterAPIServerAdmissionWebhookErrors`.
 
 ## [4.37.0] - 2025-01-31
@@ -122,8 +118,7 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 
 ### Fixed
 
-- Fix the `MimirObjectStorageLowRate` alert to be based on a better aligned metric to avoid false positives
-  when Mimir restarts (c.f. https://github.com/giantswarm/giantswarm/issues/32419).
+- Fix the `MimirObjectStorageLowRate` alert to be based on a better aligned metric to avoid false positives when Mimir restarts (c.f. https://github.com/giantswarm/giantswarm/issues/32419).
 
 ## [4.35.0] - 2025-01-28
 
@@ -183,8 +178,7 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 
 ### Changed
 
-- Ignore HelmReleases in e2e test organization namespaces for cabbage `FluxHelmReleaseFailed` (cilium,
-  network-policies, coredns)
+- Ignore HelmReleases in e2e test organization namespaces for cabbage `FluxHelmReleaseFailed` (cilium, network-policies, coredns)
 
 ## [4.27.0] - 2024-11-27
 
@@ -195,15 +189,13 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 
 ### Removed
 
-- Split `KongDeploymentNotSatisfied` into `KongProductionDeploymentNotSatisfied` and
-  `KongNonProdDeploymentNotSatisfied` to be able to control alerting in- and outside business hours.
+- Split `KongDeploymentNotSatisfied` into `KongProductionDeploymentNotSatisfied` and `KongNonProdDeploymentNotSatisfied` to be able to control alerting in- and outside business hours.
 
 ## [4.26.2] - 2024-11-27
 
 ### Changed
 
-- Remove `label_replace` from `app_operator_app_info` based alerts and use the `cluster_id` from the metric on
-  CAPI.
+- Remove `label_replace` from `app_operator_app_info` based alerts and use the `cluster_id` from the metric on CAPI.
 
 ### Added
 
@@ -212,6 +204,7 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 - Add alert to monitor the `HelmRelease` for the `vertical-pod-autoscaler-crd` app.
 - Add alert to monitor Shield pods restarts.
 - Add `MimirRulerTooManyFailedQueries` alert to detect when Mimir ruler is failing to evaluate rules
+
 
 ### Fixed
 
@@ -271,8 +264,7 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
   - `LogForwardingErrors` to be alerted when the `loki.write` component is failing.
   - `LogReceivingErrors` to be alerted when the `loki.source.api` components of the gateway is failing.
   - `MonitoringAgentDown` to be alerted when the monitoring agent is down.
-  - `MonitoringAgentShardsNotSatisfied` to be alerted when the monitoring agent is missing any number of
-    desired shards.
+  - `MonitoringAgentShardsNotSatisfied` to be alerted when the monitoring agent is missing any number of desired shards.
 
 ### Changed
 
@@ -292,9 +284,8 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 ### Changed
 
 - Rename all `prometheus-agent` related inhibitions to `monitoring-agent` inhibitions.
-- Move `Inhibition` from a suffix to a prefix for the prometheus-agent inhibitions to match with the other
-  inhibition alerts:
-- `PrometheusAgentFailingInhibition` => `InhibitionPrometheusAgentFailing`
+- Move `Inhibition` from a suffix to a prefix for the prometheus-agent inhibitions to match with the other inhibition alerts:
+- `PrometheusAgentFailingInhibition`       => `InhibitionPrometheusAgentFailing`
 - `PrometheusAgentShardsMissingInhibition` => `InhibitionPrometheusAgentShardsMissing`
 
 ### Fixed
@@ -306,8 +297,7 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 
 ### Changed
 
-- Change `KubeletVolumeSpaceTooLow` to only page when there are 500MB or less of space left, letting the
-  node-problem-detector handle the rest.
+- Change `KubeletVolumeSpaceTooLow` to only page when there are 500MB or less of space left, letting the node-problem-detector handle the rest.
 
 ## [4.21.1] - 2024-10-25
 
@@ -366,8 +356,7 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 
 ### Added
 
-- Add `LokiFailedCompaction` alert to know when Loki did not manage to run a successfull compaction in the
-  last 2 hours.
+- Add `LokiFailedCompaction` alert to know when Loki did not manage to run a successfull compaction in the last 2 hours.
 
 ### Removed
 
@@ -398,8 +387,7 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 
 ### Removed
 
-- Remove aggregation of slo:period_error_budget_remaining:ratio` as this value can be easily computed and
-  creates a lot of time series in Grafana Cloud
+- Remove aggregation of slo:period_error_budget_remaining:ratio` as this value can be easily computed and creates a lot of time series in Grafana Cloud
 
 ## [4.15.0] - 2024-09-16
 
@@ -411,8 +399,9 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 ### Changed
 
 - Added dashboards to several mimir alerts
-- Change `IRSAACMCertificateExpiringInLessThan60Days` to `IRSAACMCertificateExpiringInLessThan45Days`. The ACM
-  certificate is renewed 60 days before expiration and the alert can fire prematurely.
+- Change `IRSAACMCertificateExpiringInLessThan60Days` to
+  `IRSAACMCertificateExpiringInLessThan45Days`. The ACM certificate is renewed
+  60 days before expiration and the alert can fire prematurely.
 
 ## [4.14.0] - 2024-09-05
 
@@ -447,16 +436,13 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Fixed
 
-- Fix PromtailRequestError to also account for 4xx and -1 errors
-  (https://github.com/giantswarm/giantswarm/issues/31387).
+- Fix PromtailRequestError to also account for 4xx and -1 errors (https://github.com/giantswarm/giantswarm/issues/31387).
 
 ## [4.12.0] - 2024-08-26
 
 ### Added
 
-- Add CAPI cluster namespace to recording rule `aggregation:giantswarm:cluster_info` for use by
-  [`resource-police`](https://github.com/giantswarm/resource-police/) to find out to whom each test cluster
-  belongs
+- Add CAPI cluster namespace to recording rule `aggregation:giantswarm:cluster_info` for use by [`resource-police`](https://github.com/giantswarm/resource-police/) to find out to whom each test cluster belongs
 
 ## [4.11.0] - 2024-08-26
 
@@ -466,8 +452,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Fixed
 
-- Ignore new `watchdog` collector of node-exporter since our clusters will not have data for these devices and
-  therefore the `node_scrape_collector_success` metric would be 0
+- Ignore new `watchdog` collector of node-exporter since our clusters will not have data for these devices and therefore the `node_scrape_collector_success` metric would be 0
 
 ## [4.10.0] - 2024-08-20
 
@@ -594,8 +579,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Added `zot` related alerts
   - Added `ZotPersistentVolumeFillingUp` when storage is beyond 80% used and projected to fill up in 4 hours.
-  - Added `ZotDeploymentNotSatisfied` when there are not enough available replicas for the main Zot deployment
-    on the MC.
+  - Added `ZotDeploymentNotSatisfied` when there are not enough available replicas for the main Zot deployment on the MC.
 
 ### Changed
 
@@ -620,15 +604,13 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Fixed
 
-- Fixed mimir recording rules to grafana cloud so they only run on mimir and they are safer when labels are
-  missing.
+- Fixed mimir recording rules to grafana cloud so they only run on mimir and they are safer when labels are missing.
 
 ## [4.3.2] - 2024-06-21
 
 ### Added
 
-- Added new alerting rules to monitor the Prometheus reading data from Mimir and sending them to Grafana
-  Cloud.
+- Added new alerting rules to monitor the Prometheus reading data from Mimir and sending them to Grafana Cloud.
 - Recording rule to send mimir memory usage and metrics amount to grafana cloud
 
 ## [4.3.1] - 2024-06-18
@@ -639,8 +621,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Fixed
 
-- Fix cert-exporter alerts to render the secret namespace and not the cert-exporter namespace in the alert
-  description.
+- Fix cert-exporter alerts to render the secret namespace and not the cert-exporter namespace in the alert description.
 
 ### Removed
 
@@ -674,8 +655,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 - Added a new alerting rule to `falco.rules.yml` to fire an alert for XZ-backdoor.
 - Added `CiliumAPITooSlow`.
 - Added `CODEOWNERS` files.
-- Added `MimirIngesterNeedsToBeScaledUp` and `MimirIngesterNeedsToBeScaledDown` alerting rules to
-  `mimir-rules.yml`.
+- Added `MimirIngesterNeedsToBeScaledUp` and `MimirIngesterNeedsToBeScaledDown` alerting rules to `mimir-rules.yml`.
 
 ### Changed
 
@@ -683,8 +663,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 - Use `ready` replicas for Kyverno webhooks alert.
 - Sort out shared alert ownership by distributing them all to teams.
 - Review and fix phoenix alerts towards Mimir and multi-provider MCs.
-  - Move core components alerts from phoenix to turtles (`cluster-autoscaler`, `vertical-pod-autoscaler`,
-    `kubelet`, `etcd-kubernetes-resources-count-exporter`, `certificates`)
+  - Move core components alerts from phoenix to turtles (`cluster-autoscaler`, `vertical-pod-autoscaler`, `kubelet`, `etcd-kubernetes-resources-count-exporter`, `certificates`)
   - Split the phoenix job alert into 2:
     - Add the aws specific job alerts in the `vintage.aws.management-cluster.rules` file.
     - Move the rest of `job.rules` to turtles because it is provider independent
@@ -708,7 +687,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Fixed usage of yq, and jq in check-opsrecipes.sh
 - Fetch jq with make install-tools
-- Fixed and improve the check-opsrecipes.sh script to support <directory>/\_index.md based ops-recipes.
+- Fixed and improve the check-opsrecipes.sh script to support <directory>/_index.md based ops-recipes.
 - Fixed all area alert labels.
 - Fixed `cert-exporter` alerts to page on all providers.
 - Fixed `cilium` SLO recording rule, setting a proper threshold for the alert.
@@ -722,8 +701,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Changed
 
-- Updated `ContainerdVolumeSpaceTooLow`, `KubeletVolumeSpaceTooLow` and `LogVolumeSpaceTooLow` alerts to not
-  trigger when the node-problem-detector is already remediating the issue.
+- Updated `ContainerdVolumeSpaceTooLow`, `KubeletVolumeSpaceTooLow` and `LogVolumeSpaceTooLow` alerts to not trigger when the node-problem-detector is already remediating the issue.
 
 ## [4.1.1] - 2024-05-30
 
@@ -749,14 +727,12 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Changed
 
-- _! Breaking change !_
-  - Folder architecture for rules changed to fit with areas and teams for a better overview
-    (https://github.com/giantswarm/giantswarm/issues/30769)
+- *! Breaking change !*
+  - Folder architecture for rules changed to fit with areas and teams for a better overview (https://github.com/giantswarm/giantswarm/issues/30769)
 
 ### Added
 
-- Add new alert to detect old and new prometheus-operator kubelet services in the same cluster
-  (https://github.com/giantswarm/giantswarm/issues/30888).
+- Add new alert to detect old and new prometheus-operator kubelet services in the same cluster (https://github.com/giantswarm/giantswarm/issues/30888).
 
 ## [3.15.0] - 2024-05-27
 
@@ -824,8 +800,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Removed
 
-- Removed alerts for absent `crsync` deployments. They cause false alerts because the rules apply to all
-  prometheus instances on the MC.
+- Removed alerts for absent `crsync` deployments. They cause false alerts because the rules apply to all prometheus instances on the MC.
 
 ## [3.13.0] - 2024-04-30
 
@@ -836,8 +811,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Changed
 
 - Update LokiRingUnhealthy query to avoid false positive when a new pod is starting.
-- Changed DeploymentNotSatisfiedBigMac alert to work for teleport related deployments only on CAPI flavored
-  clusters
+- Changed DeploymentNotSatisfiedBigMac alert to work for teleport related deployments only on CAPI flavored clusters
 
 ## [3.12.2] - 2024-04-25
 
@@ -962,10 +936,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Added
 
 - Add Heartbeat alert for mimir.
-- Add missing alert about loki containers not running to ensure we do not suffer from
-  [extra cloud cost](https://github.com/giantswarm/giantswarm/issues/30124).
-- Add missing alert about mimir containers not running to ensure we do not suffer from
-  [extra cloud cost](https://github.com/giantswarm/giantswarm/issues/30124).
+- Add missing alert about loki containers not running to ensure we do not suffer from [extra cloud cost](https://github.com/giantswarm/giantswarm/issues/30124).
+- Add missing alert about mimir containers not running to ensure we do not suffer from [extra cloud cost](https://github.com/giantswarm/giantswarm/issues/30124).
 - Add recording rule for ingresses using the baseDomain.
 
 ## [3.5.0] - 2024-03-27
@@ -983,16 +955,13 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Changed
 
-- Changed severity for `TeleportJoinTokenSecret/ConfigmapMistamch` to `notify` and increased alert interval
-  from 30m to 120m
+- Changed severity for `TeleportJoinTokenSecret/ConfigmapMistamch` to `notify` and increased alert interval from 30m to 120m
 
 ## [3.3.0] - 2024-03-18
 
 ### Added
 
-- Add label `giantswarm.io/remote-write-target: grafana-cloud` to recording rules that are to be sent to mimir
-  so the Prometheus instance in the Mimir architecture in-charge of sending data to Grafana Cloud can only
-  select the data it needs and not try to execute all rules in this repository.
+- Add label `giantswarm.io/remote-write-target: grafana-cloud` to recording rules that are to be sent to mimir so the Prometheus instance in the Mimir architecture in-charge of sending data to Grafana Cloud can only select the data it needs and not try to execute all rules in this repository.
 - Add `grafana-agent` App CR to send PrometheusRules to mimir ruler.
 
 ## [3.2.0] - 2024-03-18
@@ -1013,9 +982,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 - Fix teleport alerts for mimir.
 
 ### Changed
-
-- Adjusted cert-manager `CertManagerPodHighMemoryUsage` alerting threshold
-  (https://github.com/giantswarm/prometheus-rules/pull/1077)
+- Adjusted cert-manager `CertManagerPodHighMemoryUsage` alerting threshold (https://github.com/giantswarm/prometheus-rules/pull/1077)
 
 ## [3.1.0] - 2024-03-13
 
@@ -1059,7 +1026,6 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Removed
 
 = Remove `kvm` provider alerts.
-
 - Remove `azure` provider alerts.
 - Remove `tiller` alerts.
 - Remove `gcp` provider alerts.
@@ -1069,8 +1035,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Fixed
 
-- Fix `PersistentVolumeSpaceTooLow` to ignore the observability components and
-  `DataDiskPersistentVolumeSpaceTooLow` to alert on the new observability stack components.
+- Fix `PersistentVolumeSpaceTooLow` to ignore the observability components and `DataDiskPersistentVolumeSpaceTooLow` to alert on the new observability stack components.
 
 ## [2.153.0] - 2024-02-27
 
@@ -1125,8 +1090,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Changed
 
 - Changed teleport alerts to take into account only `Provisioned` clusters
-- Made use of `workingHoursOnly` template on more alerts to ensure `stable-testing` MCs don't page out of
-  hours
+- Made use of `workingHoursOnly` template on more alerts to ensure `stable-testing` MCs don't page out of hours
 - No longer silence all CAPA and CAPZ alerts out of hours by default
 - Transfer ownership of `circleci` Azure app registration expiry alert to honeybadger
 
@@ -1163,8 +1127,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Removed
 
 - Ignore `api-spec` from `AppWithoutTeamAnnotation` alert.
-- Remove `WorkloadClusterManagedDeploymentNotSatisfiedPhoenix` as `cert-manager` is no longer owned by
-  Phoenix.
+- Remove `WorkloadClusterManagedDeploymentNotSatisfiedPhoenix` as `cert-manager` is no longer owned by Phoenix.
 - Remove `InhibitionClusterIsNotRunningPrometheusAgent` inhibition on CAPI.
 
 ## [2.145.0] - 2023-11-30
@@ -1193,8 +1156,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Fixed
 
-- Fix aggregation:container:images by adding the namespace to avoid issues when one application is deployed
-  multiple times in one cluster.
+- Fix aggregation:container:images by adding the namespace to avoid issues when one application is deployed multiple times in one cluster.
 
 ## [2.143.0] - 2023-11-21
 
@@ -1223,10 +1185,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Added
 
 - Add two aggregations to track usage of Docker Hub
-  - `aggregation:docker:containers_using_dockerhub_image`: Number of containers running iwht image from
-    docker.io.
-  - `aggregation:docker:containers_using_dockerhub_image_relative`: Percentage of all running containers that
-    use an image from docker.io (range 0.0 to 1.0).
+  - `aggregation:docker:containers_using_dockerhub_image`: Number of containers running iwht image from docker.io.
+  - `aggregation:docker:containers_using_dockerhub_image_relative`: Percentage of all running containers that use an image from docker.io (range 0.0 to 1.0).
 
 ## [2.141.0] - 2023-11-15
 
@@ -1326,23 +1286,20 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Fixed
 
-- Improve InhibitionClusterIsNotRunningPrometheusAgent to keep paging if the kube-state-metrics metric is
-  missing for 5 minutes (avoid flapping of inhibitions).
+- Improve InhibitionClusterIsNotRunningPrometheusAgent to keep paging if the kube-state-metrics metric is missing for 5 minutes (avoid flapping of inhibitions).
 
 ## [2.134.0] - 2023-09-21
 
 ### Changed
 
-- Split `KubeStateMetricsDown` alert into 2 alerts : `KubeStateMetricsDown` and
-  `KubeStateMetricsNotRetrievingMetrics`
+- Split `KubeStateMetricsDown` alert into 2 alerts : `KubeStateMetricsDown` and `KubeStateMetricsNotRetrievingMetrics`
 
 ## [2.133.0] - 2023-09-19
 
 ### Changed
 
 - Add missing prometheus-agent inhibition to `KubeStateMetricsDown` alert
-- Change time duration before `ManagementClusterDeploymentMissingAWS` pages because it is dependant on the
-  `PrometheusAgentFailing` alert.
+- Change time duration before `ManagementClusterDeploymentMissingAWS` pages because it is dependant on the `PrometheusAgentFailing` alert.
 
 ### Fixed
 
@@ -1365,8 +1322,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Changed
 
 - Refactor the Kyverno policy reports recording rule to include missing apps from Team Overview dashboard.
-- Change `ClusterUnhealthyPhase` severity to page, so that we get paged when a cluster is not working
-  properly.
+- Change `ClusterUnhealthyPhase` severity to page, so that we get paged when a cluster is not working properly.
 
 ## [2.129.0] - 2023-09-11
 
@@ -1408,12 +1364,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ## Changed
 
-- `ManagementClusterWebhookDurationExceedsTimeout`,
-  `WorkloadClusterWebhookDurationExceedsTimeoutSolutionEngineers`,
-  `WorkloadClusterWebhookDurationExceedsTimeoutHoneybadger`,
-  `WorkloadClusterWebhookDurationExceedsTimeoutCabbage`, and
-  `WorkloadClusterWebhookDurationExceedsTimeoutAtlas` are changed to use the 95th percentile latency of the
-  webhook, instead of the average rate of change.
+- `ManagementClusterWebhookDurationExceedsTimeout`, `WorkloadClusterWebhookDurationExceedsTimeoutSolutionEngineers`, `WorkloadClusterWebhookDurationExceedsTimeoutHoneybadger`, `WorkloadClusterWebhookDurationExceedsTimeoutCabbage`, and `WorkloadClusterWebhookDurationExceedsTimeoutAtlas` are changed to use the 95th percentile latency of the webhook, instead of the average rate of change.
 
 ## [2.125.0] - 2023-08-09
 
@@ -1620,10 +1571,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Changed
 
-- Ingress Controller: Rename `IngressControllerDown` recipe.
-  ([#793](https://github.com/giantswarm/prometheus-rules/pull/793))
-- Respect also `apiserver_flowcontrol_request_concurrency_limit_overwrite` metric for
-  `FlowcontrolTooManyRequests` alerts.
+- Ingress Controller: Rename `IngressControllerDown` recipe. ([#793](https://github.com/giantswarm/prometheus-rules/pull/793))
+- Respect also `apiserver_flowcontrol_request_concurrency_limit_overwrite` metric for `FlowcontrolTooManyRequests` alerts.
 
 ## [2.103.0] - 2023-06-14
 
@@ -1696,9 +1645,9 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Exclude `/token` handler from `DexErrorRateHigh` alert.
 - Reduce PrometheusRuleFailures interval to 5m
-- Reduce CertificateWillExpireInLessThanTwoWeeks period from 14 days to 13 days. This accounts for a
-  [bug in cert-manager](https://github.com/cert-manager/cert-manager/issues/5851) and gives the certificate an
-  extra day to renew without paging.
+- Reduce CertificateWillExpireInLessThanTwoWeeks period from 14 days to 13
+  days. This accounts for a [bug in cert-manager](https://github.com/cert-manager/cert-manager/issues/5851) and gives
+  the certificate an extra day to renew without paging.
 
 ## [2.98.0] - 2023-05-10
 
@@ -1749,8 +1698,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Fixed
 
 - Fix AppFailed alerts on CAPI clusters.
-- Fix `WorkloadClusterHAControlPlaneDownForTooLong` alert to ensure it only pages if there are exclusively 2
-  `control-plane` or `master` nodes.
+- Fix `WorkloadClusterHAControlPlaneDownForTooLong` alert to ensure it only pages if there are exclusively 2 `control-plane` or `master` nodes.
 
 ## [2.96.3] - 2023-05-03
 
@@ -1803,8 +1751,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Deprecate `role=master` in favor of `role=control-plane`.
 - Rename alerts containing `Master` with `ControlPlane`
-- Added `cancel_if_prometheus_agent_down` for phoenix alerts ManagementClusterCriticalPodMetricMissing,
-  ManagementClusterDeploymentMissingAWS, WorkloadClusterNonCriticalDeploymentNotSatisfiedKaas
+- Added `cancel_if_prometheus_agent_down` for phoenix alerts ManagementClusterCriticalPodMetricMissing, ManagementClusterDeploymentMissingAWS, WorkloadClusterNonCriticalDeploymentNotSatisfiedKaas
 
 ## [2.94.0] - 2023-04-26
 
@@ -1841,15 +1788,13 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Added
 
-- Revert: Do not inhibit azure clusters without worker nodes because the source metric is missing and the
-  inhibition is preventing real alerts to go through.
+- Revert: Do not inhibit azure clusters without worker nodes because the source metric is missing and the inhibition is preventing real alerts to go through.
 
 ## [2.91.0] - 2023-04-18
 
 ### Changed
 
-- Changed `GiantswarmManagedCertificateCRWillExpireInLessThanTwoWeeks` alert to work for both workload
-  clusters and management clusters.
+- Changed `GiantswarmManagedCertificateCRWillExpireInLessThanTwoWeeks` alert to work for both workload clusters and management clusters.
 
 ## [2.90.0] - 2023-04-17
 
@@ -1860,8 +1805,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Removed
 
 - Alert `WorkloadClusterManagedDeploymentNotSatisfiedCabbage`.
-- Do not inhibit azure clusters without worker nodes because the source metric is missing and the inhibition
-  is preventing real alerts to go through.
+- Do not inhibit azure clusters without worker nodes because the source metric is missing and the inhibition is preventing real alerts to go through.
 
 ### Changed
 
@@ -2036,8 +1980,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Added
 
-- Add `AzureServicePrincipalExpirationMetricsMissing` firing on `gollum` only to catch when the service
-  principal expiration metrics are missing.
+- Add `AzureServicePrincipalExpirationMetricsMissing` firing on `gollum` only to catch when the service principal expiration metrics are missing.
 
 ## [2.74.0] - 2023-01-18
 
@@ -2068,9 +2011,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Removed
 
-- Remove `CrossplaneHelmReleaseFailed` alert because `FluxHelmReleaseFailed` triggers for the same thing. As
-  long as the releases are stored in `flux-giantswarm`, but they have to be kept there because of our
-  multi-tenant flux setup.
+- Remove `CrossplaneHelmReleaseFailed` alert because `FluxHelmReleaseFailed` triggers for the same thing. As long as the releases are stored in `flux-giantswarm`, but they have to be kept there because of our multi-tenant flux setup.
 
 ### Changed
 
@@ -2108,8 +2049,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Fixed
 
-- Use `pod` label rather than `container` label to match for critical pods in
-  `ManagementClusterCriticalPodNotRunning`.
+- Use `pod` label rather than `container` label to match for critical pods in `ManagementClusterCriticalPodNotRunning`.
 
 ## [2.71.0] - 2023-01-05
 
@@ -2144,7 +2084,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Added
 
-- small tool to look for / filter alerts
+* small tool to look for / filter alerts
 
 ### Fixed
 
@@ -2167,9 +2107,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Fixed
 
-- fix `PrometheusCriticalJobScrapingFailure` alert by ignoring bastion node exporters and add the
-  prometheus-agent not running inhibition because we know targets prior to that will have k8s component
-  scraping failing.
+- fix `PrometheusCriticalJobScrapingFailure` alert by ignoring bastion node exporters and add the prometheus-agent not running inhibition because we know targets prior to that will have k8s component scraping failing.
 
 ### Added
 
@@ -2253,8 +2191,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Added
 
-- Add basic rules for Crossplane: deployment not satisfied in `crossplane` namespace and crossplane
-  `HelmRelease` failed
+- Add basic rules for Crossplane: deployment not satisfied in `crossplane` namespace and crossplane `HelmRelease` failed
 
 ## [2.62.1] - 2022-11-29
 
@@ -2356,8 +2293,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - App CR related (coming from app-exporter) alerting rules are changed:
   - Per-team duplicated rules are removed and only one rule per alert type is kept. It doesn't overwrite the
-    incoming `team` label, so alerts are always routed according to the `team` label value coming from
-    `app-exporter`
+    incoming `team` label, so alerts are always routed according to the `team` label value coming from `app-exporter`
 - unassigned team is now detected using empty or 'noteam' value of the `team` label (alert routed to 'atlas')
 - Move `KongIngressControllerConfigurationPushErrorCountTooHigh` alerting rule to business hours only.
 
@@ -2433,8 +2369,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Changed
 
-- Lowered `ManagedLoggingElasticsearchDataNodesNotSatisfied` alert sensitivity - now triggers after 15min to
-  avoid triggering on pod restarts.
+- Lowered `ManagedLoggingElasticsearchDataNodesNotSatisfied` alert sensitivity - now triggers after 15min to avoid triggering on pod restarts.
 
 ## [2.47.1] - 2022-09-06
 
@@ -2472,8 +2407,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 - Add WorkloadClusterContainerIsRestartingTooFrequentlyGCP (Team Hydra alert for GCP).
 - Add WorkloadClusterCriticalPodNotRunningGCP (Team Hydra alert for GCP).
 - Add WorkloadClusterPodPendingGCP (Team Hydra alert for GCP).
-- Enable CAPI alerts (MachineUnhealthyPhase, MachineDeploymentReplicasMismatch,
-  KubeadmControlPlaneReplicasMismatch, ClusterUnhealthyPhase) for GCP.
+- Enable CAPI alerts (MachineUnhealthyPhase, MachineDeploymentReplicasMismatch, KubeadmControlPlaneReplicasMismatch, ClusterUnhealthyPhase) for GCP.
 
 ### Changed
 
@@ -2565,7 +2499,6 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ## [2.38.0] - 2022-07-21
 
 ### Changed
-
 - Revert enable api-server SLO alert during upgrades of HA masters clusters.
 
 ## [2.37.0] - 2022-07-21
@@ -2588,8 +2521,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Changed
 
-- Improve `CoreDNSDeploymentNotSatisfied` query to consider both Coredns deployments (running in masters and
-  workers).
+- Improve `CoreDNSDeploymentNotSatisfied` query to consider both Coredns deployments (running in masters and workers).
 
 ## [2.34.0] - 2022-07-20
 
@@ -2602,7 +2534,6 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ## [2.33.0] - 2022-07-18
 
 ### Changed
-
 - Move AzureServicePrincipalExpiresInX alerts to page only in BH
 
 ## [2.32.1] - 2022-07-18
@@ -2638,8 +2569,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Added
 
 - Add Rules for Cluster API and Cluster API Openstack for team rocket
-- Add `aws-cloud-controller-manager`, `azure-cloud-controller-manager`, `azure-cloud-node-manager`,
-  `azure-scheduled-events` and `csi-azuredisk-node` to the daemonset SLO query.
+- Add `aws-cloud-controller-manager`, `azure-cloud-controller-manager`, `azure-cloud-node-manager`, `azure-scheduled-events` and `csi-azuredisk-node` to the daemonset SLO query.
 
 ## [2.28.0] - 2022-06-30
 
@@ -2708,8 +2638,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Changed
 
 - Add kong to `WorkloadClusterManagedDeploymentNotSatisfied` alert.
-- Relax external-dns and cert-manager managed app names in `WorkloadClusterManagedDeploymentNotSatisfied`
-  alert.
+- Relax external-dns and cert-manager managed app names in `WorkloadClusterManagedDeploymentNotSatisfied` alert.
 
 ## [2.20.0] - 2022-05-13
 
@@ -2721,7 +2650,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Changed
 
-- Improve '\*EtcdDBSizeTooLarge' alerts.
+- Improve '*EtcdDBSizeTooLarge' alerts.
 
 ## [2.18.0] - 2022-05-11
 
@@ -2744,8 +2673,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Fixed
 
-- Rename `ClusterCertificateWillExpireMetricMissing` alert to `ClusterCertificateExpirationMetricsMissing` to
-  avoid being paged for test installations.
+- Rename `ClusterCertificateWillExpireMetricMissing` alert to `ClusterCertificateExpirationMetricsMissing` to avoid being paged for test installations.
 
 ## [2.16.0] - 2022-05-04
 
@@ -2761,8 +2689,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Fixed
 
-- Fix query for `WorkloadClusterCertificateWillExpireMetricMissing` alert and rename to
-  `ClusterCertificateWillExpireMetricMissing`.
+- Fix query for `WorkloadClusterCertificateWillExpireMetricMissing` alert and rename to `ClusterCertificateWillExpireMetricMissing`.
 
 ## [2.15.0] - 2022-04-20
 
@@ -2809,9 +2736,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Changed
 
 - Avoid alerting if `nvme` collector in node exporter is down on Azure.
-- Use plain kube-state-metrics metrics for `IngressControllerDeploymentNotSatisfied` until
-  [kube-state-metrics-app v1.9.0](https://github.com/giantswarm/kube-state-metrics-app/releases/tag/v1.9.0) is
-  available in all WCs.
+- Use plain kube-state-metrics metrics for `IngressControllerDeploymentNotSatisfied` until [kube-state-metrics-app v1.9.0](https://github.com/giantswarm/kube-state-metrics-app/releases/tag/v1.9.0) is available in all WCs.
 
 ## [2.10.0] - 2022-03-30
 
@@ -2922,9 +2847,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Fixed
 
-- Fix `managed_app_deployment_status_replicas_available` and
-  `managed_app_deployment_status_replicas_unavailable` recording rules in cases where multiple deployments
-  have the same name.
+- Fix `managed_app_deployment_status_replicas_available` and `managed_app_deployment_status_replicas_unavailable` recording rules in cases where multiple deployments have the same name.
 
 ## [1.2.0] - 2022-02-11
 
@@ -3050,20 +2973,16 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Changed
 
-- Don't page KaaS with `DeploymentNotSatisfiedKaas` when monitoring deployments are not satisfied on
-  management clusters.
-- Don't page KaaS with `DeploymentNotSatisfiedKaas` when app platform deployments are not satisfied on
-  management clusters.
-- Remove `IngressControllerSSLCertificateWillExpireSoon`. It is covered by alert
-  `CertificateSecretWillExpireInLessThanTwoWeeks`.
+- Don't page KaaS with `DeploymentNotSatisfiedKaas` when monitoring deployments are not satisfied on management clusters.
+- Don't page KaaS with `DeploymentNotSatisfiedKaas` when app platform deployments are not satisfied on management clusters.
+- Remove `IngressControllerSSLCertificateWillExpireSoon`. It is covered by alert `CertificateSecretWillExpireInLessThanTwoWeeks`.
 - Route workload cluster app failed alerts to teams.
 
 ## [0.46.2] - 2022-01-03
 
 ### Fixed
 
-- Improve `WorkloadClusterCriticalPodNotRunningAWS` by ensuring the expected pod that is not missing is
-  included in the description.
+- Improve `WorkloadClusterCriticalPodNotRunningAWS` by ensuring the expected pod that is not missing is included in the description.
 
 ## [0.46.1] - 2022-01-03
 
@@ -3075,15 +2994,13 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Changed
 
-- Silence `WorkloadClusterCriticalPodNotRunningAzure` and `WorkloadClusterCriticalPodNotRunningAWS` if
-  `kube-state-metrics` is down.
+- Silence `WorkloadClusterCriticalPodNotRunningAzure` and `WorkloadClusterCriticalPodNotRunningAWS` if `kube-state-metrics` is down.
 
 ## [0.45.0] - 2021-12-22
 
 ### Changed
 
-- Silence `ClusterAutoscalerErrors` if cluster has no workers because `CoreDNS isn't running and that makes
-  the autoscaler fail.
+- Silence `ClusterAutoscalerErrors` if cluster has no workers because `CoreDNS isn't running and that makes the autoscaler fail.
 
 ### Fixed
 
@@ -3175,8 +3092,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Changed
 
-- Make `CertificateSecretWillExpireInLessThanTwoWeeks` only alert for certificate secrets expriry on
-  management clusters.
+- Make `CertificateSecretWillExpireInLessThanTwoWeeks` only alert for certificate secrets expriry on management clusters.
 
 ## [0.32.0] - 2021-11-10
 
@@ -3213,10 +3129,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Changed
 
 - Ignore secrets whose name contains `kiam` in `CertificateSecretWillExpireInLessThanTwoWeeks`.
-- Add `KiamCertificateSecretWillExpireInLessThanTwoWeeks` alerting for certificate secrets whose name contain
-  `kiam`.
-- Add `ManagedCertificateCRWillExpireInLessThanTwoWeeks` alerting on cert-manager certificates issued by
-  default giantswarm managed `ClusterIssuer`.
+- Add `KiamCertificateSecretWillExpireInLessThanTwoWeeks` alerting for certificate secrets whose name contain `kiam`.
+- Add `ManagedCertificateCRWillExpireInLessThanTwoWeeks` alerting on cert-manager certificates issued by default giantswarm managed `ClusterIssuer`.
 - Report affected node instead of cert-exporter instance in certificate expiration alerts (WC and MC).
 - Change ownership of rules to match new team structure.
 
@@ -3262,8 +3176,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Changed
 
-- Move event-exporter-.\* to firecracker.
-- Move grafana.\* to atlas.
+- Move event-exporter-.* to firecracker.
+- Move grafana.* to atlas.
 
 ### Fixed
 
@@ -3331,8 +3245,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Changed
 
-- Only drop PII labels from `aggregation:grafana_analytics_sessions_total`, preserve the others so they can be
-  used in analytics dashboard.
+- Only drop PII labels from `aggregation:grafana_analytics_sessions_total`,
+  preserve the others so they can be used in analytics dashboard.
 
 ## [0.18.0] - 2021-09-02
 
@@ -3431,8 +3345,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Added
 
 - Add new alerts for the Prometheus Operator.
-- Add recording rules to send the total of ready and not ready pods to Cortex to be able to investigate
-  outages when a prometheus is gone or missing.
+- Add recording rules to send the total of ready and not ready pods to Cortex to be able to investigate outages when a prometheus is gone or missing.
 
 ## [0.8.0] - 2021-08-05
 
@@ -3531,14 +3444,11 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ### Changed
 
 - Only alert during working hours for `ElasticsearchDataVolumeSpaceTooLow`
-- Alert `IngressControllerDeploymentNotSatisfied` uses newly introduced recording rules and selects on app
-  label
+- Alert `IngressControllerDeploymentNotSatisfied` uses newly introduced recording rules and selects on app label
 
 ### Added
 
-- Recording rules `managed_app_deployment_status_replicas_available` and
-  `managed_app_deployment_status_replicas_unavailable` for deployments with label
-  `giantswarm.io/service-type: "managed"`
+- Recording rules `managed_app_deployment_status_replicas_available` and `managed_app_deployment_status_replicas_unavailable` for deployments with label `giantswarm.io/service-type: "managed"`
 
 ## [0.1.1] - 2021-06-24
 
@@ -3550,8 +3460,7 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ### Added
 
-- Add existing rules from
-  https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
+- Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
 [Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.46.1...HEAD
 [4.46.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.46.0...v4.46.1

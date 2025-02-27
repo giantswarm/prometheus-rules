@@ -34,9 +34,9 @@ spec:
               kubelet_volume_stats_available_bytes{namespace="zot", persistentvolumeclaim="zot-zot-pvc"}
               /
               kubelet_volume_stats_capacity_bytes{namespace="zot", persistentvolumeclaim="zot-zot-pvc"}
-            ) < 0.2
-            and
-            predict_linear(kubelet_volume_stats_available_bytes{namespace="zot", persistentvolumeclaim="zot-zot-pvc"}[1h], 4 * 3600) < 0
+            ) < 0.1
+            or
+            predict_linear(kubelet_volume_stats_available_bytes{namespace="zot", persistentvolumeclaim="zot-zot-pvc"}[1h], 4 * 3600) < 0.05
           for: 1h
           labels:
             area: platform

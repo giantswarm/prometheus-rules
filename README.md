@@ -169,7 +169,7 @@ Alert manager generates dashboard URLs for Opsgenie and Slack alerts using these
 
 #### Optional labels
 - `cancel_if_*`: Labels used for alert inhibitions
-- `all_pipelines: "true"`: Ensures the alert is sent to Opsgenie regardless of installation stability status
+- `all_pipelines: "true"`: Ensures the alert is sent to Opsgenie regardless of installation's pipeline
 
 #### `Absent` function
 

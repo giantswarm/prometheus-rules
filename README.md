@@ -165,7 +165,6 @@ Alert manager generates dashboard URLs for Opsgenie and Slack alerts using these
 - `area`: Functional area (e.g., platform, apps)
 - `team`: Responsible team identifier
 - `severity`: Alert severity level (page, notify)
-- `cluster_id`: Associated cluster ID
 - `pipeline`: Deployment pipeline
 - `provider`: Cloud provider
 

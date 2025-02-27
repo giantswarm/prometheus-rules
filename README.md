@@ -63,6 +63,7 @@ These are standard Prometheus alerts based on PromQL queries against metrics dat
 Example:
 
 ```yaml
+# management-cluster-app-failed-atlas.rules.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:

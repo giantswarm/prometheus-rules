@@ -2,6 +2,42 @@
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
     "properties": {
+        "Installation": {
+            "type": "object",
+            "properties": {
+                "V1": {
+                    "type": "object",
+                    "properties": {
+                        "Guest": {
+                            "type": "object",
+                            "properties": {
+                                "Kubernetes": {
+                                    "type": "object",
+                                    "properties": {
+                                        "IngressController": {
+                                            "type": "object",
+                                            "properties": {
+                                                "BaseDomain": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "logs": {
+            "type": "object",
+            "properties": {
+                "tenant": {
+                    "type": "string"
+                }
+            }
+        },
         "managementCluster": {
             "type": "object",
             "properties": {
@@ -30,22 +66,19 @@
                 }
             }
         },
+        "metrics": {
+            "type": "object",
+            "properties": {
+                "tenant": {
+                    "type": "string"
+                }
+            }
+        },
         "name": {
             "type": "string"
         },
         "namespace": {
             "type": "string"
-        },
-        "project": {
-            "type": "object",
-            "properties": {
-                "branch": {
-                    "type": "string"
-                },
-                "commit": {
-                    "type": "string"
-                }
-            }
         },
         "serviceType": {
             "type": "string"

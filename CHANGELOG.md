@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Document how to create alerts based on logs.
+
+### Changed
+
+- Make logs and metrics tenant configurable via helm values.
+
 ## [4.46.1] - 2025-02-27
 
 - make disk fill up alert for `zot` more sensitive
@@ -16,7 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add `LokiLogTenantIdMissing` alert to detect dropped log lines due to missing tenant.
-- Document how to create alerts based on logs.
 
 ### Changed
 

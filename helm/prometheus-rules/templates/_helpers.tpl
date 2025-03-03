@@ -24,6 +24,9 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 application.giantswarm.io/team: {{ index .Chart.Annotations "application.giantswarm.io/team" | default "atlas" | quote }}
 helm.sh/chart: {{ include "chart" . | quote }}
 giantswarm.io/service-type: {{ .Values.serviceType }}
+{{- if or (.Template.Name | hasSuffix "logs.yaml") (.Template.Name | hasSuffix "logs.yml")}}
+application.giantswarm.io/prometheus-rule-kind: loki
+{{- end -}}
 {{- end -}}
 
 {{- define "providerTeam" -}}

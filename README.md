@@ -1,12 +1,22 @@
 [![CircleCI](https://circleci.com/gh/giantswarm/prometheus-rules.svg?style=shield)](https://circleci.com/gh/giantswarm/prometheus-rules)
 
-# Prometheus rules chart
+# Giant Swarm alert and recording rules
 
 ## Table of Contents
 
 - [Introduction](#introduction)
 - [Alerting](#alerting)
-  - [How alerts are structured](#how-alerts-are-structured)
+  - [Alert structure](#alert-structure)
+    - [Metrics-based alerts](#metrics-based-alerts)
+    - [Logs-based alerts](#logs-based-alerts)
+  - [Best practices](#best-practices)
+    - [Mandatory annotations](#mandatory-annotations)
+    - [Recommended annotations](#recommended-annotations)
+    - [Dashboard URL construction](#dashboard-url-construction)
+    - [Mandatory labels](#mandatory-labels)
+    - [Optional labels](#optional-labels)
+    - [`Absent` function](#absent-function)
+    - [Useful links](#useful-links)
   - [Alert routing](#alert-routing)
     - [Opsgenie routing](#opsgenie-routing)
     - [Inhibitions](#inhibitions)
@@ -42,75 +52,124 @@ The repository is structured to support multi-team collaboration while maintaini
 
 The alerting rules are located in `helm/prometheus-rules/templates/<area>/<team>/alerting-rules` in the specific area/team to which they belong.
 
-### How alerts are structured
+### Alert structure
 
-At Giant Swarm we follow some best practices to organize our alerts:
+Giant Swarm supports two different types of alert rules:
 
-here is an example:
+#### Metrics-based alerts
+
+These are standard Prometheus alerts based on PromQL queries against metrics data. They are stored in files ending with `.rules.yaml`.
+
+Example:
 
 ```yaml
+# management-cluster-app-failed-atlas.rules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: management-cluster-app-failed-atlas
+  namespace: monitoring
+  labels:
+    area: platform
+    team: atlas
+spec:
   groups:
   - name: app
     rules:
     - alert: ManagementClusterAppFailedAtlas
-        annotations:
-            summary: Management cluster app not deployed correctly
-            description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-            __dashboardUid__: UniqueID of the dashboard
-            __panelId__: id of the panel in the dashboard
-            dashboardQueryParams: "orgid=1"
-            # dashboardExternalUrl: https://link-to-my-dashboard
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/
-        expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="atlas"}
-        for: 30m
-        labels:
-            area: platform
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"
-            cancel_if_cluster_status_updating: "true"
-            cancel_if_outside_working_hours: "true"
-            severity: page
-            sig: none
-            team: atlas
+      annotations:
+        summary: Management cluster app not deployed correctly
+        description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
+        __dashboardUid__: unique-id-of-the-dashboard
+        __panelId__: 42 # id of the panel in the dashboard
+        dashboardQueryParams: "orgid=1"
+        # dashboardExternalUrl: https://link-to-my-dashboard
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/
+      expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="atlas"}
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        sig: none
+        team: atlas
 ```
 
-Any Alert includes:
+#### Logs-based alerts
 
-* Mandatory annotations:
-  - `description`: A detailed description of what happened and what the alert does.
-  - [runbook_url](https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/): The runbook page to guide operators managing a potential incident.
+These alerts are generated from log data using LogQL queries processed by Loki. To create a log-based alert:
 
-* Recommended annotations (c.f. [here](https://grafana.com/docs/grafana-cloud/alerting-and-irm/alerting/fundamentals/alert-rules/annotation-label/#annotations) for more context):
-  - `summary` A short summary of what the alert has detected and why.
-  - `__dashboardUid__` and `__panelId__`: Link to a dashboard and panel to facilitate alert investigation.
-    - The `__dashboardUid__` should be taken from the dashboard definition or copied from existing link in Grafana.
-    - `__panelId__` reference to the panel in the dashboard referenced by the `__dashboardUid__` annotation.
-  - `dashboardQueryParams` references extra query params to add to the dashboard url like the orgId or dashboard variables. `orgId=` is mandatory if the `__dashboardUid__` is set. If the dashboard is public (in the Shared Org), then use `orgId=1`, otherwise `orgId=2`.
-  - `dashboardExternalUrl`: dashboard external url links to an external grafana instance like grafana cloud.
+- Ensure the `expr` field contains a valid LogQL query
+- Name the file with a `.logs.yaml` extension, this will render the following label `application.giantswarm.io/prometheus-rule-kind: loki` on the alert and ensure the alert is loaded into Loki.
 
-* Mandatory labels:
-   - `area`
-   - `team`
-   - `severity`
-   - `cluster_id`
-   - `installation`
-   - `pipeline`
-   - `provider`
+Example:
 
-* Optional labels:
-   - `cancel_if_.*`
+```yaml
+# log-based-alerts-example.logs.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: log-based-alerts-example
+  namespace: monitoring
+  labels:
+    area: platform
+    team: myteam
+spec:
+  groups:
+  - name: log-alerts
+    rules:
+    - alert: HighErrorRate
+      annotations:
+        description: "High error rate detected in application logs"
+        summary: "Log-based alert for errors"
+        __dashboardUid__: UniqueID of the dashboard
+        __panelId__: id of the panel in the dashboard
+        dashboardQueryParams: "orgid=1"
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/log-errors/
+      expr: sum(rate({app="my-app"} |= "error" [5m])) > 100
+      for: 10m
+      labels:
+        severity: page
+        team: myteam
+        area: platform
+```
 
-#### Dashboard address
+Log-based alerts are processed differently in the observability platform but appear alongside metrics-based alerts in alerting interfaces.
 
-The dashboard url generated by alertmanager (for opsgenie and slack alerts) follows this rule:
+### Best practices
 
-1. if only `__dashboardUid__` is set, then the url is `https://grafana.domain/__dashboardUid__`
-2. if `__dashboardUid__` and dashboardQueryParams are set, then the url is `https://grafana.domain/__dashboardUid__?dashboardQueryParams`
-3. if `dashboardExternalUrl` is set then the url is `dashboardExternalUrl`
+We follow standardized practices for organizing our alerts using PrometheusRule custom resources.
 
-#### Specific alert labels
+#### Mandatory annotations
+- `description`: Detailed explanation of what happened and what the alert is monitoring
+- `runbook_url`: Link to a runbook page with incident management instructions
 
-- `all_pipelines: "true"`: When adding this label to an alert, you are sure the alert will be send to opsgenie, even if the installation is not a stable installation.
+#### Recommended annotations
+- `summary`: Brief overview of what the alert detected
+- `__dashboardUid__`: Unique identifier of the relevant dashboard
+- `__panelId__`: Specific panel ID within the referenced dashboard
+- `dashboardQueryParams`: Additional URL parameters (must include `orgId=1` for Shared Org dashboards or `orgId=2` for others)
+- `dashboardExternalUrl`: Optional link to an external Grafana instance (like Grafana Cloud)
+
+##### Dashboard URL construction
+
+Alertmanager generates dashboard URLs for Opsgenie and Slack alerts using these rules:
+
+1. With only `__dashboardUid__`: `https://grafana.domain/__dashboardUid__`
+2. With both `__dashboardUid__` and `dashboardQueryParams`: `https://grafana.domain/__dashboardUid__?dashboardQueryParams`
+3. If `dashboardExternalUrl` is set: Uses the exact URL provided
+
+#### Mandatory labels
+- `area`: Functional area (e.g., platform, apps)
+- `team`: Responsible team identifier
+- `severity`: Alert severity level (page, notify)
+
+#### Optional labels
+- `cancel_if_*`: Labels used for alert inhibitions
+- `all_pipelines: "true"`: Ensures the alert is sent to Opsgenie regardless of installation's pipeline
 
 #### `Absent` function
 

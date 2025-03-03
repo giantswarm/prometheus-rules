@@ -10,6 +10,11 @@ managementCluster:
     flavor: ""
     region: ""
 
+logs:
+  tenant: giantswarm
+metrics:
+  tenant: anonymous
+
 Installation:
   V1:
     Guest:

@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Extra logs and metrics tenant into helm values.
+- Make logs and metrics tenant configurable via helm values.
 
 ## [4.46.1] - 2025-02-27
 

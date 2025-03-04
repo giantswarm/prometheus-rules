@@ -53,7 +53,7 @@ data:
           content: |
             mimir.rules.kubernetes "local" {
               address = "http://mimir-ruler.mimir.svc:8080/"
-              tenant_id = "anonymous"
+              tenant_id = {{ .Values.metrics.tenant | quote }}
               rule_selector {
                   match_expression {
                     key = "application.giantswarm.io/prometheus-rule-kind"
@@ -64,7 +64,7 @@ data:
             }
             loki.rules.kubernetes "local" {
               address = "http://loki-backend.loki.svc:3100/"
-              tenant_id = "giantswarm"
+              tenant_id = {{ .Values.logs.tenant | quote }}
               rule_selector {
                   match_expression {
                     key = "application.giantswarm.io/prometheus-rule-kind"

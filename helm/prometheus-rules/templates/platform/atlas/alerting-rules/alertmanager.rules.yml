@@ -48,7 +48,6 @@ spec:
     - alert: TheoTestAlert
       annotations:
         description: '{{`TheoTestAlert`}}'
-        __dashboardUid__: alertmanager-overview
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alert-manager-notifications-failing/
       expr: "1"
       labels:

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.47.0] - 2025-03-04
+
 ### Added
 
 - Document how to create alerts based on logs.
@@ -3470,7 +3472,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.46.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.47.0...HEAD
+[4.47.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.46.1...v4.47.0
 [4.46.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.46.0...v4.46.1
 [4.46.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.45.0...v4.46.0
 [4.45.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.44.0...v4.45.0

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add first log based alert to detect CIDRNotAvailable events.
+
 ## [4.47.0] - 2025-03-04
 
 ### Added

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove `PrometheusOperatorSyncFailed` alert.
+- Remove `PrometheusOperatorReconcileErrors` alert.
+
 ## [4.47.0] - 2025-03-04
 
 ### Added

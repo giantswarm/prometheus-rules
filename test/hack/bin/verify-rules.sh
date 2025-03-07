@@ -44,7 +44,7 @@ main() {
     }
 
     START_TIME="$(date +%s)"
-    echo "$(date '+%H:%M:%S') promtool: start"
+    echo "$(date '+%H:%M:%S') - start"
 
     local GIT_WORKDIR
     GIT_WORKDIR=$(git rev-parse --show-toplevel)
@@ -203,7 +203,7 @@ main() {
     done
 
     # Job is done, print end time
-    echo "$(date '+%H:%M:%S') promtool: end (Elapsed time: $(($(date +%s) - START_TIME))s)"
+    echo "$(date '+%H:%M:%S') - end (Elapsed time: $(($(date +%s) - START_TIME))s)"
 
     # Final output
     # Bypassed checks
@@ -219,7 +219,7 @@ main() {
     # Test results
     if [[ ${#promtool_test_errors[@]} -eq 0 && ${#promtool_check_errors[@]} -eq 0 ]]; then
         echo
-        echo "Congratulations!  Prometheus rules have been promtool checked and tested"
+        echo "Congratulations! Rules have been checked and tested"
     else
         echo
         echo "Please review the below errors."

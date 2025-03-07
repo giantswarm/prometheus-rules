@@ -11,6 +11,9 @@ set -eu
 ## GENERATE_ONLY: if set to true, the script will only generate the rules files
 GENERATE_ONLY="${GENERATE_ONLY:-false}"
 
+## RULE_TYPE_DEFAULT: default type of rules to test
+RULE_TYPE_DEFAULT="prometheus"
+
 array_contains() {
     local search="$1" && shift
 
@@ -26,6 +29,7 @@ array_contains() {
 main() {
     # Filter (grep) rules files to test
     filter="${1:-}"
+    rule_type="${2:-$RULE_TYPE_DEFAULT}"
 
     START_TIME="$(date +%s)"
     echo "$(date '+%H:%M:%S') promtool: start"
@@ -73,7 +77,10 @@ main() {
 
         # Look at each rules file for current provider
         cd "$outputPath/helm-chart/$provider/prometheus-rules/templates" || return 1
-        while IFS= read -r -d '' file; do
+
+        rule_suffix_var_name="RULE_SUFFIX_${RULE_TYPE^^}"
+        rule_suffix="${!rule_suffix_var_name}"
+        find . -type f -name "*${rule_suffix}" -print0 | while read -r -d '' file; do
             # Remove "./" at the vbeggining of the file path
             file="${file#./}"
 
@@ -143,7 +150,7 @@ main() {
                     promtool_test_errors+=("$promtool_test_output")
             fi
 
-        done < <(find . -type f -name "*rules.yml" -print0)
+        done
     done
 
     # Job is done, print end time

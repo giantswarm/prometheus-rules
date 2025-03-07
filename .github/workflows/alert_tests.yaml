@@ -10,10 +10,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: "0"
-      - name: run prometheus rules tests
-        run: make test-rules rule_type=prometheus
-      - name: run loki rules tests
-        run: make test-rules rule_type=loki
+      - name: run rules tests
+        run: make test-rules
   inhibition-tests:
     runs-on: ubuntu-latest
     steps:

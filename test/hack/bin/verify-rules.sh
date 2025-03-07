@@ -10,12 +10,13 @@ set -euo pipefail
 ## GENERATE_ONLY: if set to true, the script will only generate the rules files
 GENERATE_ONLY="${GENERATE_ONLY:-false}"
 
-## RULE_TYPE_DEFAULT: default type of rules to test
-RULE_TYPE_DEFAULT="prometheus"
-## RULE_TYPES: list of supported rule types to test and their suffixes
-declare -A RULE_TYPES
-RULE_TYPES["prometheus"]="rules.yml"
-RULE_TYPES["loki"]="logs.yml"
+## RULES_TYPES: list of supported rule types to test and their associated suffixes
+declare -A RULES_TYPES
+RULES_TYPES["prometheus"]="rules.yml"
+RULES_TYPES["loki"]="logs.yml"
+
+## RULES_TYPE_DEFAULT: default type of rules to test, * means all
+RULES_TYPE_DEFAULT="*"
 
 array_contains() {
     local search="$1" && shift
@@ -32,7 +33,14 @@ array_contains() {
 main() {
     # Filter (grep) rules files to test
     filter="${1:-}"
-    rule_type="${2:-$RULE_TYPE_DEFAULT}"
+
+    # Rule type to test
+    rules_type="${2:-$RULES_TYPE_DEFAULT}"
+    rules_suffix_var="RULES_TYPES[$rules_type]"
+    rules_suffix_pattern=$(IFS="|"; echo ".*(${!rules_suffix_var})") || {
+        echo "Unsupported rule type: $rules_type"
+        exit 1
+    }
 
     START_TIME="$(date +%s)"
     echo "$(date '+%H:%M:%S') promtool: start"
@@ -82,8 +90,7 @@ main() {
         # Look at each rules file for current provider
         cd "$outputPath/helm-chart/$provider/prometheus-rules/templates" || return 1
 
-        rule_suffix="${RULE_TYPES[$rule_type]}"
-        find . -type f -name "*${rule_suffix}" -print0 | while read -r -d '' file; do
+        find . -type f -regextype posix-egrep -regex "${rules_suffix_pattern}" -print0 | while read -r -d '' file; do
             # Remove "./" at the vbeggining of the file path
             file="${file#./}"
 
@@ -111,8 +118,17 @@ main() {
             # Skip next steps if GENERATE_ONLY is set
             if [[ "$GENERATE_ONLY" == "true" ]]; then continue; fi
 
+            # Detect rule type
+            local file_rule_type=
+            for r in "${!RULES_TYPES[@]}"; do
+                if [[ "$file" =~ .*${RULES_TYPES[$r]} ]]; then
+                    file_rule_type="$r"
+                    break
+                fi
+            done
+
             # Syntax check of rules file
-            case "$rule_type" in
+            case "$file_rule_type" in
               prometheus)
                 echo "###    promtool check rules $outputPath/generated/$provider/$file"
                 local promtool_check_output
@@ -177,7 +193,7 @@ main() {
                 fi
                 ;;
               *)
-                echo "###  Warning: Unsupported rule type: $rule_type"
+                echo "###  Warning: Unsupported rule type: $file_rule_type"
                 exit 1
                 ;;
             esac

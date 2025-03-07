@@ -36,6 +36,7 @@ main() {
 
     # Rule type to test
     rules_type="${2:-$RULES_TYPE_DEFAULT}"
+    # Using variable expansion to access map values, otherwise * would cause a unbound variable error
     rules_suffix_var="RULES_TYPES[$rules_type]"
     rules_suffix_pattern=$(IFS="|"; echo ".*(${!rules_suffix_var})") || {
         echo "Unsupported rule type: $rules_type"

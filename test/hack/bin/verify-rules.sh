@@ -13,6 +13,10 @@ GENERATE_ONLY="${GENERATE_ONLY:-false}"
 
 ## RULE_TYPE_DEFAULT: default type of rules to test
 RULE_TYPE_DEFAULT="prometheus"
+## RULE_TYPES: list of supported rule types to test and their suffixes
+declare -A RULE_TYPES
+RULE_TYPES["prometheus"]="rules.yml"
+RULE_TYPES["loki"]="logs.yml"
 
 array_contains() {
     local search="$1" && shift
@@ -38,6 +42,7 @@ main() {
     GIT_WORKDIR=$(git rev-parse --show-toplevel)
 
     local PROMTOOL=test/hack/bin/promtool
+    local LOKITOOL=test/hack/bin/lokitool
     local YQ=test/hack/bin/yq
 
     expected_failure_relative_file_global="test/conf/promtool_ignore"
@@ -78,8 +83,7 @@ main() {
         # Look at each rules file for current provider
         cd "$outputPath/helm-chart/$provider/prometheus-rules/templates" || return 1
 
-        rule_suffix_var_name="RULE_SUFFIX_${RULE_TYPE^^}"
-        rule_suffix="${!rule_suffix_var_name}"
+        rule_suffix="${RULE_TYPES[$rule_type]}"
         find . -type f -name "*${rule_suffix}" -print0 | while read -r -d '' file; do
             # Remove "./" at the vbeggining of the file path
             file="${file#./}"
@@ -109,46 +113,75 @@ main() {
             if [[ "$GENERATE_ONLY" == "true" ]]; then continue; fi
 
             # Syntax check of rules file
-            echo "###    promtool check rules $outputPath/generated/$provider/$file"
-            local promtool_check_output
-            if ! promtool_check_output="$("$GIT_WORKDIR/$PROMTOOL" check rules "$outputPath/generated/$provider/$file" 2>&1)";
-            then
-                echo "###  Warning: Syntax check failing for $file:"
-                echo "$promtool_check_output"
-                promtool_check_errors+=("$promtool_check_output")
-                continue
-            fi
+            case "$rule_type" in
+              prometheus)
+                echo "###    promtool check rules $outputPath/generated/$provider/$file"
+                local promtool_check_output
+                if ! promtool_check_output="$("$GIT_WORKDIR/$PROMTOOL" check rules "$outputPath/generated/$provider/$file" 2>&1)";
+                then
+                    echo "###  Warning: Syntax check failing for $file:"
+                    echo "$promtool_check_output"
+                    promtool_check_errors+=("$promtool_check_output")
+                    continue
+                fi
 
-            local provider_testfile="$outputPath/generated/$provider/$dirname/$filenameWithoutExtension.test.yml"
+                local provider_testfile="$outputPath/generated/$provider/$dirname/$filenameWithoutExtension.test.yml"
 
 
-            # if the file is whitelisted via the global ignore file
-            if array_contains "$file" "${expected_failure_prefixes_global[@]}"; then
-                # don't run tests for it
-                echo "###    Skipping $file: listed in $expected_failure_relative_file_global"
-                continue
-            fi
-            # if the file is whitelisted via the provider ignore file
-            if array_contains "$file" "${expected_failure_prefixes_provider[@]}"; then
-                # don't run tests for it
-                echo "###    Skipping $file: listed in $expected_failure_relative_file_provider"
-                continue
-            fi
+                # if the file is whitelisted via the global ignore file
+                if array_contains "$file" "${expected_failure_prefixes_global[@]}"; then
+                    # don't run tests for it
+                    echo "###    Skipping $file: listed in $expected_failure_relative_file_global"
+                    continue
+                fi
+                # if the file is whitelisted via the provider ignore file
+                if array_contains "$file" "${expected_failure_prefixes_provider[@]}"; then
+                    # don't run tests for it
+                    echo "###    Skipping $file: listed in $expected_failure_relative_file_provider"
+                    continue
+                fi
 
-            # Fail if no testfile found
-            if [[ ! -f "$provider_testfile" ]]
-            then
-                echo "###  Warning: no testfile found for $filename"
-                continue
-            fi
+                # Fail if no testfile found
+                if [[ ! -f "$provider_testfile" ]]
+                then
+                    echo "###  Warning: no testfile found for $filename"
+                    continue
+                fi
 
-            local promtool_test_output
+                local promtool_test_output
 
-            if [[ -f "$provider_testfile" ]]; then
-                echo "###    promtool test rules $filenameWithoutExtension.test.yml - $provider"
-                promtool_test_output="$("$GIT_WORKDIR/$PROMTOOL" test rules "$provider_testfile" 2>&1)" ||
-                    promtool_test_errors+=("$promtool_test_output")
-            fi
+                if [[ -f "$provider_testfile" ]]; then
+                    echo "###    promtool test rules $filenameWithoutExtension.test.yml - $provider"
+                    promtool_test_output="$("$GIT_WORKDIR/$PROMTOOL" test rules "$provider_testfile" 2>&1)" ||
+                        promtool_test_errors+=("$promtool_test_output")
+                fi
+                ;;
+              loki)
+                echo "###    lokitool rules lint $outputPath/generated/$provider/$file"
+                local lokitool_lint_output
+                if ! lokitool_lint_output="$("$GIT_WORKDIR/$LOKITOOL" rules lint "$outputPath/generated/$provider/$file" 2>&1)";
+                then
+                    echo "###  Warning: Linter failed for $file:"
+                    echo "$lokitool_lint_output"
+                    promtool_check_errors+=("$lokitool_lint_output")
+                    continue
+                fi
+
+                echo "###    lokitool rules check $outputPath/generated/$provider/$file"
+                local lokitool_check_output
+                if ! lokitool_check_output="$("$GIT_WORKDIR/$LOKITOOL" rules check "$outputPath/generated/$provider/$file" 2>&1)";
+                then
+                    echo "###  Warning: Syntax check failed for $file:"
+                    echo "$lokitool_check_output"
+                    promtool_check_errors+=("$lokitool_check_output")
+                    continue
+                fi
+                ;;
+              *)
+                echo "###  Warning: Unsupported rule type: $rule_type"
+                exit 1
+                ;;
+            esac
 
         done
     done

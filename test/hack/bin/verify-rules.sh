@@ -1,10 +1,9 @@
 #!/bin/bash
-set -euo pipefail
 #
 # This test ensures that all prometheus rules are valid
 #
 
-set -eu
+set -euo pipefail
 
 # Global options
 

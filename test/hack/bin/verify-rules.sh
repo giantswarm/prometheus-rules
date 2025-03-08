@@ -214,15 +214,6 @@ main() {
 
     # Final output
     # Bypassed checks
-    if [[ ${#failing_name_validation[@]} -gt 0 ]]; then
-        echo
-        echo "Warning: some files have invalid names not matching the expected pattern '$rules_suffix_pattern' :"
-        for file in "${failing_name_validation[@]}"; do
-            echo " - $file"
-        done
-        echo
-    fi
-
     if [[ ${#failing_extraction[@]} -gt 0 ]]; then
         echo
         echo "Warning: some files could not be generated:"
@@ -233,7 +224,7 @@ main() {
     fi
 
     # Test results
-    if [[ ${#promtool_test_errors[@]} -eq 0 && ${#promtool_check_errors[@]} -eq 0 ]]; then
+    if [[ ${#promtool_test_errors[@]} -eq 0 && ${#promtool_check_errors[@]} -eq 0 && ${#failing_name_validation[@]} -eq 0 ]]; then
         echo
         echo "Congratulations! Rules have been checked and tested"
     else
@@ -249,6 +240,13 @@ main() {
             echo "  $err"
             echo
         done
+
+        [[ ${#failing_name_validation[@]} -ne 0 ]] && \
+          echo "Error: some files have invalid names not matching the expected pattern '$rules_suffix_pattern' :"
+        for file in "${failing_name_validation[@]}"; do
+            echo " - $file"
+        done
+
         return 1
     fi
 }

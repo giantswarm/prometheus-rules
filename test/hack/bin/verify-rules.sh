@@ -67,6 +67,7 @@ main() {
     local -a promtool_check_errors=()
     local -a promtool_test_errors=()
     local -a failing_extraction=()
+    local -a failing_name_validation=()
 
     # Clean and create generated directory with all test files
     local outputPath="$GIT_WORKDIR/test/hack/output"
@@ -90,6 +91,15 @@ main() {
 
         # Look at each rules file for current provider
         cd "$outputPath/helm-chart/$provider/prometheus-rules/templates" || return 1
+
+        # Find invalid file names not matching the expected pattern
+        while IFS= read -r -d '' file; do
+              echo "###  Warning: Invalid file name $file"
+              failing_name_validation+=("$provider:$file")
+              continue
+        done < <(find . -mindepth 2 -type f -regextype posix-egrep ! -regex "${rules_suffix_pattern}" -print0)
+
+        continue
 
         while IFS= read -r -d '' file; do
             # Remove "./" at the vbeggining of the file path
@@ -206,6 +216,16 @@ main() {
 
     # Final output
     # Bypassed checks
+    echo "${#failing_name_validation[@]} files have invalid names not matching the expected pattern ($rules_suffix_pattern)"
+    if [[ ${#failing_name_validation[@]} -gt 0 ]]; then
+        echo
+        echo "Warning: some files have invalid names not matching the expected pattern '$rules_suffix_pattern' :"
+        for file in "${failing_name_validation[@]}"; do
+            echo " - $file"
+        done
+        echo
+    fi
+
     if [[ ${#failing_extraction[@]} -gt 0 ]]; then
         echo
         echo "Warning: some files could not be generated:"

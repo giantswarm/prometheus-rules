@@ -121,9 +121,9 @@ main() {
 
             # Detect rule type
             local file_rule_type=
-            for r in "${!RULES_TYPES[@]}"; do
-                if [[ "$file" =~ .*${RULES_TYPES[$r]} ]]; then
-                    file_rule_type="$r"
+            for rules_type_candidate in "${!RULES_TYPES[@]}"; do
+                if [[ "$file" =~ .*${RULES_TYPES[$rules_type_candidate]} ]]; then
+                    file_rule_type="$rules_type_candidate"
                     break
                 fi
             done

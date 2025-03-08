@@ -91,7 +91,7 @@ main() {
         # Look at each rules file for current provider
         cd "$outputPath/helm-chart/$provider/prometheus-rules/templates" || return 1
 
-        find . -type f -regextype posix-egrep -regex "${rules_suffix_pattern}" -print0 | while read -r -d '' file; do
+        while IFS= read -r -d '' file; do
             # Remove "./" at the vbeggining of the file path
             file="${file#./}"
 
@@ -198,8 +198,7 @@ main() {
                 exit 1
                 ;;
             esac
-
-        done
+        done < <(find . -type f -regextype posix-egrep -regex "${rules_suffix_pattern}" -print0)
     done
 
     # Job is done, print end time

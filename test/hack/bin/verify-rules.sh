@@ -214,7 +214,6 @@ main() {
 
     # Final output
     # Bypassed checks
-    echo "${#failing_name_validation[@]} files have invalid names not matching the expected pattern ($rules_suffix_pattern)"
     if [[ ${#failing_name_validation[@]} -gt 0 ]]; then
         echo
         echo "Warning: some files have invalid names not matching the expected pattern '$rules_suffix_pattern' :"

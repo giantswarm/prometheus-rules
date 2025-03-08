@@ -4,13 +4,13 @@ run-name: run unit and conformance tests
 on: [pull_request]
 
 jobs:
-  promtool-unit-tests:
+  rules-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: "0"
-      - name: run promtool unit tests
+      - name: run rules tests
         run: make test-rules
   inhibition-tests:
     runs-on: ubuntu-latest

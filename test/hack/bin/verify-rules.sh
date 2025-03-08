@@ -99,8 +99,6 @@ main() {
               continue
         done < <(find . -mindepth 2 -type f -regextype posix-egrep ! -regex "${rules_suffix_pattern}" -print0)
 
-        continue
-
         while IFS= read -r -d '' file; do
             # Remove "./" at the vbeggining of the file path
             file="${file#./}"

@@ -349,6 +349,15 @@ make test-rules test_filter=grafana
 make test-rules test_filter=gr.*na
 ```
 
+##### Filter rules type
+
+You can select which type of rules you want to test, by default all rules are tested:
+
+```
+make test-rules rules_type=prometheus
+make test-rules rules_type=loki
+```
+
 #### Test "no data" case
 
 * It can be nice to test what happens when serie does not exist.

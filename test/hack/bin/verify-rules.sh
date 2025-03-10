@@ -76,12 +76,15 @@ main() {
     # We remove the global directory
     rm -rf "$outputPath/generated/global"
 
-    # Find invalid file names not matching the expected pattern
-    while IFS= read -r -d '' file; do
-          echo "###  Warning: Invalid file name $file"
-          failing_name_validation+=("$file")
-          continue
-    done < <(find "$GIT_WORKDIR/helm/prometheus-rules/templates" -mindepth 2 -type f -regextype posix-egrep ! -regex "${rules_suffix_pattern}" -print0)
+
+    if [[ "$GENERATE_ONLY" != "true" ]]; then
+      # Find invalid file names not matching the expected pattern
+      while IFS= read -r -d '' file; do
+            echo "###  Warning: Invalid file name $file"
+            failing_name_validation+=("$file")
+            continue
+      done < <(find "$GIT_WORKDIR/helm/prometheus-rules/templates" -mindepth 2 -type f -regextype posix-egrep ! -regex "${rules_suffix_pattern}" -print0)
+    fi
 
     for provider in "${providers[@]}"; do
         # We need to copy the global test files in every provider directory

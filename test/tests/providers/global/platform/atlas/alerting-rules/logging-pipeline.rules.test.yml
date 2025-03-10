@@ -36,6 +36,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
               description: "More that 10% of the requests to Loki are failing."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
       - alertname: LogForwardingErrors
@@ -54,6 +55,7 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
               description: "More that 10% of the requests to Loki are failing."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
   # Test LogReceivingErrors
@@ -85,10 +87,12 @@ tests:
               installation: gauss
               provider: aws
               pipeline: testing
+              route: api_v1_push
               severity: page
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
               description: "More that 10% of the loki requests to the observability gateway are failing."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
       - alertname: LogReceivingErrors
@@ -103,9 +107,11 @@ tests:
               installation: gauss
               provider: aws
               pipeline: testing
+              route: api_v1_push
               severity: page
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
               description: "More that 10% of the loki requests to the observability gateway are failing."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/

@@ -10,9 +10,9 @@ spec:
   - name: monitoring.resource-usage-estimation.recording
     rules:
     {{- if eq .Values.managementCluster.provider.flavor "capi" }}
-    - expr: (sum(scrape_samples_post_metric_relabeling) by (cluster_id, job) / on(cluster_id) group_left sum(cortex_ingester_active_series{container="ingester"}) by (cluster_id)) * on(cluster_id) group_left sum(container_memory_usage_bytes{container="ingester", namespace="mimir"}) by (cluster_id)
+    - expr: (sum(scrape_samples_post_metric_relabeling) by (cluster_id, installation, job, pipeline, provider) / on(cluster_id) group_left sum(cortex_ingester_active_series{container="ingester"}) by (cluster_id)) * on(cluster_id) group_left sum(container_memory_usage_bytes{container="ingester", namespace="mimir"}) by (cluster_id)
       record: giantswarm:observability:monitoring:resource_usage_estimation:memory_usage_bytes
-    - expr: (sum(scrape_samples_post_metric_relabeling) by (cluster_id, job) / on(cluster_id) group_left sum(cortex_ingester_active_series{container="ingester"}) by (cluster_id)) * on(cluster_id) group_left sum(container_memory_working_set_bytes{container="ingester", namespace="mimir"}) by (cluster_id)
+    - expr: (sum(scrape_samples_post_metric_relabeling) by (cluster_id, installation, job, pipeline, provider) / on(cluster_id) group_left sum(cortex_ingester_active_series{container="ingester"}) by (cluster_id)) * on(cluster_id) group_left sum(container_memory_working_set_bytes{container="ingester", namespace="mimir"}) by (cluster_id)
       record: giantswarm:observability:monitoring:resource_usage_estimation:memory_working_set_bytes
     {{- else }}
     - expr: (count({__name__=~".+"}) by (cluster_id, job) / on(cluster_id) group_left prometheus_tsdb_head_series{instance="localhost:9090"}) * on(cluster_id) group_left sum(container_memory_usage_bytes{container="prometheus", namespace="kube-system"}) by (cluster_id)

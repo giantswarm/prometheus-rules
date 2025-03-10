@@ -37,6 +37,7 @@ tests:
               topic: observability
             exp_annotations:
               __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
+              dashboardQueryParams: orgId=2
               description: "More that 10% of the requests to Loki are failing."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
       - alertname: LogForwardingErrors
@@ -56,6 +57,7 @@ tests:
               topic: observability
             exp_annotations:
               __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
+              dashboardQueryParams: orgId=2
               description: "More that 10% of the requests to Loki are failing."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
   # Test LogReceivingErrors
@@ -93,6 +95,7 @@ tests:
               topic: observability
             exp_annotations:
               __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
+              dashboardQueryParams: orgId=2
               description: "More that 10% of the loki requests to the observability gateway are failing."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
       - alertname: LogReceivingErrors
@@ -113,5 +116,6 @@ tests:
               topic: observability
             exp_annotations:
               __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
+              dashboardQueryParams: orgId=2
               description: "More that 10% of the loki requests to the observability gateway are failing."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/

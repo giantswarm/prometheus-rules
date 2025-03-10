@@ -88,7 +88,7 @@ main() {
 
     for provider in "${providers[@]}"; do
         # We need to copy the global test files in every provider directory
-        cp -r "$GIT_WORKDIR/test/tests/providers/global/." "$outputPath/generated/$provider"
+        cp -r --update=none "$GIT_WORKDIR/test/tests/providers/global/." "$outputPath/generated/$provider"
 
         echo "### Running tests for provider: $provider"
 

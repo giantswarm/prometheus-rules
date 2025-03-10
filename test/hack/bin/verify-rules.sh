@@ -76,6 +76,13 @@ main() {
     # We remove the global directory
     rm -rf "$outputPath/generated/global"
 
+    # Find invalid file names not matching the expected pattern
+    while IFS= read -r -d '' file; do
+          echo "###  Warning: Invalid file name $file"
+          failing_name_validation+=("$file")
+          continue
+    done < <(find "$GIT_WORKDIR/helm/prometheus-rules/templates" -mindepth 2 -type f -regextype posix-egrep ! -regex "${rules_suffix_pattern}" -print0)
+
     for provider in "${providers[@]}"; do
         # We need to copy the global test files in every provider directory
         cp -r "$GIT_WORKDIR/test/tests/providers/global/." "$outputPath/generated/$provider"
@@ -91,13 +98,6 @@ main() {
 
         # Look at each rules file for current provider
         cd "$outputPath/helm-chart/$provider/prometheus-rules/templates" || return 1
-
-        # Find invalid file names not matching the expected pattern
-        while IFS= read -r -d '' file; do
-              echo "###  Warning: Invalid file name $file"
-              failing_name_validation+=("$provider:$file")
-              continue
-        done < <(find . -mindepth 2 -type f -regextype posix-egrep ! -regex "${rules_suffix_pattern}" -print0)
 
         while IFS= read -r -d '' file; do
             # Remove "./" at the vbeggining of the file path

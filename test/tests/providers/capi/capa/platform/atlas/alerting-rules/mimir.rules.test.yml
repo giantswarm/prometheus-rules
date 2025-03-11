@@ -598,8 +598,6 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cluster_id: myinstall
               cluster_type: management_cluster
-              component: ingester
-              operation: upload
               installation: myinstall
               pipeline: stable
               provider: capa

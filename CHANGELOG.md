@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add Loki rules validation in CI
+- Add first log based alert to detect CIDRNotAvailable events.
+- Add Loki rules validation in CI.
 
 ### Changed
 

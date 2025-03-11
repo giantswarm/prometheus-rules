@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4}}
+  name: nodes.cidrnotavailable.events.logs.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+    - name: nodes.cidrnotavailable.events.logs
+      rules:
+        - alert: NodeCIDRNotAvailable
+          annotations:
+            description: Node(s) CIDR(s) are not available in the cluster {{`{{ $labels.cluster_id }}`}}.
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cidr-not-available/
+          expr: |-
+            sum (
+              count_over_time({scrape_job="kubernetes-events"} |= "CIDRNotAvailable" | logfmt [30m])
+            ) by (name, cluster_id, installation, pipeline, provider) > 0
+          for: 5m
+          labels:
+            area: kaas
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: phoenix
+            topic: nodes

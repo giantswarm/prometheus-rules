@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add first log based alert to detect CIDRNotAvailable events.
+- Add Loki rules validation in CI.
+
+### Fixed
+
+- Use the api group for the crossplane alerts to filter out resources that we don't care about.
+
+### Removed
+
+- Remove `PrometheusOperatorSyncFailed` alert.
+- Remove `PrometheusOperatorReconcileErrors` alert.
 
 ## [4.47.0] - 2025-03-04
 

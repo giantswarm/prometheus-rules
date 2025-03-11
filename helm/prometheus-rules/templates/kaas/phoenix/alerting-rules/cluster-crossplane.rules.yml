@@ -18,7 +18,7 @@ spec:
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cluster-crossplane-resources
       # Match critical resources deployed by cluster-aws via aws-nth-crossplane-resources,
       # cilium-crossplane-resources, ...
-      expr: crossplane_managed_resource_exists{gvk=~".*Kind=(Queue|QueuePolicy|Role|Rule|SecurityGroup|SecurityGroupEgressRule|SecurityGroupIngressRule|Target)"} != crossplane_managed_resource_ready{gvk=~".*Kind=(Queue|QueuePolicy|Role|Rule|SecurityGroup|SecurityGroupEgressRule|SecurityGroupIngressRule|Target)"}
+      expr: crossplane_managed_resource_exists{gvk=~"(iam.aws.upbound.io/.*, Kind=Role|sqs.aws.upbound.io/.*, Kind=Queue|sqs.aws.upbound.io/.*, Kind=QueuePolicy|cloudwatchevents.aws.upbound.io/.*, Kind=Rule|cloudwatchevents.aws.upbound.io/.*, Kind=Target|ec2.aws.upbound.io/.*, Kind=SecurityGroup*)"} != crossplane_managed_resource_ready{gvk=~"(iam.aws.upbound.io/.*, Kind=Role|sqs.aws.upbound.io/.*, Kind=Queue|sqs.aws.upbound.io/.*, Kind=QueuePolicy|cloudwatchevents.aws.upbound.io/.*, Kind=Rule|cloudwatchevents.aws.upbound.io/.*, Kind=Target|ec2.aws.upbound.io/.*, Kind=SecurityGroup*)"}
       for: 15m
       labels:
         area: kaas

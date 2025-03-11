@@ -142,9 +142,12 @@ tests:
         eval_time: 210m
       - alertname: PromtailRequestsErrors
         eval_time: 270m
+      - alertname: PromtailRequestsErrors
+        eval_time: 310m
         exp_alerts:
           - exp_labels:
               area: platform
+              cancel_if_outside_working_hours: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
@@ -164,6 +167,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
+              cancel_if_outside_working_hours: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"

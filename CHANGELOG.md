@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update `StatefulsetNotSatisfiedAtlas` to fire after 3 days.
+
 ### Fixed
 
 - Use the api group for the crossplane alerts to filter out resources that we don't care about.

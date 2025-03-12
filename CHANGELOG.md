@@ -11,9 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Rename `MimirObjectStoreLowRate` to `MimirDataPushFailures` and update its expression to only target `upload` operations from the `ingester` component.
 
+## [4.48.0] - 2025-03-11
+
 ### Added
 
-- Add Loki rules validation in CI
+- Add first log based alert to detect CIDRNotAvailable events.
+- Add Loki rules validation in CI.
+
+### Changed
+
+- Update `StatefulsetNotSatisfiedAtlas` to fire after 3 days.
 
 ### Fixed
 
@@ -3489,7 +3496,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.47.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.48.0...HEAD
+[4.48.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.47.0...v4.48.0
 [4.47.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.46.1...v4.47.0
 [4.46.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.46.0...v4.46.1
 [4.46.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.45.0...v4.46.0

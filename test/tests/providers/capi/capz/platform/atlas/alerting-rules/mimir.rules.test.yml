@@ -608,7 +608,7 @@ tests:
               __dashboardUid__: e1324ee2a434f4158c00a9ee279d3292
               dashboardQueryParams: "orgId=2"
               description: "Low rate of writes to the Mimir object store."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimirobjectstorelowrate
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimirdatapushfailures
       - alertname: MimirDataPushFailures
         eval_time: 140m
 

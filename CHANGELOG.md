@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Rename `MimirObjectStoreLowRate` to `MimirDataPushFailures` and update its expression to only target `upload` operations from the `ingester` component.
+
 ## [4.48.0] - 2025-03-11
 
 ### Added

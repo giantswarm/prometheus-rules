@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Fixed some grafana-cloud recording rules to specifically use metrics giantswarm metrics
+
 ## [4.49.1] - 2025-03-12
 
 ### Changed

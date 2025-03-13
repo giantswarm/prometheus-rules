@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update `StatefulsetNotSatisfiedAtlas` to fire after 3 days.
+- Update `PromtailRequestsErrors` to fire after 1h instead of 25min.
+- Update `PromtailRequestsErrors` to cancel outside of working hours.
 
 ### Fixed
 

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.49.2] - 2025-03-14
+
 ### Changed
 
 - Fixed some grafana-cloud recording rules to specifically use metrics giantswarm metrics
@@ -3510,7 +3512,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.49.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.49.2...HEAD
+[4.49.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.49.1...v4.49.2
 [4.49.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.49.0...v4.49.1
 [4.49.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.48.0...v4.49.0
 [4.48.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.47.0...v4.48.0

@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Fixed some grafana-cloud recording rules to specifically use metrics giantswarm metrics
+- Update `PromtailRequestsErrors` to fire after 1h instead of 25min.
+- Update `PromtailRequestsErrors` to cancel outside of working hours.
 
 ## [4.49.1] - 2025-03-12
 
@@ -35,8 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update `StatefulsetNotSatisfiedAtlas` to fire after 3 days.
-- Update `PromtailRequestsErrors` to fire after 1h instead of 25min.
-- Update `PromtailRequestsErrors` to cancel outside of working hours.
 
 ### Fixed
 

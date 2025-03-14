@@ -320,25 +320,25 @@ spec:
       record: aggregation:kubernetes:storageclass_total
   - name: node-exporter.grafana-cloud.recording
     rules:
-    - expr: count(node_cpu_seconds_total{mode="idle"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: count(node_cpu_seconds_total{app="node-exporter", mode="idle"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:cpu_cores_total
     - expr: 100 - (avg by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) (irate(node_cpu_seconds_total{app="node-exporter", mode="idle"}[5m])) * 100)
       record: aggregation:node:cpu_utilization_percentage
-    - expr: sum(node_filesystem_avail_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: sum(node_filesystem_avail_bytes{app="node-exporter"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:filesystem_avail_bytes_total
-    - expr: sum(node_filesystem_size_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: sum(node_filesystem_size_bytes{app="node-exporter"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:filesystem_size_bytes_total
     - expr: sum(node_uname_info) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, release)
       record: aggregation:node:kernel_version
-    - expr: sum(node_memory_MemAvailable_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: sum(node_memory_MemAvailable_bytes{app="node-exporter"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:memory_memavailable_bytes_total
-    - expr: sum(node_memory_MemFree_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: sum(node_memory_MemFree_bytes{app="node-exporter"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:memory_memfree_bytes_total
-    - expr: sum(node_memory_MemTotal_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: sum(node_memory_MemTotal_bytes{app="node-exporter"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:memory_memtotal_bytes_total
-    - expr: sum(rate(node_network_receive_bytes_total[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: sum(rate(node_network_receive_bytes_total{app="node-exporter"}[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:network_receive_bytes_total
-    - expr: sum(rate(node_network_transmit_bytes_total[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: sum(rate(node_network_transmit_bytes_total{app="node-exporter"}[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:network_transmit_bytes_total
   - name: prometheus.grafana-cloud.recording
     rules:

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Increase threshold time for `KubeStateMetricsSlow` from 7s to 15s.
+
 ## [4.49.2] - 2025-03-14
 
 ### Changed

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.49.3] - 2025-03-17
+
 ### Changed
 
 - Increase threshold time for `KubeStateMetricsSlow` from 7s to 15s.
@@ -3516,7 +3518,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.49.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.49.3...HEAD
+[4.49.3]: https://github.com/giantswarm/prometheus-rules/compare/v4.49.2...v4.49.3
 [4.49.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.49.1...v4.49.2
 [4.49.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.49.0...v4.49.1
 [4.49.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.48.0...v4.49.0

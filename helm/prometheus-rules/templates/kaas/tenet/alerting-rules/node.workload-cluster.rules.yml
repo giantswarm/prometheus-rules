@@ -173,6 +173,6 @@ spec:
       for: 20m
       labels:
         area: kaas
-        severity: page
+        severity: notify
         team: tenet
         topic: kubernetes

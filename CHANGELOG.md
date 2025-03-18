@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Changed the severity of several Team Tenet alerts to be "notify"
+
 ## [4.49.3] - 2025-03-17
 
 ### Changed

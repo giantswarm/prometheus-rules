@@ -37,7 +37,7 @@ spec:
       for: 15m
       labels:
         area: kaas
-        severity: page
+        severity: notify
         cancel_if_outside_working_hours: "true"
         team: tenet
         topic: etcd
@@ -49,7 +49,7 @@ spec:
       for: 15m
       labels:
         area: kaas
-        severity: page
+        severity: notify
         cancel_if_outside_working_hours: "true"
         team: tenet
         topic: etcd

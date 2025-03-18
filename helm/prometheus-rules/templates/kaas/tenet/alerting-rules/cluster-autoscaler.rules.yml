@@ -27,7 +27,7 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         cancel_if_cluster_has_no_workers: "true"
-        severity: page
+        severity: notify
         team: tenet
         topic: cluster-autoscaler
     - alert: ClusterAutoscalerFailedScaling
@@ -42,6 +42,6 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: notify
         team: tenet
         topic: cluster-autoscaler

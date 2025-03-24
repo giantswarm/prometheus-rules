@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Increased the threshold time for `ManagementClusterWebhookDurationExceedsTimeout` from 15m to 25m
+
 ## [4.50.0] - 2025-03-18
 
 ### Changed

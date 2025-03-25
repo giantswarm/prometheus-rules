@@ -17,8 +17,8 @@ spec:
       annotations:
         description: '{{`Docker volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/low-disk-space/#docker-volume
-      expr: node_filesystem_free_bytes{cluster_type="management_cluster", mountpoint=~"(/rootfs)?/var/lib/docker"} < (2 * 1024 * 1024 * 1024)
-      for: 10m
+      expr: node_filesystem_free_bytes{cluster_type="management_cluster", mountpoint=~"(/rootfs)?/var/lib/docker"} < (1.5 * 1024 * 1024 * 1024)
+      for: 20m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"

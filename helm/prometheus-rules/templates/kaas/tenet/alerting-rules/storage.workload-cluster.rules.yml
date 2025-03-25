@@ -17,11 +17,12 @@ spec:
       annotations:
         description: '{{`Docker volume {{ $labels.mountpoint}} on {{ $labels.instance }} does not have enough free space.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/low-disk-space/#docker-volume
-      expr: node_filesystem_free_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/lib/docker"} < (2 * 1024 * 1024 * 1024)
-      for: 30m
+      expr: node_filesystem_free_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/lib/docker"} < (1 * 1024 * 1024 * 1024)
+      for: 60m
       labels:
         area: kaas
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: tenet
         topic: storage
     - alert: EtcdVolumeSpaceTooLow

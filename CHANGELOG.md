@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Increased the threshold time for `ManagementClusterWebhookDurationExceedsTimeout` from 15m to 25m
+- Set `WorkloadClusterNodeUnexpectedTaintNodeCAPIUninitialized` to page
+- Cancel `WorkloadClusterEtcdNumberOfLeaderChangesTooHigh` during cluster upgrades, creation and deletion
+- Tweaked the time and size of the `KubeletVolumeSpaceTooLow` alerts.
+- Change the `KubeletVolumeSpaceTooLow` for <500Mb available to page instead of notify
+- Tweaked the time and size of the `DockerVolumeSpaceTooLow` alerts.
+- Change the `DockerVolumeSpaceTooLow` for <1Gb available to page instead of notify
 
 ## [4.50.0] - 2025-03-18
 

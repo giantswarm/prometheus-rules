@@ -59,6 +59,9 @@ spec:
       expr: increase(etcd_server_leader_changes_seen_total{cluster_type="workload_cluster", provider!="eks"}[1h]) > 8
       labels:
         area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
         severity: notify
         team: tenet
         topic: etcd

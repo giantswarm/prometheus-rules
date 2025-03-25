@@ -98,7 +98,7 @@ tests:
               description: "Monitoring agents for cluster gauss/gauss has failed to scrape all targets in kube-controller-manager job."
 
 
-    # Test MetricForwardingErrors
+  # Test MetricForwardingErrors
   - interval: 1m
     input_series:
       # Test case where alert should not fire (error rate < 1%)

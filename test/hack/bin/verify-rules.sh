@@ -115,11 +115,13 @@ main() {
             local dirname="${file%/*}"
             local filenameWithoutExtension="${filename%.*}"
 
+            local ruleFile="$outputPath/helm-chart/$provider/prometheus-rules/templates/$file"
+
             # Extract rules file from helm template
-            if [[ -f "$outputPath/helm-chart/$provider/prometheus-rules/templates/$file" ]]
+            if [[ -f "$ruleFile" ]]
             then
                 [[ -d "$outputPath/generated/$provider/$dirname" ]] || mkdir -p "$outputPath/generated/$provider/$dirname"
-                "$GIT_WORKDIR/$YQ" '.spec' "$outputPath/helm-chart/$provider/prometheus-rules/templates/$file" > "$outputPath/generated/$provider/$file"
+                "$GIT_WORKDIR/$YQ" '.spec' "$ruleFile" > "$outputPath/generated/$provider/$file"
             else
                 # Fail when file is not found
                 echo "###  Warning: Failed extracting rules file $file"
@@ -129,6 +131,15 @@ main() {
 
             # Skip next steps if GENERATE_ONLY is set
             if [[ "$GENERATE_ONLY" == "true" ]]; then continue; fi
+
+            # Verify tenant label exists and has the expected value
+            local tenant_label
+            tenant_label=$("$GIT_WORKDIR/$YQ" '.metadata.labels.["observability.giantswarm.io/tenant"]' "$ruleFile")
+            if [[ "$tenant_label" != "giantswarm" ]]; then
+              echo "###  Warning: Missing or incorrect tenant label in $file (found: '$tenant_label', expected: 'giantswarm')"
+              failing_extraction+=("$provider:$file:tenant_label")
+              continue
+            fi
 
             # Detect rule type
             local file_rule_type=

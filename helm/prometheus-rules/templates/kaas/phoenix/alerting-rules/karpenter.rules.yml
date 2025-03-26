@@ -1,11 +1,9 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  labels:
-    labels: {{- include "labels.common" . | nindent 4}}
-    name: karpenter.rules
-    namespace: {{.Values.namespace}}
-  name: karpenter
+  labels: {{- include "labels.common" . | nindent 4}}
+  name: karpenter.rules
+  namespace: {{.Values.namespace}}
 spec:
   groups:
     - name: karpenter

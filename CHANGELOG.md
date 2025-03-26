@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fine tune the `MetricForwardingErrors` so it does not trigger on sporadic issues like duplicate samples (e.g. when a pod restarts too frequently for a small time window). This alert is now based on the upstream alert and uses a percentage of failed remote storage samples as described in this issue https://github.com/giantswarm/giantswarm/issues/32873
 
+## [4.52.0] - 2025-03-26
+
+### Changed
+
+- Reduce management cluster resource usage alert window from 2d to 30m.
+
+### Fixed
+
+- Make sure HelmReleaseFailed for onprem clusters pages our onprem team.
+
 ## [4.51.0] - 2025-03-25
 
 - Increased the threshold time for `ManagementClusterWebhookDurationExceedsTimeout` from 15m to 25m
@@ -3538,7 +3548,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.51.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.52.0...HEAD
+[4.52.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.51.0...v4.52.0
 [4.51.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.50.0...v4.51.0
 [4.50.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.49.3...v4.50.0
 [4.49.3]: https://github.com/giantswarm/prometheus-rules/compare/v4.49.2...v4.49.3

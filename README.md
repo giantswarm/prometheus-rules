@@ -104,8 +104,7 @@ These alerts are generated from log data using LogQL queries processed by Loki. 
 
 - Ensure the `expr` field contains a valid LogQL query
 - Name the file with a `.logs.yaml` extension, this will render the following labels on the alert and ensure the alert is loaded into Loki:
-  * `application.giantswarm.io/prometheus-rule-kind: loki` (deprecated, will be removed once all management clusters have been upgraded to v30)
-  * `observability.giantswarm.io/rule-type: logs` (new label for releases > v30)
+  * `application.giantswarm.io/prometheus-rule-kind: loki`
 
 Example:
 

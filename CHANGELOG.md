@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.52.0] - 2025-03-26
+
 ### Changed
 
 - Reduce management cluster resource usage alert window from 2d to 30m.
@@ -3544,7 +3546,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.51.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.52.0...HEAD
+[4.52.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.51.0...v4.52.0
 [4.51.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.50.0...v4.51.0
 [4.50.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.49.3...v4.50.0
 [4.49.3]: https://github.com/giantswarm/prometheus-rules/compare/v4.49.2...v4.49.3

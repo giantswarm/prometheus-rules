@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Reduce management cluster resource usage alert window from 2d to 30m.
 
+### Fixed
+
+- Make sure HelmReleaseFailed for onprem clusters pages our onprem team.
+
 ## [4.51.0] - 2025-03-25
 
 ### Changed

@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.51.0] - 2025-03-25
 
+### Changed
+
 - Increased the threshold time for `ManagementClusterWebhookDurationExceedsTimeout` from 15m to 25m
 - Set `WorkloadClusterNodeUnexpectedTaintNodeCAPIUninitialized` to page
 - Cancel `WorkloadClusterEtcdNumberOfLeaderChangesTooHigh` during cluster upgrades, creation and deletion

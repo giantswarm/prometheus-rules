@@ -7,12 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [4.52.0] - 2025-03-26
-
 ### Changed
 
 - Label all our alerts with the giantswarm tenant.
 - Get rid of the alloy rules config as it is now managed by the observability operator.
+
+## [4.52.0] - 2025-03-26
+
+### Changed
+
 - Reduce management cluster resource usage alert window from 2d to 30m.
 
 ### Fixed

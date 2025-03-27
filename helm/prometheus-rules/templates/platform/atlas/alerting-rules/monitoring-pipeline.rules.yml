@@ -11,16 +11,24 @@ spec:
     rules:
     - alert: MetricForwardingErrors
       annotations:
-        description: '{{`Monitoring agent can''t communicate with Remote Storage API at {{ $labels.url }}.`}}'
+        summary: Monitoring agent fails to send samples to remote storage.
+        description: '{{`Monitoring agent failed to send {{ printf "%.1f" $value }}% of the samples to {{ $labels.remote_name}}:{{ $labels.url }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-pipeline/
         __dashboardUid__: promRW001
         {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=1"
         {{ end }}
       expr: |-
-        rate(prometheus_remote_storage_samples_failed_total[10m]) > 0.1
-          or rate(prometheus_remote_storage_samples_total[10m]) == 0
-          or rate(prometheus_remote_storage_metadata_retried_total[10m]) > 0
+        (
+          rate(prometheus_remote_storage_samples_failed_total[5m])
+          /
+          (
+            rate(prometheus_remote_storage_samples_failed_total[5m])
+            +
+            rate(prometheus_remote_storage_samples_total[5m])
+          )
+        ) * 100
+        > 1
       for: 1h
       labels:
         area: platform

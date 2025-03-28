@@ -103,7 +103,8 @@ spec:
 These alerts are generated from log data using LogQL queries processed by Loki. To create a log-based alert:
 
 - Ensure the `expr` field contains a valid LogQL query
-- Name the file with a `.logs.yaml` extension, this will render the following label `application.giantswarm.io/prometheus-rule-kind: loki` on the alert and ensure the alert is loaded into Loki.
+- Name the file with a `.logs.yaml` extension, this will render the following labels on the alert and ensure the alert is loaded into Loki:
+  * `application.giantswarm.io/prometheus-rule-kind: loki`
 
 Example:
 

@@ -11,8 +11,8 @@ spec:
   catalog: giantswarm
   config:
     configMap:
-      name: alloy-rules-config
-      namespace: giantswarm
+      name: ""
+      namespace: ""
     secret:
       name: ""
       namespace: ""

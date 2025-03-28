@@ -26,7 +26,8 @@ helm.sh/chart: {{ include "chart" . | quote }}
 giantswarm.io/service-type: {{ .Values.serviceType }}
 {{- if or (.Template.Name | hasSuffix "logs.yaml") (.Template.Name | hasSuffix "logs.yml")}}
 application.giantswarm.io/prometheus-rule-kind: loki
-{{- end -}}
+{{- end }}
+observability.giantswarm.io/tenant: giantswarm
 {{- end -}}
 
 {{- define "providerTeam" -}}

@@ -1,0 +1,26 @@
+{{- if eq .Values.managementCluster.provider.flavor "capi" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4}}
+  name: teleport.audit.logs.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+    - name: teleport.audit.logs
+      rules:
+        - alert: TeleportAuditLogsMissing
+          annotations:
+            description: Teleport audit logs are missing from installation {{`{{ $labels.installation }}`}}.
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/teleport-audit-logs-missing/
+          expr: |-
+            absent_over_time({scrape_job="teleport.giantswarm.io"} [7d]) > 0
+          for: 5m
+          labels:
+            area: kaas
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: atlas
+            topic: observability
+{{ end }}

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.53.0] - 2025-04-02
+
+### Added
+
+- Add new alert to detect missing installation logs that relates to teleport access.
+
 ### Changed
 
 - Label all our alerts with the giantswarm tenant.
@@ -3552,7 +3558,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.52.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.53.0...HEAD
+[4.53.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.52.0...v4.53.0
 [4.52.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.51.0...v4.52.0
 [4.51.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.50.0...v4.51.0
 [4.50.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.49.3...v4.50.0

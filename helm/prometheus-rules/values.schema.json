@@ -30,14 +30,6 @@
                 }
             }
         },
-        "logs": {
-            "type": "object",
-            "properties": {
-                "tenant": {
-                    "type": "string"
-                }
-            }
-        },
         "managementCluster": {
             "type": "object",
             "properties": {
@@ -63,14 +55,6 @@
                             "type": "string"
                         }
                     }
-                }
-            }
-        },
-        "metrics": {
-            "type": "object",
-            "properties": {
-                "tenant": {
-                    "type": "string"
                 }
             }
         },

@@ -7,13 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Label all our alerts with the giantswarm tenant.
+- Get rid of the alloy rules app as it will now be managed by the observability operator.
+
 ## [4.53.0] - 2025-04-02
 
 ### Added
 
 - Add new alert to detect missing installation logs that relates to teleport access.
-
-### Changed
 
 - Fine tune the `MetricForwardingErrors` so it does not trigger on sporadic issues like duplicate samples (e.g. when a pod restarts too frequently for a small time window). This alert is now based on the upstream alert and uses a percentage of failed remote storage samples as described in this issue https://github.com/giantswarm/giantswarm/issues/32873
 

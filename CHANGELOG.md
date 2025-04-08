@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `MonitoringAgentDown` to not page for non deleting clusters.
+
 ## [4.54.0] - 2025-04-07
 
 ### Changed

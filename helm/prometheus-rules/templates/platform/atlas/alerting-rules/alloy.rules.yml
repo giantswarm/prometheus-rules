@@ -115,12 +115,15 @@ spec:
           expr: |-
             count(
               label_replace(
-                capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+                (capi_cluster_status_condition{type="ControlPlaneReady", status="True"} == 1)
+                  * on (name, installation, pipeline, provider)
+                  # We do not want to alert on clusters that are being deleted.
+                  (capi_cluster_status_phase{phase="Deleting"} == 0),
                 "cluster_id",
                 "$1",
                 "name",
                 "(.*)"
-              ) == 1
+              )
             ) by (cluster_id, installation, pipeline, provider) > 0
             unless on (cluster_id) (
               count(up{job=~"alloy-metrics|prometheus-agent"} > 0) by (cluster_id)

@@ -236,9 +236,11 @@ tests:
   - interval: 1m
     input_series:
       - series: 'up{job="alloy-metrics", cluster_id="golem", installation="golem", provider="capa", pipeline="testing"}'
-        values: "_x40 1+0x50 0+0x70"
+        values: "_x60 1+0x60 0+0x60"
       - series: 'capi_cluster_status_condition{type="ControlPlaneReady", status="True", name="golem", installation="golem", provider="capa", pipeline="testing"}'
-        values: "1x150"
+        values: "1x180"
+      - series: 'capi_cluster_status_phase{phase="Deleting", name="golem", installation="golem", provider="capa", pipeline="testing"}'
+        values: "0x150 1x30"
     alert_rule_test:
       - alertname: MonitoringAgentDown
         eval_time: 10m
@@ -311,7 +313,7 @@ tests:
       - alertname: InhibitionMonitoringAgentDown
         eval_time: 80m
       - alertname: MonitoringAgentDown
-        eval_time: 140m
+        eval_time: 150m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -333,7 +335,30 @@ tests:
               dashboardQueryParams: "orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
       - alertname: InhibitionMonitoringAgentDown
-        eval_time: 140m
+        eval_time: 150m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              inhibit_monitoring_agent_down: "true"
+              cluster_id: golem
+              installation: golem
+              provider: capa
+              pipeline: testing
+              severity: none
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Monitoring agent fails to send samples."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/#monitoring-agent-down
+              __dashboardUid__: promRW001
+              dashboardQueryParams: "orgId=1"
+              summary: "Monitoring agent fails to send samples to remote write endpoint."
+      - alertname: MonitoringAgentDown
+        eval_time: 170m
+      - alertname: InhibitionMonitoringAgentDown
+        eval_time: 170m
         exp_alerts:
           - exp_labels:
               area: platform

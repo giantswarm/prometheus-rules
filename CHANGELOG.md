@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Improve ClusterCrossplaneResourcesNotReady with new metrics where available
+
 ## [4.54.1] - 2025-04-08
 
 ### Fixed

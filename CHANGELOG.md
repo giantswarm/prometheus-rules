@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Improve ClusterCrossplaneResourcesNotReady with new metrics where available
+- Improve alert for Karpenter machines not being Ready
 
 ## [4.54.1] - 2025-04-08
 

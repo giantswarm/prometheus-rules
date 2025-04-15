@@ -29,7 +29,7 @@ spec:
       annotations:
         description: '{{`dex-operator failed to renew secret of {{ $labels.app_registration_name }} for {{ $labels.app_owner }} on provider {{ $labels.provider_type }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/dex-operator/
-      expr: min by(app_registration_name, app_owner, app_namespace, provider_name, provider_type, installation, cluster_id, pipeline, provider) (aggregation:dex_operator_idp_secret_expiry_time{cluster_type="management_cluster"}) - time() < 60*60*12
+      expr: min by(app_registration_name, app_owner, app_namespace, provider_name, provider_type, installation, cluster_id, pipeline, provider) (aggregation:dex_operator_idp_secret_expiry_time{cluster_type="management_cluster", provider_type!="github"}) - time() < 60*60*12
       for: 30m
       labels:
         area: platform

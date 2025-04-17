@@ -8,13 +8,13 @@ spec:
   groups:
     - name: karpenter
       rules:
-        - alert: KarpenterCanNotRegisterNewNodes
+        - alert: KarpenterMachineNotReady
           annotations:
             description: |
-              Karpenter provisioner {{`{{ $labels.provisioner }}`}} on cluster {{`{{ $labels.cluster_id }}`}} launched new nodes, but some of nodes did not registered in the cluster
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/karpenter/
-          expr: sum by (provisioner, cluster_id, installation, pipeline, provider) (karpenter_machines_launched) - sum by (provisioner, cluster_id, installation, pipeline, provider)(karpenter_machines_registered) != 0
-          for: 1h
+              Karpenter machine {{`{{ $labels.name }}`}} on cluster {{`{{ $labels.cluster_id }}`}} has been not Ready for more than 30 minutes. Might be that Karpenter is not able to register new nodes to the cluster.
+            opsrecipe: karpenter/
+          expr: karpenter_machine_status_condition{type="Ready", status="True"} == 0
+          for: 30m
           labels:
             area: kaas
             cancel_if_monitoring_agent_down: "true"

@@ -26,7 +26,7 @@ spec:
     {{- end }}
     - alert: IRSACertificateSecretWillExpireInLessThanTwoWeeks
       annotations:
-        description: '{{`IRSA Pod Identity Webhook Certificate stored in Secret {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
+        description: '{{`IRSA Pod Identity Webhook Certificate stored in Secret {{ $labels.exported_namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
       expr: (cert_exporter_secret_not_after{name=~"aws-pod-identity-webhook.*"} - time()) < 13 * 24 * 60 * 60
       for: 5m
@@ -38,7 +38,7 @@ spec:
         topic: cert-manager
     - alert: KyvernoCertificateSecretWillExpireInLessThanTwoDays
       annotations:
-        description: '{{`Kyverno Certificate stored in Secret {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two days.`}}'
+        description: '{{`Kyverno Certificate stored in Secret {{ $labels.exported_namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two days.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kyverno-certificate-secret-will-expire-in-less-than-two-days/
       expr: (cert_exporter_secret_not_after{name=~".*kyverno.*"} - time()) < 2 * 24 * 60 * 60
       labels:
@@ -49,7 +49,7 @@ spec:
         topic: kyverno
     - alert: CertificateSecretWillExpireInLessThanTwoWeeks
       annotations:
-        description: '{{`Certificate stored in Secret {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
+        description: '{{`Certificate stored in Secret {{ $labels.exported_namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
       expr: (cert_exporter_secret_not_after{name!~"kiam.*|.*kyverno.*",cluster_type="management_cluster"} - time()) < 13 * 24 * 60 * 60
       labels:

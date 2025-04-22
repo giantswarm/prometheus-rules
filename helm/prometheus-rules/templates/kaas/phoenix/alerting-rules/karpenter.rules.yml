@@ -12,7 +12,7 @@ spec:
           annotations:
             description: |
               Karpenter machine {{`{{ $labels.name }}`}} on cluster {{`{{ $labels.cluster_id }}`}} has been not Ready for more than 30 minutes. Might be that Karpenter is not able to register new nodes to the cluster.
-            opsrecipe: karpenter/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/karpenter/
           expr: karpenter_machine_status_condition{type="Ready", status="True"} == 0
           for: 30m
           labels:

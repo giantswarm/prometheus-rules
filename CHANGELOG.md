@@ -7,14 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- Use `exported_namespace` for certificate expiration alerts.
-
 ### Changed
 
 - Improve ClusterCrossplaneResourcesNotReady with new metrics where available
 - Improve alert for Karpenter machines not being Ready
+
+### Fixed
+
+- Use `exported_namespace` for certificate expiration alerts.
+
+### Removed
+
+- Remove alerts related to `alloy-rules`.
 
 ## [4.54.1] - 2025-04-08
 

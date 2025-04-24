@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Improved `ClusterAutoscalerFailedScaling` alert to detect stuck states where cluster-autoscaler fails to scale.
+
 ## [4.55.0] - 2025-04-22
 
 ### Changed

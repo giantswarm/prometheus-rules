@@ -34,7 +34,7 @@ spec:
       annotations:
         description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has failed scaling up.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cluster-autoscaler-scaling/
-      expr: increase(cluster_autoscaler_failed_scale_ups_total{cluster_type="workload_cluster", provider=~"aws|capa|capz|eks"}[5m]) > 1
+      expr: cluster_autoscaler_failed_scale_ups_total{provider=~"aws|capa|capz|eks"} > 0
       for: 15m
       labels:
         area: kaas
@@ -42,6 +42,6 @@ spec:
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
-        severity: notify
+        severity: page
         team: tenet
         topic: cluster-autoscaler

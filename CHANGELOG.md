@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.56.0] - 2025-04-24
+
 ### Changed
 
 - Improved `ClusterAutoscalerFailedScaling` alert to detect stuck states where cluster-autoscaler fails to scale.
@@ -3586,7 +3588,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.55.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.56.0...HEAD
+[4.56.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.55.0...v4.56.0
 [4.55.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.54.1...v4.55.0
 [4.54.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.54.0...v4.54.1
 [4.54.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.53.0...v4.54.0

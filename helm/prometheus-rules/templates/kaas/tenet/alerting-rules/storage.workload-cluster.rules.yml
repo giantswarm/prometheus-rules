@@ -64,7 +64,8 @@ spec:
       for: 60m
       labels:
         area: kaas
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: tenet
         topic: storage
     - alert: RootVolumeSpaceTooLow
@@ -75,6 +76,7 @@ spec:
       for: 10m
       labels:
         area: kaas
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: tenet
         topic: storage

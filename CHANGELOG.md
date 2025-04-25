@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Reenabled storage alerts LogVolumeSpaceTooLow and RootVolumeSpaceTooLow as paging during working hours until we have node problem detector deployed.
+
 ## [4.56.0] - 2025-04-24
 
 ### Changed

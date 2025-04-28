@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Reenabled storage alerts LogVolumeSpaceTooLow and RootVolumeSpaceTooLow as paging during working hours until we have node problem detector deployed.
 
+### Fixed
+
+- Fix SLOs recording rules sent to Grafana Cloud that sometimes trigger PrometheusRulesFailure due to the origin metric pod changing.
+
 ## [4.56.0] - 2025-04-24
 
 ### Changed

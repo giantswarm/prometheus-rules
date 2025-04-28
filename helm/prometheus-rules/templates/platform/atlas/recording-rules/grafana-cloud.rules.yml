@@ -553,104 +553,93 @@ spec:
   - name: slos.grafana-cloud.recording
     rules:
       # Let's not send any of the slo:sli_error:ratio_ratexxx metrics but the slo:sli_error:ratio_rate5m rule to Grafana Cloud as it's not useful for the SLOs dashboard.
-      - expr: sum(
+      - expr: |-
+          label_replace(
             label_replace(
-              label_replace(
-                slo:current_burn_rate:ratio,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:current_burn_rate:ratio) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:current_burn_rate:ratio
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:error_budget:ratio,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:error_budget:ratio) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:error_budget:ratio
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:objective:ratio,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:objective:ratio) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:objective:ratio
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:period_burn_rate:ratio,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:period_burn_rate:ratio) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:period_burn_rate:ratio
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:sli_error:ratio_rate5m,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:sli_error:ratio_rate5m) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:sli_error:ratio_rate5m
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:time_period:days,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:time_period:days) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:time_period:days

@@ -46,7 +46,7 @@ spec:
                 /
                 sum(rate(promtail_request_duration_seconds_count[5m])) by (cluster_id, installation, provider, pipeline, namespace, job, route, instance)
             ) > 10
-            # ignore this alert when alloy-logs is installed
+            # ignore this alert when alloy-logs is installed - this avoids false alerts when an unconfigured and unused promtail remains after migration to alloy-logs
             unless on (cluster_id) count(up{service="alloy-logs"}) by (cluster_id) > 0
           for: 60m
           labels:

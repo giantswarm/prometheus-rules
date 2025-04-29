@@ -16,7 +16,7 @@ spec:
       annotations:
         description: '{{`The grafana-postgresql cluster has one or more unhealthy instances.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
-      expr: count(up{container="postgres", namespace="monitoring"}) by (container, job) < 2
+      expr: count(up{container="postgres", namespace="monitoring"}) by (container, cluster_id, installation, pipeline, provider) < 2
       for: 5m
       labels:
         area: platform

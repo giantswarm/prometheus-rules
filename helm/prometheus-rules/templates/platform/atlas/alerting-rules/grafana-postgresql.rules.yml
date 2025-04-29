@@ -1,0 +1,44 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
+    cluster_type: "management_cluster"
+    {{- end }}
+  name: grafana-postgresql.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+  - name: grafana-postgresql
+    rules:
+    - alert: GrafanaPostgresqlDown
+      annotations:
+        description: '{{`The grafana-postgresql cluster has one or more unhealthy instances.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
+      expr: count(up{container="postgres", namespace="monitoring"}) by (container, job) < 2
+      for: 5m
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: GrafanaPostgresqlVolumeLowSpace
+      annotations:
+        description: '{{`The free space on the Data Disk for the grafana-postgresql PVC: {{ $labels.persistentvolumeclaim}} was below 10 percent for longer than 1 hour (current value {{ $value | printf "%.2f" }}).`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
+      expr: kubelet_volume_stats_available_bytes{namespace="monitoring", persistentvolumeclaim=~"grafana-postgresql.*"}/kubelet_volume_stats_capacity_bytes{namespace="monitoring", persistentvolumeclaim=~"grafana-postgresql.*"} < 0.10
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability

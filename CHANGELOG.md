@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `GrafanaPostgresqlDown` and `GrafanaPostgresqlVolumeLowSpace` alerting rules and their unit tests.
+
 ## [4.56.1] - 2025-04-28
 
 ### Changed

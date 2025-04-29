@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- Add `GrafanaPostgresqlDown` and `GrafanaPostgresqlVolumeLowSpace` alerting rules and their unit tests.
+- Add `grafana-postgresql` in the `ObservabilityStorageSpaceTooLow` alert's monitored PVCs.
 
 ## [4.56.1] - 2025-04-28
 

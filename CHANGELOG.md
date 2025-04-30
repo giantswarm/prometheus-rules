@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - PromtailRequestsErrors does not fire anymore when alloy-logs is running
 
+### Added
+
+- Added PromtailConflictsWithAlloy alert
+
 ## [4.56.1] - 2025-04-28
 
 ### Changed

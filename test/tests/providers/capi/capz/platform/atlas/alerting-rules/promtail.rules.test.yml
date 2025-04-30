@@ -195,3 +195,42 @@ tests:
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/
       - alertname: PromtailRequestsErrors
         eval_time: 360m
+  - interval: 1m
+    input_series:
+      # Test various configs of promtail + alloy-logs:
+      #  - 120min with none installed
+      #  - 120min with only promtail
+      #  - 120min with promtail + alloy
+      #  - 120min with only alloy
+      - series: 'up{service="promtail-metrics", cluster_id="glean", cluster_type="management_cluster", installation="glean", namespace="kube-system", pod="promtail-1xxxx", provider="capz", pipeline="testing"}'
+        values: "_x120 1+0x120 1+0x120 _x120"
+      - series: 'up{service="alloy-logs", cluster_id="glean", cluster_type="management_cluster", installation="glean", namespace="kube-system", pod="alloy-logs-1xxxx", provider="capz", pipeline="testing"}'
+        values: "_x120 _x120   1+0x120 1+0x120"
+    alert_rule_test:
+      - alertname: PromtailConflictsWithAlloy
+        eval_time: 70m
+      - alertname: PromtailConflictsWithAlloy
+        eval_time: 190m
+      - alertname: PromtailConflictsWithAlloy
+        eval_time: 310m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: glean
+              installation: glean
+              pipeline: testing
+              provider: capz
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              __dashboardUid__: promtail-overview
+              dashboardQueryParams: "orgId=2"
+              description: "Both promtail and alloy-logs are installed and conflicting on the cluster"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/#check-that-it-does-not-conflict-with-alloy-logs
+      - alertname: PromtailConflictsWithAlloy
+        eval_time: 430m

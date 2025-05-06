@@ -18,13 +18,13 @@ spec:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"alertmanager.*|grafana.*|logging-operator.*|loki.*|mimir.*|oauth2-proxy.*|object-storage.*|observability-gateway.*|observability-operator.*|prometheus.*|promxy.*|tempo.*|pyroscope.*|silence-operator.*|sloth.*"} > 0
-      for: 30m
+      for: 60m
       labels:
         area: platform
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: true
         severity: page
         team: atlas
         topic: managementcluster

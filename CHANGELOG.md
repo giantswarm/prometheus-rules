@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `grafana-postgresql` in the `ObservabilityStorageSpaceTooLow` alert's monitored PVCs.
 
+### Added
+
+- Add new alert `ClusterUpgradeStuck` to detect if the cluster app cannot be upgraded.
+
+## [4.57.0] - 2025-04-30
+
+### Changed
+
+- PromtailRequestsErrors does not fire anymore when alloy-logs is running
+
+### Added
+
+- Added PromtailConflictsWithAlloy alert
+
 ## [4.56.1] - 2025-04-28
 
 ### Changed
@@ -3602,7 +3616,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.56.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.57.0...HEAD
+[4.57.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.56.1...v4.57.0
 [4.56.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.56.0...v4.56.1
 [4.56.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.55.0...v4.56.0
 [4.55.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.54.1...v4.55.0

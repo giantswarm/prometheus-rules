@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- DeploymentNotSatisfiedAtlas: lower sensitivity and page only during business hours
+
 ### Added
 
 - Add new alert `ClusterUpgradeStuck` to detect if the cluster app cannot be upgraded.

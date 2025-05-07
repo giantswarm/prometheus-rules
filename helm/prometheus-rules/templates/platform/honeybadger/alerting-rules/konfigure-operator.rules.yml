@@ -1,0 +1,44 @@
+{{- if eq .Values.managementCluster.provider.flavor "capi" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: konfigure-operator.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    - name: konfigure-operator
+      rules:
+        - alert: KonfigureOperatorDeploymentNotSatisfied
+          annotations:
+            description: '{{`Konfigure Operator deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
+          expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", namespace="giantswarm", deployment="konfigure-operator"} > 0
+          for: 30m
+          labels:
+            area: platform
+            cancel_if_cluster_status_creating: "true"
+            cancel_if_cluster_status_deleting: "true"
+            cancel_if_cluster_status_updating: "true"
+            cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+            severity: page
+            team: honeybadger
+            topic: managementcluster
+        - alert: KonfigurationReconciliationFailed
+          annotations:
+            description: |-
+              {{`{{ $labels.resource_kind }} {{ $labels.resource_name }} in ns {{ $labels.resource_namespace }} on {{ $labels.installation }} is stuck in Failed state.`}}
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/konfigure-operator/
+          expr: konfigure_operator_reconcile_condition{condition_type="Ready", condition_status="False"} > 0
+          for: 10m
+          labels:
+            area: platform
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: honeybadger
+            topic: releng
+            namespace: |-
+              {{`{{ $labels.exported_namespace }}`}}
+{{- end }}

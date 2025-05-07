@@ -29,7 +29,7 @@ tests:
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
   - interval: 1m
     input_series:
-      - series: 'konfigure_operator_reconcile_condition{condition_type="Ready", condition_status="False", resource_kind="ManagementClusterConfiguration", resource_name="test", resource_namespace="giantswarm", installation=example}'
+      - series: 'konfigure_operator_reconcile_condition{condition_type="Ready", condition_status="False", resource_kind="ManagementClusterConfiguration", resource_name="test", resource_namespace="giantswarm", installation="example"}'
         values: '0x30 1x5 0x20 1x15'
     alert_rule_test:
       - alertname: KonfigurationReconciliationFailed
@@ -42,10 +42,15 @@ tests:
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
-              namespace: "giantswarm"
+              condition_status: "False"
+              condition_type: "Ready"
+              installation: "example"
+              resource_kind: "ManagementClusterConfiguration"
+              resource_name: "test"
+              resource_namespace: "giantswarm"
               severity: "page"
               team: "honeybadger"
-              topic: "managementcluster"
+              topic: "releng"
             exp_annotations:
               description: "ManagementClusterConfiguration test in ns giantswarm on example is stuck in Failed state."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/konfigure-operator/

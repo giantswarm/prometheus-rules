@@ -29,6 +29,20 @@ spec:
         severity: page
         team: atlas
         topic: observability
+  - name: resource-usage
+    rules:
+    - alert: IncorrectResourceUsageData
+      annotations:
+        description: '{{`Data used in the Grafana Cloud Resource Usage dashboard is incorrect for cluster {{ $labels.cluster_id }}.`}}'
+        runbook_url: tbd
+      expr: quantile_over_time(0.9, aggregation:node:cpu_cores_total[120m:30m])  / on(cluster_id)  quantile_over_time(0.9, (sum(machine_cpu_cores)by(cluster_id))[120m:30m]) < 0.9
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
   {{- if eq .Values.managementCluster.provider.flavor "capi" }}
   - name: mimir-to-grafana-cloud-exporter
     rules:

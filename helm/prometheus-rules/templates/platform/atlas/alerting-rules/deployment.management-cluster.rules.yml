@@ -24,7 +24,7 @@ spec:
         cancel_if_cluster_status_creating: "true"
         cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: true
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
         topic: managementcluster

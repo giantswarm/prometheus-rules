@@ -21,7 +21,7 @@ spec:
         kube_statefulset_status_replicas{cluster_type="management_cluster", statefulset=~"loki.*|mimir.*|pyroscope.*|tempo.*"}
         - kube_statefulset_status_replicas_ready{cluster_type="management_cluster", statefulset=~"loki.*|mimir.*|pyroscope.*|tempo.*"}
         > 0
-      for: 30m
+      for: 3d
       labels:
         area: platform
         cancel_if_cluster_status_creating: "true"

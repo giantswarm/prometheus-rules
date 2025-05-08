@@ -103,7 +103,9 @@ spec:
 These alerts are generated from log data using LogQL queries processed by Loki. To create a log-based alert:
 
 - Ensure the `expr` field contains a valid LogQL query
-- Name the file with a `.logs.yaml` extension, this will render the following label `application.giantswarm.io/prometheus-rule-kind: loki` on the alert and ensure the alert is loaded into Loki.
+- Name the file with a `.logs.yaml` extension, this will render the following labels on the alert and ensure the alert is loaded into Loki:
+  * `application.giantswarm.io/prometheus-rule-kind: loki` (deprecated, will be removed once all management clusters have been upgraded to v30)
+  * `observability.giantswarm.io/rule-type: logs` (new label for releases > v30)
 
 Example:
 
@@ -347,6 +349,15 @@ You can filter which rules files you will test with a regular expression:
 make test-rules test_filter=grafana.management-cluster.rules.yml
 make test-rules test_filter=grafana
 make test-rules test_filter=gr.*na
+```
+
+##### Filter rules type
+
+You can select which type of rules you want to test, by default all rules are tested:
+
+```
+make test-rules rules_type=prometheus
+make test-rules rules_type=loki
 ```
 
 #### Test "no data" case

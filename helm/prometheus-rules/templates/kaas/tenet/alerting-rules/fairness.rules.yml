@@ -18,7 +18,7 @@ spec:
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: notify
         team: tenet
         topic: kubernetes
     - alert: FlowcontrolTooManyRequests
@@ -30,6 +30,6 @@ spec:
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: notify
         team: tenet
         topic: kubernetes

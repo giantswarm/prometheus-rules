@@ -320,25 +320,25 @@ spec:
       record: aggregation:kubernetes:storageclass_total
   - name: node-exporter.grafana-cloud.recording
     rules:
-    - expr: count(node_cpu_seconds_total{mode="idle"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: count(node_cpu_seconds_total{app="node-exporter", mode="idle"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:cpu_cores_total
     - expr: 100 - (avg by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) (irate(node_cpu_seconds_total{app="node-exporter", mode="idle"}[5m])) * 100)
       record: aggregation:node:cpu_utilization_percentage
-    - expr: sum(node_filesystem_avail_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: sum(node_filesystem_avail_bytes{app="node-exporter"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:filesystem_avail_bytes_total
-    - expr: sum(node_filesystem_size_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: sum(node_filesystem_size_bytes{app="node-exporter"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:filesystem_size_bytes_total
     - expr: sum(node_uname_info) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, release)
       record: aggregation:node:kernel_version
-    - expr: sum(node_memory_MemAvailable_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: sum(node_memory_MemAvailable_bytes{app="node-exporter"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:memory_memavailable_bytes_total
-    - expr: sum(node_memory_MemFree_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: sum(node_memory_MemFree_bytes{app="node-exporter"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:memory_memfree_bytes_total
-    - expr: sum(node_memory_MemTotal_bytes) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: sum(node_memory_MemTotal_bytes{app="node-exporter"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:memory_memtotal_bytes_total
-    - expr: sum(rate(node_network_receive_bytes_total[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: sum(rate(node_network_receive_bytes_total{app="node-exporter"}[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:network_receive_bytes_total
-    - expr: sum(rate(node_network_transmit_bytes_total[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+    - expr: sum(rate(node_network_transmit_bytes_total{app="node-exporter"}[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:node:network_transmit_bytes_total
   - name: prometheus.grafana-cloud.recording
     rules:
@@ -553,104 +553,93 @@ spec:
   - name: slos.grafana-cloud.recording
     rules:
       # Let's not send any of the slo:sli_error:ratio_ratexxx metrics but the slo:sli_error:ratio_rate5m rule to Grafana Cloud as it's not useful for the SLOs dashboard.
-      - expr: sum(
+      - expr: |-
+          label_replace(
             label_replace(
-              label_replace(
-                slo:current_burn_rate:ratio,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:current_burn_rate:ratio) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:current_burn_rate:ratio
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:error_budget:ratio,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:error_budget:ratio) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:error_budget:ratio
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:objective:ratio,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:objective:ratio) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:objective:ratio
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:period_burn_rate:ratio,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:period_burn_rate:ratio) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:period_burn_rate:ratio
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:sli_error:ratio_rate5m,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:sli_error:ratio_rate5m) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:sli_error:ratio_rate5m
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:time_period:days,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:time_period:days) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:time_period:days

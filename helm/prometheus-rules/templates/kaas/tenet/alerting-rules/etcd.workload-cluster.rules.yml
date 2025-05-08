@@ -37,7 +37,7 @@ spec:
       for: 15m
       labels:
         area: kaas
-        severity: page
+        severity: notify
         cancel_if_outside_working_hours: "true"
         team: tenet
         topic: etcd
@@ -49,7 +49,7 @@ spec:
       for: 15m
       labels:
         area: kaas
-        severity: page
+        severity: notify
         cancel_if_outside_working_hours: "true"
         team: tenet
         topic: etcd
@@ -59,6 +59,9 @@ spec:
       expr: increase(etcd_server_leader_changes_seen_total{cluster_type="workload_cluster", provider!="eks"}[1h]) > 8
       labels:
         area: kaas
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
         severity: notify
         team: tenet
         topic: etcd

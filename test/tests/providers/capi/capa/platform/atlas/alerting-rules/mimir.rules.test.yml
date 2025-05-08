@@ -577,17 +577,17 @@ tests:
               description: "Mimir continuous test myinstall is not producing metrics."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
 
-  # Test for MimirObjectStoreLowRate alert
+  # Test for MimirDataPushFailures alert
   - interval: 1m
     input_series:
-      - series: 'thanos_objstore_bucket_operation_failures_total{cluster_id="myinstall", cluster_type="management_cluster", component="store-gateway", installation="myinstall", namespace="mimir", pipeline="stable", provider="capa"}'
+      - series: 'thanos_objstore_bucket_operation_failures_total{cluster_id="myinstall", cluster_type="management_cluster", component="ingester", operation="upload", installation="myinstall", namespace="mimir", pipeline="stable", provider="capa"}'
         values: "0+10x80 100+0x80"
-      - series: 'thanos_objstore_bucket_operations_total{cluster_id="myinstall", cluster_type="management_cluster", component="store-gateway", installation="myinstall", namespace="mimir", pipeline="stable", provider="capa"}'
+      - series: 'thanos_objstore_bucket_operations_total{cluster_id="myinstall", cluster_type="management_cluster", component="ingester", operation="upload", installation="myinstall", namespace="mimir", pipeline="stable", provider="capa"}'
         values: "0+100x80 100+0x80"
     alert_rule_test:
-      - alertname: MimirObjectStoreLowRate
+      - alertname: MimirDataPushFailures
         eval_time: 40m
-      - alertname: MimirObjectStoreLowRate
+      - alertname: MimirDataPushFailures
         eval_time: 70m
         exp_alerts:
           - exp_labels:
@@ -598,7 +598,6 @@ tests:
               cancel_if_cluster_status_updating: "true"
               cluster_id: myinstall
               cluster_type: management_cluster
-              component: store-gateway
               installation: myinstall
               pipeline: stable
               provider: capa
@@ -609,8 +608,8 @@ tests:
               __dashboardUid__: e1324ee2a434f4158c00a9ee279d3292
               dashboardQueryParams: "orgId=2"
               description: "Low rate of writes to the Mimir object store."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimirobjectstorelowrate
-      - alertname: MimirObjectStoreLowRate
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimirdatapushfailures
+      - alertname: MimirDataPushFailures
         eval_time: 140m
 
   # Test for MimirRulerTooManyFailedQueries alert

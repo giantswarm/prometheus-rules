@@ -126,11 +126,20 @@ tests:
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/
   - interval: 1m
     input_series:
-      # Tests with multiple cases: no metrics, no requests, only status_code 204 ones, 204 ones and 500 that are less than 10% of the the total, 500 request that represent more than 10% of the total, only 500 ones
+      # Tests with multiple cases:
+      #   no metrics (no alert)
+      #   no requests (no alert)
+      #   only status_code 204 ones (no alert)
+      #   status codes 204 and less than 10% of status codes 500 (no alert)
+      #   status codes 500 requests that represent more than 10% of the total (alert fires)
+      #   only status codes 500 (alert fires)
+      #   only status code 500, but alloy-logs is installed (no alert)
       - series: 'promtail_request_duration_seconds_count{status_code="500", cluster_type="management_cluster", cluster_id="glean", installation="glean", provider="capz", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", pod="promtail-2j7z7"}'
-        values: "_x60 0+0x60 0+0x60   0+50x60      3000+100x60  9000+600x60"
+        values: "_x60 0+0x60 0+0x60   0+50x60      3000+100x60  9000+600x60 45000+600x60"
       - series: 'promtail_request_duration_seconds_count{status_code="204", cluster_type="management_cluster", cluster_id="glean", installation="glean", provider="capz", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", pod="promtail-2j7z7"}'
-        values: "_x60 0+0x60 0+600x60 36000+600x60 72000+600x60 108000+0x60"
+        values: "_x60 0+0x60 0+600x60 36000+600x60 72000+600x60 108000+0x60 108000+0x60"
+      - series: 'up{service="alloy-logs", cluster_id="glean"}'
+        values: "_x60 _x60   _x60     _x60         _x60         _x60        1+0x60"
     alert_rule_test:
       - alertname: PromtailRequestsErrors
         eval_time: 30m
@@ -142,9 +151,12 @@ tests:
         eval_time: 210m
       - alertname: PromtailRequestsErrors
         eval_time: 270m
+      - alertname: PromtailRequestsErrors
+        eval_time: 310m
         exp_alerts:
           - exp_labels:
               area: platform
+              cancel_if_outside_working_hours: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
@@ -165,6 +177,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
+              cancel_if_outside_working_hours: "true"
               cancel_if_cluster_status_creating: "true"
               cancel_if_cluster_status_deleting: "true"
               cancel_if_cluster_status_updating: "true"
@@ -180,3 +193,44 @@ tests:
               dashboardQueryParams: "orgId=2"
               description: "This alert checks if that the amount of failed requests is below 10% for promtail"
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/
+      - alertname: PromtailRequestsErrors
+        eval_time: 360m
+  - interval: 1m
+    input_series:
+      # Test various configs of promtail + alloy-logs:
+      #  - 120min with none installed
+      #  - 120min with only promtail
+      #  - 120min with promtail + alloy
+      #  - 120min with only alloy
+      - series: 'up{service="promtail-metrics", cluster_id="glean", cluster_type="management_cluster", installation="glean", namespace="kube-system", pod="promtail-1xxxx", provider="capz", pipeline="testing"}'
+        values: "_x120 1+0x120 1+0x120 _x120"
+      - series: 'up{service="alloy-logs", cluster_id="glean", cluster_type="management_cluster", installation="glean", namespace="kube-system", pod="alloy-logs-1xxxx", provider="capz", pipeline="testing"}'
+        values: "_x120 _x120   1+0x120 1+0x120"
+    alert_rule_test:
+      - alertname: PromtailConflictsWithAlloy
+        eval_time: 70m
+      - alertname: PromtailConflictsWithAlloy
+        eval_time: 190m
+      - alertname: PromtailConflictsWithAlloy
+        eval_time: 310m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_cluster_status_creating: "true"
+              cancel_if_cluster_status_deleting: "true"
+              cancel_if_cluster_status_updating: "true"
+              cluster_id: glean
+              installation: glean
+              pipeline: testing
+              provider: capz
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              __dashboardUid__: promtail-overview
+              dashboardQueryParams: "orgId=2"
+              description: "Both promtail and alloy-logs are installed and conflicting on the cluster"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/#check-that-it-does-not-conflict-with-alloy-logs
+      - alertname: PromtailConflictsWithAlloy
+        eval_time: 430m

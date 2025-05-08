@@ -39,7 +39,7 @@ spec:
       annotations:
         description: '{{`Management cluster {{ $labels.cluster_id }} cpu usage is too high.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/management-cluster-resource-limit-reached/
-      expr: avg_over_time(aggregation:kubernetes:pod_resource_requests_cpu_cores{cluster_type="management_cluster"}[2d]) / on (cluster_id) group_left avg_over_time(aggregation:kubernetes:node_allocatable_cpu_cores_total{cluster_type="management_cluster"}[2d]) > 0.93
+      expr: avg_over_time(aggregation:kubernetes:pod_resource_requests_cpu_cores{cluster_type="management_cluster"}[30m]) / on (cluster_id) group_left avg_over_time(aggregation:kubernetes:node_allocatable_cpu_cores_total{cluster_type="management_cluster"}[30m]) > 0.93
       for: 1h
       labels:
         area: kaas
@@ -51,7 +51,7 @@ spec:
       annotations:
         description: '{{`Management cluster {{ $labels.cluster_id }} memory usage is too high.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/management-cluster-resource-limit-reached/
-      expr: avg_over_time(aggregation:kubernetes:pod_resource_requests_memory_bytes{cluster_type="management_cluster"}[2d]) / on (cluster_id) group_left avg_over_time(aggregation:kubernetes:node_allocatable_memory_bytes{cluster_type="management_cluster"}[2d]) > 0.93
+      expr: avg_over_time(aggregation:kubernetes:pod_resource_requests_memory_bytes{cluster_type="management_cluster"}[30m]) / on (cluster_id) group_left avg_over_time(aggregation:kubernetes:node_allocatable_memory_bytes{cluster_type="management_cluster"}[30m]) > 0.93
       for: 1h
       labels:
         area: kaas

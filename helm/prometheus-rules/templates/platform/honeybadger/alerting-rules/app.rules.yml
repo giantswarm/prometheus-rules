@@ -200,3 +200,27 @@ spec:
         severity: page
         team: honeybadger
         topic: releng
+    - alert: ClusterUpgradeStuck
+      annotations:
+        description: '{{`Cluster upgrade for {{ $labels.app }} is stuck. Version mismatch detected for {{ $labels.name }} in namespace {{ $labels.namespace }}.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-pending-update/
+      expr: |-
+        (
+          app_operator_app_info{catalog="cluster", app=~"cluster-.*", version_mismatch="true", status="already-exists"}
+          * on(cluster_id) group_left(provider)
+          sum(
+              label_replace(
+                capi_cluster_info, "provider", "vsphere", "infrastructure_reference_kind", "VSphereCluster"
+              )
+          ) by (cluster_id, provider)
+        ) == 1
+      for: 5m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: releng

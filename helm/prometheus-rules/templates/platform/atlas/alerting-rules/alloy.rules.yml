@@ -54,23 +54,6 @@ spec:
             cancel_if_cluster_status_creating: "true"
             cancel_if_cluster_status_deleting: "true"
             cancel_if_cluster_status_updating: "true"
-    - name: alloy.rules
-      rules:
-        - alert: AlloyForPrometheusRulesDown
-          annotations:
-            description: 'Alloy sending PrometheusRules to Loki and Mimir ruler is down.'
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-rules/
-          expr: count(up{job="alloy-rules", namespace="monitoring"} == 0) by (cluster_id, installation, provider, pipeline) > 0
-          for: 1h
-          labels:
-            area: platform
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"
-            cancel_if_cluster_status_updating: "true"
-            cancel_if_outside_working_hours: "true"
-            severity: page
-            team: atlas
-            topic: observability
     - name: alloy.logs
       rules:
         # This alert lists the existing logging-agent pods (to extract the node label and inhibit if the node is not ready)
@@ -115,12 +98,15 @@ spec:
           expr: |-
             count(
               label_replace(
-                capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+                (capi_cluster_status_condition{type="ControlPlaneReady", status="True"} == 1)
+                  * on (name, installation, pipeline, provider)
+                  # We do not want to alert on clusters that are being deleted.
+                  (capi_cluster_status_phase{phase="Deleting"} == 0),
                 "cluster_id",
                 "$1",
                 "name",
                 "(.*)"
-              ) == 1
+              )
             ) by (cluster_id, installation, pipeline, provider) > 0
             unless on (cluster_id) (
               count(up{job=~"alloy-metrics|prometheus-agent"} > 0) by (cluster_id)

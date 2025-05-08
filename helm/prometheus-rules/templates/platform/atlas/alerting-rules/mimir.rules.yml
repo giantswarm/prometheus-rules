@@ -176,19 +176,19 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    - alert: MimirObjectStoreLowRate
+    - alert: MimirDataPushFailures
       annotations:
         __dashboardUid__: e1324ee2a434f4158c00a9ee279d3292
         dashboardQueryParams: "orgId=2"
         description: '{{`Low rate of writes to the Mimir object store.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimirobjectstorelowrate
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimirdatapushfailures
       expr: |
-        sum by (component, installation, cluster_id, cluster_type, pipeline, provider) (
-          rate(thanos_objstore_bucket_operation_failures_total{cluster_type="management_cluster", namespace="mimir"}[30m])
+        sum by (installation, cluster_id, cluster_type, pipeline, provider) (
+          rate(thanos_objstore_bucket_operation_failures_total{cluster_type="management_cluster", namespace="mimir", component="ingester", operation="upload"}[30m])
         )
         /
-        sum by (component, installation, cluster_id, cluster_type, pipeline, provider) (
-          rate(thanos_objstore_bucket_operations_total{cluster_type="management_cluster", namespace="mimir"}[30m])
+        sum by (installation, cluster_id, cluster_type, pipeline, provider) (
+          rate(thanos_objstore_bucket_operations_total{cluster_type="management_cluster", namespace="mimir", component="ingester", operation="upload"}[30m])
         )
         > 0
       for: 1h

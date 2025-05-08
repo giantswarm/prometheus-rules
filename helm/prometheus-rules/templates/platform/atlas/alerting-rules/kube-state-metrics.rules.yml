@@ -50,7 +50,7 @@ spec:
       annotations:
         description: '{{`KubeStateMetrics is too slow.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
-      expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{handler="metrics", job="kube-state-metrics"}[5m])) by (le, cluster_id, installation, provider, pipeline)) > 7
+      expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{handler="metrics", job="kube-state-metrics"}[5m])) by (le, cluster_id, installation, provider, pipeline)) > 15
       for: 15m
       labels:
         area: platform

@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.59.0] - 2025-05-08
 
+### Added
+
+- Add new alert `KonfigureOperatorDeploymentNotSatisfied`: when `konfigure-operator` deployment in `giantswarm` namespace is not ready for 30 mins.
+- Add new alert `KonfigurationReconciliationFailed`: when a `ManagementClusterConfiguration` CR in not `Ready` condition for 10 mins.
+
 ## [4.58.0] - 2025-05-07
 
 ### Changed

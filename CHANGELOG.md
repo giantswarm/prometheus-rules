@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.59.0] - 2025-05-08
+
+### Added
+
+- Add new alert `KonfigureOperatorDeploymentNotSatisfied`: when `konfigure-operator` deployment in `giantswarm` namespace is not ready for 30 mins.
+- Add new alert `KonfigurationReconciliationFailed`: when a `ManagementClusterConfiguration` CR in not `Ready` condition for 10 mins.
+
 ## [4.58.0] - 2025-05-07
 
 ### Changed
@@ -3619,7 +3626,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.58.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.0...HEAD
+[4.59.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.58.0...v4.59.0
 [4.58.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.57.0...v4.58.0
 [4.57.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.56.1...v4.57.0
 [4.56.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.56.0...v4.56.1

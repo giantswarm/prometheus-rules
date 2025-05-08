@@ -34,7 +34,7 @@ spec:
     - alert: IncorrectResourceUsageData
       annotations:
         description: '{{`Data used in the Grafana Cloud Resource Usage dashboard is incorrect for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: tbd
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/resource-usage-dashboard/
       expr: |
         quantile_over_time(0.9, aggregation:node:cpu_cores_total[120m:30m])  / on(cluster_id)  quantile_over_time(0.9, (sum(machine_cpu_cores)by(cluster_id))[120m:30m]) < 0.9
         or

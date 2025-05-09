@@ -22,9 +22,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         sig: none
@@ -38,9 +35,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         topic: releng
@@ -66,9 +60,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         sig: none
@@ -96,9 +87,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         cancel_if_cluster_has_no_workers: "true"
         severity: page
@@ -126,9 +114,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         topic: releng
@@ -154,9 +139,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: honeybadger
@@ -193,9 +175,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: honeybadger
@@ -218,8 +197,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: {{ include "providerTeam" . }}

@@ -19,9 +19,6 @@ tests:
           - exp_labels:
               alertname: TeleportJoinTokenSecretMismatch
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_updating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: my-cluster
               installation: golem
@@ -46,9 +43,6 @@ tests:
           - exp_labels:
               alertname: TeleportKubeAgentConfigMapMismatch
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_updating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: my-cluster
               installation: grizzly

@@ -90,9 +90,6 @@ tests:
               pipeline: "testing"
               job: "kube-controller-manager"
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_is_not_running_monitoring_agent: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
             exp_annotations:
               __dashboardUid__: servicemonitors-details
               dashboardQueryParams: "orgId=1"

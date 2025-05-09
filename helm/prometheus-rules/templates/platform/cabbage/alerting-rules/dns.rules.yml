@@ -18,10 +18,6 @@ spec:
       for: 15m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_with_no_nodepools: "true"
-        cancel_if_cluster_with_notready_nodepools: "true"
-        cancel_if_cluster_with_scaling_nodepools: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         cancel_if_cluster_has_no_workers: "true"
         severity: page
@@ -35,10 +31,6 @@ spec:
       for: 15m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_with_no_nodepools: "true"
-        cancel_if_cluster_with_notready_nodepools: "true"
-        cancel_if_cluster_with_scaling_nodepools: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         cancel_if_cluster_has_no_workers: "true"
         severity: page

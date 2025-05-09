@@ -15,9 +15,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: kaas
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "false"
               cluster_id: "mymc"
               gvk: "cloudwatchevents.aws.upbound.io/v1beta1, Kind=Rule"

@@ -14,9 +14,6 @@ tests:
           - exp_labels:
               alertname: "KonfigureOperatorDeploymentNotSatisfied"
               area: "platform"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_type: "management_cluster"
               deployment: "konfigure-operator"
@@ -44,9 +41,6 @@ tests:
           - exp_labels:
               alertname: "KonfigurationReconciliationFailed"
               area: "platform"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               condition_status: "False"
               condition_type: "Ready"

@@ -13,9 +13,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: "glean"
               cluster_type: management_cluster

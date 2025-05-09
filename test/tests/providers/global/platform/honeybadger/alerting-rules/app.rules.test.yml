@@ -20,9 +20,6 @@ tests:
               app_version: 1.11.2
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               catalog: giantswarm
               cluster_id: gauss
@@ -73,9 +70,6 @@ tests:
               app: userd
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               catalog: control-plane-catalog
               cluster_id: gauss
@@ -121,8 +115,6 @@ tests:
               app: cluster-aws
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
               catalog: cluster
               cluster_id: abc01

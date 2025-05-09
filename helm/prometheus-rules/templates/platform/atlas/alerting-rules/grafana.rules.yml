@@ -24,9 +24,6 @@ spec:
       for: 1h
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -64,9 +61,6 @@ spec:
       for: 6h
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -86,9 +80,6 @@ spec:
       for: 6h
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas

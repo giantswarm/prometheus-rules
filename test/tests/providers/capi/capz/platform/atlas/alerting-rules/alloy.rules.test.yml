@@ -17,9 +17,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cluster_id: glean
               installation: glean
               provider: capz
@@ -53,9 +50,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cluster_id: glean
               installation: glean
               provider: capz
@@ -103,9 +97,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_node_unschedulable: "true"
               cancel_if_node_not_ready: "true"
               cluster_id: glean
@@ -130,9 +121,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_node_unschedulable: "true"
               cancel_if_node_not_ready: "true"
               cluster_id: glean
@@ -158,9 +146,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_node_unschedulable: "true"
               cancel_if_node_not_ready: "true"
               cluster_id: glean
@@ -181,9 +166,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_node_unschedulable: "true"
               cancel_if_node_not_ready: "true"
               cluster_id: glean
@@ -219,8 +201,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               inhibit_monitoring_agent_down: "true"
               cluster_id: glean
               installation: glean
@@ -241,8 +221,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_cluster_has_no_workers: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               inhibit_monitoring_agent_down: "true"
               cluster_id: glean
               installation: glean
@@ -262,8 +240,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               inhibit_monitoring_agent_down: "true"
               cluster_id: glean
               installation: glean
@@ -288,8 +264,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_cluster_has_no_workers: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               inhibit_monitoring_agent_down: "true"
               cluster_id: glean
               installation: glean
@@ -309,8 +283,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               inhibit_monitoring_agent_down: "true"
               cluster_id: glean
               installation: glean
@@ -332,8 +304,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               inhibit_monitoring_agent_down: "true"
               cluster_id: glean
               installation: glean
@@ -366,8 +336,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cluster_id: glean
               installation: glean
               provider: capz
@@ -386,8 +354,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: glean
               installation: glean
@@ -407,8 +373,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cluster_id: glean
               installation: glean
               provider: capz

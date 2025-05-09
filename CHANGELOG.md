@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Stopped running tests for vintage. Meaning some vintage-specific labels had to be removed.
+
 ## [4.59.2] - 2025-05-09
 
 ### Changed

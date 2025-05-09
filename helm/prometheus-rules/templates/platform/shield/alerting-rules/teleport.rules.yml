@@ -29,9 +29,6 @@ spec:
       for: 60m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: shield
@@ -55,9 +52,6 @@ spec:
       for: 60m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: shield

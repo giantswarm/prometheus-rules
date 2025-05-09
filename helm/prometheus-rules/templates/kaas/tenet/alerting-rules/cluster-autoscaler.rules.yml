@@ -22,9 +22,6 @@ spec:
       for: 240m
       labels:
         area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         cancel_if_cluster_has_no_workers: "true"
         severity: notify
@@ -38,9 +35,6 @@ spec:
       for: 15m
       labels:
         area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: tenet

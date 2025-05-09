@@ -21,10 +21,7 @@ spec:
       for: 15m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        cancel_if_kiam_has_errors: "true"
         severity: page
         team: cabbage
         topic: external-dns
@@ -36,10 +33,7 @@ spec:
       for: 15m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        cancel_if_kiam_has_errors: "true"
         severity: page
         team: cabbage
         topic: external-dns
@@ -52,9 +46,6 @@ spec:
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_kiam_has_errors: "true"
         cancel_if_kubelet_down: "true"
         severity: page
         team: cabbage

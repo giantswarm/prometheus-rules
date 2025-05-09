@@ -43,9 +43,6 @@ spec:
       for: 30m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -74,9 +71,6 @@ spec:
       for: 30m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -91,9 +85,6 @@ spec:
         count by (pod, cluster_id, installation, provider, pipeline) (changes(kube_pod_status_ready{condition="true", namespace="mimir", pod=~"prometheus-mimir-to-grafana-cloud-.*"}[20m])) > 3
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas

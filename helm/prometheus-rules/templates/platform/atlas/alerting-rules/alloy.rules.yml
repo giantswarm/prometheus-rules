@@ -40,10 +40,10 @@ spec:
             {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=2"
             {{ end }}
-            description: '{{`Unhealthy components detected under job {{ $labels.job }}`}}'
+            description: '{{`Unhealthy pods {{ $labels.pod }} detected under job {{ $labels.job }}`}}'
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
             summary: Unhealthy components detected.
-          expr: sum by (cluster_id, installation, provider, pipeline, namespace, job) (alloy_component_controller_running_components{health_type!="healthy"}) > 0
+          expr: sum by (cluster_id, installation, provider, pipeline, namespace, job, pod) (alloy_component_controller_running_components{health_type!="healthy"}) > 0
           for: 15m
           labels:
             area: platform

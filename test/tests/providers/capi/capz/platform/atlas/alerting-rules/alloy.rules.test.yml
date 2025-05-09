@@ -42,7 +42,7 @@ tests:
   # Test AlloyUnhealthyComponents
   - interval: 1m
     input_series:
-      - series: 'alloy_component_controller_running_components{health_type="unhealthy", cluster_id="glean", installation="glean", provider="capz", pipeline="testing", namespace="default", job="alloy-controller"}'
+      - series: 'alloy_component_controller_running_components{health_type="unhealthy", cluster_id="glean", installation="glean", provider="capz", pipeline="testing", namespace="default", job="alloy-controller", pod="alloy-metrics-0"}'
         values: "0+0x10 1+0x50 0x50"
     alert_rule_test:
       - alertname: AlloyUnhealthyComponents
@@ -62,13 +62,14 @@ tests:
               pipeline: testing
               namespace: default
               job: alloy-controller
+              pod: alloy-metrics-0
               severity: page
               team: atlas
               topic: observability
             exp_annotations:
               __dashboardUid__: bf9f456aad7108b2c808dbd9973e386f
               dashboardQueryParams: "orgId=2"
-              description: "Unhealthy components detected under job alloy-controller"
+              description: "Unhealthy pods alloy-metrics-0 detected under job alloy-controller"
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
               summary: "Unhealthy components detected."
       - alertname: AlloyUnhealthyComponents

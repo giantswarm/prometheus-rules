@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Improved `AlloyUnhealthyComponents` alert by adding pod name
+
 ## [4.59.1] - 2025-05-09
 
 ### Changed

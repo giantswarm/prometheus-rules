@@ -51,6 +51,7 @@ spec:
             cancel_if_cluster_status_creating: "true"
             cancel_if_cluster_status_deleting: "true"
             cancel_if_cluster_status_updating: "true"
+            cancel_if_outside_working_hours: "true"
         # This alert pages when the loki source api component of the observability gateway is throwing errors
         - alert: LogReceivingErrors
           annotations:

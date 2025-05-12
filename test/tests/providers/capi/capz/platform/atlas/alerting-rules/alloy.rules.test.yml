@@ -17,9 +17,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cluster_id: glean
               installation: glean
               provider: capz
@@ -42,7 +39,7 @@ tests:
   # Test AlloyUnhealthyComponents
   - interval: 1m
     input_series:
-      - series: 'alloy_component_controller_running_components{health_type="unhealthy", cluster_id="glean", installation="glean", provider="capz", pipeline="testing", namespace="default", job="alloy-controller"}'
+      - series: 'alloy_component_controller_running_components{health_type="unhealthy", cluster_id="glean", installation="glean", provider="capz", pipeline="testing", namespace="default", job="alloy-controller", pod="alloy-metrics-0"}'
         values: "0+0x10 1+0x50 0x50"
     alert_rule_test:
       - alertname: AlloyUnhealthyComponents
@@ -53,22 +50,20 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cluster_id: glean
               installation: glean
               provider: capz
               pipeline: testing
               namespace: default
               job: alloy-controller
+              pod: alloy-metrics-0
               severity: page
               team: atlas
               topic: observability
             exp_annotations:
               __dashboardUid__: bf9f456aad7108b2c808dbd9973e386f
               dashboardQueryParams: "orgId=2"
-              description: "Unhealthy components detected under job alloy-controller"
+              description: "Unhealthy pods alloy-metrics-0 detected under job alloy-controller"
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
               summary: "Unhealthy components detected."
       - alertname: AlloyUnhealthyComponents
@@ -102,9 +97,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_node_unschedulable: "true"
               cancel_if_node_not_ready: "true"
               cluster_id: glean
@@ -129,9 +121,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_node_unschedulable: "true"
               cancel_if_node_not_ready: "true"
               cluster_id: glean
@@ -157,9 +146,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_node_unschedulable: "true"
               cancel_if_node_not_ready: "true"
               cluster_id: glean
@@ -180,9 +166,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_node_unschedulable: "true"
               cancel_if_node_not_ready: "true"
               cluster_id: glean
@@ -218,8 +201,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               inhibit_monitoring_agent_down: "true"
               cluster_id: glean
               installation: glean
@@ -240,8 +221,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_cluster_has_no_workers: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               inhibit_monitoring_agent_down: "true"
               cluster_id: glean
               installation: glean
@@ -261,8 +240,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               inhibit_monitoring_agent_down: "true"
               cluster_id: glean
               installation: glean
@@ -287,8 +264,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_cluster_has_no_workers: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               inhibit_monitoring_agent_down: "true"
               cluster_id: glean
               installation: glean
@@ -308,8 +283,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               inhibit_monitoring_agent_down: "true"
               cluster_id: glean
               installation: glean
@@ -331,8 +304,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               inhibit_monitoring_agent_down: "true"
               cluster_id: glean
               installation: glean
@@ -365,8 +336,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cluster_id: glean
               installation: glean
               provider: capz
@@ -385,8 +354,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: glean
               installation: glean
@@ -406,8 +373,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cluster_id: glean
               installation: glean
               provider: capz

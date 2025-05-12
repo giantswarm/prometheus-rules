@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Vintage cleanup:
+  - Stopped running tests for vintage. Meaning some vintage-specific labels had to be removed.
+  - Removed code behind obvious vintage/capi conditions in Atlas rules.
+  - Removed code behind obvious vintage/capi conditions in Phoenix rules.
+
+## [4.59.2] - 2025-05-09
+
+### Changed
+
+- Improved `AlloyUnhealthyComponents` alert by adding pod name
+
+## [4.59.1] - 2025-05-09
+
+### Changed
+
+- `LogForwardingErrors`: don't page out of business hours
+
 ## [4.59.0] - 2025-05-08
 
 ### Added
@@ -3626,7 +3645,9 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.2...HEAD
+[4.59.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.1...v4.59.2
+[4.59.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.0...v4.59.1
 [4.59.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.58.0...v4.59.0
 [4.58.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.57.0...v4.58.0
 [4.57.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.56.1...v4.57.0

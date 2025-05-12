@@ -47,4 +47,3 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    {{- end }}

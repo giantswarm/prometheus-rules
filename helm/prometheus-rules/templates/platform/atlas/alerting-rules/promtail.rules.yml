@@ -27,9 +27,6 @@ spec:
             team: atlas
             topic: observability
             cancel_if_outside_working_hours: "true"
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"
-            cancel_if_cluster_status_updating: "true"
             cancel_if_node_unschedulable: "true"
             cancel_if_node_not_ready: "true"
         - alert: PromtailRequestsErrors
@@ -55,9 +52,6 @@ spec:
             team: atlas
             topic: observability
             cancel_if_outside_working_hours: "true"
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"
-            cancel_if_cluster_status_updating: "true"
         - alert: PromtailConflictsWithAlloy
           # This alert was created as a workaround of https://github.com/giantswarm/giantswarm/issues/33341
           # We are replacing promtail with alloy-logs. This is done during cluster upgrades.
@@ -79,6 +73,3 @@ spec:
             team: atlas
             topic: observability
             cancel_if_outside_working_hours: "true"
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"
-            cancel_if_cluster_status_updating: "true"

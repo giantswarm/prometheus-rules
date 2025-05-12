@@ -33,9 +33,6 @@ tests:
               severity: page
               team: shield
               topic: kyverno
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "false"
             exp_annotations:
               description: "Kyverno has no available replicas but webhooks are present."
@@ -53,9 +50,6 @@ tests:
               severity: notify
               team: shield
               topic: kyverno
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "false"
               kind: "updaterequests.kyverno.io"
             exp_annotations:
@@ -74,9 +68,6 @@ tests:
               severity: notify
               team: shield
               topic: kyverno
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Kyverno has been scaled down for too long."
@@ -94,9 +85,6 @@ tests:
               severity: notify
               team: shield
               topic: kyverno
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Kyverno's admission controller deployment must use at least 3 replicas, or be scaled to 0."

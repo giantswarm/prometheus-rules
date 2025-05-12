@@ -36,8 +36,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_has_no_workers: "true"
         inhibit_kube_state_metrics_down: "true"
         cancel_if_monitoring_agent_down: "true"
@@ -55,8 +53,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_has_no_workers: "true"
         inhibit_kube_state_metrics_down: "true"
         cancel_if_kubelet_down: "true"
@@ -75,8 +71,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_has_no_workers: "true"
         inhibit_kube_state_metrics_down: "true"
         cancel_if_kubelet_down: "true"

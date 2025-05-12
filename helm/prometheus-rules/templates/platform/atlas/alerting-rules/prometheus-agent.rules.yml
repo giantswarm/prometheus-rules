@@ -36,9 +36,6 @@ spec:
         team: atlas
         topic: observability
         inhibit_monitoring_agent_down: "true"
-        cancel_if_cluster_is_not_running_monitoring_agent: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_cluster_has_no_workers: "true"
     ## Same as PrometheusAgentFailing, but triggers inhibition earlier and does not page.
     - alert: InhibitionPrometheusAgentFailing
@@ -66,9 +63,6 @@ spec:
         team: atlas
         topic: observability
         inhibit_monitoring_agent_down: "true"
-        cancel_if_cluster_is_not_running_monitoring_agent: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
     {{- end }}
     ## This alert pages if one of the prometheus-agent shard is not running.
     - alert: PrometheusAgentShardsMissing
@@ -97,9 +91,6 @@ spec:
         team: atlas
         topic: observability
         inhibit_monitoring_agent_down: "true"
-        cancel_if_cluster_is_not_running_monitoring_agent: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"
     ## Same as PrometheusAgentShardsMissing but triggers inhibition earlier, and does not page.
     - alert: InhibitionPrometheusAgentShardsMissing
@@ -128,7 +119,4 @@ spec:
         team: atlas
         topic: observability
         inhibit_monitoring_agent_down: "true"
-        cancel_if_cluster_is_not_running_monitoring_agent: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"

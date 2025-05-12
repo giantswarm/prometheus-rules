@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Vintage cleanup:
   - Stopped running tests for vintage. Meaning some vintage-specific labels had to be removed.
-  - Removed code behind obvious vintage conditions in Atlas rules.
+  - Removed code behind obvious vintage/capi conditions in Atlas rules.
 
 ## [4.59.2] - 2025-05-09
 

@@ -32,9 +32,7 @@ spec:
         - alert: PromtailRequestsErrors
           annotations:
             __dashboardUid__: promtail-overview
-            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=2"
-            {{ end }}
             description: This alert checks if that the amount of failed requests is below 10% for promtail
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/
           expr: |
@@ -58,9 +56,7 @@ spec:
           # Sometimes the old promtail is not uninstalled properly, so we need this alert to inform us.
           annotations:
             __dashboardUid__: promtail-overview
-            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=2"
-            {{ end }}
             description: Both promtail and alloy-logs are installed and conflicting on the cluster
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/promtail/#check-that-it-does-not-conflict-with-alloy-logs
           expr: |

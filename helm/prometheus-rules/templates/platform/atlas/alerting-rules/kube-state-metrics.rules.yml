@@ -14,10 +14,6 @@ spec:
       annotations:
         description: '{{`KubeStateMetrics is down.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
-      {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-      expr: |-
-        label_replace(up{job="kube-state-metrics",instance=~".*:8080"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0 or absent(up{job="kube-state-metrics",instance=~".*:8080"} == 1)
-      {{- else }}
       expr: |-
         count by (cluster_id, installation, provider, pipeline) (label_replace(up{job="kube-state-metrics", instance=~".*:8080"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*")) == 0
         or (
@@ -31,7 +27,6 @@ spec:
         ) unless on (cluster_id) (
           count(up{job="kube-state-metrics", instance=~".*:8080"} == 1) by (cluster_id)
         )
-      {{- end }}
       for: 15m
       labels:
         area: platform
@@ -83,9 +78,6 @@ spec:
       annotations:
         description: '{{`kube_configmap_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
-      {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-      expr: absent(kube_configmap_created{})
-      {{- else }}
       expr: |-
         (
           label_replace(
@@ -98,7 +90,6 @@ spec:
         ) unless on (cluster_id) (
           count(kube_configmap_created{}) by (cluster_id)
         )
-      {{- end }}
       for: 30m
       labels:
         area: platform
@@ -111,9 +102,6 @@ spec:
       annotations:
         description: '{{`kube_daemonset_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
-      {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-      expr: absent(kube_daemonset_created{})
-      {{- else }}
       expr: |-
         (
           label_replace(
@@ -126,7 +114,6 @@ spec:
         ) unless on (cluster_id) (
           count(kube_daemonset_created{}) by (cluster_id)
         )
-      {{- end }}
       for: 30m
       labels:
         area: platform
@@ -139,9 +126,6 @@ spec:
       annotations:
         description: '{{`kube_deployment_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
-      {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-      expr: absent(kube_deployment_created{})
-      {{- else }}
       expr: |-
         (
           label_replace(
@@ -154,7 +138,6 @@ spec:
         ) unless on (cluster_id) (
           count(kube_deployment_created{}) by (cluster_id)
         )
-      {{- end }}
       for: 30m
       labels:
         area: platform
@@ -167,9 +150,6 @@ spec:
       annotations:
         description: '{{`kube_endpoint_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
-      {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-      expr: absent(kube_endpoint_created{})
-      {{- else }}
       expr: |-
         (
           label_replace(
@@ -182,7 +162,6 @@ spec:
         ) unless on (cluster_id) (
           count(kube_endpoint_created{}) by (cluster_id)
         )
-      {{- end }}
       for: 30m
       labels:
         area: platform
@@ -195,9 +174,6 @@ spec:
       annotations:
         description: '{{`kube_namespace_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
-      {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-      expr: absent(kube_namespace_created{})
-      {{- else }}
       expr: |-
         (
           label_replace(
@@ -210,7 +186,6 @@ spec:
         ) unless on (cluster_id) (
           count(kube_namespace_created{}) by (cluster_id)
         )
-      {{- end }}
       for: 30m
       labels:
         area: platform
@@ -223,9 +198,6 @@ spec:
       annotations:
         description: '{{`kube_node_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
-      {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-      expr: absent(kube_node_created{})
-      {{- else }}
       expr: |-
         (
           label_replace(
@@ -238,7 +210,6 @@ spec:
         ) unless on (cluster_id) (
           count(kube_node_created{}) by (cluster_id)
         )
-      {{- end }}
       for: 30m
       labels:
         area: platform
@@ -251,9 +222,6 @@ spec:
       annotations:
         description: '{{`kube_pod_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
-      {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-      expr: absent(kube_pod_created{})
-      {{- else }}
       expr: |-
         (
           label_replace(
@@ -266,7 +234,6 @@ spec:
         ) unless on (cluster_id) (
           count(kube_pod_created{}) by (cluster_id)
         )
-      {{- end }}
       for: 30m
       labels:
         area: platform
@@ -279,9 +246,6 @@ spec:
       annotations:
         description: '{{`kube_replicaset_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
-      {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-      expr: absent(kube_replicaset_created{})
-      {{- else }}
       expr: |-
         (
           label_replace(
@@ -294,7 +258,6 @@ spec:
         ) unless on (cluster_id) (
           count(kube_replicaset_created{}) by (cluster_id)
         )
-      {{- end }}
       for: 30m
       labels:
         area: platform
@@ -307,9 +270,6 @@ spec:
       annotations:
         description: '{{`kube_secret_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
-      {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-      expr: absent(kube_secret_created{})
-      {{- else }}
       expr: |-
         (
           label_replace(
@@ -322,7 +282,6 @@ spec:
         ) unless on (cluster_id) (
           count(kube_secret_created{}) by (cluster_id)
         )
-      {{- end }}
       for: 30m
       labels:
         area: platform
@@ -335,9 +294,6 @@ spec:
       annotations:
         description: '{{`kube_service_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
-      {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-      expr: absent(kube_service_created{})
-      {{- else }}
       expr: |-
         (
           label_replace(
@@ -350,7 +306,6 @@ spec:
         ) unless on (cluster_id) (
           count(kube_service_created{}) by (cluster_id)
         )
-      {{- end }}
       for: 30m
       labels:
         area: platform

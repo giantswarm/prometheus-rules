@@ -1,4 +1,3 @@
-{{- if eq .Values.managementCluster.provider.flavor "capi" }}
 # This rule applies to all capi clusters
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
@@ -24,4 +23,3 @@ spec:
         cluster_control_plane_unhealthy: "true"
         team: tenet
         topic: status
-{{- end }}

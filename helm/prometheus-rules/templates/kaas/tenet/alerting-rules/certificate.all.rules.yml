@@ -10,20 +10,6 @@ spec:
   groups:
   - name: certificate.all
     rules:
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    - alert: KiamCertificateSecretWillExpireInLessThanTwoWeeks
-      annotations:
-        description: '{{`Kiam Certificate stored in Secret {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
-      expr: (cert_exporter_secret_not_after{name=~"kiam.*"} - time()) < 13 * 24 * 60 * 60
-      for: 5m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: phoenix
-        topic: cert-manager
-    {{- end }}
     - alert: IRSACertificateSecretWillExpireInLessThanTwoWeeks
       annotations:
         description: '{{`IRSA Pod Identity Webhook Certificate stored in Secret {{ $labels.exported_namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two weeks.`}}'

@@ -29,8 +29,12 @@ tests:
               dashboardQueryParams: "orgId=2"
   - interval: 1m
     input_series:
+      # No lag for the first 20 minutes (lag = 0)
+      # Then replication stops working for 30 minutes (lag increases 60 seconds per minute)
+      # Then lag stays constant to right over 5min (lag is stable at 301s)
+      # Then no lag again (lag = 0)
       - series: 'cnpg_pg_replication_lag{namespace="monitoring", pod="grafana-postgresql-1", cluster_id="golem", cluster_type="management_cluster", installation="golem"}'
-        values: "0+0x20 1+10x30 301+0x20 0+0x20"
+        values: "0+0x20 0+60x30 1800+0x20 0+0x20"
     alert_rule_test:
       - alertname: GrafanaPostgresqlReplicationFailure
         eval_time: 15m
@@ -58,6 +62,9 @@ tests:
         exp_alerts: []
   - interval: 1m
     input_series:
+      # For the first 20 minutes there's no failure
+      # Then, for the next 10 minutes the failure time is 1000s (a bit less than 17 minutes after the beginning of the tests).
+      # Then the last failure time is forgotten (back to -1)
       - series: 'cnpg_pg_stat_archiver_last_failed_time{namespace="monitoring", pod="grafana-postgresql-1", cluster_id="golem", cluster_type="management_cluster", installation="golem"}'
         values: "-1+0x20 1000+0x10 -1+0x20"
       - series: 'cnpg_pg_stat_archiver_last_archived_time{namespace="monitoring", pod="grafana-postgresql-1", cluster_id="golem", cluster_type="management_cluster", installation="golem"}'

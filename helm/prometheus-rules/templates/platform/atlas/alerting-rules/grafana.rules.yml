@@ -23,82 +23,6 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    - alert: GrafanaFolderPermissionsDown
-      # Monitors that folder permissions have been updated at least once in the last 6 hours.
-      # We have a cronjob (grafana-permissions) that runs every 20 minutes.
-      # When successfully run, folders permissions successful updates counter increases.
-      annotations:
-        description: '{{`Grafana Folder could not be updated.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-perms/
-      expr: |
-        sum by(cluster_id, installation, provider, pipeline) (
-          increase(grafana_http_request_duration_seconds_count{
-            handler="/api/folders/:uid/permissions/",
-            method="POST",
-            namespace="monitoring",
-            service="grafana",
-            status_code="200",
-            cluster_type="management_cluster"
-          }[2h])) < 1 
-          or absent(grafana_http_request_duration_seconds_count{
-            handler="/api/folders/:uid/permissions/",
-            method="POST",
-            namespace="monitoring",
-            service="grafana",
-            status_code="200",
-            cluster_type="management_cluster",
-            cluster_id="{{ .Values.managementCluster.name }}",
-            installation="{{ .Values.managementCluster.name }}",
-            provider="{{ .Values.managementCluster.provider.kind }}",
-            pipeline="{{ .Values.managementCluster.pipeline }}"
-          })
-      for: 6h
-      labels:
-        area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
-    - alert: GrafanaFolderPermissionsCronjobFails
-      # Monitors that folder permissions job has run successfully at least once in the last 6 hours.
-      # We have a cronjob (grafana-permissions) that runs every 20 minutes.
-      # Here we check the kubernetes job status
-      annotations:
-        description: '{{`Grafana permissions updates cronjob failed to run.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-perms/
-      # expression explanation:
-      # - we create cronjob label from cron name (label_replace)
-      # - we sum number of failed to have one global value
-      # - we avg_over_time to avoid 0 value when a cron was skipped for whatever reason
-      expr: sum by (cronjob, cluster_id, installation, provider, pipeline) (label_replace(avg_over_time(kube_job_status_failed{job_name=~"grafana-permissions.*", reason!="BackoffLimitExceeded", cluster_type="management_cluster"}[60m]), "cronjob", "$1", "job_name", "(grafana-permissions)-.*")) > 0
-      for: 6h
-      labels:
-        area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
-    - alert: GrafanaPermissionJobHasNotBeenScheduledForTooLong
-      annotations:
-        description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 1 day.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/job-has-not-been-scheduled-for-too-long/
-      # This alert triggers when the grafana permission job did not schedule for more than 1 day
-      # or if the job did not run successfully at least once in the last day
-      expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="grafana-permissions", cluster_type="management_cluster"}) > 86400
-            or count by (cluster_id, cronjob, installation, namespace, provider, pipeline) (label_replace(max_over_time(kube_job_status_succeeded{job_name=~"grafana-permissions-.+", cluster_type="management_cluster"}[1d]), "cronjob", "grafana-permissions", "job_name", "grafana-permissions-.+") == 1) == 0
-      labels:
-        area: platform
-        severity: page
-        team: atlas
-        topic: managementcluster
-        cancel_if_outside_working_hours: "true"
     - alert: GrafanaPostgresqlReplicationFailure
       annotations:
         description: '{{`grafana-postgresql replication is lagging.`}}'
@@ -107,9 +31,6 @@ spec:
       for: 6h
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -122,9 +43,6 @@ spec:
       for: 6h
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas

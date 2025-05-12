@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Vintage cleanup:
+  - Removed code behind obvious vintage/capi conditions in Cabbage rules.
+
 ## [4.60.0] - 2025-05-13
 
 ### Changed

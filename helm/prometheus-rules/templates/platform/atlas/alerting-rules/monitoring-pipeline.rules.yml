@@ -15,9 +15,7 @@ spec:
         description: '{{`Monitoring agent failed to send {{ printf "%.1f" $value }}% of the samples to {{ $labels.remote_name}}:{{ $labels.url }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-pipeline/
         __dashboardUid__: promRW001
-        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=1"
-        {{ end }}
       expr: |-
         (
           rate(prometheus_remote_storage_samples_failed_total[5m])
@@ -39,9 +37,7 @@ spec:
     - alert: JobScrapingFailure
       annotations:
         __dashboardUid__: servicemonitors-details
-        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=1"
-        {{ end }}
         description: '{{`Monitoring agents for cluster {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}'
         summary: Monitoring agent failed to scrape all targets in a job.
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-job-scraping-failure/
@@ -61,9 +57,7 @@ spec:
     - alert: CriticalJobScrapingFailure
       annotations:
         __dashboardUid__: servicemonitors-details
-        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=1"
-        {{ end }}
         description: '{{`Monitoring agents for cluster {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}'
         summary: Monitoring agent failed to scrape all targets in a job.
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-job-scraping-failure/

@@ -13,9 +13,7 @@ spec:
     - alert: AlertmanagerNotifyNotificationsFailing
       annotations:
         __dashboardUid__: alertmanager-overview
-        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=1"
-        {{ end }}
         description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alert-manager-notifications-failing/
       # Interval = 20m because currently AlertManager config set `group_interval=15m` that means that if a notification fails, it will be retried after 15m
@@ -32,9 +30,7 @@ spec:
     - alert: AlertmanagerPageNotificationsFailing
       annotations:
         __dashboardUid__: alertmanager-overview
-        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=1"
-        {{ end }}
         description: '{{`AlertManager {{ $labels.integration }} notifications are failing.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alert-manager-notifications-failing/
       # Here, we decide to notify after 2 successive failures (opsgenie notification), so we need to wait 2*15m = 30m before notifying.

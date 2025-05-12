@@ -105,11 +105,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
-      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"cert-manager-*|teleport-.*|dex*|athena*|rbac-operator|credentiald"} > 0
-      {{- else }}
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"cert-manager-*|dex*|athena*|rbac-operator|credentiald"} > 0
-      {{- end }}
       for: 30m
       labels:
         area: platform

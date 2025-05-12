@@ -17,9 +17,7 @@ spec:
         - alert: AlloySlowComponentEvaluations
           annotations:
             __dashboardUid__: bf9f456aad7108b2c808dbd9973e386f
-            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=2"
-            {{ end }}
             description: '{{`Component evaluations are taking too long under job {{ $labels.job }}, component_id {{ $labels.component_id }}.`}}'
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
             summary: Component evaluations are taking too long.
@@ -34,9 +32,7 @@ spec:
         - alert: AlloyUnhealthyComponents
           annotations:
             __dashboardUid__: bf9f456aad7108b2c808dbd9973e386f
-            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=2"
-            {{ end }}
             description: '{{`Unhealthy pods {{ $labels.pod }} detected under job {{ $labels.job }}`}}'
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
             summary: Unhealthy components detected.
@@ -55,9 +51,7 @@ spec:
         - alert: LoggingAgentDown
           annotations:
             __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
-            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=2"
-            {{ end }}
             description: '{{`Scraping of all logging-agent pods to check if one failed every 30 minutes.`}}'
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
           expr: |-
@@ -83,9 +77,7 @@ spec:
             summary: Monitoring agent fails to send samples to remote write endpoint.
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/#monitoring-agent-down
             __dashboardUid__: promRW001
-            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=1"
-            {{ end }}
           expr: |-
             count(
               label_replace(
@@ -117,9 +109,7 @@ spec:
             summary: Monitoring agent fails to send samples to remote write endpoint.
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/#monitoring-agent-down
             __dashboardUid__: promRW001
-            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=1"
-            {{ end }}
           expr: |-
             count(
               label_replace(

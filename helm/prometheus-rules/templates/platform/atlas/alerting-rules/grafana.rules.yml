@@ -25,9 +25,9 @@ spec:
         topic: observability
     - alert: GrafanaPostgresqlReplicationFailure
       annotations:
-        description: '{{`grafana-postgresql replication is lagging.`}}'
+        description: '{{`grafana-postgresql replication is lagging for pod {{ $labels.pod }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-perms/
-      expr: sum(cnpg_pg_replication_lag{namespace="monitoring", pod=~"grafana-postgresql.*"}) by (cluster_id, installation, pipeline, provider) > 300
+      expr: sum(cnpg_pg_replication_lag{namespace="monitoring", pod=~"grafana-postgresql.*"}) by (pod, cluster_id, installation, pipeline, provider) > 300
       for: 6h
       labels:
         area: platform

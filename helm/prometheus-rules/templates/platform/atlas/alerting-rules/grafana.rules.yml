@@ -28,7 +28,7 @@ spec:
         description: '{{`grafana-postgresql replication is lagging for pod {{ $labels.pod }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
       expr: sum(cnpg_pg_replication_lag{namespace="monitoring", pod=~"grafana-postgresql.*"}) by (pod, cluster_id, installation, pipeline, provider) > 300
-      for: 6h
+      for: 10m
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
@@ -40,7 +40,7 @@ spec:
         description: '{{`grafana-postgresql archiving failed for pod {{ $labels.pod }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
       expr: sum((cnpg_pg_stat_archiver_last_failed_time{namespace="monitoring", pod=~"grafana-postgresql.*"} - cnpg_pg_stat_archiver_last_archived_time{namespace="monitoring", pod=~"grafana-postgresql.*"})) by (pod, cluster_id, installation, pipeline, provider) > 1
-      for: 6h
+      for: 5m
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"

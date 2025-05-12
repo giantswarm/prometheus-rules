@@ -27,3 +27,66 @@ tests:
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
               __dashboardUid__: qRQXmRnik
               dashboardQueryParams: "orgId=2"
+  - interval: 1m
+    input_series:
+      - series: 'cnpg_pg_replication_lag{namespace="monitoring", pod="grafana-postgresql-1", cluster_id="golem", cluster_type="management_cluster", installation="golem"}'
+        values: "0+0x20 1+10x30 300+0x20 0+0x20"
+    alert_rule_test:
+      - alertname: GrafanaPostgresqlReplicationFailure
+        eval_time: 15m
+        exp_alerts: []
+      - alertname: GrafanaPostgresqlReplicationFailure
+        eval_time: 30m
+        exp_alerts: []
+      - alertname: GrafanaPostgresqlReplicationFailure
+        eval_time: 65m
+        exp_alerts:
+          - exp_labels:
+              pod: grafana-postgresql-1
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "golem"
+              cluster_type: management_cluster
+              installation: "golem"
+              pipeline: "stable"
+              provider: capa
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: 'grafana-postgresql replication is lagging for pod grafana-postgresql-1.'
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
+      - alertname: GrafanaPostgresqlReplicationFailure
+        eval_time: 85m
+        exp_alerts: []
+  - interval: 1m
+    input_series:
+      - series: 'cnpg_pg_stat_archiver_last_failed_time{namespace="monitoring", pod="grafana-postgresql-1", cluster_id="golem", cluster_type="management_cluster", installation="golem"}'
+        values: "-1+0x20 1000+0x10 -1+0x20"
+      - series: 'cnpg_pg_stat_archiver_last_archived_time{namespace="monitoring", pod="grafana-postgresql-1", cluster_id="golem", cluster_type="management_cluster", installation="golem"}'
+        values: "1000+0x20 -1+0x10 1000+0x20"
+    alert_rule_test:
+      - alertname: GrafanaPostgresqlArchivingFailure
+        eval_time: 15m
+        exp_alerts: []
+      - alertname: GrafanaPostgresqlArchivingFailure
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              pod: grafana-postgresql-1
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "golem"
+              cluster_type: management_cluster
+              installation: "golem"
+              pipeline: "stable"
+              provider: capa
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: 'ggrafana-postgresql archiving failed for pod grafana-postgresql-1.'
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
+      - alertname: GrafanaPostgresqlArchivingFailure
+        eval_time: 40m
+        exp_alerts: []

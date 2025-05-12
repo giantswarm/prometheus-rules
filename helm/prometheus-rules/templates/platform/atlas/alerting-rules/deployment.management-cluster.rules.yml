@@ -4,9 +4,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "management_cluster"
-    {{- end }}
   name: deployment.management-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -82,19 +79,6 @@ spec:
         severity: page
         team: phoenix
         topic: managementcluster
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    ## TODO(@giantswarm/team-atlas) Remove when all vintage clusters are gone
-    - alert: AWSManagementClusterDeploymentScaledDownToZero
-      annotations:
-        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} on AWS has been scaled down to zero for prolonged period of time.`}}'
-      expr: kube_deployment_status_replicas_available{cluster_type="management_cluster", deployment=~"([a-z]*)-operator([a-z,-]*)",provider="aws"} + kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"([a-z]*)-operator([a-z,-]*)",provider="aws"} == 0
-      for: 4h
-      labels:
-        area: platform
-        severity: notify
-        team: phoenix
-        topic: managementcluster
-    {{- end }}
     - alert: DeploymentNotSatisfiedCabbage
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'

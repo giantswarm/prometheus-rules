@@ -43,9 +43,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -59,9 +56,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -76,9 +70,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -101,9 +92,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -128,9 +116,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -140,9 +125,7 @@ spec:
     - alert: LokiCompactorFailedCompaction
       annotations:
         __dashboardUid__: loki-retention
-        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=2"
-        {{ end }}
         description: 'Loki compactor has been failing compactions for more than 2 hours since last compaction.'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki#lokicompactorfailedcompaction
       # This alert checks if Loki's the last successful compaction run is older than 2 hours
@@ -150,9 +133,6 @@ spec:
       for: 1h
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -160,9 +140,7 @@ spec:
     - alert: LokiCompactorFailedCompaction
       annotations:
         __dashboardUid__: loki-retention
-        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=2"
-        {{ end }}
         description: 'Loki compactor has been failing compactions for more than 2 hours since start-up.'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki#lokicompactorfailedcompaction
       # This alert covers the special case at compactor startup, where the "normal" alert would always consider time `0` is more than 2 hours ago, yet we want to let it 2 hours + `for` duration.
@@ -170,9 +148,6 @@ spec:
       for: 1h
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -180,9 +155,7 @@ spec:
     - alert: LokiMissingLogs
       annotations:
         __dashboardUid__: loki-canary
-        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=2"
-        {{ end }}
         description: This alert checks that loki is not missing canary logs
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
       expr: |
@@ -197,9 +170,6 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -207,9 +177,7 @@ spec:
     - alert: LokiObjectStorageLowRate
       annotations:
         __dashboardUid__: loki-operational
-        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=2"
-        {{ end }}
         description: '{{`Loki object storage write rate is down.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
       expr: |
@@ -229,9 +197,6 @@ spec:
       for: 1h
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -245,9 +210,6 @@ spec:
       for: 1h
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas

@@ -3,9 +3,6 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "management_cluster"
-    {{- end }}
   name: grafana.rules
   namespace: {{ .Values.namespace }}
 spec:
@@ -17,16 +14,11 @@ spec:
         description: '{{`Grafana ({{ $labels.instance }}) is down.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
         __dashboardUid__: qRQXmRnik
-        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=2"
-        {{ end }}
       expr: up{service="grafana", cluster_type="management_cluster"} == 0
       for: 1h
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas

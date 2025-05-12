@@ -1,0 +1,56 @@
+---
+rule_files:
+  - konfigure-operator.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'kube_deployment_status_replicas_unavailable{cluster_type="management_cluster",namespace="giantswarm",deployment="konfigure-operator"}'
+        values: '_x5 0x10 1x45 0x60'
+    alert_rule_test:
+      - alertname: KonfigureOperatorDeploymentNotSatisfied
+        eval_time: 46m
+        exp_alerts:
+          - exp_labels:
+              alertname: "KonfigureOperatorDeploymentNotSatisfied"
+              area: "platform"
+              cancel_if_outside_working_hours: "true"
+              cluster_type: "management_cluster"
+              deployment: "konfigure-operator"
+              namespace: "giantswarm"
+              severity: "page"
+              team: "honeybadger"
+              topic: "managementcluster"
+            exp_annotations:
+              description: "Konfigure Operator deployment giantswarm/konfigure-operator is not satisfied."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
+      - alertname: KonfigureOperatorDeploymentNotSatisfied
+        eval_time: 100m
+        exp_alerts: []
+  - interval: 1m
+    input_series:
+      - series: 'konfigure_operator_reconcile_condition{condition_type="Ready", condition_status="False", resource_kind="ManagementClusterConfiguration", resource_name="test", resource_namespace="giantswarm", installation="example"}'
+        values: '0x30 1x5 0x20 1x15'
+    alert_rule_test:
+      - alertname: KonfigurationReconciliationFailed
+        eval_time: 35m
+        exp_alerts: []
+      - alertname: KonfigurationReconciliationFailed
+        eval_time: 70m
+        exp_alerts:
+          - exp_labels:
+              alertname: "KonfigurationReconciliationFailed"
+              area: "platform"
+              cancel_if_outside_working_hours: "true"
+              condition_status: "False"
+              condition_type: "Ready"
+              installation: "example"
+              resource_kind: "ManagementClusterConfiguration"
+              resource_name: "test"
+              resource_namespace: "giantswarm"
+              severity: "page"
+              team: "honeybadger"
+              topic: "releng"
+            exp_annotations:
+              description: "ManagementClusterConfiguration test in ns giantswarm on example is stuck in Failed state."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/konfigure-operator/

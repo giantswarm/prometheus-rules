@@ -3,9 +3,6 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "management_cluster"
-    {{- end }}
   name: grafana-cloud.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -17,11 +14,7 @@ spec:
       annotations:
         description: 'Prometheus is not sending data to Grafana Cloud.'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-grafanacloud/
-      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: absent(prometheus_remote_storage_samples_total{remote_name="grafana-cloud", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
-      {{- else }}
-      expr: absent(prometheus_remote_storage_samples_total{remote_name="grafana-cloud"})
-      {{- end }}
       for: 1h
       labels:
         area: platform
@@ -29,7 +22,6 @@ spec:
         severity: page
         team: atlas
         topic: observability
-  {{- if eq .Values.managementCluster.provider.flavor "capi" }}
   - name: mimir-to-grafana-cloud-exporter
     rules:
     - alert: MimirToGrafanaCloudExporterDown
@@ -43,9 +35,6 @@ spec:
       for: 30m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -74,9 +63,6 @@ spec:
       for: 30m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -91,11 +77,7 @@ spec:
         count by (pod, cluster_id, installation, provider, pipeline) (changes(kube_pod_status_ready{condition="true", namespace="mimir", pod=~"prometheus-mimir-to-grafana-cloud-.*"}[20m])) > 3
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
         topic: observability
-  {{- end }}

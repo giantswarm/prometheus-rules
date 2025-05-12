@@ -10,11 +10,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Add `grafana-postgresql` in the `ObservabilityStorageSpaceTooLow` alert's monitored PVCs.
+- Vintage cleanup:
+  - Stopped running tests for vintage. Meaning some vintage-specific labels had to be removed.
+  - Removed code behind obvious vintage/capi conditions in Atlas rules.
+  - Removed code behind obvious vintage/capi conditions in Phoenix rules.
+
+### Added
+
+- Add `GrafanaPostgresqlReplicationFailure` and `GrafanaPostgresqlArchivingFailure` alerting rules in `grafana.rules.yml`.
+
+## [4.59.2] - 2025-05-09
+
+### Changed
+
+- Improved `AlloyUnhealthyComponents` alert by adding pod name
+
+## [4.59.1] - 2025-05-09
+
+### Changed
+
+- `LogForwardingErrors`: don't page out of business hours
+
+## [4.59.0] - 2025-05-08
+
+### Added
+
+- Add new alert `KonfigureOperatorDeploymentNotSatisfied`: when `konfigure-operator` deployment in `giantswarm` namespace is not ready for 30 mins.
+- Add new alert `KonfigurationReconciliationFailed`: when a `ManagementClusterConfiguration` CR in not `Ready` condition for 10 mins.
+
+## [4.58.0] - 2025-05-07
+
+### Changed
+
+- DeploymentNotSatisfiedAtlas: lower sensitivity and page only during business hours
 
 ### Added
 
 - Add new alert `ClusterUpgradeStuck` to detect if the cluster app cannot be upgraded.
-- Add `GrafanaPostgresqlReplicationFailure` and `GrafanaPostgresqlArchivingFailure` alerting rules in `grafana.rules.yml`.
+- Addd `konfigure-operator` related alerts and tests.
 
 ## [4.57.0] - 2025-04-30
 
@@ -3617,7 +3650,11 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.57.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.2...HEAD
+[4.59.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.1...v4.59.2
+[4.59.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.0...v4.59.1
+[4.59.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.58.0...v4.59.0
+[4.58.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.57.0...v4.58.0
 [4.57.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.56.1...v4.57.0
 [4.56.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.56.0...v4.56.1
 [4.56.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.55.0...v4.56.0

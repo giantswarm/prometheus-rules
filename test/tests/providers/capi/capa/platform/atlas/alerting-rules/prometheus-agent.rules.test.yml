@@ -35,9 +35,6 @@ tests:
               team: atlas
               topic: observability
               inhibit_monitoring_agent_down: "true"
-              cancel_if_cluster_is_not_running_monitoring_agent: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
@@ -56,9 +53,6 @@ tests:
               team: atlas
               topic: observability
               inhibit_monitoring_agent_down: "true"
-              cancel_if_cluster_is_not_running_monitoring_agent: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
@@ -77,9 +71,6 @@ tests:
               team: atlas
               topic: observability
               inhibit_monitoring_agent_down: "true"
-              cancel_if_cluster_is_not_running_monitoring_agent: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
@@ -98,9 +89,6 @@ tests:
               team: atlas
               topic: observability
               inhibit_monitoring_agent_down: "true"
-              cancel_if_cluster_is_not_running_monitoring_agent: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
@@ -139,9 +127,6 @@ tests:
               team: atlas
               topic: observability
               inhibit_monitoring_agent_down: "true"
-              cancel_if_cluster_is_not_running_monitoring_agent: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
@@ -160,9 +145,6 @@ tests:
               team: atlas
               topic: observability
               inhibit_monitoring_agent_down: "true"
-              cancel_if_cluster_is_not_running_monitoring_agent: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
@@ -181,9 +163,6 @@ tests:
               team: atlas
               topic: observability
               inhibit_monitoring_agent_down: "true"
-              cancel_if_cluster_is_not_running_monitoring_agent: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."
@@ -202,9 +181,6 @@ tests:
               team: atlas
               topic: observability
               inhibit_monitoring_agent_down: "true"
-              cancel_if_cluster_is_not_running_monitoring_agent: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Prometheus agent is missing shards."

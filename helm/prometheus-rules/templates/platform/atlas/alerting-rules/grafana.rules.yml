@@ -107,4 +107,34 @@ spec:
         team: atlas
         topic: managementcluster
         cancel_if_outside_working_hours: "true"
+    - alert: GrafanaPostgresqlReplicationFailure
+      annotations:
+        description: '{{`grafana-postgresql replication is lagging.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-perms/
+      expr: sum(cnpg_pg_replication_lag{namespace="monitoring", pod=~"grafana-postgresql.*"}) by (cluster_id, installation, pipeline, provider) > 300
+      for: 6h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: GrafanaPostgresqlArchivingFailure
+      annotations:
+        description: '{{`grafana-postgresql archiving failed for pod {{ $labels.pod }}.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-perms/
+      expr: sum((cnpg_pg_stat_archiver_last_failed_time{namespace="monitoring", pod=~"grafana-postgresql.*"} - cnpg_pg_stat_archiver_last_archived_time{namespace="monitoring", pod=~"grafana-postgresql.*"})) by (pod, cluster_id, installation, pipeline, provider) > 1
+      for: 6h
+      labels:
+        area: platform
+        cancel_if_cluster_status_creating: "true"
+        cancel_if_cluster_status_deleting: "true"
+        cancel_if_cluster_status_updating: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
     {{- end }}

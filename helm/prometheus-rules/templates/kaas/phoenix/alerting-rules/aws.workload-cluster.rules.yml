@@ -5,9 +5,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "workload_cluster"
-    {{- end }}
   name: aws.workload-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -42,41 +39,3 @@ spec:
         cancel_if_cluster_has_no_workers: "true"
         severity: page
         team: phoenix
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    ## TODO Remove when all vintage installations are gone
-    - alert: WorkloadClusterCriticalPodNotRunningAWS
-      annotations:
-        description: '{{`Critical pod {{ $labels.namespace }}/{{ $labels.pod }} is not running.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/critical-pod-is-not-running/
-      expr: kube_pod_container_status_running{namespace="kube-system", container=~"(k8s-api-server|k8s-controller-manager|k8s-scheduler)"} != 1 or label_replace(absent(kube_pod_container_status_running{namespace="kube-system", container="k8s-api-server"}), "pod", "$1", "container", "(.+)") == 1 or label_replace(absent(kube_pod_container_status_running{namespace="kube-system", container="k8s-controller-manager"}), "pod", "$1", "container", "(.+)") == 1 or label_replace(absent(kube_pod_container_status_running{namespace="kube-system", container="k8s-scheduler"}), "pod", "$1", "container", "(.+)") == 1
-      for: 20m
-      labels:
-        area: kaas
-        cancel_if_kube_state_metrics_down: "true"
-        severity: page
-        team: phoenix
-        topic: kubernetes
-    - alert: WorkloadClusterAWSCNIIpAlmostExhausted
-      annotations:
-        description: '{{`IPs exhausted for aws-cni subnet {{ $labels.id }} in AZ {{ $labels.availability_zone }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/aws-ips-exhausted/
-      expr: min(aws_operator_subnet_available_ips_percentage{subnet_type="aws-cni"}) by (account, availability_zone, cluster_id, id) < 0.1
-      for: 5m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: se
-        topic: workloadcluster
-    - alert: WorkloadClusterAWSCNIIpExhausted
-      annotations:
-        description: '{{`IPs exhausted for aws-cni subnet {{ $labels.id }} in AZ {{ $labels.availabvility_zone }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/aws-ips-exhausted/
-      expr: sum(aws_operator_subnet_available_ips{subnet_type="aws-cni"}) by (account, availability_zone, cluster_id, id) == 0
-      for: 5m
-      labels:
-        area: kaas
-        severity: page
-        team: phoenix
-        topic: workloadcluster
-    {{- end }}

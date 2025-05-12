@@ -5,9 +5,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "workload_cluster"
-    {{- end }}
   name: aws-load-balancer-controller.rules
   namespace: {{ .Values.namespace  }}
 spec:

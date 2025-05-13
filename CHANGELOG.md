@@ -13,14 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed code behind obvious vintage/capi conditions in Cabbage rules.
   - Removed code behind obvious vintage/capi conditions in Honeybadger rules.
   - Removed code behind obvious vintage/capi conditions in Tenet rules.
+  - Removed code behind obvious vintage/capi conditions in Shield rules.
 
 ## [4.60.0] - 2025-05-13
-
-### Changed
 
 ### Added
 
 - Add `OnPremCloudProviderAPIIsDown` alert to all clusters
+
+### Changed
 
 - Vintage cleanup:
   - Stopped running tests for vintage. Meaning some vintage-specific labels had to be removed.

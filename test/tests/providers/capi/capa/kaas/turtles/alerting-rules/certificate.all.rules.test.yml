@@ -6,7 +6,7 @@ tests:
   # CertificateSecretWillExpireInLessThanTwoWeeks within 2 weeks of expiration
   - interval: 1d
     input_series:
-      - series: 'cCertificateSecretWillExpireInLessThanTwoWeeksert_exporter_secret_not_after{app="cert-exporter-deployment", cluster_id="gollem", cluster_type="management_cluster", container="cert-exporter", customer="giantswarm", installation="gollem", instance="10.0.0.0:1234", job="gollem-prometheus/workload-gollem/0", name="athena-certs-secret", namespace="giantswarm", exported_namespace="giantswarm", node="10.0.0.0", organization="giantswarm", pod="cert-exporter-deployment-5c47b4c55c-49wt9", provider="capa", secretkey="tls.crt", service_priority="highest"}'
+      - series: 'cert_exporter_secret_not_after{app="cert-exporter-deployment", cluster_id="gollem", cluster_type="management_cluster", container="cert-exporter", customer="giantswarm", installation="gollem", instance="10.0.0.0:1234", job="gollem-prometheus/workload-gollem/0", name="athena-certs-secret", namespace="giantswarm", exported_namespace="giantswarm", node="10.0.0.0", organization="giantswarm", pod="cert-exporter-deployment-5c47b4c55c-49wt9", provider="capa", secretkey="tls.crt", service_priority="highest"}'
         values: "2678400x60"
     alert_rule_test:
       - alertname: CertificateSecretWillExpireInLessThanTwoWeeks

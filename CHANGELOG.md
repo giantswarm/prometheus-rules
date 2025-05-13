@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Add `grafana-postgresql` in the `ObservabilityStorageSpaceTooLow` alert's monitored PVCs.
+
+### Added
+
+- Add `GrafanaPostgresqlReplicationFailure` and `GrafanaPostgresqlArchivingFailure` alerting rules in `grafana.rules.yml`.
 - Vintage cleanup:
   - Removed code behind obvious vintage/capi conditions in Cabbage rules.
   - Removed code behind obvious vintage/capi conditions in Honeybadger rules.

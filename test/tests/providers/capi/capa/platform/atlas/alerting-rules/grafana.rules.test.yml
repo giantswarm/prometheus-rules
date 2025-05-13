@@ -62,14 +62,15 @@ tests:
   - interval: 1m
     input_series:
       # For the first 20 minutes there's no archiving failure.
-      # Then, for the next 10 minutes, archiving fails so the last archived time stays the same.
-      # Then archiving works again for 20 minutes so the last failed archived time is updated.
+      # Then, for the next 10 minutes, archiving fails so the last failed archived time is updated.
+      # Then archiving works again for 20 minutes so the last failed archived time stays the same.
       - series: 'cnpg_pg_stat_archiver_last_failed_time{namespace="monitoring", pod="grafana-postgresql-1", cluster_id="golem", cluster_type="management_cluster", installation="golem"}'
-        values: "-1+0x20 1200+60x10 -1+0x20"
+        values: "-1+0x20 1200+60x10 1800+0x20"
+      # For the first 20 minutes archiving works fine.
+      # Then, for the next 10 minutes, the last archived time stays the same as archiving is not succeeding anymore.
+      # Then archiving works again for 20 minutes
       - series: 'cnpg_pg_stat_archiver_last_archived_time{namespace="monitoring", pod="grafana-postgresql-1", cluster_id="golem", cluster_type="management_cluster", installation="golem"}'
         values: "0+60x20 1200+0x10 1800+60x20"
-      - series: 'cnpg_pg_stat_archiver_last_archived_time{namespace="monitoring", pod="grafana-postgresql-2", cluster_id="golem", cluster_type="management_cluster", installation="golem"}'
-        values: "0+60x40"
     alert_rule_test:
       - alertname: GrafanaPostgresqlArchivingFailure
         eval_time: 15m

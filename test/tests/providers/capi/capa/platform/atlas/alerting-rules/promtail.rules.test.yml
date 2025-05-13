@@ -6,18 +6,18 @@ tests:
   - interval: 1m
     input_series:
       # For the first 60min: test with 1 pod: none, up, down
-      - series: 'up{container="promtail", cluster_id="golem", cluster_type="management_cluster", installation="golem", namespace="kube-system", pod="promtail-1xxxx", provider="aws", pipeline="testing"}'
+      - series: 'up{container="promtail", cluster_id="golem", cluster_type="management_cluster", installation="golem", namespace="kube-system", pod="promtail-1xxxx", provider="capa", pipeline="testing"}'
         values: "_x20 1+0x20 0+0x40"
-      - series: kube_pod_info{cluster_id="golem", cluster_type="management_cluster", installation="golem", namespace="kube-system", pod="promtail-1xxxx", node="ip-10-0-5-1.eu-west-1.compute.internal", provider="aws", pipeline="testing"}
+      - series: kube_pod_info{cluster_id="golem", cluster_type="management_cluster", installation="golem", namespace="kube-system", pod="promtail-1xxxx", node="ip-10-0-5-1.eu-west-1.compute.internal", provider="capa", pipeline="testing"}
         values: "1x180"
       # From 60min: test with 2 pods: 1 up and 1 down, 2 up, 2 down.
-      - series: 'up{container="promtail", cluster_id="golem", cluster_type="management_cluster", installation="golem", namespace="kube-system", pod="promtail-2xxxx", provider="aws", pipeline="testing"}'
+      - series: 'up{container="promtail", cluster_id="golem", cluster_type="management_cluster", installation="golem", namespace="kube-system", pod="promtail-2xxxx", provider="capa", pipeline="testing"}'
         values: "_x80 1+0x40 1+0x20 0+0x40"
-      - series: kube_pod_info{cluster_id="golem", cluster_type="management_cluster", installation="golem", namespace="kube-system", pod="promtail-2xxxx", node="ip-10-0-5-2.eu-west-1.compute.internal", provider="aws", pipeline="testing"}
+      - series: kube_pod_info{cluster_id="golem", cluster_type="management_cluster", installation="golem", namespace="kube-system", pod="promtail-2xxxx", node="ip-10-0-5-2.eu-west-1.compute.internal", provider="capa", pipeline="testing"}
         values: "1x180"
-      - series: 'up{container="promtail", cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="kube-system", pod="promtail-3xxxx", provider="aws", pipeline="testing"}'
+      - series: 'up{container="promtail", cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="kube-system", pod="promtail-3xxxx", provider="capa", pipeline="testing"}'
         values: "_x80 0+0x40 1+0x20 0+0x40"
-      - series: kube_pod_info{cluster_id="golem", cluster_type="management_cluster", installation="golem", namespace="kube-system", pod="promtail-3xxxx", node="ip-10-0-5-3.eu-west-1.compute.internal", provider="aws", pipeline="testing"}
+      - series: kube_pod_info{cluster_id="golem", cluster_type="management_cluster", installation="golem", namespace="kube-system", pod="promtail-3xxxx", node="ip-10-0-5-3.eu-west-1.compute.internal", provider="capa", pipeline="testing"}
         values: "1x180"
     alert_rule_test:
       - alertname: PromtailDown
@@ -39,7 +39,7 @@ tests:
               node: ip-10-0-5-1.eu-west-1.compute.internal
               pipeline: testing
               pod: promtail-1xxxx
-              provider: aws
+              provider: capa
               severity: page
               team: atlas
               topic: observability
@@ -62,7 +62,7 @@ tests:
               node: ip-10-0-5-3.eu-west-1.compute.internal
               pipeline: testing
               pod: promtail-3xxxx
-              provider: aws
+              provider: capa
               severity: page
               team: atlas
               topic: observability
@@ -86,7 +86,7 @@ tests:
               node: ip-10-0-5-2.eu-west-1.compute.internal
               pipeline: testing
               pod: promtail-2xxxx
-              provider: aws
+              provider: capa
               severity: page
               team: atlas
               topic: observability
@@ -105,7 +105,7 @@ tests:
               node: ip-10-0-5-3.eu-west-1.compute.internal
               pipeline: testing
               pod: promtail-3xxxx
-              provider: aws
+              provider: capa
               severity: page
               team: atlas
               topic: observability
@@ -122,9 +122,9 @@ tests:
       #   status codes 500 requests that represent more than 10% of the total (alert fires)
       #   only status codes 500 (alert fires)
       #   only status code 500, but alloy-logs is installed (no alert)
-      - series: 'promtail_request_duration_seconds_count{status_code="500", cluster_type="management_cluster", cluster_id="golem", installation="golem", provider="aws", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", pod="promtail-2j7z7"}'
+      - series: 'promtail_request_duration_seconds_count{status_code="500", cluster_type="management_cluster", cluster_id="golem", installation="golem", provider="capa", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", pod="promtail-2j7z7"}'
         values: "_x60 0+0x60 0+0x60   0+50x60      3000+100x60  9000+600x60 45000+600x60"
-      - series: 'promtail_request_duration_seconds_count{status_code="204", cluster_type="management_cluster", cluster_id="golem", installation="golem", provider="aws", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", pod="promtail-2j7z7"}'
+      - series: 'promtail_request_duration_seconds_count{status_code="204", cluster_type="management_cluster", cluster_id="golem", installation="golem", provider="capa", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", pod="promtail-2j7z7"}'
         values: "_x60 0+0x60 0+600x60 36000+600x60 72000+600x60 108000+0x60 108000+0x60"
       - series: 'up{service="alloy-logs", cluster_id="golem"}'
         values: "_x60 _x60   _x60     _x60         _x60         _x60        1+0x60"
@@ -147,7 +147,7 @@ tests:
               cancel_if_outside_working_hours: "true"
               cluster_id: golem
               installation: golem
-              provider: aws
+              provider: capa
               pipeline: testing
               severity: page
               team: atlas
@@ -165,7 +165,7 @@ tests:
               cancel_if_outside_working_hours: "true"
               cluster_id: golem
               installation: golem
-              provider: aws
+              provider: capa
               pipeline: testing
               severity: page
               team: atlas

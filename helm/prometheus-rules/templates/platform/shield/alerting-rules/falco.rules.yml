@@ -4,9 +4,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "management_cluster"
-    {{- end }}
   name: falco.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -22,9 +19,6 @@ spec:
       expr: increase(falco_events{priority=~"0|1|2|3"}[10m] ) > 0
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: shield
@@ -38,9 +32,6 @@ spec:
       expr: increase(falco_events{priority=~"4|5"}[10m] ) > 0
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         severity: notify
         team: shield
         topic: security
@@ -53,9 +44,6 @@ spec:
       expr: increase(falco_events{priority="6"}[10m] ) > 0
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         severity: notify
         team: shield
         topic: security
@@ -68,9 +56,6 @@ spec:
       expr: falco_events{rule="Backdoored library loaded into SSHD (CVE-2024-3094)"} > 0
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "false"
-        cancel_if_cluster_status_deleting: "false"
-        cancel_if_cluster_status_updating: "false"
         severity: notify
         team: shield
         topic: security

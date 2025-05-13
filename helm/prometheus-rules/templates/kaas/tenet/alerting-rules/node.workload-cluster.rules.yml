@@ -4,9 +4,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "workload_cluster"
-    {{- end }}
   name: node.workload-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -21,8 +18,6 @@ spec:
       for: 45m
       labels:
         area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: {{ include "providerTeam" . }}
@@ -35,8 +30,6 @@ spec:
       for: 30m
       labels:
         area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         control_plane_node_down: "true"
         severity: page
         team: {{ include "providerTeam" . }}
@@ -49,8 +42,6 @@ spec:
       for: 30m
       labels:
         area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"
         control_plane_node_down: "true"
         severity: page
@@ -82,8 +73,6 @@ spec:
       for: 10m
       labels:
         area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: {{ include "providerTeam" . }}
@@ -97,8 +86,6 @@ spec:
       for: 10m
       labels:
         area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: {{ include "providerTeam" . }}

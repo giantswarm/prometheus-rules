@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  architect: giantswarm/architect@5.12.1
+  architect: giantswarm/architect@5.14.0
 
 workflows:
   package-and-push-chart-on-tag:
@@ -16,24 +16,10 @@ workflows:
         filters:
           tags:
             only: /^v.*/
-
           branches:
             ignore:
             - main
             - master
-    - architect/push-to-app-collection:
-        context: architect
-        name: aws-app-collection
-        app_name: prometheus-rules
-        app_namespace: monitoring
-        app_collection_repo: aws-app-collection
-        requires:
-        - app-catalog
-        filters:
-          branches:
-            ignore: /.*/
-          tags:
-            only: /^v.*/
 
     - architect/push-to-app-collection:
         context: architect

@@ -4,9 +4,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "workload_cluster"
-    {{- end }}
   name: pods.core.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -21,9 +18,6 @@ spec:
       for: 10m
       labels:
         area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         cancel_if_cluster_has_no_workers: "true"
         severity: page
@@ -38,9 +32,6 @@ spec:
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_kube_state_metrics_down: "true"
         cancel_if_cluster_has_no_workers: "true"
         severity: page

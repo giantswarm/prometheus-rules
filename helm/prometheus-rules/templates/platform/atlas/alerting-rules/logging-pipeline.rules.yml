@@ -14,9 +14,7 @@ spec:
         - alert: LogForwardingErrors
           annotations:
             __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
-            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=2"
-            {{ end }}
             description: '{{`More that 10% of the requests to Loki are failing.`}}'
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
           expr: |-
@@ -48,16 +46,12 @@ spec:
             severity: page
             team: atlas
             topic: observability
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"
-            cancel_if_cluster_status_updating: "true"
+            cancel_if_outside_working_hours: "true"
         # This alert pages when the loki source api component of the observability gateway is throwing errors
         - alert: LogReceivingErrors
           annotations:
             __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
-            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=2"
-            {{ end }}
             description: '{{`More that 10% of the loki requests to the observability gateway are failing.`}}'
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
           expr: |-
@@ -89,6 +83,3 @@ spec:
             severity: page
             team: atlas
             topic: observability
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"
-            cancel_if_cluster_status_updating: "true"

@@ -1,0 +1,26 @@
+# This rule is applied to all management clusters but it is only active if blackbox
+# exporter is deployed and configured with a scrape job named 'http-cloud-provider-api'
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: rocket-onprem-cloud-provider-api
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: rocket-onprem-cloud-provider-api
+    rules:
+    - alert: OnPremCloudProviderAPIIsDown
+      annotations:
+        description: '{{` blackbox-exporter on {{ $labels.cluster_id}} is unable to connect to the on-prem cloud provider API.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/onprem-cloud-provider-api-is-down/
+      expr: probe_success{cluster_type="management_cluster",job="prometheus-blackbox-exporter",target="http-cloud-provider-api"} == 0
+      for: 5m
+      labels:
+        area: kaas
+        severity: page
+        team: rocket
+        topic: network
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}

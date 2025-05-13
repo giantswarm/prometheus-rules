@@ -20,35 +20,6 @@ spec:
       record: aggregation:alertmanager:silences_expired_total
     - expr: sum(alertmanager_silences{state="pending"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:alertmanager:silences_pending_total
-{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-  - name: aws.grafana-cloud.recording
-    rules:
-    # Instance types used
-    - expr: count(sum(aws_operator_ec2_instance_status) by (ec2_instance, instance_type)) by (instance_type)
-      record: aggregation:aws:instance_types
-    # Available IPs
-    - expr: min(aws_operator_subnet_available_ips_percentage{subnet_type="aws-cni"}) by (cluster_type, cluster_id, availability_zone)
-      record: aggregation:aws:available_ip_percentage
-    - expr: min(aws_operator_subnet_available_ips{subnet_type="aws-cni"}) by (cluster_type, cluster_id, availability_zone)
-      record: aggregation:aws:available_ip_count
-    # Spot Instances being used
-    - expr: count(sum(aws_operator_ec2_instance_status{lifecycle != ""}) by (ec2_instance, lifecycle)) by  (lifecycle)
-      record: aggregation:aws:instance_lifecycle
-  - name: api.grafana-cloud.recording
-    rules:
-    # REST API usage: authentications successful via the "giantswarm" token method
-    - expr: sum(rate(api_service_authentication_giantswarm_successful_attempts_total[5m]))
-      record: aggregation:giantswarm:api_auth_giantswarm_successful_attempts_total
-    # REST API usage: authentication fails via the "giantswarm" token method
-    - expr: sum(rate(api_service_authentication_giantswarm_failed_attempts_total[5m]))
-      record: aggregation:giantswarm:api_auth_giantswarm_failed_attempts_total
-    # API usage: authentication fails via the "Bearer" auth method (SSO)
-    - expr: sum(rate(api_service_authentication_jwt_failed_attempts_total[5m]))
-      record: aggregation:giantswarm:api_auth_jwt_failed_attempts_total
-    # GS Rest API requests
-    - expr: sum(rate(nginx_ingress_controller_requests{namespace="giantswarm", ingress="api"}[5m])) by (status)
-      record: aggregation:giantswarm:api_requests
-{{- end }}
   - name: app-operator.grafana-cloud.recording
     rules:
     - expr: app_operator_app_info
@@ -61,7 +32,7 @@ spec:
       record: aggregation:giantswarm:app_upgrade_available
   - name: clusters.grafana-cloud.recording
     rules:
-    # This recording rule is used to list all clusters. The last expression is used to list vintage MCs
+    # This recording rule is used to list all clusters.
     - expr: |-
         avg by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, exported_namespace) (
           label_replace(
@@ -71,54 +42,6 @@ spec:
             "name",
             "(.*)"
           ) >= 1
-          {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-          or label_replace(cluster_operator_cluster_status, "cluster_type", "workload_cluster", "", "") >= 1
-          or label_replace(cluster_service_cluster_info, "cluster_type", "workload_cluster", "", "") >= 1
-          or
-            label_replace(
-              label_replace(
-                label_replace(
-                  label_replace(
-                    label_replace(
-                      label_replace(
-                        label_replace(
-                          vector(1),
-                          "cluster_id",
-                          {{ .Values.managementCluster.name | quote }},
-                          "",
-                          ""
-                        ),
-                        "customer",
-                        {{ .Values.managementCluster.customer | quote }},
-                        "",
-                        ""
-                      ),
-                      "installation",
-                      {{ .Values.managementCluster.name | quote }},
-                      "",
-                      ""
-                    ),
-                    "cluster_type",
-                    "management_cluster",
-                    "",
-                    ""
-                  ),
-                  "provider",
-                  {{ .Values.managementCluster.provider.kind | quote }},
-                  "",
-                  ""
-                ),
-                "pipeline",
-                {{ .Values.managementCluster.pipeline | quote }},
-                "",
-                ""
-              ),
-              "region",
-              {{ .Values.managementCluster.provider.region | quote }},
-              "",
-              ""
-            )
-          {{- end }}
         )
       record: aggregation:giantswarm:cluster_info
     - expr: |-
@@ -150,14 +73,6 @@ spec:
     # Happa requests
     - expr: sum(rate(nginx_ingress_controller_requests{namespace="giantswarm", ingress="happa"}[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, status)
       record: aggregation:giantswarm:happa_requests
-{{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-  - name: nodepools.grafana-cloud.recording
-    rules:
-    - expr: sum(cluster_operator_node_pool_count)
-      record: aggregation:giantswarm:node_pool_total
-    - expr: sum(cluster_operator_node_pool_ready_workers)
-      record: aggregation:giantswarm:node_pool_worker_ready_total
-{{- end }}
   - name: nginx-ingress-controller.grafana-cloud.recording
     rules:
     - expr: sum(rate(nginx_ingress_controller_requests{namespace="giantswarm", ingress="passage"}[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, status)
@@ -344,16 +259,6 @@ spec:
     rules:
     - expr: sum(ALERTS{alertstate="firing"}) by (alertname, cluster_id, cluster_type, customer, installation, pipeline, provider, region, area, severity, team, topic)
       record: aggregation:prometheus:alerts
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    # Metric container_memory_working_set_bytes comes from the cAdvisor component scraped on management clusters which is then scraped by the management cluster prometheus.
-    # This means the cluster_id label on this metric will be the cluster_id of the management cluster for all the series, not the workload cluster id.
-    # As we want to record the memory usage of the prometheis per cluster, we need to extract the cluster id from the prometheus pod name (i.e. pod=prometheus-xyz-ordinal => cluster_id=xyz).
-    - expr: sum(label_replace(container_memory_working_set_bytes{container='prometheus', namespace=~'.*-prometheus'}, "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)") / on(node) group_left node_memory_MemTotal_bytes{role!="bastion"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, node) * 100
-      record: aggregation:prometheus:memory_percentage
-    - expr: sum(label_replace(container_memory_working_set_bytes{container='prometheus', namespace=~'.*-prometheus'}, "cluster_id", "$2", "pod", "(prometheus-)(.+)(-.+)")) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-      record: aggregation:prometheus:memory_usage
-    {{- end }}
-  {{- if eq .Values.managementCluster.provider.flavor "capi" }}
   - name: mimir.grafana-cloud.recording
     rules:
     - expr: sum(container_memory_working_set_bytes{namespace='mimir', cluster_type="management_cluster", container=~'.+'}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
@@ -362,7 +267,6 @@ spec:
       record: aggregation:mimir:scrape_samples_post_metric_relabeling
     - expr: sum(scrape_series_added{cluster_id=~'.+'}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:mimir:scrape_series_added
-  {{- end }}
   - name: dex.grafana-cloud.recording
     rules:
     # Dex activity and status based on ingress controller data
@@ -553,104 +457,93 @@ spec:
   - name: slos.grafana-cloud.recording
     rules:
       # Let's not send any of the slo:sli_error:ratio_ratexxx metrics but the slo:sli_error:ratio_rate5m rule to Grafana Cloud as it's not useful for the SLOs dashboard.
-      - expr: sum(
+      - expr: |-
+          label_replace(
             label_replace(
-              label_replace(
-                slo:current_burn_rate:ratio,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:current_burn_rate:ratio) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:current_burn_rate:ratio
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:error_budget:ratio,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:error_budget:ratio) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:error_budget:ratio
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:objective:ratio,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:objective:ratio) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:objective:ratio
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:period_burn_rate:ratio,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:period_burn_rate:ratio) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:period_burn_rate:ratio
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:sli_error:ratio_rate5m,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:sli_error:ratio_rate5m) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:sli_error:ratio_rate5m
       - expr: |-
-          sum(
+          label_replace(
             label_replace(
-              label_replace(
-                slo:time_period:days,
-                "slo",
-                "$1",
-                "sloth_id",
-                "(.*)"
-              ),
-              "service",
+              sum(slo:time_period:days) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, sloth_id, sloth_service),
+              "slo",
               "$1",
-              "sloth_service",
+              "sloth_id",
               "(.*)"
-            )
-          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, slo, service)
+            ),
+            "service",
+            "$1",
+            "sloth_service",
+            "(.*)"
+          )
         record: aggregation:slo:time_period:days

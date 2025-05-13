@@ -17,9 +17,7 @@ spec:
         - alert: AlloySlowComponentEvaluations
           annotations:
             __dashboardUid__: bf9f456aad7108b2c808dbd9973e386f
-            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=2"
-            {{ end }}
             description: '{{`Component evaluations are taking too long under job {{ $labels.job }}, component_id {{ $labels.component_id }}.`}}'
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
             summary: Component evaluations are taking too long.
@@ -31,19 +29,14 @@ spec:
             team: atlas
             topic: observability
             cancel_if_outside_working_hours: "true"
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"
-            cancel_if_cluster_status_updating: "true"
         - alert: AlloyUnhealthyComponents
           annotations:
             __dashboardUid__: bf9f456aad7108b2c808dbd9973e386f
-            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=2"
-            {{ end }}
-            description: '{{`Unhealthy components detected under job {{ $labels.job }}`}}'
+            description: '{{`Unhealthy pods {{ $labels.pod }} detected under job {{ $labels.job }}`}}'
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
             summary: Unhealthy components detected.
-          expr: sum by (cluster_id, installation, provider, pipeline, namespace, job) (alloy_component_controller_running_components{health_type!="healthy"}) > 0
+          expr: sum by (cluster_id, installation, provider, pipeline, namespace, job, pod) (alloy_component_controller_running_components{health_type!="healthy"}) > 0
           for: 15m
           labels:
             area: platform
@@ -51,26 +44,6 @@ spec:
             team: atlas
             topic: observability
             cancel_if_outside_working_hours: "true"
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"
-            cancel_if_cluster_status_updating: "true"
-    - name: alloy.rules
-      rules:
-        - alert: AlloyForPrometheusRulesDown
-          annotations:
-            description: 'Alloy sending PrometheusRules to Loki and Mimir ruler is down.'
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-rules/
-          expr: count(up{job="alloy-rules", namespace="monitoring"} == 0) by (cluster_id, installation, provider, pipeline) > 0
-          for: 1h
-          labels:
-            area: platform
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"
-            cancel_if_cluster_status_updating: "true"
-            cancel_if_outside_working_hours: "true"
-            severity: page
-            team: atlas
-            topic: observability
     - name: alloy.logs
       rules:
         # This alert lists the existing logging-agent pods (to extract the node label and inhibit if the node is not ready)
@@ -78,9 +51,7 @@ spec:
         - alert: LoggingAgentDown
           annotations:
             __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
-            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=2"
-            {{ end }}
             description: '{{`Scraping of all logging-agent pods to check if one failed every 30 minutes.`}}'
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
           expr: |-
@@ -95,9 +66,6 @@ spec:
             team: atlas
             topic: observability
             cancel_if_outside_working_hours: "true"
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"
-            cancel_if_cluster_status_updating: "true"
             cancel_if_node_unschedulable: "true"
             cancel_if_node_not_ready: "true"
     - name: alloy.metrics
@@ -109,9 +77,7 @@ spec:
             summary: Monitoring agent fails to send samples to remote write endpoint.
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/#monitoring-agent-down
             __dashboardUid__: promRW001
-            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=1"
-            {{ end }}
           expr: |-
             count(
               label_replace(
@@ -135,8 +101,6 @@ spec:
             team: atlas
             topic: observability
             inhibit_monitoring_agent_down: "true"
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"
             cancel_if_cluster_has_no_workers: "true"
         ## Same as MonitoringAgentDown, but triggers inhibition earlier and does not page.
         - alert: InhibitionMonitoringAgentDown
@@ -145,9 +109,7 @@ spec:
             summary: Monitoring agent fails to send samples to remote write endpoint.
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/#monitoring-agent-down
             __dashboardUid__: promRW001
-            {{ if eq .Values.managementCluster.provider.flavor "capi" }}
             dashboardQueryParams: "orgId=1"
-            {{ end }}
           expr: |-
             count(
               label_replace(
@@ -168,8 +130,6 @@ spec:
             team: atlas
             topic: observability
             inhibit_monitoring_agent_down: "true"
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"
         ## This alert pages if any of the monitoring-agent shard is not running.
         - alert: MonitoringAgentShardsNotSatisfied
           annotations:
@@ -187,8 +147,6 @@ spec:
             team: atlas
             topic: observability
             inhibit_monitoring_agent_down: "true"
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"
             cancel_if_outside_working_hours: "true"
         ## Same as MonitoringAgentShardsNotSatisfied but triggers inhibition earlier, and does not page.
         - alert: InhibitionMonitoringAgentShardsNotSatisfied
@@ -207,5 +165,3 @@ spec:
             team: atlas
             topic: observability
             inhibit_monitoring_agent_down: "true"
-            cancel_if_cluster_status_creating: "true"
-            cancel_if_cluster_status_deleting: "true"

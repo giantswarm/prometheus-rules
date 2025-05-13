@@ -20,9 +20,6 @@ tests:
               app_version: 1.11.2
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               catalog: giantswarm
               cluster_id: gauss
@@ -73,9 +70,6 @@ tests:
               app: userd
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               catalog: control-plane-catalog
               cluster_id: gauss
@@ -104,3 +98,52 @@ tests:
             exp_annotations:
               description: App userd has no team label.
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-without-team-annotation/
+
+  # ClusterUpgradeStuck tests
+  - interval: 1m
+    input_series:
+      - series: 'app_operator_app_info{app="cluster-aws", catalog="cluster", cluster_id="abc01", cluster_missing="false", cluster_type="management_cluster", container="app-exporter", customer="giantswarm", deployed_version="2.6.2", endpoint="web", installation="alba", instance="100.64.140.199:8000", job="app-exporter", latest_version="3.2.1", name="abc01", namespace="org-giantswarm", organization="giantswarm", pipeline="stable", pod="app-exporter-ff795cc9b-bh89s", provider="capa", region="eu-west-1", service="app-exporter", service_priority="highest", status="already-exists", team="phoenix", upgrade_available="false", version="3.2.1", version_mismatch="true"}'
+        values: "0+0x5 1+0x100"
+      - series: 'capi_cluster_info{cluster_id="abc01", infrastructure_reference_kind="AWSCluster", provider="capa"}'
+        values: "1x120"
+    alert_rule_test:
+      - alertname: ClusterUpgradeStuck
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              alertname: ClusterUpgradeStuck
+              app: cluster-aws
+              area: platform
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_outside_working_hours: "true"
+              catalog: cluster
+              cluster_id: abc01
+              cluster_missing: "false"
+              cluster_type: management_cluster
+              container: app-exporter
+              customer: giantswarm
+              deployed_version: "2.6.2"
+              endpoint: web
+              installation: alba
+              instance: 100.64.140.199:8000
+              job: app-exporter
+              latest_version: "3.2.1"
+              name: abc01
+              namespace: org-giantswarm
+              organization: giantswarm
+              pipeline: stable
+              pod: app-exporter-ff795cc9b-bh89s
+              provider: capa
+              region: eu-west-1
+              service: app-exporter
+              service_priority: highest
+              severity: page
+              status: already-exists
+              team: phoenix
+              topic: releng
+              upgrade_available: "false"
+              version: "3.2.1"
+              version_mismatch: "true"
+            exp_annotations:
+              description: "Cluster upgrade for cluster-aws is stuck. Version mismatch detected for abc01 in namespace org-giantswarm."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-pending-update/

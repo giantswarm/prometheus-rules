@@ -4,9 +4,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "workload_cluster"
-    {{- end }}
   name: core.storage.workload-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -64,7 +61,8 @@ spec:
       for: 60m
       labels:
         area: kaas
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: tenet
         topic: storage
     - alert: RootVolumeSpaceTooLow
@@ -75,6 +73,7 @@ spec:
       for: 10m
       labels:
         area: kaas
-        severity: notify
+        cancel_if_outside_working_hours: "true"
+        severity: page
         team: tenet
         topic: storage

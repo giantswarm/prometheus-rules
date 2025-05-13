@@ -5,9 +5,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "workload_cluster"
-    {{- end }}
   name: cluster-autoscaler.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -18,13 +15,10 @@ spec:
       annotations:
         description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has unneeded nodes.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cluster-autoscaler-scaling/
-      expr: cluster_autoscaler_unneeded_nodes_count{cluster_type="workload_cluster", provider=~"aws|capa|capz|eks"} > 0
+      expr: cluster_autoscaler_unneeded_nodes_count{cluster_type="workload_cluster", provider=~"capa|capz|eks"} > 0
       for: 240m
       labels:
         area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         cancel_if_cluster_has_no_workers: "true"
         severity: notify
@@ -34,14 +28,11 @@ spec:
       annotations:
         description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has failed scaling up.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cluster-autoscaler-scaling/
-      expr: increase(cluster_autoscaler_failed_scale_ups_total{cluster_type="workload_cluster", provider=~"aws|capa|capz|eks"}[5m]) > 1
+      expr: cluster_autoscaler_failed_scale_ups_total{provider=~"capa|capz|eks"} > 0
       for: 15m
       labels:
         area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
-        severity: notify
+        severity: page
         team: tenet
         topic: cluster-autoscaler

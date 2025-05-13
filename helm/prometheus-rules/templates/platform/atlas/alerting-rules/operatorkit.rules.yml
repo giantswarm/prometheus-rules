@@ -57,36 +57,6 @@ spec:
         severity: notify
         team: phoenix
         topic: qa
-    # Phoenix
-    # It might happen that CRs get orphaned or deletion gets kind of stuck during
-    # the cleanup process. Then we want to get notified and figure out what went
-    # wrong to fix the root cause eventually.
-    - alert: OperatorkitCRNotDeletedAWS
-      annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.pod }}@{{ $labels.app_version }} has not deleted object {{ $labels.namespace }}/{{ $labels.name }} of type {{ $labels.kind }} for too long.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/check-not-deleted-object/
-      expr: (time() - operatorkit_controller_deletion_timestamp{pod=~"aws-operator.+|cluster-operator.+", provider="aws"}) > 18000
-      for: 5m
-      labels:
-        area: kaas
-        severity: notify
-        team: phoenix
-        topic: qa
-    # In case something stops an operator from reconciling CRs we want to
-    # be paged to be able to fix the issue immediately.
-    - alert: OperatorNotReconcilingAWS
-      annotations:
-        description: '{{`{{ $labels.namespace }}/{{ $labels.pod }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/
-      expr: (sum by (cluster_id, installation, pipeline, provider, instance, pod, app_version, namespace)(increase(operatorkit_controller_event_count{pod=~"aws-operator.+|cluster-operator.+"}[10m])) == 0 and on (cluster_id, instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
-      for: 20m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: "true"
-        severity: notify
-        team: phoenix
-        topic: qa
-
     # In case something stops an operator from reconciling CRs we want to
     # be paged to be able to fix the issue immediately.
     - alert: OperatorkitErrorRateTooHighKaas

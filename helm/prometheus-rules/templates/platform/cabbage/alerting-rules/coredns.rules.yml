@@ -19,13 +19,10 @@ spec:
       for: 10m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: cabbage
         topic: dns
-    {{- if eq .Values.managementCluster.provider.flavor "capi" }}
     - alert: FluxHelmReleaseFailed
       annotations:
         description: |-
@@ -43,7 +40,6 @@ spec:
         topic: dns
         namespace: |-
           {{`{{ $labels.exported_namespace }}`}}
-    {{- end }}
     - alert: CoreDNSMaxHPAReplicasReached
       expr: |
         (

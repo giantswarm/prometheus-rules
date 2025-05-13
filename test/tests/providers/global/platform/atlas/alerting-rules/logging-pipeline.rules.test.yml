@@ -7,9 +7,9 @@ tests:
   - interval: 1m
     input_series:
       # Tests with multiple cases: no metrics, no requests, only status_code 204 ones, 204 ones and 500 that are less than 10% of the the total, 500 request that represent more than 10% of the total, only 500 ones
-      - series: 'loki_write_request_duration_seconds_count{status_code="500", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", pod="alloy-2j7z7"}'
+      - series: 'loki_write_request_duration_seconds_count{status_code="500", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="capa", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", pod="alloy-2j7z7"}'
         values: "_x60 0+0x60 0+0x60   0+50x60      3000+100x60  9000+600x60"
-      - series: 'loki_write_request_duration_seconds_count{status_code="204", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", pod="alloy-2j7z7"}'
+      - series: 'loki_write_request_duration_seconds_count{status_code="204", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="capa", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", pod="alloy-2j7z7"}'
         values: "_x60 0+0x60 0+600x60 36000+600x60 72000+600x60 108000+0x60"
     alert_rule_test:
       - alertname: LogForwardingErrors
@@ -25,12 +25,10 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
               cluster_id: gauss
               installation: gauss
-              provider: aws
+              provider: capa
               pipeline: testing
               severity: page
               team: atlas
@@ -44,12 +42,10 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
+              cancel_if_outside_working_hours: "true"
               cluster_id: gauss
               installation: gauss
-              provider: aws
+              provider: capa
               pipeline: testing
               severity: page
               team: atlas
@@ -62,9 +58,9 @@ tests:
   - interval: 1m
     input_series:
       # Tests with multiple cases: no metrics, no requests, only status_code 204 ones, 204 ones and 500 that are less than 10% of the the total, 500 request that represent more than 10% of the total, only 500 ones
-      - series: 'loki_source_api_request_duration_seconds_count{status_code="500", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", route="api_v1_push", pod="alloy-2j7z7"}'
+      - series: 'loki_source_api_request_duration_seconds_count{status_code="500", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="capa", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", route="api_v1_push", pod="alloy-2j7z7"}'
         values: "_x60 0+0x60 0+0x60   0+50x60      3000+100x60  9000+600x60"
-      - series: 'loki_source_api_request_duration_seconds_count{status_code="204", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="aws", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", route="api_v1_push", pod="alloy-2j7z7"}'
+      - series: 'loki_source_api_request_duration_seconds_count{status_code="204", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="capa", pipeline="testing", node="ip-10-0-5-145.eu-west-1.compute.internal", route="api_v1_push", pod="alloy-2j7z7"}'
         values: "_x60 0+0x60 0+600x60 36000+600x60 72000+600x60 108000+0x60"
     alert_rule_test:
       - alertname: LogReceivingErrors
@@ -80,12 +76,9 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cluster_id: gauss
               installation: gauss
-              provider: aws
+              provider: capa
               pipeline: testing
               route: api_v1_push
               severity: page
@@ -100,12 +93,9 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cluster_id: gauss
               installation: gauss
-              provider: aws
+              provider: capa
               pipeline: testing
               route: api_v1_push
               severity: page

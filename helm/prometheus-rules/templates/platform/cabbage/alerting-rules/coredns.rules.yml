@@ -23,7 +23,6 @@ spec:
         severity: page
         team: cabbage
         topic: dns
-    {{- if eq .Values.managementCluster.provider.flavor "capi" }}
     - alert: FluxHelmReleaseFailed
       annotations:
         description: |-
@@ -41,7 +40,6 @@ spec:
         topic: dns
         namespace: |-
           {{`{{ $labels.exported_namespace }}`}}
-    {{- end }}
     - alert: CoreDNSMaxHPAReplicasReached
       expr: |
         (

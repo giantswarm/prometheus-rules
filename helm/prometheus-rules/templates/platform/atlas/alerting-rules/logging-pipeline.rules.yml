@@ -80,6 +80,7 @@ spec:
           for: 15m
           labels:
             area: platform
+            cancel_if_outside_working_hours: "true"
             severity: page
             team: atlas
             topic: observability

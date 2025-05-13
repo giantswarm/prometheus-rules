@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'kube_deployment_status_replicas_unavailable{job="kube-state-metrics", cluster_id="gauss", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="crossplane", installation="gauss", instance="100.64.5.122:8080", namespace="crossplane", node="ip-10-0-5-119.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-95bbb4bd7-v6hvh", provider="aws", service_priority="highest"}'
+      - series: 'kube_deployment_status_replicas_unavailable{job="kube-state-metrics", cluster_id="gauss", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="crossplane", installation="gauss", instance="100.64.5.122:8080", namespace="crossplane", node="ip-10-0-5-119.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-95bbb4bd7-v6hvh", provider="capa", service_priority="highest"}'
         values: "0+0x20 1+0x100"
     alert_rule_test:
       - alertname: CrossplaneDeploymentNotSatisfied
@@ -15,9 +15,6 @@ tests:
               alertname: CrossplaneDeploymentNotSatisfied
               job: kube-state-metrics
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: gauss
               cluster_type: management_cluster
@@ -30,7 +27,7 @@ tests:
               node: ip-10-0-5-119.eu-west-1.compute.internal
               organization: giantswarm
               pod: kube-state-metrics-95bbb4bd7-v6hvh
-              provider: aws
+              provider: capa
               service_priority: highest
               severity: page
               team: honeybadger
@@ -40,7 +37,7 @@ tests:
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
   - interval: 1m
     input_series:
-      - series: 'kube_deployment_status_replicas_unavailable{job="kube-state-metrics", cluster_id="gauss", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="caicloud-event-exporter", installation="gauss", instance="100.64.5.122:8080", namespace="crossplane", node="ip-10-0-5-119.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-95bbb4bd7-v6hvh", provider="aws", service_priority="highest"}'
+      - series: 'kube_deployment_status_replicas_unavailable{job="kube-state-metrics", cluster_id="gauss", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="caicloud-event-exporter", installation="gauss", instance="100.64.5.122:8080", namespace="crossplane", node="ip-10-0-5-119.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-95bbb4bd7-v6hvh", provider="capa", service_priority="highest"}'
         values: "0+0x20 1+0x100"
     alert_rule_test:
       - alertname: CrossplaneDeploymentNotSatisfied
@@ -50,9 +47,6 @@ tests:
               alertname: CrossplaneDeploymentNotSatisfied
               job: kube-state-metrics
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: gauss
               cluster_type: management_cluster
@@ -65,7 +59,7 @@ tests:
               node: ip-10-0-5-119.eu-west-1.compute.internal
               organization: giantswarm
               pod: kube-state-metrics-95bbb4bd7-v6hvh
-              provider: aws
+              provider: capa
               service_priority: highest
               severity: page
               team: honeybadger

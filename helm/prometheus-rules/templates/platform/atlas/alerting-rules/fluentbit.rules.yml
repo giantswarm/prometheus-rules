@@ -16,17 +16,12 @@ spec:
         description: '{{`Fluentbit ({{ $labels.instance }}) is erroring.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluentbit-too-many-erros/
         __dashboardUid__: fluentbit
-        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=2"
-        {{ end }}
       # If we have some failures sending data, raise an alert
       expr: rate(fluentbit_output_retries_failed_total[10m]) > 0
       for: 20m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -36,17 +31,12 @@ spec:
         description: '{{`Fluentbit ({{ $labels.instance }}) is dropping more than 1% records.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluentbit-too-many-erros/
         __dashboardUid__: fluentbit
-        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=2"
-        {{ end }}
       # Check the ratio of dropped records over the total number of records.
       expr: rate(fluentbit_output_dropped_records_total[10m]) / (rate(fluentbit_output_proc_records_total[10m]) + rate(fluentbit_output_dropped_records_total[10m])) > 0.01
       for: 20m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -56,16 +46,11 @@ spec:
         description: '{{`Fluentbit is down on node ({{ $labels.node }}).`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluentbit-down/
         __dashboardUid__: fluentbit
-        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=2"
-        {{ end }}
       expr: sum(up{job="fluent-logshipping-app"}) by (job, cluster_id, installation, provider, pipeline, namespace, node) == 0
       for: 15m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -75,16 +60,11 @@ spec:
         description: '{{`Daemonset {{ $labels.namespace}}/{{ $labels.daemonset }} is not satisfied.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/daemonset-not-satisfied/
         __dashboardUid__: fluentbit
-        {{ if eq .Values.managementCluster.provider.flavor "capi" }}
         dashboardQueryParams: "orgId=2"
-        {{ end }}
       expr: kube_daemonset_status_number_unavailable{daemonset="fluent-logshipping-app"} > 0
       for: 1h
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas

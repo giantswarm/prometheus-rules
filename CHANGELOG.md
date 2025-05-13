@@ -7,17 +7,104 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Add `grafana-postgresql` in the `ObservabilityStorageSpaceTooLow` alert's monitored PVCs.
+
 ### Added
 
+- Add `GrafanaPostgresqlReplicationFailure` and `GrafanaPostgresqlArchivingFailure` alerting rules in `grafana.rules.yml`.
+- Vintage cleanup:
+  - Removed code behind obvious vintage/capi conditions in Cabbage rules.
+  - Removed code behind obvious vintage/capi conditions in Honeybadger rules.
+  - Removed code behind obvious vintage/capi conditions in Tenet rules.
+  - Removed code behind obvious vintage/capi conditions in Shield rules.
+  - Remove the "aws" provider.
 - Add `CAPATooManyReconciliations` to page when CAPA controllers are stuck reconciling over and over.
+
+## [4.60.0] - 2025-05-13
+
+### Added
+
+- Add `OnPremCloudProviderAPIIsDown` alert to all clusters
+
+### Changed
+
+- Vintage cleanup:
+  - Stopped running tests for vintage. Meaning some vintage-specific labels had to be removed.
+  - Removed code behind obvious vintage/capi conditions in Atlas rules.
+  - Removed code behind obvious vintage/capi conditions in Phoenix rules.
+
+## [4.59.2] - 2025-05-09
+
+### Changed
+
+- Improved `AlloyUnhealthyComponents` alert by adding pod name
+
+## [4.59.1] - 2025-05-09
+
+### Changed
+
+- `LogForwardingErrors`: don't page out of business hours
+
+## [4.59.0] - 2025-05-08
+
+### Added
+
+- Add new alert `KonfigureOperatorDeploymentNotSatisfied`: when `konfigure-operator` deployment in `giantswarm` namespace is not ready for 30 mins.
+- Add new alert `KonfigurationReconciliationFailed`: when a `ManagementClusterConfiguration` CR in not `Ready` condition for 10 mins.
+
+## [4.58.0] - 2025-05-07
+
+### Changed
+
+- DeploymentNotSatisfiedAtlas: lower sensitivity and page only during business hours
+
+### Added
+
+- Add new alert `ClusterUpgradeStuck` to detect if the cluster app cannot be upgraded.
+- Addd `konfigure-operator` related alerts and tests.
+
+## [4.57.0] - 2025-04-30
+
+### Changed
+
+- PromtailRequestsErrors does not fire anymore when alloy-logs is running
+
+### Added
+
+- Added PromtailConflictsWithAlloy alert
+
+## [4.56.1] - 2025-04-28
+
+### Changed
+
+- Reenabled storage alerts LogVolumeSpaceTooLow and RootVolumeSpaceTooLow as paging during working hours until we have node problem detector deployed.
+
+### Fixed
+
+- Fix SLOs recording rules sent to Grafana Cloud that sometimes trigger PrometheusRulesFailure due to the origin metric pod changing.
+
+## [4.56.0] - 2025-04-24
+
+### Changed
+
+- Improved `ClusterAutoscalerFailedScaling` alert to detect stuck states where cluster-autoscaler fails to scale.
+
+## [4.55.0] - 2025-04-22
+
+### Changed
+
+- Improve ClusterCrossplaneResourcesNotReady with new metrics where available
+- Improve alert for Karpenter machines not being Ready
 
 ### Fixed
 
 - Use `exported_namespace` for certificate expiration alerts.
 
-### Changed
+### Removed
 
-- Improve ClusterCrossplaneResourcesNotReady with new metrics where available
+- Remove alerts related to `alloy-rules`.
 
 ## [4.54.1] - 2025-04-08
 
@@ -3579,7 +3666,16 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.54.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.60.0...HEAD
+[4.60.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.2...v4.60.0
+[4.59.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.1...v4.59.2
+[4.59.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.0...v4.59.1
+[4.59.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.58.0...v4.59.0
+[4.58.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.57.0...v4.58.0
+[4.57.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.56.1...v4.57.0
+[4.56.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.56.0...v4.56.1
+[4.56.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.55.0...v4.56.0
+[4.55.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.54.1...v4.55.0
 [4.54.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.54.0...v4.54.1
 [4.54.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.53.0...v4.54.0
 [4.53.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.52.0...v4.53.0

@@ -3,9 +3,6 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "management_cluster"
-    {{- end }}
   name: irsa.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -16,18 +13,13 @@ spec:
       annotations:
         description: '{{`IRSA bootstrap for Cluster {{ $labels.cluster_id }} failed.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/irsa-operator-error/
-        ## TODO Remove this if all vintage installations are gone
-        {{- if eq .Values.managementCluster.provider.flavor "capi" }}
         __dashboardUid__: bdiako8tt1b7kc
         dashboardQueryParams: "orgId=2"
-        {{- end }}
       expr: irsa_operator_cluster_errors{cluster_type="management_cluster"} > 0
       for: 10m
       labels:
         area: kaas
         cancel_if_kube_state_metrics_down: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: phoenix
@@ -40,8 +32,6 @@ spec:
       for: 10m
       labels:
         area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: phoenix

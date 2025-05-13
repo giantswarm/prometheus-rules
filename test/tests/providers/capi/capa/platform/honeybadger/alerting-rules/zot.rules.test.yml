@@ -14,9 +14,6 @@ tests:
           - exp_labels:
               alertname: "ZotDeploymentNotSatisfied"
               area: "platform"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_type: "management_cluster"
               deployment: "zot-zot"
@@ -40,9 +37,6 @@ tests:
           - exp_labels:
               alertname: "ZotPersistentVolumeFillingUp"
               area: "platform"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               namespace: "zot"
               persistentvolumeclaim: "zot-zot-pvc"

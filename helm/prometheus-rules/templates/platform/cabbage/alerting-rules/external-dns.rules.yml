@@ -4,9 +4,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "workload_cluster"
-    {{- end }}
   name: external-dns.rules
   namespace: {{ .Values.namespace }}
 spec:
@@ -17,14 +14,11 @@ spec:
       annotations:
         description: '{{`external-dns in namespace {{ $labels.namespace }}) can''t access registry (cloud service provider DNS service).`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/external-dns-cant-access-registry/
-      expr: rate(external_dns_registry_errors_total{provider=~"aws|capa|capz|eks"}[2m]) > 0
+      expr: rate(external_dns_registry_errors_total{provider=~"capa|capz|eks"}[2m]) > 0
       for: 15m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        cancel_if_kiam_has_errors: "true"
         severity: page
         team: cabbage
         topic: external-dns
@@ -32,14 +26,11 @@ spec:
       annotations:
         description: '{{`external-dns in namespace {{ $labels.namespace }}) can''t access source (Service or Ingress resource).`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/external-dns-cant-access-source/
-      expr: rate(external_dns_source_errors_total{provider=~"aws|capa|capz|eks"}[2m]) > 0
+      expr: rate(external_dns_source_errors_total{provider=~"capa|capz|eks"}[2m]) > 0
       for: 15m
       labels:
         area: platform
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        cancel_if_kiam_has_errors: "true"
         severity: page
         team: cabbage
         topic: external-dns
@@ -47,14 +38,11 @@ spec:
       annotations:
         description: '{{`external-dns in namespace {{ $labels.namespace }}) is down.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/external-dns-down/
-      expr: label_replace(up{container="external-dns", provider=~"aws|capa|capz|eks"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
+      expr: label_replace(up{container="external-dns", provider=~"capa|capz|eks"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_kiam_has_errors: "true"
         cancel_if_kubelet_down: "true"
         severity: page
         team: cabbage

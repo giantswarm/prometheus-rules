@@ -25,9 +25,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: glean-wc01
               installation: glean
@@ -54,9 +51,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: glean-wc01
               installation: glean
@@ -87,9 +81,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: glean-wc01
               container: loki
@@ -173,9 +164,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               installation: "golem"
               cluster_id: "golem"
@@ -211,9 +199,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               severity: page
               team: atlas
@@ -241,9 +226,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: golem
               installation: "golem"
@@ -273,9 +255,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: grizzly
               installation: "grizzly"
@@ -308,9 +287,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: grizzly
               installation: "grizzly"
@@ -344,9 +320,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cluster_id: myinstall
               cluster_type: management_cluster
               installation: myinstall
@@ -373,9 +346,6 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cancel_if_cluster_status_creating: "true"
-              cancel_if_cluster_status_deleting: "true"
-              cancel_if_cluster_status_updating: "true"
               cluster_id: myinstall
               cluster_type: management_cluster
               installation: myinstall

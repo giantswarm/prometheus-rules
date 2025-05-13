@@ -21,9 +21,6 @@ spec:
       labels:
         area: kaas
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: tenet

@@ -4,32 +4,12 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "workload_cluster"
-    {{- end }}
   name: node.aws.workload-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
   - name: node.aws
     rules:
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    ## TODO Remove when all vintage installations are gone
-    - alert: AWSWorkloadClusterNodeTooManyAutoTermination
-      annotations:
-        description: '{{`Cluster {{ $labels.cluster_id }} has too many nodes terminated by node auto termination feature in a short time.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/node-too-many-auto-termination-aws/
-      expr: increase(aws_operator_unhealthy_node_termination_count[60m]) > 10
-      for: 15m
-      labels:
-        area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
-        severity: page
-        team: phoenix
-        topic: kubernetes
-    {{- end }}
     - alert: WorkloadClusterNodeUnexpectedTaintNodeWithImpairedVolumes
       annotations:
         description: '{{`Node {{ $labels.node }} has unexpected taint NodeWithImpairedVolumes`}}'

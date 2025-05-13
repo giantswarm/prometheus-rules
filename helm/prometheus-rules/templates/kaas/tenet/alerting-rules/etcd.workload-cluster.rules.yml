@@ -4,9 +4,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "workload_cluster"
-    {{- end }}
   name: etcd.workload-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -21,8 +18,6 @@ spec:
       for: 20m
       labels:
         area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         cancel_if_control_plane_node_down: "true"
         cancel_if_kubelet_down: "true"
@@ -59,9 +54,6 @@ spec:
       expr: increase(etcd_server_leader_changes_seen_total{cluster_type="workload_cluster", provider!="eks"}[1h]) > 8
       labels:
         area: kaas
-        cancel_if_cluster_status_creating: "true"
-        cancel_if_cluster_status_deleting: "true"
-        cancel_if_cluster_status_updating: "true"
         severity: notify
         team: tenet
         topic: etcd

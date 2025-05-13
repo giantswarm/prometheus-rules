@@ -10,14 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Add `grafana-postgresql` in the `ObservabilityStorageSpaceTooLow` alert's monitored PVCs.
-- Vintage cleanup:
-  - Stopped running tests for vintage. Meaning some vintage-specific labels had to be removed.
-  - Removed code behind obvious vintage/capi conditions in Atlas rules.
-  - Removed code behind obvious vintage/capi conditions in Phoenix rules.
 
 ### Added
 
 - Add `GrafanaPostgresqlReplicationFailure` and `GrafanaPostgresqlArchivingFailure` alerting rules in `grafana.rules.yml`.
+
+## [4.60.0] - 2025-05-13
+
+### Added
+
+- Add `OnPremCloudProviderAPIIsDown` alert to all clusters
+- Vintage cleanup:
+  - Stopped running tests for vintage. Meaning some vintage-specific labels had to be removed.
+  - Removed code behind obvious vintage/capi conditions in Atlas rules.
+  - Removed code behind obvious vintage/capi conditions in Phoenix rules.
 
 ## [4.59.2] - 2025-05-09
 
@@ -3650,7 +3656,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.60.0...HEAD
+[4.60.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.2...v4.60.0
 [4.59.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.1...v4.59.2
 [4.59.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.0...v4.59.1
 [4.59.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.58.0...v4.59.0

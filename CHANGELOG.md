@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Add `grafana-postgresql` in the `ObservabilityStorageSpaceTooLow` alert's monitored PVCs.
+
+### Added
+
+- Add `GrafanaPostgresqlReplicationFailure` and `GrafanaPostgresqlArchivingFailure` alerting rules in `grafana.rules.yml`.
 - Vintage cleanup:
   - Removed code behind obvious vintage/capi conditions in Cabbage rules.
   - Removed code behind obvious vintage/capi conditions in Honeybadger rules.
@@ -16,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed code behind obvious vintage/capi conditions in Shield rules.
   - Remove the "aws" provider.
   - Clean up mimir-heartbeat type that was needed when we have both old and new heartbeats.
+- Add `CAPATooManyReconciliations` to page when CAPA controllers are stuck reconciling over and over.
 
 ## [4.60.0] - 2025-05-13
 

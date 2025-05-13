@@ -19,7 +19,6 @@ tests:
               installation: myinstall
               team: atlas
               topic: observability
-              type: mimir-heartbeat
             exp_annotations:
               description: "This alert is used to ensure the entire alerting pipeline is functional."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
@@ -35,7 +34,6 @@ tests:
               installation: myinstall
               team: atlas
               topic: observability
-              type: mimir-heartbeat
             exp_annotations:
               description: "This alert is used to ensure the entire alerting pipeline is functional."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
@@ -51,7 +49,6 @@ tests:
               installation: myinstall
               team: atlas
               topic: observability
-              type: mimir-heartbeat
             exp_annotations:
               description: "This alert is used to ensure the entire alerting pipeline is functional."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/

@@ -18,8 +18,6 @@ spec:
       labels:
         area: platform
         installation: {{ .Values.managementCluster.name }}
-        # TODO(@giantswarm/team-atlas): We need this label as long as we have the old and new heartbeats. Let's remove once the legacy monitoring is gone
-        type: mimir-heartbeat
         team: atlas
         topic: observability
     # Coming from https://github.com/giantswarm/giantswarm/issues/30124

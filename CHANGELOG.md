@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed code behind obvious vintage/capi conditions in Tenet rules.
   - Removed code behind obvious vintage/capi conditions in Shield rules.
   - Remove the "aws" provider.
+- Clean up mimir-heartbeat type that was needed when we have both old and new heartbeats.
 
 ## [4.60.0] - 2025-05-13
 

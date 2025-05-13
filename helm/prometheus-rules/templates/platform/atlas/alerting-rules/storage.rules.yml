@@ -14,7 +14,7 @@ spec:
       annotations:
         description: '{{`The free space on the Data Disk for instance: {{ $labels.instance }} and PVC: {{ $labels.persistentvolumeclaim}} was below 10 percent for longer than 1 hour (current value {{ $value | printf "%.2f" }}).`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/low-disk-space/#persistent-volume
-      expr: kubelet_volume_stats_available_bytes{cluster_type="management_cluster", persistentvolumeclaim=~".*(alertmanager|loki|mimir|prometheus|pyroscope|tempo).*"}/kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~".*(alertmanager|loki|mimir|prometheus|pyroscope|tempo).*"} < 0.10
+      expr: kubelet_volume_stats_available_bytes{cluster_type="management_cluster", persistentvolumeclaim=~".*(alertmanager|loki|mimir|prometheus|pyroscope|tempo|grafana-postgresql).*"}/kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~".*(alertmanager|loki|mimir|prometheus|pyroscope|tempo).*"} < 0.10
       for: 1h
       labels:
         area: platform

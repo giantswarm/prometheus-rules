@@ -4,9 +4,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "management_cluster"
-    {{- end }}
   name: app.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -42,7 +39,6 @@ spec:
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/
-      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: |-
         (
           app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog=~"giantswarm|cluster|default", team!~"^$|noteam"}
@@ -53,9 +49,6 @@ spec:
               )
           ) by (cluster_id, provider)
         ) == 1
-      {{- else }}
-      expr: label_replace(app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog=~"giantswarm|default", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
-      {{- end }}
       for: 30m
       labels:
         area: platform
@@ -69,7 +62,6 @@ spec:
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/
-      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: |-
         (
           app_operator_app_info{status="not-installed", catalog=~"giantswarm|cluster|default", team!~"^$|noteam"} 
@@ -80,9 +72,6 @@ spec:
               )
           ) by (cluster_id, provider)
         ) == 1
-      {{- else }}
-      expr: label_replace(app_operator_app_info{status="not-installed", catalog=~"giantswarm|default", team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
-      {{- end }}
       for: 30m
       labels:
         area: platform
@@ -96,7 +85,6 @@ spec:
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-pending-update/
-      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: |-
         (
           app_operator_app_info{catalog=~"giantswarm|cluster|default", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}
@@ -107,9 +95,6 @@ spec:
               )
           ) by (cluster_id, provider)
         ) == 1
-      {{- else }}
-      expr: label_replace(app_operator_app_info{catalog=~"giantswarm|default", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
-      {{- end }}
       for: 40m
       labels:
         area: platform
@@ -121,7 +106,6 @@ spec:
       annotations:
         description: '{{`App {{ $labels.name }} has no team label.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-without-team-annotation/
-      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: |-
         (
           app_operator_app_info{app!~"api-spec(-app)?", team=~"^$|noteam", catalog=~"giantswarm.*|control-plane(-test)?-catalog|cluster(-test)?|default(-test)?|releases(-test)?"}
@@ -132,9 +116,6 @@ spec:
               )
           ) by (cluster_id, provider)
         ) == 1
-      {{- else }}
-      expr: label_replace(app_operator_app_info{app!~"api-spec(-app)?", team=~"^$|noteam", catalog=~"giantswarm.*|control-plane(-test)?-catalog|cluster(-test)?|default(-test)?|releases(-test)?"}, "cluster_id", "$1", "namespace", {{ include "namespaceNotGiantswarm" . }}) == 1
-      {{- end }}
       for: 40m
       labels:
         area: platform

@@ -5,7 +5,7 @@ set -o nounset
 set -o pipefail
 
 TMPDIR="$(mktemp -d -t 'tmp.XXXXXXXXXX')"
-RULESFILE="helm/prometheus-rules/templates/kaas/turtles/recording-rules/kubernetes-mixins.rules.yml"
+RULESFILE="helm/prometheus-rules/templates/kaas/tenet/recording-rules/kubernetes-mixins.rules.yml"
 
 trap 'cleanup' EXIT
 

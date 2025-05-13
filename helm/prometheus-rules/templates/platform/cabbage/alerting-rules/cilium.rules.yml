@@ -59,7 +59,6 @@ spec:
         severity: page
         team: cabbage
         topic: cilium
-    {{- if eq .Values.managementCluster.provider.flavor "capi" }}
     - alert: FluxHelmReleaseFailed
       annotations:
         description: |-
@@ -77,4 +76,3 @@ spec:
         topic: cilium
         namespace: |-
           {{`{{ $labels.exported_namespace }}`}}
-    {{- end -}}

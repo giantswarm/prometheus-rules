@@ -4,9 +4,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "management_cluster"
-    {{- end }}
   name: management-cluster.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -70,37 +67,6 @@ spec:
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: managementcluster
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    ## TODO(@giantswarm/team-atlas) Remove when all vintage clusters are gone
-    - alert: ManagementClusterCriticalPodNotRunning
-      annotations:
-        description: '{{`Critical pod {{ $labels.namespace }}/{{ $labels.pod }} is not running.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/critical-pod-is-not-running/
-      expr: kube_pod_container_status_running{pod=~"(k8s-api-server|k8s-controller-manager|k8s-scheduler).*", cluster_type="management_cluster"} != 1
-      for: 5m
-      labels:
-        area: kaas
-        severity: page
-        team: phoenix
-        topic: managementcluster
-    - alert: ManagementClusterCriticalPodMetricMissing
-      annotations:
-        description: '{{`Critical pod {{ $labels.container }} does not have metrics.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/critical-pod-is-not-running/
-      expr: |
-        absent(kube_pod_container_status_running{container="k8s-api-server", cluster_type="management_cluster"}) == 1
-          or absent(kube_pod_container_status_running{container="k8s-controller-manager", cluster_type="management_cluster"}) == 1
-          or absent(kube_pod_container_status_running{container="k8s-scheduler", cluster_type="management_cluster"}) == 1
-      for: 25m
-      labels:
-        area: kaas
-        cancel_if_monitoring_agent_down: "true"
-        cancel_if_kube_state_metrics_down: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: page
-        team: phoenix
-        topic: managementcluster
-    {{- end }}
     - alert: ManagementClusterContainerIsRestartingTooFrequently
       # Prometheus and phoenix containers are excluded
       annotations:

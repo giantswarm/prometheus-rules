@@ -4,9 +4,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "management_cluster"
-    {{- end }}
   name: etcdbackup.rules
   namespace: {{ .Values.namespace  }}
 spec:
@@ -29,11 +26,7 @@ spec:
       annotations:
         description: '{{`Latest successful ETCD backup for {{ $labels.cluster_id }}/{{ $labels.tenant_cluster_id }} was more than 48h ago.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/etcd-backup-failed/
-      {{- if eq .Values.managementCluster.provider.flavor "capi" }}
       expr: count(label_replace(capi_cluster_created, "tenant_cluster_id", "$1", "name", "(.*)")) by (cluster_id, installation, pipeline, provider, tenant_cluster_id)  > 48 * 60 * 60 unless count((time() - etcd_backup_latest_success{tenant_cluster_id!="Control Plane"}) > 48 * 60 * 60) by (cluster_id, installation, pipeline, provider, tenant_cluster_id)
-      {{- else }}
-      expr: (time() - etcd_backup_latest_success{tenant_cluster_id!="Control Plane"}) > 48 * 60 * 60
-      {{- end }}
       for: 5m
       labels:
         area: kaas

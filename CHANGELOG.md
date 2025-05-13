@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vintage cleanup:
   - Removed code behind obvious vintage/capi conditions in Cabbage rules.
   - Removed code behind obvious vintage/capi conditions in Honeybadger rules.
+  - Removed code behind obvious vintage/capi conditions in Tenet rules.
 
 ## [4.60.0] - 2025-05-13
 

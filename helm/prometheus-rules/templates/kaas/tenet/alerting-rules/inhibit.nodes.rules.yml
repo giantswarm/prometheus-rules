@@ -4,9 +4,6 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-    {{- if eq .Values.managementCluster.provider.flavor "vintage" }}
-    cluster_type: "management_cluster"
-    {{- end }}
   name: inhibit.nodes.rules
   namespace: {{ .Values.namespace  }}
 spec:

@@ -64,4 +64,19 @@ spec:
         severity: page
         team: phoenix
         topic: kubernetes
+    - alert: CAPATooManyReconciliations
+      annotations:
+        description: '{{`The {{ $labels.controller }} in CAPA is reconciling too frequently.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capa-too-many-reconciliations/
+      # Computes the absolute number of reconciliation loops over the past 10 minutes (600 seconds). Fires as soon as that count exceeds 1000. 1.667 reconciliations/second on average.
+      expr: increase(controller_runtime_reconcile_total{app="cluster-api-provider-aws"}[10m]) > 1000
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_monitoring_agent_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: kubernetes
 {{- end }}

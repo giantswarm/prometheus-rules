@@ -10,7 +10,7 @@ spec:
   groups:
   - name: prometheus-operator
     rules:
-    ## TODO(@giantswarm/team-atlas) remove once all clusters are passed v20
+    ## TODO(@giantswarm/team-atlas): Remove once all clusters are passed v20
     - alert: DuplicatePrometheusOperatorKubeletService
       annotations:
         description: '{{`Prometheus-operator in cluster {{ $labels.cluster_id }} has duplicate kubelet service.`}}'

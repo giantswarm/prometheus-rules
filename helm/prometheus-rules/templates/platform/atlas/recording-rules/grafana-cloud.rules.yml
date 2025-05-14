@@ -279,7 +279,7 @@ spec:
     # Dex operator metrics for expiry time of identity provider oauth app secrets
     - expr: dex_operator_idp_secret_expiry_time
       record: aggregation:dex_operator_idp_secret_expiry_time
-    # Requests to the deprecated k8s authenticator. TODO(@team-bigmac): Get rid of this recording rule when the component is no longer used.
+    # Requests to the deprecated k8s authenticator. TODO(@giantswarm/team-shield): Get rid of this recording rule when the component is no longer used.
     - expr: nginx_ingress_controller_requests{ingress="dex-k8s-authenticator"}
       record: aggregation:dex_k8s_authenticator_requests
   - name: grafana.grafana-cloud.recording

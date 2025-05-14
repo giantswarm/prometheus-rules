@@ -1,4 +1,4 @@
-# TODO - This is only used by the chart-operator, let's get rid of it when the chart operator is gone.
+# TODO(@giantswarm/team-honeybadger): This is only used by the chart-operator, let's get rid of it when the chart operator is gone.
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:

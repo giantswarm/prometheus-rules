@@ -14,7 +14,7 @@ spec:
       annotations:
         description: '{{`NodeExporter Collector {{ $labels.collector }} on {{ $labels.instance }} is failed.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/node-exporter-device-error/
-        # TODO(theo): the namespace filter should be removed when this completed https://github.com/giantswarm/roadmap/issues/3791, see https://github.com/giantswarm/prometheus-rules/pull/1491
+        # # TODO(@giantswarm/team-atlas): the namespace filter should be removed when this completed https://github.com/giantswarm/roadmap/issues/3791, see https://github.com/giantswarm/prometheus-rules/pull/1491
       expr: node_scrape_collector_success{collector!~"conntrack|bonding|hwmon|powersupplyclass|mdadm|nfs|nfsd|tapestats|fibrechannel|nvme|watchdog", namespace="kube-system"} == 0
       for: 5m
       labels:

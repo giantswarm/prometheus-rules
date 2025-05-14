@@ -35,5 +35,96 @@ tests:
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/node-exporter-device-error/
       - alertname: NodeExporterCollectorFailed
         eval_time: 70m
+  # Tests for `IncorrectResourceUsageData` alert
+  # This alert compare metrics for CPU and memory between node-exporter (aggregation:node:*) and kubelet (machine_*).
+  # This alert is triggered when the values from node-exporter are 10% lower than the values from kubelet.
+  # Test cases:
+  # - same value yield no alert
+  # - lower value from node-exporter yield no alert
+  # - incorrect value from node-exporter for 20m yield no alert
+  # - higher value from node-exporter yield no alert
+  # The tests use 180m intervals since the alert uses a 2h time window and wait for 1h before firing
+  # The tests are split in 2 parts: one for CPU and one for memory with the same test cases
+  - interval: 1m
+    input_series:
+      # First test CPU
+      - series: 'aggregation:node:cpu_cores_total{cluster_id="mycluster", customer="giantswarm", installation="myinstall", pipeline="testing", provider="capa", region="eu-west-1"}'
+        values: '64x180 48x180 64x180  0x20 64x160 128x180'
+      - series: 'machine_cpu_cores{cluster_id="mycluster", customer="giantswarm", installation="myinstall", pipeline="testing", provider="capa", region="eu-west-1", node="node-a"}'
+        values: '16x900'
+      - series: 'machine_cpu_cores{cluster_id="mycluster", customer="giantswarm", installation="myinstall", pipeline="testing", provider="capa", region="eu-west-1", node="node-b"}'
+        values: '16x900'
+      - series: 'machine_cpu_cores{cluster_id="mycluster", customer="giantswarm", installation="myinstall", pipeline="testing", provider="capa", region="eu-west-1", node="node-c"}'
+        values: '16x900'
+      - series: 'machine_cpu_cores{cluster_id="mycluster", customer="giantswarm", installation="myinstall", pipeline="testing", provider="capa", region="eu-west-1", node="node-d"}'
+        values: '16x900'
 
+      # Then test memory with a 900mn padding
+      - series: 'aggregation:node:memory_memtotal_bytes_total{cluster_id="mycluster", customer="giantswarm", installation="myinstall", pipeline="testing", provider="capa", region="eu-west-1"}'
+        values: '256x900 256x180 128x180 256x180 0x20 256x160 512x180'
+      - series: 'machine_memory_bytes{cluster_id="mycluster", customer="giantswarm", installation="myinstall", pipeline="testing", provider="capa", region="eu-west-1", node="node-a"}'
+        values: '64x1800'
+      - series: 'machine_memory_bytes{cluster_id="mycluster", customer="giantswarm", installation="myinstall", pipeline="testing", provider="capa", region="eu-west-1", node="node-b"}'
+        values: '64x1800'
+      - series: 'machine_memory_bytes{cluster_id="mycluster", customer="giantswarm", installation="myinstall", pipeline="testing", provider="capa", region="eu-west-1", node="node-c"}'
+        values: '64x1800'
+      - series: 'machine_memory_bytes{cluster_id="mycluster", customer="giantswarm", installation="myinstall", pipeline="testing", provider="capa", region="eu-west-1", node="node-d"}'
+        values: '64x1800'
+    alert_rule_test:
+      # Test case 1 (cpu): no alert
+      - alertname: IncorrectResourceUsageData
+        eval_time: 181m
+      # Test case 2 (cpu): alert fire after 3h
+      - alertname: IncorrectResourceUsageData
+        eval_time: 361m
+        exp_alerts:
+          - exp_labels:
+              area: "kaas"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "mycluster"
+              customer: "giantswarm"
+              installation: "myinstall"
+              pipeline: "testing"
+              provider: "capa"
+              region: "eu-west-1"
+              severity: "page"
+              team: "tenet"
+              topic: "observability"
+            exp_annotations:
+              description: 'Data used in the Grafana Cloud Resource Usage dashboard is incorrect for cluster mycluster.'
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/resource-usage-dashboard/
+      # Test case 3 (cpu): incorrect value for 20m yield no alert
+      - alertname: IncorrectResourceUsageData
+        eval_time: 721m
+      # Test case 4 (cpu): higher value from node-exporter yield no alert
+      - alertname: IncorrectResourceUsageData
+        eval_time: 901m
 
+      # Test case 1 (memory): no alert
+      - alertname: IncorrectResourceUsageData
+        eval_time: 1081m
+      # Test case 2 (memory): alert fire after 3h
+      - alertname: IncorrectResourceUsageData
+        eval_time: 1261m
+        exp_alerts:
+          - exp_labels:
+              area: "kaas"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "mycluster"
+              customer: "giantswarm"
+              installation: "myinstall"
+              pipeline: "testing"
+              provider: "capa"
+              region: "eu-west-1"
+              severity: "page"
+              team: "tenet"
+              topic: "observability"
+            exp_annotations:
+              description: 'Data used in the Grafana Cloud Resource Usage dashboard is incorrect for cluster mycluster.'
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/resource-usage-dashboard/
+      # Test case 3 (memory): incorrect value for 20m yield no alert
+      - alertname: IncorrectResourceUsageData
+        eval_time: 1620m
+      # Test case 4 (memory): higher value from node-exporter yield no alert
+      - alertname: IncorrectResourceUsageData
+        eval_time: 1801m

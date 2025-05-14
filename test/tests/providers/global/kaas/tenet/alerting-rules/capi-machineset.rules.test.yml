@@ -4,8 +4,10 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'capi_machineset_annotation_paused{paused_value="true",cluster_name="grumpy", name="grumpy-def99", exported_namespace="giantswarm"}'
+      - series: 'capi_machineset_annotation_paused{paused_value="true",cluster_id="grumpy", name="grumpy-def99", exported_namespace="giantswarm"}'
         values: "0+1x75"
+      - series: 'capi_cluster_info{cluster_id="grumpy", provider="capa"}'
+        values: "1+0x75"
     alert_rule_test:
       - alertname: MachineSetPaused
         eval_time: 75m
@@ -14,10 +16,11 @@ tests:
               area: kaas
               cancel_if_monitoring_agent_down: "true"
               cancel_if_outside_working_hours: "true"
+              provider: capa
               severity: notify
               team: phoenix
               topic: managementcluster
-              cluster_name: grumpy
+              cluster_id: grumpy
               name: grumpy-def99
               exported_namespace: giantswarm
               paused_value: "true"

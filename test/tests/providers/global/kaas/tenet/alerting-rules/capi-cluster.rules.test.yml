@@ -4,16 +4,18 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'capi_cluster_status_phase{name="clippaxy", exported_namespace="giantswarm", phase="Provisioned"}'
-        values: "1+0x75"
-      - series: 'capi_cluster_status_phase{name="clippaxy", exported_namespace="giantswarm", phase="Pending"}'
-        values: "1+0x75"
-      - series: 'capi_cluster_status_condition{name="grumpy", exported_namespace="giantswarm", status="False", type="Ready"}'
+      - series: 'capi_cluster_status_phase{cluster_id="clippaxy", exported_namespace="giantswarm", phase="Pending"}'
+        values: "1x75"
+      - series: 'capi_cluster_info{cluster_id="clippaxy", provider="capa"}'
+        values: "1x75"
+      - series: 'capi_cluster_status_condition{cluster_id="grumpy", exported_namespace="giantswarm", status="False", type="Ready"}'
         values: "0+0x10 0+1x65"
-      - series: 'capi_cluster_status_condition{name="grumpy", exported_namespace="giantswarm", status="True", type="Ready"}'
+      - series: 'capi_cluster_status_condition{cluster_id="grumpy", exported_namespace="giantswarm", status="True", type="Ready"}'
         values: "0+1x10 0+0x65"
-      - series: 'capi_cluster_annotation_paused{name="grumpy", exported_namespace="giantswarm", paused_value="true"}'
+      - series: 'capi_cluster_annotation_paused{cluster_id="grumpy", exported_namespace="giantswarm", paused_value="true"}'
         values: "0+1x75"
+      - series: 'capi_cluster_info{cluster_id="grumpy", provider="capa"}'
+        values: "1x75"
     alert_rule_test:
       - alertname: ClusterUnhealthyPhase
         eval_time: 75m
@@ -22,12 +24,13 @@ tests:
               area: kaas
               cancel_if_monitoring_agent_down: "true"
               cancel_if_outside_working_hours: "true"
+              cluster_id: clippaxy
               severity: page
               team: phoenix
               topic: managementcluster
-              name: clippaxy
               exported_namespace: giantswarm
               phase: Pending
+              provider: capa
             exp_annotations:
               description: "Cluster giantswarm/clippaxy stuck in Pending phase."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
@@ -40,10 +43,11 @@ tests:
               area: kaas
               cancel_if_monitoring_agent_down: "true"
               cancel_if_outside_working_hours: "true"
+              cluster_id: grumpy
+              provider: capa
               severity: notify
               team: phoenix
               topic: managementcluster
-              name: grumpy
               exported_namespace: giantswarm
               status: "False"
               type: Ready
@@ -59,10 +63,11 @@ tests:
               area: kaas
               cancel_if_monitoring_agent_down: "true"
               cancel_if_outside_working_hours: "true"
+              cluster_id: grumpy
+              provider: capa
               severity: notify
               team: phoenix
               topic: managementcluster
-              name: grumpy
               exported_namespace: giantswarm
               paused_value: "true"
             exp_annotations:

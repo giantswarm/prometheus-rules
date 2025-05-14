@@ -7,9 +7,9 @@ tests:
   - interval: 1m
     input_series:
       # No data for 20 minutes, then all good, then cpu collector fails, then bonding collector fails
-      - series: 'node_scrape_collector_success{app="node-exporter", collector="cpu", instance="10.0.5.111:10300"}'
+      - series: 'node_scrape_collector_success{app="node-exporter", collector="cpu", instance="10.0.5.111:10300", namespace="kube-system"}'
         values: "_x20 1+0x20 0+0x20 1+0x20"
-      - series: 'node_scrape_collector_success{app="node-exporter", collector="bonding", instance="10.0.5.111:10300"}'
+      - series: 'node_scrape_collector_success{app="node-exporter", collector="bonding", instance="10.0.5.111:10300", namespace="kube-system"}'
         values: "_x20 1+0x20 1+0x20 0+0x20"
     alert_rule_test:
       - alertname: NodeExporterCollectorFailed
@@ -26,8 +26,9 @@ tests:
               cancel_if_outside_working_hours: "true"
               collector: "cpu"
               instance: "10.0.5.111:10300"
+              namespace: "kube-system"
               severity: "page"
-              team: "phoenix"
+              team: "tenet"
               topic: "observability"
             exp_annotations:
               description: "NodeExporter Collector cpu on 10.0.5.111:10300 is failed."

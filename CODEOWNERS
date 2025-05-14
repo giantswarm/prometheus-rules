@@ -28,8 +28,8 @@
 /helm/prometheus-rules/templates/platform/honeybadger/ @giantswarm/team-honeybadger
 /test/tests/provider/global/platform/honeybadger/      @giantswarm/team-honeybadger
 
-/helm/prometheus-rules/templates/platform/shield/      @giantswarm/team-shield
-/test/tests/provider/global/platform/shield/           @giantswarm/team-shield
+/helm/prometheus-rules/templates/platform/shield/ @giantswarm/team-shield
+/test/tests/provider/global/platform/shield/      @giantswarm/team-shield
 
 # No owners for changelog
 /CHANGELOG.md

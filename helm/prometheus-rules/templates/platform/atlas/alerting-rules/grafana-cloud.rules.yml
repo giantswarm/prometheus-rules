@@ -24,6 +24,7 @@ spec:
         topic: observability
   - name: resource-usage
     rules:
+    # IncorrectResourceUsageData alert detects if the data used in the Grafana Cloud Resource Usage dashboard is incorrect by comparing the dashboard data against data from the kubelet.
     - alert: IncorrectResourceUsageData
       annotations:
         description: '{{`Data used in the Grafana Cloud Resource Usage dashboard is incorrect for cluster {{ $labels.cluster_id }}.`}}'

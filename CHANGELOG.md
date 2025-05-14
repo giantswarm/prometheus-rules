@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.61.0] - 2025-05-14
+
 ### Changed
 
 - Add `grafana-postgresql` in the `ObservabilityStorageSpaceTooLow` alert's monitored PVCs.
@@ -3667,7 +3669,8 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.60.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.61.0...HEAD
+[4.61.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.60.0...v4.61.0
 [4.60.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.2...v4.60.0
 [4.59.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.1...v4.59.2
 [4.59.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.0...v4.59.1

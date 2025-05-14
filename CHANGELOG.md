@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Remove duplicate test files for Atlas since all tests are the same accross all CAPI providers.
+- Remove duplicate test files for Honeybadger since all tests are the same accross all CAPI providers.
 - Remove duplicate test files for Shield since all tests are the same accross all CAPI providers.
 
 ## [4.61.0] - 2025-05-14

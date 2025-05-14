@@ -12,9 +12,22 @@ spec:
     rules:
     - alert: ManagementClusterCertificateIsMissing
       annotations:
-        description: '{{`Cannot renew Certificate for Secret {{ $labels.exported_namespace }}/{{ $labels.certificatename }} because it is missing.`}}'
+        description: '{{`Cannot renew Certificate for Secret {{ $labels.exported_namespace }}/{{ $labels.certificatename }} on {{ $labels.cluster_id }} because it is missing.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/managed-app-cert-manager/missing-certificate-for-secret/
-      expr: count(cert_exporter_secret_not_after{cluster_type="management_cluster", secretkey="tls.crt", certificatename!=""}) by (cluster_id, installation, pipeline, provider, certificatename, exported_namespace) unless count(label_replace(cert_exporter_certificate_cr_not_after{cluster_type="management_cluster"}, "certificatename", "$1", "name", "(.*)")) by (cluster_id, installation, pipeline, provider, certificatename, exported_namespace)
+      expr: |
+        count(
+          cert_exporter_secret_not_after{cluster_type="management_cluster", secretkey="tls.crt", certificatename!=""}
+        ) by (cluster_id, installation, pipeline, provider, certificatename, exported_namespace)
+        unless 
+        count(
+          label_replace(
+            cert_exporter_certificate_cr_not_after{cluster_type="management_cluster"}, 
+            "certificatename", 
+            "$1", 
+            "name", 
+            "(.*)"
+          )
+        ) by (cluster_id, installation, pipeline, provider, certificatename, exported_namespace)
       for: 5m
       labels:
         area: kaas

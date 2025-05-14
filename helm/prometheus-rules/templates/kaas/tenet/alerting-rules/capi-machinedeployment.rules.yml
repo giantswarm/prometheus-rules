@@ -29,7 +29,7 @@ spec:
             topic: managementcluster
           annotations:
             description: |-
-              {{`The clusters {{$labels.cluster_name}} machinedeployment {{$labels.exported_namespace}}/{{$labels.name}} is not healthy.`}}
+              {{`The clusters {{$labels.cluster_id}} machinedeployment {{$labels.exported_namespace}}/{{$labels.name}} is not healthy.`}}
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-machinedeployment/
             __dashboardUid__: bdi7iswg81czkcasd
             dashboardQueryParams: "orgId=2"
@@ -54,7 +54,7 @@ spec:
             topic: managementcluster
           annotations:
             description: |-
-              {{`The clusters {{$labels.cluster_name}} machinedeployment {{$labels.exported_namespace}}/{{$labels.name}} is paused.`}}
+              {{`The clusters {{$labels.cluster_id}} machinedeployment {{$labels.exported_namespace}}/{{$labels.name}} is paused.`}}
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-machinedeployment/
             __dashboardUid__: bdi7iswg81czkcasd
             dashboardQueryParams: "orgId=2"

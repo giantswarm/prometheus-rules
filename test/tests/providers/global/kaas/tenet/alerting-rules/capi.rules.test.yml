@@ -4,10 +4,12 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'capi_machine_status_phase{cluster_name="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm", phase="Running"}'
+      - series: 'capi_machine_status_phase{cluster_id="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm", phase="Running"}'
         values: "1+0x10 0+0x35"
-      - series: 'capi_machine_status_phase{cluster_name="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm", phase="Failed"}'
+      - series: 'capi_machine_status_phase{cluster_id="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm", phase="Failed"}'
         values: "0+0x10 1+0x35"
+      - series: 'capi_cluster_info{cluster_id="clippaxy", provider="capa"}'
+        values: "1+0x45"
     alert_rule_test:
       - alertname: MachineUnhealthyPhase
         eval_time: 45m
@@ -15,10 +17,11 @@ tests:
           - exp_labels:
               area: kaas
               cancel_if_outside_working_hours: "true"
+              provider: capa
               severity: notify
               team: phoenix
               topic: managementcluster
-              cluster_name: clippaxy
+              cluster_id: clippaxy
               name: clippaxy-72jq5
               exported_namespace: giantswarm
               phase: Failed
@@ -26,7 +29,7 @@ tests:
               description: "Machine giantswarm/clippaxy-72jq5 stuck in phase Failed for more than 30 minutes."
   - interval: 1m
     input_series:
-      - series: 'capi_machinepool_status_phase{phase="Failed", cluster_name="clippaxy", name="clippaxy-def00", exported_namespace="giantswarm"}'
+      - series: 'capi_machinepool_status_phase{phase="Failed", cluster_id="clippaxy", name="clippaxy-def00", exported_namespace="giantswarm"}'
         values: "0+3x75"
     alert_rule_test:
       - alertname: MachinePoolIsNotHealthy
@@ -35,23 +38,24 @@ tests:
           - exp_labels:
               area: kaas
               cancel_if_outside_working_hours: "true"
+              provider: capa
               severity: notify
               team: phoenix
               topic: managementcluster
-              cluster_name: clippaxy
+              cluster_id: clippaxy
               name: clippaxy-def00
               exported_namespace: giantswarm
             exp_annotations:
               description: "The clusters clippaxy machinepool giantswarm/clippaxy-def00 is not healthy."
   - interval: 1m
     input_series:
-      - series: 'capi_kubeadmcontrolplane_spec_replicas{cluster_name="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm"}'
+      - series: 'capi_kubeadmcontrolplane_spec_replicas{cluster_id="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm"}'
         values: "0+3x100"
-      - series: 'capi_kubeadmcontrolplane_status_replicas_ready{cluster_name="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm"}'
+      - series: 'capi_kubeadmcontrolplane_status_replicas_ready{cluster_id="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm"}'
         values: "0+3x100"
-      - series: 'capi_kubeadmcontrolplane_spec_replicas{cluster_name="clippaxy", name="clippaxy-72jzy", exported_namespace="giantswarm"}'
+      - series: 'capi_kubeadmcontrolplane_spec_replicas{cluster_id="clippaxy", name="clippaxy-72jzy", exported_namespace="giantswarm"}'
         values: "0+3x100"
-      - series: 'capi_kubeadmcontrolplane_status_replicas_ready{cluster_name="clippaxy", name="clippaxy-72jzy", exported_namespace="giantswarm"}'
+      - series: 'capi_kubeadmcontrolplane_status_replicas_ready{cluster_id="clippaxy", name="clippaxy-72jzy", exported_namespace="giantswarm"}'
         values: "0+2x100"
     alert_rule_test:
       - alertname: KubeadmControlPlaneReplicasMismatch
@@ -60,10 +64,11 @@ tests:
           - exp_labels:
               area: kaas
               cancel_if_outside_working_hours: "true"
+              provider: capa
               severity: notify
               team: phoenix
               topic: managementcluster
-              cluster_name: clippaxy
+              cluster_id: clippaxy
               name: clippaxy-72jzy
               exported_namespace: giantswarm
             exp_annotations:
@@ -81,6 +86,7 @@ tests:
           - exp_labels:
               area: kaas
               cancel_if_outside_working_hours: "true"
+              provider: capa
               severity: notify
               team: phoenix
               topic: managementcluster

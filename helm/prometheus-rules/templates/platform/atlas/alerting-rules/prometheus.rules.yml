@@ -1,4 +1,4 @@
-# TODO(@giantswarm/team-atlas): revisit once vintage is gone
+# TODO(@giantswarm/team-atlas): Revisit once vintage is gone
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:

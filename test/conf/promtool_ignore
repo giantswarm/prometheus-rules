@@ -27,4 +27,3 @@ platform/honeybadger/recording-rules/helm-operations.rules.yml
 platform/shield/alerting-rules/falco.rules.yml
 platform/shield/alerting-rules/cert-manager.rules.yml
 platform/shield/alerting-rules/dex.rules.yml
-platform/shield/alerting-rules/teleport.rules.yml

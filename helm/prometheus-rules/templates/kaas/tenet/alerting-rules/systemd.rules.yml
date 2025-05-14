@@ -10,7 +10,7 @@ spec:
   groups:
   - name: systemd
     rules:
-    ## TODO(@giantswarm/team-tenet) Update those lists when all vintage clusters are gone
+    ## TODO(@giantswarm/team-tenet): Update those lists when all vintage clusters are gone
     - alert: ClusterCriticalSystemdUnitFailed
       annotations:
         description: '{{`Critical systemd unit {{ $labels.name }} is failed on {{ $labels.instance }}.`}}'

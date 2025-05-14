@@ -10,6 +10,18 @@ spec:
   groups:
   - name: app
     rules:
+    - alert: AppAdmissionControllerWebhookDurationExceedsTimeout
+      annotations:
+        description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/apiserver-admission-webhook-errors/
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{name="apps.app-admission-controller.giantswarm.io"}[5m])) by (cluster_id, installation, pipeline, provider, name, le)) > 9
+      for: 25m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: honeybadger
+        topic: releng
     - alert: ManagementClusterAppFailed
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
@@ -42,7 +54,7 @@ spec:
       expr: |-
         (
           app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog=~"giantswarm|cluster|default", team!~"^$|noteam"}
-          * on(cluster_id) group_left(provider) 
+          * on(cluster_id) group_left(provider)
           sum(
               label_replace(
                 capi_cluster_info, "provider", "vsphere", "infrastructure_reference_kind", "VSphereCluster"
@@ -64,8 +76,8 @@ spec:
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/
       expr: |-
         (
-          app_operator_app_info{status="not-installed", catalog=~"giantswarm|cluster|default", team!~"^$|noteam"} 
-          * on(cluster_id) group_left(provider) 
+          app_operator_app_info{status="not-installed", catalog=~"giantswarm|cluster|default", team!~"^$|noteam"}
+          * on(cluster_id) group_left(provider)
           sum(
               label_replace(
                 capi_cluster_info, "provider", "vsphere", "infrastructure_reference_kind", "VSphereCluster"
@@ -109,7 +121,7 @@ spec:
       expr: |-
         (
           app_operator_app_info{app!~"api-spec(-app)?", team=~"^$|noteam", catalog=~"giantswarm.*|control-plane(-test)?-catalog|cluster(-test)?|default(-test)?|releases(-test)?"}
-          * on(cluster_id) group_left(provider) 
+          * on(cluster_id) group_left(provider)
           sum(
               label_replace(
                 capi_cluster_info, "provider", "vsphere", "infrastructure_reference_kind", "VSphereCluster"

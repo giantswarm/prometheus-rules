@@ -6,7 +6,7 @@
 /test/tests/provider/capi/capz/kaas/phoenix/   @giantswarm/team-phoenix
 
 /helm/prometheus-rules/templates/kaas/rocket/         @giantswarm/team-rocket
-/test/tests/provider/capi/cloud-director/kaas/rocket/ @giantswarm/team-phoenix
+/test/tests/provider/capi/cloud-director/kaas/rocket/ @giantswarm/team-rocket
 /test/tests/provider/capi/proxmox/kaas/rocket/        @giantswarm/team-phoenix
 /test/tests/provider/capi/vsphere/kaas/rocket/        @giantswarm/team-phoenix
 

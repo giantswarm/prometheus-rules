@@ -1,11 +1,35 @@
+# By default, everything is owned by @giantswarm/team-atlas
 * @giantswarm/team-atlas
+
 /helm/prometheus-rules/templates/kaas/phoenix/ @giantswarm/team-phoenix
-/helm/prometheus-rules/templates/kaas/rocket/ @giantswarm/team-rocket
+/test/tests/provider/capi/capa/kaas/phoenix/   @giantswarm/team-phoenix
+/test/tests/provider/capi/capz/kaas/phoenix/   @giantswarm/team-phoenix
+
+/helm/prometheus-rules/templates/kaas/rocket/         @giantswarm/team-rocket
+/test/tests/provider/capi/cloud-director/kaas/rocket/ @giantswarm/team-rocket
+/test/tests/provider/capi/proxmox/kaas/rocket/        @giantswarm/team-rocket
+/test/tests/provider/capi/vsphere/kaas/rocket/        @giantswarm/team-rocket
+
 /helm/prometheus-rules/templates/kaas/tenet/ @giantswarm/team-tenet
-/helm/prometheus-rules/templates/platform/atlas/ @giantswarm/team-atlas
+/test/tests/provider/global/kaas/tenet/      @giantswarm/team-tenet
+
+/helm/prometheus-rules/templates/platform/atlas/         @giantswarm/team-atlas
+/test/tests/provider/global/platform/atlas/              @giantswarm/team-atlas
+# We need a per provider rule for atlas because we use absent functions
+/test/tests/provider/capi/capa/platform/atlas/           @giantswarm/team-atlas
+/test/tests/provider/capi/capz/platform/atlas/           @giantswarm/team-atlas
+/test/tests/provider/capi/cloud-director/platform/atlas/ @giantswarm/team-atlas
+/test/tests/provider/capi/proxmox/platform/atlas/        @giantswarm/team-atlas
+/test/tests/provider/capi/vsphere/platform/atlas/        @giantswarm/team-atlas
+
 /helm/prometheus-rules/templates/platform/cabbage/ @giantswarm/team-cabbage
+/test/tests/provider/global/platform/cabbage/      @giantswarm/team-cabbage
+
 /helm/prometheus-rules/templates/platform/honeybadger/ @giantswarm/team-honeybadger
+/test/tests/provider/global/platform/honeybadger/      @giantswarm/team-honeybadger
+
 /helm/prometheus-rules/templates/platform/shield/ @giantswarm/team-shield
+/test/tests/provider/global/platform/shield/      @giantswarm/team-shield
 
 # No owners for changelog
 /CHANGELOG.md

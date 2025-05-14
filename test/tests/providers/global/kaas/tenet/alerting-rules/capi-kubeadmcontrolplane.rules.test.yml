@@ -1,0 +1,62 @@
+rule_files:
+  - capi-kubeadmcontrolplane.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'capi_kubeadmcontrolplane_spec_replicas{cluster_id="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm"}'
+        values: "3x100"
+      - series: 'capi_kubeadmcontrolplane_status_replicas_ready{cluster_id="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm"}'
+        values: "3x100"
+      - series: 'capi_cluster_info{cluster_id="clippaxy", provider="capa"}'
+        values: "1x100"
+      - series: 'capi_kubeadmcontrolplane_spec_replicas{cluster_id="failing", name="failing-72jzy", exported_namespace="giantswarm"}'
+        values: "3x100"
+      - series: 'capi_kubeadmcontrolplane_status_replicas_ready{cluster_id="failing", name="failing-72jzy", exported_namespace="giantswarm"}'
+        values: "2x100"
+      - series: 'capi_cluster_info{cluster_id="failing", provider="capa"}'
+        values: "1x100"
+      - series: 'capi_kubeadmcontrolplane_annotation_paused{paused_value="true", cluster_id="grumpy", name="grumpy-72r5c", exported_namespace="giantswarm"}'
+        values: "1x75"
+      - series: 'capi_cluster_info{cluster_id="grumpy", provider="capa"}'
+        values: "1x75"
+    alert_rule_test:
+      - alertname: KubeadmControlPlaneReplicasMismatch
+        eval_time: 100m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: failing
+              provider: capa
+              severity: notify
+              team: phoenix
+              topic: managementcluster
+              name: failing-72jzy
+              exported_namespace: giantswarm
+            exp_annotations:
+              description: "The clusters failing kubeadmcontrolplane giantswarm/failing-72jzy does not match the expected number of replicas for longer than 90 minutes."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-kubeadmcontrolplane/
+              __dashboardUid__: bdi7iswg81czkcasd
+              dashboardQueryParams: "orgId=2"
+      - alertname: KubeadmControlPlanePaused
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              provider: capa
+              severity: notify
+              team: phoenix
+              topic: managementcluster
+              cluster_id: grumpy
+              name: grumpy-72r5c
+              exported_namespace: giantswarm
+              paused_value: "true"
+            exp_annotations:
+              description: "The clusters grumpy kubeadmcontrolplane giantswarm/grumpy-72r5c is paused."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-kubeadmcontrolplane/
+              __dashboardUid__: bdi7iswg81czkcasd
+              dashboardQueryParams: "orgId=2"

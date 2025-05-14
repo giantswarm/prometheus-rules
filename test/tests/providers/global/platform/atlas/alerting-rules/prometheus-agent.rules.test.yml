@@ -1,0 +1,192 @@
+---
+# These tests differ between prometheus and mimir installations: the resulting labels are different
+rule_files:
+- prometheus-agent.rules.yml
+
+tests:
+  # Tests for `PrometheusAgentShardsMissing` alert
+  - interval: 1m
+    input_series:
+      - series: 'prometheus_remote_storage_metadata_total{cluster_id="test01", installation="myinstall", provider="capa", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+        values: "10000+0x180"
+      - series: 'prometheus_remote_storage_metadata_total{cluster_id="test01", installation="myinstall", provider="capa", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-1-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+        values: "10000+0x180"
+      - series: 'prometheus_remote_storage_metadata_total{cluster_id="test01", installation="myinstall", provider="capa", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-2-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+        values: "10000+0x180"
+      - series: 'prometheus_operator_spec_shards{cluster_id="test01", installation="myinstall", provider="capa", pipeline="testing", container="prometheus-operator-app", controller="prometheus", instance="prometheus-operator-app", job="prometheus-operator-app-operator", name="prometheus-agent", pod="prometheus-operator-app-operator-76b5899558-nz8h5", service="prometheus-operator-app-operator", team="atlas"}'
+        values: '3+0x60 5+0x60 3+0x60'
+      - series: 'prometheus_operator_spec_replicas{cluster_id="test01", installation="myinstall", provider="capa", pipeline="testing", container="prometheus-operator-app", controller="prometheus", instance="prometheus-operator-app", job="prometheus-operator-app-operator", name="prometheus-agent", pod="prometheus-operator-app-operator-76b5899558-nz8h5", service="prometheus-operator-app-operator", team="atlas"}'
+        values: '1+0x180'
+    alert_rule_test:
+      - alertname: PrometheusAgentShardsMissing
+        eval_time: 40m
+      - alertname: InhibitionPrometheusAgentShardsMissing
+        eval_time: 40m
+      - alertname: PrometheusAgentShardsMissing
+        eval_time: 120m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cluster_id: test01
+              installation: myinstall
+              provider: capa
+              pipeline: testing
+              severity: page
+              team: atlas
+              topic: observability
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+            exp_annotations:
+              description: "Prometheus agent is missing shards."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
+              summary: "Prometheus agent is missing shards."
+      - alertname: InhibitionPrometheusAgentShardsMissing
+        eval_time: 100m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cluster_id: test01
+              installation: myinstall
+              provider: capa
+              pipeline: testing
+              severity: none
+              team: atlas
+              topic: observability
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+            exp_annotations:
+              description: "Prometheus agent is missing shards."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
+              summary: "Prometheus agent is missing shards."
+      - alertname: PrometheusAgentShardsMissing
+        eval_time: 125m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cluster_id: test01
+              installation: myinstall
+              provider: capa
+              pipeline: testing
+              severity: page
+              team: atlas
+              topic: observability
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+            exp_annotations:
+              description: "Prometheus agent is missing shards."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
+              summary: "Prometheus agent is missing shards."
+      - alertname: InhibitionPrometheusAgentShardsMissing
+        eval_time: 125m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cluster_id: test01
+              installation: myinstall
+              provider: capa
+              pipeline: testing
+              severity: none
+              team: atlas
+              topic: observability
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+            exp_annotations:
+              description: "Prometheus agent is missing shards."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
+              summary: "Prometheus agent is missing shards."
+      - alertname: PrometheusAgentShardsMissing
+        eval_time: 130m
+      - alertname: InhibitionPrometheusAgentShardsMissing
+        eval_time: 130m
+  # Tests for `PrometheusAgentShardsMissing` alert with missing `prometheus_operator_spec_shards` metric
+  - interval: 1m
+    input_series:
+      - series: 'prometheus_remote_storage_metadata_total{cluster_id="test01", installation="myinstall", provider="capa", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+        values: "10000+0x180"
+      - series: 'prometheus_remote_storage_metadata_total{cluster_id="test01", installation="myinstall", provider="capa", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-1-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+        values: "10000+0x180"
+      - series: 'prometheus_remote_storage_metadata_total{cluster_id="test01", installation="myinstall", provider="capa", pipeline="testing", container="prometheus", instance="prometheus-agent", job="prometheus-agent", pod="prometheus-prometheus-agent-shard-2-0", remote_name="806b63", service="prometheus-agent", team="atlas", url="https://myinstall/mycluster/api/v1/write"}'
+        values: "10000+0x180"
+      - series: 'prometheus_operator_spec_replicas{cluster_id="test01", installation="myinstall", provider="capa", pipeline="testing", container="prometheus-operator-app", controller="prometheus", instance="prometheus-operator-app", job="prometheus-operator-app-operator", name="prometheus-agent", pod="prometheus-operator-app-operator-76b5899558-nz8h5", service="prometheus-operator-app-operator", team="atlas"}'
+        values: '3+0x60 5+0x60 3+0x60'
+    alert_rule_test:
+      - alertname: PrometheusAgentShardsMissing
+        eval_time: 40m
+      - alertname: InhibitionPrometheusAgentShardsMissing
+        eval_time: 40m
+      - alertname: PrometheusAgentShardsMissing
+        eval_time: 120m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cluster_id: test01
+              installation: myinstall
+              provider: capa
+              pipeline: testing
+              severity: page
+              team: atlas
+              topic: observability
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+            exp_annotations:
+              description: "Prometheus agent is missing shards."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
+              summary: "Prometheus agent is missing shards."
+      - alertname: InhibitionPrometheusAgentShardsMissing
+        eval_time: 100m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cluster_id: test01
+              installation: myinstall
+              provider: capa
+              pipeline: testing
+              severity: none
+              team: atlas
+              topic: observability
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+            exp_annotations:
+              description: "Prometheus agent is missing shards."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
+              summary: "Prometheus agent is missing shards."
+      - alertname: PrometheusAgentShardsMissing
+        eval_time: 125m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cluster_id: test01
+              installation: myinstall
+              provider: capa
+              pipeline: testing
+              severity: page
+              team: atlas
+              topic: observability
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+            exp_annotations:
+              description: "Prometheus agent is missing shards."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
+              summary: "Prometheus agent is missing shards."
+      - alertname: InhibitionPrometheusAgentShardsMissing
+        eval_time: 125m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cluster_id: test01
+              installation: myinstall
+              provider: capa
+              pipeline: testing
+              severity: none
+              team: atlas
+              topic: observability
+              inhibit_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+            exp_annotations:
+              description: "Prometheus agent is missing shards."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-agent/
+              summary: "Prometheus agent is missing shards."
+      - alertname: PrometheusAgentShardsMissing
+        eval_time: 130m
+      - alertname: InhibitionPrometheusAgentShardsMissing
+        eval_time: 130m

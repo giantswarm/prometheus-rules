@@ -1,0 +1,55 @@
+rule_files:
+  - capi-machinedeployment.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'capi_machinedeployment_status_phase{phase="Failed", cluster_id="clippaxy", name="clippaxy-def00", exported_namespace="giantswarm"}'
+        values: "0+3x75"
+      - series: 'capi_cluster_info{cluster_id="clippaxy", provider="capa"}'
+        values: "1+0x75"
+      - series: 'capi_machinedeployment_annotation_paused{paused_value="true",cluster_id="grumpy", name="grumpy-def99", exported_namespace="giantswarm"}'
+        values: "0+1x75"
+      - series: 'capi_cluster_info{cluster_id="grumpy", provider="capa"}'
+        values: "1+0x75"
+    alert_rule_test:
+      - alertname: MachineDeploymentIsNotHealthy
+        eval_time: 25m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              provider: capa
+              severity: notify
+              phase: Failed
+              team: phoenix
+              topic: managementcluster
+              cluster_id: clippaxy
+              name: clippaxy-def00
+              exported_namespace: giantswarm
+            exp_annotations:
+              description: "The clusters clippaxy machinedeployment giantswarm/clippaxy-def00 is not healthy."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-machinedeployment/
+              __dashboardUid__: bdi7iswg81czkcasd
+              dashboardQueryParams: "orgId=2"
+      - alertname: MachineDeploymentPaused
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              provider: capa
+              severity: notify
+              team: phoenix
+              topic: managementcluster
+              cluster_id: grumpy
+              name: grumpy-def99
+              exported_namespace: giantswarm
+              paused_value: "true"
+            exp_annotations:
+              description: "The clusters grumpy machinedeployment giantswarm/grumpy-def99 is paused."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-machinedeployment/
+              __dashboardUid__: bdi7iswg81czkcasd
+              dashboardQueryParams: "orgId=2"

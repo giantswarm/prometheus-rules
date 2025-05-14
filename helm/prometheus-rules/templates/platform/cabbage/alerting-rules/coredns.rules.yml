@@ -23,7 +23,6 @@ spec:
         severity: page
         team: cabbage
         topic: dns
-    {{- if eq .Values.managementCluster.provider.flavor "capi" }}
     - alert: FluxHelmReleaseFailed
       annotations:
         description: |-
@@ -41,12 +40,11 @@ spec:
         topic: dns
         namespace: |-
           {{`{{ $labels.exported_namespace }}`}}
-    {{- end }}
     - alert: CoreDNSMaxHPAReplicasReached
       expr: |
         (
           # This is using the deprecated HPA metric names https://github.com/kubernetes/kube-state-metrics/commit/eb01334f2d03ebc3ab25cd7b29d0ff28f6ca5ee0
-          # TODO(@team-cabbage) remove once kube-state-metrics is updated to use the new metric names everywhere
+          # TODO(@giantswarm/team-cabbage) remove once kube-state-metrics is updated to use the new metric names everywhere
           kube_hpa_status_current_replicas{hpa="coredns"} == kube_hpa_spec_max_replicas{hpa="coredns"}
           and
           kube_hpa_spec_min_replicas{hpa="coredns"} != kube_hpa_spec_max_replicas{hpa="coredns"}

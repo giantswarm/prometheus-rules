@@ -1,0 +1,57 @@
+rule_files:
+  - capi-machine.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'capi_machine_status_phase{cluster_id="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm", phase="Running"}'
+        values: "1+0x10 0+0x35"
+      - series: 'capi_machine_status_phase{cluster_id="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm", phase="Failed"}'
+        values: "0+0x10 1+0x35"
+      - series: 'capi_cluster_info{cluster_id="clippaxy", provider="capa"}'
+        values: "1+0x45"
+      - series: 'capi_machine_annotation_paused{paused_value="true",cluster_id="grumpy", name="grumpy-72r5c", exported_namespace="giantswarm"}'
+        values: "0+1x75"
+      - series: 'capi_cluster_info{cluster_id="grumpy", provider="capa"}'
+        values: "1+0x75"
+    alert_rule_test:
+      - alertname: MachineUnhealthyPhase
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              provider: capa
+              severity: page
+              team: phoenix
+              topic: managementcluster
+              cluster_id: clippaxy
+              name: clippaxy-72jq5
+              exported_namespace: giantswarm
+              phase: Failed
+            exp_annotations:
+              description: "Machine giantswarm/clippaxy-72jq5 stuck in phase Failed for more than 30 minutes."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-machine/
+              __dashboardUid__: bdi7iswg81czkcasd
+              dashboardQueryParams: "orgId=2"
+      - alertname: MachinePaused
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              provider: capa
+              severity: notify
+              team: phoenix
+              topic: managementcluster
+              cluster_id: grumpy
+              name: grumpy-72r5c
+              exported_namespace: giantswarm
+              paused_value: "true"
+            exp_annotations:
+              description: "Machine giantswarm/grumpy-72r5c is paused."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-machine/
+              __dashboardUid__: bdi7iswg81czkcasd
+              dashboardQueryParams: "orgId=2"

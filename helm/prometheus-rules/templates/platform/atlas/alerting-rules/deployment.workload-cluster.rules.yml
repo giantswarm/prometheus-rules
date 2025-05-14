@@ -10,7 +10,7 @@ spec:
   groups:
   - name: deployment
     rules:
-    # TODO - This is only used by the chart-operator, let's get rid of it when the chart operator is gone.
+    # TODO(@giantswarm/team-honeybadger): This is only used by the chart-operator, let's get rid of it when the chart operator is gone.
     - alert: WorkloadClusterDeploymentNotSatisfied
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'

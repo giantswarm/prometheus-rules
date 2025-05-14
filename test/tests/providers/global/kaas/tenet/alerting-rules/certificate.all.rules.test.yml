@@ -1,0 +1,94 @@
+---
+rule_files:
+  - certificate.all.rules.yml
+
+tests:
+  # CertificateSecretWillExpireInLessThanTwoWeeks within 2 weeks of expiration
+  - interval: 1d
+    input_series:
+      - series: 'cert_exporter_secret_not_after{app="cert-exporter-deployment", cluster_id="gollem", cluster_type="management_cluster", container="cert-exporter", customer="giantswarm", installation="gollem", instance="10.0.0.0:1234", job="gollem-prometheus/workload-gollem/0", name="athena-certs-secret", namespace="giantswarm", exported_namespace="giantswarm", node="10.0.0.0", organization="giantswarm", pod="cert-exporter-deployment-5c47b4c55c-49wt9", provider="capa", secretkey="tls.crt", service_priority="highest"}'
+        values: "2678400x60"
+    alert_rule_test:
+      - alertname: CertificateSecretWillExpireInLessThanTwoWeeks
+        eval_time: 20d
+        exp_alerts:
+          - exp_labels:
+              alertname: CertificateSecretWillExpireInLessThanTwoWeeks
+              app: cert-exporter-deployment
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              cluster_id: gollem
+              cluster_type: management_cluster
+              container: cert-exporter
+              customer: giantswarm
+              exported_namespace: giantswarm
+              instance: 10.0.0.0:1234
+              job: gollem-prometheus/workload-gollem/0
+              namespace: giantswarm
+              node: 10.0.0.0
+              organization: giantswarm
+              pod: cert-exporter-deployment-5c47b4c55c-49wt9
+              provider: capa
+              name: athena-certs-secret
+              installation: gollem
+              service_priority: highest
+              severity: page
+              secretkey: tls.crt
+              team: phoenix
+              topic: cert-manager
+            exp_annotations:
+              description: "Certificate stored in Secret giantswarm/athena-certs-secret on gollem will expire in less than two weeks."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
+  # CertificateSecretWillExpireInLessThanTwoWeeks not within 2 weeks of expiration
+  - interval: 1d
+    input_series:
+      - series: 'cert_exporter_secret_not_after{app="cert-exporter-deployment", cluster_id="gollem", cluster_type="management_cluster", container="cert-exporter", customer="giantswarm", installation="gollem", instance="10.0.0.0:1234", job="gollem-prometheus/workload-gollem/0", name="athena-certs-secret", namespace="giantswarm", exported_namespace="giantswarm", node="10.0.0.0", organization="giantswarm", pod="cert-exporter-deployment-5c47b4c55c-49wt9", provider="capa", secretkey="tls.crt", service_priority="highest"}'
+        values: "2678400x60"
+    alert_rule_test:
+      - alertname: CertificateSecretWillExpireInLessThanTwoWeeks
+        eval_time: 10d
+  # GiantswarmManagedCertificateCRWillExpireInLessThanTwoWeeks within 2 weeks of expiration
+  - interval: 1d
+    input_series:
+      - series: 'cert_exporter_certificate_cr_not_after{app="cert-exporter-deployment", cluster_id="12345", cluster_type="workload_cluster", container="cert-exporter", customer="giantswarm", installation="gollem", instance="10.0.0.0:1234", issuer_ref="kiam-ca-issuer", job="12345-prometheus/workload-12345/0", managed_issuer="true", name="kiam-agent", namespace="kube-system", exported_namespace="kube-system", node="10.0.0.0", organization="giantswarm", pod="cert-exporter-deployment-57bbbfd856-8r8dr", provider="capa", service_priority="highest"}'
+        values: "2678400x60"
+    alert_rule_test:
+      - alertname: GiantswarmManagedCertificateCRWillExpireInLessThanTwoWeeks
+        eval_time: 20d
+        exp_alerts:
+          - exp_labels:
+              alertname: GiantswarmManagedCertificateCRWillExpireInLessThanTwoWeeks
+              app: cert-exporter-deployment
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              cluster_id: 12345
+              cluster_type: workload_cluster
+              container: cert-exporter
+              customer: giantswarm
+              exported_namespace: kube-system
+              instance: 10.0.0.0:1234
+              job: 12345-prometheus/workload-12345/0
+              namespace: kube-system
+              node: 10.0.0.0
+              organization: giantswarm
+              pod: cert-exporter-deployment-57bbbfd856-8r8dr
+              provider: capa
+              name: kiam-agent
+              installation: gollem
+              service_priority: highest
+              severity: page
+              team: phoenix
+              topic: cert-manager
+              issuer_ref: kiam-ca-issuer
+              managed_issuer: "true"
+            exp_annotations:
+              description: "Certificate CR kube-system/kiam-agent on 12345 will expire in less than two weeks."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/managed-app-cert-manager/certificate-secret-will-expire-in-less-than-two-weeks/
+  # GiantswarmManagedCertificateCRWillExpireInLessThanTwoWeeks not within 2 weeks of expiration
+  - interval: 1d
+    input_series:
+      - series: 'cert_exporter_certificate_cr_not_after{app="cert-exporter-deployment", cluster_id="12345", cluster_type="workload_cluster", container="cert-exporter", customer="giantswarm", installation="gollem", instance="10.0.0.0:1234", issuer_ref="kiam-ca-issuer", job="12345-prometheus/workload-12345/0", managed_issuer="true", name="kiam-agent", namespace="kube-system", exported_namespace="kube-system", node="10.0.0.0", organization="giantswarm", pod="cert-exporter-deployment-57bbbfd856-8r8dr", provider="capa", service_priority="highest"}'
+        values: "2678400x60"
+    alert_rule_test:
+      - alertname: GiantswarmManagedCertificateCRWillExpireInLessThanTwoWeeks
+        eval_time: 10d

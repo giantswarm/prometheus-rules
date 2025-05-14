@@ -1,0 +1,77 @@
+rule_files:
+  - capi-cluster.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_phase{cluster_id="clippaxy", exported_namespace="giantswarm", phase="Pending"}'
+        values: "1x75"
+      - series: 'capi_cluster_info{cluster_id="clippaxy", provider="capa"}'
+        values: "1x75"
+      - series: 'capi_cluster_status_condition{cluster_id="grumpy", exported_namespace="giantswarm", status="False", type="Ready"}'
+        values: "0+0x10 0+1x65"
+      - series: 'capi_cluster_status_condition{cluster_id="grumpy", exported_namespace="giantswarm", status="True", type="Ready"}'
+        values: "0+1x10 0+0x65"
+      - series: 'capi_cluster_annotation_paused{cluster_id="grumpy", exported_namespace="giantswarm", paused_value="true"}'
+        values: "0+1x75"
+      - series: 'capi_cluster_info{cluster_id="grumpy", provider="capa"}'
+        values: "1x75"
+    alert_rule_test:
+      - alertname: ClusterUnhealthyPhase
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: clippaxy
+              severity: page
+              team: phoenix
+              topic: managementcluster
+              exported_namespace: giantswarm
+              phase: Pending
+              provider: capa
+            exp_annotations:
+              description: "Cluster giantswarm/clippaxy stuck in Pending phase."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+              __dashboardUid__: bdi7iswg81czkcasd
+              dashboardQueryParams: "orgId=2"
+      - alertname: ClusterStatusNotReady
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: grumpy
+              provider: capa
+              severity: notify
+              team: phoenix
+              topic: managementcluster
+              exported_namespace: giantswarm
+              status: "False"
+              type: Ready
+            exp_annotations:
+              description: "Cluster giantswarm/grumpy is not ready."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+              __dashboardUid__: bdi7iswg81czkcasd
+              dashboardQueryParams: "orgId=2"
+      - alertname: ClusterPaused
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: grumpy
+              provider: capa
+              severity: notify
+              team: phoenix
+              topic: managementcluster
+              exported_namespace: giantswarm
+              paused_value: "true"
+            exp_annotations:
+              description: "The cluster giantswarm/grumpy is paused."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+              __dashboardUid__: bdi7iswg81czkcasd
+              dashboardQueryParams: "orgId=2"

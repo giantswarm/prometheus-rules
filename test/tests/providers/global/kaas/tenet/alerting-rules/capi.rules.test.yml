@@ -1,0 +1,97 @@
+rule_files:
+  - capi.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'capi_machine_status_phase{cluster_id="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm", phase="Running"}'
+        values: "1+0x10 0+0x35"
+      - series: 'capi_machine_status_phase{cluster_id="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm", phase="Failed"}'
+        values: "0+0x10 1+0x35"
+      - series: 'capi_cluster_info{cluster_id="clippaxy", provider="capa"}'
+        values: "1+0x45"
+    alert_rule_test:
+      - alertname: MachineUnhealthyPhase
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              provider: capa
+              severity: notify
+              team: phoenix
+              topic: managementcluster
+              cluster_id: clippaxy
+              name: clippaxy-72jq5
+              exported_namespace: giantswarm
+              phase: Failed
+            exp_annotations:
+              description: "Machine giantswarm/clippaxy-72jq5 stuck in phase Failed for more than 30 minutes."
+  - interval: 1m
+    input_series:
+      - series: 'capi_machinepool_status_phase{phase="Failed", cluster_id="clippaxy", name="clippaxy-def00", exported_namespace="giantswarm"}'
+        values: "0+3x75"
+    alert_rule_test:
+      - alertname: MachinePoolIsNotHealthy
+        eval_time: 25m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              provider: capa
+              severity: notify
+              team: phoenix
+              topic: managementcluster
+              cluster_id: clippaxy
+              name: clippaxy-def00
+              exported_namespace: giantswarm
+            exp_annotations:
+              description: "The clusters clippaxy machinepool giantswarm/clippaxy-def00 is not healthy."
+  - interval: 1m
+    input_series:
+      - series: 'capi_kubeadmcontrolplane_spec_replicas{cluster_id="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm"}'
+        values: "0+3x100"
+      - series: 'capi_kubeadmcontrolplane_status_replicas_ready{cluster_id="clippaxy", name="clippaxy-72jq5", exported_namespace="giantswarm"}'
+        values: "0+3x100"
+      - series: 'capi_kubeadmcontrolplane_spec_replicas{cluster_id="clippaxy", name="clippaxy-72jzy", exported_namespace="giantswarm"}'
+        values: "0+3x100"
+      - series: 'capi_kubeadmcontrolplane_status_replicas_ready{cluster_id="clippaxy", name="clippaxy-72jzy", exported_namespace="giantswarm"}'
+        values: "0+2x100"
+    alert_rule_test:
+      - alertname: KubeadmControlPlaneReplicasMismatch
+        eval_time: 100m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              provider: capa
+              severity: notify
+              team: phoenix
+              topic: managementcluster
+              cluster_id: clippaxy
+              name: clippaxy-72jzy
+              exported_namespace: giantswarm
+            exp_annotations:
+              description: "The clusters clippaxy kubeadmcontrolplane giantswarm/clippaxy-72jzy does not match the expected number of replicas for longer than 90 minutes."
+  - interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_phase{name="clippaxy", exported_namespace="giantswarm", phase="Provisioned"}'
+        values: "1+0x75"
+      - series: 'capi_cluster_status_phase{name="clippaxy", exported_namespace="giantswarm", phase="Pending"}'
+        values: "1+0x75"
+    alert_rule_test:
+      - alertname: ClusterUnhealthyPhase
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              provider: capa
+              severity: notify
+              team: phoenix
+              topic: managementcluster
+              name: clippaxy
+              exported_namespace: giantswarm
+              phase: Pending
+            exp_annotations:
+              description: "Cluster giantswarm/clippaxy is in a non healthy phase."

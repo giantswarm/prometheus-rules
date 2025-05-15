@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.62.0] - 2025-05-15
 
+### Added
+
+- Add `AppAdmissionControllerWebhookDurationExceedsTimeout` alert, business hours only.
+
+### Removed
+
+- Remove `app-admission-controller` from generic `ManagementClusterWebhookDurationExceedsTimeout` alert.
+
 ### Changed
 
 - Remove duplicate test files for Atlas since all tests are the same accross all CAPI providers.

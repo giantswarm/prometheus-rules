@@ -84,7 +84,7 @@ spec:
         sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir"}[5m])) by (cluster_id, installation, namespace, pipeline, provider) 
           / 
         sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core"}) 
-          >= 0.90
+          >= 0.95
       for: 1h
       labels:
         area: platform

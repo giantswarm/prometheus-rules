@@ -151,16 +151,16 @@ tests:
         values: "12+0x400"
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "12+0x400"
-      # mimir-ingester real cpu usage gradually increases until it goes beyond 90% of the cpu requests.                              
+      # mimir-ingester real cpu usage gradually increases until it goes beyond 95% of the cpu requests.
       - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
-        values: "0+60x100 6000+110x70 10400+60x60 14000+110x70 18400+60x60"
+        values: "0+60x100 6000+130x70 10400+60x60 14000+110x70 18400+60x60"
       - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
         values: "0+60x400"
       # mimir-ingester cpu requests stay the same for the entire duration of the test.
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
-        values: "1.5+0x400"                                 
+        values: "1.5+0x400"
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capz", region="eu-west-2"}'
-        values: "1.5+0x400"                                 
+        values: "1.5+0x400"
     alert_rule_test:
       - alertname: MimirIngesterNeedsToBeScaledUp
         eval_time: 15m

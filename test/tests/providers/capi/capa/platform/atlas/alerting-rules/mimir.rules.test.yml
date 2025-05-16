@@ -153,7 +153,7 @@ tests:
         values: "12+0x400"
       # mimir-ingester real cpu usage gradually increases until it goes beyond 90% of the cpu requests.                              
       - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "0+60x100 6000+110x70 10400+60x60 14000+110x70 18400+60x60"
+        values: "0+60x100 6000+130x70 10400+60x60 14000+110x70 18400+60x60"
       - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "0+60x400"
       # mimir-ingester cpu requests stay the same for the entire duration of the test.

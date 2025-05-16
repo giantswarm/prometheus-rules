@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `IncorrectResourceUsageData` alert.
+
 ## [4.62.0] - 2025-05-15
 
 ### Added
@@ -118,13 +122,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve ClusterCrossplaneResourcesNotReady with new metrics where available
 - Improve alert for Karpenter machines not being Ready
 
-### Fixed
-
-- Use `exported_namespace` for certificate expiration alerts.
-
 ### Removed
 
 - Remove alerts related to `alloy-rules`.
+
+### Fixed
+
+- Use `exported_namespace` for certificate expiration alerts.
 
 ## [4.54.1] - 2025-04-08
 
@@ -144,7 +148,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add new alert to detect missing installation logs that relates to teleport access.
-
 - Fine tune the `MetricForwardingErrors` so it does not trigger on sporadic issues like duplicate samples (e.g. when a pod restarts too frequently for a small time window). This alert is now based on the upstream alert and uses a percentage of failed remote storage samples as described in this issue https://github.com/giantswarm/giantswarm/issues/32873
 
 ## [4.52.0] - 2025-03-26
@@ -212,14 +215,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update `StatefulsetNotSatisfiedAtlas` to fire after 3 days.
 
-### Fixed
-
-- Use the api group for the crossplane alerts to filter out resources that we don't care about.
-
 ### Removed
 
 - Remove `PrometheusOperatorSyncFailed` alert.
 - Remove `PrometheusOperatorReconcileErrors` alert.
+
+### Fixed
+
+- Use the api group for the crossplane alerts to filter out resources that we don't care about.
 
 ## [4.47.0] - 2025-03-04
 
@@ -293,7 +296,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-Add the necessary orgIds to public and private dashboards (https://github.com/giantswarm/roadmap/issues/3826)
+- Add the necessary orgIds to public and private dashboards (https://github.com/giantswarm/roadmap/issues/3826)
 
 ## [4.39.1] - 2025-02-12
 
@@ -417,10 +420,6 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 
 ## [4.26.2] - 2024-11-27
 
-### Changed
-
-- Remove `label_replace` from `app_operator_app_info` based alerts and use the `cluster_id` from the metric on CAPI.
-
 ### Added
 
 - Add `cloud-provider-controller.rules` to monitor the cloud-provider-controller components across providers.
@@ -429,6 +428,9 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 - Add alert to monitor Shield pods restarts.
 - Add `MimirRulerTooManyFailedQueries` alert to detect when Mimir ruler is failing to evaluate rules
 
+### Changed
+
+- Remove `label_replace` from `app_operator_app_info` based alerts and use the `cluster_id` from the metric on CAPI.
 
 ### Fixed
 
@@ -582,14 +584,14 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 
 - Add `LokiFailedCompaction` alert to know when Loki did not manage to run a successfull compaction in the last 2 hours.
 
-### Removed
-
-- Remove CRsync alerting rules.
-
 ### Changed
 
 - Migrate BigMac alerts to Shield
 - Upgrade Alloy to 0.5.2 which brings no value to this repo.
+
+### Removed
+
+- Remove CRsync alerting rules.
 
 ### Fixed
 
@@ -611,7 +613,7 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 
 ### Removed
 
-- Remove aggregation of slo:period_error_budget_remaining:ratio` as this value can be easily computed and creates a lot of time series in Grafana Cloud
+- Remove aggregation of slo:period_error_budget_remaining:ratio as this value can be easily computed and creates a lot of time series in Grafana Cloud
 
 ## [4.15.0] - 2024-09-16
 
@@ -649,7 +651,7 @@ Add the necessary orgIds to public and private dashboards (https://github.com/gi
 
 ### Fixed
 
-Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so actual errors are hidden.
+- Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so actual errors are hidden.
 
 ## [4.13.0] - 2024-09-03
 
@@ -815,7 +817,6 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 ## [4.3.5] - 2024-06-24
 
 ### Fixed
-
 - Fixed MimirToGrafanaCloudExporterFailures alerts: labels cleanup
 
 ## [4.3.4] - 2024-06-21
@@ -843,14 +844,14 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Increase time in volume filled related alerts to allow node-problem-detector to shut down nodes properly.
 
-### Fixed
-
-- Fix cert-exporter alerts to render the secret namespace and not the cert-exporter namespace in the alert description.
-
 ### Removed
 
 - Remove old kaas daemonset slos as they are now in sloth slos.
 - Remove old cilium daemonset slos as they are now in sloth slos.
+
+### Fixed
+
+- Fix cert-exporter alerts to render the secret namespace and not the cert-exporter namespace in the alert description.
 
 ## [4.3.0] - 2024-06-17
 
@@ -907,6 +908,11 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
   - Fix alerts using absent metrics for Mimir.
   - Reviewed turtles alerts labels.
 
+### Removed
+
+- cleanup: get rid of microendpoint alerts as it never fired and probably never will
+- cleanup: remove scrape timeout inhibition leftovers (documentation and labels)
+
 ### Fixed
 
 - Fixed usage of yq, and jq in check-opsrecipes.sh
@@ -915,11 +921,6 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 - Fixed all area alert labels.
 - Fixed `cert-exporter` alerts to page on all providers.
 - Fixed `cilium` SLO recording rule, setting a proper threshold for the alert.
-
-### Removed
-
-- cleanup: get rid of microendpoint alerts as it never fired and probably never will
-- cleanup: remove scrape timeout inhibition leftovers (documentation and labels)
 
 ## [4.1.2] - 2024-05-31
 
@@ -1003,6 +1004,12 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 - Replace `cancel_if_apiserver_down` with `cancel_if_cluster_control_plane_unhealthy`
 
+### Removed
+
+- Removed `apiserver_down` inhibition dummy trigger.
+- Remove cilium entry from KAAS SLOs.
+- Remove elasticsearch and tempo related alerts and recording rules.
+
 ### Fixed
 
 - Fix shield alert labels for Mimir.
@@ -1013,12 +1020,6 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 - Fix all mixins according to `pint` recommendations.
 - Fix etcd alert labels for Mimir.
 - Fix apiserver alert labels for Mimir.
-
-### Removed
-
-- Removed `apiserver_down` inhibition dummy trigger.
-- Remove cilium entry from KAAS SLOs.
-- Remove elasticsearch and tempo related alerts and recording rules.
 
 ## [3.13.1] - 2024-04-30
 
@@ -1133,15 +1134,15 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ## [3.7.0] - 2024-04-08
 
-### Fixed
-
-- Fix missing ops-recipes.
-
 ### Changed
 
 - Make Atlas rules compatible with Mimir:
   - Add labels `cluster_id, installation, provider, pipeline` for each aggregation functions
   - Rewrite some of `absent` functions
+
+### Fixed
+
+- Fix missing ops-recipes.
 
 ## [3.6.2] - 2024-04-04
 
@@ -1201,12 +1202,13 @@ Fix `PromtailRequestsErrors` alerts as promtail retries after some backoff so ac
 
 ## [3.1.1] - 2024-03-14
 
+### Changed
+
+- Adjusted cert-manager `CertManagerPodHighMemoryUsage` alerting threshold (https://github.com/giantswarm/prometheus-rules/pull/1077)
+
 ### Fixed
 
 - Fix teleport alerts for mimir.
-
-### Changed
-- Adjusted cert-manager `CertManagerPodHighMemoryUsage` alerting threshold (https://github.com/giantswarm/prometheus-rules/pull/1077)
 
 ## [3.1.0] - 2024-03-13
 

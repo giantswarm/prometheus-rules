@@ -22,12 +22,17 @@ spec:
         severity: page
         team: honeybadger
         topic: managementcluster
+#
+# FluxHelmReleaseFailed
+#
+# Alerting for GiantSwarm management clusters HelmRelease CRs.
+#
     - alert: FluxHelmReleaseFailed
       annotations:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-helmrelease/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", namespace="flux-giantswarm", exported_namespace=~".*giantswarm.*"} > 0
+      expr: gotk_resource_info{ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
       for: 10m
       labels:
         area: platform
@@ -37,27 +42,37 @@ spec:
         topic: releng
         namespace: |-
           {{`{{ $labels.exported_namespace }}`}}
+#
+# FluxWorkloadClusterHelmReleaseFailed
+#
+# Alerting for GiantSwarm-owned workload clusters. The `organization` label makes sure of that.
+#
     - alert: FluxWorkloadClusterHelmReleaseFailed
       annotations:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-helmrelease/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="workload_cluster", organization="giantswarm"} > 0
-      for: 2h
+      expr: gotk_resource_info{ready="False", customresource_kind="HelmRelease", cluster_type="workload_cluster", organization="giantswarm"} > 0
+      for: 10m
       labels:
         area: platform
-        severity: page
         cancel_if_outside_working_hours: "true"
+        severity: page
         team: honeybadger
         topic: releng
         namespace: |-
           {{`{{ $labels.exported_namespace }}`}}
+#
+# FluxKustomizationFailed
+#
+# Alerting for GiantSwarm management clusters Kustomization CRs.
+#
     - alert: FluxKustomizationFailed
       annotations:
         description: |-
           {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-kustomization/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="management_cluster", namespace="flux-giantswarm", exported_namespace=~".*giantswarm.*"} > 0
+      expr: gotk_resource_info{ready="False", customresource_kind="Kustomization". cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
       for: 20m
       labels:
         area: platform
@@ -65,12 +80,17 @@ spec:
         severity: page
         team: honeybadger
         topic: releng
+#
+# FluxWorkloadClusterKustomizationFailed
+#
+# Alerting for GiantSwarm-owned workload clusters. The `organization` label makes sure of that.
+#
     - alert: FluxWorkloadClusterKustomizationFailed
       annotations:
         description: |-
           {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-kustomization/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="workload_cluster", organization="giantswarm"} > 0
+      expr: gotk_resource_info{ready="False", customresource_kind="Kustomization", cluster_type="management_cluster", organization="giantswarm"} > 0
       for: 2h
       labels:
         area: platform
@@ -78,12 +98,17 @@ spec:
         cancel_if_outside_working_hours: "true"
         team: honeybadger
         topic: releng
+#
+# FluxSourceFailed
+#
+# Alerting for GiantSwarm management clusters Flux source-related CRs.
+#
     - alert: FluxSourceFailed
       annotations:
         description: |-
-          {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
+          {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-source/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="management_cluster", namespace="flux-giantswarm", exported_namespace=~".*giantswarm.*"} > 0
+      expr: gotk_resource_info{ready="False", customresource_kind=~"GitRepository|HelmRepository|Bucket", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
       for: 2h
       labels:
         area: platform
@@ -91,17 +116,22 @@ spec:
         severity: page
         team: honeybadger
         topic: releng
+#
+# FluxWorkloadClusterSourceFailed
+#
+# Alerting for GiantSwarm-owned workload clusters. The `organization` label makes sure of that.
+#
     - alert: FluxWorkloadClusterSourceFailed
       annotations:
         description: |-
-          {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
+          {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-source/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="workload_cluster", organization="giantswarm"} > 0
+      expr: gotk_resource_info{ready="False", customresource_kind=~"GitRepository|HelmRepository|Bucket", cluster_type="workload_cluster", organization="giantswarm"} > 0
       for: 2h
       labels:
         area: platform
-        severity: page
         cancel_if_outside_working_hours: "true"
+        severity: page
         team: honeybadger
         topic: releng
     # this alert checks average reconciliation times in 10 min windows, then calculates monthly error budget usage for it
@@ -130,124 +160,14 @@ spec:
     - alert: FluxSuspendedForTooLong
       annotations:
         description: |-
-          {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }} has been suspended for 24h.`}}
+          {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }} has been suspended for 24h.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-suspended-for-too-long/
-      expr: gotk_suspend_status{namespace="flux-giantswarm", exported_namespace="flux-giantswarm"} > 0
+      expr: gotk_resource_info{namespace="flux-giantswarm", cluster_type="management_cluster", exported_namespace="flux-giantswarm", suspended="true"} > 0
       for: 24h
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: honeybadger
-        topic: releng
-    - alert: FluxImageAutomationControllerStuck
-      annotations:
-        description: |-
-          {{`Flux Image Automation Controller on {{ $labels.installation }} seems stuck.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/flux-image-automation-stuck/
-      expr: |
-        sum(irate(workqueue_unfinished_work_seconds{name="imageupdateautomation",cluster_type="management_cluster",namespace=~"flux-giantswarm|flux-system"}[15m])) by (cluster_id, installation, pipeline, provider) > 0
-      for: 30m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        severity: notify
-        team: honeybadger
-        topic: releng
-  # Customer's Alerts
-  - name: fluxcd-customer
-    rules:
-    - alert: FluxHelmReleaseFailedCustomer
-      annotations:
-        description: |-
-          {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-helmrelease/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", exported_namespace!~".*giantswarm.*"} > 0
-      for: 10m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
-        team: honeybadger
-        topic: releng
-    - alert: FluxWorkloadClusterHelmReleaseFailedCustomer
-      annotations:
-        description: |-
-          {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-helmrelease/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="workload_cluster", organization!="giantswarm"} > 0
-      for: 2h
-      labels:
-        area: platform
-        severity: notify
-        cancel_if_outside_working_hours: "true"
-        team: honeybadger
-        topic: releng
-    - alert: FluxKustomizationFailedCustomer
-      annotations:
-        description: |-
-          {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-kustomization/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="management_cluster", exported_namespace!~".*giantswarm.*"} > 0
-      for: 10m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
-        team: honeybadger
-        topic: releng
-    - alert: FluxWorkloadClusterKustomizationFailedCustomer
-      annotations:
-        description: |-
-          {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-kustomization/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="Kustomization", cluster_type="workload_cluster", organization!="giantswarm"} > 0
-      for: 2h
-      labels:
-        area: platform
-        severity: notify
-        cancel_if_outside_working_hours: "true"
-        team: honeybadger
-        topic: releng
-    - alert: FluxSourceFailedCustomer
-      annotations:
-        description: |-
-          {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-source/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="management_cluster", exported_namespace!~".*giantswarm.*"} > 0
-      for: 2h
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
-        team: honeybadger
-        topic: releng
-    - alert: FluxWorkloadClusterSourceFailedCustomer
-      annotations:
-        description: |-
-          {{`Flux {{ $labels.kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-source/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind=~"GitRepository|HelmRepository|Bucket", cluster_type="workload_cluster", organization!="giantswarm"} > 0
-      for: 2h
-      labels:
-        area: platform
-        severity: notify
-        cancel_if_outside_working_hours: "true"
-        team: honeybadger
-        topic: releng
-    - alert: FluxReconciliationTakingTooLongCustomer
-      annotations:
-        description: |-
-          {{`Flux controller {{ $labels.controller }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is reconciling very slowly.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-slow-reconciliation/
-      expr: |
-        (sum(rate(controller_runtime_reconcile_time_seconds_sum{app=~".*flux.*", namespace!~".*giantswarm.*"}[5m])) by (controller, cluster_id, installation, pipeline, provider) /
-        sum(rate(controller_runtime_reconcile_time_seconds_count{app=~".*flux.*", namespace!~".*giantswarm.*"}[5m])) by (controller, cluster_id, installation, pipeline, provider)) > 60
-      for: 10m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        severity: notify
         team: honeybadger
         topic: releng
     - alert: FluxWorkqueueTooLong
@@ -256,7 +176,7 @@ spec:
           {{`Flux artifacts are stuck in work queue for over 1 hour and are not being reconciled.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-workqueue-too-long/
       expr: |
-        sum by (cluster_id, installation, name, namespace, pipeline, provider) (workqueue_unfinished_work_seconds{namespace=~"flux-giantswarm|flux-system"}) > 3600.0
+        sum by (cluster_id, installation, name, namespace, pipeline, provider) (workqueue_unfinished_work_seconds{namespace=~"flux-giantswarm"}) > 3600.0
       for: 10m
       labels:
         area: platform

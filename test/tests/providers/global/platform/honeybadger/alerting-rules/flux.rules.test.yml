@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'gotk_suspend_status{installation="test", namespace="flux-giantswarm", exported_namespace="flux-giantswarm", kind="Kustomization", name="flux"}'
+      - series: 'gotk_resource_info{installation="test", namespace="flux-giantswarm", exported_namespace="flux-giantswarm", customresource_kind="Kustomization", name="flux", suspended="true"}'
         values: "1x60 0+1x60 1+0x1500"
     alert_rule_test:
       - alertname:  FluxSuspendedForTooLong
@@ -17,12 +17,13 @@ tests:
               cancel_if_outside_working_hours: "true"
               exported_namespace: "flux-giantswarm"
               installation: "test"
-              kind: "Kustomization"
+              customresource_kind: "Kustomization"
               name: "flux"
               namespace: "flux-giantswarm"
               severity: "page"
               team: "honeybadger"
               topic: "releng"
+              suspended: "true"
             exp_annotations:
               description: "Flux Kustomization flux in ns flux-giantswarm on test has been suspended for 24h."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-suspended-for-too-long/

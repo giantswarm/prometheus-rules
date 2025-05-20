@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Made `MimirIngesterNeedsToBeScaledUp` alert less sensitive to CPU usage
+- Rewrite Flux alerting rules towards the `gotk_resource_info` emitted by the Kube State Metrics.
+- Drop customer-related alerting rules of Flux.
 
 ## [4.62.0] - 2025-05-15
 

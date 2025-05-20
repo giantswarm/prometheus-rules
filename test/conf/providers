@@ -1,4 +1,5 @@
-capi/capa
-capi/capz
-capi/proxmox
-capi/vsphere
+capa
+capz
+cloud-director
+proxmox
+vsphere

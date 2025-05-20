@@ -21,9 +21,9 @@ tests:
               name: "flux"
               namespace: "kube-system"
               severity: "page"
+              suspended: "true"
               team: "honeybadger"
               topic: "releng"
-              suspended: "true"
             exp_annotations:
               description: "Flux Kustomization flux in ns flux-giantswarm on test has been suspended for 24h."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-suspended-for-too-long/

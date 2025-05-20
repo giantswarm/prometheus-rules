@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Made `MimirIngesterNeedsToBeScaledUp` alert less sensitive to CPU usage
+- Rules unit tests: support for `$provider` template so we can move provider-specific tests to global tests.
 
 ## [4.62.0] - 2025-05-15
 

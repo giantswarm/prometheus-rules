@@ -90,6 +90,9 @@ main() {
         # We need to copy the global test files in every provider directory
         cp -r --update=none "$GIT_WORKDIR/test/tests/providers/global/." "$outputPath/generated/$provider"
 
+        # Rules tests templating: replace $provider with the provider name
+        find "$outputPath/generated/$provider" -type f -name "*rules.test.yml" -execdir sed -i 's/$provider/'"${provider#capi/}"'/g' {} \;
+
         echo "### Running tests for provider: $provider"
 
         # Get the list of whitelisted files for this provider

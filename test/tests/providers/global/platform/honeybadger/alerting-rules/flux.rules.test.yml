@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'gotk_resource_info{installation="test", cluster_type="management_cluster", namespace="kube-system", exported_namespace="flux-giantswarm", kind="Kustomization", name="flux", suspended="true"}'
+      - series: 'gotk_resource_info{installation="test", cluster_type="management_cluster", namespace="kube-system", exported_namespace="flux-giantswarm", customresource_kind="Kustomization", name="flux", suspended="true"}'
         values: "1x60 0+1x60 1+0x1500"
     alert_rule_test:
       - alertname:  FluxSuspendedForTooLong

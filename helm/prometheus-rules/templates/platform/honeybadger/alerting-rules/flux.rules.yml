@@ -72,7 +72,7 @@ spec:
         description: |-
           {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-kustomization/
-      expr: gotk_resource_info{ready="False", customresource_kind="Kustomization". cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
+      expr: gotk_resource_info{ready="False", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
       for: 20m
       labels:
         area: platform
@@ -176,7 +176,7 @@ spec:
           {{`Flux artifacts are stuck in work queue for over 1 hour and are not being reconciled.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-workqueue-too-long/
       expr: |
-        sum by (cluster_id, installation, name, namespace, pipeline, provider) (workqueue_unfinished_work_seconds{namespace=~"flux-giantswarm"}) > 3600.0
+        sum by (cluster_id, installation, name, namespace, pipeline, provider) (workqueue_unfinished_work_seconds{namespace="flux-giantswarm"}) > 3600.0
       for: 10m
       labels:
         area: platform

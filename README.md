@@ -310,6 +310,10 @@ This is a good example of an input series for testing an `up` query.
 * The second series introduce a timeseries which first returns a `0` value and which adds `600` every minutes (=interval) for 40 minutes. After 40 minutes it has reached a value of `24000` (600x40) and goes on by adding `400` every minutes for 40 more minutes.
 This is a good example of an input series for testing a `range` query.
 
+#### Test templating
+
+In order to reduce the need for provider-specific test files, you can use `$provider` in your test file and our tooling will replace it with the provider name.
+
 #### Test exceptions
 
 * Rule files that can't be tested are listed in `test/conf/promtool_ignore`.

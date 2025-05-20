@@ -15,9 +15,10 @@ tests:
               alertname: "FluxSuspendedForTooLong"
               area: platform
               cancel_if_outside_working_hours: "true"
+              cluster_type: "management_cluster"
+              customresource_kind: "Kustomization"
               exported_namespace: "flux-giantswarm"
               installation: "test"
-              customresource_kind: "Kustomization"
               name: "flux"
               namespace: "kube-system"
               severity: "page"

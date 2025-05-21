@@ -10,16 +10,24 @@ set -euo pipefail
 
 main () {
     echo "Running Pint"
-    declare -a PINT_FILES_LIST
+
+    local GIT_WORKDIR
+    GIT_WORKDIR="$(git rev-parse --show-toplevel)"
+
+    local -a PINT_FILES_LIST
+    local -a PROVIDERS
 
     PINT_CONFIG="${1:-test/conf/pint/pint-config.hcl}"
+    mapfile -t PROVIDERS <"$GIT_WORKDIR/test/conf/providers"
 
     if [[ "${2:-}" != "" ]]; then
-        mapfile -t PINT_FILES_LIST < <(grep -lr "team:.*${PINT_TEAM_FILTER}" "test/hack/output/generated/capi/capa/" | grep -v ".test.yml")
-        mapfile -t PINT_FILES_LIST < <(grep -lr "team:.*${PINT_TEAM_FILTER}" "test/hack/output/generated/capi/capz/" | grep -v ".test.yml")
+        for provider in "${PROVIDERS[@]}"; do
+            mapfile -t PINT_FILES_LIST < <(grep -lr "team:.*${PINT_TEAM_FILTER}" "test/hack/output/generated/$provider/" | grep -v ".test.yml")
+        done
     else
-        mapfile -t PINT_FILES_LIST < <(find test/hack/output/generated/capi/capa/ -name "*.rules.yml")
-        mapfile -t PINT_FILES_LIST < <(find test/hack/output/generated/capi/capz/ -name "*.rules.yml")
+        for provider in "${PROVIDERS[@]}"; do
+            mapfile -t PINT_FILES_LIST < <(find test/hack/output/generated/$provider/ -name "*.rules.yml")
+        done
     fi
 
     test/hack/bin/pint -c "$PINT_CONFIG" lint "${PINT_FILES_LIST[@]}"

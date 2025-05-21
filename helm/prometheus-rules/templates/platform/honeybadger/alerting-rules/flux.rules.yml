@@ -90,7 +90,7 @@ spec:
         description: |-
           {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-kustomization/
-      expr: gotk_resource_info{ready="False", namespace="kube-system", customresource_kind="Kustomization", cluster_type="management_cluster", organization="giantswarm"} > 0
+      expr: gotk_resource_info{ready="False", namespace="kube-system", customresource_kind="Kustomization", cluster_type="workload_cluster", organization="giantswarm"} > 0
       for: 2h
       labels:
         area: platform

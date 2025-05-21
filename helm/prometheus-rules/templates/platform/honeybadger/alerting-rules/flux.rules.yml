@@ -162,7 +162,7 @@ spec:
         description: |-
           {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }} has been suspended for 24h.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-suspended-for-too-long/
-      expr: gotk_resource_info{namespace="kube-system", app="cluster-api-monitoring", cluster_type="management_cluster", exported_namespace="flux-giantswarm", suspended="true"} > 0
+      expr: gotk_resource_info{app="cluster-api-monitoring", cluster_type="management_cluster", exported_namespace="flux-giantswarm", suspended="true"} > 0
       for: 24h
       labels:
         area: platform

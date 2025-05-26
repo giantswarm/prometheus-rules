@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rules unit tests: support for `$provider` template so we can move provider-specific tests to global tests.
 - Rules unit tests: simplify files organization by removing the `capi` folder. Also fixes a bug in cloud-director tests.
 - Rules linting: run against all configured providers.
+- Change `JobScrapingFailure` to page owner team and default to atlas if not set.
 
 ## [4.62.0] - 2025-05-15
 

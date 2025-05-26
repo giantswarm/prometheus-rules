@@ -42,16 +42,15 @@ spec:
         summary: Monitoring agent failed to scrape all targets in a job.
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-job-scraping-failure/
       expr: |-
-        (
-          count(up == 0) by (job, installation, cluster_id, provider, pipeline)
+        label_replace((
+          count(up == 0) by (job, installation, cluster_id, provider, pipeline, team)
           /
-          count(up) by (job, installation, cluster_id, provider, pipeline)
-        ) >= 1
+          count(up) by (job, installation, cluster_id, provider, pipeline, team)
+        ), "team", "atlas", "team", "^$") >= 1
       for: 1d
       labels:
         area: platform
         severity: notify
-        team: atlas
         topic: observability
         cancel_if_outside_working_hours: "true"
     - alert: CriticalJobScrapingFailure

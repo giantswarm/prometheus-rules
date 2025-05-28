@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'gotk_resource_info{installation="test", app="cluster-api-monitoring", cluster_type="management_cluster", exported_namespace="flux-giantswarm", customresource_kind="Kustomization", name="flux", suspended="true"}'
+      - series: 'gotk_resource_info{installation="test", job="giantswarm/cluster-api-monitoring", cluster_type="management_cluster", exported_namespace="flux-giantswarm", customresource_kind="Kustomization", name="flux", suspended="true"}'
         values: "1x60 0+1x60 1+0x1500"
     alert_rule_test:
       - alertname:  FluxSuspendedForTooLong
@@ -13,13 +13,13 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: "FluxSuspendedForTooLong"
-              app: "cluster-api-monitoring"
               area: platform
               cancel_if_outside_working_hours: "true"
               cluster_type: "management_cluster"
               customresource_kind: "Kustomization"
               exported_namespace: "flux-giantswarm"
               installation: "test"
+              job: "giantswarm/cluster-api-monitoring"
               name: "flux"
               severity: "page"
               suspended: "true"

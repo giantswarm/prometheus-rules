@@ -165,7 +165,7 @@ tests:
       - alertname: MimirIngesterNeedsToBeScaledUp
         eval_time: 3h
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 8h
+        eval_time: 9h
         exp_alerts:
           - exp_labels:
               area: platform

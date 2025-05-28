@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Made `MimirIngesterNeedsToBeScaledUp` alert less sensitive to CPU usage
+- Made `MimirIngesterNeedsToBeScaledUp` alert less sensitive to CPU usage.
+- Increase `MimirIngesterNeedsToBeScaledUp` alert's time to trigger from 1h to 6h to avoid noise coming from temporary spikes like from `stable-testing` installations (https://github.com/giantswarm/giantswarm/issues/33513)
 - Rules unit tests: support for `$provider` template so we can move provider-specific tests to global tests.
 - Rules unit tests: simplify files organization by removing the `capi` folder. Also fixes a bug in cloud-director tests.
 - Rules linting: run against all configured providers.
@@ -564,8 +565,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update alloy-app to 0.6.1. This includes:
-  - an upgrade to upstream version 1.4.2
-  - a ciliumnetworkpolicy fix for clustering.
+    - an upgrade to upstream version 1.4.2
+    - a ciliumnetworkpolicy fix for clustering.
 
 ## [4.18.0] - 2024-10-08
 
@@ -2943,7 +2944,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Opsrecipie link for `KiamSTSIssuingErrors`
+- Opsrecipie link for `KiamSTSIssuingErrors`.
 
 ## [2.14.0] - 2022-04-12
 

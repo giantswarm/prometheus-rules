@@ -85,7 +85,7 @@ spec:
           / 
         sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core"}) 
           >= 0.95
-      for: 1h
+      for: 6h
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"

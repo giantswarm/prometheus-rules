@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rules unit tests: support for `$provider` template so we can move provider-specific tests to global tests.
 - Rules unit tests: simplify files organization by removing the `capi` folder. Also fixes a bug in cloud-director tests.
 - Rules linting: run against all configured providers.
+- Change `apiserver_flowcontrol_request_concurrency_limit` to `apiserver_flowcontrol_nominal_limit_seats`, metric will be dropped in Kubernetes `v1.31`.
 
 ## [4.62.0] - 2025-05-15
 

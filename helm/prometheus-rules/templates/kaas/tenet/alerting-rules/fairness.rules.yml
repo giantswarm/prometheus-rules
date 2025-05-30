@@ -25,7 +25,7 @@ spec:
       annotations:
         description: '{{`Cluster {{ $labels.installation }}/{{ $labels.cluster_id }}: there are too many API requests for flow schema {{ $labels.flow_schema }}.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/flowcontrol-rejected-requests/
-      expr: sum(irate(apiserver_flowcontrol_dispatched_requests_total[1m])) by (cluster_id, installation, pipeline, provider, flow_schema, priority_level) > (min by(cluster_id, installation, pipeline, provider, flow_schema, priority_level) (apiserver_flowcontrol_request_concurrency_limit_overwrite) OR min by(cluster_id, installation, pipeline, provider, flow_schema, priority_level) (apiserver_flowcontrol_request_concurrency_limit))
+      expr: sum(irate(apiserver_flowcontrol_dispatched_requests_total[1m])) by (cluster_id, installation, pipeline, provider, flow_schema, priority_level) > (min by(cluster_id, installation, pipeline, provider, flow_schema, priority_level) (apiserver_flowcontrol_nominal_limit_seats) OR min by(cluster_id, installation, pipeline, provider, flow_schema, priority_level) (apiserver_flowcontrol_nominal_limit_seats))
       for: 15m
       labels:
         area: kaas

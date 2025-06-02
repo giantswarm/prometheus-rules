@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.63.0] - 2025-06-02
+
 ### Added
 
 - Add `IncorrectResourceUsageData` alert.
@@ -3698,7 +3700,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.62.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.63.0...HEAD
+[4.63.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.62.0...v4.63.0
 [4.62.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.61.0...v4.62.0
 [4.61.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.60.0...v4.61.0
 [4.60.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.2...v4.60.0

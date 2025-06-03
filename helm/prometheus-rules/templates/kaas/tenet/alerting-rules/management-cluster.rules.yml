@@ -72,7 +72,7 @@ spec:
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/container-is-restarting-too-often/
-      expr: increase(kube_pod_container_status_restarts_total{cluster_type="management_cluster", container!="grafana.*|prometheus.*|promxy.*|promtail.*|silence.*|teleport.*|.*-admission-controller.*|*-aws-*|aws-*|route53-manager.*|cilium.*|external-dns.*|teleport.*|falco.*|kyverno.*|postgres.*|exception.*|edgedb.*|athena.*|app.*"}[1h]) > 5
+      expr: increase(kube_pod_container_status_restarts_total{cluster_type="management_cluster", pod!~"grafana.*|prometheus.*|silence.*|teleport.*|.*-admission-controller.*|.*-aws-.*|aws-.*|route53-manager.*|cilium.*|external-dns.*|falco.*|kyverno.*|postgres.*|exception.*|edgedb.*|athena.*|app.*"}[1h]) > 5
       for: 5m
       labels:
         area: kaas

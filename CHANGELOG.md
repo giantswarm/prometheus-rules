@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Removed `grafana` from `DeploymentNotSatisfiedAtlas` because it's already monitored via `GrafanaDown` alert.
 - Rework Rocket's `ManagementClusterContainerIsRestartingTooFrequently` to use pod names as the selector.
+- Update alert for Cilium HelmRelease to match timeout.
 
 ## [4.63.0] - 2025-06-02
 

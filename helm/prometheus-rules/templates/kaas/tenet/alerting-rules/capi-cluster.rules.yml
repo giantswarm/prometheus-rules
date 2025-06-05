@@ -30,7 +30,7 @@ spec:
           annotations:
             description: |-
               {{`Cluster {{ $labels.exported_namespace }}/{{ $labels.cluster_id }} stuck in {{ $labels.phase }} phase.`}}
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+            runbook_url: "{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/?cluster_id={{ $labels.cluster_id }}`}}"
             __dashboardUid__: bdi7iswg81czkcasd
             dashboardQueryParams: "orgId=2"
         - alert: ClusterStatusNotReady

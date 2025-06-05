@@ -33,7 +33,7 @@ tests:
               provider: capa
             exp_annotations:
               description: "Cluster giantswarm/clippaxy stuck in Pending phase."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/?cluster_id=clippaxy
               __dashboardUid__: bdi7iswg81czkcasd
               dashboardQueryParams: "orgId=2"
       - alertname: ClusterStatusNotReady

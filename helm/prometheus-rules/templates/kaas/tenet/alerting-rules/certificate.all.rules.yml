@@ -25,7 +25,7 @@ spec:
     - alert: KyvernoCertificateSecretWillExpireInLessThanTwoDays
       annotations:
         description: '{{`Kyverno Certificate stored in Secret {{ $labels.exported_namespace }}/{{ $labels.name }} on {{ $labels.cluster_id }} will expire in less than two days.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kyverno-certificate-secret-will-expire-in-less-than-two-days/?cluster_id={{ $labels.cluster_id }}
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kyverno-certificate-secret-will-expire-in-less-than-two-days/?cluster_id={{ $labels.cluster_id }}`}}'
       expr: (cert_exporter_secret_not_after{name=~".*kyverno.*"} - time()) < 2 * 24 * 60 * 60
       labels:
         area: platform

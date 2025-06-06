@@ -26,13 +26,14 @@ spec:
         topic: cluster-autoscaler
     - alert: ClusterAutoscalerFailedScaling
       annotations:
-        description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has failed scaling up.`}}'
+        description: '{{`Cluster-Autoscaler on {{ $labels.cluster_id }} has failed scaling up {{ $value | printf "%.0f" }} times recently.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cluster-autoscaler-scaling/
-      expr: cluster_autoscaler_failed_scale_ups_total{provider=~"capa|capz|eks"} > 0
-      for: 15m
+      expr: increase(cluster_autoscaler_failed_scale_ups_total{provider=~"capa|capz|eks"}[15m]) > 3 and rate(cluster_autoscaler_failed_scale_ups_total{provider=~"capa|capz|eks"}[5m]) > 0
+      for: 5m
       labels:
         area: kaas
         cancel_if_outside_working_hours: "true"
+        cancel_if_cluster_has_no_workers: "true"
         severity: page
         team: tenet
         topic: cluster-autoscaler

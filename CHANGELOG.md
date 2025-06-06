@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Improved `ClusterAutoscalerFailedScaling` alert expression to reduce false positives by detecting ongoing scaling failures rather than cumulative historical failures.
+
 ## [4.64.0] - 2025-06-05
 
 ### Changed

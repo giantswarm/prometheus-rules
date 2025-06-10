@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Increase `MimirIngesterNeedsToBeScaledUp` alert's time to trigger from 6h to 12h to avoid noise coming from temporary spikes.
+
 ## [4.65.0] - 2025-06-10
 
 ### Changed

@@ -141,19 +141,25 @@ tests:
   # Test for MimirIngesterNeedsToBeScaledUp alert
   - interval: 1m
     input_series:
-      # mimir-ingester real memory usage gradually increases until it goes beyond 90% of the memory requests.
-      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "8+0x120 11+0x420 8+0x840 11+0x420 8+0x360"
+      # mimir-ingester real memory usage fluctuates between 8 out of 12 (66%) and 11 out of 12 (91%)
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}' 
+        values: "8+0x120 11+0x780 8+0x2400"
       - series: 'container_memory_working_set_bytes{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "8+0x120 11+0x420 8+0x840 11+0x420 8+0x360"
+        values: "8+0x120 11+0x780 8+0x2400"
       # mimir-ingester memory requests stay the same for the entire duration of the test.
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "12+0x2400"
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "12+0x2400"
-      # mimir-ingester real cpu usage gradually increases until it goes beyond 90% of the cpu requests.
+      # mimir-ingester cpu usage fluctuates between different values.
+      # Note that:
+      # - the rule does the average of all pods
+      # - cpu usage is a counter
+      # so here are what each value means:
+      # - +60  and +60 = +2 per second, out of 3 requests total = 66% usage
+      # - +120 and +60 = +3 per second, out of 3 requests total = 100% usage
       - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "0+60x600 6000+130x420 10400+60x360 14000+110x420 18400+60x360"
+        values: "0+60x1440 86400+120x780 95500+60x2400"
       - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "0+60x2400"
       # mimir-ingester cpu requests stay the same for the entire duration of the test.
@@ -165,8 +171,8 @@ tests:
       - alertname: MimirIngesterNeedsToBeScaledUp
         eval_time: 3h
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 9h
-        exp_alerts:
+        eval_time: 15h
+        exp_alerts: # caused by RAM usage
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
@@ -182,11 +188,11 @@ tests:
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 13h
+        eval_time: 20h
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 17h
+        eval_time: 37h
         exp_alerts:
-          - exp_labels:
+          - exp_labels: # caused by cpu usage
               area: platform
               cancel_if_outside_working_hours: "true"
               cluster_id: golem
@@ -201,26 +207,7 @@ tests:
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 21h
-      - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 29h30m
-        exp_alerts:
-          - exp_labels:
-              area: platform
-              cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              installation: "golem"
-              pipeline: "testing"
-              provider: "$provider"
-              namespace: mimir
-              severity: page
-              team: atlas
-              topic: observability
-            exp_annotations:
-              description: Mimir ingester is consuming too much resources and needs to be scaled up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
-      - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 35h
+        eval_time: 40h
   # Test for MimirIngesterNeedsToBeScaledDown alert
   - interval: 1m
     input_series:

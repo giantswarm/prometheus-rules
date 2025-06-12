@@ -45,10 +45,10 @@ spec:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/apiserver-admission-webhook-errors/
       expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name!~".*(prometheus|vpa.k8s.io|linkerd|validate.nginx.ingress.kubernetes.io|kong.konghq.com|cert-manager.io|kyverno|app-admission-controller).*"}[5m])) by (cluster_id, installation, pipeline, provider, name, job, le)) > 5
-      for: 15m
+      for: 1h
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: se
         topic: kubernetes

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Increase `MimirIngesterNeedsToBeScaledUp` alert's time to trigger from 6h to 12h to avoid noise coming from temporary spikes.
 - WorkloadClusterWebhookDurationExceedsTimeoutSolutionEngineers alert: make it page only during business hours, and increase delay to 1h before it pages
+- MetricForwardingErrors alert: make it less sensitive
 
 ## [4.65.0] - 2025-06-10
 

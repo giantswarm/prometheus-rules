@@ -26,7 +26,7 @@ spec:
             rate(prometheus_remote_storage_samples_total[5m])
           )
         ) * 100
-        > 1
+        > 10
       for: 1h
       labels:
         area: platform

@@ -277,6 +277,7 @@ spec:
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
+        inhibit_metrics_broken: "true"
         severity: page
         team: atlas
         topic: observability

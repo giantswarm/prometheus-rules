@@ -19,6 +19,7 @@ spec:
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
+        cancel_if_metrics_broken: "true"
         severity: page
         team: atlas
         topic: observability
@@ -36,6 +37,7 @@ spec:
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
+        cancel_if_metrics_broken: "true"
         severity: page
         team: atlas
         topic: observability

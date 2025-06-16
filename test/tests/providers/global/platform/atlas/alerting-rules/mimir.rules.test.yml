@@ -484,6 +484,7 @@ tests:
               area: platform
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
+              inhibit_metrics_broken: "true"
               installation: myinstall
               pipeline: stable
               provider: $provider
@@ -504,6 +505,7 @@ tests:
               area: platform
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
+              inhibit_metrics_broken: "true"
               installation: myinstall
               pipeline: stable
               provider: $provider

@@ -476,7 +476,7 @@ tests:
         values: "_x80 1+1x80 0+0x80"
     alert_rule_test:
       - alertname: MimirContinuousTestMissing
-        eval_time: 40m
+        eval_time: 9m
       - alertname: MimirContinuousTestMissing
         eval_time: 70m
         exp_alerts:

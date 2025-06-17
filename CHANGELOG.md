@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `MimirToGrafanaCloudExporterDown`
   - `ManagementClusterDexAppMissing`
 
+### Changed
+
+- `LogForwardingErrors` description improvement
+
 ## [4.65.1] - 2025-06-16
 
 ### Changed

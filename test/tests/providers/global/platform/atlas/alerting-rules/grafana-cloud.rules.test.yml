@@ -14,6 +14,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
+              cancel_if_metrics_broken: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
               cluster_type: management_cluster
@@ -36,6 +37,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
+              cancel_if_metrics_broken: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
               cluster_type: management_cluster

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added `cancel_if_metrics_broken` inhibition to following alerts:
+  - `ManagementClusterDeploymentMissingCAPA`
+  - `ManagementClusterDeploymentMissingCAPI`
+  - `ETCDBackupMetricsMissing`
+  - `PrometheusMissingGrafanaCloud`
+  - `MimirToGrafanaCloudExporterDown`
+  - `ManagementClusterDexAppMissing`
+
 ## [4.65.1] - 2025-06-16
 
 ### Changed

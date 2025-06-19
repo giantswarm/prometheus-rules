@@ -15,7 +15,7 @@ spec:
           annotations:
             __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
             dashboardQueryParams: "orgId=2"
-            description: '{{`More that 10% of the requests to Loki are failing.`}}'
+            description: '{{`{{ $value | printf "%.2f" }}% of the requests to Loki are failing for pod {{ $labels.pod }} (threshold 10%)`}}'
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
           expr: |-
             (
@@ -23,7 +23,7 @@ spec:
               *
                 (
                     (
-                      sum by (cluster_id, installation, provider, pipeline, namespace, job, instance) (
+                      sum by (cluster_id, installation, provider, pipeline, namespace, job, instance, pod) (
                         rate (
                           loki_write_request_duration_seconds_count{status_code!~"2.."}[5m:]
                         )
@@ -31,7 +31,7 @@ spec:
                     )
                   /
                     (
-                      sum by (cluster_id, installation, provider, pipeline, namespace, job, instance) (
+                      sum by (cluster_id, installation, provider, pipeline, namespace, job, instance, pod) (
                         rate (
                           loki_write_request_duration_seconds_count[5m:]
                         )

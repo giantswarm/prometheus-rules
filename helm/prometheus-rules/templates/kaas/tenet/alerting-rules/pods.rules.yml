@@ -27,7 +27,7 @@ spec:
           [30m:]) > 5
         # count per cluster
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-        > 2
+        >= 2
       for: 15m
       labels:
         area: kaas

@@ -23,8 +23,6 @@ tests:
         eval_time: 90m
       - alertname: PodsUnschedulable
         eval_time: 150m
-      - alertname: PodsUnschedulable
-        eval_time: 210m
         exp_alerts:
           - exp_labels:
               area: "kaas"

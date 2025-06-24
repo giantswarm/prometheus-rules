@@ -76,3 +76,17 @@ spec:
         topic: cilium
         namespace: |-
           {{`{{ $labels.exported_namespace }}`}}
+    - alert: CiliumAgentPodPending
+      annotations:
+        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending in cluster {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/pod-stuck-in-pending/
+      expr: kube_pod_status_phase{namespace="kube-system",pod=~"(cilium-.*)",phase="Pending"} == 1
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        severity: page
+        team: cabbage
+        topic: cilium

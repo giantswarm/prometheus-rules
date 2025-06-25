@@ -35,9 +35,9 @@ spec:
         description: This alert checks that we have less than 10% errors on Loki requests.
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
       expr: |
-        100 * sum(rate(loki_request_duration_seconds_count{status_code=~"5.."}[2m])) by (cluster_id, installation, provider, pipeline, namespace, job, route)
+        100 * sum(rate(loki_request_duration_seconds_count{status_code=~"5..", cluster_type="management_cluster", namespace="loki"}[2m])) by (cluster_id, installation, provider, pipeline, namespace, job, route)
           /
-        sum(rate(loki_request_duration_seconds_count[2m])) by (cluster_id, installation, provider, pipeline, namespace, job, route)
+        sum(rate(loki_request_duration_seconds_count{cluster_type="management_cluster", namespace="loki"}[2m])) by (cluster_id, installation, provider, pipeline, namespace, job, route)
           > 10
       for: 120m
       labels:

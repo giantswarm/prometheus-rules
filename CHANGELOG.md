@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `FluentbitDropRatio` and `FluentbitTooManyErrors` only page for `kube-system` and `monitoring` instances (giantswarm-managed ones).
+- `FluentbitDropRatio` and `FluentbitTooManyErrors` only page for management cluster instances (giantswarm-managed).
 
 ## [4.66.0] - 2025-06-24
 

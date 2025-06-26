@@ -18,7 +18,7 @@ spec:
         __dashboardUid__: fluentbit
         dashboardQueryParams: "orgId=2"
       # If we have some failures sending data, raise an alert
-      expr: rate(fluentbit_output_retries_failed_total[10m]) > 0
+      expr: rate(fluentbit_output_retries_failed_total{namespace=~"kube-system|monitoring"}[10m]) > 0
       for: 20m
       labels:
         area: platform
@@ -33,7 +33,14 @@ spec:
         __dashboardUid__: fluentbit
         dashboardQueryParams: "orgId=2"
       # Check the ratio of dropped records over the total number of records.
-      expr: rate(fluentbit_output_dropped_records_total[10m]) / (rate(fluentbit_output_proc_records_total[10m]) + rate(fluentbit_output_dropped_records_total[10m])) > 0.01
+      expr: |-
+        rate(
+          fluentbit_output_dropped_records_total{namespace=~"kube-system|monitoring"}[10m])
+          / (
+            rate(fluentbit_output_proc_records_total{namespace=~"kube-system|monitoring"}[10m])
+            + rate(fluentbit_output_dropped_records_total{namespace=~"kube-system|monitoring"}[10m])
+          )
+        > 0.01
       for: 20m
       labels:
         area: platform

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `FluentbitDropRatio` only pages for management cluster instances (giantswarm-managed).
+
+### Removed
+
+- Removed `FluentbitTooManyErrors` alerts, at this is already covered by `FluentbitDropRatio` alerts and they mostly page together.
+
 ## [4.66.0] - 2025-06-24
 
 ### Added

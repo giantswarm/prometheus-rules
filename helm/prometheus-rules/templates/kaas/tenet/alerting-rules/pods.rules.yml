@@ -35,7 +35,5 @@ spec:
         cancel_if_outside_working_hours: "true"
         inhibit_cluster_broken: "true"
         severity: page
-        # Let's start sending these alerts to atlas, then we can swich to provider team when properly tuned.
-        team: atlas
-        # team: {{ include "providerTeam" . }}
+        team: {{ include "providerTeam" . }}
         topic: workloadcluster

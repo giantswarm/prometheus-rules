@@ -36,7 +36,7 @@ tests:
               provider: "capa"
               region: "us-east-1"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "workloadcluster"
             exp_annotations:
               description: 'Cluster wc01 has unschedulable kube-system pods.'

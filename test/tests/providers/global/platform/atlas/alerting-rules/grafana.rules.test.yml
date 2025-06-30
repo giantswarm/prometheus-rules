@@ -111,7 +111,7 @@ tests:
               area: platform
               cancel_if_outside_working_hours: "true"
               installation: "golem"
-              cluster: grafana-postgresql-rexocery-test
+              cluster: grafana-postgresql-recovery-test
               severity: page
               team: atlas
               topic: observability

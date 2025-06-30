@@ -15,7 +15,7 @@ spec:
         description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/core-dns-deployment-not-satisfied/
       expr: |
-        sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider) / (sum(kube_deployment_status_replicas_available{deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider) + sum(kube_deployment_status_replicas_unavailable{deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider))* 100 < 51
+        sum(kube_deployment_status_replicas_available{namespace="kube-system", deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider) / (sum(kube_deployment_status_replicas_available{namespace="kube-system", deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider) + sum(kube_deployment_status_replicas_unavailable{namespace="kube-system", deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider))* 100 < 51
       for: 10m
       labels:
         area: platform
@@ -45,14 +45,14 @@ spec:
         (
           # This is using the deprecated HPA metric names https://github.com/kubernetes/kube-state-metrics/commit/eb01334f2d03ebc3ab25cd7b29d0ff28f6ca5ee0
           # TODO(@giantswarm/team-cabbage) remove once kube-state-metrics is updated to use the new metric names everywhere
-          kube_hpa_status_current_replicas{hpa="coredns"} == kube_hpa_spec_max_replicas{hpa="coredns"}
+          kube_hpa_status_current_replicas{namespace="kube-system", hpa="coredns"} == kube_hpa_spec_max_replicas{namespace="kube-system", hpa="coredns"}
           and
-          kube_hpa_spec_min_replicas{hpa="coredns"} != kube_hpa_spec_max_replicas{hpa="coredns"}
+          kube_hpa_spec_min_replicas{namespace="kube-system", hpa="coredns"} != kube_hpa_spec_max_replicas{hpa="coredns"}
         ) or (
           # This is using the new HPA metric names
-          kube_horizontalpodautoscaler_status_current_replicas{horizontalpodautoscaler="coredns"} == kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="coredns"}
+          kube_horizontalpodautoscaler_status_current_replicas{namespace="kube-system", horizontalpodautoscaler="coredns"} == kube_horizontalpodautoscaler_spec_max_replicas{namespace="kube-system", horizontalpodautoscaler="coredns"}
           and
-          kube_horizontalpodautoscaler_spec_min_replicas{horizontalpodautoscaler="coredns"} != kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="coredns"}
+          kube_horizontalpodautoscaler_spec_min_replicas{namespace="kube-system", horizontalpodautoscaler="coredns"} != kube_horizontalpodautoscaler_spec_max_replicas{namespace="kube-system", horizontalpodautoscaler="coredns"}
         )
       for: 120m
       labels:

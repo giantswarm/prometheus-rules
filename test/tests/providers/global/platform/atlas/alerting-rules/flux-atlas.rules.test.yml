@@ -13,18 +13,19 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: "FluxKustomizationFailed"
-              area: platform
+              area: "platform"
               cancel_if_outside_working_hours: "true"
+              cluster_id: "test"
               cluster_type: "management_cluster"
               customresource_kind: "Kustomization"
               exported_namespace: "flux-giantswarm"
               installation: "test"
               job: "giantswarm/cluster-api-monitoring"
-              name: "flux"
+              name: "silences"
+              ready: "False"
               severity: "page"
-              suspended: "false"
               team: "atlas"
               topic: "releng"
             exp_annotations:
               description: "Flux Kustomization silences in ns flux-giantswarm on test/test is stuck in Failed state."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-kustomization/
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-kustomization/"

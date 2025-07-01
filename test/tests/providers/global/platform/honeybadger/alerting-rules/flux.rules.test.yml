@@ -5,6 +5,14 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
+      - series: 'gotk_resource_info{ready="False", job="giantswarm/cluster-api-monitoring", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="silences"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: FluxSuspendedForTooLong
+        eval_time: 30m
+        exp_alerts: []
+  - interval: 1m
+    input_series:
       - series: 'gotk_resource_info{installation="test", job="giantswarm/cluster-api-monitoring", cluster_type="management_cluster", exported_namespace="flux-giantswarm", customresource_kind="Kustomization", name="flux", suspended="true"}'
         values: "1x60 0+1x60 1+0x1500"
     alert_rule_test:

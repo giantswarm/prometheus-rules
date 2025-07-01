@@ -8,7 +8,7 @@ tests:
       - series: 'gotk_resource_info{ready="False", job="giantswarm/cluster-api-monitoring", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="silences"}'
         values: "1x60"
     alert_rule_test:
-      - alertname: FluxSuspendedForTooLong
+      - alertname: FluxKustomizationFailed
         eval_time: 30m
         exp_alerts: []
   - interval: 1m

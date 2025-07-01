@@ -13,7 +13,7 @@ spec:
 #
 # FluxKustomizationFailed
 #
-# Alerting for GiantSwarm management clusters Kustomization CRs.
+# Alerting for GiantSwarm management clusters silences Kustomization CRs.
 #
     - alert: FluxKustomizationFailed
       annotations:

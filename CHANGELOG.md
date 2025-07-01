@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update CoreDNS alerts to page only for resources in "kube-system" namespace.
+- Route `FluxKustomizationFailed` for `silences` kustomization to Atlas.
 
 ## [4.67.0] - 2025-06-27
 

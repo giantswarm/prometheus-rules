@@ -1,0 +1,31 @@
+---
+rule_files:
+  - flux-atlas.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{ready="False", job="giantswarm/cluster-api-monitoring", installation="test", cluster_id="test", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="silences"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: FluxKustomizationFailed
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              alertname: "FluxKustomizationFailed"
+              area: "platform"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "test"
+              cluster_type: "management_cluster"
+              customresource_kind: "Kustomization"
+              exported_namespace: "flux-giantswarm"
+              installation: "test"
+              job: "giantswarm/cluster-api-monitoring"
+              name: "silences"
+              ready: "False"
+              severity: "page"
+              team: "atlas"
+              topic: "releng"
+            exp_annotations:
+              description: "Flux Kustomization silences in ns flux-giantswarm on test/test is stuck in Failed state."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-kustomization/"

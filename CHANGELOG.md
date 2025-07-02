@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.68.0] - 2025-07-02
+
 ### Changed
 
 - Update CoreDNS alerts to page only for resources in "kube-system" namespace.
@@ -3754,7 +3756,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.67.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.68.0...HEAD
+[4.68.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.67.0...v4.68.0
 [4.67.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.66.0...v4.67.0
 [4.66.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.65.1...v4.66.0
 [4.65.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.65.0...v4.65.1

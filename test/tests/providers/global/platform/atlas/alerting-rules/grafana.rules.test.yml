@@ -93,3 +93,32 @@ tests:
       - alertname: GrafanaPostgresqlArchivingFailure
         eval_time: 40m
         exp_alerts: []
+  - interval: 1m
+    input_series:
+      # For the first 20 minutes there's no grafana-postgresql recovery test cluster.
+      # Then, for the next 70 minutes, as the recovery test failed, the recovery test cluster stays around.
+      # Then someone fixed the issue and manually deleted the recovery test cluster.
+      - series: 'cnpg_collector_up{namespace="monitoring", cluster="grafana-postgresql-recovery-test", cluster_id="golem", cluster_type="management_cluster", installation="golem"}'
+        values: "0+0x20 2+0x70 0+0x20"
+    alert_rule_test:
+      - alertname: GrafanaPostgresqlRecoveryTestFailed
+        eval_time: 15m
+        exp_alerts: []
+      - alertname: GrafanaPostgresqlRecoveryTestFailed
+        eval_time: 85m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              installation: "golem"
+              cluster: grafana-postgresql-recovery-test
+              severity: page
+              team: atlas
+              topic: observability
+              cluster_id: "golem"
+            exp_annotations:
+              description: 'grafana-postgresql db automated recovery test failed with cluster grafana-postgresql-recovery-test.'
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
+      - alertname: GrafanaPostgresqlRecoveryTestFailed
+        eval_time: 105m
+        exp_alerts: []

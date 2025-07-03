@@ -1,0 +1,43 @@
+---
+rule_files:
+  - pods.rules.yml
+
+tests:
+  # PodsUnschedulable
+  - interval: 1m
+    input_series:
+      # All is good for 1h,
+      # Then every hour we have a new pod unschedulable
+      - series: 'kube_pod_status_unschedulable{app="kube-state-metrics", cluster_id="wc01", cluster_type="workload_cluster", customer="giantswarm", installation="testinstall", namespace="kube-system", pipeline="stable", pod="alloy-logs-1", provider="capa", region="us-east-1"}'
+        values: "_x60 1x1000"
+      - series: 'kube_pod_status_unschedulable{app="kube-state-metrics", cluster_id="wc01", cluster_type="workload_cluster", customer="giantswarm", installation="testinstall", namespace="kube-system", pipeline="stable", pod="alloy-metrics-1", provider="capa", region="us-east-1"}'
+        values: "_x120 1x1000"
+      - series: 'kube_pod_status_unschedulable{app="kube-state-metrics", cluster_id="wc01", cluster_type="workload_cluster", customer="giantswarm", installation="testinstall", namespace="kube-system", pipeline="stable", pod="alloy-metrics-2", provider="capa", region="us-east-1"}'
+        values: "_x180 1x1000"
+    alert_rule_test:
+      - alertname: PodsUnschedulable
+        eval_time: 10m
+      - alertname: PodsUnschedulable
+        eval_time: 50m
+      - alertname: PodsUnschedulable
+        eval_time: 90m
+      - alertname: PodsUnschedulable
+        eval_time: 150m
+        exp_alerts:
+          - exp_labels:
+              area: "kaas"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "wc01"
+              cluster_type: "workload_cluster"
+              customer: "giantswarm"
+              installation: "testinstall"
+              inhibit_cluster_broken: "true"
+              pipeline: "stable"
+              provider: "capa"
+              region: "us-east-1"
+              severity: "page"
+              team: "phoenix"
+              topic: "workloadcluster"
+            exp_annotations:
+              description: 'Cluster wc01 has unschedulable kube-system pods.'
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/validate-cluster-health

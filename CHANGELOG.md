@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `PrometheusOperatorRejectedResources`: only page for MC resources
+ 
 ### Removed
 
 - DuplicatePrometheusOperatorKubeletService was for clusters before v20, which we don't have anymore.

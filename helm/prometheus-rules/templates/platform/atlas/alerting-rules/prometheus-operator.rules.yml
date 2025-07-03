@@ -10,21 +10,6 @@ spec:
   groups:
   - name: prometheus-operator
     rules:
-    ## TODO(@giantswarm/team-atlas): Remove once all clusters are passed v20
-    - alert: DuplicatePrometheusOperatorKubeletService
-      annotations:
-        description: '{{`Prometheus-operator in cluster {{ $labels.cluster_id }} has duplicate kubelet service.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-rule-failures/
-      expr: count(kube_service_info{namespace=~"monitoring|kube-system", service=~"kube-prometheus-stack-kubelet|prometheus-operator-app-kubelet"}) by (cluster_id, installation, provider, pipeline) > 1
-      for: 20m
-      labels:
-        area: platform
-        cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_cluster_has_no_workers: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
     - alert: PrometheusOperatorDown
       annotations:
         description: '{{`Prometheus-operator ({{ $labels.instance }}) is down.`}}'
@@ -87,11 +72,12 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    # This one depends on the validity of the watched resources. On WCs, these resources are created by customers and we don't want these to page us. So we only run this rule for MCs.
     - alert: PrometheusOperatorRejectedResources
       annotations:
         description: Prometheus operator in {{`{{`}} $labels.namespace {{`}}`}} namespace rejected {{`{{`}} printf "%0.0f" $value {{`}}`}} {{`{{`}} $labels.controller {{`}}`}}/{{`{{`}} $labels.resource {{`}}`}} resources.
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-operator/
-      expr: min_over_time(prometheus_operator_managed_resources{state="rejected", job=~"prometheus-operator-app-operator|kube-prometheus-stack-operator"}[5m]) > 0
+      expr: min_over_time(prometheus_operator_managed_resources{state="rejected", job=~"prometheus-operator-app-operator|kube-prometheus-stack-operator", cluster_type="management_cluster"}[5m]) > 0
       for: 5m
       labels:
         area: platform

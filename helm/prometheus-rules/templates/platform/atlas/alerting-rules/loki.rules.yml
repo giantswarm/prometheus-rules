@@ -185,7 +185,7 @@ spec:
         # This part will fire the alert when the metric does not exist
         or (
             label_replace(
-              capi_cluster_status_condition{type="ControlPlaneReady", status="True", cluster_type="management_cluster"},
+              capi_cluster_status_condition{type="ControlPlaneReady", status="True", cluster_type="management_cluster", app="cluster-api-monitoring"},
               "cluster_id",
               "$1",
               "name",

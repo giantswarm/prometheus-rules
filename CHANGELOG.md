@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added `PodsUnschedulable` alert
 
+### Changed
+
+- LokiObjectStorageLowRate: don't page when WCs are being created
+
 ## [4.69.0] - 2025-07-03
 
 ### Added

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- DuplicatePrometheusOperatorKubeletService was for clusters before v20, which we don't have anymore.
+
 ## [4.68.0] - 2025-07-02
 
 ### Changed

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add new observability recording rules for Grafana Cloud to be able to check the actual resource usage of the observability platform.
+
 ## [4.70.0] - 2025-07-03
 
 ### Added

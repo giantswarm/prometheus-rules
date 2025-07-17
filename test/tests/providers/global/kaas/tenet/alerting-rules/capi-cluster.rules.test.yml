@@ -75,3 +75,31 @@ tests:
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
               __dashboardUid__: bdi7iswg81czkcasd
               dashboardQueryParams: "orgId=2"
+
+  - interval: 1m
+    input_series:
+      - series: 'capi_machine_info{cluster_id="oopsie",control_plane_name="oopsie",name="oopsie-gjsqb",namespace="giantswarm"}'
+        # Pretend the machine gets deleted after node startup timeout of ~8 minutes,
+        # but monitoring only sees the info for 5 minutes
+        values: "0x3 1x5 0x100"
+      - series: 'capi_machine_status_condition{cluster_id="oopsie",control_plane_name="oopsie",name="oopsie-gjsqb",namespace="giantswarm",status="False",type="HealthCheckSucceeded"}'
+        # Unhealthy condition often only appears only shortly since the
+        # CAPI health check logic deletes the machine very soon
+        values: "0x5 1x1 0x100"
+    alert_rule_test:
+      - alertname: ClusterControlPlaneMachineStatusNotHealthy
+        eval_time: 7m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: oopsie
+              name: oopsie-gjsqb
+              namespace: giantswarm
+              severity: notify
+              team: phoenix
+              topic: managementcluster
+            exp_annotations:
+              description: "Cluster 'giantswarm/oopsie' has a non-ready control plane node 'oopsie-gjsqb'. Failing cluster upgrade/node-roll?"
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/

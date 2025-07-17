@@ -83,3 +83,28 @@ spec:
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
             __dashboardUid__: bdi7iswg81czkcasd
             dashboardQueryParams: "orgId=2"
+        - alert: ClusterControlPlaneMachineStatusNotHealthy
+          expr: |-
+            sum without (control_plane_name) (
+              capi_machine_info{control_plane_name!=""}
+              * on(cluster_id, namespace) group_left
+              sum by (cluster_id, namespace)(capi_machine_status_condition{type="HealthCheckSucceeded",status!="True"})
+            )
+            > 0
+          # In real cases of `type="HealthCheckSucceeded",status="False",reason="NodeStartupTimeout"`
+          # (mind that the label `reason` doesn't exist at time of writing in `cluster-api-monitoring`,
+          # so it can't be used to filter for certain conditions), the metric for the unhealthy
+          # condition only appeared for a short time, so alert already after a short period
+          # (might be tunable with shorter scraping interval).
+          for: 1m
+          labels:
+            area: kaas
+            cancel_if_monitoring_agent_down: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: notify
+            team: {{ include "providerTeam" . }}
+            topic: managementcluster
+          annotations:
+            description: |-
+              {{`Cluster '{{ $labels.namespace }}/{{ $labels.cluster_id }}' has a non-ready control plane node '{{ $labels.name }}'. Failing cluster upgrade/node-roll?`}}
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/

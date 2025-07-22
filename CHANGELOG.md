@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Rewrite Flux alerting rules towards the `gotk_resource_info` emitted by the Kube State Metrics.
+
 ## [4.71.0] - 2025-07-21
 
 ### Added

@@ -64,7 +64,7 @@ spec:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}-{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-helmrelease/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", exported_namespace!~"org-t-.*", name=~".*(cilium|network-policies)"} > 0
+      expr: gotk_resource_info{ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", exported_namespace!~"org-t-.*", name=~".*(cilium|network-policies)"} > 0
       for: 1h10m
       labels:
         area: platform

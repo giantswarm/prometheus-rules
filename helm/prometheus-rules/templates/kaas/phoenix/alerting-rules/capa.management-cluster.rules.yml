@@ -16,6 +16,7 @@ spec:
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/pod-stuck-in-pending/
+        muster_workflow: analyze-managementclusterpodpendingcapa
       expr: kube_pod_status_phase{namespace="giantswarm", provider="capa", pod=~"(aws.*|capa.*|irsa-operator.*)", phase="Pending", cluster_type="management_cluster"} == 1
       for: 15m
       labels:

@@ -41,3 +41,4 @@ tests:
             exp_annotations:
               description: 'Cluster wc01 has unschedulable kube-system pods.'
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/validate-cluster-health
+              muster_workflow: analyze-podsunschedulable

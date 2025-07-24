@@ -85,18 +85,40 @@ spec:
             dashboardQueryParams: "orgId=2"
         - alert: ClusterControlPlaneMachineStatusNotHealthy
           expr: |-
-            sum without (control_plane_name) (
-              capi_machine_info{control_plane_name!=""}
-              * on(cluster_id, namespace) group_left
-              sum by (cluster_id, namespace)(capi_machine_status_condition{type="HealthCheckSucceeded",status!="True"})
+            # To understand all the comments below, please look at the test `input_series` data to
+            # see what the metrics look like during a stuck cluster upgrade.
+            sum by (cluster_id, namespace) (
+              # The `capi_machine_info` metric may appear with different labels for the same `name`,
+              # e.g. `provider_id` filled or not, so we just combine those. Clamping to 1 is really
+              # only for visual purposes to see in a dashboard how many nodes are really affected.
+              clamp_max(
+                sum by (name, namespace, cluster_id) (
+                  # Filter by `control_plane_name` to only alert on control plane `Machine` objects.
+                  #
+                  # The `capi_machine_info` metric goes away with the `Machine`, so it's important
+                  # to extend the metric for a few minutes here in order to match it against the
+                  # failed-status which we also extend below.
+                  max_over_time(capi_machine_info{control_plane_name!=""}[20m]
+                )
+              ), 1)
+
+              # Match/filter by machine name
+              * on(name, namespace, cluster_id) group_right
+
+              # In real cases of `type="HealthCheckSucceeded",status="False",reason="NodeStartupTimeout"`
+              # (mind that the label `reason` doesn't exist at time of writing in `cluster-api-monitoring`,
+              # so it can't be used to filter for that specific condition unless we add it), the
+              # metric for the unhealthy condition only appears for a short time and then the
+              # machine gets destroyed to try creating a new control plane machine. Therefore,
+              # extend the metric to the right on the timeline so we can use a longer `for:` to
+              # alert only if CP machines failed to come up for a long time (= stuck/failed upgrade)
+              # and not just a few minutes (= one-time failure, upgrade may still succeed).
+              max_over_time(
+                capi_machine_status_condition{type="HealthCheckSucceeded",status!="True"}[15m]
+              )
             )
             > 0
-          # In real cases of `type="HealthCheckSucceeded",status="False",reason="NodeStartupTimeout"`
-          # (mind that the label `reason` doesn't exist at time of writing in `cluster-api-monitoring`,
-          # so it can't be used to filter for certain conditions), the metric for the unhealthy
-          # condition only appeared for a short time, so alert already after a short period
-          # (might be tunable with shorter scraping interval).
-          for: 1m
+          for: 20m
           labels:
             area: kaas
             cancel_if_monitoring_agent_down: "true"
@@ -106,5 +128,5 @@ spec:
             topic: managementcluster
           annotations:
             description: |-
-              {{`Cluster '{{ $labels.namespace }}/{{ $labels.cluster_id }}' has a non-ready control plane node '{{ $labels.name }}'. Failing cluster upgrade/node-roll?`}}
+              {{`Cluster '{{ $labels.namespace }}/{{ $labels.cluster_id }}' has one or more non-ready control plane nodes. Failing cluster upgrade/node-roll?`}}
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/

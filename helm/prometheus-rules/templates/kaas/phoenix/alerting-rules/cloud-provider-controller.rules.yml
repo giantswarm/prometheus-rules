@@ -19,7 +19,7 @@ spec:
       {{- $components := "(aws-ebs-csi-driver|cloud-provider-aws|azure-cloud-controller-manager|azure-cloud-node-manager|azuredisk-csi-driver|azurefile-csi-driver|cloud-provider-vsphere|cloud-provider-cloud-director)" }}
       expr: |
         (
-          label_replace(gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", exported_namespace!~"org-t-.*", name=~"(.+)-{{ $components }}"}, "cluster_id", "$1", "name", "(.+)-{{ $components }}")
+          label_replace(gotk_resource_info{ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", exported_namespace!~"org-t-.*", name=~"(.+)-{{ $components }}"}, "cluster_id", "$1", "name", "(.+)-{{ $components }}")
           * on(cluster_id) group_left(provider)
           sum(
               label_replace(

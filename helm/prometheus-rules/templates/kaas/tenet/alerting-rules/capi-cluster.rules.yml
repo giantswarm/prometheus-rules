@@ -87,12 +87,12 @@ spec:
           expr: |-
             # To understand all the comments below, please look at the test `input_series` data to
             # see what the metrics look like during a stuck cluster upgrade.
-            sum by (cluster_id, namespace, provider) (
+            sum by (cluster_id, installation, namespace, pipeline, provider) (
               # The `capi_machine_info` metric may appear with different labels for the same `name`,
               # e.g. `provider_id` filled or not, so we just combine those. Clamping to 1 is really
               # only for visual purposes to see in a dashboard how many nodes are really affected.
               clamp_max(
-                sum by (name, namespace, cluster_id, provider) (
+                sum by (cluster_id, installation, name, namespace, provider) (
                   # Filter by `control_plane_name` to only alert on control plane `Machine` objects.
                   #
                   # The `capi_machine_info` metric goes away with the `Machine`, so it's important

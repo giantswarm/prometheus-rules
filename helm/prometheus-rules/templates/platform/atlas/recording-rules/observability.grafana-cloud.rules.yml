@@ -15,59 +15,93 @@ spec:
     - expr: |-
         sum(
           label_replace(
-            container_memory_working_set_bytes{namespace="loki", cluster_type="management_cluster"},
-            "component", "$1", "pod", "loki-([^-]+)-.*"
+            container_memory_working_set_bytes{
+              namespace="loki",
+              cluster_type="management_cluster",
+              container!="",        # Exclude unnamed containers
+              container!="POD"      # Exclude pause containers
+            },
+            "component", "$1", "pod", "(loki-[^-]+)(?:-[0-9]+|-[a-z0-9]{8,}-[a-z0-9]{5,})"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:loki:memory_usage
-      
+
     # CPU usage by SSD component
-    - expr: |-
+    - expr: |
         sum(
           label_replace(
-            rate(container_cpu_usage_seconds_total{namespace="loki", cluster_type="management_cluster"}[5m]),
-            "component", "$1", "pod", "loki-([^-]+)-.*"
+            rate(container_cpu_usage_seconds_total{
+              namespace="loki",
+              cluster_type="management_cluster",
+              container!="",        # Exclude unnamed containers
+              container!="POD"      # Exclude pause containers
+            }[5m]),
+            "component", "$1", "pod", "(loki-[^-]+)(?:-[0-9]+|-[a-z0-9]{8,}-[a-z0-9]{5,})"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:loki:cpu_usage
-      
+
     # === RESOURCE REQUESTS & LIMITS ===
     # Memory requests by SSD component
-    - expr: |-
+    - expr: |
         sum(
           label_replace(
-            kube_pod_container_resource_requests{namespace="loki", cluster_type="management_cluster", resource="memory"},
-            "component", "$1", "pod", "loki-([^-]+)-.*"
+            kube_pod_container_resource_requests{
+              namespace="loki",
+              cluster_type="management_cluster",
+              resource="memory",
+              container!="",        # Exclude unnamed containers
+              container!="POD"      # Exclude pause containers
+            },
+            "component", "$1", "pod", "(loki-[^-]+)(?:-[0-9]+|-[a-z0-9]{8,}-[a-z0-9]{5,})"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:loki:memory_requests
       
     # Memory limits by SSD component
-    - expr: |-
+    - expr: |
         sum(
           label_replace(
-            kube_pod_container_resource_limits{namespace="loki", cluster_type="management_cluster", resource="memory"},
-            "component", "$1", "pod", "loki-([^-]+)-.*"
+            kube_pod_container_resource_limits{
+              namespace="loki",
+              cluster_type="management_cluster",
+              resource="memory",
+              container!="",        # Exclude unnamed containers
+              container!="POD"      # Exclude pause containers
+            },
+            "component", "$1", "pod", "(loki-[^-]+)(?:-[0-9]+|-[a-z0-9]{8,}-[a-z0-9]{5,})"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:loki:memory_limits
-      
+
     # CPU requests by SSD component
-    - expr: |-
+    - expr: |
         sum(
           label_replace(
-            kube_pod_container_resource_requests{namespace="loki", cluster_type="management_cluster", resource="cpu"},
-            "component", "$1", "pod", "loki-([^-]+)-.*"
+            kube_pod_container_resource_requests{
+              namespace="loki",
+              cluster_type="management_cluster",
+              resource="cpu",
+              container!="",        # Exclude unnamed containers
+              container!="POD"      # Exclude pause containers
+            },
+            "component", "$1", "pod", "(loki-[^-]+)(?:-[0-9]+|-[a-z0-9]{8,}-[a-z0-9]{5,})"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:loki:cpu_requests
-      
+
     # CPU limits by SSD component
-    - expr: |-
+    - expr: |
         sum(
           label_replace(
-            kube_pod_container_resource_limits{namespace="loki", cluster_type="management_cluster", resource="cpu"},
-            "component", "$1", "pod", "loki-([^-]+)-.*"
+            kube_pod_container_resource_limits{
+              namespace="loki",
+              cluster_type="management_cluster",
+              resource="cpu",
+              container!="",        # Exclude unnamed containers
+              container!="POD"      # Exclude pause containers
+            },
+            "component", "$1", "pod", "(loki-[^-]+)(?:-[0-9]+|-[a-z0-9]{8,}-[a-z0-9]{5,})"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:loki:cpu_limits
@@ -82,62 +116,96 @@ spec:
     rules:
     # === BASIC RESOURCE USAGE ===
     # Memory usage by component
-    - expr: |-
+    - expr: |
         sum(
           label_replace(
-            container_memory_working_set_bytes{namespace="mimir", cluster_type="management_cluster"},
-            "component", "$1", "pod", "mimir-([^-]+)-.*"
+            container_memory_working_set_bytes{
+              namespace="mimir",
+              cluster_type="management_cluster",
+              container!="",        # Exclude unnamed containers
+              container!="POD"      # Exclude pause containers
+            },
+            "component", "$1", "pod", "(mimir-[^-]+)(?:-[0-9]+|-[a-z0-9]{8,}-[a-z0-9]{5,})"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:mimir:memory_usage
-      
-    # CPU usage by component  
-    - expr: |-
+
+    # CPU usage by component
+    - expr: |
         sum(
           label_replace(
-            rate(container_cpu_usage_seconds_total{namespace="mimir", cluster_type="management_cluster"}[5m]),
-            "component", "$1", "pod", "mimir-([^-]+)-.*"
+            rate(container_cpu_usage_seconds_total{
+              namespace="mimir",
+              cluster_type="management_cluster",
+              container!="",        # Exclude unnamed containers
+              container!="POD"      # Exclude pause containers
+            }[5m]),
+            "component", "$1", "pod", "(mimir-[^-]+)(?:-[0-9]+|-[a-z0-9]{8,}-[a-z0-9]{5,})"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:mimir:cpu_usage
-      
+
     # === RESOURCE REQUESTS & LIMITS ===
     # Memory requests by component
-    - expr: |-
+    - expr: |
         sum(
           label_replace(
-            kube_pod_container_resource_requests{namespace="mimir", cluster_type="management_cluster", resource="memory"},
-            "component", "$1", "pod", "mimir-([^-]+)-.*"
+            kube_pod_container_resource_requests{
+              namespace="mimir",
+              cluster_type="management_cluster",
+              resource="memory",
+              container!="",        # Exclude unnamed containers
+              container!="POD"      # Exclude pause containers
+            },
+            "component", "$1", "pod", "(mimir-[^-]+)(?:-[0-9]+|-[a-z0-9]{8,}-[a-z0-9]{5,})"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:mimir:memory_requests
-      
+
     # Memory limits by component
-    - expr: |-
+    - expr: |
         sum(
           label_replace(
-            kube_pod_container_resource_limits{namespace="mimir", cluster_type="management_cluster", resource="memory"},
-            "component", "$1", "pod", "mimir-([^-]+)-.*"
+            kube_pod_container_resource_limits{
+              namespace="mimir",
+              cluster_type="management_cluster",
+              resource="memory",
+              container!="",        # Exclude unnamed containers
+              container!="POD"      # Exclude pause containers
+            },
+            "component", "$1", "pod", "(mimir-[^-]+)(?:-[0-9]+|-[a-z0-9]{8,}-[a-z0-9]{5,})"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:mimir:memory_limits
-      
+
     # CPU requests by component
-    - expr: |-
+    - expr: |
         sum(
           label_replace(
-            kube_pod_container_resource_requests{namespace="mimir", cluster_type="management_cluster", resource="cpu"},
-            "component", "$1", "pod", "mimir-([^-]+)-.*"
+            kube_pod_container_resource_requests{
+              namespace="mimir",
+              cluster_type="management_cluster",
+              resource="cpu",
+              container!="",        # Exclude unnamed containers
+              container!="POD"      # Exclude pause containers
+            },
+            "component", "$1", "pod", "(mimir-[^-]+)(?:-[0-9]+|-[a-z0-9]{8,}-[a-z0-9]{5,})"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:mimir:cpu_requests
       
     # CPU limits by component
-    - expr: |-
+    - expr: |
         sum(
           label_replace(
-            kube_pod_container_resource_limits{namespace="mimir", cluster_type="management_cluster", resource="cpu"},
-            "component", "$1", "pod", "mimir-([^-]+)-.*"
+            kube_pod_container_resource_limits{
+              namespace="mimir",
+              cluster_type="management_cluster",
+              resource="cpu",
+              container!="",        # Exclude unnamed containers
+              container!="POD"      # Exclude pause containers
+            },
+            "component", "$1", "pod", "(mimir-[^-]+)(?:-[0-9]+|-[a-z0-9]{8,}-[a-z0-9]{5,})"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:mimir:cpu_limits

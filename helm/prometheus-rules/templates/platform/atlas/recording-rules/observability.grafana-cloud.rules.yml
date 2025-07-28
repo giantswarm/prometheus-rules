@@ -21,7 +21,7 @@ spec:
               container!="",        # Exclude unnamed containers
               container!="POD"      # Exclude pause containers
             },
-            "component", "$1", "pod", "(loki-.+?)(?:-\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
+            "component", "$1", "pod", "(loki-.+?)(?:-\\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:loki:memory_usage
@@ -36,7 +36,7 @@ spec:
               container!="",        # Exclude unnamed containers
               container!="POD"      # Exclude pause containers
             }[5m]),
-            "component", "$1", "pod", "(loki-.+?)(?:-\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
+            "component", "$1", "pod", "(loki-.+?)(?:-\\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:loki:cpu_usage
@@ -53,7 +53,7 @@ spec:
               container!="",        # Exclude unnamed containers
               container!="POD"      # Exclude pause containers
             },
-            "component", "$1", "pod", "(loki-.+?)(?:-\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
+            "component", "$1", "pod", "(loki-.+?)(?:-\\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:loki:memory_requests
@@ -69,7 +69,7 @@ spec:
               container!="",        # Exclude unnamed containers
               container!="POD"      # Exclude pause containers
             },
-            "component", "$1", "pod", "(loki-.+?)(?:-\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
+            "component", "$1", "pod", "(loki-.+?)(?:-\\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:loki:memory_limits
@@ -85,7 +85,7 @@ spec:
               container!="",        # Exclude unnamed containers
               container!="POD"      # Exclude pause containers
             },
-            "component", "$1", "pod", "(loki-.+?)(?:-\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
+            "component", "$1", "pod", "(loki-.+?)(?:-\\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:loki:cpu_requests
@@ -101,7 +101,7 @@ spec:
               container!="",        # Exclude unnamed containers
               container!="POD"      # Exclude pause containers
             },
-            "component", "$1", "pod", "(loki-.+?)(?:-\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
+            "component", "$1", "pod", "(loki-.+?)(?:-\\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:loki:cpu_limits
@@ -125,7 +125,7 @@ spec:
               container!="",        # Exclude unnamed containers
               container!="POD"      # Exclude pause containers
             },
-            "component", "$1", "pod", "(mimir-.+?)(?:-\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
+            "component", "$1", "pod", ".*?(mimir-.+?)(?:-\\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:mimir:memory_usage
@@ -140,7 +140,7 @@ spec:
               container!="",        # Exclude unnamed containers
               container!="POD"      # Exclude pause containers
             }[5m]),
-            "component", "$1", "pod", "(mimir-.+?)(?:-\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
+            "component", "$1", "pod", ".*?(mimir-.+?)(?:-\\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:mimir:cpu_usage
@@ -157,7 +157,7 @@ spec:
               container!="",        # Exclude unnamed containers
               container!="POD"      # Exclude pause containers
             },
-            "component", "$1", "pod", "(mimir-.+?)(?:-\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
+            "component", "$1", "pod", ".*?(mimir-.+?)(?:-\\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:mimir:memory_requests
@@ -173,7 +173,7 @@ spec:
               container!="",        # Exclude unnamed containers
               container!="POD"      # Exclude pause containers
             },
-            "component", "$1", "pod", "(mimir-.+?)(?:-\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
+            "component", "$1", "pod", ".*?(mimir-.+?)(?:-\\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:mimir:memory_limits
@@ -189,7 +189,7 @@ spec:
               container!="",        # Exclude unnamed containers
               container!="POD"      # Exclude pause containers
             },
-            "component", "$1", "pod", "(mimir-.+?)(?:-\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
+            "component", "$1", "pod", ".*?(mimir-.+?)(?:-\\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:mimir:cpu_requests
@@ -205,7 +205,7 @@ spec:
               container!="",        # Exclude unnamed containers
               container!="POD"      # Exclude pause containers
             },
-            "component", "$1", "pod", "(mimir-.+?)(?:-\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
+            "component", "$1", "pod", ".*?(mimir-.+?)(?:-\\d+$|-[a-z0-9]{8,}-[a-z0-9]{5,}$)"
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:mimir:cpu_limits

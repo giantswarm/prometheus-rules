@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix observability-platform overview regex patterns.
+
 ## [4.72.1] - 2025-07-28
 
 ### Fixed

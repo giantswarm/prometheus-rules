@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `ClusterControlPlaneMachineStatusNotHealthy` alert (very broad, using `severity: notify` for testing how often it happens)
+
 ## [4.72.2] - 2025-07-28
 
 ### Fixed
@@ -56,7 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `PrometheusOperatorRejectedResources`: only page for MC resources
- 
+
 ### Removed
 
 - DuplicatePrometheusOperatorKubeletService was for clusters before v20, which we don't have anymore.

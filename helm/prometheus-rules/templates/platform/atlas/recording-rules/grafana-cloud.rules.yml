@@ -42,7 +42,7 @@ spec:
               "vsphere",
               "infrastructure_reference_kind",
               "VSphereCluster"
-            )
+            ),
             "cluster_id",
             "$1",
             "name",

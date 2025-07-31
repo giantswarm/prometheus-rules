@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix provider label in cluster recording rules for hybrid installations.
+
 ## [4.72.4] - 2025-07-31
 
 ### Changed

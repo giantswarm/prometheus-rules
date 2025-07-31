@@ -123,7 +123,7 @@ spec:
             area: kaas
             cancel_if_monitoring_agent_down: "true"
             cancel_if_outside_working_hours: "true"
-            severity: notify
+            severity: page
             team: {{ include "providerTeam" . }}
             topic: managementcluster
           annotations:

@@ -36,7 +36,13 @@ spec:
     - expr: |-
         avg by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, exported_namespace) (
           label_replace(
-            capi_cluster_info,
+            label_replace(
+              capi_cluster_info,
+              "provider",
+              "vsphere",
+              "infrastructure_reference_kind",
+              "VSphereCluster"
+            )
             "cluster_id",
             "$1",
             "name",
@@ -45,9 +51,30 @@ spec:
         )
       record: aggregation:giantswarm:cluster_info
     - expr: |-
-        sum(cluster_service_cluster_info) by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region) / 2
-        or sum(cluster_operator_cluster_status{release_version!=""}) by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-        or sum(capi_cluster_info) by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+        (
+          sum(
+            cluster_service_cluster_info
+          )
+          by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+        ) / 2
+        or (
+          sum(
+            cluster_operator_cluster_status{release_version!=""}
+          )
+          by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+        )
+        or (
+          sum(
+            label_replace(
+              capi_cluster_info,
+              "provider",
+              "vsphere",
+              "infrastructure_reference_kind",
+              "VSphereCluster"
+            )
+          )
+          by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+        )
       record: aggregation:giantswarm:cluster_release_version
     - expr: avg_over_time(cluster_operator_cluster_create_transition[1w])
       record: aggregation:giantswarm:cluster_transition_create

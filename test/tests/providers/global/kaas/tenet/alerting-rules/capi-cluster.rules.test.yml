@@ -138,7 +138,7 @@ tests:
               cancel_if_outside_working_hours: "true"
               cluster_id: oopsie
               namespace: giantswarm
-              severity: notify
+              severity: page
               team: phoenix
               topic: managementcluster
             exp_annotations:

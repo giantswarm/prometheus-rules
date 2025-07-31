@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change `ClusterControlPlaneMachineStatusNotHealthy` to page
+
 ## [4.72.3] - 2025-07-29
 
 ### Added

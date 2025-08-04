@@ -17,14 +17,17 @@ spec:
         description: '{{`Cluster ({{ $labels.cluster_id }}) has no worker nodes.`}}'
       expr: |-
         label_replace(
-            capi_cluster_status_condition{type="ControlPlaneReady", status="True", provider="capa"},
+            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
                 "cluster_id",
                 "$1",
                 "name",
                 "(.*)"
             ) == 1
         unless on (cluster_id) (
-            sum(capi_machinepool_spec_replicas{provider="capa"} > 0) by (cluster_id)
+            sum(capi_machinepool_spec_replicas{} > 0) by (cluster_id)
+        )
+        and on (cluster_id) (
+            capi_cluster_info{infrastructure_reference_kind="AWSCluster"} == 1
         )
       labels:
         area: kaas

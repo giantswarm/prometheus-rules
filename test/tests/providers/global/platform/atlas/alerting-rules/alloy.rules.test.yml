@@ -68,6 +68,68 @@ tests:
               summary: "Unhealthy components detected."
       - alertname: AlloyUnhealthyComponents
         eval_time: 80m
+  
+  # Test ObservabilityAgentsDown
+  - interval: 1m
+    input_series:
+      # From 80min: test with 2 pods: 1 up and 1 down, 2 up, 2 down.
+      - series: 'up{container="alloy", cluster_id="golem", cluster_type="management_cluster", installation="golem", job="alloy-logs", pod="alloy-logs-2xxxx", provider="capa", pipeline="testing"}'
+        values: "_x40  1+0x40 1+0x40 0+0x40 0+0x40"
+      - series: 'up{container="alloy", cluster_id="golem", cluster_type="management_cluster", installation="golem", job="alloy-metrics", pod="alloy-metrics-0", provider="capa", pipeline="testing"}'
+        values: "_x40  1+0x40 0+0x40 1+0x40 0+0x40"
+      - series: 'capi_cluster_status_condition{type="ControlPlaneReady", status="True", name="golem", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x180"
+      - series: 'capi_cluster_status_phase{phase="Deleting", name="golem", installation="golem", provider="capa", pipeline="testing"}'
+        values: "0x150 1x30"
+    alert_rule_test:
+      - alertname: ObservabilityAgentsDown
+        eval_time: 10m
+      - alertname: ObservabilityAgentsDown
+        eval_time: 35m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              inhibit_observability_agents_down: "true"
+              cancel_if_cluster_has_no_workers: "true"
+              cluster_id: golem
+              cluster_type: management_cluster
+              installation: golem
+              pipeline: testing
+              provider: capa
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              __dashboardUid__: promRW001
+              dashboardQueryParams: "orgId=1"
+              description: "Both monitoring and logging agents fails to send samples."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
+      - alertname: ObservabilityAgentsDown
+        eval_time: 75m
+      - alertname: ObservabilityAgentsDown
+        eval_time: 115m
+      - alertname: ObservabilityAgentsDown
+        eval_time: 155m
+      - alertname: ObservabilityAgentsDown
+        eval_time: 195m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              inhibit_observability_agents_down: "true"
+              cancel_if_cluster_has_no_workers: "true"
+              cluster_id: golem
+              cluster_type: management_cluster
+              installation: golem
+              pipeline: testing
+              provider: capa
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              __dashboardUid__: promRW001
+              dashboardQueryParams: "orgId=1"
+              description: "Both monitoring and logging agents fails to send samples."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
 
   # Test LoggingAgentDown
   - interval: 1m

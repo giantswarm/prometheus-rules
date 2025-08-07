@@ -10,6 +10,8 @@ tests:
         values: "1+0x300"
       - series: 'capi_machinepool_spec_replicas{cluster_id="golem", cluster_name="golem", cluster_type="management_cluster", customer="giantswarm", installation="golem", organization="giantswarm", pipeline="testing", provider="capa"}'
         values: "_x60 0x60 3x60"
+      - series: 'capi_cluster_info{infrastructure_reference_kind="AWSCluster"}'
+        values: "1+0x300"
     alert_rule_test:
       - alertname: InhibitionClusterWithoutWorkerNodes
         eval_time: 30m

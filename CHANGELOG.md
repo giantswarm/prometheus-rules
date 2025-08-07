@@ -5,15 +5,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update CAPA `InhibitionClusterWithoutWorkerNodes` to only apply to CAPA clusters.
+
 ## [4.72.5] - 2025-07-31
 
 ### Fixed
 
 - Fix provider label in cluster recording rules for hybrid installations.
-
-### Changed
-
-- Update CAPA `InhibitionClusterWithoutWorkerNodes` to only apply to CAPA clusters.
 
 ## [4.72.4] - 2025-07-31
 

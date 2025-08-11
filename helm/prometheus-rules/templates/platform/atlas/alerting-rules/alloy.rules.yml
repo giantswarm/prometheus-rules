@@ -77,7 +77,8 @@ spec:
             severity: page
             team: atlas
             topic: observability
-            inhibit_observability_agents_down: "true"
+            inhibit_cluster_broken: "true"
+            inhibit_monitoring_agent_down: "true"
             cancel_if_cluster_has_no_workers: "true"
     - name: alloy.logs
       rules:
@@ -103,7 +104,7 @@ spec:
             cancel_if_outside_working_hours: "true"
             cancel_if_node_unschedulable: "true"
             cancel_if_node_not_ready: "true"
-            cancel_if_observability_agents_down: "true"
+            cancel_if_cluster_broken: "true"
     - name: alloy.metrics
       rules:
         # This alert pages if monitoring-agent fails to send samples to its remote write endpoint.
@@ -138,7 +139,7 @@ spec:
             topic: observability
             inhibit_monitoring_agent_down: "true"
             cancel_if_cluster_has_no_workers: "true"
-            cancel_if_observability_agents_down: "true"
+            cancel_if_cluster_broken: "true"
         ## Same as MonitoringAgentDown, but triggers inhibition earlier and does not page.
         - alert: InhibitionMonitoringAgentDown
           annotations:

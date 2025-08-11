@@ -7,7 +7,7 @@ jobs:
   rules-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: "0"
       - name: run rules tests
@@ -15,7 +15,7 @@ jobs:
   inhibition-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: "0"
       - name: run inhibition tests
@@ -23,7 +23,7 @@ jobs:
   runbook-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: "0"
       - name: Clone private runbook repo
@@ -39,7 +39,7 @@ jobs:
   prometheus-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: "0"
       - name: run pint linter

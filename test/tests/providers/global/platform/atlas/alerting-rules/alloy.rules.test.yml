@@ -78,9 +78,9 @@ tests:
       - series: 'up{container="alloy", cluster_id="golem", cluster_type="management_cluster", installation="golem", job="alloy-metrics", pod="alloy-metrics-0", provider="capa", pipeline="testing"}'
         values: "_x40  1+0x40 0+0x40 1+0x40 0+0x40"
       - series: 'capi_cluster_status_condition{type="ControlPlaneReady", status="True", name="golem", installation="golem", provider="capa", pipeline="testing"}'
-        values: "1x180"
+        values: "1x200"
       - series: 'capi_cluster_status_phase{phase="Deleting", name="golem", installation="golem", provider="capa", pipeline="testing"}'
-        values: "0x150 1x30"
+        values: "0x200"
     alert_rule_test:
       - alertname: ObservabilityAgentsDown
         eval_time: 10m
@@ -89,10 +89,10 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              inhibit_observability_agents_down: "true"
+              inhibit_cluster_broken: "true"
+              inhibit_monitoring_agent_down: "true"
               cancel_if_cluster_has_no_workers: "true"
               cluster_id: golem
-              cluster_type: management_cluster
               installation: golem
               pipeline: testing
               provider: capa
@@ -104,6 +104,7 @@ tests:
               dashboardQueryParams: "orgId=1"
               description: "Both monitoring and logging agents fails to send samples."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
+              summary: Both monitoring and logging agent fails to send samples to remote write endpoint
       - alertname: ObservabilityAgentsDown
         eval_time: 75m
       - alertname: ObservabilityAgentsDown
@@ -115,10 +116,10 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              inhibit_observability_agents_down: "true"
+              inhibit_cluster_broken: "true"
+              inhibit_monitoring_agent_down: "true"
               cancel_if_cluster_has_no_workers: "true"
               cluster_id: golem
-              cluster_type: management_cluster
               installation: golem
               pipeline: testing
               provider: capa
@@ -130,6 +131,7 @@ tests:
               dashboardQueryParams: "orgId=1"
               description: "Both monitoring and logging agents fails to send samples."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
+              summary: Both monitoring and logging agent fails to send samples to remote write endpoint
 
   # Test LoggingAgentDown
   - interval: 1m
@@ -161,6 +163,7 @@ tests:
               cancel_if_outside_working_hours: "true"
               cancel_if_node_unschedulable: "true"
               cancel_if_node_not_ready: "true"
+              cancel_if_cluster_broken: "true"
               cluster_id: golem
               cluster_type: management_cluster
               installation: golem
@@ -185,6 +188,7 @@ tests:
               cancel_if_outside_working_hours: "true"
               cancel_if_node_unschedulable: "true"
               cancel_if_node_not_ready: "true"
+              cancel_if_cluster_broken: "true"
               cluster_id: golem
               cluster_type: management_cluster
               installation: golem
@@ -210,6 +214,7 @@ tests:
               cancel_if_outside_working_hours: "true"
               cancel_if_node_unschedulable: "true"
               cancel_if_node_not_ready: "true"
+              cancel_if_cluster_broken: "true"
               cluster_id: golem
               cluster_type: management_cluster
               installation: golem
@@ -230,6 +235,7 @@ tests:
               cancel_if_outside_working_hours: "true"
               cancel_if_node_unschedulable: "true"
               cancel_if_node_not_ready: "true"
+              cancel_if_cluster_broken: "true"
               cluster_id: golem
               cluster_type: management_cluster
               installation: golem
@@ -284,6 +290,7 @@ tests:
               area: platform
               cancel_if_cluster_has_no_workers: "true"
               inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_broken: "true"
               cluster_id: golem
               installation: golem
               provider: capa
@@ -327,6 +334,7 @@ tests:
               area: platform
               cancel_if_cluster_has_no_workers: "true"
               inhibit_monitoring_agent_down: "true"
+              cancel_if_cluster_broken: "true"
               cluster_id: golem
               installation: golem
               provider: capa

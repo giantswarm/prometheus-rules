@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Make `KubeStateMetricsDown` page only during business hours
+
 ## [4.72.6] - 2025-08-07
 
 ### Changed

@@ -35,7 +35,7 @@ spec:
         inhibit_kube_state_metrics_down: "true"
         cancel_if_monitoring_agent_down: "true"
         cancel_if_kubelet_down: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
         topic: observability

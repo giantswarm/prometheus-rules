@@ -102,9 +102,9 @@ tests:
             exp_annotations:
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
-              description: "Both monitoring and logging agents fails to send samples."
+              description: "Both monitoring and logging agents fail to send samples."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
-              summary: Both monitoring and logging agent fails to send samples to remote write endpoint
+              summary: Both monitoring and logging agent fail to send samples to remote write endpoint
       - alertname: ObservabilityAgentsDown
         eval_time: 75m
       - alertname: ObservabilityAgentsDown
@@ -129,9 +129,9 @@ tests:
             exp_annotations:
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
-              description: "Both monitoring and logging agents fails to send samples."
+              description: "Both monitoring and logging agents fail to send samples."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
-              summary: Both monitoring and logging agent fails to send samples to remote write endpoint
+              summary: Both monitoring and logging agent fail to send samples to remote write endpoint
 
   # Test LoggingAgentDown
   - interval: 1m

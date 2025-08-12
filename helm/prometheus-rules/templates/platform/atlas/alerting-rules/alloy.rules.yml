@@ -46,12 +46,12 @@ spec:
             cancel_if_outside_working_hours: "true"
     - name: alloy.observability
       rules:
-        # This alert pages if both monitoring and logging agents fails to send samples to their remote write endpoints.
-        # It inhibes the MonitoringAgentDown and LoggingAgentDown alerts.
+        # This alert pages if both monitoring and logging agents fail to send samples to their remote write endpoints.
+        # It inhibits the MonitoringAgentDown and LoggingAgentDown alerts.
         - alert: ObservabilityAgentsDown
           annotations:
-            description: '{{`Both monitoring and logging agents fails to send samples.`}}'
-            summary: Both monitoring and logging agent fails to send samples to remote write endpoint
+            description: '{{`Both monitoring and logging agents fail to send samples.`}}'
+            summary: Both monitoring and logging agent fail to send samples to remote write endpoint
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
             __dashboardUid__: promRW001
             dashboardQueryParams: "orgId=1"

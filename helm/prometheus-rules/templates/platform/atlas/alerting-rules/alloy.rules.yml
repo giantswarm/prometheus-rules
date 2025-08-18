@@ -50,8 +50,8 @@ spec:
         # It inhibits the MonitoringAgentDown and LoggingAgentDown alerts.
         - alert: ObservabilityAgentsDown
           annotations:
-            description: '{{`Both monitoring and logging agents fail to send samples.`}}'
-            summary: Both monitoring and logging agent fail to send samples to remote write endpoint
+            description: '{{`Both monitoring and logging agents from {{ $labels.cluster_id }} WC fail to send samples. The cluster is likely broken.`}}'
+            summary: Both monitoring and logging agent fail to send samples to remote write endpoint which implies the cluster is broken.
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
             __dashboardUid__: promRW001
             dashboardQueryParams: "orgId=1"

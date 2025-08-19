@@ -52,7 +52,7 @@ spec:
           annotations:
             description: '{{`Both monitoring and logging agents from {{ $labels.cluster_id }} WC fail to send samples. The cluster is likely broken.`}}'
             summary: Both monitoring and logging agent fail to send samples to remote write endpoint which implies the cluster is broken.
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/validate-cluster-health
             __dashboardUid__: promRW001
             dashboardQueryParams: "orgId=1"
           expr: |-
@@ -75,7 +75,7 @@ spec:
           labels:
             area: platform
             severity: page
-            team: atlas
+            team: {{ include "providerTeam" . }}
             topic: observability
             inhibit_cluster_broken: "true"
             inhibit_monitoring_agent_down: "true"

@@ -97,13 +97,13 @@ tests:
               pipeline: testing
               provider: capa
               severity: page
-              team: atlas
+              team: phoenix
               topic: observability
             exp_annotations:
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               description: "Both monitoring and logging agents from golem WC fail to send samples. The cluster is likely broken."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/validate-cluster-health
               summary: Both monitoring and logging agent fail to send samples to remote write endpoint which implies the cluster is broken.
       - alertname: ObservabilityAgentsDown
         eval_time: 75m
@@ -124,13 +124,13 @@ tests:
               pipeline: testing
               provider: capa
               severity: page
-              team: atlas
+              team: phoenix
               topic: observability
             exp_annotations:
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               description: "Both monitoring and logging agents from golem WC fail to send samples. The cluster is likely broken."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/validate-cluster-health
               summary: Both monitoring and logging agent fail to send samples to remote write endpoint which implies the cluster is broken.
 
   # Test LoggingAgentDown

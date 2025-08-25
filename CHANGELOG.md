@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.73.0] - 2025-08-25
+
 ### Changed
 
 - Add Grafana cloud aggregations for use of deprecated registries (`aggregation:docker:containers_from_deprecated_registries:*`)
@@ -3842,7 +3844,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.7...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.0...HEAD
+[4.73.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.7...v4.73.0
 [4.72.7]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.6...v4.72.7
 [4.72.6]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.5...v4.72.6
 [4.72.5]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.4...v4.72.5

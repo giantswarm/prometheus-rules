@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `ObservabilityAgentsDown` alerting rule.
+
 ## [4.72.7] - 2025-08-12
 
 ### Changed

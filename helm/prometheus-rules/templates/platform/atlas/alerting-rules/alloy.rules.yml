@@ -44,6 +44,42 @@ spec:
             team: atlas
             topic: observability
             cancel_if_outside_working_hours: "true"
+    - name: alloy.observability
+      rules:
+        # This alert pages if both monitoring and logging agents fail to send samples to their remote write endpoints.
+        # It inhibits the MonitoringAgentDown and LoggingAgentDown alerts.
+        - alert: ObservabilityAgentsDown
+          annotations:
+            description: '{{`Both monitoring and logging agents from {{ $labels.cluster_id }} WC fail to send samples. The cluster is likely broken.`}}'
+            summary: Both monitoring and logging agent fail to send samples to remote write endpoint which implies the cluster is broken.
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/validate-cluster-health
+            __dashboardUid__: promRW001
+            dashboardQueryParams: "orgId=1"
+          expr: |-
+            count(
+              label_replace(
+                (capi_cluster_status_condition{type="ControlPlaneReady", status="True"} == 1)
+                  * on (name, installation, pipeline, provider)
+                  # We do not want to alert on clusters that are being deleted.
+                  (capi_cluster_status_phase{phase="Deleting"} == 0),
+                "cluster_id",
+                "$1",
+                "name",
+                "(.*)"
+              )
+            ) by (cluster_id, installation, pipeline, provider) > 0
+            unless on (cluster_id) (
+              count(up{job=~"alloy-metrics|prometheus-agent"} > 0) by (cluster_id) or count(up{job="alloy-logs"} > 0) by (cluster_id)
+            )
+          for: 20m
+          labels:
+            area: platform
+            severity: page
+            team: {{ include "providerTeam" . }}
+            topic: observability
+            inhibit_cluster_broken: "true"
+            inhibit_monitoring_agent_down: "true"
+            cancel_if_cluster_has_no_workers: "true"
     - name: alloy.logs
       rules:
         # This alert lists the existing logging-agent pods (to extract the node label and inhibit if the node is not ready)
@@ -68,6 +104,7 @@ spec:
             cancel_if_outside_working_hours: "true"
             cancel_if_node_unschedulable: "true"
             cancel_if_node_not_ready: "true"
+            cancel_if_cluster_broken: "true"
     - name: alloy.metrics
       rules:
         # This alert pages if monitoring-agent fails to send samples to its remote write endpoint.
@@ -102,6 +139,7 @@ spec:
             topic: observability
             inhibit_monitoring_agent_down: "true"
             cancel_if_cluster_has_no_workers: "true"
+            cancel_if_cluster_broken: "true"
         ## Same as MonitoringAgentDown, but triggers inhibition earlier and does not page.
         - alert: InhibitionMonitoringAgentDown
           annotations:

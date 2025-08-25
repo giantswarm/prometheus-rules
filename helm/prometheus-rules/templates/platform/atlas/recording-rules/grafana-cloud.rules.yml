@@ -574,3 +574,16 @@ spec:
             "(.*)"
           )
         record: aggregation:slo:time_period:days
+      - expr: |-
+          (
+            count(up{}== 0 )
+            by (job, installation, cluster_id, provider,
+              pipeline, cluster_type, metrics_path,
+              container, namespace, organization, team)
+            /
+            count(up{})
+            by (job, installation, cluster_id, provider,
+              pipeline, cluster_type, metrics_path,
+              container, namespace, organization, team)
+          ) >= 1
+        record: aggregation:giantswarm:jobscrapingfailures

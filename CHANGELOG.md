@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.73.0] - 2025-08-25
 
-### Changed
+### Added
 
 - Add Grafana cloud aggregations for use of deprecated registries (`aggregation:docker:containers_from_deprecated_registries:*`)
 

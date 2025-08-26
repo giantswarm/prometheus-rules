@@ -575,6 +575,12 @@ spec:
           )
         record: aggregation:slo:time_period:days
       - expr: |-
+          # The purpose of this metrics is to spot when a servicemonitor is broken, and not when a pod behind the servicemonitor is broken.
+          #
+          # If it's just a pod that is broken, some of the targets will work.
+          # If the whole servicemonitor is broken (misconfigured), then it can't scrape any pods.
+          #
+          # This behaviour reduces the amount of generated metrics, and makes them easier to interpret
           (
             count(up{}== 0 )
             by (job, installation, cluster_id, provider,

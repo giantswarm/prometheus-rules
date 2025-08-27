@@ -79,54 +79,54 @@ tests:
   - interval: 1m
     input_series:
       # Taken from a real upgrade failure, unnecessary labels removed
-      - series: capi_machine_info{cluster_id="oopsie", control_plane_name="oopsie", name="oopsie-6d9q7", namespace="giantswarm", provider_id="aws:///eu-central-1c/i-0643d384aa5d42d57"}
+      - series: capi_machine_info{cluster_name="oopsie", control_plane_name="oopsie", name="oopsie-6d9q7", namespace="giantswarm", provider_id="aws:///eu-central-1c/i-0643d384aa5d42d57"}
         values: "_x26 1x10 _x60"
-      - series: capi_machine_info{cluster_id="oopsie", control_plane_name="oopsie", name="oopsie-7npqj", namespace="giantswarm", provider_id="aws:///eu-central-1b/i-0325c255e1a65cd07"}
+      - series: capi_machine_info{cluster_name="oopsie", control_plane_name="oopsie", name="oopsie-7npqj", namespace="giantswarm", provider_id="aws:///eu-central-1b/i-0325c255e1a65cd07"}
         values: "_x47 1x10 _x60"
-      - series: capi_machine_info{cluster_id="oopsie", control_plane_name="oopsie", name="oopsie-9rhg7", namespace="giantswarm", provider_id="aws:///eu-central-1b/i-02636d5d4c6eca6e4"}
+      - series: capi_machine_info{cluster_name="oopsie", control_plane_name="oopsie", name="oopsie-9rhg7", namespace="giantswarm", provider_id="aws:///eu-central-1b/i-02636d5d4c6eca6e4"}
         values: "_x16 1x8 _x60"
-      - series: capi_machine_info{cluster_id="oopsie", control_plane_name="oopsie", name="oopsie-hw757", namespace="giantswarm", provider_id="aws:///eu-central-1a/i-081d154aba0f21660"}
+      - series: capi_machine_info{cluster_name="oopsie", control_plane_name="oopsie", name="oopsie-hw757", namespace="giantswarm", provider_id="aws:///eu-central-1a/i-081d154aba0f21660"}
         values: "1x60"
 
       # This `name` appeared twice with different labels (e.g. with/without `provider_id`).
-      - series: capi_machine_info{cluster_id="oopsie", control_plane_name="oopsie", name="oopsie-dhd55", namespace="giantswarm", provider_id="aws:///eu-central-1a/i-028756797a3e68e09"}
+      - series: capi_machine_info{cluster_name="oopsie", control_plane_name="oopsie", name="oopsie-dhd55", namespace="giantswarm", provider_id="aws:///eu-central-1a/i-028756797a3e68e09"}
         values: "_x36 1x7 _x60"
-      - series: capi_machine_info{cluster_id="oopsie", control_plane_name="oopsie", name="oopsie-dhd55", namespace="giantswarm"}
+      - series: capi_machine_info{cluster_name="oopsie", control_plane_name="oopsie", name="oopsie-dhd55", namespace="giantswarm"}
         values: "_x34 1x1 _x60"
 
-      - series: capi_machine_info{cluster_id="oopsie", control_plane_name="oopsie", name="oopsie-q49zf", namespace="giantswarm", provider_id="aws:///eu-central-1b/i-0a026aff280d4cb18"}
+      - series: capi_machine_info{cluster_name="oopsie", control_plane_name="oopsie", name="oopsie-q49zf", namespace="giantswarm", provider_id="aws:///eu-central-1b/i-0a026aff280d4cb18"}
         values: "1x60"
-      - series: capi_machine_info{cluster_id="oopsie", control_plane_name="oopsie", name="oopsie-sf9zr", namespace="giantswarm", provider_id="aws:///eu-central-1c/i-025ad92e96fa3a2c9"}
+      - series: capi_machine_info{cluster_name="oopsie", control_plane_name="oopsie", name="oopsie-sf9zr", namespace="giantswarm", provider_id="aws:///eu-central-1c/i-025ad92e96fa3a2c9"}
         values: "1x60"
 
 
-      - series: capi_machine_status_condition{cluster_id="oopsie", name="oopsie-6d9q7", namespace="giantswarm", status="False", type="HealthCheckSucceeded"}
+      - series: capi_machine_status_condition{cluster_name="oopsie", name="oopsie-6d9q7", namespace="giantswarm", status="False", type="HealthCheckSucceeded"}
         values: "_x33 1x3 _x60"
-      - series: capi_machine_status_condition{cluster_id="oopsie", name="oopsie-6d9q7", namespace="giantswarm", status="Unknown", type="HealthCheckSucceeded"}
+      - series: capi_machine_status_condition{cluster_name="oopsie", name="oopsie-6d9q7", namespace="giantswarm", status="Unknown", type="HealthCheckSucceeded"}
         values: "_x33 0x3 _x60"
-      - series: capi_machine_status_condition{cluster_id="oopsie", name="oopsie-7npqj", namespace="giantswarm", status="False", type="HealthCheckSucceeded"}
+      - series: capi_machine_status_condition{cluster_name="oopsie", name="oopsie-7npqj", namespace="giantswarm", status="False", type="HealthCheckSucceeded"}
         values: "_x55 1x3 _x60"
-      - series: capi_machine_status_condition{cluster_id="oopsie", name="oopsie-7npqj", namespace="giantswarm", status="Unknown", type="HealthCheckSucceeded"}
+      - series: capi_machine_status_condition{cluster_name="oopsie", name="oopsie-7npqj", namespace="giantswarm", status="Unknown", type="HealthCheckSucceeded"}
         values: "_x55 1x3 _x60"
-      - series: capi_machine_status_condition{cluster_id="oopsie", name="oopsie-9rhg7", namespace="giantswarm", status="False", type="HealthCheckSucceeded"}
+      - series: capi_machine_status_condition{cluster_name="oopsie", name="oopsie-9rhg7", namespace="giantswarm", status="False", type="HealthCheckSucceeded"}
         values: "_x24 1x1 _x60"
-      - series: capi_machine_status_condition{cluster_id="oopsie", name="oopsie-9rhg7", namespace="giantswarm", status="Unknown", type="HealthCheckSucceeded"}
+      - series: capi_machine_status_condition{cluster_name="oopsie", name="oopsie-9rhg7", namespace="giantswarm", status="Unknown", type="HealthCheckSucceeded"}
         values: "_x24 0x1 _x60"
-      - series: capi_machine_status_condition{cluster_id="oopsie", name="oopsie-dhd55", namespace="giantswarm", status="False", type="HealthCheckSucceeded"}
+      - series: capi_machine_status_condition{cluster_name="oopsie", name="oopsie-dhd55", namespace="giantswarm", status="False", type="HealthCheckSucceeded"}
         values: "_x44 1x3 _x60"
-      - series: capi_machine_status_condition{cluster_id="oopsie", name="oopsie-dhd55", namespace="giantswarm", status="Unknown", type="HealthCheckSucceeded"}
+      - series: capi_machine_status_condition{cluster_name="oopsie", name="oopsie-dhd55", namespace="giantswarm", status="Unknown", type="HealthCheckSucceeded"}
         values: "_x44 0x3 _x60"
-      - series: capi_machine_status_condition{cluster_id="oopsie", name="oopsie-hw757", namespace="giantswarm", status="False", type="HealthCheckSucceeded"}
+      - series: capi_machine_status_condition{cluster_name="oopsie", name="oopsie-hw757", namespace="giantswarm", status="False", type="HealthCheckSucceeded"}
         values: "0x60"
-      - series: capi_machine_status_condition{cluster_id="oopsie", name="oopsie-hw757", namespace="giantswarm", status="Unknown", type="HealthCheckSucceeded"}
+      - series: capi_machine_status_condition{cluster_name="oopsie", name="oopsie-hw757", namespace="giantswarm", status="Unknown", type="HealthCheckSucceeded"}
         values: "0x60"
-      - series: capi_machine_status_condition{cluster_id="oopsie", name="oopsie-q49zf", namespace="giantswarm", status="False", type="HealthCheckSucceeded"}
+      - series: capi_machine_status_condition{cluster_name="oopsie", name="oopsie-q49zf", namespace="giantswarm", status="False", type="HealthCheckSucceeded"}
         values: "0x60"
-      - series: capi_machine_status_condition{cluster_id="oopsie", name="oopsie-q49zf", namespace="giantswarm", status="Unknown", type="HealthCheckSucceeded"}
+      - series: capi_machine_status_condition{cluster_name="oopsie", name="oopsie-q49zf", namespace="giantswarm", status="Unknown", type="HealthCheckSucceeded"}
         values: "0x60"
-      - series: capi_machine_status_condition{cluster_id="oopsie", name="oopsie-sf9zr", namespace="giantswarm", status="False", type="HealthCheckSucceeded"}
+      - series: capi_machine_status_condition{cluster_name="oopsie", name="oopsie-sf9zr", namespace="giantswarm", status="False", type="HealthCheckSucceeded"}
         values: "0x60"
-      - series: capi_machine_status_condition{cluster_id="oopsie", name="oopsie-sf9zr", namespace="giantswarm", status="Unknown", type="HealthCheckSucceeded"}
+      - series: capi_machine_status_condition{cluster_name="oopsie", name="oopsie-sf9zr", namespace="giantswarm", status="Unknown", type="HealthCheckSucceeded"}
         values: "0x60"
     alert_rule_test:
       - alertname: ClusterControlPlaneMachineStatusNotHealthy

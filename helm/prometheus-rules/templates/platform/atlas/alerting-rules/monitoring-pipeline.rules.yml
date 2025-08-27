@@ -42,6 +42,7 @@ spec:
         summary: Monitoring agent failed to scrape all targets in a job.
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-job-scraping-failure/
       expr: |-
+        # This alert uses the same logic as the `aggregation:giantswarm:jobscrapingfailures` recording rule
         (
           count(up == 0) by (job, installation, cluster_id, provider, pipeline)
           /

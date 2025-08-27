@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `ClusterControlPlaneMachineStatusNotHealthy`: take workload cluster name from `cluster_name` label because `cluster_id` may be globally overridden in metrics
+
 ## [4.73.1] - 2025-08-27
 
 ### Fixed

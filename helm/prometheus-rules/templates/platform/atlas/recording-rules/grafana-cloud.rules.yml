@@ -91,6 +91,14 @@ spec:
       record: aggregation:docker:containers_using_dockerhub_image
     - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) / sum(kube_pod_container_info{} or kube_pod_init_container_info{}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:docker:containers_using_dockerhub_image_relative
+    - expr: sum(kube_pod_container_info{image=~"quay\\.io/giantswarm/.*"} OR kube_pod_init_container_info{image=~"quay\\.io/giantswarm/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:docker:containers_from_deprecated_registries:quay
+    - expr: sum(kube_pod_container_info{image=~"docker\\.io/giantswarm/.*"} OR kube_pod_init_container_info{image=~"docker\\.io/giantswarm/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:docker:containers_from_deprecated_registries:dockerhub
+    - expr: sum(kube_pod_container_info{image=~"giantswarm\\.azurecr\\.io/.*"} OR kube_pod_init_container_info{image=~"giantswarm\\.azurecr\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:docker:containers_from_deprecated_registries:giantswarmacr
+    - expr: sum(kube_pod_container_info{image=~"giantswarmpublic\\.azurecr\\.io/.*"} OR kube_pod_init_container_info{image=~"giantswarmpublic\\.azurecr\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      record: aggregation:docker:containers_from_deprecated_registries:giantswarmpublicacr
   - name: certificates.grafana-cloud.recording
     rules:
     - expr: min(cert_exporter_not_after) by (app, job, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
@@ -566,3 +574,22 @@ spec:
             "(.*)"
           )
         record: aggregation:slo:time_period:days
+      - expr: |-
+          # The purpose of this metrics is to spot when a servicemonitor is broken, and not when a pod behind the servicemonitor is broken.
+          #
+          # If it's just a pod that is broken, some of the targets will work.
+          # If the whole servicemonitor is broken (misconfigured), then it can't scrape any pods.
+          #
+          # This behaviour reduces the amount of generated metrics, and makes them easier to interpret
+          (
+            count(up{}== 0 )
+            by (job, installation, cluster_id, provider,
+              pipeline, cluster_type, metrics_path,
+              container, namespace, organization, team)
+            /
+            count(up{})
+            by (job, installation, cluster_id, provider,
+              pipeline, cluster_type, metrics_path,
+              container, namespace, organization, team)
+          ) >= 1
+        record: aggregation:giantswarm:jobscrapingfailures

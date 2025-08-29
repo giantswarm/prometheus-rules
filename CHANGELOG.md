@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.73.2] - 2025-08-29
+
 ### Fixed
 
 - Fix `ClusterControlPlaneMachineStatusNotHealthy`: take workload cluster name from `cluster_name` label because `cluster_id` may be globally overridden in metrics
@@ -3862,7 +3864,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.2...HEAD
+[4.73.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.1...v4.73.2
 [4.73.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.0...v4.73.1
 [4.73.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.7...v4.73.0
 [4.72.7]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.6...v4.72.7

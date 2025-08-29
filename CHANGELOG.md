@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Change labels provided for `aggregation:docker:containers_from_deprecated_registries:*` recording rules, adding `namespace`, `pod` and `image` labels, removing `region` and `pipeline` labels.
+- Change labels provided for `aggregation:docker:containers_from_deprecated_registries:*` recording rules, adding `namespace`, `pod` and `image` labels, removing `region` label.
 
 ## [4.73.1] - 2025-08-27
 

@@ -91,13 +91,13 @@ spec:
       record: aggregation:docker:containers_using_dockerhub_image
     - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) / sum(kube_pod_container_info{} or kube_pod_init_container_info{}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:docker:containers_using_dockerhub_image_relative
-    - expr: sum(kube_pod_container_info{image=~"quay\\.io/giantswarm/.*"} OR kube_pod_init_container_info{image=~"quay\\.io/giantswarm/.*"}) by (cluster_id, cluster_type, customer, installation, provider, namespace, pod, image)
+    - expr: sum(kube_pod_container_info{image=~"quay\\.io/giantswarm/.*"} OR kube_pod_init_container_info{image=~"quay\\.io/giantswarm/.*"}) by (cluster_id, cluster_type, customer, installation, provider, namespace, pod, image, pipeline)
       record: aggregation:docker:containers_from_deprecated_registries:quay
-    - expr: sum(kube_pod_container_info{image=~"docker\\.io/giantswarm/.*"} OR kube_pod_init_container_info{image=~"docker\\.io/giantswarm/.*"}) by (cluster_id, cluster_type, customer, installation, provider, namespace, pod, image)
+    - expr: sum(kube_pod_container_info{image=~"docker\\.io/giantswarm/.*"} OR kube_pod_init_container_info{image=~"docker\\.io/giantswarm/.*"}) by (cluster_id, cluster_type, customer, installation, provider, namespace, pod, image, pipeline)
       record: aggregation:docker:containers_from_deprecated_registries:dockerhub
-    - expr: sum(kube_pod_container_info{image=~"giantswarm\\.azurecr\\.io/.*"} OR kube_pod_init_container_info{image=~"giantswarm\\.azurecr\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, provider, namespace, pod, image)
+    - expr: sum(kube_pod_container_info{image=~"giantswarm\\.azurecr\\.io/.*"} OR kube_pod_init_container_info{image=~"giantswarm\\.azurecr\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, provider, namespace, pod, image, pipeline)
       record: aggregation:docker:containers_from_deprecated_registries:giantswarmacr
-    - expr: sum(kube_pod_container_info{image=~"giantswarmpublic\\.azurecr\\.io/.*"} OR kube_pod_init_container_info{image=~"giantswarmpublic\\.azurecr\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, provider, namespace, pod, image)
+    - expr: sum(kube_pod_container_info{image=~"giantswarmpublic\\.azurecr\\.io/.*"} OR kube_pod_init_container_info{image=~"giantswarmpublic\\.azurecr\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, provider, namespace, pod, image, pipeline)
       record: aggregation:docker:containers_from_deprecated_registries:giantswarmpublicacr
   - name: certificates.grafana-cloud.recording
     rules:

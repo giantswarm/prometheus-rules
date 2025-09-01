@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add quicker alerts for Kyverno's `svc-fail` validation/mutation webhooks taking very long or timing out
+
 ## [4.73.2] - 2025-08-29
 
 ### Fixed

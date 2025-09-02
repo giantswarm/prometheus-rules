@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- New alert `MimirDistributorReachingInflightPushRequestLimit` to monitor when Mimir distributors are approaching their inflight push request limit (80% threshold).
+
 ## [4.73.2] - 2025-08-29
 
 ### Fixed

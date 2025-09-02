@@ -671,3 +671,41 @@ tests:
               dashboardQueryParams: "orgId=2"
               description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to replicating partial state to its replicas."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
+
+  # Test for MimirDistributorReachingInflightPushRequestLimit alert
+  - interval: 1m
+    input_series:
+      # mimir-distributor current inflight push requests: start low, then increase to 80 (80% of 100 limit) for over 1h, then back to normal
+      - series: 'cortex_distributor_inflight_push_requests{pod="mimir-distributor-0", cluster_id="golem", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
+        values: "10+0x60 80+0x80 50+0x60"
+      - series: 'cortex_distributor_inflight_push_requests{pod="mimir-distributor-1", cluster_id="golem", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
+        values: "15+0x60 80+0x80 55+0x60"
+      # mimir-distributor max inflight push requests limit: 100 for both pods
+      - series: 'cortex_distributor_instance_limits{limit="max_inflight_push_requests", pod="mimir-distributor-0", cluster_id="golem", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
+        values: "100+0x200"
+      - series: 'cortex_distributor_instance_limits{limit="max_inflight_push_requests", pod="mimir-distributor-1", cluster_id="golem", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
+        values: "100+0x200"
+    alert_rule_test:
+      - alertname: MimirDistributorReachingInflightPushRequestLimit
+        eval_time: 30m  # Low usage, should not fire
+      - alertname: MimirDistributorReachingInflightPushRequestLimit
+        eval_time: 90m  # At 80% threshold but not for 1h yet, should not fire
+      - alertname: MimirDistributorReachingInflightPushRequestLimit
+        eval_time: 121m  # At 80% threshold for over 1h, should fire
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: golem
+              installation: golem
+              namespace: mimir
+              pipeline: testing
+              provider: $provider
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "Mimir distributors are approaching their inflight push request limit and may start rejecting requests."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir
+      - alertname: MimirDistributorReachingInflightPushRequestLimit
+        eval_time: 180m  # Back to normal levels, should not fire

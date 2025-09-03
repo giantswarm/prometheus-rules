@@ -327,7 +327,7 @@ spec:
   - name: falco.grafana-cloud.recording
     rules:
     # Falco event counts
-    - expr: sum(falco_events{priority=~"0|1|2|3|4|5|6|7"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, priority, rule)
+    - expr: sum(falcosecurity_falco_rules_matches_total{priority=~"0|1|2|3|4|5|6|7"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, priority, rule_name)
       record: aggregation:falco_events
   - name: kyverno.grafana-cloud.recording
     rules:

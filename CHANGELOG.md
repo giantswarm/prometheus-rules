@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add quicker alerts for Kyverno's `svc-fail` validation/mutation webhooks taking very long or timing out
 
+## [4.74.0] - 2025-09-02
+
+### Added
+
+- New alert `MimirDistributorReachingInflightPushRequestLimit` to monitor when Mimir distributors are approaching their inflight push request limit (80% threshold).
+
 ## [4.73.2] - 2025-08-29
 
 ### Fixed
@@ -3868,7 +3874,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.0...HEAD
+[4.74.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.2...v4.74.0
 [4.73.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.1...v4.73.2
 [4.73.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.0...v4.73.1
 [4.73.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.7...v4.73.0

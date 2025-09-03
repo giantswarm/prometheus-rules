@@ -53,7 +53,7 @@ spec:
         team: se
         topic: kubernetes
 
-      # Webhooks owned by Honeybadger
+    # Webhooks owned by Honeybadger
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutHoneybadger
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
@@ -67,7 +67,7 @@ spec:
         team: honeybadger
         topic: kubernetes
 
-      # Webhooks owned by Cabbage
+    # Webhooks owned by Cabbage
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutCabbage
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
@@ -81,7 +81,7 @@ spec:
         team: cabbage
         topic: kubernetes
 
-      # Webhooks owned by Phoenix
+    # Webhooks owned by Phoenix
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutPhoenix
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
@@ -95,7 +95,7 @@ spec:
         team: phoenix
         topic: kubernetes
 
-      # Webhooks owned by Atlas
+    # Webhooks owned by Atlas
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutAtlas
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
@@ -107,4 +107,18 @@ spec:
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: atlas
+        topic: kubernetes
+
+    # Kyverno webhooks that may block critical objects
+    - alert: WorkloadClusterWebhookDurationExceedsTimeoutKyvernoCritical
+      annotations:
+        description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} takes very long or is timing out.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/apiserver-admission-webhook-errors/
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(kyverno.*fail).*"}[15m])) by (cluster_id, installation, pipeline, provider, name, job, le)) > 10
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: shield
         topic: kubernetes

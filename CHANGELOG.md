@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- New alert `IRSAClaimNotReady` to monitor Crossplane IRSA objects.
+
 ## [4.74.1] - 2025-09-03
 
 ### Changed

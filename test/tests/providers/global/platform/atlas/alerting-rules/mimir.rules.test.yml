@@ -612,7 +612,7 @@ tests:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
               description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to read tenant configurations from storage."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
+              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
 
   # Test for MimirAlertmanagerRingCheckFailing alert
   - interval: 1m
@@ -641,7 +641,7 @@ tests:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
               description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is unable to check tenants ownership via the ring."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
+              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
 
   # Test for MimirAlertmanagerReplicationFailing alert
   - interval: 1m
@@ -670,7 +670,7 @@ tests:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
               description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to replicating partial state to its replicas."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
+              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
 
   # Test for MimirDistributorReachingInflightPushRequestLimit alert
   - interval: 1m

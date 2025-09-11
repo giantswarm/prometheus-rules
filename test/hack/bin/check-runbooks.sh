@@ -108,7 +108,7 @@ main() {
     for rulesFile in $rulesFiles; do
         echo "Processing rules file: $rulesFile"
         # iterate over all rules in a file
-        url=$(grep --no-filename "runbook_url:" $rulesFile 2>/dev/null | sed 's|runbook_url:||' | sed -e 's|[[:space:]]+||' | sed -e "s|[\"']||g" || true)
+        url=$(grep --no-filename "runbook_url:" $rulesFile 2>/dev/null | sed 's|runbook_url:||' | sed -e 's|[[:space:]]+||g' | sed -e "s|[\"']||g" || true)
         
         # Skip if no runbook_url found in this file
         if [[ -z "$url" ]]; then
@@ -118,7 +118,7 @@ main() {
         # Check if url is in runbooks array
         echo "Checking runbook URL '$url'"
         if ! isInArray "$url" "${runbooks[@]}"; then
-            local message="file $prettyRulesFilename / alert \"$alertname\" links to unexisting runbook (\"$runbook\")"
+            local message="file $rulesFile links to nonexisting runbook '$url'"
             E_unexistingrunbook+=("$message")
             continue
         fi

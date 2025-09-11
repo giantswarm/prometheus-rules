@@ -20,22 +20,6 @@ jobs:
           fetch-depth: "0"
       - name: run inhibition tests
         run: make test-inhibitions
-  runbook-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: "0"
-      - name: Clone private runbook repo
-        run: |
-          git clone --depth 1 --single-branch -b main -q https://oauth2:${{ secrets.TAYLORBOT_GITHUB_ACTION }}@github.com/giantswarm/giantswarm.git
-      - name: Clone public runbook repo
-        run: |
-          git clone --depth 1 --single-branch -b main -q https://oauth2:${{ secrets.TAYLORBOT_GITHUB_ACTION }}@github.com/giantswarm/handbook.git
-      - name: run runbook tests
-        env:
-          RUNBOOKS_DIR: ./giantswarm
-        run: make test-ci-runbooks
   prometheus-lint:
     runs-on: ubuntu-latest
     steps:

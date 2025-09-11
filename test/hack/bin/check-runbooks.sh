@@ -106,26 +106,22 @@ main() {
 
     # iterate over all rules files
     for rulesFile in $rulesFiles; do
-        echo "Processing rules file: $rulesFile"
         # iterate over all rules in a file
         urls=$(grep --no-filename "runbook_url:" $rulesFile 2>/dev/null || true)
-        
         # Skip if no runbook_url found in this file
         if [[ -z "$urls" ]]; then
             continue
         fi
 
         for url in $urls; do
-            url=$(echo "$url" | sed 's|runbook_url:||' | sed -e 's|[[:space:]]+||g' | sed -e "s|[\"']||g")
-
+            url=$(echo "$url" | sed 's|runbook_url:||' | sed -e 's|[[:space:]]+||g' | sed -e 's|#.*||g' | sed -e "s|[\"']||g")
             if [[ -z "$url" ]]; then
                 continue
             fi
-            
+
             # Check if url is in runbooks array
-            echo "Checking runbook URL '$url'"
             if ! isInArray "$url" "${runbooks[@]}"; then
-                local message="file $rulesFile links to nonexisting runbook '$url'"
+                local message="file $rulesFile links to nonexisting runbook $url"
                 E_unexistingrunbook+=("$message")
                 continue
             fi
@@ -134,7 +130,7 @@ main() {
 
     if [[ "${#E_unexistingrunbook[@]}" -gt 0 ]]; then
         echo ""
-        echo "Alerts using unexisting runbook: ${#E_unexistingrunbook[@]}"
+        echo "Alerts using nonexisting runbooks: ${#E_unexistingrunbook[@]}"
         for message in "${E_unexistingrunbook[@]}"; do
             echo "$message"
         done

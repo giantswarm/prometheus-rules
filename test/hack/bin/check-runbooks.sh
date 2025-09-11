@@ -96,12 +96,11 @@ main() {
     # Retrieve list of runbooks
     mapfile -t runbooks < <(listRunbooks "$runInCi")
 
-    if [[ "$DEBUG_MODE" != "false" ]]; then
-        echo "List of runbooks:"
-        for runbook in "${runbooks[@]}"; do
-            echo " - \"$runbook\""
-        done
-    fi
+    echo "Number of runbooks found: ${#runbooks[@]}"
+    echo "List of runbooks:"
+    for runbook in "${runbooks[@]}"; do
+        echo " - $runbook"
+    done
 
     # Look at each rules file
     while IFS= read -r -d '' rulesFile; do

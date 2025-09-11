@@ -95,12 +95,6 @@ main() {
     # Retrieve list of runbooks
     mapfile -t runbooks < <(listRunbooks "$runInCi")
 
-    echo "Number of runbooks found: ${#runbooks[@]}"
-    echo "List of runbooks:"
-    for runbook in "${runbooks[@]}"; do
-        echo " - $runbook"
-    done
-
     # Find all `runbook_url:` occurrences in .y[a]ml files under ./helm/prometheus-rules
     rulesFiles=$(find ./helm/prometheus-rules -type f \( -name "*.yml" -o -name "*.yaml" \))
 

@@ -117,6 +117,11 @@ main() {
 
         for url in $urls; do
             url=$(echo "$url" | sed 's|runbook_url:||' | sed -e 's|[[:space:]]+||g' | sed -e "s|[\"']||g")
+
+            if [[ -z "$url" ]]; then
+                continue
+            fi
+            
             # Check if url is in runbooks array
             echo "Checking runbook URL '$url'"
             if ! isInArray "$url" "${runbooks[@]}"; then

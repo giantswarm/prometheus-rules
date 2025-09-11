@@ -57,9 +57,8 @@ listRunbooks () {
     # perform merge as done by intranet build
     merge_docs "$privateRunbooksHandbookParentDirectory" "$privateRunbooksParentDirectory"
 
-    # find all runbooks ".md" files, and keep only the runbook name (may contain a path, like "rolling-nodes/rolling-nodes")
-    find "$privateRunbooksParentDirectory"/content/docs/support-and-ops/ops-recipes -type f -name \*.md \
-        | sed -n 's_'"$privateRunbooksParentDirectory"'/content/docs/support-and-ops/ops-recipes/\(.*\).md_\1_p' \
+    # find all page ".md" files and form a proper URL
+    find "$privateRunbooksParentDirectory"/content/docs -type f -name \*.md \
         | sed 's/\/_index//g' # Removes the _index.md files and keep the directory name
     rm -rf "$privateRunbooksParentDirectory"
 

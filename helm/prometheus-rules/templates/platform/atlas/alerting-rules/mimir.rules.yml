@@ -308,7 +308,7 @@ spec:
         __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
         dashboardQueryParams: "orgId=2"
         description: '{{`Mimir Alertmanager {{ $labels.pod }} is failing to read tenant configurations from storage.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
+        runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
       expr: |
         rate(cortex_alertmanager_sync_configs_failed_total[5m]) > 0
       for: 30m
@@ -323,7 +323,7 @@ spec:
         __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
         dashboardQueryParams: "orgId=2"
         description: '{{`Mimir Alertmanager {{ $labels.pod }} is unable to check tenants ownership via the ring.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
+        runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
       expr: |
         rate(cortex_alertmanager_ring_check_errors_total[2m]) > 0
       for: 10m
@@ -338,7 +338,7 @@ spec:
         __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
         dashboardQueryParams: "orgId=2"
         description: '{{`Mimir Alertmanager {{ $labels.pod }} is failing to replicating partial state to its replicas.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
+        runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
       expr: |
         rate(cortex_alertmanager_state_replication_failed_total[2m]) > 0
       for: 10m

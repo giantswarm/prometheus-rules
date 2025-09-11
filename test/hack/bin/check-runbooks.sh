@@ -108,7 +108,7 @@ main() {
     for rulesFile in $rulesFiles; do
         echo "Processing rules file: $rulesFile"
         # iterate over all rules in a file
-        url=$(grep --no-filename "runbook_url:" $rulesFile | sed 's|[[:space:]]+runbook_url:[[:space:]]+||' | sed 's|[[:space:]]+||' | sed "s|[\"']||g")
+        url=$(grep --no-filename "runbook_url:" $rulesFile | sed 's|runbook_url:||' | sed -e 's|[[:space:]]+||' | sed -e "s|[\"']||g")
         
         # Check if url is in runbooks array
         echo "Checking runbook URL '$url'"

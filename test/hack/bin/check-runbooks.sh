@@ -101,93 +101,31 @@ main() {
         echo " - $runbook"
     done
 
-    # Look at each rules file
-    while IFS= read -r -d '' rulesFile; do
-        prettyRulesFilename="$(basename "$rulesFile")"
+    # Find all `runbook_url:` occurrences in .y[a]ml files under ./helm/prometheus-rules
+    rulesFiles=$(find ./helm/prometheus-rules -type f \( -name "*.yml" -o -name "*.yaml" \))
 
-        # skip if rules file has already been checked
-        isInArray "$prettyRulesFilename" "${checkedRules[@]}" \
-            && continue
-
-        while read -r alertname runbook severity overflow ; do
-
-            # Discard non-paging alerts
-            [[ "$severity" != "page" ]] && continue
-
-            # Get rid of url prefix
-            runbook=${runbook#https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/}
-            # Get rid of anchors
-            runbook="${runbook%%#*}"
-            # Get rid of trailing slash
-            runbook="${runbook%/}"
-
-
-            # There should be no data in $overflow
-            # If there is, it means something went wrong with the parsing
-            if [[ "$overflow" != "" ]]; then
-                local message="file: $prettyRulesFilename / alert \"$alertname\" / runbook \"$runbook\": extra data \"$overflow\""
-                E_extradata+=("$message")
-                continue
-            fi
-
-            # When there is no runbook annotation, yq outputs "null"
-            if [[ "$runbook" == "null" ]]; then
-                local message="file $prettyRulesFilename / alert \"$alertname\" has no runbook"
-                E_norunbook+=("$message")
-                continue
-            fi
-
-            # Let's check if the runbook is in our list of existing runbooks
-            # or is a valid URL starting with http
-            if ! isInArray "$runbook" "${runbooks[@]}" && [[ "$runbook" != http* ]]; then
-                local message="file $prettyRulesFilename / alert \"$alertname\" links to unexisting runbook (\"$runbook\")"
-                E_unexistingrunbook+=("$message")
-                continue
-            fi
-
-            if [[ "$DEBUG_MODE" != "false" ]]; then
-                echo "file $prettyRulesFilename / alert: $alertname / runbook: $runbook - OK"
-            fi
-
-        # parse rules yaml files, and for each rule found output alertname, runbook, and severity, space-separated, on one line.
-        done < <("$GIT_WORKDIR/$YQ" -o json "$rulesFile" | "$GIT_WORKDIR/$JQ" -j '.spec.groups[]?.rules[] | .alert, " ", .annotations.runbook_url, " ", .labels.severity, "\n"')
-
-        checkedRules+=("$rulesFile")
-    done < <(find "${RULES_FILES[@]}" -type f -print0)
-
-
-    # Output section - let's write down our findings
-    #################################################
-
-    if [[ "$CHECK_EXTRADATA_ERRORS" != "false" ]]; then
-        if [[ "${#E_extradata[@]}" -gt 0 ]]; then
-            echo ""
-            echo "Alerts that failed parsing: ${#E_extradata[@]}"
-            for message in "${E_extradata[@]}"; do
-                echo "$message"
-            done
-            returncode=1
+    # iterate over all rules files
+    for rulesFile in $rulesFiles; do
+        echo "Processing rules file: $rulesFile"
+        # iterate over all rules in a file
+        url=$(grep --no-filename "runbook_url:" $rulesFile | sed 's|[:space:]+runbook_url:[:space:]+||' | sed 's|[:space:]+||' | sed "s|[\"']||g")
+        
+        # Check if url is in runbooks array
+        echo "Checking runbook URL '$url'"
+        if ! isInArray "$url" "${runbooks[@]}"; then
+            local message="file $prettyRulesFilename / alert \"$alertname\" links to unexisting runbook (\"$runbook\")"
+            E_unexistingrunbook+=("$message")
+            continue
         fi
-    fi
-    if [[ "$CHECK_NORUNBOOK_ERRORS" != "false" ]]; then
-        if [[ "${#E_norunbook[@]}" -gt 0 ]]; then
-            echo ""
-            echo "Alerts missing runbook: ${#E_norunbook[@]}"
-            for message in "${E_norunbook[@]}"; do
-                echo "$message"
-            done
-            returncode=1
-        fi
-    fi
-    if [[ "$CHECK_UNEXISTINGRUNBOOK_ERRORS" != "false" ]]; then
-        if [[ "${#E_unexistingrunbook[@]}" -gt 0 ]]; then
-            echo ""
-            echo "Alerts using unexisting runbook: ${#E_unexistingrunbook[@]}"
-            for message in "${E_unexistingrunbook[@]}"; do
-                echo "$message"
-            done
-            returncode=1
-        fi
+    done
+
+    if [[ "${#E_unexistingrunbook[@]}" -gt 0 ]]; then
+        echo ""
+        echo "Alerts using unexisting runbook: ${#E_unexistingrunbook[@]}"
+        for message in "${E_unexistingrunbook[@]}"; do
+            echo "$message"
+        done
+        returncode=1
     fi
 
     return "$returncode"

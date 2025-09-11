@@ -115,7 +115,7 @@ main() {
 
             # Check if url is in runbooks array
             if ! isInArray "$url" "${runbooks[@]}"; then
-                local message="file $rulesFile links to nonexisting runbook $url"
+                local message="File $rulesFile links to nonexisting URL $url"
                 E_unexistingrunbook+=("$message")
                 continue
             fi
@@ -124,7 +124,7 @@ main() {
 
     if [[ "${#E_unexistingrunbook[@]}" -gt 0 ]]; then
         echo ""
-        echo "Alerts using nonexisting runbooks: ${#E_unexistingrunbook[@]}"
+        echo "${#E_unexistingrunbook[@]} bad runbook URLs found"
         for message in "${E_unexistingrunbook[@]}"; do
             echo "$message"
         done

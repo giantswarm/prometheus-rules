@@ -347,7 +347,7 @@ tests:
               __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
               dashboardQueryParams: "orgId=2"
               description: Mimir compactor has been failing compactions for more than 2 hours since start-up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir#mimircompactorfailedcompaction
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimircompactorfailedcompaction
       - alertname: MimirCompactorFailedCompaction
         eval_time: 250m
       - alertname: MimirCompactorFailedCompaction
@@ -370,7 +370,7 @@ tests:
               __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
               dashboardQueryParams: "orgId=2"
               description: Mimir compactor has been failing its compactions for 2 hours.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir#mimircompactorfailedcompaction
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimircompactorfailedcompaction
 
   # Test for MimirContinuousTestFailingOnWrites alert
   - interval: 1m
@@ -706,6 +706,6 @@ tests:
               topic: observability
             exp_annotations:
               description: "Mimir distributors are approaching their inflight push request limit and may start rejecting requests."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       - alertname: MimirDistributorReachingInflightPushRequestLimit
         eval_time: 180m  # Back to normal levels, should not fire

@@ -67,12 +67,6 @@ listRunbooks () {
         | sed "s|./giantswarm/content/|https://intranet.giantswarm.io/|g" \
         | sed 's/\/_index//g' # Removes the _index.md files and keep the directory name
     rm -rf "$privateRunbooksParentDirectory"
-
-    # Add extra runbooks
-    # These ones are defined as aliases of `deployment-not-satisfied`:
-    echo "workload-cluster-managed-deployment-not-satisfied"
-    echo "workload-cluster-deployment-not-satisfied"
-    echo "deployment-not-satisfied-china"
 }
 
 main() {

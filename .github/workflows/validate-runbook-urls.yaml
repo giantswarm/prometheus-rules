@@ -1,0 +1,24 @@
+# This workflow reads all runbook_url fields in alert rules and checks if they are valid URLs.
+# If the URL starts with https://intranet.giantswarm.io/, it checks if the according file exists
+# in the giantswarm/giantswarm repository.
+# If the URL starts with https://handbook.giantswarm.io/, it checks if the according file exists
+# in the giantswarm/handbook repository.
+# Bad URLs should be annotated.
+
+
+name: Validate runbook URLs
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-runbook-urls:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout prometheus-rules
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: make test-ci-runbooks
+        run: make test-ci-runbooks

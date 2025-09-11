@@ -706,6 +706,6 @@ tests:
               topic: observability
             exp_annotations:
               description: "Mimir distributors are approaching their inflight push request limit and may start rejecting requests."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       - alertname: MimirDistributorReachingInflightPushRequestLimit
         eval_time: 180m  # Back to normal levels, should not fire

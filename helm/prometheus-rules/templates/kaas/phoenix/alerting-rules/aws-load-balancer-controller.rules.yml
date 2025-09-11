@@ -13,7 +13,7 @@ spec:
     - alert: AWSLoadBalancerControllerAWSAPIErrors
       annotations:
         description: '{{`AWS load balancer controller pod {{ $labels.namespace}}/{{ $labels.pod }} on {{ $labels.cluster_id}} is throwing {{ $labels.error_code }} errors when contacting AWS API.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alb-errors
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alb-errors/
       expr: sum(increase(aws_api_calls_total{cluster_type="workload_cluster", error_code != "", provider=~"capa|eks"}[20m])) by (cluster_id, error_code, installation, namespace, pipeline, provider, pod) > 0
       for: 40m
       labels:
@@ -25,7 +25,7 @@ spec:
     - alert: AWSLoadBalancerControllerReconcileErrors
       annotations:
         description: '{{`AWS load balancer controller pod {{ $labels.namespace }}/{{ $labels.pod }} on {{ $labels.cluster_id }} is throwing errors while reconciling the {{ $labels.controller }} controller.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alb-errors
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alb-errors/
       expr: sum(increase(controller_runtime_reconcile_total{cluster_type="workload_cluster", provider=~"capa|eks", result = "error", service="aws-load-balancer-controller"}[20m])) by (cluster_id, controller, installation, namespace, pipeline, provider, pod) > 0
       for: 40m
       labels:

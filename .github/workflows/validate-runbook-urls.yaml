@@ -19,6 +19,22 @@ jobs:
     steps:
       - name: Checkout prometheus-rules
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      
+      - name: Clone handbook repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 1
+          repository: giantswarm/handbook
+          path: handbook
+          token: ${{ secrets.TAYLORBOT_GITHUB_ACTION }}
+
+      - name: Clone intranet repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 1
+          repository: giantswarm/giantswarm
+          path: giantswarm
+          token: ${{ secrets.TAYLORBOT_GITHUB_ACTION }}
 
       - name: Verify runbook URLs
         run: test/hack/bin/check-runbooks.sh --ci

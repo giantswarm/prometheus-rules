@@ -202,7 +202,7 @@ spec:
         __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
         dashboardQueryParams: "orgId=2"
         description: 'Mimir compactor has been failing its compactions for 2 hours.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir#mimircompactorfailedcompaction
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimircompactorfailedcompaction
       expr: min by (cluster_id, installation, namespace, provider, pipeline) (time() - (cortex_compactor_last_successful_run_timestamp_seconds > 0 ) ) > 60 * 60 * 2
       labels:
         area: platform
@@ -215,7 +215,7 @@ spec:
         __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
         dashboardQueryParams: "orgId=2"
         description: 'Mimir compactor has been failing compactions for more than 2 hours since start-up.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir#mimircompactorfailedcompaction
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimircompactorfailedcompaction
       # This alert covers the special case at compactor startup, where the "normal" alert would always consider time `0` is more than 2 hours ago, yet we want to let it 2 hours + `for` duration.
       expr: max(max_over_time(cortex_compactor_last_successful_run_timestamp_seconds{}[2h])) by (cluster_id, installation, namespace, provider, pipeline) == 0
       for: 2h

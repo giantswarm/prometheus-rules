@@ -34,3 +34,17 @@ spec:
         severity: page
         team: tenet
         topic: managementcluster
+
+    # Kyverno webhooks that may block critical objects
+    - alert: ManagementClusterWebhookDurationExceedsTimeoutKyvernoCritical
+      annotations:
+        description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} takes very long or is timing out.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/apiserver-admission-webhook-errors/
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="management_cluster", name=~".*(kyverno.*fail).*"}[15m])) by (cluster_id, installation, pipeline, provider, name, job, le)) > 10
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: tenet
+        topic: managementcluster

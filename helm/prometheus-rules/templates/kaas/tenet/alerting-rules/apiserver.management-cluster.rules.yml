@@ -46,5 +46,5 @@ spec:
         area: kaas
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
-        team: shield
+        team: tenet
         topic: managementcluster

@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed runbook for alertmanager alerts
 
+### Changed
+
+- Update some runbook URLs to point to the actual URL instead of to a redirect
+- Remove aliases from runbook URL validation
+
 ## [4.74.1] - 2025-09-03
 
 ### Changed

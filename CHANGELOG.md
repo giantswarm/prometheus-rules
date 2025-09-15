@@ -7,7 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New alert `IRSAClaimNotReady` to monitor Crossplane IRSA objects.
 - Add quicker alerts for Kyverno's `svc-fail` validation/mutation webhooks taking very long or timing out
+
+### Fixed
+
+- Fixed runbook for alertmanager alerts
+
+### Changed
+
+- Update some runbook URLs to point to the actual URL instead of to a redirect
+- Remove aliases from runbook URL validation
+
+## [4.74.1] - 2025-09-03
+
+### Changed
+
+- Update `falco` recording rule to make it work with new Falco version.
 
 ## [4.74.0] - 2025-09-02
 
@@ -3874,7 +3890,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.1...HEAD
+[4.74.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.0...v4.74.1
 [4.74.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.2...v4.74.0
 [4.73.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.1...v4.73.2
 [4.73.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.0...v4.73.1

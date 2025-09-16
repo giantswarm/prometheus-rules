@@ -145,7 +145,11 @@ main() {
         generateAnnotationsJson "${annotations_data[@]}" > annotations.json
 
         if [[ -n "${GITHUB_ENV:-}" ]]; then
-            echo "found_bad_urls=true" >> $GITHUB_ENV
+            echo "DEBUG: GITHUB_ENV is set to: ${GITHUB_ENV}"
+            echo "found_bad_urls=true" >> "${GITHUB_ENV}"
+            echo "DEBUG: Written found_bad_urls=true to GITHUB_ENV"
+        else
+            echo "DEBUG: GITHUB_ENV is not set or empty"
         fi
         
         returncode=1

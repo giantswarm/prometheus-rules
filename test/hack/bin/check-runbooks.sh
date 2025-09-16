@@ -134,7 +134,7 @@ main() {
 
     if [[ "${#E_unexistingrunbook[@]}" -gt 0 ]]; then
         echo ""
-        echo "${#E_unexistingrunbook[@]} bad runbook URLs found"
+        echo "${#E_unexistingrunbook[@]} bad runbook URLs found" >> $GITHUB_STEP_SUMMARY
         for message in "${E_unexistingrunbook[@]}"; do
             echo "$message"
         done
@@ -144,12 +144,12 @@ main() {
         echo "Writing GitHub annotations to annotations.json"
         generateAnnotationsJson "${annotations_data[@]}" > annotations.json
 
-        if [[ -n "${GITHUB_ENV:-}" ]]; then
-            echo "DEBUG: GITHUB_ENV is set to: ${GITHUB_ENV}"
-            echo "found_bad_urls=true" >> "${GITHUB_ENV}"
-            echo "DEBUG: Written found_bad_urls=true to GITHUB_ENV"
+        if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
+            echo "DEBUG: GITHUB_OUTPUT is set to: ${GITHUB_OUTPUT}"
+            echo "found_bad_urls=true" >> $GITHUB_OUTPUT
+            echo "DEBUG: Written found_bad_urls=true to GITHUB_OUTPUT"
         else
-            echo "DEBUG: GITHUB_ENV is not set or empty"
+            echo "DEBUG: GITHUB_OUTPUT is not set or empty"
         fi
         
         returncode=1

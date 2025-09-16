@@ -6,8 +6,13 @@ name: Validate runbook URLs
 
 on:
   pull_request:
+    # Only run on PRs based on the main branch
     branches:
       - main
+    # Only trigger if these rules files are changed
+    paths:
+      - 'helm/prometheus-rules/templates/**.yml'
+      - 'helm/prometheus-rules/templates/**.yaml'
 
 jobs:
   validate-runbook-urls:

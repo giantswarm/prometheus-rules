@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update some runbook URLs to point to the actual URL instead of to a redirect
 - Remove aliases from runbook URL validation
+- Runbook URL validation refactored
 
 ## [4.74.1] - 2025-09-03
 

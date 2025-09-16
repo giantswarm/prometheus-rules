@@ -121,6 +121,11 @@ main() {
                 continue
             fi
 
+            # Skip URLs that don't start with https://intranet.giantswarm.io
+            if [[ ! "$url" =~ ^https://intranet\.giantswarm\.io ]]; then
+                continue
+            fi
+
             # Check if url is in runbooks array
             if ! isInArray "$url" "${runbooks[@]}"; then
                 local message="File $filename:$line_number links to nonexisting URL $url"

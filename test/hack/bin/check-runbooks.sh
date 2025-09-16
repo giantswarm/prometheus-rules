@@ -27,35 +27,15 @@ isInArray () {
     return 1
 }
 
-# merge_docs () merges a Hugo docs hierarchy from a source directory (first arg) into a destination directory (second arg).
-merge_docs() {
-    if [[ ! -d "$1/content/docs/." ]] ; then
-        echo "Source Hugo base directory not specified or invalid (must contain content/docs)!" >&2
-    fi
-    if [[ ! -d "$2/content/docs/." ]] ; then
-        echo "Destination Hugo base directory not specified or invalid (must contain content/docs)!" >&2
-    fi
-    find "$1/content/docs" -mindepth 1 -maxdepth 1 -type d -print0 | xargs -0 cp -v -x -a -r -u -t "$2/content/docs/." | \
-        grep -o -P "(?<= -> ').*\.md" | \
-        xargs sed -s -i'' '0,/^---.*$/s//---\nsourceOrigin: handbook/'
-}
-
 listRunbooks () {
     local runInCi="$1" && shift
     privateRunbooksParentDirectory="./giantswarm"
-    privateRunbooksHandbookParentDirectory="./handbook"
     # CI clones git dependencies, but if we run it locally we have to do it ourselves
     if [[ "$runInCi" == false ]]; then
         tmpDir="$(mktemp -d)"
-        tmpDirHandbook="$(mktemp -d)"
         git clone --depth 1 --single-branch -b main -q git@github.com:giantswarm/giantswarm.git "$tmpDir"
-        git clone --depth=1 --single-branch -b main -q git@github.com:giantswarm/handbook.git "$tmpDirHandbook"
         privateRunbooksParentDirectory="$tmpDir"
-        privateRunbooksHandbookParentDirectory="$tmpDirHandbook"
     fi
-
-    # perform merge as done by intranet build
-    merge_docs "$privateRunbooksHandbookParentDirectory" "$privateRunbooksParentDirectory"
 
     # find all page ".md" files and form a proper URL
     find "$privateRunbooksParentDirectory"/content/docs -type f -name \*.md \

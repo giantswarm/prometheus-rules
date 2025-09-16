@@ -1,10 +1,6 @@
 # This workflow reads all runbook_url fields in alert rules and checks if they are valid URLs.
 # If the URL starts with https://intranet.giantswarm.io/, it checks if the according file exists
 # in the giantswarm/giantswarm repository.
-# If the URL starts with https://handbook.giantswarm.io/, it checks if the according file exists
-# in the giantswarm/handbook repository.
-# Bad URLs should be annotated.
-
 
 name: Validate runbook URLs
 
@@ -19,14 +15,6 @@ jobs:
     steps:
       - name: Checkout prometheus-rules
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      
-      - name: Clone handbook repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        with:
-          fetch-depth: 1
-          repository: giantswarm/handbook
-          path: handbook
-          token: ${{ secrets.TAYLORBOT_GITHUB_ACTION }}
 
       - name: Clone intranet repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0

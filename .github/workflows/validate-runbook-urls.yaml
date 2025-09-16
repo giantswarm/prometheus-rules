@@ -32,7 +32,6 @@ jobs:
           token: ${{ secrets.TAYLORBOT_GITHUB_ACTION }}
 
       - name: Verify runbook URLs
-        continue-on-error: true
         run: test/hack/bin/check-runbooks.sh --ci
       
       - name: Send annotations to PR
@@ -42,3 +41,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           title: Bad runbook URLs
           input: /home/runner/work/prometheus-rules/annotations.json
+      
+      - name: Fail if bad URLs are found
+        if: ${{ env.found_bad_urls == 'true' }}
+        run: exit 1

@@ -148,8 +148,9 @@ main() {
         echo ""
         echo "Writing GitHub annotations to /home/runner/work/prometheus-rules/annotations.json"
         generateAnnotationsJson "${annotations_data[@]}" > /home/runner/work/prometheus-rules/annotations.json
-        
-        returncode=1
+
+        # Write to GITHUB_ENV for later steps
+        echo "found_bad_urls=true" >> $GITHUB_ENV        
     fi
 
     return "$returncode"

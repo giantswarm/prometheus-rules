@@ -1,4 +1,5 @@
-[![CircleCI](https://circleci.com/gh/giantswarm/prometheus-rules.svg?style=shield)](https://circleci.com/gh/giantswarm/prometheus-rules)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/giantswarm/prometheus-rules/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/giantswarm/prometheus-rules/tree/main)
+
 
 # Giant Swarm alert and recording rules
 

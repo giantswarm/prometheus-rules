@@ -8,10 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - New alert `IRSAClaimNotReady` to monitor Crossplane IRSA objects.
+- Add quicker alerts for Kyverno's `svc-fail` validation/mutation webhooks taking very long or timing out
 
 ### Fixed
 
 - Fixed runbook for alertmanager alerts
+
+### Changed
+
+- Update some runbook URLs to point to the actual URL instead of to a redirect
+- Remove aliases from runbook URL validation
 
 ## [4.74.1] - 2025-09-03
 

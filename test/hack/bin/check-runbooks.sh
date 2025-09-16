@@ -1,15 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# List of generated rules
-RULES_FILES=(./test/hack/output/helm-chart)
-
-DEBUG_MODE=false
-
-CHECK_EXTRADATA_ERRORS=true
-CHECK_NORUNBOOK_ERRORS=true
-CHECK_UNEXISTINGRUNBOOK_ERRORS=true
-
 # Parameters:
 # - an element
 # - an array

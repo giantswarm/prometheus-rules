@@ -40,6 +40,36 @@ listRunbooks () {
     rm -rf "$privateRunbooksParentDirectory"
 }
 
+generateAnnotationsJson() {
+    local -a annotations_data=("$@")
+    local first=true
+    
+    echo "["
+    for annotation in "${annotations_data[@]}"; do
+        IFS='|' read -r filename line_number url <<< "$annotation"
+        
+        if [[ "$first" == true ]]; then
+            first=false
+        else
+            echo ","
+        fi
+        
+        # Escape quotes in the URL for JSON
+        escaped_url=$(echo "$url" | sed 's/"/\\"/g')
+        
+        cat << EOF
+  {
+    "file": "$filename",
+    "line": $line_number,
+    "title": "Bad runbook URL",
+    "message": "This runbook URL does not exist: $escaped_url",
+    "annotation_level": "failure"
+  }EOF
+    done
+    echo ""
+    echo "]"
+}
+
 main() {
     local -a runInCi=false
     for arg in "$@"; do
@@ -54,6 +84,7 @@ main() {
     local -a E_extradata=()
     local -a E_norunbook=()
     local -a E_unexistingrunbook=()
+    local -a annotations_data=()
     local returncode=0
 
     local -r GIT_WORKDIR="$(git rev-parse --show-toplevel)"
@@ -72,25 +103,32 @@ main() {
     # iterate over all rules files
     for rulesFile in $rulesFiles; do
         # iterate over all rules in a file
-        urls=$(grep --no-filename "runbook_url:" $rulesFile 2>/dev/null || true)
+        urls=$(grep --line-number "runbook_url:" $rulesFile 2>/dev/null || true)
         # Skip if no runbook_url found in this file
         if [[ -z "$urls" ]]; then
             continue
         fi
 
-        for url in $urls; do
-            url=$(echo "$url" | sed 's|runbook_url:||' | sed -e 's|[[:space:]]+||g' | sed -e 's|#.*||g' | sed -e "s|[\"']||g")
+        while IFS= read -r line; do
+            # Parse grep output: filename:line_number:matched_text
+            filename=$(echo "$line" | cut -d':' -f1)
+            line_number=$(echo "$line" | cut -d':' -f2)
+            matched_text=$(echo "$line" | cut -d':' -f3-)
+            
+            url=$(echo "$matched_text" | sed 's|runbook_url:||' | sed -e 's|[[:space:]]+||g' | sed -e 's|#.*||g' | sed -e "s|[\"']||g")
             if [[ -z "$url" ]]; then
                 continue
             fi
 
             # Check if url is in runbooks array
             if ! isInArray "$url" "${runbooks[@]}"; then
-                local message="File $rulesFile links to nonexisting URL $url"
+                local message="File $filename:$line_number links to nonexisting URL $url"
                 E_unexistingrunbook+=("$message")
+                # Store annotation data as pipe-separated values for JSON generation
+                annotations_data+=("$filename|$line_number|$url")
                 continue
             fi
-        done
+        done <<< "$urls"
     done
 
     if [[ "${#E_unexistingrunbook[@]}" -gt 0 ]]; then
@@ -99,6 +137,16 @@ main() {
         for message in "${E_unexistingrunbook[@]}"; do
             echo "$message"
         done
+        
+        # Generate GitHub annotations JSON file
+        echo ""
+        echo "Writing GitHub annotations to annotations.json"
+        generateAnnotationsJson "${annotations_data[@]}" > annotations.json
+
+        if [[ -n "${GITHUB_ENV:-}" ]]; then
+            echo "found_bad_urls=true" >> $GITHUB_ENV
+        fi
+        
         returncode=1
     fi
 

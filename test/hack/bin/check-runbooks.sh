@@ -62,7 +62,7 @@ generateAnnotationsJson() {
     "file": "$filename",
     "line": $line_number,
     "title": "Bad runbook URL",
-    "message": "This runbook URL does not exist: $escaped_url",
+    "message": "This runbook URL does not exist: [$escaped_url]($escaped_url)",
     "annotation_level": "failure"
   }
 EOF

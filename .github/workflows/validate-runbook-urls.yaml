@@ -15,7 +15,7 @@ on:
       - 'helm/prometheus-rules/templates/**.yaml'
 
 jobs:
-  validate-runbook-urls:
+  validate:
     runs-on: ubuntu-latest
     permissions:
       checks: write
@@ -35,11 +35,10 @@ jobs:
         run: test/hack/bin/check-runbooks.sh --ci
       
       - name: Send annotations to PR
-        #if: ${{ env.found_bad_urls == 'true' }}
         uses: yuzutech/annotations-action@0e061a6e3ac848299310b6429b60d67cafd4e7f8 # v0.5.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          title: Bad runbook URLs
+          title: Validate runbook URLs
           input: /home/runner/work/prometheus-rules/annotations.json
       
       - name: Fail if bad URLs are found

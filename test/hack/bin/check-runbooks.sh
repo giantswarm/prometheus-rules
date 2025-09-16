@@ -141,8 +141,8 @@ main() {
         
         # Generate GitHub annotations JSON file
         echo ""
-        echo "Writing GitHub annotations to ${PWD}/annotations.json"
-        generateAnnotationsJson "${annotations_data[@]}" > annotations.json
+        echo "Writing GitHub annotations to /home/runner/work/prometheus-rules/annotations.json"
+        generateAnnotationsJson "${annotations_data[@]}" > /home/runner/work/prometheus-rules/annotations.json
 
         if [[ -n "${GITHUB_ENV:-}" ]]; then
             echo "DEBUG: GITHUB_OUTPUT is set to: ${GITHUB_ENV}"

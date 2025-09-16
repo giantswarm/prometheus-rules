@@ -38,4 +38,4 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           title: Bad runbook URLs
-          input: ./annotations.json
+          input: /home/runner/work/prometheus-rules/annotations.json

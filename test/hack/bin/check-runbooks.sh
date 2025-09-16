@@ -64,7 +64,8 @@ generateAnnotationsJson() {
     "title": "Bad runbook URL",
     "message": "This runbook URL does not exist: $escaped_url",
     "annotation_level": "failure"
-  }EOF
+  }
+EOF
     done
     echo ""
     echo "]"

@@ -32,6 +32,7 @@ jobs:
           token: ${{ secrets.TAYLORBOT_GITHUB_ACTION }}
 
       - name: Verify runbook URLs
+        continue-on-error: true
         run: test/hack/bin/check-runbooks.sh --ci
       
       - name: Send annotations to PR

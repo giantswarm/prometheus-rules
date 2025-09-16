@@ -141,7 +141,7 @@ main() {
         
         # Generate GitHub annotations JSON file
         echo ""
-        echo "Writing GitHub annotations to annotations.json"
+        echo "Writing GitHub annotations to ${PWD}/annotations.json"
         generateAnnotationsJson "${annotations_data[@]}" > annotations.json
 
         if [[ -n "${GITHUB_ENV:-}" ]]; then

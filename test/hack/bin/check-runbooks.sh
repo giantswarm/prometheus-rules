@@ -143,23 +143,8 @@ main() {
         echo ""
         echo "Writing GitHub annotations to /home/runner/work/prometheus-rules/annotations.json"
         generateAnnotationsJson "${annotations_data[@]}" > /home/runner/work/prometheus-rules/annotations.json
-        cat /home/runner/work/prometheus-rules/annotations.json
-
-        if [[ -n "${GITHUB_ENV:-}" ]]; then
-            echo "DEBUG: GITHUB_ENV is set to: ${GITHUB_ENV}"
-            echo "found_bad_urls=true" >> "${GITHUB_ENV}"
-            echo "DEBUG: Written found_bad_urls=true to GITHUB_ENV"
-        else
-            echo "DEBUG: GITHUB_ENV is not set or empty"
-        fi
         
         returncode=1
-    else
-        # No bad URLs found - set output to false
-        if [[ -n "${GITHUB_ENV:-}" ]]; then
-            echo "DEBUG: No bad URLs found, setting found_bad_urls=false"
-            echo "found_bad_urls=false" >> "${GITHUB_ENV}"
-        fi
     fi
 
     return "$returncode"

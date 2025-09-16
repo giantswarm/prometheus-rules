@@ -116,7 +116,7 @@ main() {
             line_number=$(echo "$line" | cut -d':' -f2)
             matched_text=$(echo "$line" | cut -d':' -f3-)
             
-            url=$(echo "$matched_text" | sed 's|runbook_url:||' | sed -e 's|[[:space:]]+||g' | sed -e 's|#.*||g' | sed -e "s|[\"']||g")
+            url=$(echo "$matched_text" | sed 's|runbook_url:||' | sed -e 's|^[[:space:]]*||' | sed -e 's|[[:space:]]*$||' | sed -e 's|#.*||g' | sed -e "s|[\"']||g")
             if [[ -z "$url" ]]; then
                 continue
             fi

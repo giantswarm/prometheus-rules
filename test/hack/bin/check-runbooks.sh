@@ -144,10 +144,10 @@ main() {
         echo "Writing GitHub annotations to annotations.json"
         generateAnnotationsJson "${annotations_data[@]}" > annotations.json
 
-        if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
-            echo "DEBUG: GITHUB_OUTPUT is set to: ${GITHUB_OUTPUT}"
-            echo "found_bad_urls=true" >> "${GITHUB_OUTPUT}"
-            echo "DEBUG: Written found_bad_urls=true to GITHUB_OUTPUT"
+        if [[ -n "${GITHUB_ENV:-}" ]]; then
+            echo "DEBUG: GITHUB_OUTPUT is set to: ${GITHUB_ENV}"
+            echo "found_bad_urls=true" >> "${GITHUB_ENV}"
+            echo "DEBUG: Written found_bad_urls=true to GITHUB_ENV"
         else
             echo "DEBUG: GITHUB_OUTPUT is not set or empty"
         fi
@@ -155,9 +155,9 @@ main() {
         returncode=1
     else
         # No bad URLs found - set output to false
-        if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
+        if [[ -n "${GITHUB_ENV:-}" ]]; then
             echo "DEBUG: No bad URLs found, setting found_bad_urls=false"
-            echo "found_bad_urls=false" >> "${GITHUB_OUTPUT}"
+            echo "found_bad_urls=false" >> "${GITHUB_ENV}"
         fi
     fi
 

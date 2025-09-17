@@ -593,3 +593,7 @@ spec:
               container, namespace, organization, team)
           ) >= 1
         record: aggregation:giantswarm:jobscrapingfailures
+
+      # Observability platform product signals
+      - expr: count(giantswarm:observability:grafana:unique_users:30d) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+        record: aggregation:giantswarm:observability:signals:user_logins

@@ -139,14 +139,14 @@ main() {
 
     if [[ "${#E_unexistingrunbook[@]}" -gt 0 ]]; then
         echo ""
-        if [[ -n "$GITHUB_STEP_SUMMARY" ]]; then
+        if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
             echo "${#E_unexistingrunbook[@]} bad runbook URLs found" >> $GITHUB_STEP_SUMMARY
         fi
         for message in "${E_unexistingrunbook[@]}"; do
             echo "$message"
         done
         
-        if [[ -n "$GITHUB_ENV" ]]; then
+        if [[ -n "${GITHUB_ENV:-}" ]]; then
             # Generate GitHub annotations JSON file
             echo ""
             echo "Writing GitHub annotations to ./annotations.json"

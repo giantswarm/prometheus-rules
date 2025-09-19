@@ -146,13 +146,13 @@ main() {
             echo "$message"
         done
         
-        # Generate GitHub annotations JSON file
-        echo ""
-        echo "Writing GitHub annotations to /home/runner/work/prometheus-rules/annotations.json"
-        generateAnnotationsJson "${annotations_data[@]}" > /home/runner/work/prometheus-rules/annotations.json
-
-        # Write to GITHUB_ENV for later steps
         if [[ -n "$GITHUB_ENV" ]]; then
+            # Generate GitHub annotations JSON file
+            echo ""
+            echo "Writing GitHub annotations to ./annotations.json"
+            generateAnnotationsJson "${annotations_data[@]}" > ./annotations.json
+
+            # Write to GITHUB_ENV for later steps
             echo "found_bad_urls=true" >> $GITHUB_ENV
         fi
     fi

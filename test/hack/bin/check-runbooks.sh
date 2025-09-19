@@ -35,7 +35,7 @@ listRunbooks () {
         | sed 's|\.md|/|' \
         | sed 's|//|/|' \
         | tr '[:upper:]' '[:lower:]' \
-        | sed "s|./giantswarm/content/|https://intranet.giantswarm.io/|g" \
+        | sed "s|$privateRunbooksParentDirectory/content/|https://intranet.giantswarm.io/|g" \
         | sed 's/\/_index//g' # Removes the _index.md files and keep the directory name
     rm -rf "$privateRunbooksParentDirectory"
 }

@@ -26,7 +26,7 @@ spec:
     - alert: ClusterCertificateExpirationMetricsMissing
       annotations:
         description: '{{`Certificate metrics are missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/absent-metrics
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/absent-metrics/
       expr: max(up{cluster_id!="", cluster_type="workload_cluster"}) by (cluster_id, installation, pipeline, provider) unless on (cluster_id) count (cert_exporter_not_after{cluster_type="workload_cluster"}) by (cluster_id, installation, pipeline, provider) > 0
       for: 30m
       labels:

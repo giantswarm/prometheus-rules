@@ -27,4 +27,4 @@ tests:
               cancel_if_outside_working_hours: "false"
             exp_annotations:
               description: 'Pod security/trivy-0 is restarting too often.'
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/shield-pod-failing
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/shield-pod-failing/

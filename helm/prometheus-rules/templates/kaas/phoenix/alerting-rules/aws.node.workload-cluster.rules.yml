@@ -13,7 +13,7 @@ spec:
     - alert: WorkloadClusterNodeUnexpectedTaintNodeWithImpairedVolumes
       annotations:
         description: '{{`Node {{ $labels.node }} has unexpected taint NodeWithImpairedVolumes`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/aws-node-taint-NodeWithImpairedVolumes/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/aws-node-taint-nodewithimpairedvolumes/
       expr: kube_node_spec_taint{key="NodeWithImpairedVolumes"} > 0
       for: 30m
       labels:

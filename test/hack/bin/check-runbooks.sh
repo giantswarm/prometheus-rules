@@ -40,6 +40,32 @@ listRunbooks () {
     rm -rf "$privateRunbooksParentDirectory"
 }
 
+# Extract and clean URL from runbook_url value, handling templated URLs
+extractRunbookUrl() {
+    local raw_url="$1"
+    local url
+    
+    # Remove runbook_url: prefix and trim whitespace
+    url=$(echo "$raw_url" | sed 's|runbook_url:||' | sed -e 's|^[[:space:]]*||' | sed -e 's|[[:space:]]*$||')
+    
+    # Remove quotes (single or double)
+    url=$(echo "$url" | sed -e "s|^[\"']||" | sed -e "s|[\"']$||")
+    
+    # Handle templated URLs with {{` ... `}} syntax
+    if [[ "$url" =~ ^\{\{\`.*\`\}\}$ ]]; then
+        # Extract content between {{` and `}}
+        url=$(echo "$url" | sed 's|^{{`||' | sed 's|`}}$||')
+    fi
+    
+    # Remove query parameters (everything after ?)
+    url=$(echo "$url" | sed 's|?.*$||')
+    
+    # Remove fragment identifiers that might remain
+    url=$(echo "$url" | sed 's|#.*$||')
+    
+    echo "$url"
+}
+
 generateAnnotationsJson() {
     local -a annotations_data=("$@")
     local first=true
@@ -116,7 +142,7 @@ main() {
             line_number=$(echo "$line" | cut -d':' -f2)
             matched_text=$(echo "$line" | cut -d':' -f3-)
             
-            url=$(echo "$matched_text" | sed 's|runbook_url:||' | sed -e 's|^[[:space:]]*||' | sed -e 's|[[:space:]]*$||' | sed -e 's|#.*||g' | sed -e "s|[\"']||g")
+            url=$(extractRunbookUrl "$matched_text")
             if [[ -z "$url" ]]; then
                 continue
             fi

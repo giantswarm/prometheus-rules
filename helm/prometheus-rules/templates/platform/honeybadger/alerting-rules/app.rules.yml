@@ -162,7 +162,7 @@ spec:
     - alert: AppExporterDown
       annotations:
         description: '{{`App-exporter ({{ $labels.instance }}) is down.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-exporter-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-exporter-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: up{job="app-exporter"} == 0
       for: 15m
       labels:

@@ -162,7 +162,7 @@ spec:
             description: '{{`Tempo block list length is up 40 percent over the last 7 days.  Consider scaling compactors.`}}'
             runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoBlockListRisingQuickly
           expr: |
-            avg(tempodb_blocklist_length{cluster_type="management_cluster", container="compactor"}) / avg(tempodb_blocklist_length{cluster_type="management_cluster", container="compactor"} offset 7d) by (cluster_id, installation, pipeline, provider, namespace) > 1.4
+            avg(tempodb_blocklist_length{cluster_type="management_cluster", container="compactor"}) by (cluster_id, installation, pipeline, provider, namespace) / avg(tempodb_blocklist_length{cluster_type="management_cluster", container="compactor"} offset 7d) by (cluster_id, installation, pipeline, provider, namespace) > 1.4
           for: 15m
           labels:
             severity: page
@@ -253,7 +253,7 @@ spec:
             description: '{{`Tempo partition {{ $labels.partition }} in consumer group {{ $labels.group }} is lagging by more than 900 seconds in {{ $labels.cluster_id }}/{{ $labels.namespace }}.`}}'
             runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoPartitionLag
           expr: |
-            max by (cluster_id, installation, pipeline, provider, namespace, partition) (tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container="metrics-generator"}) > 900
+            max by (group, cluster_id, installation, pipeline, provider, namespace, partition) (tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container="metrics-generator"}) > 900
           for: 5m
           labels:
             severity: page
@@ -266,7 +266,7 @@ spec:
             description: '{{`Tempo ingest partition {{ $labels.partition }} for blockbuilder {{ $labels.pod }} is lagging by more than 300 seconds in {{ $labels.cluster_id }}/{{ $labels.namespace }}.`}}'
             runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoPartitionLag
           expr: |
-            max by (cluster_id, installation, pipeline, provider, namespace, partition) (avg_over_time(tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container="block-builder"}[6m])) > 200
+            max by (pod, cluster_id, installation, pipeline, provider, namespace, partition) (avg_over_time(tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container="block-builder"}[6m])) > 200
           for: 5m
           labels:
             severity: page
@@ -279,7 +279,7 @@ spec:
             description: '{{`Tempo ingest partition {{ $labels.partition }} for blockbuilder {{ $labels.pod }} is lagging by more than 300 seconds in {{ $labels.cluster_id }}/{{ $labels.namespace }}.`}}'
             runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoPartitionLag
           expr: |
-            max by (cluster_id, installation, pipeline, provider, namespace, partition) (avg_over_time(tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container=~"block-builder"}[6m])) > 300
+            max by (pod, cluster_id, installation, pipeline, provider, namespace, partition) (avg_over_time(tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container="block-builder"}[6m])) > 300
           for: 5m
           labels:
             severity: page

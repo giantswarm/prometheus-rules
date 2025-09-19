@@ -152,8 +152,6 @@ main() {
         # Write to GITHUB_ENV for later steps
         echo "found_bad_urls=true" >> $GITHUB_ENV        
     fi
-
-    return "$returncode"
 }
 
 main "$@"

@@ -44,5 +44,7 @@ sed -i 's/{\([a-z].*\)}/{cluster_type="management_cluster", \1}/g' "$OUTPUT_FILE
 sed -i 's/{}/{cluster_type="management_cluster"}/g' "$OUTPUT_FILE"
 # Fix single quotes in alert messages
 sed -i 's/'\''/ /g' "$OUTPUT_FILE"
-# Wrap alert messages in double curly braces to avoid Helm template parsing issues
-sed -i 's/\(message: \)\(.*\)/\1'\''{{`\2`}}'\''/g' "$OUTPUT_FILE"
+# Wrap alert messages in double curly braces to avoid Helm template parsing issues. Also, rename the field to `description`.
+sed -i 's/\(message: \)\(.*\)/description: '\''{{`\2`}}'\''/g' "$OUTPUT_FILE"
+# Remove useless namespace selector
+sed -i 's/, namespace=~"\.\*"//g' "$OUTPUT_FILE"

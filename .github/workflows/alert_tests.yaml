@@ -1,13 +1,17 @@
 name: alert-test
 run-name: run unit and conformance tests
 
-on: [pull_request]
+on:
+  pull_request:
+    # Only run on PRs based on the main branch
+    branches:
+      - main
 
 jobs:
   rules-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: "0"
       - name: run rules tests
@@ -15,15 +19,32 @@ jobs:
   inhibition-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: "0"
       - name: run inhibition tests
         run: make test-inhibitions
+  runbook-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: "0"
+      - name: Clone intranet repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 1
+          repository: giantswarm/giantswarm
+          path: giantswarm
+          token: ${{ secrets.TAYLORBOT_GITHUB_ACTION }}
+      - name: run runbook tests
+        env:
+          RUNBOOKS_DIR: ./giantswarm
+        run: make test-ci-runbooks
   prometheus-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: "0"
       - name: run pint linter

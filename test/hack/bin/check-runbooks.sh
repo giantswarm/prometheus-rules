@@ -137,6 +137,28 @@ main() {
         done <<< "$urls"
     done
 
+    # Check for alerts that fire outside business hours but lack runbook URLs
+    ########################
+    
+    # Find all alerts with severity: page that don't have cancel_if_outside_working_hours: "true"
+    for rulesFile in $rulesFiles; do
+        # Use yq to directly query YAML and find alerts missing runbook URLs
+        "$GIT_WORKDIR/$YQ" eval '
+            .spec.groups[]? |
+            select(.rules) |
+            .rules[] |
+            select(.alert) |
+            select(.labels.severity == "page") |
+            select(.labels.cancel_if_outside_working_hours != "true") |
+            select(.annotations.runbook_url == null or .annotations.runbook_url == "") |
+            "'"$rulesFile"': Alert \"" + .alert + "\" (severity: page, no cancel_if_outside_working_hours) is missing runbook_url"
+        ' "$rulesFile" 2>/dev/null || true
+    done | while IFS= read -r line; do
+        if [[ -n "$line" ]]; then
+            E_norunbook+=("$line")
+        fi
+    done
+
     if [[ "${#E_unexistingrunbook[@]}" -gt 0 ]]; then
         echo ""
         if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
@@ -155,7 +177,22 @@ main() {
             # Write to GITHUB_ENV for later steps
             echo "found_bad_urls=true" >> $GITHUB_ENV
         fi
+        returncode=1
     fi
+
+    if [[ "${#E_norunbook[@]}" -gt 0 ]]; then
+        echo ""
+        echo "${#E_norunbook[@]} alerts that fire outside business hours are missing runbook URLs:"
+        if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
+            echo "${#E_norunbook[@]} alerts missing runbook URLs (fire outside business hours)" >> $GITHUB_STEP_SUMMARY
+        fi
+        for message in "${E_norunbook[@]}"; do
+            echo "$message"
+        done
+        returncode=1
+    fi
+
+    return "$returncode"
 }
 
 main "$@"

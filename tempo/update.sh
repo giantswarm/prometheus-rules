@@ -48,16 +48,48 @@ update_rules() {
     for rule in "${tempoRules[@]}"; do
 
         alert_name=$(echo "$rule" | jq -r -c '.alert')
-        if [[ "$alert_name" == "TempoBackendSchedulerJobsFailureRateHigh" ]]; then
-            echo "####" >&2
-#            echo "$rule" >&2
-        fi
 
         ## Global fixes
         rule=$(apply_global_sed_fixes "$rule")
 
         # Add alert labels
         rule="$(echo "$rule" | jq '.labels += {"area": "platform", "team": "atlas", "topic": "observability", "cancel_if_outside_working_hours": "true", "severity": "page"}')"
+
+        ## Manage rule-specific fixes
+        case "$alert_name" in
+            "TempoBlockListRisingQuickly")
+                # label are required and should be preserved when aggregating
+                rule="$(echo "$rule" \
+                    | sed 's/avg(\(.*\)}) \//avg(\1}) by (cluster_id, installation, pipeline, provider, namespace) \//' \
+                    )"
+                ;;
+            "TempoMetricsGeneratorPartitionLagCritical")
+                # Template is using `group` label but the query removes it.
+                rule="$(echo "$rule" \
+                    | sed 's/max by (/max by (group, /'
+                )"
+                ;;
+            "TempoBlockBuilderPartitionLagWarning")
+                # Template is using `pod` label but the query removes it.
+                rule="$(echo "$rule" \
+                    | sed 's/max by (/max by (pod, /'
+                )"
+                ;;
+            "TempoBlockBuilderPartitionLagCritical")
+                # Template is using `pod` label but the query removes it.
+                rule="$(echo "$rule" \
+                    | sed 's/max by (/max by (pod, /'
+                )"
+                # Unnecessary regexp match on static string
+                rule="$(echo "$rule" \
+                    | sed 's/container=~/container=/' \
+                )"
+                ;;
+            *)
+                ;;
+        esac
+
+        ## Output the rule
         echo "$rule" | jq -c -j
 
         # Add comma if not the last rule

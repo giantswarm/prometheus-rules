@@ -1,3 +1,4 @@
+---
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -161,7 +162,7 @@ spec:
             description: '{{`Tempo block list length is up 40 percent over the last 7 days.  Consider scaling compactors.`}}'
             runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoBlockListRisingQuickly
           expr: |
-            avg(tempodb_blocklist_length{cluster_type="management_cluster", container="compactor"}) / avg(tempodb_blocklist_length{namespace=~".*", container="compactor"} offset 7d) by (cluster_id, installation, pipeline, provider, namespace) > 1.4
+            avg(tempodb_blocklist_length{cluster_type="management_cluster", container="compactor"}) / avg(tempodb_blocklist_length{cluster_type="management_cluster", container="compactor"} offset 7d) by (cluster_id, installation, pipeline, provider, namespace) > 1.4
           for: 15m
           labels:
             severity: page
@@ -171,7 +172,7 @@ spec:
             cancel_if_outside_working_hours: "true"
         - alert: TempoBadOverrides
           annotations:
-            description: '{{` {{ $labels.job }} failed to reload overrides. `}}'
+            description: '{{`{{ $labels.job }} failed to reload overrides.`}}'
             runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoBadOverrides
           expr: |
             sum(tempo_runtime_config_last_reload_successful{cluster_type="management_cluster"} == 0) by (cluster_id, installation, pipeline, provider, namespace, job)
@@ -213,7 +214,7 @@ spec:
             description: '{{`There are too many outstanding compaction blocks in {{ $labels.cluster_id }}/{{ $labels.namespace }} for tenant {{ $labels.tenant }}, increase compactor s CPU or add more compactors.`}}'
             runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoCompactorsTooManyOutstandingBlocks
           expr: |
-            sum by (cluster_id, installation, pipeline, provider, namespace, tenant) (tempodb_compaction_outstanding_blocks{cluster_type="management_cluster", container="compactor"}) / ignoring(tenant) group_left count(tempo_build_info{container="compactor"}) by (cluster_id, installation, pipeline, provider, namespace) > 100
+            sum by (cluster_id, installation, pipeline, provider, namespace, tenant) (tempodb_compaction_outstanding_blocks{cluster_type="management_cluster", container="compactor"}) / ignoring(tenant) group_left count(tempo_build_info{cluster_type="management_cluster", container="compactor"}) by (cluster_id, installation, pipeline, provider, namespace) > 100
           for: 6h
           labels:
             severity: page
@@ -226,7 +227,7 @@ spec:
             description: '{{`There are too many outstanding compaction blocks in {{ $labels.cluster_id }}/{{ $labels.namespace }} for tenant {{ $labels.tenant }}, increase compactor s CPU or add more compactors.`}}'
             runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoCompactorsTooManyOutstandingBlocks
           expr: |
-            sum by (cluster_id, installation, pipeline, provider, namespace, tenant) (tempodb_compaction_outstanding_blocks{cluster_type="management_cluster", container="compactor"}) / ignoring(tenant) group_left count(tempo_build_info{container="compactor"}) by (cluster_id, installation, pipeline, provider, namespace) > 250
+            sum by (cluster_id, installation, pipeline, provider, namespace, tenant) (tempodb_compaction_outstanding_blocks{cluster_type="management_cluster", container="compactor"}) / ignoring(tenant) group_left count(tempo_build_info{cluster_type="management_cluster", container="compactor"}) by (cluster_id, installation, pipeline, provider, namespace) > 250
           for: 24h
           labels:
             severity: page
@@ -359,7 +360,7 @@ spec:
             description: '{{`Tempo vulture error rate is {{ printf "%0.2f" $value }} for error type {{ $labels.error }} in {{ $labels.cluster_id }}/{{ $labels.namespace }}`}}'
             runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoVultureHighErrorRate
           expr: |
-            sum(rate(tempo_vulture_trace_error_total{cluster_type="management_cluster"}[1m])) by (cluster_id, installation, pipeline, provider, namespace, error) / ignoring (error) group_left sum(rate(tempo_vulture_trace_total{namespace=~".*"}[1m])) by (cluster_id, installation, pipeline, provider, namespace) > 0.100000
+            sum(rate(tempo_vulture_trace_error_total{cluster_type="management_cluster"}[1m])) by (cluster_id, installation, pipeline, provider, namespace, error) / ignoring (error) group_left sum(rate(tempo_vulture_trace_total{cluster_type="management_cluster"}[1m])) by (cluster_id, installation, pipeline, provider, namespace) > 0.100000
           for: 5m
           labels:
             severity: page

@@ -9,42 +9,77 @@ BRANCHREF="heads/main"
 MIXIN_URL="https://raw.githubusercontent.com/grafana/tempo/refs/$BRANCHREF/operations/tempo-mixin-compiled/alerts.yaml"
 OUTPUT_FILE="$(pwd)/helm/prometheus-rules/templates/platform/atlas/alerting-rules/tempo-mixins.rules.yml"
 
-# Retrieve rules and cleanup yaml formatting
-curl -so- "$MIXIN_URL" \
-    | yq -P -M > "$OUTPUT_FILE"
+print_header() {
+echo '---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: tempo-mixins.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    - name: tempo_alerts
+      rules:'
+}
 
-# Add alert labels
-yq -i e '.groups[].rules[].labels += {"area": "platform", "team": "atlas", "topic": "observability", "cancel_if_outside_working_hours": "true", "severity": "page"}' "$OUTPUT_FILE"
+apply_global_sed_fixes() {
+    local rule="$*"
+    echo "$rule" | jq -r |
+      sed 's/cluster/cluster_id/g' | # Rename cluster to cluster_id
+      sed 's/cluster_id,/cluster_id, installation, pipeline, provider,/g' | # Add mandatory labels
+      sed 's/{\([a-z]\)/{cluster_type=\\\"management_cluster\\\", \1/g' | # Only apply this alert to management clusters - this one is where there's already a selector
+      sed 's/{}/{cluster_type=\\\"management_cluster\\\"}/g' | # Only apply this alert to management clusters - this one is where there is no selector
+      sed 's/'\''/ /g' | # Fix single quotes in alert messages
+      sed 's/\(message": "\)\(.*\)"/description": "{{`\2`}}"/g' | # Wrap alert messages in double curly braces to avoid Helm template parsing issues. Also, rename the field to `description`.
+      sed 's/, namespace=~\\"\.\*\\"//g' #| # Remove useless namespace selector
+      #jq -c
+}
 
-# Remove the initial `groups:` line
-sed -i '1d' "$OUTPUT_FILE"
+update_rules() {
+    local tempoRules="$*"
 
-# Add indentation to each line
-sed -i 's/^/  /g' "$OUTPUT_FILE"
+    # Go through each rule for fixes
+    readarray tempoRules < <(echo "$rawUpstreamRules" | jq -c '.groups[].rules[]')
 
-# Add the PrometheusRule metadata header
-sed -i '1i\
-apiVersion: monitoring.coreos.com/v1\
-kind: PrometheusRule\
-metadata:\
-  labels:\
-    {{- include "labels.common" . | nindent 4 }}\
-  name: tempo-mixins.rules\
-  namespace: {{ .Values.namespace  }}\
-spec:\
-  groups:' "$OUTPUT_FILE"
+    echo "["
+    remainingRules=${#tempoRules[@]}
+    for rule in "${tempoRules[@]}"; do
 
-# Our cluster labels are named `cluster_id`
-sed -i 's/cluster/cluster_id/g' "$OUTPUT_FILE"
-# Add mandatory labels
-sed -i 's/cluster_id,/cluster_id, installation, pipeline, provider,/g' "$OUTPUT_FILE"
-# Only apply this alert to management clusters - this one is where there's already a selector
-sed -i 's/{\([a-z].*\)}/{cluster_type="management_cluster", \1}/g' "$OUTPUT_FILE"
-# Only apply this alert to management clusters - this one is where there is no selector
-sed -i 's/{}/{cluster_type="management_cluster"}/g' "$OUTPUT_FILE"
-# Fix single quotes in alert messages
-sed -i 's/'\''/ /g' "$OUTPUT_FILE"
-# Wrap alert messages in double curly braces to avoid Helm template parsing issues. Also, rename the field to `description`.
-sed -i 's/\(message: \)\(.*\)/description: '\''{{`\2`}}'\''/g' "$OUTPUT_FILE"
-# Remove useless namespace selector
-sed -i 's/, namespace=~"\.\*"//g' "$OUTPUT_FILE"
+        alert_name=$(echo "$rule" | jq -r -c '.alert')
+        if [[ "$alert_name" == "TempoBackendSchedulerJobsFailureRateHigh" ]]; then
+            echo "####" >&2
+#            echo "$rule" >&2
+        fi
+
+        ## Global fixes
+        rule=$(apply_global_sed_fixes "$rule")
+
+        # Add alert labels
+        rule="$(echo "$rule" | jq '.labels += {"area": "platform", "team": "atlas", "topic": "observability", "cancel_if_outside_working_hours": "true", "severity": "page"}')"
+        echo "$rule" | jq -c -j
+
+        # Add comma if not the last rule
+        remainingRules=$((remainingRules - 1))
+        if [[ "$remainingRules" -gt 0 ]]; then
+            echo ','
+        fi
+    done
+    echo "]"
+}
+
+# Retrieve rules and store them as json string in a variable
+rawUpstreamRules="$(
+    curl -so- "$MIXIN_URL" \
+    | yq -o=j -I=0
+)"
+
+
+# Start with the PrometheusRule metadata header
+print_header > "$OUTPUT_FILE"
+
+update_rules tempoRules \
+    | yq -P \
+    | sed 's/^/        /g' \
+    >> "$OUTPUT_FILE"

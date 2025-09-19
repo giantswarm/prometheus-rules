@@ -139,7 +139,9 @@ main() {
 
     if [[ "${#E_unexistingrunbook[@]}" -gt 0 ]]; then
         echo ""
-        echo "${#E_unexistingrunbook[@]} bad runbook URLs found" >> $GITHUB_STEP_SUMMARY
+        if [[ -n "$GITHUB_STEP_SUMMARY" ]]; then
+            echo "${#E_unexistingrunbook[@]} bad runbook URLs found" >> $GITHUB_STEP_SUMMARY
+        fi
         for message in "${E_unexistingrunbook[@]}"; do
             echo "$message"
         done
@@ -150,7 +152,9 @@ main() {
         generateAnnotationsJson "${annotations_data[@]}" > /home/runner/work/prometheus-rules/annotations.json
 
         # Write to GITHUB_ENV for later steps
-        echo "found_bad_urls=true" >> $GITHUB_ENV        
+        if [[ -n "$GITHUB_ENV" ]]; then
+            echo "found_bad_urls=true" >> $GITHUB_ENV
+        fi
     fi
 }
 

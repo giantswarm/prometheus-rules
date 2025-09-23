@@ -129,7 +129,7 @@ main() {
     # iterate over all rules files
     for rulesFile in $rulesFiles; do
         # iterate over all rules in a file
-        urls=$(grep -H --line-number "runbook_url:" $rulesFile 2>/dev/null || true)
+        urls=$(grep -H --line-number "runbook_url:" "$rulesFile" 2>/dev/null || true)
         # Skip if no runbook_url found in this file
         if [[ -z "$urls" ]]; then
             continue

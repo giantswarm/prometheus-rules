@@ -108,7 +108,6 @@ main() {
 
     local -a checkedRules=()
     local -a runbooks=()
-    local -a E_extradata=()
     local -a E_norunbook=()
     local -a E_unexistingrunbook=()
     local -a annotations_data=()

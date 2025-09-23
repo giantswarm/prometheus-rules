@@ -210,7 +210,7 @@ main() {
         echo ""
         echo "${#E_norunbook[@]} alerts that fire outside business hours are missing runbook URLs:"
         if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
-            echo "${#E_norunbook[@]} alerts missing runbook URLs (fire outside business hours)" >> $GITHUB_STEP_SUMMARY
+            echo "${#E_norunbook[@]} alerts missing runbook URLs (fire outside business hours)" >> "$GITHUB_STEP_SUMMARY"
         fi
         for message in "${E_norunbook[@]}"; do
             echo "$message"

@@ -200,7 +200,7 @@ main() {
             generateAnnotationsJson "${annotations_data[@]}" > ./annotations.json
 
             # Write to GITHUB_ENV for later steps
-            echo "found_bad_urls=true" >> $GITHUB_ENV
+            echo "found_bad_urls=true" >> "$GITHUB_ENV"
         fi
         returncode=1
     fi

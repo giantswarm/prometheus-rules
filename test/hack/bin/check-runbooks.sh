@@ -187,7 +187,7 @@ main() {
     if [[ "${#E_unexistingrunbook[@]}" -gt 0 ]]; then
         echo ""
         if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
-            echo "${#E_unexistingrunbook[@]} bad runbook URLs found" >> $GITHUB_STEP_SUMMARY
+            echo "${#E_unexistingrunbook[@]} bad runbook URLs found" >> "$GITHUB_STEP_SUMMARY"
         fi
         for message in "${E_unexistingrunbook[@]}"; do
             echo "$message"

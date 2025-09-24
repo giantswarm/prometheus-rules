@@ -106,7 +106,6 @@ main() {
         esac
     done
 
-    local -a checkedRules=()
     local -a runbooks=()
     local -a E_norunbook=()
     local -a E_unexistingrunbook=()
@@ -115,7 +114,6 @@ main() {
 
     local -r GIT_WORKDIR="$(git rev-parse --show-toplevel)"
     local -r YQ=test/hack/bin/yq
-    local -r JQ=test/hack/bin/jq
 
     # Investigation section
     ########################

@@ -133,11 +133,7 @@ main() {
             continue
         fi
 
-        while IFS= read -r line; do
-            # Parse grep output: filename:line_number:matched_text
-            filename=$(echo "$line" | cut -d':' -f1)
-            line_number=$(echo "$line" | cut -d':' -f2)
-            matched_text=$(echo "$line" | cut -d':' -f3-)
+        while IFS=: read -r filename line_number matched_text; do
             
             url=$(extractRunbookUrl "$matched_text")
             if [[ -z "$url" ]]; then

@@ -58,7 +58,7 @@ extractRunbookUrl() {
     fi
     
     # Remove query parameters (everything after ?)
-    url=$(echo "$url" | sed 's|?.*$||')
+    url="${url%%\?*}"
     
     # Remove fragment identifiers that might remain
     url=$(echo "$url" | sed 's|#.*$||')

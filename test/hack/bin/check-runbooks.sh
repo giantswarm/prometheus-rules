@@ -81,7 +81,7 @@ generateAnnotationsJson() {
         fi
         
         # Escape quotes in the URL for JSON
-        escaped_url=$(echo "$url" | sed 's/"/\\"/g')
+        escaped_url="${url//\"/\\\"}"
         
         cat << EOF
   {

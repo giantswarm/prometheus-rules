@@ -28,7 +28,7 @@ test-inhibitions: install-tools template-chart ## test whether inhibition labels
 test-runbooks: install-tools template-chart ## Check if runbooks are valid
 	bash test/hack/bin/check-runbooks.sh
 
-test-ci-runbooks: install-tools template-chart ## Check if runbooks are valid in CI
+test-ci-runbooks: ## Check if runbooks are valid in CI
 	test/hack/bin/check-runbooks.sh --ci
 
 pint: install-tools template-chart ## Run pint

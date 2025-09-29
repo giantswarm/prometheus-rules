@@ -13,7 +13,7 @@ spec:
     - alert: ManagementClusterJobFailed
       annotations:
         description: '{{`Job {{ $labels.namespace }}/{{ $labels.job_name }} is failed.`}}'
-      expr: kube_job_failed{cluster_type="management_cluster", condition="true", job_name!~"silence-operator-sync.+|grafana-permission.+"} == 1
+      expr: kube_job_failed{cluster_type="management_cluster", condition="true"} == 1
       for: 15m
       labels:
         area: kaas

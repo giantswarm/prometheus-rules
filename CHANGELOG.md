@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - New alert `IRSAClaimNotReady` to monitor Crossplane IRSA objects.
 - Add quicker alerts for Kyverno's `svc-fail` validation/mutation webhooks taking very long or timing out
+- Add the observability signal for the setup activity which is the actual number of unique logins for observability platform users in the last month: `aggregation:giantswarm:observability:signals:user_logins`. This will be added to the observability platform signals dashboard in grafana cloud.
 
 ### Fixed
 
@@ -18,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update some runbook URLs to point to the actual URL instead of to a redirect
 - Remove aliases from runbook URL validation
+- Runbook URL validation refactored
+- Change runbook URL for AppExporterDown alert
+- Change runbook URL for OpeartorKit alerts
 
 ## [4.74.1] - 2025-09-03
 

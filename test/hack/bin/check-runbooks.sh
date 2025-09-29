@@ -1,14 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
-
-# List of generated rules
-RULES_FILES=(./test/hack/output/helm-chart)
-
-DEBUG_MODE=false
-
-CHECK_EXTRADATA_ERRORS=true
-CHECK_NORUNBOOK_ERRORS=true
-CHECK_UNEXISTINGRUNBOOK_ERRORS=true
 
 # Parameters:
 # - an element
@@ -27,41 +18,83 @@ isInArray () {
     return 1
 }
 
-# merge_docs () merges a Hugo docs hierarchy from a source directory (first arg) into a destination directory (second arg).
-merge_docs() {
-    if [[ ! -d "$1/content/docs/." ]] ; then
-        echo "Source Hugo base directory not specified or invalid (must contain content/docs)!" >&2
-    fi
-    if [[ ! -d "$2/content/docs/." ]] ; then
-        echo "Destination Hugo base directory not specified or invalid (must contain content/docs)!" >&2
-    fi
-    find "$1/content/docs" -mindepth 1 -maxdepth 1 -type d -print0 | xargs -0 cp -v -x -a -r -u -t "$2/content/docs/." | \
-        grep -o -P "(?<= -> ').*\.md" | \
-        xargs sed -s -i'' '0,/^---.*$/s//---\nsourceOrigin: handbook/'
-}
-
 listRunbooks () {
     local runInCi="$1" && shift
     privateRunbooksParentDirectory="./giantswarm"
-    privateRunbooksHandbookParentDirectory="./handbook"
     # CI clones git dependencies, but if we run it locally we have to do it ourselves
     if [[ "$runInCi" == false ]]; then
         tmpDir="$(mktemp -d)"
-        tmpDirHandbook="$(mktemp -d)"
         git clone --depth 1 --single-branch -b main -q git@github.com:giantswarm/giantswarm.git "$tmpDir"
-        git clone --depth=1 --single-branch -b main -q git@github.com:giantswarm/handbook.git "$tmpDirHandbook"
         privateRunbooksParentDirectory="$tmpDir"
-        privateRunbooksHandbookParentDirectory="$tmpDirHandbook"
     fi
 
-    # perform merge as done by intranet build
-    merge_docs "$privateRunbooksHandbookParentDirectory" "$privateRunbooksParentDirectory"
-
-    # find all runbooks ".md" files, and keep only the runbook name (may contain a path, like "rolling-nodes/rolling-nodes")
-    find "$privateRunbooksParentDirectory"/content/docs/support-and-ops/ops-recipes -type f -name \*.md \
-        | sed -n 's_'"$privateRunbooksParentDirectory"'/content/docs/support-and-ops/ops-recipes/\(.*\).md_\1_p' \
+    # find all page ".md" files and form a proper URL
+    find "$privateRunbooksParentDirectory"/content/docs -type f -name \*.md \
+        | sed 's|_index\.md||' \
+        | sed 's|index\.md||' \
+        | sed 's|\.md|/|' \
+        | sed 's|//|/|' \
+        | sed "s|$privateRunbooksParentDirectory/content/|https://intranet.giantswarm.io/|g" \
+        | tr '[:upper:]' '[:lower:]' \
         | sed 's/\/_index//g' # Removes the _index.md files and keep the directory name
     rm -rf "$privateRunbooksParentDirectory"
+}
+
+# Extract and clean URL from runbook_url value, handling templated URLs
+extractRunbookUrl() {
+    local raw_url="$1"
+    local url
+    
+    # Remove runbook_url: prefix and trim whitespace
+    url=$(echo "$raw_url" | sed 's|runbook_url:||' | sed -e 's|^[[:space:]]*||' | sed -e 's|[[:space:]]*$||')
+    
+    # Remove quotes (single or double)
+    url=$(echo "$url" | sed -e "s|^[\"']||" | sed -e "s|[\"']$||")
+    
+    # Handle templated URLs with {{` ... `}} syntax
+    if [[ "$url" =~ ^\{\{\`.*\`\}\}$ ]]; then
+        # Extract content between {{` and `}}
+        url=$(echo "$url" | sed 's|^{{`||' | sed 's|`}}$||')
+    fi
+    
+    # Remove query parameters (everything after ?)
+    url="${url%%\?*}"
+    
+    # Remove fragment identifiers that might remain
+    url="${url%%#*}"
+    
+    echo "$url"
+}
+
+generateAnnotationsJson() {
+    local -a annotations_data=("$@")
+    local first=true
+    
+    echo "["
+    for annotation in "${annotations_data[@]}"; do
+        IFS='|' read -r filename line_number url <<< "$annotation"
+        
+        if [[ "$first" == true ]]; then
+            first=false
+        else
+            echo ","
+        fi
+        
+        # Escape quotes in the URL for JSON
+        escaped_url="${url//\"/\\\"}"
+        
+        cat << EOF
+  {
+    "file": "$filename",
+    "line": $line_number,
+    "title": "Bad runbook URL",
+    "message": "This runbook URL does not exist: $escaped_url",
+    "annotation_level": "failure"
+  }
+EOF
+    done
+    echo ""
+    echo "]"
 }
 
 main() {
@@ -73,16 +106,14 @@ main() {
         esac
     done
 
-    local -a checkedRules=()
     local -a runbooks=()
-    local -a E_extradata=()
     local -a E_norunbook=()
     local -a E_unexistingrunbook=()
+    local -a annotations_data=()
     local returncode=0
 
     local -r GIT_WORKDIR="$(git rev-parse --show-toplevel)"
     local -r YQ=test/hack/bin/yq
-    local -r JQ=test/hack/bin/jq
 
     # Investigation section
     ########################
@@ -90,100 +121,94 @@ main() {
     # Retrieve list of runbooks
     mapfile -t runbooks < <(listRunbooks "$runInCi")
 
-    if [[ "$DEBUG_MODE" != "false" ]]; then
-        echo "List of runbooks:"
-        for runbook in "${runbooks[@]}"; do
-            echo " - \"$runbook\""
-        done
-    fi
+    # Find all `runbook_url:` occurrences in .y[a]ml files under ./helm/prometheus-rules
+    rulesFiles=$(find ./helm/prometheus-rules -type f \( -name "*.yml" -o -name "*.yaml" \))
 
-    # Look at each rules file
-    while IFS= read -r -d '' rulesFile; do
-        prettyRulesFilename="$(basename "$rulesFile")"
+    # iterate over all rules files
+    for rulesFile in $rulesFiles; do
+        # iterate over all rules in a file
+        urls=$(grep -H --line-number "runbook_url:" "$rulesFile" 2>/dev/null || true)
+        # Skip if no runbook_url found in this file
+        if [[ -z "$urls" ]]; then
+            continue
+        fi
 
-        # skip if rules file has already been checked
-        isInArray "$prettyRulesFilename" "${checkedRules[@]}" \
-            && continue
-
-        while read -r alertname runbook severity overflow ; do
-
-            # Discard non-paging alerts
-            [[ "$severity" != "page" ]] && continue
-
-            # Get rid of url prefix
-            runbook=${runbook#https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/}
-            # Get rid of anchors
-            runbook="${runbook%%#*}"
-            # Get rid of trailing slash
-            runbook="${runbook%/}"
-
-
-            # There should be no data in $overflow
-            # If there is, it means something went wrong with the parsing
-            if [[ "$overflow" != "" ]]; then
-                local message="file: $prettyRulesFilename / alert \"$alertname\" / runbook \"$runbook\": extra data \"$overflow\""
-                E_extradata+=("$message")
+        while IFS=: read -r filename line_number matched_text; do
+            
+            url=$(extractRunbookUrl "$matched_text")
+            if [[ -z "$url" ]]; then
                 continue
             fi
 
-            # When there is no runbook annotation, yq outputs "null"
-            if [[ "$runbook" == "null" ]]; then
-                local message="file $prettyRulesFilename / alert \"$alertname\" has no runbook"
-                E_norunbook+=("$message")
+            # Skip URLs that don't start with https://intranet.giantswarm.io
+            if [[ ! "$url" =~ ^https://intranet\.giantswarm\.io ]]; then
                 continue
             fi
 
-            # Let's check if the runbook is in our list of existing runbooks
-            # or is a valid URL starting with http
-            if ! isInArray "$runbook" "${runbooks[@]}" && [[ "$runbook" != http* ]]; then
-                local message="file $prettyRulesFilename / alert \"$alertname\" links to unexisting runbook (\"$runbook\")"
+            # Check if url is in runbooks array
+            if ! isInArray "$url" "${runbooks[@]}"; then
+                local message="File $filename:$line_number links to nonexisting URL $url"
                 E_unexistingrunbook+=("$message")
+                # Store annotation data as pipe-separated values for JSON generation
+                annotations_data+=("$filename|$line_number|$url")
                 continue
             fi
+        done <<< "$urls"
+    done
 
-            if [[ "$DEBUG_MODE" != "false" ]]; then
-                echo "file $prettyRulesFilename / alert: $alertname / runbook: $runbook - OK"
-            fi
-
-        # parse rules yaml files, and for each rule found output alertname, runbook, and severity, space-separated, on one line.
-        done < <("$GIT_WORKDIR/$YQ" -o json "$rulesFile" | "$GIT_WORKDIR/$JQ" -j '.spec.groups[]?.rules[] | .alert, " ", .annotations.runbook_url, " ", .labels.severity, "\n"')
-
-        checkedRules+=("$rulesFile")
-    done < <(find "${RULES_FILES[@]}" -type f -print0)
-
-
-    # Output section - let's write down our findings
-    #################################################
-
-    if [[ "$CHECK_EXTRADATA_ERRORS" != "false" ]]; then
-        if [[ "${#E_extradata[@]}" -gt 0 ]]; then
-            echo ""
-            echo "Alerts that failed parsing: ${#E_extradata[@]}"
-            for message in "${E_extradata[@]}"; do
-                echo "$message"
-            done
-            returncode=1
+    # Check for alerts that fire outside business hours but lack runbook URLs
+    ########################
+    
+    # Find all alerts with severity: page that don't have cancel_if_outside_working_hours: "true"
+    for rulesFile in $rulesFiles; do
+        # Use yq to directly query YAML and find alerts missing runbook URLs
+        "$GIT_WORKDIR/$YQ" eval '
+            .spec.groups[]? |
+            select(.rules) |
+            .rules[] |
+            select(.alert) |
+            select(.labels.severity == "page") |
+            select(.labels.cancel_if_outside_working_hours != "true") |
+            select(.annotations.runbook_url == null or .annotations.runbook_url == "") |
+            "'"$rulesFile"': Alert \"" + .alert + "\" (severity: page, no cancel_if_outside_working_hours) is missing runbook_url"
+        ' "$rulesFile" 2>/dev/null || true
+    done | while IFS= read -r line; do
+        if [[ -n "$line" ]]; then
+            E_norunbook+=("$line")
         fi
+    done
+
+    if [[ "${#E_unexistingrunbook[@]}" -gt 0 ]]; then
+        echo ""
+        if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
+            echo "${#E_unexistingrunbook[@]} bad runbook URLs found" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        for message in "${E_unexistingrunbook[@]}"; do
+            echo "$message"
+        done
+        
+        if [[ -n "${GITHUB_ENV:-}" ]]; then
+            # Generate GitHub annotations JSON file
+            echo ""
+            echo "Writing GitHub annotations to ./annotations.json"
+            generateAnnotationsJson "${annotations_data[@]}" > ./annotations.json
+
+            # Write to GITHUB_ENV for later steps
+            echo "found_bad_urls=true" >> "$GITHUB_ENV"
+        fi
+        returncode=1
     fi
-    if [[ "$CHECK_NORUNBOOK_ERRORS" != "false" ]]; then
-        if [[ "${#E_norunbook[@]}" -gt 0 ]]; then
-            echo ""
-            echo "Alerts missing runbook: ${#E_norunbook[@]}"
-            for message in "${E_norunbook[@]}"; do
-                echo "$message"
-            done
-            returncode=1
+
+    if [[ "${#E_norunbook[@]}" -gt 0 ]]; then
+        echo ""
+        echo "${#E_norunbook[@]} alerts that fire outside business hours are missing runbook URLs:"
+        if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
+            echo "${#E_norunbook[@]} alerts missing runbook URLs (fire outside business hours)" >> "$GITHUB_STEP_SUMMARY"
         fi
-    fi
-    if [[ "$CHECK_UNEXISTINGRUNBOOK_ERRORS" != "false" ]]; then
-        if [[ "${#E_unexistingrunbook[@]}" -gt 0 ]]; then
-            echo ""
-            echo "Alerts using unexisting runbook: ${#E_unexistingrunbook[@]}"
-            for message in "${E_unexistingrunbook[@]}"; do
-                echo "$message"
-            done
-            returncode=1
-        fi
+        for message in "${E_norunbook[@]}"; do
+            echo "$message"
+        done
+        returncode=1
     fi
 
     return "$returncode"

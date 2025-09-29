@@ -10,18 +10,17 @@ spec:
     - name: signals.observability-platform.logs
       rules:
         - record: giantswarm:observability:grafana:unique_users:30d
-          annotations:
-            description: "The number of unique Grafana users over the last 30 days"
           expr: |
-            count(
-                count(
+            count by (uname, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+                count by (uname, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
                     count_over_time(
                         {container="grafana"}
                             | logfmt
                             | handler="/api/live/ws"
                             |~ `uname=.*@.*`
                             !~ `uname=.*@giantswarm\.io`
-                            | line_format "{{.uname}}"[30d]
+                            | line_format "{{`{{.uname}}`}}"
+                        [30d]
                     )
-                ) by (uname, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-          ) by (uname, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+                ) 
+            )

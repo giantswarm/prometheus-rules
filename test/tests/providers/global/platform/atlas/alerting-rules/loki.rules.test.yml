@@ -240,7 +240,7 @@ tests:
               __dashboardUid__: loki-retention
               dashboardQueryParams: "orgId=2"
               description: Loki compactor has been failing compactions for more than 2 hours since last compaction.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki#lokicompactorfailedcompaction
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/#lokicompactorfailedcompaction
       - alertname: LokiCompactorFailedCompaction
         eval_time: 300m
 
@@ -269,7 +269,7 @@ tests:
               __dashboardUid__: loki-retention
               dashboardQueryParams: "orgId=2"
               description: Loki compactor has been failing compactions for more than 2 hours since start-up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki#lokicompactorfailedcompaction
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/#lokicompactorfailedcompaction
       - alertname: LokiCompactorFailedCompaction
         eval_time: 300m
 

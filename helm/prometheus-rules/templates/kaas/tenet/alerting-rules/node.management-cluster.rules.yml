@@ -114,3 +114,17 @@ spec:
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: infrastructure
+    - alert: ControlPlaneNodeMemoryPressureTaint
+      annotations:
+        description: '{{`Control plane node {{ $labels.node }} has memory-pressure taint applied, indicating memory issues.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/memory-pressure-taint/
+      expr: |
+        kube_node_spec_taint{cluster_type="management_cluster", key="node.kubernetes.io/memory-pressure", effect="NoSchedule"} > 0
+        and on (node) kube_node_role{cluster_type="management_cluster", role=~"control-plane|master"}
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: tenet
+        topic: kubernetes

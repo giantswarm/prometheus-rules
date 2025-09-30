@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New alerts `WorkloadClusterControlPlaneNodeMemoryPressureTaint` and `ManagementClusterControlPlaneNodeMemoryPressureTaint`.
+- New alert `ControlPlaneNodeMemoryPressureTaint`.
 - New alert `IRSAClaimNotReady` to monitor Crossplane IRSA objects.
 - Add quicker alerts for Kyverno's `svc-fail` validation/mutation webhooks taking very long or timing out
 

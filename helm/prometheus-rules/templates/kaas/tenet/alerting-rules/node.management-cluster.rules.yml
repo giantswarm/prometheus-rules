@@ -114,7 +114,7 @@ spec:
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: infrastructure
-    - alert: ControlPlaneNodeMemoryPressureTaint
+    - alert: ManagementClusterControlPlaneNodeMemoryPressureTaint
       annotations:
         description: '{{`Control plane node {{ $labels.node }} has memory-pressure taint applied, indicating memory issues.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/memory-pressure-taint/

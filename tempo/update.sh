@@ -44,13 +44,13 @@ update_rules() {
     readarray tempoRules < <(echo "$rawUpstreamRules" | jq -c '.groups[].rules[]')
 
     echo "["
-    remainingRules=${#tempoRules[@]}
+    remainingRules="${#tempoRules[@]}"
     for rule in "${tempoRules[@]}"; do
 
-        alert_name=$(echo "$rule" | jq -r -c '.alert')
+        alert_name="$(echo "$rule" | jq -r -c '.alert')"
 
         ## Global fixes
-        rule=$(apply_global_sed_fixes "$rule")
+        rule="$(apply_global_sed_fixes "$rule")"
 
         # Add alert labels
         rule="$(echo "$rule" | jq '.labels += {"area": "platform", "team": "atlas", "topic": "observability", "cancel_if_outside_working_hours": "true", "severity": "page"}')"
@@ -93,7 +93,7 @@ update_rules() {
         echo "$rule" | jq -c -j
 
         # Add comma if not the last rule
-        remainingRules=$((remainingRules - 1))
+        remainingRules="$((remainingRules - 1))"
         if [[ "$remainingRules" -gt 0 ]]; then
             echo ','
         fi

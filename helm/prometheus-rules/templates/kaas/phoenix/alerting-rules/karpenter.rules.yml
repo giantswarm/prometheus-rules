@@ -55,7 +55,7 @@ spec:
             description: |
               Karpenter on cluster {{`{{ $labels.cluster_id }}`}} has unregistered nodes.
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/karpenter/
-          expr: count(kube_node_spec_taint{key="karpenter.sh/unregistered", value="karpenter", effect="NoExecute"}) > 0
+          expr: count(kube_node_spec_taint{key="karpenter.sh/unregistered", value="karpenter", effect="NoExecute"}) by (cluster_id, installation, pipeline, provider) > 0
           for: 10m
           labels:
             area: kaas

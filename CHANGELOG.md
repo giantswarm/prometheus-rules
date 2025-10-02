@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.76.0] - 2025-10-02
+
 ### Added
 
 - Tempo alerts
@@ -3902,7 +3904,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.75.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.76.0...HEAD
+[4.76.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.75.0...v4.76.0
 [4.75.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.1...v4.75.0
 [4.74.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.0...v4.74.1
 [4.74.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.2...v4.74.0

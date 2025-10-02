@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Tempo alerts
+
 ## [4.75.0] - 2025-10-01
 
 ### Added

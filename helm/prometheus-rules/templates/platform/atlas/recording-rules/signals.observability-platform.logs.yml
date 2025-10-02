@@ -9,18 +9,18 @@ spec:
   groups:
     - name: signals.observability-platform.logs
       rules:
-        - record: giantswarm:observability:grafana:unique_users:30d
+        - record: giantswarm:observability:grafana:unique_users:hourly
           expr: |
             count by (uname, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
                 count by (uname, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
                     count_over_time(
-                        {container="grafana"}
+                        {container="grafana", cluster_id="{{ .Values.managementCluster.name }}"}
                             | logfmt
                             | handler="/api/live/ws"
                             |~ `uname=.*@.*`
                             !~ `uname=.*@giantswarm\.io`
                             | line_format "{{`{{.uname}}`}}"
-                        [30d]
+                        [1h]
                     )
                 ) 
             )

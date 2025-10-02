@@ -595,5 +595,5 @@ spec:
         record: aggregation:giantswarm:jobscrapingfailures
 
       # Observability platform product signals
-      - expr: count(giantswarm:observability:grafana:unique_users:30d) by (uname, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+      - expr: count_over_time(giantswarm:observability:grafana:unique_users:hourly[30d])
         record: aggregation:giantswarm:observability:signals:user_logins

@@ -111,22 +111,40 @@ tests:
   # Tests for `MimirToGrafanaCloudExporterTooManyRestarts` alert
   - interval: 1m
     input_series:
-      # remote read is working for 2 hours and then fails for 1 hour
-      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-8e08b9c64ea5", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "_x60 1+0x60 _x80"
-      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-8e08b9c64ea6", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "_x122 1+0x2 _x78"
-      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-8e08b9c64ea7", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "_x124 1+0x2 _x76"
-      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-8e08b9c64ea8", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "_x126 1+0x2 _x74"
-      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-8e08b9c64ea9", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "_x128 1+0x72"
+      # prometheus-mimir-to-grafana-cloud starts after 60 minutes, and stays stable for 60 minutes
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-000000000001", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
+        values: "_x60 1+0x60 _x120"
+      # Every 5 minutes, we get a new pod that stays up for 5 minutes - that lasts for 1 hour
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-000000000002", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
+        values: "_x120 1x5 _x115"
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-000000000003", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
+        values: "_x125 1x5 _x110"
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-000000000004", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
+        values: "_x130 1x5 _x105"
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-000000000005", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
+        values: "_x135 1x5 _x100"
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-000000000006", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
+        values: "_x140 1x5 _x95"
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-000000000007", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
+        values: "_x145 1x5 _x90"
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-000000000008", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
+        values: "_x150 1x5 _x85"
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-000000000009", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
+        values: "_x155 1x5 _x80"
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-000000000010", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
+        values: "_x160 1x5 _x75"
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-000000000011", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
+        values: "_x165 1x5 _x70"
+      # Then we have a pod that stays up stable until the end
+      - series: 'kube_pod_status_ready{condition="true", uid="0bb4e0cc-12df-4085-8d39-000000000012", pod="prometheus-mimir-to-grafana-cloud-0", cluster_id="myinstall", customer="giantswarm", installation="myinstall", namespace="mimir", pipeline="testing", provider="$provider", region="eu-west-2"}'
+        values: "_x170 1x70"
     alert_rule_test:
       - alertname: MimirToGrafanaCloudExporterTooManyRestarts
         eval_time: 70m
       - alertname: MimirToGrafanaCloudExporterTooManyRestarts
         eval_time: 140m
+      - alertname: MimirToGrafanaCloudExporterTooManyRestarts
+        eval_time: 170m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -145,4 +163,4 @@ tests:
               description: "Prometheus Mimir to Grafana-Cloud is restarting too much."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-grafana-cloud-exporter-failing/
       - alertname: MimirToGrafanaCloudExporterTooManyRestarts
-        eval_time: 180m
+        eval_time: 190m

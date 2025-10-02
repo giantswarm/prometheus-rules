@@ -243,6 +243,12 @@ To update `loki-mixins` recording rules:
 * Run `./loki/update.sh`
 * make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards)
 
+#### tempo-mixins
+
+To update `tempo-mixins` alerting rules:
+
+* Run `./tempo/update.sh`
+
 ## Testing
 
 You can run all tests by running `make test`.

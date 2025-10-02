@@ -7,9 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add the observability signal for the setup activity which is the actual number of unique logins for observability platform users in the last month: `aggregation:giantswarm:observability:signals:user_logins`. This will be added to the observability platform signals dashboard in grafana cloud.
+
+## [4.76.0] - 2025-10-02
+
+### Added
+
+- Tempo alerts
+- Karpenter unregistered nodes
+
+## [4.75.0] - 2025-10-01
+
+### Added
+
+- New alert `ControlPlaneNodeMemoryPressureTaint`.
 - New alert `IRSAClaimNotReady` to monitor Crossplane IRSA objects.
 - Add quicker alerts for Kyverno's `svc-fail` validation/mutation webhooks taking very long or timing out
-- Add the observability signal for the setup activity which is the actual number of unique logins for observability platform users in the last month: `aggregation:giantswarm:observability:signals:user_logins`. This will be added to the observability platform signals dashboard in grafana cloud.
+- Add alerts for EFS pods
 
 ### Fixed
 
@@ -3894,7 +3908,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.76.0...HEAD
+[4.76.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.75.0...v4.76.0
+[4.75.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.1...v4.75.0
 [4.74.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.0...v4.74.1
 [4.74.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.2...v4.74.0
 [4.73.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.1...v4.73.2

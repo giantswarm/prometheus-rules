@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.77.0] - 2025-10-02
+
 ### Added
 
 - Add the observability signal for the setup activity which is the actual number of unique logins for observability platform users in the last month: `aggregation:giantswarm:observability:signals:user_logins`. This will be added to the observability platform signals dashboard in grafana cloud.
@@ -3908,7 +3910,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.76.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.0...HEAD
+[4.77.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.76.0...v4.77.0
 [4.76.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.75.0...v4.76.0
 [4.75.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.1...v4.75.0
 [4.74.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.0...v4.74.1

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Alert `MimirToGrafanaCloudExporterTooManyRestarts` is less sensitive
+- Alert `PodsUnschedulable` gets a dashsboard link
 
 ## [4.77.0] - 2025-10-02
 

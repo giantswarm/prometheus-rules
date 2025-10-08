@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update Zot runbook URL
+- Remove non-existing runbook_url from HelmHistorySecretCountTooHigh alert
 
 ## [4.77.1] - 2025-10-07
 

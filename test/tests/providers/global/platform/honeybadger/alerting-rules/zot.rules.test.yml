@@ -23,7 +23,7 @@ tests:
               topic: "managementcluster"
             exp_annotations:
               description: "Zot deployment zot/zot-zot is not satisfied."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/zot/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/zot/
   - interval: 1m
     input_series:
       - series: 'kubelet_volume_stats_available_bytes{namespace="zot", persistentvolumeclaim="zot-zot-pvc"}'
@@ -45,4 +45,4 @@ tests:
               topic: "managementcluster"
             exp_annotations:
               description: "The Zot PersistentVolume claimed by zot-zot-pvc in namespace zot is at least 80% full and projected to fill up soon."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/zot/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/zot/

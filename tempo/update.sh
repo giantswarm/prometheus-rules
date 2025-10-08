@@ -34,7 +34,6 @@ apply_global_sed_fixes() {
       sed 's/'\''/ /g' | # Fix single quotes in alert messages
       sed 's/\(message": "\)\(.*\)"/description": "{{`\2`}}"/g' | # Wrap alert messages in double curly braces to avoid Helm template parsing issues. Also, rename the field to `description`.
       sed 's/, namespace=~\\"\.\*\\"//g' #| # Remove useless namespace selector
-      #jq -c
 }
 
 update_rules() {
@@ -62,6 +61,11 @@ update_rules() {
                 rule="$(echo "$rule" \
                     | sed 's/avg(\(.*\)}) \//avg(\1}) by (cluster_id, installation, pipeline, provider, namespace) \//' \
                     )"
+                # This one fires for 2 days when a new cluster is created,
+                # so we don't want it to page until we run tempo all around.
+                rule="$(echo "$rule" \
+                    | sed 's/"severity": "page"/"severity": "none"/' \
+                    )"
                 ;;
             "TempoMetricsGeneratorPartitionLagCritical")
                 # Template is using `group` label but the query removes it.
@@ -74,6 +78,10 @@ update_rules() {
                 rule="$(echo "$rule" \
                     | sed 's/max by (/max by (pod, /'
                 )"
+                # warning alerts should be severity notify
+                rule="$(echo "$rule" \
+                    | sed 's/"severity": "page"/"severity": "notify"/' \
+                )"
                 ;;
             "TempoBlockBuilderPartitionLagCritical")
                 # Template is using `pod` label but the query removes it.
@@ -83,6 +91,12 @@ update_rules() {
                 # Unnecessary regexp match on static string
                 rule="$(echo "$rule" \
                     | sed 's/container=~/container=/' \
+                )"
+                ;;
+            *Warning)
+                # All warning alerts should be severity notify
+                rule="$(echo "$rule" \
+                    | sed 's/"severity": "page"/"severity": "notify"/' \
                 )"
                 ;;
             *)

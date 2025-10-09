@@ -165,7 +165,7 @@ spec:
             avg(tempodb_blocklist_length{cluster_type="management_cluster", container="compactor"}) by (cluster_id, installation, pipeline, provider, namespace) / avg(tempodb_blocklist_length{cluster_type="management_cluster", container="compactor"} offset 7d) by (cluster_id, installation, pipeline, provider, namespace) > 1.4
           for: 15m
           labels:
-            severity: page
+            severity: none
             area: platform
             team: atlas
             topic: observability
@@ -269,7 +269,7 @@ spec:
             max by (pod, cluster_id, installation, pipeline, provider, namespace, partition) (avg_over_time(tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container="block-builder"}[6m])) > 200
           for: 5m
           labels:
-            severity: page
+            severity: notify
             area: platform
             team: atlas
             topic: observability
@@ -280,6 +280,32 @@ spec:
             runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoPartitionLag
           expr: |
             max by (pod, cluster_id, installation, pipeline, provider, namespace, partition) (avg_over_time(tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container="block-builder"}[6m])) > 300
+          for: 5m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoLiveStorePartitionLagWarning
+          annotations:
+            description: '{{`Tempo ingest partition {{ $labels.partition }} for live store {{ $labels.pod }} is lagging by more than 300 seconds in {{ $labels.cluster_id }}/{{ $labels.namespace }}.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoPartitionLag
+          expr: |
+            max by (pod, cluster_id, installation, pipeline, provider, namespace, partition) (avg_over_time(tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container="live-store"}[6m])) > 200
+          for: 5m
+          labels:
+            severity: notify
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoLiveStorePartitionLagCritical
+          annotations:
+            description: '{{`Tempo ingest partition {{ $labels.partition }} for live store {{ $labels.pod }} is lagging by more than 300 seconds in {{ $labels.cluster_id }}/{{ $labels.namespace }}.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoPartitionLag
+          expr: |
+            max by (pod, cluster_id, installation, pipeline, provider, namespace, partition) (avg_over_time(tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container="live-store"}[6m])) > 300
           for: 5m
           labels:
             severity: page

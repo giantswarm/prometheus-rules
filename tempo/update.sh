@@ -93,10 +93,24 @@ update_rules() {
                     | sed 's/container=~/container=/' \
                 )"
                 ;;
-            *Warning)
-                # All warning alerts should be severity notify
+            "TempoLiveStorePartitionLagWarning")
+                # Template is using `pod` label but the query removes it.
+                rule="$(echo "$rule" \
+                    | sed 's/max by (/max by (pod, /'
+                )"
+                # warning alerts should be severity notify
                 rule="$(echo "$rule" \
                     | sed 's/"severity": "page"/"severity": "notify"/' \
+                )"
+                ;;
+            "TempoLiveStorePartitionLagCritical")
+                # Template is using `pod` label but the query removes it.
+                rule="$(echo "$rule" \
+                    | sed 's/max by (/max by (pod, /'
+                )"
+                # Unnecessary regexp match on static string
+                rule="$(echo "$rule" \
+                    | sed 's/container=~/container=/' \
                 )"
                 ;;
             *)

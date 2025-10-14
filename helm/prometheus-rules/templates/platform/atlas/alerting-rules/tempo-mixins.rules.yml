@@ -1,0 +1,396 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: tempo-mixins.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    - name: tempo_alerts
+      rules:
+        - alert: TempoCompactorUnhealthy
+          annotations:
+            description: '{{`There are {{ printf "%f" $value }} unhealthy compactor(s).`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoCompactorUnhealthy
+          expr: |
+            max by (cluster_id, installation, pipeline, provider, namespace) (tempo_ring_members{cluster_type="management_cluster", state="Unhealthy", name="compactor"}) > 0
+          for: 15m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoDistributorUnhealthy
+          annotations:
+            description: '{{`There are {{ printf "%f" $value }} unhealthy distributor(s).`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoDistributorUnhealthy
+          expr: |
+            max by (cluster_id, installation, pipeline, provider, namespace) (tempo_ring_members{cluster_type="management_cluster", state="Unhealthy", name="distributor"}) > 0
+          for: 15m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoIngesterUnhealthy
+          annotations:
+            description: '{{`There are {{ printf "%f" $value }} unhealthy ingester(s).`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoIngesterUnhealthy
+          expr: |
+            max by (cluster_id, installation, pipeline, provider, namespace) (tempo_ring_members{cluster_type="management_cluster", state="Unhealthy", name="ingester"}) > 0
+          for: 15m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoMetricsGeneratorUnhealthy
+          annotations:
+            description: '{{`There are {{ printf "%f" $value }} unhealthy metric-generator(s).`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoMetricsGeneratorUnhealthy
+          expr: |
+            max by (cluster_id, installation, pipeline, provider, namespace) (tempo_ring_members{cluster_type="management_cluster", state="Unhealthy", name="metrics-generator"}) > 0
+          for: 15m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoCompactionsFailing
+          annotations:
+            description: '{{`Greater than 2 compactions have failed in the past hour.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoCompactionsFailing
+          expr: |
+            sum by (cluster_id, installation, pipeline, provider, namespace) (increase(tempodb_compaction_errors_total{cluster_type="management_cluster"}[1h])) > 2 and
+            sum by (cluster_id, installation, pipeline, provider, namespace) (increase(tempodb_compaction_errors_total{cluster_type="management_cluster"}[5m])) > 0
+          for: 1h
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoIngesterFlushesUnhealthy
+          annotations:
+            description: '{{`Greater than 2 flush retries have occurred in the past hour.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoIngesterFlushesFailing
+          expr: |
+            sum by (cluster_id, installation, pipeline, provider, namespace) (increase(tempo_ingester_failed_flushes_total{cluster_type="management_cluster"}[1h])) > 2 and
+            sum by (cluster_id, installation, pipeline, provider, namespace) (increase(tempo_ingester_failed_flushes_total{cluster_type="management_cluster"}[5m])) > 0
+          for: 5m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoIngesterFlushesFailing
+          annotations:
+            description: '{{`Greater than 2 flush retries have failed in the past hour.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoIngesterFlushesFailing
+          expr: |
+            sum by (cluster_id, installation, pipeline, provider, namespace) (increase(tempo_ingester_flush_failed_retries_total{cluster_type="management_cluster"}[1h])) > 2 and
+            sum by (cluster_id, installation, pipeline, provider, namespace) (increase(tempo_ingester_flush_failed_retries_total{cluster_type="management_cluster"}[5m])) > 0
+          for: 5m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoPollsFailing
+          annotations:
+            description: '{{`Greater than 2 polls have failed in the past hour.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoPollsFailing
+          expr: |
+            sum by (cluster_id, installation, pipeline, provider, namespace) (increase(tempodb_blocklist_poll_errors_total{cluster_type="management_cluster"}[1h])) > 2 and
+            sum by (cluster_id, installation, pipeline, provider, namespace) (increase(tempodb_blocklist_poll_errors_total{cluster_type="management_cluster"}[5m])) > 0
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoTenantIndexFailures
+          annotations:
+            description: '{{`Greater than 2 tenant index failures in the past hour.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoTenantIndexFailures
+          expr: |
+            sum by (cluster_id, installation, pipeline, provider, namespace) (increase(tempodb_blocklist_tenant_index_errors_total{cluster_type="management_cluster"}[1h])) > 2 and
+            sum by (cluster_id, installation, pipeline, provider, namespace) (increase(tempodb_blocklist_tenant_index_errors_total{cluster_type="management_cluster"}[5m])) > 0
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoNoTenantIndexBuilders
+          annotations:
+            description: '{{`No tenant index builders for tenant {{ $labels.tenant }}. Tenant index will quickly become stale.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoNoTenantIndexBuilders
+          expr: |
+            sum by (cluster_id, installation, pipeline, provider, namespace, tenant) (tempodb_blocklist_tenant_index_builder{cluster_type="management_cluster"}) == 0 and
+            max by (cluster_id, installation, pipeline, provider, namespace) (tempodb_blocklist_length{cluster_type="management_cluster"}) > 0
+          for: 5m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoTenantIndexTooOld
+          annotations:
+            description: '{{`Tenant index age is 600 seconds old for tenant {{ $labels.tenant }}.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoTenantIndexTooOld
+          expr: |
+            max by (cluster_id, installation, pipeline, provider, namespace, tenant) (tempodb_blocklist_tenant_index_age_seconds{cluster_type="management_cluster"}) > 600
+          for: 5m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoBlockListRisingQuickly
+          annotations:
+            description: '{{`Tempo block list length is up 40 percent over the last 7 days.  Consider scaling compactors.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoBlockListRisingQuickly
+          expr: |
+            avg(tempodb_blocklist_length{cluster_type="management_cluster", container="compactor"}) by (cluster_id, installation, pipeline, provider, namespace) / avg(tempodb_blocklist_length{cluster_type="management_cluster", container="compactor"} offset 7d) by (cluster_id, installation, pipeline, provider, namespace) > 1.4
+          for: 15m
+          labels:
+            severity: none
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoBadOverrides
+          annotations:
+            description: '{{`{{ $labels.job }} failed to reload overrides.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoBadOverrides
+          expr: |
+            sum(tempo_runtime_config_last_reload_successful{cluster_type="management_cluster"} == 0) by (cluster_id, installation, pipeline, provider, namespace, job)
+          for: 15m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoUserConfigurableOverridesReloadFailing
+          annotations:
+            description: '{{`Greater than 5 user-configurable overides reloads failed in the past hour.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoTenantIndexFailures
+          expr: |
+            sum by (cluster_id, installation, pipeline, provider, namespace) (increase(tempo_overrides_user_configurable_overrides_reload_failed_total{cluster_type="management_cluster"}[1h])) > 5 and
+            sum by (cluster_id, installation, pipeline, provider, namespace) (increase(tempo_overrides_user_configurable_overrides_reload_failed_total{cluster_type="management_cluster"}[5m])) > 0
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoProvisioningTooManyWrites
+          annotations:
+            description: '{{`Ingesters in {{ $labels.cluster_id }}/{{ $labels.namespace }} are receiving more data/second than desired, add more ingesters.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoProvisioningTooManyWrites
+          expr: |
+            avg by (cluster_id, installation, pipeline, provider, namespace) (rate(tempo_ingester_bytes_received_total{cluster_type="management_cluster", job=~".+/ingester"}[5m])) / 1024 / 1024 > 30
+          for: 15m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoCompactorsTooManyOutstandingBlocks
+          annotations:
+            description: '{{`There are too many outstanding compaction blocks in {{ $labels.cluster_id }}/{{ $labels.namespace }} for tenant {{ $labels.tenant }}, increase compactor s CPU or add more compactors.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoCompactorsTooManyOutstandingBlocks
+          expr: |
+            sum by (cluster_id, installation, pipeline, provider, namespace, tenant) (tempodb_compaction_outstanding_blocks{cluster_type="management_cluster", container="compactor"}) / ignoring(tenant) group_left count(tempo_build_info{cluster_type="management_cluster", container="compactor"}) by (cluster_id, installation, pipeline, provider, namespace) > 100
+          for: 6h
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoCompactorsTooManyOutstandingBlocks
+          annotations:
+            description: '{{`There are too many outstanding compaction blocks in {{ $labels.cluster_id }}/{{ $labels.namespace }} for tenant {{ $labels.tenant }}, increase compactor s CPU or add more compactors.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoCompactorsTooManyOutstandingBlocks
+          expr: |
+            sum by (cluster_id, installation, pipeline, provider, namespace, tenant) (tempodb_compaction_outstanding_blocks{cluster_type="management_cluster", container="compactor"}) / ignoring(tenant) group_left count(tempo_build_info{cluster_type="management_cluster", container="compactor"}) by (cluster_id, installation, pipeline, provider, namespace) > 250
+          for: 24h
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoIngesterReplayErrors
+          annotations:
+            description: '{{`Tempo ingester has encountered errors while replaying a block on startup in {{ $labels.cluster_id }}/{{ $labels.namespace }} for tenant {{ $labels.tenant }}`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoIngesterReplayErrors
+          expr: |
+            sum by (cluster_id, installation, pipeline, provider, namespace, tenant) (increase(tempo_ingester_replay_errors_total{cluster_type="management_cluster"}[5m])) > 0
+          for: 5m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoMetricsGeneratorPartitionLagCritical
+          annotations:
+            description: '{{`Tempo partition {{ $labels.partition }} in consumer group {{ $labels.group }} is lagging by more than 900 seconds in {{ $labels.cluster_id }}/{{ $labels.namespace }}.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoPartitionLag
+          expr: |
+            max by (group, cluster_id, installation, pipeline, provider, namespace, partition) (tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container="metrics-generator"}) > 900
+          for: 5m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoBlockBuilderPartitionLagWarning
+          annotations:
+            description: '{{`Tempo ingest partition {{ $labels.partition }} for blockbuilder {{ $labels.pod }} is lagging by more than 300 seconds in {{ $labels.cluster_id }}/{{ $labels.namespace }}.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoPartitionLag
+          expr: |
+            max by (pod, cluster_id, installation, pipeline, provider, namespace, partition) (avg_over_time(tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container="block-builder"}[6m])) > 200
+          for: 5m
+          labels:
+            severity: notify
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoBlockBuilderPartitionLagCritical
+          annotations:
+            description: '{{`Tempo ingest partition {{ $labels.partition }} for blockbuilder {{ $labels.pod }} is lagging by more than 300 seconds in {{ $labels.cluster_id }}/{{ $labels.namespace }}.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoPartitionLag
+          expr: |
+            max by (pod, cluster_id, installation, pipeline, provider, namespace, partition) (avg_over_time(tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container="block-builder"}[6m])) > 300
+          for: 5m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoLiveStorePartitionLagWarning
+          annotations:
+            description: '{{`Tempo ingest partition {{ $labels.partition }} for live store {{ $labels.pod }} is lagging by more than 300 seconds in {{ $labels.cluster_id }}/{{ $labels.namespace }}.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoPartitionLag
+          expr: |
+            max by (pod, cluster_id, installation, pipeline, provider, namespace, partition) (avg_over_time(tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container="live-store"}[6m])) > 200
+          for: 5m
+          labels:
+            severity: notify
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoLiveStorePartitionLagCritical
+          annotations:
+            description: '{{`Tempo ingest partition {{ $labels.partition }} for live store {{ $labels.pod }} is lagging by more than 300 seconds in {{ $labels.cluster_id }}/{{ $labels.namespace }}.`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoPartitionLag
+          expr: |
+            max by (pod, cluster_id, installation, pipeline, provider, namespace, partition) (avg_over_time(tempo_ingest_group_partition_lag_seconds{cluster_type="management_cluster", container="live-store"}[6m])) > 300
+          for: 5m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoBackendSchedulerJobsFailureRateHigh
+          annotations:
+            description: '{{`Tempo backend scheduler job failure rate is {{ printf "%0.2f" $value }} (threshold 0.1) in {{ $labels.cluster_id }}/{{ $labels.namespace }}`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoBackendSchedulerJobsFailureRateHigh
+          expr: |
+            sum(increase(tempo_backend_scheduler_jobs_failed_total{cluster_type="management_cluster"}[5m])) by (cluster_id, installation, pipeline, provider, namespace)
+            /
+            sum(increase(tempo_backend_scheduler_jobs_created_total{cluster_type="management_cluster"}[5m])) by (cluster_id, installation, pipeline, provider, namespace)
+            > 0.05
+          for: 10m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoBackendSchedulerRetryRateHigh
+          annotations:
+            description: '{{`Tempo backend scheduler retry rate is high ({{ printf "%0.2f" $value }} retries/minute) in {{ $labels.cluster_id }}/{{ $labels.namespace }}`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoBackendSchedulerRetryRateHigh
+          expr: |
+            sum(increase(tempo_backend_scheduler_jobs_retry_total{cluster_type="management_cluster"}[1m])) by (cluster_id, installation, pipeline, provider, namespace) > 20
+          for: 10m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoBackendSchedulerCompactionEmptyJobRateHigh
+          annotations:
+            description: '{{`Tempo backend scheduler empty job rate is high ({{ printf "%0.2f" $value }} jobs/minute) in {{ $labels.cluster_id }}/{{ $labels.namespace }}`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoBackendSchedulerCompactionEmptyJobRateHigh
+          expr: |
+            sum(increase(tempo_backend_scheduler_compaction_tenant_empty_job_total{cluster_type="management_cluster"}[1m])) by (cluster_id, installation, pipeline, provider, namespace) > 10
+          for: 10m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoBackendWorkerBadJobsRateHigh
+          annotations:
+            description: '{{`Tempo backend worker bad jobs rate is high ({{ printf "%0.2f" $value }} bad jobs/minute) in {{ $labels.cluster_id }}/{{ $labels.namespace }}`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoBackendWorkerBadJobsRateHigh
+          expr: |
+            sum(increase(tempo_backend_worker_bad_jobs_received_total{cluster_type="management_cluster"}[1m])) by (cluster_id, installation, pipeline, provider, namespace) > 0
+          for: 10m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoBackendWorkerCallRetriesHigh
+          annotations:
+            description: '{{`Tempo backend worker call retries rate is high ({{ printf "%0.2f" $value }} retries/minute) in {{ $labels.cluster_id }}/{{ $labels.namespace }}`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoBackendWorkerCallRetriesHigh
+          expr: |
+            sum(increase(tempo_backend_worker_call_retries_total{cluster_type="management_cluster"}[1m])) by (cluster_id, installation, pipeline, provider, namespace) > 5
+          for: 10m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        - alert: TempoVultureHighErrorRate
+          annotations:
+            description: '{{`Tempo vulture error rate is {{ printf "%0.2f" $value }} for error type {{ $labels.error }} in {{ $labels.cluster_id }}/{{ $labels.namespace }}`}}'
+            runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoVultureHighErrorRate
+          expr: |
+            sum(rate(tempo_vulture_trace_error_total{cluster_type="management_cluster"}[1m])) by (cluster_id, installation, pipeline, provider, namespace, error) / ignoring (error) group_left sum(rate(tempo_vulture_trace_total{cluster_type="management_cluster"}[1m])) by (cluster_id, installation, pipeline, provider, namespace) > 0.100000
+          for: 5m
+          labels:
+            severity: page
+            area: platform
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"

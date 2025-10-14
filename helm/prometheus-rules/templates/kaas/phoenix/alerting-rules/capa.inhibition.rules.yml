@@ -26,6 +26,9 @@ spec:
         unless on (cluster_id) (
             sum(capi_machinepool_spec_replicas{} > 0) by (cluster_id)
         )
+        and on (cluster_id) (
+            capi_cluster_info{infrastructure_reference_kind="AWSCluster"} == 1
+        )
       labels:
         area: kaas
         has_worker_nodes: "false"

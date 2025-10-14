@@ -1,5 +1,3 @@
-# Changelog
-
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -10,6 +8,153 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add `TeleportKubeAgentInstancesNotReady` and `TeleportKubeAgentZeroReadyReplicas` alerts.
+
+## [4.77.2] - 2025-10-09
+
+### Changed
+
+- Update Zot runbook URL
+- Remove non-existing runbook_url from HelmHistorySecretCountTooHigh alert
+- Update tempo alerts
+
+## [4.77.1] - 2025-10-07
+
+### Changed
+
+- Alert `MimirToGrafanaCloudExporterTooManyRestarts` is less sensitive
+- Alert `PodsUnschedulable` gets a dashsboard link
+
+## [4.77.0] - 2025-10-02
+
+### Added
+
+- Add the observability signal for the setup activity which is the actual number of unique logins for observability platform users in the last month: `aggregation:giantswarm:observability:signals:user_logins`. This will be added to the observability platform signals dashboard in grafana cloud.
+
+## [4.76.0] - 2025-10-02
+
+### Added
+
+- Tempo alerts
+- Karpenter unregistered nodes
+
+## [4.75.0] - 2025-10-01
+
+### Added
+
+- New alert `ControlPlaneNodeMemoryPressureTaint`.
+- New alert `IRSAClaimNotReady` to monitor Crossplane IRSA objects.
+- Add quicker alerts for Kyverno's `svc-fail` validation/mutation webhooks taking very long or timing out
+- Add alerts for EFS pods
+
+### Fixed
+
+- Fixed runbook for alertmanager alerts
+
+### Changed
+
+- Update some runbook URLs to point to the actual URL instead of to a redirect
+- Remove aliases from runbook URL validation
+- Runbook URL validation refactored
+- Change runbook URL for AppExporterDown alert
+- Change runbook URL for OpeartorKit alerts
+
+## [4.74.1] - 2025-09-03
+
+### Changed
+
+- Update `falco` recording rule to make it work with new Falco version.
+
+## [4.74.0] - 2025-09-02
+
+### Added
+
+- New alert `MimirDistributorReachingInflightPushRequestLimit` to monitor when Mimir distributors are approaching their inflight push request limit (80% threshold).
+
+## [4.73.2] - 2025-08-29
+
+### Fixed
+
+- Fix `ClusterControlPlaneMachineStatusNotHealthy`: take workload cluster name from `cluster_name` label because `cluster_id` may be globally overridden in metrics
+
+### Changed
+
+- Change labels provided for `aggregation:docker:containers_from_deprecated_registries:*` recording rules, adding `namespace`, `pod` and `image` labels, removing `region` label.
+
+## [4.73.1] - 2025-08-27
+
+### Fixed
+
+- Fix `GrafanaPostgresqlRecoveryTestFailed` which relies on a metric that does not exist.
+
+### Added
+
+- Recording rule sending job scraping failures to Grafana Cloud
+
+## [4.73.0] - 2025-08-25
+
+### Added
+
+- Add Grafana cloud aggregations for use of deprecated registries (`aggregation:docker:containers_from_deprecated_registries:*`)
+
+## [4.72.7] - 2025-08-12
+
+### Changed
+
+- Make `KubeStateMetricsDown` page only during business hours
+
+## [4.72.6] - 2025-08-07
+
+### Changed
+
+- Update CAPA `InhibitionClusterWithoutWorkerNodes` to only apply to CAPA clusters.
+
+## [4.72.5] - 2025-07-31
+
+### Fixed
+
+- Fix provider label in cluster recording rules for hybrid installations.
+
+## [4.72.4] - 2025-07-31
+
+### Changed
+
+- Change `ClusterControlPlaneMachineStatusNotHealthy` to page
+
+## [4.72.3] - 2025-07-29
+
+### Added
+
+- Add `ClusterControlPlaneMachineStatusNotHealthy` alert (very broad, using `severity: notify` for testing how often it happens)
+
+## [4.72.2] - 2025-07-28
+
+### Fixed
+
+- Fix observability-platform overview regex patterns.
+
+## [4.72.1] - 2025-07-28
+
+### Fixed
+
+- Fix observability-platform overview recording rules.
+
+## [4.72.0] - 2025-07-23
+
+### Added
+
+- Added `CiliumOperatorRestartingTooOften` alert
+
+## [4.71.1] - 2025-07-22
+
+### Fixed
+
+- Rewrite Flux alerting rules towards the `gotk_resource_info` emitted by the Kube State Metrics.
+
+## [4.71.0] - 2025-07-21
+
+### Added
+
+- Add new observability recording rules for Grafana Cloud to be able to check the actual resource usage of the observability platform.
 
 ## [4.70.0] - 2025-07-03
 
@@ -3784,7 +3929,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.70.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.2...HEAD
+[4.77.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.1...v4.77.2
+[4.77.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.0...v4.77.1
+[4.77.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.76.0...v4.77.0
+[4.76.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.75.0...v4.76.0
+[4.75.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.1...v4.75.0
+[4.74.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.0...v4.74.1
+[4.74.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.2...v4.74.0
+[4.73.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.1...v4.73.2
+[4.73.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.0...v4.73.1
+[4.73.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.7...v4.73.0
+[4.72.7]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.6...v4.72.7
+[4.72.6]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.5...v4.72.6
+[4.72.5]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.4...v4.72.5
+[4.72.4]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.3...v4.72.4
+[4.72.3]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.2...v4.72.3
+[4.72.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.1...v4.72.2
+[4.72.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.0...v4.72.1
+[4.72.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.71.1...v4.72.0
+[4.71.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.71.0...v4.71.1
+[4.71.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.70.0...v4.71.0
 [4.70.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.69.0...v4.70.0
 [4.69.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.68.0...v4.69.0
 [4.68.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.67.0...v4.68.0

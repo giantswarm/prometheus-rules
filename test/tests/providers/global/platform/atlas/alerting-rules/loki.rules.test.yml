@@ -208,6 +208,8 @@ tests:
               installation: golem
               cluster_id: golem
             exp_annotations:
+              __dashboardUid__: loki-resources-overview
+              dashboardQueryParams: "orgId=2"
               description: Loki component loki-backend has reached its maxReplicas number but still needs to be scaled up.
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
       - alertname: LokiHpaReachedMaxReplicas
@@ -238,7 +240,7 @@ tests:
               __dashboardUid__: loki-retention
               dashboardQueryParams: "orgId=2"
               description: Loki compactor has been failing compactions for more than 2 hours since last compaction.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki#lokicompactorfailedcompaction
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/#lokicompactorfailedcompaction
       - alertname: LokiCompactorFailedCompaction
         eval_time: 300m
 
@@ -267,7 +269,7 @@ tests:
               __dashboardUid__: loki-retention
               dashboardQueryParams: "orgId=2"
               description: Loki compactor has been failing compactions for more than 2 hours since start-up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki#lokicompactorfailedcompaction
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/#lokicompactorfailedcompaction
       - alertname: LokiCompactorFailedCompaction
         eval_time: 300m
 

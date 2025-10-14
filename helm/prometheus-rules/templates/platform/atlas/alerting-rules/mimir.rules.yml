@@ -177,6 +177,24 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    # This alert monitors when Mimir distributors are approaching their inflight push request limit.
+    # When distributors reach 80% of their maximum inflight push requests, it may indicate
+    # they are becoming overwhelmed and could start rejecting incoming requests.
+    - alert: MimirDistributorReachingInflightPushRequestLimit
+      annotations:
+        description: 'Mimir distributors are approaching their inflight push request limit and may start rejecting requests.'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
+      expr: |
+        sum(max_over_time(cortex_distributor_inflight_push_requests{pod=~"mimir-distributor.*"}[5m])) by (cluster_id, installation, namespace, pipeline, provider)
+        >= 
+        sum(cortex_distributor_instance_limits{limit="max_inflight_push_requests", pod=~"mimir-distributor.*"}) by (cluster_id, installation, namespace, pipeline, provider) * 0.8
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
   - name: mimir.compactor
     rules:
     - alert: MimirCompactorFailedCompaction
@@ -184,7 +202,7 @@ spec:
         __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
         dashboardQueryParams: "orgId=2"
         description: 'Mimir compactor has been failing its compactions for 2 hours.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir#mimircompactorfailedcompaction
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimircompactorfailedcompaction
       expr: min by (cluster_id, installation, namespace, provider, pipeline) (time() - (cortex_compactor_last_successful_run_timestamp_seconds > 0 ) ) > 60 * 60 * 2
       labels:
         area: platform
@@ -197,7 +215,7 @@ spec:
         __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
         dashboardQueryParams: "orgId=2"
         description: 'Mimir compactor has been failing compactions for more than 2 hours since start-up.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir#mimircompactorfailedcompaction
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimircompactorfailedcompaction
       # This alert covers the special case at compactor startup, where the "normal" alert would always consider time `0` is more than 2 hours ago, yet we want to let it 2 hours + `for` duration.
       expr: max(max_over_time(cortex_compactor_last_successful_run_timestamp_seconds{}[2h])) by (cluster_id, installation, namespace, provider, pipeline) == 0
       for: 2h
@@ -290,7 +308,7 @@ spec:
         __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
         dashboardQueryParams: "orgId=2"
         description: '{{`Mimir Alertmanager {{ $labels.pod }} is failing to read tenant configurations from storage.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
+        runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
       expr: |
         rate(cortex_alertmanager_sync_configs_failed_total[5m]) > 0
       for: 30m
@@ -305,7 +323,7 @@ spec:
         __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
         dashboardQueryParams: "orgId=2"
         description: '{{`Mimir Alertmanager {{ $labels.pod }} is unable to check tenants ownership via the ring.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
+        runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
       expr: |
         rate(cortex_alertmanager_ring_check_errors_total[2m]) > 0
       for: 10m
@@ -320,7 +338,7 @@ spec:
         __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
         dashboardQueryParams: "orgId=2"
         description: '{{`Mimir Alertmanager {{ $labels.pod }} is failing to replicating partial state to its replicas.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
+        runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
       expr: |
         rate(cortex_alertmanager_state_replication_failed_total[2m]) > 0
       for: 10m

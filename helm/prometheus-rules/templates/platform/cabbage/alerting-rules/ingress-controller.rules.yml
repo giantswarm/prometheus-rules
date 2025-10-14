@@ -25,7 +25,7 @@ spec:
     - alert: IngressControllerMemoryUsageTooHigh
       annotations:
         description: '{{`Ingress Controller {{ $labels.pod }} memory usage is too high.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/ic-memory-too-high/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/managed-app-nginx-ic/
       expr: sum by (node, pod, cluster_id, installation, pipeline, provider) (container_memory_usage_bytes{pod=~".*(ingress-nginx|nginx-ingress-controller).*", container=""}) / ignoring (pod) group_left sum (node_memory_MemTotal_bytes) by (node, cluster_id, installation, pipeline, provider) * 100 > 33
       for: 3m
       labels:

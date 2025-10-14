@@ -15,7 +15,9 @@ spec:
     - alert: PodsUnschedulable
       annotations:
         description: '{{`Cluster {{ $labels.cluster_id }} has unschedulable kube-system pods.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/validate-cluster-health
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/validate-cluster-health/
+        __dashboardUid__: unschedulable-pods
+        dashboardQueryParams: '{{`orgId=1&var-namespace=kube-system&var-cluster={{ $labels.cluster_id }}`}}'
       expr: |-
         count(
           count_over_time(

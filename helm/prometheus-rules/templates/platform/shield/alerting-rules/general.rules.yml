@@ -13,7 +13,7 @@ spec:
     - alert: ShieldComponentRestartingTooOften
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/shield-pod-failing
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/shield-pod-failing/
       expr: increase(kube_pod_container_status_restarts_total{cluster_type="workload_cluster", pod=~"trivy-.*|kyverno-.*|falco-*|"}[1h]) > 5
       for: 30m
       labels:

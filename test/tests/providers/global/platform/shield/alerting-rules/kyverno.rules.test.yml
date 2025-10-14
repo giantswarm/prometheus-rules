@@ -88,4 +88,4 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Kyverno's admission controller deployment must use at least 3 replicas, or be scaled to 0."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/KyvernoWronglyScaled/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kyverno/#kyverno-wrongly-scaled

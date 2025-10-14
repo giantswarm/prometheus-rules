@@ -39,5 +39,7 @@ tests:
               team: "phoenix"
               topic: "workloadcluster"
             exp_annotations:
+              __dashboardUid__: "unschedulable-pods"
+              dashboardQueryParams: "orgId=1&var-namespace=kube-system&var-cluster=wc01"
               description: 'Cluster wc01 has unschedulable kube-system pods.'
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/validate-cluster-health
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/validate-cluster-health/

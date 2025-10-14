@@ -71,6 +71,7 @@ tests:
               cluster_id: my-cluster
               installation: gunittest
               severity: notify
+              statefulset: teleport-kube-agent
               team: shield
               topic: teleport
             exp_annotations:
@@ -97,6 +98,7 @@ tests:
               cluster_id: zero-test
               installation: gunittest
               severity: notify
+              statefulset: teleport-kube-agent
               team: shield
               topic: teleport
             exp_annotations:

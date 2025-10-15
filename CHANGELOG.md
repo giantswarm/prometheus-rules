@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update `AppWithoutTeamAnnotation` alert runbook URL to point to migrated runbook
+
 ## [4.77.2] - 2025-10-09
 
 ### Changed

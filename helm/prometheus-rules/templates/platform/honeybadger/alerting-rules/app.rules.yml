@@ -150,7 +150,7 @@ spec:
     - alert: AppOperatorNotReady
       annotations:
         description: '{{`app CR version ({{ $labels.version }}) in namespace {{ $labels.namespace }} has no ready app-operator.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-operator-not-ready/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-operator-not-ready/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: app_operator_ready_total != 1
       for: 15m
       labels:

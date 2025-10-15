@@ -81,8 +81,7 @@ spec:
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/teleport/
       expr: |-
         kube_statefulset_status_replicas_ready{statefulset="teleport-kube-agent"}
-          - kube_statefulset_status_replicas{statefulset="teleport-kube-agent"}
-          < 1
+          == 0
       for: 25m
       labels:
         area: platform

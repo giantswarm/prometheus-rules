@@ -80,8 +80,6 @@ tests:
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/teleport/"
   - interval: 1m
     input_series:
-      - series: 'kube_statefulset_status_replicas{cluster_id="zero-test", installation="gunittest", statefulset="teleport-kube-agent"}'
-        values: "3+0x40"
       - series: 'kube_statefulset_status_replicas_ready{cluster_id="zero-test", installation="gunittest", statefulset="teleport-kube-agent"}'
         values: "0+0x40"
     alert_rule_test:

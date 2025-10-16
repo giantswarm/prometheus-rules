@@ -25,8 +25,8 @@ spec:
             count(
               kube_pod_status_unschedulable{namespace="kube-system"}
             ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, pod)
-          # only keep those that have been unschedulable for more than 5 minutes over the past 30 minutes
-          [30m:]) > 5
+          # only keep those that have been unschedulable for more than 10 minutes over the past 30 minutes
+          [30m:]) > 10
         # count per cluster
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
         # At least 2 pods should be unschedulable for the alert to page.

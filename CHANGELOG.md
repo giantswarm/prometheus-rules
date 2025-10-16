@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update `AppWithoutTeamAnnotation` alert runbook URL to point to migrated runbook
+- Update `ClusterCrossplaneResourcesNotReady` alert runbook URL to point to migrated runbook with templated variables
 
 ### Added
 

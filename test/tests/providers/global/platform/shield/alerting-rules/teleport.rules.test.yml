@@ -51,3 +51,55 @@ tests:
               topic: teleport
             exp_annotations:
               description: "Mismatch in number of teleport-kube-agent-config secrets and clusters"
+  - interval: 1m
+    input_series:
+      - series: 'kube_statefulset_status_replicas{cluster_id="my-cluster", installation="gunittest", statefulset="teleport-kube-agent"}'
+        values: "3+0x60"
+      - series: 'kube_statefulset_status_replicas_ready{cluster_id="my-cluster", installation="gunittest", statefulset="teleport-kube-agent"}'
+        values: "2+0x60"
+    alert_rule_test:
+      - alertname: TeleportKubeAgentInstancesNotReady
+        eval_time: 30m
+        exp_alerts: []
+      - alertname: TeleportKubeAgentInstancesNotReady
+        eval_time: 50m
+        exp_alerts:
+          - exp_labels:
+              alertname: TeleportKubeAgentInstancesNotReady
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: my-cluster
+              installation: gunittest
+              severity: notify
+              statefulset: teleport-kube-agent
+              team: shield
+              topic: teleport
+            exp_annotations:
+              description: "At least one teleport-kube-agent instance is unhealthy."
+              summary: "Teleport Kube Agent has had one or more unhealthy instances for an extended period."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/teleport/"
+  - interval: 1m
+    input_series:
+      - series: 'kube_statefulset_status_replicas_ready{cluster_id="zero-test", installation="gunittest", statefulset="teleport-kube-agent"}'
+        values: "0+0x40"
+    alert_rule_test:
+      - alertname: TeleportKubeAgentZeroReadyReplicas
+        eval_time: 20m
+        exp_alerts: []
+      - alertname: TeleportKubeAgentZeroReadyReplicas
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              alertname: TeleportKubeAgentZeroReadyReplicas
+              area: platform
+              cancel_if_outside_working_hours: "false"
+              cluster_id: zero-test
+              installation: gunittest
+              severity: notify
+              statefulset: teleport-kube-agent
+              team: shield
+              topic: teleport
+            exp_annotations:
+              description: "Cluster has no Ready teleport-kube-agent instances."
+              summary: "Teleport Kube Agent has had no Ready instances for an extended period."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/teleport/"

@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update `AppWithoutTeamAnnotation` alert runbook URL to point to migrated runbook
 
+### Added
+
+- Add `TeleportKubeAgentInstancesNotReady` and `TeleportKubeAgentZeroReadyReplicas` alerts.
+
 ## [4.77.2] - 2025-10-09
 
 ### Changed

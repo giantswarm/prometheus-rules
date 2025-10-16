@@ -108,7 +108,7 @@ spec:
         description: |-
           {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-source/
-      expr: gotk_resource_info{ready="False", customresource_kind=~"GitRepository|HelmRepository|Bucket", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
+      expr: gotk_resource_info{ready="False", customresource_kind=~"GitRepository|HelmRepository|Bucket|OCIRepository", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
       for: 2h
       labels:
         area: platform
@@ -126,7 +126,7 @@ spec:
         description: |-
           {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-source/
-      expr: gotk_resource_info{ready="False", job="kube-state-metrics", customresource_kind=~"GitRepository|HelmRepository|Bucket", cluster_type="workload_cluster", organization="giantswarm"} > 0
+      expr: gotk_resource_info{ready="False", job="kube-state-metrics", customresource_kind=~"GitRepository|HelmRepository|Bucket|OCIRepository", cluster_type="workload_cluster", organization="giantswarm"} > 0
       for: 2h
       labels:
         area: platform

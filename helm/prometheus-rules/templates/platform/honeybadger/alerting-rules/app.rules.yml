@@ -117,7 +117,7 @@ spec:
     - alert: AppWithoutTeamAnnotation
       annotations:
         description: '{{`App {{ $labels.name }} has no team label.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-team-annotation/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-team-annotation/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&APP={{ $labels.name }}`}}'
       expr: |-
         (
           app_operator_app_info{app!~"api-spec(-app)?", team=~"^$|noteam", catalog=~"giantswarm.*|control-plane(-test)?-catalog|cluster(-test)?|default(-test)?|releases(-test)?"}

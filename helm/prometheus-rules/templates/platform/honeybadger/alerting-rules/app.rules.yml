@@ -38,7 +38,7 @@ spec:
     - alert: ManagementClusterAppPendingUpdate
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-pending-update/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-pending-update/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&APP={{ $labels.name }}`}}'
       expr: app_operator_app_info{catalog=~"(control-plane-.*|default)", deployed_version!="", status="deployed", version_mismatch="true", team!~"^$|noteam", namespace=~".*giantswarm"} == 1
       for: 40m
       labels:
@@ -96,7 +96,7 @@ spec:
     - alert: WorkloadClusterAppPendingUpdate
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-pending-update/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-pending-update/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&APP={{ $labels.name }}`}}'
       expr: |-
         (
           app_operator_app_info{catalog=~"giantswarm|cluster|default", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}
@@ -117,7 +117,7 @@ spec:
     - alert: AppWithoutTeamAnnotation
       annotations:
         description: '{{`App {{ $labels.name }} has no team label.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-without-team-annotation/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-team-annotation/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&APP={{ $labels.name }}`}}'
       expr: |-
         (
           app_operator_app_info{app!~"api-spec(-app)?", team=~"^$|noteam", catalog=~"giantswarm.*|control-plane(-test)?-catalog|cluster(-test)?|default(-test)?|releases(-test)?"}
@@ -175,7 +175,7 @@ spec:
     - alert: ClusterUpgradeStuck
       annotations:
         description: '{{`Cluster upgrade for {{ $labels.app }} is stuck. Version mismatch detected for {{ $labels.name }} in namespace {{ $labels.namespace }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-pending-update/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-pending-update/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&APP={{ $labels.name }}`}}'
       expr: |-
         (
           app_operator_app_info{catalog="cluster", app=~"cluster-.*", version_mismatch="true", status="already-exists"}

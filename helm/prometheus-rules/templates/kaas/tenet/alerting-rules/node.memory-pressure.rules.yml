@@ -13,7 +13,7 @@ spec:
     - alert: ControlPlaneNodeMemoryPressureTaint
       annotations:
         description: '{{`Control plane node {{ $labels.node }} in {{ $labels.cluster_type }} cluster {{ $labels.installation }}{{ if $labels.cluster_id }}/{{ $labels.cluster_id }}{{ end }} has memory-pressure taint applied, indicating memory issues.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/memory-pressure-taint/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/memory-pressure/
       expr: |
         kube_node_spec_taint{key="node.kubernetes.io/memory-pressure", effect="NoSchedule"} > 0
         and on (node) kube_node_role{role=~"control-plane|master"}

@@ -56,3 +56,36 @@ spec:
         severity: notify
         team: shield
         topic: teleport
+    ## TeleportKubeAgentInstancesNotReady pages during business hours if the teleport-kube-agent statefulset is not fully Ready for an extended period.
+    - alert: TeleportKubeAgentInstancesNotReady
+      annotations:
+        description: '{{`At least one teleport-kube-agent instance is unhealthy.`}}'
+        summary: Teleport Kube Agent has had one or more unhealthy instances for an extended period.
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/teleport/
+      expr: |-
+        kube_statefulset_status_replicas{statefulset="teleport-kube-agent"}
+          - kube_statefulset_status_replicas_ready{statefulset="teleport-kube-agent"}
+          > 0
+      for: 40m
+      labels:
+        area: platform
+        severity: notify
+        team: shield
+        topic: teleport
+        cancel_if_outside_working_hours: "true"
+    ## TeleportKubeAgentZeroReadyReplicas pages at all hours if a cluster has no Ready teleport-kube-agent replicas.
+    - alert: TeleportKubeAgentZeroReadyReplicas
+      annotations:
+        description: '{{`Cluster has no Ready teleport-kube-agent instances.`}}'
+        summary: Teleport Kube Agent has had no Ready instances for an extended period.
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/teleport/
+      expr: |-
+        kube_statefulset_status_replicas_ready{statefulset="teleport-kube-agent"}
+          == 0
+      for: 25m
+      labels:
+        area: platform
+        severity: notify
+        team: shield
+        topic: teleport
+        cancel_if_outside_working_hours: "false"

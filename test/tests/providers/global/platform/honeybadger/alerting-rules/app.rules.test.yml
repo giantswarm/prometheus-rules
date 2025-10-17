@@ -47,7 +47,7 @@ tests:
               version_mismatch: "false"
             exp_annotations:
               description: "Workload Cluster App giantswarm/cilium, version 0.2.6 is  in pending-upgrade state. "
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-failures/?INSTALLATION=gauss&CLUSTER=gauss&NAMESPACE=giantswarm&APP=cilium
 
   # AppWithoutTeamAnnotation tests
   - interval: 1m

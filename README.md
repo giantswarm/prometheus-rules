@@ -84,7 +84,7 @@ spec:
         __panelId__: 42 # id of the panel in the dashboard
         dashboardQueryParams: "orgid=1"
         # dashboardExternalUrl: https://link-to-my-dashboard
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-failures/
       expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"control-plane-.*",team="atlas"}
       for: 30m
       labels:

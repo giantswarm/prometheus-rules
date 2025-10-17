@@ -1,0 +1,9 @@
+---
+globs: **/*.rules.yml
+alwaysApply: false
+---
+# Rules for editing alerting rules
+
+- **Update tests:**
+  - When modifying an alerting rule, check if there are any tests for the rule. This is best done by grepping for the alert name.
+  - If a runbook URL is changed, the according test must be updated.

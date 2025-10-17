@@ -174,7 +174,7 @@ spec:
       annotations:
         description: |-
           {{`Flux artifacts are stuck in work queue for over 1 hour and are not being reconciled.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-workqueue-too-long/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-workqueue/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         sum by (cluster_id, installation, name, namespace, pipeline, provider) (workqueue_unfinished_work_seconds{namespace="flux-giantswarm", cluster_type="management_cluster"}) > 3600.0
       for: 10m

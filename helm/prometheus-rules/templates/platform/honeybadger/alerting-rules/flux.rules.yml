@@ -161,7 +161,7 @@ spec:
       annotations:
         description: |-
           {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }} has been suspended for 24h.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-suspended-for-too-long/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-suspended/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: gotk_resource_info{cluster_type="management_cluster", exported_namespace="flux-giantswarm", suspended="true"} > 0
       for: 24h
       labels:

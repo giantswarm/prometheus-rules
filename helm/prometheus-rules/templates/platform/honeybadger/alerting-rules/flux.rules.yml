@@ -139,7 +139,7 @@ spec:
       annotations:
         description: |-
           {{`Flux object {{ $labels.kind }}/{{ $labels.name }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is below the error threshold of its error budget.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-slow-reconciliation/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-slow-reconciliation/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         1-sum_over_time(
         (

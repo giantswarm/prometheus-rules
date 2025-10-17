@@ -25,7 +25,7 @@ spec:
     - alert: ManagementClusterAppFailed
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-failures/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&APP={{ $labels.name }}`}}'
       expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"(control-plane-.*|default)",team!~"^$|noteam", namespace=~".*giantswarm"} == 1
       for: 30m
       labels:
@@ -50,7 +50,7 @@ spec:
     - alert: WorkloadClusterAppFailed
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-failures/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}&APP={{ $labels.name }}`}}'
       expr: |-
         (
           app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog=~"giantswarm|cluster|default", team!~"^$|noteam"}
@@ -73,7 +73,7 @@ spec:
     - alert: WorkloadClusterAppNotInstalled
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-failures/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}&APP={{ $labels.name }}`}}'
       expr: |-
         (
           app_operator_app_info{status="not-installed", catalog=~"giantswarm|cluster|default", team!~"^$|noteam"}

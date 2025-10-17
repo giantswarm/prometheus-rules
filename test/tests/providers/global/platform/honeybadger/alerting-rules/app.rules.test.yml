@@ -47,7 +47,7 @@ tests:
               version_mismatch: "false"
             exp_annotations:
               description: "Workload Cluster App giantswarm/cilium, version 0.2.6 is  in pending-upgrade state. "
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-failures/?INSTALLATION=gauss&CLUSTER=gauss&NAMESPACE=giantswarm&APP=cilium
 
   # AppWithoutTeamAnnotation tests
   - interval: 1m
@@ -146,4 +146,4 @@ tests:
               version_mismatch: "true"
             exp_annotations:
               description: "Cluster upgrade for cluster-aws is stuck. Version mismatch detected for abc01 in namespace org-giantswarm."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-pending-update/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-pending-update/?INSTALLATION=alba&CLUSTER=abc01&APP=abc01

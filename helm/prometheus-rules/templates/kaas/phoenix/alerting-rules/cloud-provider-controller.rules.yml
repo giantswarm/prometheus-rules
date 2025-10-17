@@ -15,7 +15,7 @@ spec:
       annotations:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-helmrelease/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'
       {{- $components := "(aws-ebs-csi-driver|cloud-provider-aws|azure-cloud-controller-manager|azure-cloud-node-manager|azuredisk-csi-driver|azurefile-csi-driver|cloud-provider-vsphere|cloud-provider-cloud-director)" }}
       expr: |
         (

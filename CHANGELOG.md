@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.78.0] - 2025-10-21
+
 ### Changed
 
 - Update app failure alerts to point to new runbook with variables (`ManagementClusterAppFailed`, `WorkloadClusterAppFailed`, `WorkloadClusterAppNotInstalled`)
@@ -3946,7 +3948,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.0...HEAD
+[4.78.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.2...v4.78.0
 [4.77.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.1...v4.77.2
 [4.77.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.0...v4.77.1
 [4.77.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.76.0...v4.77.0

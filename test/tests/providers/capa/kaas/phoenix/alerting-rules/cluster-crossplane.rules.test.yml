@@ -4,9 +4,9 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'crossplane_managed_resource_exists{gvk="cloudwatchevents.aws.upbound.io/v1beta1, Kind=Rule", cluster_id="mymc"}'
+      - series: 'crossplane_managed_resource_exists{gvk="cloudwatchevents.aws.upbound.io/v1beta1, Kind=Rule", cluster_id="mymc", installation="test-installation"}'
         values: "6x20"
-      - series: 'crossplane_managed_resource_ready{gvk="cloudwatchevents.aws.upbound.io/v1beta1, Kind=Rule", cluster_id="mymc"}'
+      - series: 'crossplane_managed_resource_ready{gvk="cloudwatchevents.aws.upbound.io/v1beta1, Kind=Rule", cluster_id="mymc", installation="test-installation"}'
         values: "5x20"
 
     alert_rule_test:
@@ -18,8 +18,9 @@ tests:
               cancel_if_outside_working_hours: "false"
               cluster_id: "mymc"
               gvk: "cloudwatchevents.aws.upbound.io/v1beta1, Kind=Rule"
+              installation: "test-installation"
               severity: page
               team: phoenix
             exp_annotations:
               description: 'Not all managed Crossplane resources of type "cloudwatchevents.aws.upbound.io/v1beta1, Kind=Rule" on mymc are ready. This could affect creation or health of workload clusters.'
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cluster-crossplane-resources/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cluster-crossplane-resources/?INSTALLATION=test-installation&CLUSTER=mymc

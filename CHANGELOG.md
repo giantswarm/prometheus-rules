@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update `FluxKustomizationFailed` and `FluxWorkloadClusterKustomizationFailed` alert runbook URLs to point to migrated runbook with templated variables
 - Update `FluxHelmReleaseFailed` and `FluxWorkloadClusterHelmReleaseFailed` alert runbook URLs to point to migrated runbook with templated variables
 - Adjust `PodsUnschedulable` alert trigger time: Pods have to be more than 10 minutes Pending for the alert to trigger
+- Update `FluxSuspendedForTooLong` alert runbook URL to point to migrated runbook with templated installation and cluster variables
 - Update `FluxWorkqueueTooLong` alert runbook URL to point to migrated runbook with templated installation and cluster variables
 
 ### Added

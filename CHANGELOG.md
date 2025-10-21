@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adjust `PodsUnschedulable` alert trigger time: Pods have to be more than 10 minutes Pending for the alert to trigger
 - Update `FluxSuspendedForTooLong` alert runbook URL to point to migrated runbook with templated installation and cluster variables
 - Update `FluxWorkqueueTooLong` alert runbook URL to point to migrated runbook with templated installation and cluster variables
+- Update `CapaTooManyReconciliations` alert with higher threshold from 1000 to 1500
 
 ### Added
 

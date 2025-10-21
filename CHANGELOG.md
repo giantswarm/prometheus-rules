@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `GrafanaPostgresqlRecoveryTestFailed` by relying on the new `kube_cnpg_cluster_info` metric introduced in kube-state-metrics (https://github.com/giantswarm/observability-bundle/pull/340)
+
 ## [4.78.0] - 2025-10-21
 
 ### Changed

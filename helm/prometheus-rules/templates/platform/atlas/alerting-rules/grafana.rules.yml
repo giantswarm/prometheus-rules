@@ -52,7 +52,13 @@ spec:
         description: '{{`grafana-postgresql db automated recovery test failed.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
       # If we have a pod for grafana-postgresql-recovery-test postgresql cluster running for 1 hour, we can consider the recovery failed. This alert works because the test clusters are automatically deleted right after the tests are successful, and the grafana database is small so restore+tests never take that long.
-      expr: sum(kube_pod_info{cluster_type="management_cluster", namespace="monitoring", pod=~"grafana-postgresql-recovery-test-[0-9]+"}) by (cluster_id, installation, pipeline, provider) >= 1
+      expr: |
+        (
+          # On v33+ clusters, we introduced the kube_cnpg_cluster_info metric to complement kube_pod_info for better reliability.
+          count(kube_cnpg_cluster_info{cluster_type="management_cluster", name="grafana-postgresql-recovery-test", namespace="monitoring"}) by (cluster_id, installation, pipeline, provider)
+          or
+          sum(kube_pod_info{cluster_type="management_cluster", namespace="monitoring", pod=~"grafana-postgresql-recovery-test-[0-9]+"}) by (cluster_id, installation, pipeline, provider)
+        ) >= 1
       for: 1h
       labels:
         area: platform

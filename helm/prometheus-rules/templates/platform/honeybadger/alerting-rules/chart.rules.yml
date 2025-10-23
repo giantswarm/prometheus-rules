@@ -15,7 +15,7 @@ spec:
       annotations:
         description: '{{`ChartOperator ({{ $labels.instance }}) is down.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/chart-operator-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: label_replace(up{job=~"chart-operator"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
+      expr: label_replace(up{job="chart-operator"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:
         area: platform

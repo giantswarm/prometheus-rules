@@ -103,10 +103,11 @@ spec:
           expr: |-
             count(
               label_replace(
-                (capi_cluster_status_condition{type="ControlPlaneReady", status="True"} == 1)
+                # TODO remove app="kube-state-metrics" filter when capi-monitoring-app has been removed from our MCs
+                (capi_cluster_status_condition{app="kube-state-metrics", type="ControlPlaneReady", status="True"} == 1)
                   * on (name, installation, pipeline, provider)
                   # We do not want to alert on clusters that are being deleted.
-                  (capi_cluster_status_phase{phase="Deleting"} == 0),
+                  (capi_cluster_status_phase{app="kube-state-metrics", phase="Deleting"} == 0),
                 "cluster_id",
                 "$1",
                 "name",
@@ -135,7 +136,8 @@ spec:
           expr: |-
             count(
               label_replace(
-                capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+                # TODO remove app="kube-state-metrics" filter when capi-monitoring-app has been removed from our MCs
+                capi_cluster_status_condition{app="kube-state-metrics", type="ControlPlaneReady", status="True"},
                 "cluster_id",
                 "$1",
                 "name",

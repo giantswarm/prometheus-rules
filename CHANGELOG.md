@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove `LogReceivingErrors` as we do not use the observability gateway anymore.
 
+### Fixed
+
+- Fix the `MonitoringAgentDown` alert which is currently erroring on all installations because both kube-state-metrics and cluster-api-monitoring app provide the same metrics.
+
 ## [4.78.1] - 2025-10-22
 
 ### Fixed

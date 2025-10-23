@@ -189,9 +189,9 @@ tests:
     input_series:
       - series: 'up{job="alloy-metrics", cluster_id="golem", installation="golem", provider="capa", pipeline="testing"}'
         values: "_x60 1+0x60 0+0x60"
-      - series: 'capi_cluster_status_condition{type="ControlPlaneReady", status="True", name="golem", installation="golem", provider="capa", pipeline="testing"}'
+      - series: 'capi_cluster_status_condition{app="kube-state-metrics", type="ControlPlaneReady", status="True", name="golem", installation="golem", provider="capa", pipeline="testing"}'
         values: "1x180"
-      - series: 'capi_cluster_status_phase{phase="Deleting", name="golem", installation="golem", provider="capa", pipeline="testing"}'
+      - series: 'capi_cluster_status_phase{app="kube-state-metrics", phase="Deleting", name="golem", installation="golem", provider="capa", pipeline="testing"}'
         values: "0x150 1x30"
     alert_rule_test:
       - alertname: MonitoringAgentDown

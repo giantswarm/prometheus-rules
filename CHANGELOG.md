@@ -5,9 +5,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Chanded
+### Added
+
+- Add new alert `TracingAndEventAgentDown` to monitor alloy-event pods and page if any are down for 30 minutes.
+- Add new alert `OTLPExporterEnqueueFailures` and `OTLPTraceForwardingErrors` to page when the tracing pipeline is not working as expected.
+
+### Changed
 
 - better tests output
+
+### Removed
+
+- Remove `LogReceivingErrors` as we do not use the observability gateway anymore.
 
 ## [4.78.1] - 2025-10-22
 

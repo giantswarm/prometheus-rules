@@ -15,7 +15,9 @@ spec:
         description: '{{`KubeStateMetrics is down.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
       expr: |-
-        count by (cluster_id, installation, provider, pipeline) (label_replace(up{job="kube-state-metrics", instance=~".*:8080"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*")) == 0
+        count by (cluster_id, installation, provider, pipeline) (
+          up{job="kube-state-metrics", endpoint="http"}
+        ) == 0
         or (
           label_replace(
             capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
@@ -24,8 +26,9 @@ spec:
             "name",
             "(.*)"
           ) == 1
-        ) unless on (cluster_id) (
-          count(up{job="kube-state-metrics", instance=~".*:8080"} == 1) by (cluster_id)
+        )
+        unless on (cluster_id) (
+          count by (cluster_id) (up{job="kube-state-metrics", endpoint="http"} == 1)
         )
       for: 15m
       labels:
@@ -61,7 +64,7 @@ spec:
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
       expr: |-
         # When it looks up but we don't have metrics
-        count({job="kube-state-metrics", __name__=~"kube_.+"}) by (cluster_id, installation, provider, pipeline) <= 100
+        count({job="kube-state-metrics"}) by (cluster_id, installation, provider, pipeline) <= 100
       for: 20m
       labels:
         area: platform

@@ -14,7 +14,7 @@ spec:
       annotations:
         description: '{{`Flux deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", namespace=~"flux-giantswarm"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", namespace="flux-giantswarm"} > 0
       for: 30m
       labels:
         area: platform

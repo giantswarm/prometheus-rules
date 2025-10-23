@@ -10,10 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rename `PrometheusMissingGrafanaCloud` to `MimirToGrafanaCloudExporterMissingData`
 - Remove the `PrometheusRuleFailure` in favor of `MimirToGrafanaCloudExporterRuleEvaluationFailures` targetting only the Mimir to Grafana Cloud exporter.
 - Remove `MimirRulerEventsFailed` (based on an alloy metric that does not even exist) with `MimirRulerRulEvaluationFailures` for proper rule evaluation detection.
+- better tests output
 
 ### Removed
 
 - Remove `PrometheusCantCommunicateWithKubernetesAPI` as it is now unused.
+
+### Fixed
+
+- Fix the `MonitoringAgentDown` alert which is currently erroring on all installations because both kube-state-metrics and cluster-api-monitoring app provide the same metrics.
 
 ## [4.78.1] - 2025-10-22
 

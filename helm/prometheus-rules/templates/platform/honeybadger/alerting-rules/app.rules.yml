@@ -136,17 +136,6 @@ spec:
         severity: notify
         team: honeybadger
         topic: releng
-    - alert: CordonedAppExpired
-      annotations:
-        description: '{{`Cordoned app {{ $labels.name }} in {{ $labels.namespace}} is expired.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/expired-cordon-charts/
-      expr: (app_operator_app_cordon_expire_time_seconds - time()) < 0
-      for: 30m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
-        topic: releng
     - alert: AppExporterDown
       annotations:
         description: '{{`App-exporter ({{ $labels.instance }}) is down.`}}'

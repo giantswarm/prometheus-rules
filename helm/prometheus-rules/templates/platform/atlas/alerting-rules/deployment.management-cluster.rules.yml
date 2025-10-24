@@ -14,7 +14,7 @@ spec:
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"alertmanager.*|logging-operator.*|loki.*|mimir.*|object-storage.*|observability-gateway.*|observability-operator.*|prometheus.*|promxy.*|tempo.*|pyroscope.*|silence-operator.*|sloth.*"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"logging-operator.*|loki.*|mimir.*|object-storage.*|observability-operator.*|prometheus.*|tempo.*|pyroscope.*|silence-operator.*|sloth.*"} > 0
       for: 60m
       labels:
         area: platform

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- update test tools to latest versions
+- fix a few alerts to bass latest checks
 - better tests output
 - Improve `KubeStateMetricsDown` and `KubeStateMetricsNotRetrievingMetrics` alert efficiency.
 

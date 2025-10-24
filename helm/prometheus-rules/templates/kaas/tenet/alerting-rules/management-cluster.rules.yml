@@ -14,7 +14,7 @@ spec:
       annotations:
         description: '{{`Management cluster {{ $labels.cluster_id }} has less than 3 nodes.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/management-cluster-less-than-three-workers/
-      expr: sum(kubelet_node_name{cluster_type="management_cluster"} * on (cluster_id, node) kube_node_role{role="worker", cluster_type="management_cluster"}) by (cluster_id, installation, pipeline, provider) < 3
+      expr: sum(kubelet_node_name{cluster_type="management_cluster"} * on (cluster_id, installation, pipeline, provider, node) kube_node_role{role="worker", cluster_type="management_cluster"}) by (cluster_id, installation, pipeline, provider) < 3
       for: 1h
       labels:
         area: kaas

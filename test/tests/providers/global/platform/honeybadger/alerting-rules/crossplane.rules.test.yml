@@ -66,4 +66,4 @@ tests:
               topic: managementcluster
             exp_annotations:
               description: "Crossplane related deployment crossplane/caicloud-event-exporter is not satisfied."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION=gauss&CLUSTER=gauss&NAMESPACE=crossplane&KIND=deployment&NAME=crossplane
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION=gauss&CLUSTER=gauss&NAMESPACE=crossplane&KIND=deployment&NAME=caicloud-event-exporter

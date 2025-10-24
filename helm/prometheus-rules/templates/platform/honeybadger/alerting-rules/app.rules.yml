@@ -147,18 +147,6 @@ spec:
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         topic: releng
-    - alert: AppOperatorNotReady
-      annotations:
-        description: '{{`app CR version ({{ $labels.version }}) in namespace {{ $labels.namespace }} has no ready app-operator.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-operator-not-ready/
-      expr: app_operator_ready_total != 1
-      for: 15m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: honeybadger
-        topic: releng
     - alert: AppExporterDown
       annotations:
         description: '{{`App-exporter ({{ $labels.instance }}) is down.`}}'

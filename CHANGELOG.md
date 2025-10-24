@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix a few alerts to bass latest checks
 - better tests output
 - Improve `KubeStateMetricsDown` and `KubeStateMetricsNotRetrievingMetrics` alert efficiency.
+- Update runbook URL in several alerts referencing the "Deployment or StatefulSet not satisfied" runbook.
 
 ### Fixed
 

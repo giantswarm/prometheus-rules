@@ -34,7 +34,7 @@ tests:
               topic: managementcluster
             exp_annotations:
               description: "Crossplane related deployment crossplane/crossplane is not satisfied."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION=gauss&CLUSTER=gauss&NAMESPACE=crossplane&KIND=deployment&NAME=crossplane
   - interval: 1m
     input_series:
       - series: 'kube_deployment_status_replicas_unavailable{job="kube-state-metrics", cluster_id="gauss", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="caicloud-event-exporter", installation="gauss", instance="100.64.5.122:8080", namespace="crossplane", node="ip-10-0-5-119.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-95bbb4bd7-v6hvh", provider="capa", service_priority="highest"}'
@@ -66,4 +66,4 @@ tests:
               topic: managementcluster
             exp_annotations:
               description: "Crossplane related deployment crossplane/caicloud-event-exporter is not satisfied."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION=gauss&CLUSTER=gauss&NAMESPACE=crossplane&KIND=deployment&NAME=crossplane

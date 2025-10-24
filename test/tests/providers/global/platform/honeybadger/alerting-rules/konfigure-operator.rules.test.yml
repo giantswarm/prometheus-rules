@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'kube_deployment_status_replicas_unavailable{cluster_type="management_cluster",namespace="giantswarm",deployment="konfigure-operator"}'
+      - series: 'kube_deployment_status_replicas_unavailable{installation="exampleinstallation",cluster_id="examplecluster",cluster_type="management_cluster",namespace="giantswarm",deployment="konfigure-operator"}'
         values: '_x5 0x10 1x45 0x60'
     alert_rule_test:
       - alertname: KonfigureOperatorDeploymentNotSatisfied
@@ -15,15 +15,17 @@ tests:
               alertname: "KonfigureOperatorDeploymentNotSatisfied"
               area: "platform"
               cancel_if_outside_working_hours: "true"
+              cluster_id: "examplecluster"
               cluster_type: "management_cluster"
               deployment: "konfigure-operator"
+              installation: "exampleinstallation"
               namespace: "giantswarm"
               severity: "page"
               team: "honeybadger"
               topic: "managementcluster"
             exp_annotations:
               description: "Konfigure Operator deployment giantswarm/konfigure-operator is not satisfied."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION=exampleinstallation&CLUSTER=examplecluster&NAMESPACE=giantswarm&KIND=deployment&NAME=konfigure-operator
       - alertname: KonfigureOperatorDeploymentNotSatisfied
         eval_time: 100m
         exp_alerts: []

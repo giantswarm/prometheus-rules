@@ -13,7 +13,7 @@ spec:
     - alert: StatefulsetNotSatisfiedAtlas
       annotations:
         description: '{{`Statefulset {{ $labels.namespace}}/{{ $labels.statefulset }} is not satisfied.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=statefulset&NAME={{ $labels.statefulset }}`}}'
       expr: |-
         kube_statefulset_status_replicas{cluster_type="management_cluster", statefulset=~"loki.*|mimir.*|pyroscope.*|tempo.*"}
         - kube_statefulset_status_replicas_ready{cluster_type="management_cluster", statefulset=~"loki.*|mimir.*|pyroscope.*|tempo.*"}

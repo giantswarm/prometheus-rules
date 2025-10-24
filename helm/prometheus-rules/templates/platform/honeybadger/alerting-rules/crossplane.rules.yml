@@ -14,7 +14,7 @@ spec:
     - alert: CrossplaneDeploymentNotSatisfied
       annotations:
         description: '{{`Crossplane related deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", namespace="crossplane"} > 0
       for: 30m
       labels:

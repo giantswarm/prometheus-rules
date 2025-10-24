@@ -25,7 +25,7 @@ tests:
               topic: "releng"
             exp_annotations:
               description: "CrSync deployment crsync-giantswarm-azurecr-io is not satisfied in gazelle / operations at the crsync namespace."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION=gazelle&CLUSTER=operations&NAMESPACE=crsync&KIND=deployment&NAME=crsync-giantswarm-azurecr-io
   - interval: 1m
     input_series:
       - series: 'crsync_sync_tags_total{registry="quay.io", cluster_id="example", repository="giantswarm/example"}'

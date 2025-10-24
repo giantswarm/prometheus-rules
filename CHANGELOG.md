@@ -7,8 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Rename `PrometheusMissingGrafanaCloud` to `MimirToGrafanaCloudExporterMissingData`
+- Remove the `PrometheusRuleFailure` in favor of `MimirToGrafanaCloudExporterRuleEvaluationFailures` targetting only the Mimir to Grafana Cloud exporter.
+- Remove `MimirRulerEventsFailed` (based on an alloy metric that does not even exist) with `MimirRulerRulEvaluationFailures` for proper rule evaluation detection.
 - better tests output
 - Improve `KubeStateMetricsDown` and `KubeStateMetricsNotRetrievingMetrics` alert efficiency.
+
+### Removed
+
+- Remove `PrometheusCantCommunicateWithKubernetesAPI` as it is now unused.
 
 ### Fixed
 

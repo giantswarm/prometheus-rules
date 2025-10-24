@@ -10,11 +10,11 @@ spec:
   groups:
   - name: fluxcd-atlas
     rules:
-#
-# FluxKustomizationFailed
-#
-# Alerting for GiantSwarm management clusters silences Kustomization CRs.
-#
+    #
+    # FluxKustomizationFailed
+    #
+    # Alerting for GiantSwarm management clusters silences Kustomization CRs.
+    #
     - alert: FluxKustomizationFailed
       annotations:
         description: |-

@@ -83,34 +83,6 @@ tests:
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
   - interval: 1m
     input_series:
-      # test: none, rate > 0, rate = 0
-      - series: 'mimir_rules_events_failed_total{cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="mimir"}'
-        values: "_x20 1+1x80 0+0x70"
-    alert_rule_test:
-      - alertname: MimirRulerEventsFailed
-        eval_time: 40m
-      - alertname: MimirRulerEventsFailed
-        eval_time: 95m
-        exp_alerts:
-          - exp_labels:
-              area: platform
-              cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              cluster_type: management_cluster
-              installation: golem
-              namespace: mimir
-              severity: page
-              team: atlas
-              topic: observability
-            exp_annotations:
-              __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
-              dashboardQueryParams: "orgId=2"
-              description: "Mimir ruler is failing to process PrometheusRules."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
-      - alertname: MimirRulerEventsFailed
-        eval_time: 160m
-  - interval: 1m
-    input_series:
       - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container="mimir-ingester"}'
         values: "0+0x20 0+5x20 100+0x140" # 0 restarts after 20 minutes then we restart 5 times per minute for 20 minutes then we stop restarting for 140 minutes
       - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container="prometheus"}'

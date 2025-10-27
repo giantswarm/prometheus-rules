@@ -63,8 +63,8 @@ spec:
         description: '{{`KubeStateMetrics is not retrieving metrics.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
       expr: |-
-        # When it looks up but we don't have metrics
-        count({job="kube-state-metrics"}) by (cluster_id, installation, provider, pipeline) <= 100
+        # When it looks up but we don't have metrics. We ignore the SLO alert that can be present even after 30 days after the cluster is deleted.
+        count({job="kube-state-metrics", __name__!~"slo:.+"}) by (cluster_id, installation, provider, pipeline) <= 100
       for: 20m
       labels:
         area: platform

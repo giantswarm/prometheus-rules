@@ -7,9 +7,9 @@ tests:
   - interval: 1m
     input_series:
       # Test case 1: Low failure rate (below 10% threshold) - should not alert
-      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-otlp-exporter"}'
+      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+1x60 0+2x60 0+1x60"  # 180 minutes total
-      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-otlp-exporter"}'
+      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+20x60 0+20x60 0+20x60"  # Success rate high
     alert_rule_test:
       # Should not alert when failure rate is low
@@ -23,9 +23,9 @@ tests:
   # Test case 2: High failure rate (above 10% threshold) - should alert after 1h
   - interval: 1m
     input_series:
-      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-otlp-exporter"}'
+      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+15x180"  # High failure rate
-      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-otlp-exporter"}'
+      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+85x180"  # Lower success rate - results in ~15% failure rate
     alert_rule_test:
       # Should not alert immediately
@@ -45,7 +45,7 @@ tests:
               installation: golem
               provider: capa
               pipeline: testing
-              job: alloy-otlp-exporter
+              job: alloy-events
               severity: page
               team: atlas
               topic: observability
@@ -59,9 +59,9 @@ tests:
   # Test case 3: Exactly 10% failure rate (edge case) - should alert
   - interval: 1m
     input_series:
-      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-otlp-exporter"}'
+      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+10x180"  # Exactly 10% failure rate
-      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-otlp-exporter"}'
+      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+90x180"  # 90% success rate
     alert_rule_test:
       - alertname: OTLPTraceForwardingErrors
@@ -74,7 +74,7 @@ tests:
               installation: golem
               provider: capa
               pipeline: testing
-              job: alloy-otlp-exporter
+              job: alloy-events
               severity: page
               team: atlas
               topic: observability
@@ -88,9 +88,9 @@ tests:
   # Test case 4: No spans being sent at all - should not divide by zero
   - interval: 1m
     input_series:
-      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-otlp-exporter"}'
+      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+0x180"  # No failed spans
-      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-otlp-exporter"}'
+      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+0x180"  # No successful spans
     alert_rule_test:
       - alertname: OTLPTraceForwardingErrors
@@ -100,9 +100,9 @@ tests:
   # Test case 5: Recovery scenario for OTLPTraceForwardingErrors
   - interval: 1m
     input_series:
-      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-otlp-exporter"}'
+      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+15x60 0+15x60 0+1x60"  # High failure, then recovery
-      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-otlp-exporter"}'
+      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+85x60 0+85x60 0+99x60"  # Success rate improves
     alert_rule_test:
       # Should alert during high failure period
@@ -116,7 +116,7 @@ tests:
               installation: golem
               provider: capa
               pipeline: testing
-              job: alloy-otlp-exporter
+              job: alloy-events
               severity: page
               team: atlas
               topic: observability
@@ -134,7 +134,7 @@ tests:
   - interval: 1m
     input_series:
       # Test case 1: Low enqueue failure rate (below threshold) - should not alert
-      - series: 'otelcol_exporter_enqueue_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-otlp-exporter"}'
+      - series: 'otelcol_exporter_enqueue_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+50x180"  # 50 failures per minute = below 100 threshold per 5min
     alert_rule_test:
       # Should not alert when enqueue failures are low
@@ -148,7 +148,7 @@ tests:
   # Test case 2: High enqueue failure rate (above threshold) - should alert after 1h
   - interval: 1m
     input_series:
-      - series: 'otelcol_exporter_enqueue_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-otlp-exporter"}'
+      - series: 'otelcol_exporter_enqueue_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+6001x180" # 6001 failures per minute = above 100 threshold per second per 5min
     alert_rule_test:
       # Should not alert immediately
@@ -168,7 +168,7 @@ tests:
               installation: golem
               provider: capa
               pipeline: testing
-              job: alloy-otlp-exporter
+              job: alloy-events
               severity: page
               team: atlas
               topic: observability
@@ -182,7 +182,7 @@ tests:
   # Test case 3: Exactly 6000 enqueue failures per 5min (edge case) - should not alert
   - interval: 1m
     input_series:
-      - series: 'otelcol_exporter_enqueue_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-otlp-exporter"}'
+      - series: 'otelcol_exporter_enqueue_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+6000x180"  # Exactly 6000x180 failures per minute
     alert_rule_test:
       - alertname: OTLPExporterEnqueueFailures
@@ -191,7 +191,7 @@ tests:
   # Test case 4: Intermittent high enqueue failures - should alert only during high period
   - interval: 1m
     input_series:
-      - series: 'otelcol_exporter_enqueue_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-otlp-exporter"}'
+      - series: 'otelcol_exporter_enqueue_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+50x60 0+6001x80 0+50x60"  # Low, then high, then low again
     alert_rule_test:
       # Should not alert during low period
@@ -208,7 +208,7 @@ tests:
               installation: golem
               provider: capa
               pipeline: testing
-              job: alloy-otlp-exporter
+              job: alloy-events
               severity: page
               team: atlas
               topic: observability

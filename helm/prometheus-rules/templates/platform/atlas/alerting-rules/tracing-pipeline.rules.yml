@@ -21,11 +21,7 @@ spec:
             (
               rate(otelcol_exporter_send_failed_spans_total{job="alloy-events"}[5m])
               /
-              (
-                rate(otelcol_exporter_send_failed_spans_total{job="alloy-events"}[5m])
-                +
-                rate(otelcol_exporter_sent_spans_total{job="alloy-events"}[5m])
-              )
+              rate(otelcol_exporter_sent_spans_total{job="alloy-events"}[5m])
             ) * 100
             >= 10  # Trigger if failure rate exceeds 10%
           for: 1h

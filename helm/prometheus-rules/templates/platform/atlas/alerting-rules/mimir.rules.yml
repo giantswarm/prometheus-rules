@@ -57,20 +57,6 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    - alert: MimirRulerEventsFailed
-      annotations:
-        __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
-        dashboardQueryParams: "orgId=2"
-        description: 'Mimir ruler is failing to process PrometheusRules.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
-      expr: rate(mimir_rules_events_failed_total{cluster_type="management_cluster", namespace="mimir"}[5m]) > 0
-      for: 1h
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
     - alert: MimirIngesterNeedsToBeScaledUp
       annotations:
         description: 'Mimir ingester is consuming too much resources and needs to be scaled up.'
@@ -130,25 +116,6 @@ spec:
           kube_horizontalpodautoscaler_spec_target_metric{namespace="mimir"}
         )
       for: 30m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
-    - alert: MimirRulerTooManyFailedQueries
-      annotations:
-        __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
-        dashboardQueryParams: "orgId=2"
-        description: '{{`Mimir Ruler {{ $labels.pod }} is experiencing {{ printf "%.2f" $value }}% errors while evaluating rules.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
-      expr: |
-        100 * (
-        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_failed_total[5m]))
-          /
-        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_total[5m]))
-        ) > 1
-      for: 1h
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
@@ -342,6 +309,42 @@ spec:
       expr: |
         rate(cortex_alertmanager_state_replication_failed_total[2m]) > 0
       for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+  - name: mimir-ruler
+    rules:
+    - alert: MimirRulerTooManyFailedQueries
+      annotations:
+        __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
+        dashboardQueryParams: "orgId=2"
+        description: '{{`Mimir Ruler {{ $labels.pod }} is experiencing {{ printf "%.2f" $value }}% errors while evaluating rules.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
+      expr: |
+        100 * (
+        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_failed_total[5m]))
+          /
+        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_total[5m]))
+        ) > 1
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirRulerRuleEvaluationFailures
+      annotations:
+        __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
+        dashboardQueryParams: "orgId=2"
+        description: '{{`Mimir ruler {{ $labels.pod }} has failed to evaluate rule(s) {{ printf "%.2f" $value }} time(s).`}}'
+        summary: Mimir ruler is failing rule evaluations.
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-rule-failures/
+      expr: sum(increase(cortex_prometheus_rule_evaluation_failures_total[5m])) by (installation, cluster_id, pipeline, provider, namespace, pod, rule_group) > 0
+      for: 1h
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"

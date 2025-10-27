@@ -336,7 +336,7 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    - alert: MimirRulerRulEvaluationFailures
+    - alert: MimirRulerRuleEvaluationFailures
       annotations:
         __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
         dashboardQueryParams: "orgId=2"

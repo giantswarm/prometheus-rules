@@ -23,9 +23,9 @@ tests:
       # - 02:30 all is up again
       # - 03:00 we don't have enough metrics
       # - 03:30 all is up again
-      - series: 'up{job="kube-state-metrics", cluster_id="golem", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="http", installation="golem", instance="192.0.2.10:8080", namespace="kube-system", node="ip-10-0-1-1.eu-west-1.compute.internal", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-72vzx", provider="capa", region="eu-west-1", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
+      - series: 'up{job="kube-state-metrics", cluster_id="golem", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="http", installation="golem", namespace="kube-system", node="ip-10-0-1-1.eu-west-1.compute.internal", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-72vzx", provider="capa", region="eu-west-1", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
         values: "_x30 1x30 0x30 1x30 1x30 1x30 1x30 1x30"
-      - series: 'up{job="kube-state-metrics", cluster_id="golem", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="metrics", installation="golem", instance="192.0.2.10:8081", namespace="kube-system", node="ip-10-0-1-1.eu-west-1.compute.internal", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-72vzx", provider="capa", region="eu-west-1", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
+      - series: 'up{job="kube-state-metrics", cluster_id="golem", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="metrics", installation="golem", namespace="kube-system", node="ip-10-0-1-1.eu-west-1.compute.internal", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-72vzx", provider="capa", region="eu-west-1", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
         values: "_x30 1x30 1x30 1x30 0x30 1x30 1x30 1x30"
       - series: 'testmetric2{job="kube-state-metrics"}'
         values: "0x1000"
@@ -87,7 +87,7 @@ tests:
               provider: "capa"
               pipeline: "testing"
             exp_annotations:
-              description: "KubeStateMetrics () is down."
+              description: "KubeStateMetrics is down."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
       # - 01:30 All is up again
       - alertname: KubeStateMetricsDown
@@ -117,7 +117,7 @@ tests:
               provider: "capa"
               pipeline: "testing"
             exp_annotations:
-              description: "KubeStateMetrics () is down."
+              description: "KubeStateMetrics is down."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
       # - 03:30 all is up again
       - alertname: KubeStateMetricsDown

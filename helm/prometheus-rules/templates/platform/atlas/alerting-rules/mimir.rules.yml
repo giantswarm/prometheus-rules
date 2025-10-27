@@ -325,9 +325,9 @@ spec:
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       expr: |
         100 * (
-        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_failed_total[1m]))
+        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_failed_total[5m]))
           /
-        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_total[1m]))
+        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_total[5m]))
         ) > 1
       for: 1h
       labels:

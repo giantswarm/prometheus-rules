@@ -1,50 +1,71 @@
 {
+  // Base config - https://github.com/giantswarm/renovate-presets/blob/main/default.json5
   "extends": [
-    // Base config - https://github.com/giantswarm/renovate-presets/blob/main/default.json5
     "github>giantswarm/renovate-presets:default.json5"
   ],
-  "regexManagers": [
+  "customManagers": [
     {
+      "customType": "regex",
       "fileMatch": ["test/hack/bin/fetch-tools.sh"],
-      "matchStrings": ["ARCHITECT_VERSION=\"(?<currentValue>.*?)\""],
-      "depName": "giantswarm/architect",
-      "datasource": "github-releases"
+      "matchStrings": [
+        "ARCHITECT_VERSION=\"(?<currentValue>.*?)\""
+      ],
+      "depNameTemplate": "giantswarm/architect",
+      "datasourceTemplate": "github-releases"
     },
     {
+      "customType": "regex",
       "fileMatch": ["test/hack/bin/fetch-tools.sh"],
-      "matchStrings": ["HELM_VERSION=\"(?<currentValue>.*?)\""],
-      "depName": "helm/helm",
-      "datasource": "github-releases"
+      "matchStrings": [
+        "HELM_VERSION=\"(?<currentValue>.*?)\""
+      ],
+      "depNameTemplate": "helm/helm",
+      "datasourceTemplate": "github-releases"
     },
     {
+      "customType": "regex",
       "fileMatch": ["test/hack/bin/fetch-tools.sh"],
-      "matchStrings": ["JQ_VERSION=\"(?<currentValue>.*?)\""],
-      "depName": "jqlang/jq",
-      "datasource": "github-releases"
+      "matchStrings": [
+        "JQ_VERSION=\"(?<currentValue>.*?)\""
+      ],
+      "depNameTemplate": "jqlang/jq",
+      "datasourceTemplate": "github-releases"
     },
     {
+      "customType": "regex",
       "fileMatch": ["test/hack/bin/fetch-tools.sh"],
-      "matchStrings": ["LOKITOOL_VERSION=\"(?<currentValue>.*?)\""],
-      "depName": "grafana/loki",
-      "datasource": "github-releases"
+      "matchStrings": [
+        "LOKITOOL_VERSION=\"(?<currentValue>.*?)\""
+      ],
+      "depNameTemplate": "grafana/loki",
+      "datasourceTemplate": "github-releases"
     },
     {
+      "customType": "regex",
       "fileMatch": ["test/hack/bin/fetch-tools.sh"],
-      "matchStrings": ["PINT_VERSION=\"(?<currentValue>.*?)\""],
-      "depName": "cloudflare/pint",
-      "datasource": "github-releases"
+      "matchStrings": [
+        "PINT_VERSION=\"(?<currentValue>.*?)\""
+      ],
+      "depNameTemplate": "cloudflare/pint",
+      "datasourceTemplate": "github-releases"
     },
     {
+      "customType": "regex",
       "fileMatch": ["test/hack/bin/fetch-tools.sh"],
-      "matchStrings": ["PROMETHEUS_VERSION=\"(?<currentValue>.*?)\""],
-      "depName": "prometheus/prometheus",
-      "datasource": "github-releases"
+      "matchStrings": [
+        "PROMETHEUS_VERSION=\"(?<currentValue>.*?)\""
+      ],
+      "depNameTemplate": "prometheus/prometheus",
+      "datasourceTemplate": "github-releases"
     },
     {
+      "customType": "regex",
       "fileMatch": ["test/hack/bin/fetch-tools.sh"],
-      "matchStrings": ["YQ_VERSION=\"(?<currentValue>.*?)\""],
-      "depName": "mikefarah/yq",
-      "datasource": "github-releases"
+      "matchStrings": [
+        "YQ_VERSION=\"(?<currentValue>.*?)\""
+      ],
+      "depNameTemplate": "mikefarah/yq",
+      "datasourceTemplate": "github-releases"
     }
   ]
 }

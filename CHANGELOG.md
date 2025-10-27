@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.79.1] - 2025-10-27
+
 ### Fixed
 
 - Fix `KubeStateMetricsNotRetrievingMetrics` by ignoring SLO recording rules
@@ -3989,7 +3991,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.1...HEAD
+[4.79.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.0...v4.79.1
 [4.79.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.1...v4.79.0
 [4.78.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.0...v4.78.1
 [4.78.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.2...v4.78.0

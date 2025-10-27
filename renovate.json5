@@ -11,7 +11,8 @@
         "ARCHITECT_VERSION=\"(?<currentValue>.*?)\""
       ],
       "depNameTemplate": "giantswarm/architect",
-      "datasourceTemplate": "github-releases"
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
     },
     {
       "customType": "regex",
@@ -20,7 +21,8 @@
         "HELM_VERSION=\"(?<currentValue>.*?)\""
       ],
       "depNameTemplate": "helm/helm",
-      "datasourceTemplate": "github-releases"
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
     },
     {
       "customType": "regex",
@@ -29,7 +31,8 @@
         "JQ_VERSION=\"(?<currentValue>.*?)\""
       ],
       "depNameTemplate": "jqlang/jq",
-      "datasourceTemplate": "github-releases"
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
     },
     {
       "customType": "regex",
@@ -38,7 +41,8 @@
         "LOKITOOL_VERSION=\"(?<currentValue>.*?)\""
       ],
       "depNameTemplate": "grafana/loki",
-      "datasourceTemplate": "github-releases"
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
     },
     {
       "customType": "regex",
@@ -47,7 +51,8 @@
         "PINT_VERSION=\"(?<currentValue>.*?)\""
       ],
       "depNameTemplate": "cloudflare/pint",
-      "datasourceTemplate": "github-releases"
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
     },
     {
       "customType": "regex",
@@ -56,7 +61,8 @@
         "PROMETHEUS_VERSION=\"(?<currentValue>.*?)\""
       ],
       "depNameTemplate": "prometheus/prometheus",
-      "datasourceTemplate": "github-releases"
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
     },
     {
       "customType": "regex",
@@ -65,7 +71,8 @@
         "YQ_VERSION=\"(?<currentValue>.*?)\""
       ],
       "depNameTemplate": "mikefarah/yq",
-      "datasourceTemplate": "github-releases"
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
     }
   ]
 }

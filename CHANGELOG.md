@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `KubeStateMetricsNotRetrievingMetrics` by ignoring SLO recording rules
+
 ## [4.79.0] - 2025-10-27
 
 ### Added

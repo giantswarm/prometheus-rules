@@ -7,27 +7,11 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: grafana-cloud
-    rules:
-    ## Pages Atlas when prometheus fails to send samples to cortex
-    - alert: PrometheusMissingGrafanaCloud
-      annotations:
-        description: 'Prometheus is not sending data to Grafana Cloud.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-grafanacloud/
-      expr: absent(prometheus_remote_storage_samples_total{remote_name="grafana-cloud", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
-      for: 1h
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        cancel_if_metrics_broken: "true"
-        severity: page
-        team: atlas
-        topic: observability
   - name: mimir-to-grafana-cloud-exporter
     rules:
     - alert: MimirToGrafanaCloudExporterDown
       annotations:
-        description: '{{`Prometheus Mimir to Grafana-Cloud is down.`}}'
+        description: '{{`Prometheus mimir-to-grafana-cloud is down.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-grafana-cloud-exporter-failing/
         __dashboardUid__: iWowmlSmk
         dashboardQueryParams: "orgId=1&var-cluster=mimir-to-grafana-cloud"
@@ -41,9 +25,23 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    # Pages Atlas when the mimir-to-grafana-cloud exporter fails to send samples to Grafana Cloud for 1 hour.
+    - alert: MimirToGrafanaCloudExporterMissingData
+      annotations:
+        description: 'Prometheus mimir-to-grafana-cloud is not sending data to Grafana Cloud.'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-grafanacloud/
+      expr: absent(prometheus_remote_storage_samples_total{remote_name="grafana-cloud", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        cancel_if_metrics_broken: "true"
+        severity: page
+        team: atlas
+        topic: observability
     - alert: MimirToGrafanaCloudExporterFailures
       annotations:
-        description: '{{`Prometheus Mimir to Grafana-Cloud is failing to read or write data.`}}'
+        description: '{{`Prometheus mimir-to-grafana-cloud is failing to read or write data.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-grafana-cloud-exporter-failing/
         __dashboardUid__: promRW001
         dashboardQueryParams: "orgId=1"
@@ -71,7 +69,7 @@ spec:
         topic: observability
     - alert: MimirToGrafanaCloudExporterTooManyRestarts
       annotations:
-        description: '{{`Prometheus Mimir to Grafana-Cloud is restarting too much.`}}'
+        description: '{{`Prometheus mimir-to-grafana-cloud is restarting too much.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-grafana-cloud-exporter-failing/
         __dashboardUid__: promRW001
         dashboardQueryParams: "orgId=1"
@@ -84,3 +82,16 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: MimirToGrafanaCloudExporterRuleEvaluationFailures
+      annotations:
+        description: '{{`Prometheus mimir-to-grafana-cloud has failed to evaluate rule(s) {{ printf "%.2f" $value }} time(s).`}}'
+        summary: Prometheus is failing rule evaluations.
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-rule-failures/
+      expr: rate(prometheus_rule_evaluation_failures_total{job="mimir/mimir-to-grafana-cloud"}[5m]) > 0
+      for: 1h
+      labels:
+        area: platform
+        severity: page
+        team: atlas
+        topic: observability
+        cancel_if_outside_working_hours: "true"

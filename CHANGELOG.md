@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.79.0] - 2025-10-27
+
 ### Added
 
 - Add new alert `TracingAndEventAgentDown` to monitor alloy-event pods and page if any are down for 30 minutes.
@@ -3983,7 +3985,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.0...HEAD
+[4.79.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.1...v4.79.0
 [4.78.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.0...v4.78.1
 [4.78.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.2...v4.78.0
 [4.77.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.1...v4.77.2

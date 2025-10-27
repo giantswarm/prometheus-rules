@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add new alert `TracingAndEventAgentDown` to monitor alloy-event pods and page if any are down for 30 minutes.
+- Add new alert `OTLPExporterEnqueueFailures` and `OTLPTraceForwardingErrors` to page when the tracing pipeline is not working as expected.
+
 ### Changed
 
 - Rename `PrometheusMissingGrafanaCloud` to `MimirToGrafanaCloudExporterMissingData`
@@ -15,16 +20,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - better tests output
 - Improve `KubeStateMetricsDown` and `KubeStateMetricsNotRetrievingMetrics` alert efficiency.
 
-### Removed
-
-- Remove `PrometheusCantCommunicateWithKubernetesAPI` as it is now unused.
-
 ### Fixed
 
 - Fix the `MonitoringAgentDown` alert which is currently erroring on all installations because both kube-state-metrics and cluster-api-monitoring app provide the same metrics.
 
 ### Removed
 
+- Remove `LogReceivingErrors` as we do not use the observability gateway anymore.
+- Remove `PrometheusCantCommunicateWithKubernetesAPI` as it is now unused.
 - Remove `AppOperatorNotReady` alert.
 - Remove `CordonedAppExpired` alert.
 

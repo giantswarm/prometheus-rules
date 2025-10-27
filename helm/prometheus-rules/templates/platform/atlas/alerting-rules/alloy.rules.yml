@@ -68,6 +68,28 @@ spec:
             cancel_if_outside_working_hours: "true"
             cancel_if_node_unschedulable: "true"
             cancel_if_node_not_ready: "true"
+    - name: alloy.events
+      rules:
+        - alert: TracingAndEventAgentDown
+          annotations:
+            __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
+            dashboardQueryParams: "orgId=2"
+            description: '{{`Scraping of all tracing-and-event-agent pods to check if one failed every 30 minutes.`}}'
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
+          expr: |-
+            kube_pod_info{pod=~"alloy-events.*"}
+            * on(cluster_id, pod)
+              group_left ()
+              up{job="alloy-events", container="alloy"} == 0
+          for: 30m
+          labels:
+            area: platform
+            severity: page
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+            cancel_if_node_unschedulable: "true"
+            cancel_if_node_not_ready: "true"
     - name: alloy.metrics
       rules:
         # This alert pages if monitoring-agent fails to send samples to its remote write endpoint.

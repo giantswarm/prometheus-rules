@@ -1,0 +1,223 @@
+---
+rule_files:
+  - tracing-pipeline.rules.yml
+
+tests:
+  # Test OTLPTraceForwardingErrors
+  - interval: 1m
+    input_series:
+      # Test case 1: Low failure rate (below 10% threshold) - should not alert
+      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
+        values: "0+1x60 0+2x60 0+1x60"  # 180 minutes total
+      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
+        values: "0+20x60 0+20x60 0+20x60"  # Success rate high
+    alert_rule_test:
+      # Should not alert when failure rate is low
+      - alertname: OTLPTraceForwardingErrors
+        eval_time: 10m
+      - alertname: OTLPTraceForwardingErrors
+        eval_time: 30m
+      - alertname: OTLPTraceForwardingErrors
+        eval_time: 70m
+
+  # Test case 2: High failure rate (above 10% threshold) - should alert after 1h
+  - interval: 1m
+    input_series:
+      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
+        values: "0+15x180"  # High failure rate
+      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
+        values: "0+100x180"  # Lower success rate - results in ~15% failure rate
+    alert_rule_test:
+      # Should not alert immediately
+      - alertname: OTLPTraceForwardingErrors
+        eval_time: 30m
+      # Should not alert before 1h
+      - alertname: OTLPTraceForwardingErrors
+        eval_time: 59m
+      # Should alert after 1h
+      - alertname: OTLPTraceForwardingErrors
+        eval_time: 61m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: golem
+              installation: golem
+              provider: capa
+              pipeline: testing
+              job: alloy-events
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
+              dashboardQueryParams: "orgId=2"
+              description: "The Alloy OTLP exporter has failed to send 15.0% of spans over the last 5 minutes."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/
+              summary: Alloy OTLP exporter is failing to send spans.
+
+  # Test case 3: Exactly 10% failure rate (edge case) - should alert
+  - interval: 1m
+    input_series:
+      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
+        values: "0+10x180"  # Exactly 10% failure rate
+      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
+        values: "0+100x180"  # 90% success rate
+    alert_rule_test:
+      - alertname: OTLPTraceForwardingErrors
+        eval_time: 61m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: golem
+              installation: golem
+              provider: capa
+              pipeline: testing
+              job: alloy-events
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
+              dashboardQueryParams: "orgId=2"
+              description: "The Alloy OTLP exporter has failed to send 10.0% of spans over the last 5 minutes."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/
+              summary: Alloy OTLP exporter is failing to send spans.
+
+  # Test case 4: No spans being sent at all - should not divide by zero
+  - interval: 1m
+    input_series:
+      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
+        values: "0+0x180"  # No failed spans
+      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
+        values: "0+0x180"  # No successful spans
+    alert_rule_test:
+      - alertname: OTLPTraceForwardingErrors
+        eval_time: 61m
+
+
+  # Test case 5: Recovery scenario for OTLPTraceForwardingErrors
+  - interval: 1m
+    input_series:
+      - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
+        values: "0+15x60 0+15x60 0+1x60"  # High failure, then recovery
+      - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
+        values: "0+85x60 0+85x60 0+99x60"  # Success rate improves
+    alert_rule_test:
+      # Should alert during high failure period
+      - alertname: OTLPTraceForwardingErrors
+        eval_time: 61m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: golem
+              installation: golem
+              provider: capa
+              pipeline: testing
+              job: alloy-events
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
+              dashboardQueryParams: "orgId=2"
+              description: "The Alloy OTLP exporter has failed to send 17.6% of spans over the last 5 minutes."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/
+              summary: Alloy OTLP exporter is failing to send spans.
+      # Should resolve after recovery
+      - alertname: OTLPTraceForwardingErrors
+        eval_time: 180m
+
+  # Test OTLPExporterEnqueueFailures
+  - interval: 1m
+    input_series:
+      # Test case 1: Low enqueue failure rate (below threshold) - should not alert
+      - series: 'otelcol_exporter_enqueue_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
+        values: "0+50x180"  # 50 failures per minute = below 100 threshold per 5min
+    alert_rule_test:
+      # Should not alert when enqueue failures are low
+      - alertname: OTLPExporterEnqueueFailures
+        eval_time: 10m
+      - alertname: OTLPExporterEnqueueFailures
+        eval_time: 30m
+      - alertname: OTLPExporterEnqueueFailures
+        eval_time: 70m
+
+  # Test case 2: High enqueue failure rate (above threshold) - should alert after 1h
+  - interval: 1m
+    input_series:
+      - series: 'otelcol_exporter_enqueue_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
+        values: "0+6001x180" # 6001 failures per minute = above 100 threshold per second per 5min
+    alert_rule_test:
+      # Should not alert immediately
+      - alertname: OTLPExporterEnqueueFailures
+        eval_time: 30m
+      # Should not alert before 1h
+      - alertname: OTLPExporterEnqueueFailures
+        eval_time: 59m
+      # Should alert after 1h
+      - alertname: OTLPExporterEnqueueFailures
+        eval_time: 65m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: golem
+              installation: golem
+              provider: capa
+              pipeline: testing
+              job: alloy-events
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
+              dashboardQueryParams: "orgId=2"
+              description: "The Alloy OTLP exporter has failed to enqueue more than 100 spans per second on average over the last 5 minutes, indicating potential upstream issues."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/
+              summary: Alloy OTLP exporter enqueue failures exceed 100 spans/second over 5 minutes
+
+  # Test case 3: Exactly 6000 enqueue failures per 5min (edge case) - should not alert
+  - interval: 1m
+    input_series:
+      - series: 'otelcol_exporter_enqueue_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
+        values: "0+6000x180"  # Exactly 6000x180 failures per minute
+    alert_rule_test:
+      - alertname: OTLPExporterEnqueueFailures
+        eval_time: 65m
+
+  # Test case 4: Intermittent high enqueue failures - should alert only during high period
+  - interval: 1m
+    input_series:
+      - series: 'otelcol_exporter_enqueue_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
+        values: "0+50x60 0+6001x80 0+50x60"  # Low, then high, then low again
+    alert_rule_test:
+      # Should not alert during low period
+      - alertname: OTLPExporterEnqueueFailures
+        eval_time: 30m
+      # Should alert during high period after 1h
+      - alertname: OTLPExporterEnqueueFailures
+        eval_time: 130m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: golem
+              installation: golem
+              provider: capa
+              pipeline: testing
+              job: alloy-events
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
+              dashboardQueryParams: "orgId=2"
+              description: "The Alloy OTLP exporter has failed to enqueue more than 100 spans per second on average over the last 5 minutes, indicating potential upstream issues."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/
+              summary: Alloy OTLP exporter enqueue failures exceed 100 spans/second over 5 minutes
+      # Should resolve after failure rate drops
+      - alertname: OTLPExporterEnqueueFailures
+        eval_time: 180m

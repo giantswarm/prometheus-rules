@@ -26,7 +26,7 @@ tests:
       - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+15x180"  # High failure rate
       - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
-        values: "0+85x180"  # Lower success rate - results in ~15% failure rate
+        values: "0+100x180"  # Lower success rate - results in ~15% failure rate
     alert_rule_test:
       # Should not alert immediately
       - alertname: OTLPTraceForwardingErrors
@@ -62,7 +62,7 @@ tests:
       - series: 'otelcol_exporter_send_failed_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
         values: "0+10x180"  # Exactly 10% failure rate
       - series: 'otelcol_exporter_sent_spans_total{cluster_id="golem", installation="golem", provider="capa", pipeline="testing", job="alloy-events"}'
-        values: "0+90x180"  # 90% success rate
+        values: "0+100x180"  # 90% success rate
     alert_rule_test:
       - alertname: OTLPTraceForwardingErrors
         eval_time: 61m
@@ -123,7 +123,7 @@ tests:
             exp_annotations:
               __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
               dashboardQueryParams: "orgId=2"
-              description: "The Alloy OTLP exporter has failed to send 15.0% of spans over the last 5 minutes."
+              description: "The Alloy OTLP exporter has failed to send 17.6% of spans over the last 5 minutes."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/
               summary: Alloy OTLP exporter is failing to send spans.
       # Should resolve after recovery

@@ -5,6 +5,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Tenet - Removal of noisy notify alerts that don't require immediate action
+  - Remove `WorkloadClusterAPIServerAdmissionWebhookErrors` - Too noisy, webhook errors are often transient and don't require immediate intervention
+  - Remove `KubeletPLEGLatencyTooHigh` - High PLEG latency is common and doesn't typically indicate actionable issues
+  - Remove `KubeletDockerOperationsErrorsTooHigh` - Docker operation errors are often transient and don't require immediate action
+  - Remove `KubeletConditionBad` - Kubelet condition alerts are too noisy and rarely actionable
+  - Remove `CadvisorDown` - Cadvisor downtime is often temporary and doesn't require immediate response
+
 ## [4.79.1] - 2025-10-27
 
 ### Fixed

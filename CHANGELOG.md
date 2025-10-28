@@ -5,10 +5,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.79.1] - 2025-10-27
+
+### Fixed
+
+- Fix `KubeStateMetricsNotRetrievingMetrics` by ignoring SLO recording rules
+
+## [4.79.0] - 2025-10-27
+
+### Added
+
+- Add new alert `TracingAndEventAgentDown` to monitor alloy-event pods and page if any are down for 30 minutes.
+- Add new alert `OTLPExporterEnqueueFailures` and `OTLPTraceForwardingErrors` to page when the tracing pipeline is not working as expected.
+
 ### Changed
 
+- Rename `PrometheusMissingGrafanaCloud` to `MimirToGrafanaCloudExporterMissingData`
+- Remove the `PrometheusRuleFailure` in favor of `MimirToGrafanaCloudExporterRuleEvaluationFailures` targetting only the Mimir to Grafana Cloud exporter.
+- Remove `MimirRulerEventsFailed` (based on an alloy metric that does not even exist) with `MimirRulerRulEvaluationFailures` for proper rule evaluation detection.
 - update test tools to latest versions
-- fix a few alerts to bass latest checks
+- fix a few alerts to pass latest checks
 - better tests output
 - Improve `KubeStateMetricsDown` and `KubeStateMetricsNotRetrievingMetrics` alert efficiency.
 - Update runbook URL in several alerts referencing the "Deployment or StatefulSet not satisfied" runbook.
@@ -19,7 +35,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- Remove `LogReceivingErrors` as we do not use the observability gateway anymore.
+- Remove `PrometheusCantCommunicateWithKubernetesAPI` as it is now unused.
 - Remove `AppOperatorNotReady` alert.
+- Remove `CordonedAppExpired` alert.
 
 ## [4.78.1] - 2025-10-22
 
@@ -3973,7 +3992,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.1...HEAD
+[4.79.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.0...v4.79.1
+[4.79.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.1...v4.79.0
 [4.78.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.0...v4.78.1
 [4.78.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.2...v4.78.0
 [4.77.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.1...v4.77.2

@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add new alert `DexInvalidClientId`
+
 ## [4.79.1] - 2025-10-27
 
 ### Fixed

@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix alertmanager alerts to make them work with Mimir metric.
+
 ## [4.79.1] - 2025-10-27
 
 ### Fixed

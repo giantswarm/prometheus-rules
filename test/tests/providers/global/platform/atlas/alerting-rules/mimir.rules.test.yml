@@ -84,7 +84,7 @@ tests:
   - interval: 1m
     input_series:
       # test: none, rate > 0, rate = 0
-      - series: 'cortex_prometheus_rule_evaluation_failures_total{cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="mimir", pod="mimir-ruler-0", rule_group="test-group"}'
+      - series: 'cortex_prometheus_rule_evaluation_failures_total{cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="mimir"}'
         values: "_x20 1+1x100 0+0x70"
     alert_rule_test:
       - alertname: MimirRulerRuleEvaluationFailures
@@ -96,19 +96,17 @@ tests:
               area: platform
               cancel_if_outside_working_hours: "true"
               cluster_id: golem
+              cluster_type: management_cluster
               installation: golem
               namespace: mimir
-              pod: mimir-ruler-0
-              rule_group: test-group
               severity: page
               team: atlas
               topic: observability
             exp_annotations:
               __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
               dashboardQueryParams: "orgId=2"
-              description: "Mimir ruler mimir-ruler-0 has failed to evaluate rule(s) 5.00 time(s)."
-              summary: Mimir ruler is failing rule evaluations.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-rule-failures/
+              description: "Mimir ruler is failing to process PrometheusRules."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       - alertname: MimirRulerRuleEvaluationFailures
         eval_time: 160m
 
@@ -743,41 +741,3 @@ tests:
         eval_time: 180m
       - alertname:  MimirAlertmanagerAlertsFailing
         eval_time: 210m
-
-  # Test for MimirDistributorReachingInflightPushRequestLimit alert
-  - interval: 1m
-    input_series:
-      # mimir-distributor current inflight push requests: start low, then increase to 80 (80% of 100 limit) for over 1h, then back to normal
-      - series: 'cortex_distributor_inflight_push_requests{pod="mimir-distributor-0", cluster_id="golem", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
-        values: "10+0x60 80+0x80 50+0x60"
-      - series: 'cortex_distributor_inflight_push_requests{pod="mimir-distributor-1", cluster_id="golem", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
-        values: "15+0x60 80+0x80 55+0x60"
-      # mimir-distributor max inflight push requests limit: 100 for both pods
-      - series: 'cortex_distributor_instance_limits{limit="max_inflight_push_requests", pod="mimir-distributor-0", cluster_id="golem", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
-        values: "100+0x200"
-      - series: 'cortex_distributor_instance_limits{limit="max_inflight_push_requests", pod="mimir-distributor-1", cluster_id="golem", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
-        values: "100+0x200"
-    alert_rule_test:
-      - alertname: MimirDistributorReachingInflightPushRequestLimit
-        eval_time: 30m  # Low usage, should not fire
-      - alertname: MimirDistributorReachingInflightPushRequestLimit
-        eval_time: 90m  # At 80% threshold but not for 1h yet, should not fire
-      - alertname: MimirDistributorReachingInflightPushRequestLimit
-        eval_time: 121m  # At 80% threshold for over 1h, should fire
-        exp_alerts:
-          - exp_labels:
-              area: platform
-              cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              installation: golem
-              namespace: mimir
-              pipeline: testing
-              provider: $provider
-              severity: page
-              team: atlas
-              topic: observability
-            exp_annotations:
-              description: "Mimir distributors are approaching their inflight push request limit and may start rejecting requests."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
-      - alertname: MimirDistributorReachingInflightPushRequestLimit
-        eval_time: 180m  # Back to normal levels, should not fire

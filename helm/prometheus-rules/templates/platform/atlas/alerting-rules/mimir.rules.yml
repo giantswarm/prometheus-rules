@@ -144,24 +144,6 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    # This alert monitors when Mimir distributors are approaching their inflight push request limit.
-    # When distributors reach 80% of their maximum inflight push requests, it may indicate
-    # they are becoming overwhelmed and could start rejecting incoming requests.
-    - alert: MimirDistributorReachingInflightPushRequestLimit
-      annotations:
-        description: 'Mimir distributors are approaching their inflight push request limit and may start rejecting requests.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
-      expr: |
-        sum(max_over_time(cortex_distributor_inflight_push_requests{pod=~"mimir-distributor.*"}[5m])) by (cluster_id, installation, namespace, pipeline, provider)
-        >= 
-        sum(cortex_distributor_instance_limits{limit="max_inflight_push_requests", pod=~"mimir-distributor.*"}) by (cluster_id, installation, namespace, pipeline, provider) * 0.8
-      for: 1h
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
 
   - name: mimir.compactor
     rules:

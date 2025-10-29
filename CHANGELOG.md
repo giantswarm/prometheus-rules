@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add log-based alert `MimirDistributorMaxInflightPushRequests` to detect high rate of "err-mimir-distributor-max-inflight-push-requests" errors in Mimir distributors instead of the previous `MimirDistributorReachingInflightPushRequestLimit` alert.
 
+## [4.80.0] - 2025-10-29
+
 ### Fixed
 
 - Fix alertmanager alerts to make them work with Mimir metric.
@@ -4008,7 +4010,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.80.0...HEAD
+[4.80.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.1...v4.80.0
 [4.79.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.0...v4.79.1
 [4.79.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.1...v4.79.0
 [4.78.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.0...v4.78.1

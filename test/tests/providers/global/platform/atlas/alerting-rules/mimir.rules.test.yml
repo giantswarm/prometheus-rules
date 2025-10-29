@@ -585,7 +585,7 @@ tests:
             exp_annotations:
               __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
               dashboardQueryParams: "orgId=2"
-              description: "Mimir Ruler mimir-ruler-aaaaaaaaaa-bbbbb is experiencing 2.00% errors while evaluating rules."
+              description: "Mimir ruler mimir-ruler-aaaaaaaaaa-bbbbb is experiencing 2.00% errors while evaluating rules."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
 
   # Test for MimirAlertmanagerSyncConfigsFailing alert
@@ -614,7 +614,7 @@ tests:
             exp_annotations:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
-              description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to read tenant configurations from storage."
+              description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to read tenant configurations from storage."
               runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
 
   # Test for MimirAlertmanagerRingCheckFailing alert
@@ -643,7 +643,7 @@ tests:
             exp_annotations:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
-              description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is unable to check tenants ownership via the ring."
+              description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is unable to check tenants ownership via the ring."
               runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
 
   # Test for MimirAlertmanagerReplicationFailing alert
@@ -672,43 +672,74 @@ tests:
             exp_annotations:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
-              description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to replicating partial state to its replicas."
+              description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to replicating partial state to its replicas."
               runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
 
-  # Test for MimirDistributorReachingInflightPushRequestLimit alert
+  # Test for MimirAlertmanagerNotificationsFailing alert
   - interval: 1m
     input_series:
-      # mimir-distributor current inflight push requests: start low, then increase to 80 (80% of 100 limit) for over 1h, then back to normal
-      - series: 'cortex_distributor_inflight_push_requests{pod="mimir-distributor-0", cluster_id="golem", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
-        values: "10+0x60 80+0x80 50+0x60"
-      - series: 'cortex_distributor_inflight_push_requests{pod="mimir-distributor-1", cluster_id="golem", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
-        values: "15+0x60 80+0x80 55+0x60"
-      # mimir-distributor max inflight push requests limit: 100 for both pods
-      - series: 'cortex_distributor_instance_limits{limit="max_inflight_push_requests", pod="mimir-distributor-0", cluster_id="golem", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
-        values: "100+0x200"
-      - series: 'cortex_distributor_instance_limits{limit="max_inflight_push_requests", pod="mimir-distributor-1", cluster_id="golem", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
-        values: "100+0x200"
+      # after 1h, slack notification fails during 2h then works again (15m group_interval) => alert fires after 3 successive failures
+      - series: 'cortex_alertmanager_notifications_failed_total{integration="slack", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb"}'
+        values: "0x60 1+0x15 2+0x15 3+0x15 4+0x15 5+0x15 6+0x15 7+0x15 8+0x15 8+0x120"
+      # after 1h, slack notification fails 2 times during 30mn than works again => alert must not fires
+      - series: 'cortex_alertmanager_notifications_failed_total{integration="webhook", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb"}'
+        values: "0x60 1+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x120"
     alert_rule_test:
-      - alertname: MimirDistributorReachingInflightPushRequestLimit
-        eval_time: 30m  # Low usage, should not fire
-      - alertname: MimirDistributorReachingInflightPushRequestLimit
-        eval_time: 90m  # At 80% threshold but not for 1h yet, should not fire
-      - alertname: MimirDistributorReachingInflightPushRequestLimit
-        eval_time: 121m  # At 80% threshold for over 1h, should fire
+      - alertname:  MimirAlertmanagerNotificationsFailing
+        eval_time: 10m
+      - alertname:  MimirAlertmanagerNotificationsFailing
+        eval_time: 90m
+      - alertname:  MimirAlertmanagerNotificationsFailing
+        eval_time: 95m
+      - alertname:  MimirAlertmanagerNotificationsFailing
+        eval_time: 106m
         exp_alerts:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              installation: golem
-              namespace: mimir
-              pipeline: testing
-              provider: $provider
+              cluster_type: management_cluster
+              integration: slack
+              pod: mimir-alertmanager-aaaaaaaaaa-bbbbb
               severity: page
               team: atlas
               topic: observability
             exp_annotations:
-              description: "Mimir distributors are approaching their inflight push request limit and may start rejecting requests."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
-      - alertname: MimirDistributorReachingInflightPushRequestLimit
-        eval_time: 180m  # Back to normal levels, should not fire
+              __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
+              dashboardQueryParams: "orgId=2"
+              description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb: slack notifications are failing."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-alertmanager/
+      - alertname:  MimirAlertmanagerNotificationsFailing
+        eval_time: 240m
+
+  # Test for MimirAlertmanagerPagesFailing alert
+  - interval: 1m
+    input_series:
+      # after 1h, pagerduty notification fails during 45m then works again for 1h, finally fails 1 time (group_interval=15m)
+      # => alert fires after 2 successive failures only
+      - series: 'cortex_alertmanager_notifications_failed_total{integration="pagerduty", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb"}'
+        values: "0x60 1+0x15 2+0x15 2+0x15 2+0x60 3+0x15 3+0x60"
+    alert_rule_test:
+      - alertname:  MimirAlertmanagerAlertsFailing
+        eval_time: 10m
+      - alertname:  MimirAlertmanagerAlertsFailing
+        eval_time: 75m
+      - alertname:  MimirAlertmanagerAlertsFailing
+        eval_time: 91m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cluster_type: management_cluster
+              integration: pagerduty
+              pod: mimir-alertmanager-aaaaaaaaaa-bbbbb
+              severity: notify
+              team: atlas
+              topic: observability
+            exp_annotations:
+              __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
+              dashboardQueryParams: "orgId=2"
+              description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb: pagerduty alerts are failing."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-alertmanager/
+      - alertname:  MimirAlertmanagerAlertsFailing
+        eval_time: 180m
+      - alertname:  MimirAlertmanagerAlertsFailing
+        eval_time: 210m

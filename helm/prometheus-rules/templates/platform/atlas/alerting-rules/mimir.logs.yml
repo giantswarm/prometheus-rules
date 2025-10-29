@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4}}
+  name: mimir.logs.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+    - name: mimir-distributor
+      rules:
+        - alert: MimirDistributorMaxInflightPushRequests
+          annotations:
+            description: '{{`Mimir distributor is experiencing high rate of "err-mimir-distributor-max-inflight-push-requests" errors. Rate: {{ printf "%.2f" $value }} errors/second over the last 10 minutes.`}}'
+            summary: Mimir distributor max inflight push requests errors
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
+          expr: |-
+            sum(rate({service_name="distributor"} |= "err-mimir-distributor-max-inflight-push-requests" [10m])) by (cluster_id, installation, provider, pipeline, namespace) > 0.1
+          for: 15m
+          labels:
+            area: platform
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: atlas
+            topic: observability

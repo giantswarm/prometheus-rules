@@ -144,24 +144,7 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    # This alert monitors when Mimir distributors are approaching their inflight push request limit.
-    # When distributors reach 80% of their maximum inflight push requests, it may indicate
-    # they are becoming overwhelmed and could start rejecting incoming requests.
-    - alert: MimirDistributorReachingInflightPushRequestLimit
-      annotations:
-        description: 'Mimir distributors are approaching their inflight push request limit and may start rejecting requests.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
-      expr: |
-        sum(max_over_time(cortex_distributor_inflight_push_requests{pod=~"mimir-distributor.*"}[5m])) by (cluster_id, installation, namespace, pipeline, provider)
-        >= 
-        sum(cortex_distributor_instance_limits{limit="max_inflight_push_requests", pod=~"mimir-distributor.*"}) by (cluster_id, installation, namespace, pipeline, provider) * 0.8
-      for: 1h
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
+
   - name: mimir.compactor
     rules:
     - alert: MimirCompactorFailedCompaction
@@ -192,6 +175,7 @@ spec:
         severity: page
         team: atlas
         topic: observability
+
   - name: mimir.continuous-test
     rules:
     - alert: MimirContinuousTestFailingOnWrites
@@ -266,6 +250,7 @@ spec:
         severity: page
         team: atlas
         topic: observability
+
   # The following alerts are taken from upstream Mimir https://github.com/grafana/mimir/blob/59868b5e4ad5562a836e057a21c37b7e8067ae7d/operations/mimir-mixin-compiled/alerts.yaml#L617
   # Feel free to adapt as you see fit.
   - name: mimir-alertmanager
@@ -274,10 +259,9 @@ spec:
       annotations:
         __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
         dashboardQueryParams: "orgId=2"
-        description: '{{`Mimir Alertmanager {{ $labels.pod }} is failing to read tenant configurations from storage.`}}'
+        description: '{{`Mimir alertmanager {{ $labels.pod }} is failing to read tenant configurations from storage.`}}'
         runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
-      expr: |
-        rate(cortex_alertmanager_sync_configs_failed_total[5m]) > 0
+      expr: rate(cortex_alertmanager_sync_configs_failed_total[5m]) > 0
       for: 30m
       labels:
         area: platform
@@ -289,10 +273,9 @@ spec:
       annotations:
         __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
         dashboardQueryParams: "orgId=2"
-        description: '{{`Mimir Alertmanager {{ $labels.pod }} is unable to check tenants ownership via the ring.`}}'
+        description: '{{`Mimir alertmanager {{ $labels.pod }} is unable to check tenants ownership via the ring.`}}'
         runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
-      expr: |
-        rate(cortex_alertmanager_ring_check_errors_total[2m]) > 0
+      expr: rate(cortex_alertmanager_ring_check_errors_total[2m]) > 0
       for: 10m
       labels:
         area: platform
@@ -304,10 +287,9 @@ spec:
       annotations:
         __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
         dashboardQueryParams: "orgId=2"
-        description: '{{`Mimir Alertmanager {{ $labels.pod }} is failing to replicating partial state to its replicas.`}}'
+        description: '{{`Mimir alertmanager {{ $labels.pod }} is failing to replicating partial state to its replicas.`}}'
         runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
-      expr: |
-        rate(cortex_alertmanager_state_replication_failed_total[2m]) > 0
+      expr: rate(cortex_alertmanager_state_replication_failed_total[2m]) > 0
       for: 10m
       labels:
         area: platform
@@ -315,13 +297,47 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    - alert: MimirAlertmanagerNotificationsFailing
+      annotations:
+        __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
+        dashboardQueryParams: "orgId=2"
+        description: '{{`Mimir alertmanager {{ $labels.pod }}: {{ $labels.integration }} notifications are failing.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-alertmanager/
+      # TODO: Remove opsgenie
+      # Interval = 20m because currently Alertmanager config set `group_interval=15m` that means that if a notification fails, it will be retried after 15m
+      # so the counter will stay flat during this time.
+      # Here, we decide to page after 3 successive failures, so we need to wait 3*15m = 45m before paging.
+      expr: rate(cortex_alertmanager_notifications_failed_total{integration!~"pagerduty|opsgenie", cluster_type="management_cluster"}[20m]) > 0
+      for: 45m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirAlertmanagerAlertsFailing
+      annotations:
+        __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
+        dashboardQueryParams: "orgId=2"
+        description: '{{`Mimir alertmanager {{ $labels.pod }}: {{ $labels.integration }} alerts are failing.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-alertmanager/
+      # TODO: Remove opsgenie
+      # Here, we decide to notify after 2 successive failures (opsgenie or pagerduty notification), so we need to wait 2*15m = 30m before notifying.
+      expr: rate(cortex_alertmanager_notifications_failed_total{integration=~"pagerduty|opsgenie", cluster_type="management_cluster"}[20m]) > 0
+      for: 30m
+      labels:
+        area: platform
+        severity: notify
+        team: atlas
+        topic: observability
+
   - name: mimir-ruler
     rules:
     - alert: MimirRulerTooManyFailedQueries
       annotations:
         __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
         dashboardQueryParams: "orgId=2"
-        description: '{{`Mimir Ruler {{ $labels.pod }} is experiencing {{ printf "%.2f" $value }}% errors while evaluating rules.`}}'
+        description: '{{`Mimir ruler {{ $labels.pod }} is experiencing {{ printf "%.2f" $value }}% errors while evaluating rules.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
       expr: |
         100 * (

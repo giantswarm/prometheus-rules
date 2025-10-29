@@ -84,7 +84,7 @@ tests:
   - interval: 1m
     input_series:
       # test: none, rate > 0, rate = 0
-      - series: 'cortex_prometheus_rule_evaluation_failures_total{cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="mimir"}'
+      - series: 'cortex_prometheus_rule_evaluation_failures_total{cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="mimir", pod="mimir-ruler-0", rule_group="test-group"}'
         values: "_x20 1+1x100 0+0x70"
     alert_rule_test:
       - alertname: MimirRulerRuleEvaluationFailures
@@ -96,17 +96,19 @@ tests:
               area: platform
               cancel_if_outside_working_hours: "true"
               cluster_id: golem
-              cluster_type: management_cluster
               installation: golem
               namespace: mimir
+              pod: mimir-ruler-0
+              rule_group: test-group
               severity: page
               team: atlas
               topic: observability
             exp_annotations:
               __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
               dashboardQueryParams: "orgId=2"
-              description: "Mimir ruler is failing to process PrometheusRules."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
+              description: "Mimir ruler mimir-ruler-0 has failed to evaluate rule(s) 5.00 time(s)."
+              summary: Mimir ruler is failing rule evaluations.
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-rule-failures/
       - alertname: MimirRulerRuleEvaluationFailures
         eval_time: 160m
 

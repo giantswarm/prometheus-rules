@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix alertmanager alerts to make them work with Mimir metric.
+
 ### Removed
 
 - Tenet - Removal of noisy notify alerts that don't require immediate action

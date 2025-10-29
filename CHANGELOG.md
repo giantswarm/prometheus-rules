@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add log-based alert `MimirDistributorMaxInflightPushRequests` to detect high rate of "err-mimir-distributor-max-inflight-push-requests" errors in Mimir distributors instead of the previous `MimirDistributorReachingInflightPushRequestLimit` alert.
 
+### Changed
+
+- Update runbook URL for `ManagementClusterDeploymentMissingCAPA` and `ManagementClusterDeploymentMissingCAPI` alerts to point to the new runbook location with URL parameters for installation and cluster.
+
 ## [4.80.0] - 2025-10-29
 
 ### Fixed

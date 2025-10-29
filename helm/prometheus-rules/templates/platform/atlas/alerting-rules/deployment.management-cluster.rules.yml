@@ -13,7 +13,7 @@ spec:
     - alert: DeploymentNotSatisfiedAtlas
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"logging-operator.*|loki.*|mimir.*|object-storage.*|observability-operator.*|prometheus.*|tempo.*|pyroscope.*|silence-operator.*|sloth.*"} > 0
       for: 60m
       labels:
@@ -25,7 +25,7 @@ spec:
     - alert: DeploymentNotSatisfiedHoneybadger
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"app-admission-controller-.+|app-operator-.+|chart-operator-.+", cluster_id!~"argali|giraffe"} > 0
       for: 30m
       labels:
@@ -37,7 +37,7 @@ spec:
     - alert: DeploymentNotSatisfiedChinaHoneybadger
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"app-admission-controller-.+|app-operator-.+|chart-operator-.+", cluster_id=~"argali|giraffe"} > 0
       for: 3h
       labels:
@@ -49,7 +49,7 @@ spec:
     - alert: DeploymentNotSatisfiedShield
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"kyverno.*"} > 0
       for: 30m
       labels:
@@ -61,7 +61,7 @@ spec:
     - alert: DeploymentNotSatisfiedKaas
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator-.*|cluster-operator-.*|cluster-api-core-webhook.*|event-exporter-.*|upgrade-schedule-operator.*|event-exporter-app.*|etcd-kubernetes-resources-count-exporter.*", cluster_id!~"argali|giraffe"}, "service", "/", "namespace", "deployment") > 0
       for: 30m
       labels:
@@ -73,7 +73,7 @@ spec:
     - alert: DeploymentNotSatisfiedChinaKaas
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: label_join(kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"aws-admission-controller.*|aws-operator-.*|cluster-operator-.*|cluster-api-core-webhook.*|event-exporter-.*|upgrade-schedule-operator.*|event-exporter-app.*|etcd-kubernetes-resources-count-exporter.*", cluster_id=~"argali|giraffe"}, "service", "/", "namespace", "deployment") > 0
       for: 3h
       labels:
@@ -85,7 +85,7 @@ spec:
     - alert: DeploymentNotSatisfiedCabbage
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"(ingress-nginx|nginx-ingress-controller|external-dns|coredns|kong)-.+", cluster_id!~"argali|giraffe"} > 0
       for: 30m
       labels:
@@ -97,7 +97,7 @@ spec:
     - alert: DeploymentNotSatisfiedChinaCabbage
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"(ingress-nginx|nginx-ingress-controller|external-dns|coredns|kong)-.+", cluster_id=~"argali|giraffe"} > 0
       for: 3h
       labels:
@@ -109,7 +109,7 @@ spec:
     - alert: DeploymentNotSatisfiedShield
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbook/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", deployment=~"cert-manager-*|teleport-.*|dex*|athena*|rbac-operator|credentiald"} > 0
       for: 30m
       labels:

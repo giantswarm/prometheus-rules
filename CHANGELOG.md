@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix `MimirAlertmanagerNotificationsFailing` alert to 
+- Fix `MimirAlertmanagerNotificationsFailing` and `MimirAlertmanagerAlertsFailing` alerts to only page for giantswarm tenants.
 
 ## [4.80.0] - 2025-10-29
 

@@ -303,11 +303,11 @@ spec:
         dashboardQueryParams: "orgId=2"
         description: '{{`Mimir alertmanager {{ $labels.pod }}: {{ $labels.integration }} notifications are failing.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-alertmanager/
-      # TODO: Remove opsgenie
-      # Interval = 20m because currently Alertmanager config set `group_interval=15m` that means that if a notification fails, it will be retried after 15m
-      # so the counter will stay flat during this time.
-      # Here, we decide to page after 3 successive failures, so we need to wait 3*15m = 45m before paging.
-      expr: rate(cortex_alertmanager_notifications_failed_total{integration!~"pagerduty|opsgenie", cluster_type="management_cluster"}[20m]) > 0
+      # TODO: Remove opsgenie from integration matching once fully deprecated.
+      # This alert pages after 3 consecutive notification failures for non-pagerduty/non-opsgenie integrations.
+      # The 45m 'for' duration matches 3 Alertmanager group intervals (15m each), ensuring we only page if failures persist across three intervals.
+      # The alert is restricted to the 'giantswarm' tenant to avoid paging for customer-related issues.
+      expr: rate(cortex_alertmanager_notifications_failed_total{integration!~"pagerduty|opsgenie", cluster_type="management_cluster", user="giantswarm"}[20m]) > 0
       for: 45m
       labels:
         area: platform
@@ -321,9 +321,11 @@ spec:
         dashboardQueryParams: "orgId=2"
         description: '{{`Mimir alertmanager {{ $labels.pod }}: {{ $labels.integration }} alerts are failing.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-alertmanager/
-      # TODO: Remove opsgenie
-      # Here, we decide to notify after 2 successive failures (opsgenie or pagerduty notification), so we need to wait 2*15m = 30m before notifying.
-      expr: rate(cortex_alertmanager_notifications_failed_total{integration=~"pagerduty|opsgenie", cluster_type="management_cluster"}[20m]) > 0
+      # TODO: Remove opsgenie from integration matching once fully deprecated.
+      # This alert notifies after 2 consecutive notification failures for either opsgenie or pagerduty integrations.
+      # The 30m 'for' duration matches 2 Alertmanager group intervals (15m each), ensuring we only notify if failures persist across two intervals.
+      # The alert is restricted to the 'giantswarm' tenant to avoid paging for customer-related issues.
+      expr: rate(cortex_alertmanager_notifications_failed_total{integration=~"pagerduty|opsgenie", cluster_type="management_cluster", user="giantswarm"}[20m]) > 0
       for: 30m
       labels:
         area: platform

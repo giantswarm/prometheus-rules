@@ -669,7 +669,6 @@ tests:
               severity: page
               team: atlas
               topic: observability
-              user: giantswarm
             exp_annotations:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
@@ -736,6 +735,7 @@ tests:
               severity: notify
               team: atlas
               topic: observability
+              user: giantswarm
             exp_annotations:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"

@@ -28,4 +28,4 @@ tests:
               topic: "releng"
             exp_annotations:
               description: "Flux Kustomization silences in ns flux-giantswarm on test/test is stuck in Failed state."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-kustomization/"
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-kustomization-failed/?INSTALLATION=test&CLUSTER=test&NAMESPACE=flux-giantswarm&KUSTOMIZATION_NAME=silences"

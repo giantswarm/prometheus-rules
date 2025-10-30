@@ -45,7 +45,7 @@ spec:
     - alert: ManagementClusterDeploymentMissingCAPA
       annotations:
         description: '{{`Deployment {{ $labels.deployment }} is missing.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/management-cluster-deployment-is-missing/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mc-deployment-missing/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-resolver-rules-operator", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
           or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-vpc-operator", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
@@ -67,7 +67,7 @@ spec:
         description: '{{`The {{ $labels.controller }} in CAPA is reconciling too frequently.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capa-too-many-reconciliations/
       # Computes the absolute number of reconciliation loops over the past 10 minutes (600 seconds). Fires as soon as that count exceeds 1000. 1.667 reconciliations/second on average.
-      expr: increase(controller_runtime_reconcile_total{app="cluster-api-provider-aws"}[10m]) > 1000
+      expr: increase(controller_runtime_reconcile_total{app="cluster-api-provider-aws"}[10m]) > 1500
       for: 15m
       labels:
         area: kaas

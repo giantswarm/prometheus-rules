@@ -26,19 +26,6 @@ spec:
         team: tenet
         topic: kubernetes
 
-    - alert: WorkloadClusterAPIServerAdmissionWebhookErrors
-      annotations:
-        description: '{{`Kubernetes API Server {{ $labels.cluster_id }} having admission webhook errors (webhook: {{ $labels.name }}).`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/apiserver-admission-webhook-errors/
-      expr: rate(apiserver_admission_webhook_rejection_count{cluster_type="workload_cluster",error_type=~"calling_webhook_error|apiserver_internal_error",name!~"validate\\.kyverno\\.svc-fail|mutate\\.kyverno\\.svc-fail|validations\\.kong\\.konghq\\.com"}[5m]) > 0
-      for: 5m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
-        team: tenet
-        topic: kubernetes
-
     # Webhooks that are not explicitely owner by any team (customer owned ones).
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutSolutionEngineers
       annotations:

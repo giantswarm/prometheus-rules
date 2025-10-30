@@ -5,9 +5,96 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add log-based alert `MimirDistributorMaxInflightPushRequests` to detect high rate of "err-mimir-distributor-max-inflight-push-requests" errors in Mimir distributors instead of the previous `MimirDistributorReachingInflightPushRequestLimit` alert.
+
 ### Changed
 
+- Update runbook URL for `ManagementClusterDeploymentMissingCAPA` and `ManagementClusterDeploymentMissingCAPI` alerts to point to the new runbook location with URL parameters for installation and cluster.
 - Update `AppOperatorNotReady` alert runbook URL to point to new runbook location with variable templating.
+
+## [4.80.0] - 2025-10-29
+
+### Fixed
+
+- Fix alertmanager alerts to make them work with Mimir metric.
+
+### Removed
+
+- Tenet - Removal of noisy notify alerts that don't require immediate action
+  - Remove `WorkloadClusterAPIServerAdmissionWebhookErrors` - Too noisy, webhook errors are often transient and don't require immediate intervention
+  - Remove `KubeletPLEGLatencyTooHigh` - High PLEG latency is common and doesn't typically indicate actionable issues
+  - Remove `KubeletDockerOperationsErrorsTooHigh` - Docker operation errors are often transient and don't require immediate action
+  - Remove `KubeletConditionBad` - Kubelet condition alerts are too noisy and rarely actionable
+  - Remove `CadvisorDown` - Cadvisor downtime is often temporary and doesn't require immediate response
+
+## [4.79.1] - 2025-10-27
+
+### Fixed
+
+- Fix `KubeStateMetricsNotRetrievingMetrics` by ignoring SLO recording rules
+
+## [4.79.0] - 2025-10-27
+
+### Added
+
+- Add new alert `TracingAndEventAgentDown` to monitor alloy-event pods and page if any are down for 30 minutes.
+- Add new alert `OTLPExporterEnqueueFailures` and `OTLPTraceForwardingErrors` to page when the tracing pipeline is not working as expected.
+
+### Changed
+
+- Rename `PrometheusMissingGrafanaCloud` to `MimirToGrafanaCloudExporterMissingData`
+- Remove the `PrometheusRuleFailure` in favor of `MimirToGrafanaCloudExporterRuleEvaluationFailures` targetting only the Mimir to Grafana Cloud exporter.
+- Remove `MimirRulerEventsFailed` (based on an alloy metric that does not even exist) with `MimirRulerRulEvaluationFailures` for proper rule evaluation detection.
+- update test tools to latest versions
+- fix a few alerts to pass latest checks
+- better tests output
+- Improve `KubeStateMetricsDown` and `KubeStateMetricsNotRetrievingMetrics` alert efficiency.
+- Update runbook URL in several alerts referencing the "Deployment or StatefulSet not satisfied" runbook.
+
+### Fixed
+
+- Fix the `MonitoringAgentDown` alert which is currently erroring on all installations because both kube-state-metrics and cluster-api-monitoring app provide the same metrics.
+
+### Removed
+
+- Remove `LogReceivingErrors` as we do not use the observability gateway anymore.
+- Remove `PrometheusCantCommunicateWithKubernetesAPI` as it is now unused.
+- Remove `AppOperatorNotReady` alert.
+- Remove `CordonedAppExpired` alert.
+
+## [4.78.1] - 2025-10-22
+
+### Fixed
+
+- Fix `GrafanaPostgresqlRecoveryTestFailed` by relying on the new `kube_cnpg_cluster_info` metric introduced in kube-state-metrics (https://github.com/giantswarm/observability-bundle/pull/340)
+
+## [4.78.0] - 2025-10-21
+
+### Changed
+
+- Update app failure alerts to point to new runbook with variables (`ManagementClusterAppFailed`, `WorkloadClusterAppFailed`, `WorkloadClusterAppNotInstalled`)
+- Update `AppWithoutTeamAnnotation` alert runbook URL to point to migrated runbook
+- Update `ClusterCrossplaneResourcesNotReady` alert runbook URL to point to migrated runbook with templated variables
+- Update `ManagementClusterAppPendingUpdate`, `WorkloadClusterAppPendingUpdate`, and `ClusterUpgradeStuck` alert runbook URLs to point to migrated runbook with templated variables
+- Update `FluxSourceFailed` and `FluxWorkloadClusterSourceFailed` alert runbook URLs to point to migrated runbook with templated variables
+- Update `ChartOperatorDown` alert runbook URL to point to migrated runbook with templated variables
+- Update `FluxKustomizationFailed` and `FluxWorkloadClusterKustomizationFailed` alert runbook URLs to point to migrated runbook with templated variables
+- Update `FluxHelmReleaseFailed` and `FluxWorkloadClusterHelmReleaseFailed` alert runbook URLs to point to migrated runbook with templated variables
+- Adjust `PodsUnschedulable` alert trigger time: Pods have to be more than 10 minutes Pending for the alert to trigger
+- Update `FluxReconciliationLongErrorBudgetLow` alert runbook URL to point to migrated runbook with templated installation and cluster variables
+- Update `FluxSuspendedForTooLong` alert runbook URL to point to migrated runbook with templated installation and cluster variables
+- Update `FluxWorkqueueTooLong` alert runbook URL to point to migrated runbook with templated installation and cluster variables
+- Update `CapaTooManyReconciliations` alert with higher threshold from 1000 to 1500
+
+### Added
+
+- Add `TeleportKubeAgentInstancesNotReady` and `TeleportKubeAgentZeroReadyReplicas` alerts.
+
+### Changed
+
+- Update `ChartOrphanConfigMap` alert runbook URL to point to new runbook location with templated installation and cluster variables.
 
 ## [4.77.2] - 2025-10-09
 
@@ -3929,7 +4016,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.80.0...HEAD
+[4.80.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.1...v4.80.0
+[4.79.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.0...v4.79.1
+[4.79.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.1...v4.79.0
+[4.78.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.0...v4.78.1
+[4.78.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.2...v4.78.0
 [4.77.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.1...v4.77.2
 [4.77.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.0...v4.77.1
 [4.77.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.76.0...v4.77.0

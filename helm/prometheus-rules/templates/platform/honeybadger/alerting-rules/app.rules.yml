@@ -25,7 +25,7 @@ spec:
     - alert: ManagementClusterAppFailed
       annotations:
         description: '{{`Management Cluster App {{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-failures/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&APP={{ $labels.name }}`}}'
       expr: app_operator_app_info{status!~"(?i:(deployed|cordoned))", catalog=~"(control-plane-.*|default)",team!~"^$|noteam", namespace=~".*giantswarm"} == 1
       for: 30m
       labels:
@@ -38,7 +38,7 @@ spec:
     - alert: ManagementClusterAppPendingUpdate
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-pending-update/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-pending-update/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&APP={{ $labels.name }}`}}'
       expr: app_operator_app_info{catalog=~"(control-plane-.*|default)", deployed_version!="", status="deployed", version_mismatch="true", team!~"^$|noteam", namespace=~".*giantswarm"} == 1
       for: 40m
       labels:
@@ -50,7 +50,7 @@ spec:
     - alert: WorkloadClusterAppFailed
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-failures/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}&APP={{ $labels.name }}`}}'
       expr: |-
         (
           app_operator_app_info{status!~"(?i:(deployed|cordoned|not-installed))", catalog=~"giantswarm|cluster|default", team!~"^$|noteam"}
@@ -73,7 +73,7 @@ spec:
     - alert: WorkloadClusterAppNotInstalled
       annotations:
         description: '{{`Workload Cluster App {{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}/{{ $labels.name }}, version {{ $labels.version }} is {{if $labels.status }} in {{ $labels.status }} state. {{else}} not installed. {{end}}`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-failed/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-failures/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ if $labels.exported_namespace }}{{ $labels.exported_namespace }}{{ else }}{{ $labels.namespace }}{{ end }}&APP={{ $labels.name }}`}}'
       expr: |-
         (
           app_operator_app_info{status="not-installed", catalog=~"giantswarm|cluster|default", team!~"^$|noteam"}
@@ -96,7 +96,7 @@ spec:
     - alert: WorkloadClusterAppPendingUpdate
       annotations:
         description: 'Current version of {{`App {{ $labels.name }} is {{ $labels.deployed_version }} but it should be {{ $labels.version }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-pending-update/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-pending-update/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&APP={{ $labels.name }}`}}'
       expr: |-
         (
           app_operator_app_info{catalog=~"giantswarm|cluster|default", deployed_version!="", status="deployed", version_mismatch="true" ,team!~"^$|noteam"}
@@ -117,7 +117,7 @@ spec:
     - alert: AppWithoutTeamAnnotation
       annotations:
         description: '{{`App {{ $labels.name }} has no team label.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-without-team-annotation/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-team-annotation/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&APP={{ $labels.name }}`}}'
       expr: |-
         (
           app_operator_app_info{app!~"api-spec(-app)?", team=~"^$|noteam", catalog=~"giantswarm.*|control-plane(-test)?-catalog|cluster(-test)?|default(-test)?|releases(-test)?"}
@@ -135,17 +135,6 @@ spec:
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: honeybadger
-        topic: releng
-    - alert: CordonedAppExpired
-      annotations:
-        description: '{{`Cordoned app {{ $labels.name }} in {{ $labels.namespace}} is expired.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/expired-cordon-charts/
-      expr: (app_operator_app_cordon_expire_time_seconds - time()) < 0
-      for: 30m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
         topic: releng
     - alert: AppOperatorNotReady
       annotations:
@@ -175,7 +164,7 @@ spec:
     - alert: ClusterUpgradeStuck
       annotations:
         description: '{{`Cluster upgrade for {{ $labels.app }} is stuck. Version mismatch detected for {{ $labels.name }} in namespace {{ $labels.namespace }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/app-pending-update/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-pending-update/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&APP={{ $labels.name }}`}}'
       expr: |-
         (
           app_operator_app_info{catalog="cluster", app=~"cluster-.*", version_mismatch="true", status="already-exists"}

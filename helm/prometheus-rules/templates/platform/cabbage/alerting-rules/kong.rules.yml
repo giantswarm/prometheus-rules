@@ -13,7 +13,7 @@ spec:
     - alert: KongNonProdDeploymentNotSatisfied
       annotations:
         description: '{{`Kong Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: managed_app_deployment_status_replicas_available{managed_app=~"kong.*", cluster_id!~"p.*"} / (managed_app_deployment_status_replicas_available{managed_app=~"kong.*", cluster_id!~"p.*"} + managed_app_deployment_status_replicas_unavailable{managed_app=~"kong.*", cluster_id!~"p.*"}) < 0.6
       for: 30m
       labels:
@@ -25,7 +25,7 @@ spec:
     - alert: KongProductionDeploymentNotSatisfied
       annotations:
         description: '{{`Kong Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: managed_app_deployment_status_replicas_available{managed_app=~"kong.*", cluster_id=~"p.*"} / (managed_app_deployment_status_replicas_available{managed_app=~"kong.*", cluster_id=~"p.*"} + managed_app_deployment_status_replicas_unavailable{managed_app=~"kong.*", cluster_id=~"p.*"}) < 0.6
       for: 30m
       labels:

@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update runbook URL for `ManagementClusterDeploymentMissingCAPA` and `ManagementClusterDeploymentMissingCAPI` alerts to point to the new runbook location with URL parameters for installation and cluster.
 
+### Fixed
+
+- Fix `MimirAlertmanagerNotificationsFailing` alert to 
+
 ## [4.80.0] - 2025-10-29
 
 ### Fixed

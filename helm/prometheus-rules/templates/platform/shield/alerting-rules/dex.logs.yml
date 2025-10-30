@@ -20,5 +20,5 @@ spec:
             area: kaas
             cancel_if_outside_working_hours: "true"
             severity: page
-            team: atlas
-            topic: observability
+            team: shield
+            topic: dex

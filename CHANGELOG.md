@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.81.0] - 2025-10-30
+
 ### Added
 
 - Add new alert `DexInvalidClientId`
@@ -13,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update runbook URL for `ManagementClusterDeploymentMissingCAPA` and `ManagementClusterDeploymentMissingCAPI` alerts to point to the new runbook location with URL parameters for installation and cluster.
+
+### Fixed
+
+- Fix `MimirAlertmanagerNotificationsFailing` and `MimirAlertmanagerAlertsFailing` alerts to only page for giantswarm tenants.
 
 ## [4.80.0] - 2025-10-29
 
@@ -4016,7 +4022,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.80.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.81.0...HEAD
+[4.81.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.80.0...v4.81.0
 [4.80.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.1...v4.80.0
 [4.79.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.0...v4.79.1
 [4.79.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.1...v4.79.0

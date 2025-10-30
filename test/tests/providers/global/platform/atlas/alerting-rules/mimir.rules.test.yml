@@ -679,10 +679,10 @@ tests:
   - interval: 1m
     input_series:
       # after 1h, slack notification fails during 2h then works again (15m group_interval) => alert fires after 3 successive failures
-      - series: 'cortex_alertmanager_notifications_failed_total{integration="slack", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb"}'
+      - series: 'cortex_alertmanager_notifications_failed_total{integration="slack", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb", user="giantswarm"}'
         values: "0x60 1+0x15 2+0x15 3+0x15 4+0x15 5+0x15 6+0x15 7+0x15 8+0x15 8+0x120"
       # after 1h, slack notification fails 2 times during 30mn than works again => alert must not fires
-      - series: 'cortex_alertmanager_notifications_failed_total{integration="webhook", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb"}'
+      - series: 'cortex_alertmanager_notifications_failed_total{integration="webhook", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb", user="giantswarm"}'
         values: "0x60 1+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x120"
     alert_rule_test:
       - alertname:  MimirAlertmanagerNotificationsFailing
@@ -703,6 +703,7 @@ tests:
               severity: page
               team: atlas
               topic: observability
+              user: giantswarm
             exp_annotations:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
@@ -716,7 +717,7 @@ tests:
     input_series:
       # after 1h, pagerduty notification fails during 45m then works again for 1h, finally fails 1 time (group_interval=15m)
       # => alert fires after 2 successive failures only
-      - series: 'cortex_alertmanager_notifications_failed_total{integration="pagerduty", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb"}'
+      - series: 'cortex_alertmanager_notifications_failed_total{integration="pagerduty", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb", user="giantswarm"}'
         values: "0x60 1+0x15 2+0x15 2+0x15 2+0x60 3+0x15 3+0x60"
     alert_rule_test:
       - alertname:  MimirAlertmanagerAlertsFailing
@@ -734,6 +735,7 @@ tests:
               severity: notify
               team: atlas
               topic: observability
+              user: giantswarm
             exp_annotations:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"

@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update runbook URL for `ManagementClusterDeploymentMissingCAPA` and `ManagementClusterDeploymentMissingCAPI` alerts to point to the new runbook location with URL parameters for installation and cluster.
+-Update alert severity from 'page' to 'ticket' for `LokiNeedsToBeScaledDown`, `MimirIngesterNeedsToBeScaledDown`, and `MimirIngesterNeedsToBeScaledUp` alerts in Loki and Mimir alerting rules.
 
 ### Fixed
 

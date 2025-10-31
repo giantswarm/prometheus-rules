@@ -598,8 +598,8 @@ spec:
       - expr: count_over_time(giantswarm:observability:grafana:unique_users:hourly[30d])
         record: aggregation:giantswarm:observability:signals:user_logins
       - expr: |
-        sum by (dashboard_id, dashboard_name) (
-          sum_over_time(giantswarm:observability:grafana:dashboard_views:total[30d])
-        )
+          sum by (dashboard_id, dashboard_name) (
+            sum_over_time(giantswarm:observability:grafana:dashboard_views:total[30d])
+          )
         record: aggregation:giantswarm:observability:signals:dashboard_views:30d
 

@@ -24,3 +24,17 @@ spec:
                     )
                 ) 
             )
+        - record: giantswarm:observability:grafana:dashboard_views:total
+          expr: |
+            sum by (dashboard_id, dashboard_name) (
+              count_over_time (
+                {cluster_id="{{ .Values.managementCluster.name }}", container="proxy", namespace="monitoring"}
+                |~ "GET /d/|GET /api/dashboards/uid/"
+                | pattern `<ip> - - [<time>] "<method> <uri> <protocol>" <status> <size> "<referrer>" "<agent>" "<forwarded_for>"`
+                | method = `GET`
+                | uri =~ "(/d/|/api/dashboards/uid/).+"
+                | line_format "{{.uri}} ||| {{.referrer}}"
+                | regexp `(?i)\/d\/(?P<dashboard_id>[^/]+)\/(?P<dashboard_name>[^/?\s]+)`
+                [1m]
+              )
+            )

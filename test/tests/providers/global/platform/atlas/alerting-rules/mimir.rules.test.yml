@@ -184,7 +184,7 @@ tests:
               pipeline: "testing"
               provider: "$provider"
               namespace: mimir
-              severity: ticket
+              severity: page
               team: atlas
               topic: observability
             exp_annotations:
@@ -203,7 +203,7 @@ tests:
               pipeline: "testing"
               provider: "$provider"
               namespace: mimir
-              severity: ticket
+              severity: page
               team: atlas
               topic: observability
             exp_annotations:
@@ -256,7 +256,7 @@ tests:
               pipeline: "testing"
               provider: "$provider"
               namespace: mimir
-              severity: ticket
+              severity: page
               team: atlas
               topic: observability
             exp_annotations:

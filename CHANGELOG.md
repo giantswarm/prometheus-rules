@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-Add dashboard views metrics recording rule to Grafana observability rules. The rule aggregates dashboard view counts over 30 days by dashboard ID and name.
+
 ## [4.81.0] - 2025-10-30
 
 ### Added

@@ -93,7 +93,7 @@ spec:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_outside_working_hours: "true"
-        severity: ticket
+        severity: page
         team: atlas
         topic: observability
     - alert: LokiHpaReachedMaxReplicas

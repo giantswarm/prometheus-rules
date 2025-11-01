@@ -75,7 +75,7 @@ spec:
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: ticket 
         team: atlas
         topic: observability
     - alert: MimirIngesterNeedsToBeScaledDown
@@ -96,7 +96,7 @@ spec:
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: ticket
         team: atlas
         topic: observability
     - alert: MimirHPAReachedMaxReplicas

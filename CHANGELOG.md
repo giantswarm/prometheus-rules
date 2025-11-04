@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix `ManagementClusterCertificateIsMissing` alert to only trigger for KaaS-specific certificates (provider-specific serving certificates or CAPI serving certificates), preventing provider teams and tenet from being paged for Platform certificates (observability/security) they don't own.
+- Fix `ManagementClusterCertificateIsMissing` alert to only trigger for KaaS-specific certificates (provider-specific serving certificates or CAPI serving certificates).
 
 ## [4.81.0] - 2025-10-30
 

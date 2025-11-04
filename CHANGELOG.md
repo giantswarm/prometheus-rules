@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `ManagementClusterCertificateIsMissing` alert to only trigger for provider-specific serving certificates or CAPI serving certificates, preventing provider teams and tenet from being paged for certificates they don't own.
+
 ## [4.81.0] - 2025-10-30
 
 ### Added

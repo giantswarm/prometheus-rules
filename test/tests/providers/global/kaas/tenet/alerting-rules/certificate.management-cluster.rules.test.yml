@@ -5,9 +5,9 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'cert_exporter_secret_not_after{cluster_id="gauss", cluster_type="management_cluster", secretkey="tls.crt", certificatename="aws-admission-controller-certificates", exported_namespace="giantswarm", provider="capa"}'
+      - series: 'cert_exporter_secret_not_after{cluster_id="gauss", cluster_type="management_cluster", secretkey="tls.crt", certificatename="capa-serving-cert", exported_namespace="giantswarm", provider="capa"}'
         values: "1x20 1x20 0+0x20"
-      - series: 'cert_exporter_certificate_cr_not_after{cluster_id="gauss", cluster_type="management_cluster", name="aws-admission-controller-certificates", exported_namespace="giantswarm", provider="capa"}'
+      - series: 'cert_exporter_certificate_cr_not_after{cluster_id="gauss", cluster_type="management_cluster", name="capa-serving-cert", exported_namespace="giantswarm", provider="capa"}'
         values: "1x20 _x20 0+0x20"
     alert_rule_test:
       - alertname: ManagementClusterCertificateIsMissing
@@ -18,7 +18,7 @@ tests:
           - exp_labels:
               area: kaas
               cancel_if_outside_working_hours: "true"
-              certificatename: aws-admission-controller-certificates
+              certificatename: capa-serving-cert
               cluster_id: gauss
               exported_namespace: giantswarm
               provider: capa
@@ -26,7 +26,7 @@ tests:
               team: phoenix
               topic: security
             exp_annotations:
-              description: 'Cannot renew Certificate for Secret giantswarm/aws-admission-controller-certificates on gauss because it is missing.'
+              description: 'Cannot renew Certificate for Secret giantswarm/capa-serving-cert on gauss because it is missing.'
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/managed-app-cert-manager/missing-certificate-for-secret/
       - alertname: ManagementClusterCertificateIsMissing
         eval_time: 55m

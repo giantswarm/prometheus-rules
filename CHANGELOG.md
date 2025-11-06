@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `management-clusters.organizations.grafana-cloud.recording` recording rules to grafana cloud.
+
 ### Removed
 
 - Clean up all that pertain to our old monitoring/logging agents:

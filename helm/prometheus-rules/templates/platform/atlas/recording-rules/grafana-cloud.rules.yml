@@ -462,16 +462,10 @@ spec:
   - name: management-clusters.organizations.grafana-cloud.recording
     rules:
     # Management Cluster Usage
-    - expr: sum(observability_operator_grafana_organization_info) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, display_name)
+    - expr: observability_operator_grafana_organization_info
       record: aggregation:observability:organization:organization_info
-    - expr: count(observability_operator_grafana_organization_info{status="active"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-      record: aggregation:observability:organization:active_organizations
-    - expr: count(observability_operator_grafana_organization_tenants) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, org_id)
-      record: aggregation:observability:organization:tenants_number_per_organization
-    - expr: sum(observability_operator_grafana_organization_tenants) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, org_id, name)
-      record: aggregation:observability:organization:tenants_name_per_organization
-    - expr: count(observability_operator_grafana_organization_tenants) by (cluster_id, cluster_type, customer, installation, pipeline, provider)
-      record: aggregation:observability:organization:tenants_number_total
+    - expr: observability_operator_grafana_organization_tenants
+      record: aggregation:observability:organization:organization_tenants
   - name: management-clusters.aws.grafana-cloud.recording
     rules:
     # Management Cluster Usage

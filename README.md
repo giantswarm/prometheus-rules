@@ -178,7 +178,7 @@ Alertmanager generates dashboard URLs for Opsgenie and Slack alerts using these 
 If you want to make sure a metrics exists on one cluster, you can't just use the `absent` function anymore.
 With `mimir` we have metrics for all the clusters on a single database, and it makes detecting the absence of one metrics on one cluster much harder.
 
-To achieve such a test, you should do like [`PrometheusAgentFailing`](https://github.com/giantswarm/prometheus-rules/blob/master/helm/prometheus-rules/templates/alerting-rules/areas/platform/atlas/prometheus-agent.rules.yml) alert does.
+To achieve such a test, you should do like [`MimirToGrafanaCloudExporterMissingData`](https://github.com/giantswarm/prometheus-rules/blob/d06a84e8369f4d0bafdf0d48f18120de15c8e18a/helm/prometheus-rules/templates/platform/atlas/alerting-rules/grafana-cloud.rules.yml#L33) alert does.
 
 #### Useful links
 

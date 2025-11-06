@@ -5,6 +5,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Clean up all that pertain to our old monitoring/logging agents:
+  - `PromtailDown`
+  - `PromtailRequestsErrors`
+  - `PromtailConflictsWithAlloy`
+  - `PrometheusAgentShardsMissing`
+  - `InhibitionPrometheusAgentShardsMissing`
+
 ## [4.81.0] - 2025-10-30
 
 ### Added

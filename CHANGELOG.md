@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.83.0] - 2025-11-07
+
 ### Changed
 
 - Update alert severity from 'page' to 'ticket' for `LokiNeedsToBeScaledDown`, `MimirIngesterNeedsToBeScaledDown`, and `MimirIngesterNeedsToBeScaledUp` alerts in Loki and Mimir alerting rules.
@@ -4041,7 +4043,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.82.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.83.0...HEAD
+[4.83.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.82.0...v4.83.0
 [4.82.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.81.0...v4.82.0
 [4.81.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.80.0...v4.81.0
 [4.80.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.1...v4.80.0

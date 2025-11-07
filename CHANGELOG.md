@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update alert severity from 'page' to 'ticket' for `LokiNeedsToBeScaledDown`, `MimirIngesterNeedsToBeScaledDown`, and `MimirIngesterNeedsToBeScaledUp` alerts in Loki and Mimir alerting rules.
+
 ## [4.82.0] - 2025-11-06
 
 ### Added

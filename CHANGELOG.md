@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix `ManagementClusterCertificateIsMissing` alert to only trigger for KaaS-specific certificates (provider-specific serving certificates or CAPI serving certificates).
 
+## [4.83.0] - 2025-11-07
+
+### Changed
+
+- Update alert severity from 'page' to 'ticket' for `LokiNeedsToBeScaledDown`, `MimirIngesterNeedsToBeScaledDown`, and `MimirIngesterNeedsToBeScaledUp` alerts in Loki and Mimir alerting rules.
+
+## [4.82.0] - 2025-11-06
+
+### Added
+
+- Add `management-clusters.organizations.grafana-cloud.recording` recording rules to grafana cloud.
+
+### Removed
+
+- Clean up all that pertain to our old monitoring/logging agents:
+  - `PromtailDown`
+  - `PromtailRequestsErrors`
+  - `PromtailConflictsWithAlloy`
+  - `PrometheusAgentShardsMissing`
+  - `InhibitionPrometheusAgentShardsMissing`
+
 ## [4.81.0] - 2025-10-30
 
 ### Added
@@ -4026,7 +4047,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.81.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.83.0...HEAD
+[4.83.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.82.0...v4.83.0
+[4.82.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.81.0...v4.82.0
 [4.81.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.80.0...v4.81.0
 [4.80.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.1...v4.80.0
 [4.79.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.0...v4.79.1

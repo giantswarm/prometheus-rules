@@ -459,6 +459,13 @@ spec:
       record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_request_errors
     - expr: sum(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region) / count(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_values
+  - name: management-clusters.organizations.grafana-cloud.recording
+    rules:
+    # Management Cluster Usage
+    - expr: observability_operator_grafana_organization_info
+      record: aggregation:observability:organization:organization_info
+    - expr: observability_operator_grafana_organization_tenants
+      record: aggregation:observability:organization:organization_tenants
   - name: management-clusters.aws.grafana-cloud.recording
     rules:
     # Management Cluster Usage

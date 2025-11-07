@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Alert DexInvalidClientId: make matching rule more specific to prevent false positives
+
 ## [4.83.0] - 2025-11-07
 
 ### Changed

@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Alert DexInvalidClientId: make matching rule more specific to prevent false positives
+
 ### Fixed
 
 - Fix `ManagementClusterCertificateIsMissing` alert to only trigger for KaaS-specific certificates (provider-specific serving certificates or CAPI serving certificates).

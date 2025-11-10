@@ -16,12 +16,12 @@ spec:
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/managed-app-cert-manager/missing-certificate-for-secret/
       expr: |
         count(
-          cert_exporter_secret_not_after{cluster_type="management_cluster", secretkey="tls.crt", certificatename!=""}
+          cert_exporter_secret_not_after{cluster_type="management_cluster", secretkey="tls.crt", certificatename=~"^capa-serving-cert$|^capi-serving-cert$|^capi-kubeadm-bootstrap-serving-cert$|^capi-kubeadm-control-plane-serving-cert$|^capv-serving-cert$|^capmox-serving-cert$|^caip-in-cluster-serving-cert$|^capvcd-serving-cert$|^capz-serving-cert$|^azureserviceoperator-serving-cert$|^aws-pod-identity-webhook$"}
         ) by (cluster_id, installation, pipeline, provider, certificatename, exported_namespace)
         unless 
         count(
           label_replace(
-            cert_exporter_certificate_cr_not_after{cluster_type="management_cluster"}, 
+            cert_exporter_certificate_cr_not_after{cluster_type="management_cluster", name=~"^capa-serving-cert$|^capi-serving-cert$|^capi-kubeadm-bootstrap-serving-cert$|^capi-kubeadm-control-plane-serving-cert$|^capv-serving-cert$|^capmox-serving-cert$|^caip-in-cluster-serving-cert$|^capvcd-serving-cert$|^capz-serving-cert$|^azureserviceoperator-serving-cert$|^aws-pod-identity-webhook$"}, 
             "certificatename", 
             "$1", 
             "name", 

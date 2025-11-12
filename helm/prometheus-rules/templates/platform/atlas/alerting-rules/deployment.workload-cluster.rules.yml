@@ -72,9 +72,9 @@ spec:
         topic: releng
     - alert: WorkloadClusterDeploymentNotSatisfiedShield
       annotations:
-        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} has been scaled down to zero for prolonged period of time.`}}'
+        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="workload_cluster", deployment=~"cert-manager-*|teleport-*|dex*|athena*|rbac-operator|credentiald"} > 0
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="workload_cluster", deployment=~"cert-manager-*|teleport-*|dex*|athena*|rbac-operator"} > 0
       for: 30m
       labels:
         area: platform

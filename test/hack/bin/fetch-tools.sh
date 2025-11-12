@@ -3,7 +3,7 @@ set -euo pipefail
 
 # let's have reproducable tests - pin to specific versions
 ARCHITECT_VERSION="7.3.0"
-HELM_VERSION="3.19.1"
+HELM_VERSION="4.0.0"
 JQ_VERSION="1.8.1"
 LOKITOOL_VERSION="3.5.8"
 PINT_VERSION="0.77.0"

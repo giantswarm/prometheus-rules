@@ -16,7 +16,7 @@ spec:
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/pod-stuck-in-pending/
-      expr: kube_pod_status_phase{namespace="giantswarm", provider="capa", pod=~"(aws.*|capa.*|irsa-operator.*)", phase="Pending", cluster_type="management_cluster"} == 1
+      expr: kube_pod_status_phase{namespace="giantswarm", provider="capa", pod=~"(aws.*|capa.*)", phase="Pending", cluster_type="management_cluster"} == 1
       for: 15m
       labels:
         area: kaas
@@ -32,7 +32,7 @@ spec:
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/container-is-restarting-too-often/
         __dashboardUid__: bdiako8tt1b7kc
         dashboardQueryParams: "orgId=2"
-      expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"(aws.*|capa-.*|irsa-operator.*)", cluster_type="management_cluster"}[1h]), "service", "/", "namespace", "pod") > 6
+      expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"(aws.*|capa-.*)", cluster_type="management_cluster"}[1h]), "service", "/", "namespace", "pod") > 6
       for: 5m
       labels:
         area: kaas
@@ -51,7 +51,6 @@ spec:
           or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="aws-vpc-operator", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
           or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capa-controller-manager", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
           or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capa-iam-operator", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
-          or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="irsa-operator", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
       for: 15m
       labels:
         area: kaas

@@ -5,6 +5,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix description for `WorkloadClusterDeploymentNotSatisfiedShield` WC alert.
+- Remove duplicate `DeploymentNotSatisfiedShield` MC alert.
+
+### Removed
+
+- Remove `credentiald` from `WorkloadClusterDeploymentNotSatisfiedShield` MC and WC alerts.
+
 ## [4.84.0] - 2025-11-12
 
 ### Added

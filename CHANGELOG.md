@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix `ManagementClusterCertificateIsMissing` alert to only trigger for KaaS-specific certificates (provider-specific serving certificates or CAPI serving certificates).
 
+### Removed
+
+- Remove irsa-operator alerts
+
 ## [4.83.0] - 2025-11-07
 
 ### Changed

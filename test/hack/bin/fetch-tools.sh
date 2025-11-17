@@ -8,7 +8,7 @@ JQ_VERSION="1.8.1"
 LOKITOOL_VERSION="3.5.8"
 PINT_VERSION="0.77.1"
 PROMETHEUS_VERSION="3.7.3"
-YQ_VERSION="4.48.1"
+YQ_VERSION="4.48.2"
 
 GIT_WORKDIR=$(git rev-parse --show-toplevel)
 OS_BASE="$(uname -s)"

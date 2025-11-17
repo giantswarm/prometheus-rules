@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix description for `WorkloadClusterDeploymentNotSatisfiedShield` WC alert.
 - Remove duplicate `DeploymentNotSatisfiedShield` MC alert.
+- Fix `KubeStateMetricsNotRetrievingMetrics` by not paging on leftover CAPI CRs.
 
 ### Removed
 

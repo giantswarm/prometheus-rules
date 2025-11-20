@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update `OnPremCloudProviderAPIIsDown` alert runbook URL to point to new runbook location.
+
 ## [4.85.0] - 2025-11-18
 
 ### Fixed

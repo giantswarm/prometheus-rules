@@ -63,9 +63,9 @@ spec:
       annotations:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}-{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-helmrelease/
-      expr: gotk_reconcile_condition{type="Ready", status="False", kind="HelmRelease", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", exported_namespace!~"org-t-.*", name=~".*(cilium|network-policies)"} > 0
-      for: 20m
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'
+      expr: gotk_resource_info{ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", exported_namespace!~"org-t-.*", name=~".*(cilium|network-policies)"} > 0
+      for: 1h10m
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
@@ -76,3 +76,31 @@ spec:
         topic: cilium
         namespace: |-
           {{`{{ $labels.exported_namespace }}`}}
+    - alert: CiliumAgentPodPending
+      annotations:
+        description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending in cluster {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/pod-stuck-in-pending/
+      expr: kube_pod_status_phase{namespace="kube-system",pod=~"(cilium-.*)",phase="Pending"} == 1
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        severity: page
+        team: cabbage
+        topic: cilium
+    - alert: CiliumOperatorPodRestartingTooOften
+      annotations:
+        description: '{{`cilium-operator is restarting too often in cluster {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cilium-troubleshooting/
+      expr: 1 - sum(increase(kube_pod_container_status_restarts_total{container="cilium-operator"}[10m])) by (container, cluster_id, cluster_type, customer, installation, pipeline, provider, region)/100 < 0.98
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_cluster_has_no_workers: "true"
+        severity: page
+        team: cabbage
+        topic: cilium

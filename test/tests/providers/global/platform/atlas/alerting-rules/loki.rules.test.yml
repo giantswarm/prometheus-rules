@@ -5,15 +5,15 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'cortex_ring_members{job="loki/loki-read", cluster_id="golem-wc01", cluster_type="workload_cluster", container="loki", customer="giantswarm", installation="golem", name="ingester", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-xxxxx", provider="capa", pipeline="stable", service_priority="highest", state="Unhealthy"}'
+      - series: 'cortex_ring_members{job="loki/loki-read", cluster_id="golem-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="golem", name="ingester", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-xxxxx", provider="capa", pipeline="stable", service_priority="highest", state="Unhealthy"}'
         values: "0+0x20 1+0x160"  # 1 unhealthy value after 20 minutes
-      - series: 'cortex_ring_members{job="loki/loki-read", cluster_id="golem-wc01", cluster_type="workload_cluster", container="loki", customer="giantswarm", installation="golem", name="ingester", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-yyyyy", provider="capa", pipeline="stable", service_priority="highest", state="Unhealthy"}'
+      - series: 'cortex_ring_members{job="loki/loki-read", cluster_id="golem-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="golem", name="ingester", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-yyyyy", provider="capa", pipeline="stable", service_priority="highest", state="Unhealthy"}'
         values: "_x30 1+0x10 0+0x60"  # no data for 30 minutes then 1 unhealthy value for 10 minutes and back to normal for 1 hour
-      - series: 'loki_panic_total{job="loki/loki-read", cluster_id="golem-wc01", cluster_type="workload_cluster", container="loki", customer="giantswarm", installation="golem", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-zzzzz", provider="capa", pipeline="stable", service_priority="highest"}'
+      - series: 'loki_panic_total{job="loki/loki-read", cluster_id="golem-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="golem", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-zzzzz", provider="capa", pipeline="stable", service_priority="highest"}'
         values: "0+0x20 1+0x160"  # 1 panic after 20 minutes
-      - series: 'loki_request_duration_seconds_count{job="loki/loki-write", cluster_id="golem-wc01", cluster_type="workload_cluster", container="loki", customer="giantswarm", installation="golem", instance="10.7.75.90:3100", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-write-0", provider="capa", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="204", ws="false"}'
+      - series: 'loki_request_duration_seconds_count{job="loki/loki-write", cluster_id="golem-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="golem", instance="10.7.75.90:3100", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-write-0", provider="capa", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="204", ws="false"}'
         values: "0+60x180"  # 1 request per second OK for 3 hours
-      - series: 'loki_request_duration_seconds_count{job="loki/loki-write", cluster_id="golem-wc01", cluster_type="workload_cluster", container="loki", customer="giantswarm", installation="golem", instance="10.7.75.90:3100", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-write-0", provider="capa", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="503", ws="false"}'
+      - series: 'loki_request_duration_seconds_count{job="loki/loki-write", cluster_id="golem-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="golem", instance="10.7.75.90:3100", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-write-0", provider="capa", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="503", ws="false"}'
         values: "0+0x20 0+30x160"  # After 20 minutes, we also have 0.5 rq/s failing
     alert_rule_test:
       - alertname: LokiRequestPanics
@@ -171,7 +171,7 @@ tests:
               pipeline: "testing"
               provider: "capa"
               namespace: loki
-              severity: page
+              severity: ticket
               team: atlas
               topic: observability
             exp_annotations:
@@ -208,6 +208,8 @@ tests:
               installation: golem
               cluster_id: golem
             exp_annotations:
+              __dashboardUid__: loki-resources-overview
+              dashboardQueryParams: "orgId=2"
               description: Loki component loki-backend has reached its maxReplicas number but still needs to be scaled up.
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
       - alertname: LokiHpaReachedMaxReplicas
@@ -238,7 +240,7 @@ tests:
               __dashboardUid__: loki-retention
               dashboardQueryParams: "orgId=2"
               description: Loki compactor has been failing compactions for more than 2 hours since last compaction.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki#lokicompactorfailedcompaction
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/#lokicompactorfailedcompaction
       - alertname: LokiCompactorFailedCompaction
         eval_time: 300m
 
@@ -267,7 +269,7 @@ tests:
               __dashboardUid__: loki-retention
               dashboardQueryParams: "orgId=2"
               description: Loki compactor has been failing compactions for more than 2 hours since start-up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki#lokicompactorfailedcompaction
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/#lokicompactorfailedcompaction
       - alertname: LokiCompactorFailedCompaction
         eval_time: 300m
 
@@ -309,7 +311,7 @@ tests:
     input_series:
       - series: 'loki_rate_store_stream_rate_bytes_count{cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", namespace="loki", pipeline="stable"}'
         values: "_x90 1+1x90 90+0x200"
-      - series: 'capi_cluster_status_condition{cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", namespace="loki", pipeline="stable", name="myinstall", type="ControlPlaneReady", status="True"}'
+      - series: 'capi_cluster_status_condition{app="cluster-api-monitoring", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", namespace="loki", pipeline="stable", name="myinstall", type="ControlPlaneReady", status="True"}'
         values: "1+0x380"
     alert_rule_test:
       - alertname: LokiObjectStorageLowRate
@@ -319,6 +321,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
+              app: cluster-api-monitoring
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
               cluster_type: management_cluster

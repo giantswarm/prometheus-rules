@@ -84,31 +84,34 @@ tests:
   - interval: 1m
     input_series:
       # test: none, rate > 0, rate = 0
-      - series: 'mimir_rules_events_failed_total{cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="mimir"}'
-        values: "_x20 1+1x80 0+0x70"
+      - series: 'cortex_prometheus_rule_evaluation_failures_total{cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="mimir", pod="mimir-ruler-0", rule_group="test-group"}'
+        values: "_x20 1+1x100 0+0x70"
     alert_rule_test:
-      - alertname: MimirRulerEventsFailed
+      - alertname: MimirRulerRuleEvaluationFailures
         eval_time: 40m
-      - alertname: MimirRulerEventsFailed
-        eval_time: 95m
+      - alertname: MimirRulerRuleEvaluationFailures
+        eval_time: 100m
         exp_alerts:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
               cluster_id: golem
-              cluster_type: management_cluster
               installation: golem
               namespace: mimir
+              pod: mimir-ruler-0
+              rule_group: test-group
               severity: page
               team: atlas
               topic: observability
             exp_annotations:
               __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
               dashboardQueryParams: "orgId=2"
-              description: "Mimir ruler is failing to process PrometheusRules."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
-      - alertname: MimirRulerEventsFailed
+              description: "Mimir ruler mimir-ruler-0 has failed to evaluate rule(s) 5.00 time(s)."
+              summary: Mimir ruler is failing rule evaluations.
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-rule-failures/
+      - alertname: MimirRulerRuleEvaluationFailures
         eval_time: 160m
+
   - interval: 1m
     input_series:
       - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container="mimir-ingester"}'
@@ -141,32 +144,38 @@ tests:
   # Test for MimirIngesterNeedsToBeScaledUp alert
   - interval: 1m
     input_series:
-      # mimir-ingester real memory usage gradually increases until it goes beyond 90% of the memory requests.
-      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "8+0x20 11+0x70 8+0x140 11+0x70 8+0x60"
+      # mimir-ingester real memory usage fluctuates between 8 out of 12 (66%) and 11 out of 12 (91%)
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}' 
+        values: "8+0x120 11+0x780 8+0x2400"
       - series: 'container_memory_working_set_bytes{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "8+0x20 11+0x70 8+0x140 11+0x70 8+0x60"
+        values: "8+0x120 11+0x780 8+0x2400"
       # mimir-ingester memory requests stay the same for the entire duration of the test.
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "12+0x400"
+        values: "12+0x2400"
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "12+0x400"
-      # mimir-ingester real cpu usage gradually increases until it goes beyond 90% of the cpu requests.                              
+        values: "12+0x2400"
+      # mimir-ingester cpu usage fluctuates between different values.
+      # Note that:
+      # - the rule does the average of all pods
+      # - cpu usage is a counter
+      # so here are what each value means:
+      # - +60  and +60 = +2 per second, out of 3 requests total = 66% usage
+      # - +120 and +60 = +3 per second, out of 3 requests total = 100% usage
       - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "0+60x100 6000+130x70 10400+60x60 14000+110x70 18400+60x60"
+        values: "0+60x1440 86400+120x780 95500+60x2400"
       - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "0+60x400"
+        values: "0+60x2400"
       # mimir-ingester cpu requests stay the same for the entire duration of the test.
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "1.5+0x400"                                 
+        values: "1.5+0x2400"
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "1.5+0x400"                                 
+        values: "1.5+0x2400"
     alert_rule_test:
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 15m
+        eval_time: 3h
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 85m
-        exp_alerts:
+        eval_time: 15h
+        exp_alerts: # caused by RAM usage
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
@@ -175,18 +184,20 @@ tests:
               pipeline: "testing"
               provider: "$provider"
               namespace: mimir
-              severity: page
+              severity: ticket
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: bc9160e50b52e89e0e49c840fea3d379
+              dashboardQueryParams: "orgId=2"
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 130m
+        eval_time: 20h
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 170m 
+        eval_time: 37h
         exp_alerts:
-          - exp_labels:
+          - exp_labels: # caused by cpu usage
               area: platform
               cancel_if_outside_working_hours: "true"
               cluster_id: golem
@@ -194,33 +205,16 @@ tests:
               pipeline: "testing"
               provider: "$provider"
               namespace: mimir
-              severity: page
+              severity: ticket
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: bc9160e50b52e89e0e49c840fea3d379
+              dashboardQueryParams: "orgId=2"
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 210m
-      - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 295m
-        exp_alerts:
-          - exp_labels:
-              area: platform
-              cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              installation: "golem"
-              pipeline: "testing"
-              provider: "$provider"
-              namespace: mimir
-              severity: page
-              team: atlas
-              topic: observability
-            exp_annotations:
-              description: Mimir ingester is consuming too much resources and needs to be scaled up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
-      - alertname: MimirIngesterNeedsToBeScaledUp
-        eval_time: 350m
+        eval_time: 40h
   # Test for MimirIngesterNeedsToBeScaledDown alert
   - interval: 1m
     input_series:
@@ -266,10 +260,12 @@ tests:
               pipeline: "testing"
               provider: "$provider"
               namespace: mimir
-              severity: page
+              severity: ticket
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: bc9160e50b52e89e0e49c840fea3d379
+              dashboardQueryParams: "orgId=2"
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       - alertname: MimirIngesterNeedsToBeScaledDown
@@ -360,7 +356,7 @@ tests:
               __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
               dashboardQueryParams: "orgId=2"
               description: Mimir compactor has been failing compactions for more than 2 hours since start-up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir#mimircompactorfailedcompaction
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimircompactorfailedcompaction
       - alertname: MimirCompactorFailedCompaction
         eval_time: 250m
       - alertname: MimirCompactorFailedCompaction
@@ -383,7 +379,7 @@ tests:
               __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
               dashboardQueryParams: "orgId=2"
               description: Mimir compactor has been failing its compactions for 2 hours.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir#mimircompactorfailedcompaction
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimircompactorfailedcompaction
 
   # Test for MimirContinuousTestFailingOnWrites alert
   - interval: 1m
@@ -489,7 +485,7 @@ tests:
         values: "_x80 1+1x80 0+0x80"
     alert_rule_test:
       - alertname: MimirContinuousTestMissing
-        eval_time: 40m
+        eval_time: 9m
       - alertname: MimirContinuousTestMissing
         eval_time: 70m
         exp_alerts:
@@ -497,6 +493,7 @@ tests:
               area: platform
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
+              inhibit_metrics_broken: "true"
               installation: myinstall
               pipeline: stable
               provider: $provider
@@ -517,6 +514,7 @@ tests:
               area: platform
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
+              inhibit_metrics_broken: "true"
               installation: myinstall
               pipeline: stable
               provider: $provider
@@ -593,7 +591,7 @@ tests:
             exp_annotations:
               __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
               dashboardQueryParams: "orgId=2"
-              description: "Mimir Ruler mimir-ruler-aaaaaaaaaa-bbbbb is experiencing 2.00% errors while evaluating rules."
+              description: "Mimir ruler mimir-ruler-aaaaaaaaaa-bbbbb is experiencing 2.00% errors while evaluating rules."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
 
   # Test for MimirAlertmanagerSyncConfigsFailing alert
@@ -622,8 +620,8 @@ tests:
             exp_annotations:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
-              description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to read tenant configurations from storage."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
+              description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to read tenant configurations from storage."
+              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
 
   # Test for MimirAlertmanagerRingCheckFailing alert
   - interval: 1m
@@ -651,8 +649,8 @@ tests:
             exp_annotations:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
-              description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is unable to check tenants ownership via the ring."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
+              description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is unable to check tenants ownership via the ring."
+              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
 
   # Test for MimirAlertmanagerReplicationFailing alert
   - interval: 1m
@@ -680,5 +678,76 @@ tests:
             exp_annotations:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
-              description: "Mimir Alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to replicating partial state to its replicas."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
+              description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to replicating partial state to its replicas."
+              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
+
+  # Test for MimirAlertmanagerNotificationsFailing alert
+  - interval: 1m
+    input_series:
+      # after 1h, slack notification fails during 2h then works again (15m group_interval) => alert fires after 3 successive failures
+      - series: 'cortex_alertmanager_notifications_failed_total{integration="slack", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb", user="giantswarm"}'
+        values: "0x60 1+0x15 2+0x15 3+0x15 4+0x15 5+0x15 6+0x15 7+0x15 8+0x15 8+0x120"
+      # after 1h, slack notification fails 2 times during 30mn than works again => alert must not fires
+      - series: 'cortex_alertmanager_notifications_failed_total{integration="webhook", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb", user="giantswarm"}'
+        values: "0x60 1+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x15 2+0x120"
+    alert_rule_test:
+      - alertname:  MimirAlertmanagerNotificationsFailing
+        eval_time: 10m
+      - alertname:  MimirAlertmanagerNotificationsFailing
+        eval_time: 90m
+      - alertname:  MimirAlertmanagerNotificationsFailing
+        eval_time: 95m
+      - alertname:  MimirAlertmanagerNotificationsFailing
+        eval_time: 106m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_type: management_cluster
+              integration: slack
+              pod: mimir-alertmanager-aaaaaaaaaa-bbbbb
+              severity: page
+              team: atlas
+              topic: observability
+              user: giantswarm
+            exp_annotations:
+              __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
+              dashboardQueryParams: "orgId=2"
+              description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb: slack notifications are failing."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-alertmanager/
+      - alertname:  MimirAlertmanagerNotificationsFailing
+        eval_time: 240m
+
+  # Test for MimirAlertmanagerPagesFailing alert
+  - interval: 1m
+    input_series:
+      # after 1h, pagerduty notification fails during 45m then works again for 1h, finally fails 1 time (group_interval=15m)
+      # => alert fires after 2 successive failures only
+      - series: 'cortex_alertmanager_notifications_failed_total{integration="pagerduty", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb", user="giantswarm"}'
+        values: "0x60 1+0x15 2+0x15 2+0x15 2+0x60 3+0x15 3+0x60"
+    alert_rule_test:
+      - alertname:  MimirAlertmanagerAlertsFailing
+        eval_time: 10m
+      - alertname:  MimirAlertmanagerAlertsFailing
+        eval_time: 75m
+      - alertname:  MimirAlertmanagerAlertsFailing
+        eval_time: 91m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cluster_type: management_cluster
+              integration: pagerduty
+              pod: mimir-alertmanager-aaaaaaaaaa-bbbbb
+              severity: notify
+              team: atlas
+              topic: observability
+              user: giantswarm
+            exp_annotations:
+              __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
+              dashboardQueryParams: "orgId=2"
+              description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb: pagerduty alerts are failing."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-alertmanager/
+      - alertname:  MimirAlertmanagerAlertsFailing
+        eval_time: 180m
+      - alertname:  MimirAlertmanagerAlertsFailing
+        eval_time: 210m

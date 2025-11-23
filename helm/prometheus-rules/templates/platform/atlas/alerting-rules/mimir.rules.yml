@@ -57,22 +57,10 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    - alert: MimirRulerEventsFailed
-      annotations:
-        __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
-        dashboardQueryParams: "orgId=2"
-        description: 'Mimir ruler is failing to process PrometheusRules.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
-      expr: rate(mimir_rules_events_failed_total{cluster_type="management_cluster", namespace="mimir"}[5m]) > 0
-      for: 1h
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
     - alert: MimirIngesterNeedsToBeScaledUp
       annotations:
+        __dashboardUid__: bc9160e50b52e89e0e49c840fea3d379
+        dashboardQueryParams: "orgId=2"
         description: 'Mimir ingester is consuming too much resources and needs to be scaled up.'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       expr: |-
@@ -85,15 +73,17 @@ spec:
           / 
         sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core"}) 
           >= 0.95
-      for: 1h
+      for: 12h
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: ticket 
         team: atlas
         topic: observability
     - alert: MimirIngesterNeedsToBeScaledDown
       annotations:
+        __dashboardUid__: bc9160e50b52e89e0e49c840fea3d379
+        dashboardQueryParams: "orgId=2"
         description: 'Mimir ingester is consuming very few resources and needs to be scaled down.'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       expr: |-
@@ -110,7 +100,7 @@ spec:
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: ticket
         team: atlas
         topic: observability
     - alert: MimirHPAReachedMaxReplicas
@@ -130,25 +120,6 @@ spec:
           kube_horizontalpodautoscaler_spec_target_metric{namespace="mimir"}
         )
       for: 30m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
-    - alert: MimirRulerTooManyFailedQueries
-      annotations:
-        __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
-        dashboardQueryParams: "orgId=2"
-        description: '{{`Mimir Ruler {{ $labels.pod }} is experiencing {{ printf "%.2f" $value }}% errors while evaluating rules.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
-      expr: |
-        100 * (
-        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_failed_total[1m]))
-          /
-        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_total[1m]))
-        ) > 1
-      for: 1h
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
@@ -177,6 +148,7 @@ spec:
         severity: page
         team: atlas
         topic: observability
+
   - name: mimir.compactor
     rules:
     - alert: MimirCompactorFailedCompaction
@@ -184,7 +156,7 @@ spec:
         __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
         dashboardQueryParams: "orgId=2"
         description: 'Mimir compactor has been failing its compactions for 2 hours.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir#mimircompactorfailedcompaction
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimircompactorfailedcompaction
       expr: min by (cluster_id, installation, namespace, provider, pipeline) (time() - (cortex_compactor_last_successful_run_timestamp_seconds > 0 ) ) > 60 * 60 * 2
       labels:
         area: platform
@@ -197,7 +169,7 @@ spec:
         __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
         dashboardQueryParams: "orgId=2"
         description: 'Mimir compactor has been failing compactions for more than 2 hours since start-up.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir#mimircompactorfailedcompaction
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/#mimircompactorfailedcompaction
       # This alert covers the special case at compactor startup, where the "normal" alert would always consider time `0` is more than 2 hours ago, yet we want to let it 2 hours + `for` duration.
       expr: max(max_over_time(cortex_compactor_last_successful_run_timestamp_seconds{}[2h])) by (cluster_id, installation, namespace, provider, pipeline) == 0
       for: 2h
@@ -207,6 +179,7 @@ spec:
         severity: page
         team: atlas
         topic: observability
+
   - name: mimir.continuous-test
     rules:
     - alert: MimirContinuousTestFailingOnWrites
@@ -273,13 +246,15 @@ spec:
             }
           )
         )
-      for: 1h
+      for: 10m
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
+        inhibit_metrics_broken: "true"
         severity: page
         team: atlas
         topic: observability
+
   # The following alerts are taken from upstream Mimir https://github.com/grafana/mimir/blob/59868b5e4ad5562a836e057a21c37b7e8067ae7d/operations/mimir-mixin-compiled/alerts.yaml#L617
   # Feel free to adapt as you see fit.
   - name: mimir-alertmanager
@@ -288,10 +263,9 @@ spec:
       annotations:
         __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
         dashboardQueryParams: "orgId=2"
-        description: '{{`Mimir Alertmanager {{ $labels.pod }} is failing to read tenant configurations from storage.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
-      expr: |
-        rate(cortex_alertmanager_sync_configs_failed_total[5m]) > 0
+        description: '{{`Mimir alertmanager {{ $labels.pod }} is failing to read tenant configurations from storage.`}}'
+        runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
+      expr: rate(cortex_alertmanager_sync_configs_failed_total[5m]) > 0
       for: 30m
       labels:
         area: platform
@@ -303,10 +277,9 @@ spec:
       annotations:
         __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
         dashboardQueryParams: "orgId=2"
-        description: '{{`Mimir Alertmanager {{ $labels.pod }} is unable to check tenants ownership via the ring.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
-      expr: |
-        rate(cortex_alertmanager_ring_check_errors_total[2m]) > 0
+        description: '{{`Mimir alertmanager {{ $labels.pod }} is unable to check tenants ownership via the ring.`}}'
+        runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
+      expr: rate(cortex_alertmanager_ring_check_errors_total[2m]) > 0
       for: 10m
       labels:
         area: platform
@@ -318,11 +291,82 @@ spec:
       annotations:
         __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
         dashboardQueryParams: "orgId=2"
-        description: '{{`Mimir Alertmanager {{ $labels.pod }} is failing to replicating partial state to its replicas.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
-      expr: |
-        rate(cortex_alertmanager_state_replication_failed_total[2m]) > 0
+        description: '{{`Mimir alertmanager {{ $labels.pod }} is failing to replicating partial state to its replicas.`}}'
+        runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
+      expr: rate(cortex_alertmanager_state_replication_failed_total[2m]) > 0
       for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirAlertmanagerNotificationsFailing
+      annotations:
+        __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
+        dashboardQueryParams: "orgId=2"
+        description: '{{`Mimir alertmanager {{ $labels.pod }}: {{ $labels.integration }} notifications are failing.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-alertmanager/
+      # TODO: Remove opsgenie from integration matching once fully deprecated.
+      # This alert pages after 3 consecutive notification failures for non-pagerduty/non-opsgenie integrations.
+      # The 45m 'for' duration matches 3 Alertmanager group intervals (15m each), ensuring we only page if failures persist across three intervals.
+      # The alert is restricted to the 'giantswarm' tenant to avoid paging for customer-related issues.
+      expr: rate(cortex_alertmanager_notifications_failed_total{integration!~"pagerduty|opsgenie", cluster_type="management_cluster", user="giantswarm"}[20m]) > 0
+      for: 45m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirAlertmanagerAlertsFailing
+      annotations:
+        __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
+        dashboardQueryParams: "orgId=2"
+        description: '{{`Mimir alertmanager {{ $labels.pod }}: {{ $labels.integration }} alerts are failing.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-alertmanager/
+      # TODO: Remove opsgenie from integration matching once fully deprecated.
+      # This alert notifies after 2 consecutive notification failures for either opsgenie or pagerduty integrations.
+      # The 30m 'for' duration matches 2 Alertmanager group intervals (15m each), ensuring we only notify if failures persist across two intervals.
+      # The alert is restricted to the 'giantswarm' tenant to avoid paging for customer-related issues.
+      expr: rate(cortex_alertmanager_notifications_failed_total{integration=~"pagerduty|opsgenie", cluster_type="management_cluster", user="giantswarm"}[20m]) > 0
+      for: 30m
+      labels:
+        area: platform
+        severity: notify
+        team: atlas
+        topic: observability
+
+  - name: mimir-ruler
+    rules:
+    - alert: MimirRulerTooManyFailedQueries
+      annotations:
+        __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
+        dashboardQueryParams: "orgId=2"
+        description: '{{`Mimir ruler {{ $labels.pod }} is experiencing {{ printf "%.2f" $value }}% errors while evaluating rules.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
+      expr: |
+        100 * (
+        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_failed_total[5m]))
+          /
+        sum by (installation, cluster_id, pipeline, provider, namespace, pod) (rate(cortex_ruler_queries_total[5m]))
+        ) > 1
+      for: 1h
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability
+    - alert: MimirRulerRuleEvaluationFailures
+      annotations:
+        __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
+        dashboardQueryParams: "orgId=2"
+        description: '{{`Mimir ruler {{ $labels.pod }} has failed to evaluate rule(s) {{ printf "%.2f" $value }} time(s).`}}'
+        summary: Mimir ruler is failing rule evaluations.
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/prometheus-rule-failures/
+      expr: sum(increase(cortex_prometheus_rule_evaluation_failures_total[5m])) by (installation, cluster_id, pipeline, provider, namespace, pod, rule_group) > 0
+      for: 1h
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"

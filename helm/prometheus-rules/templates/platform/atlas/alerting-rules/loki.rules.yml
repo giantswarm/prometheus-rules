@@ -35,9 +35,9 @@ spec:
         description: This alert checks that we have less than 10% errors on Loki requests.
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
       expr: |
-        100 * sum(rate(loki_request_duration_seconds_count{status_code=~"5.."}[2m])) by (cluster_id, installation, provider, pipeline, namespace, job, route)
+        100 * sum(rate(loki_request_duration_seconds_count{status_code=~"5..", cluster_type="management_cluster", namespace="loki"}[2m])) by (cluster_id, installation, provider, pipeline, namespace, job, route)
           /
-        sum(rate(loki_request_duration_seconds_count[2m])) by (cluster_id, installation, provider, pipeline, namespace, job, route)
+        sum(rate(loki_request_duration_seconds_count{cluster_type="management_cluster", namespace="loki"}[2m])) by (cluster_id, installation, provider, pipeline, namespace, job, route)
           > 10
       for: 120m
       labels:
@@ -93,11 +93,13 @@ spec:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: ticket
         team: atlas
         topic: observability
     - alert: LokiHpaReachedMaxReplicas
       annotations:
+        __dashboardUid__: loki-resources-overview
+        dashboardQueryParams: "orgId=2"
         description: '{{`Loki component {{ $labels.horizontalpodautoscaler }} has reached its maxReplicas number but still needs to be scaled up.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
       expr: |-
@@ -127,7 +129,7 @@ spec:
         __dashboardUid__: loki-retention
         dashboardQueryParams: "orgId=2"
         description: 'Loki compactor has been failing compactions for more than 2 hours since last compaction.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki#lokicompactorfailedcompaction
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/#lokicompactorfailedcompaction
       # This alert checks if Loki's the last successful compaction run is older than 2 hours
       expr: (min by (cluster_id, installation, provider, pipeline) (time() - (loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds > 0)) > 60 * 60 * 2)
       for: 1h
@@ -142,7 +144,7 @@ spec:
         __dashboardUid__: loki-retention
         dashboardQueryParams: "orgId=2"
         description: 'Loki compactor has been failing compactions for more than 2 hours since start-up.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki#lokicompactorfailedcompaction
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/#lokicompactorfailedcompaction
       # This alert covers the special case at compactor startup, where the "normal" alert would always consider time `0` is more than 2 hours ago, yet we want to let it 2 hours + `for` duration.
       expr: max(max_over_time(loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{}[2h])) by (cluster_id, installation, provider, pipeline) == 0
       for: 1h
@@ -185,7 +187,7 @@ spec:
         # This part will fire the alert when the metric does not exist
         or (
             label_replace(
-              capi_cluster_status_condition{type="ControlPlaneReady", status="True", cluster_type="management_cluster"},
+              capi_cluster_status_condition{type="ControlPlaneReady", status="True", cluster_type="management_cluster", app="cluster-api-monitoring"},
               "cluster_id",
               "$1",
               "name",

@@ -53,7 +53,7 @@ spec:
     - alert: KyvernoUnsafeReplicaCount
       annotations:
         description: "Kyverno's admission controller deployment must use at least 3 replicas, or be scaled to 0."
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/KyvernoWronglyScaled/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kyverno/#kyverno-wrongly-scaled
       expr: sum(kube_deployment_spec_replicas{deployment="kyverno"}) by (cluster_id, installation, pipeline, provider) != 0 and sum(kube_deployment_spec_replicas{deployment="kyverno"}) by (cluster_id, installation, pipeline, provider) < 3
       for: 1h
       labels:

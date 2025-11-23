@@ -192,8 +192,8 @@ main() {
                 local promtool_test_output
 
                 if [[ -f "$provider_testfile" ]]; then
-                    echo "###    promtool test rules $filenameWithoutExtension.test.yml - $provider"
-                    promtool_test_output="$("$GIT_WORKDIR/$PROMTOOL" test rules "$provider_testfile" 2>&1)" ||
+                    echo "###    promtool test rules $filenameWithoutExtension.test.yml - $provider" --diff
+                    promtool_test_output="$("$GIT_WORKDIR/$PROMTOOL" test rules "$provider_testfile" --diff 2>&1)" ||
                         promtool_test_errors+=("$promtool_test_output")
                 fi
                 ;;

@@ -36,7 +36,13 @@ spec:
     - expr: |-
         avg by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, exported_namespace) (
           label_replace(
-            capi_cluster_info,
+            label_replace(
+              capi_cluster_info,
+              "provider",
+              "vsphere",
+              "infrastructure_reference_kind",
+              "VSphereCluster"
+            ),
             "cluster_id",
             "$1",
             "name",
@@ -45,9 +51,30 @@ spec:
         )
       record: aggregation:giantswarm:cluster_info
     - expr: |-
-        sum(cluster_service_cluster_info) by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region) / 2
-        or sum(cluster_operator_cluster_status{release_version!=""}) by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-        or sum(capi_cluster_info) by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+        (
+          sum(
+            cluster_service_cluster_info
+          )
+          by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+        ) / 2
+        or (
+          sum(
+            cluster_operator_cluster_status{release_version!=""}
+          )
+          by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+        )
+        or (
+          sum(
+            label_replace(
+              capi_cluster_info,
+              "provider",
+              "vsphere",
+              "infrastructure_reference_kind",
+              "VSphereCluster"
+            )
+          )
+          by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+        )
       record: aggregation:giantswarm:cluster_release_version
     - expr: avg_over_time(cluster_operator_cluster_create_transition[1w])
       record: aggregation:giantswarm:cluster_transition_create
@@ -64,6 +91,14 @@ spec:
       record: aggregation:docker:containers_using_dockerhub_image
     - expr: sum(kube_pod_container_info{image_spec=~"docker\\.io/.*"} or kube_pod_init_container_info{image_spec=~"docker\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) / sum(kube_pod_container_info{} or kube_pod_init_container_info{}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:docker:containers_using_dockerhub_image_relative
+    - expr: sum(kube_pod_container_info{image=~"quay\\.io/giantswarm/.*"} OR kube_pod_init_container_info{image=~"quay\\.io/giantswarm/.*"}) by (cluster_id, cluster_type, customer, installation, provider, namespace, pod, image, pipeline)
+      record: aggregation:docker:containers_from_deprecated_registries:quay
+    - expr: sum(kube_pod_container_info{image=~"docker\\.io/giantswarm/.*"} OR kube_pod_init_container_info{image=~"docker\\.io/giantswarm/.*"}) by (cluster_id, cluster_type, customer, installation, provider, namespace, pod, image, pipeline)
+      record: aggregation:docker:containers_from_deprecated_registries:dockerhub
+    - expr: sum(kube_pod_container_info{image=~"giantswarm\\.azurecr\\.io/.*"} OR kube_pod_init_container_info{image=~"giantswarm\\.azurecr\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, provider, namespace, pod, image, pipeline)
+      record: aggregation:docker:containers_from_deprecated_registries:giantswarmacr
+    - expr: sum(kube_pod_container_info{image=~"giantswarmpublic\\.azurecr\\.io/.*"} OR kube_pod_init_container_info{image=~"giantswarmpublic\\.azurecr\\.io/.*"}) by (cluster_id, cluster_type, customer, installation, provider, namespace, pod, image, pipeline)
+      record: aggregation:docker:containers_from_deprecated_registries:giantswarmpublicacr
   - name: certificates.grafana-cloud.recording
     rules:
     - expr: min(cert_exporter_not_after) by (app, job, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
@@ -259,14 +294,6 @@ spec:
     rules:
     - expr: sum(ALERTS{alertstate="firing"}) by (alertname, cluster_id, cluster_type, customer, installation, pipeline, provider, region, area, severity, team, topic)
       record: aggregation:prometheus:alerts
-  - name: mimir.grafana-cloud.recording
-    rules:
-    - expr: sum(container_memory_working_set_bytes{namespace='mimir', cluster_type="management_cluster", container=~'.+'}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-      record: aggregation:mimir:memory_usage
-    - expr: sum(scrape_samples_post_metric_relabeling{cluster_id=~'.+'}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-      record: aggregation:mimir:scrape_samples_post_metric_relabeling
-    - expr: sum(scrape_series_added{cluster_id=~'.+'}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-      record: aggregation:mimir:scrape_series_added
   - name: dex.grafana-cloud.recording
     rules:
     # Dex activity and status based on ingress controller data
@@ -300,7 +327,7 @@ spec:
   - name: falco.grafana-cloud.recording
     rules:
     # Falco event counts
-    - expr: sum(falco_events{priority=~"0|1|2|3|4|5|6|7"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, priority, rule)
+    - expr: sum(falco_events{priority=~"0|1|2|3|4|5|6|7"} or label_replace(falcosecurity_falco_rules_matches_total{priority=~"0|1|2|3|4|5|6|7"}, "rule", "$1", "rule_name", "(.*)")) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, priority, rule)
       record: aggregation:falco_events
   - name: kyverno.grafana-cloud.recording
     rules:
@@ -432,6 +459,13 @@ spec:
       record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_request_errors
     - expr: sum(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region) / count(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_values
+  - name: management-clusters.organizations.grafana-cloud.recording
+    rules:
+    # Management Cluster Usage
+    - expr: observability_operator_grafana_organization_info
+      record: aggregation:observability:organization:organization_info
+    - expr: observability_operator_grafana_organization_tenants
+      record: aggregation:observability:organization:organization_tenants
   - name: management-clusters.aws.grafana-cloud.recording
     rules:
     # Management Cluster Usage
@@ -447,13 +481,13 @@ spec:
     rules:
       - expr: sum(trivy_compliance_info{title!~".*Pod.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, compliance_id, compliance_name, severity, title, status)
         record: aggregation:cluster_compliance_info
-{{- if eq .Values.managementCluster.provider.kind "capa" }}
+  {{- if eq .Values.managementCluster.provider.kind "capa" }}
   # Keeps track of the versions of the CAPI infrastructure CRDs in the management cluster. Currently only used for CAPA.
   - name: capi_crds.grafana-cloud.recording
     rules:
       - expr: sum(capi_crd_info{resource_name=~".*infrastructure.cluster.x-k8s.io.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, version)
         record: aggregation:capi_infrastructure_crd_versions
-{{- end }}
+  {{- end }}
   - name: slos.grafana-cloud.recording
     rules:
       # Let's not send any of the slo:sli_error:ratio_ratexxx metrics but the slo:sli_error:ratio_rate5m rule to Grafana Cloud as it's not useful for the SLOs dashboard.
@@ -547,3 +581,172 @@ spec:
             "(.*)"
           )
         record: aggregation:slo:time_period:days
+      - expr: |-
+          # The purpose of this metrics is to spot when a servicemonitor is broken, and not when a pod behind the servicemonitor is broken.
+          #
+          # If it's just a pod that is broken, some of the targets will work.
+          # If the whole servicemonitor is broken (misconfigured), then it can't scrape any pods.
+          #
+          # This behaviour reduces the amount of generated metrics, and makes them easier to interpret
+          (
+            count(up{}== 0 )
+            by (job, installation, cluster_id, provider,
+              pipeline, cluster_type, metrics_path,
+              container, namespace, organization, team)
+            /
+            count(up{})
+            by (job, installation, cluster_id, provider,
+              pipeline, cluster_type, metrics_path,
+              container, namespace, organization, team)
+          ) >= 1
+        record: aggregation:giantswarm:jobscrapingfailures
+
+  - name: signals.observability.grafana-cloud.recording
+    rules:
+      # Observability platform product signals
+      - expr: count_over_time(giantswarm:observability:grafana:unique_users:hourly[30d])
+        record: aggregation:giantswarm:observability:signals:user_logins
+      - expr: |
+          sum by (dashboard_id, dashboard_name, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+            sum_over_time(giantswarm:observability:grafana:dashboard_views:total[30d])
+          )
+        record: aggregation:giantswarm:observability:signals:dashboard_views:30d
+
+      ## Alertmanager routes
+      - expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant) (
+            observability_operator_alertmanager_routes
+          )
+        record: aggregation:giantswarm:observability:signals:alerting:routes
+
+      ## Mimir, Loki, GCE and Grafana Alerting rules aggregation
+      ### Mimir rules
+      - record: aggregation:giantswarm:observability:signals:rules
+        expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
+            label_replace(
+              label_replace(
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        label_replace(
+                          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, user, rule_group) (
+                            cortex_prometheus_rule_group_rules{cluster_type="management_cluster", rule_group=~".+"}
+                          ),
+                          "cluster_id", "$1", "rule_group", "/data/[^/]+/([^%/]+)%2F[^%/]+%2F[^%/]+%2F[^;]+;.*"
+                        ),
+                        "source_system", "mimir", "", ""
+                      ),
+                      "creation_mode", "clickops", "", ""
+                    ),
+                    "creation_mode", "gitops", "rule_group", "/data/[^/]+/[^%/]+%2F[^%/]+%2F[^%/]+%2F[^;]+;.*"
+                  ),
+                  "tenant", "$1", "user", "(.*)"
+                ),
+                "cluster_type", "workload_cluster", "", ""
+              ),
+              "cluster_type", "management_cluster", "cluster_id", "^{{ .Values.managementCluster.name }}$"
+            )
+          )
+
+      ### Loki rules
+      - record: aggregation:giantswarm:observability:signals:rules
+        expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
+            label_replace(
+              label_replace(
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        label_replace(
+                          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, user, rule_group) (
+                            loki_prometheus_rule_group_rules{cluster_type="management_cluster", rule_group=~".+"}
+                          ),
+                          "cluster_id", "$1", "rule_group", "/var/loki/rules-temp/[^/]+/[^-]+-[^-]+-(([a-z0-9]+(-[a-z0-9]+)*)-[a-z0-9]+((-[a-z0-9]+)*))\\.[^;]+;.*"
+                        ),
+                        "source_system", "loki", "", ""
+                      ),
+                      "creation_mode", "clickops", "", ""
+                    ),
+                    "creation_mode", "gitops", "rule_group", "/var/loki/rules-temp/[^/]+/[^-]+-[^-]+-[^-]+-[^;]+;.*"
+                  ),
+                  "tenant", "$1", "user", "(.*)"
+                ),
+                "cluster_type", "workload_cluster", "", ""
+              ),
+              "cluster_type", "management_cluster", "cluster_id", "^{{ .Values.managementCluster.name }}$"
+            )
+          )
+
+      ### GCE rules
+      - record: aggregation:giantswarm:observability:signals:rules
+        expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
+            label_replace(
+              label_replace(
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, rule_group) (
+                          prometheus_rule_group_rules{cluster_type="management_cluster", rule_group=~".+"}
+                        ),
+                        "source_system", "grafana-cloud-exporter", "", ""
+                      ),
+                      "creation_mode", "clickops", "", ""
+                    ),
+                    "creation_mode", "gitops", "rule_group", "/etc/prometheus/rules/prometheus-mimir-to-grafana-cloud-rulefiles-0/.*"
+                  ),
+                  "tenant", "giantswarm", "", ""
+                ),
+                "cluster_type", "workload_cluster", "", ""
+              ),
+              "cluster_type", "management_cluster", "cluster_id", "^{{ .Values.managementCluster.name }}$"
+            )
+          )
+
+      ### Grafana alerting rules
+      - record: aggregation:giantswarm:observability:signals:rules
+        expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant, org) (
+            label_replace(
+              label_replace(
+                label_replace(
+                  grafana_alerting_rule_group_rules{cluster_type="management_cluster", rule_group=~".+"},
+                  "source_system", "grafana", "", ""
+                ),
+                "creation_mode", "clickops", "", ""
+              ),
+              "tenant", "unknown", "", ""
+            )
+          )
+
+      # Mimir and Grafana Alerting fired alerts aggregation
+      ##  Fired alerts from Mimir
+      - record: aggregation:giantswarm:observability:signals:fired_alerts
+        expr: |
+          # Enrich alerts with tenant info by joining with mimir rules metric
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant, source_system) (
+            label_replace(
+                label_replace(
+                    cortex_alertmanager_alerts{state="active"},
+                    "source_system", "mimir", "", ""
+                ),
+                "tenant", "$1", "user", "(.*)"
+            )
+          )
+
+      ## Fired alerts from Grafana Alerting
+      - record: aggregation:giantswarm:observability:signals:fired_alerts
+        expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, org, source_system) (
+            label_replace(
+              label_replace(
+                grafana_alerting_alertmanager_alerts{state="active"},
+                "tenant", "unknown", "", ""
+              ),
+              "source_system", "grafana", "", ""
+            )
+          )

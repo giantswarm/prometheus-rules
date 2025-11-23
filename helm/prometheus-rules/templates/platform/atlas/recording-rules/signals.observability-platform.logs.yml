@@ -1,0 +1,40 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4}}
+  name: signals.observability-platform.logs.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+    - name: signals.observability-platform.logs
+      rules:
+        - record: giantswarm:observability:grafana:unique_users:hourly
+          expr: |
+            count by (uname, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+                count by (uname, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+                    count_over_time(
+                        {container="grafana", cluster_id="{{ .Values.managementCluster.name }}"}
+                            | logfmt
+                            | handler="/api/live/ws"
+                            |~ `uname=.*@.*`
+                            !~ `uname=.*@giantswarm\.io`
+                            | line_format "{{`{{.uname}}`}}"
+                        [1h]
+                    )
+                ) 
+            )
+        - record: giantswarm:observability:grafana:dashboard_views:total
+          expr: |
+            sum by (dashboard_id, dashboard_name, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+              count_over_time (
+                {cluster_id="{{ .Values.managementCluster.name }}", container="proxy", namespace="monitoring"}
+                |~ "GET /d/|GET /api/dashboards/uid/"
+                | pattern `<ip> - - [<time>] "<method> <uri> <protocol>" <status> <size> "<referrer>" "<agent>" "<forwarded_for>"`
+                | method = `GET`
+                | uri =~ "(/d/|/api/dashboards/uid/).+"
+                | line_format "{{.uri}} ||| {{.referrer}}"
+                | regexp `(?i)\/d\/(?P<dashboard_id>[^/]+)\/(?P<dashboard_name>[^/?\s]+)`
+                [1m]
+              )
+            )

@@ -44,10 +44,14 @@ spec:
       expr: |-
         # This alert uses the same logic as the `aggregation:giantswarm:jobscrapingfailures` recording rule
         (
-          count(up == 0) by (job, installation, cluster_id, provider, pipeline, team)
-          /
-          count(up) by (job, installation, cluster_id, provider, pipeline, team)
-        ), "team", "atlas", "team", "^$") >= 1
+          (
+            count(up == 0) by (app, job, installation, cluster_id, provider, pipeline)
+            /
+            count(up) by (app, job, installation, cluster_id, provider, pipeline)
+          )
+          * on(app, cluster_id) group_left(team)
+            label_replace(app_operator_app_info, "app", "$1", "name", "[^-]+-(.+)")
+        ) >= 1
       for: 1d
       labels:
         area: platform

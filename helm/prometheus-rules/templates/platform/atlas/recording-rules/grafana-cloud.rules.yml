@@ -609,3 +609,33 @@ spec:
             sum_over_time(giantswarm:observability:grafana:dashboard_views:total[30d])
           )
         record: aggregation:giantswarm:observability:signals:dashboard_views:30d
+      ## Mimir, Loki, GCE and Grafana Alerting rules aggregation
+      - record: aggregation:giantswarm:observability:signals:rules
+        expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
+            label_replace(
+              (
+                giantswarm:observability:signals:mimir_rules
+                or
+                giantswarm:observability:signals:loki_rules
+                or
+                giantswarm:observability:signals:grafana_cloud_exporter_rules
+                or
+                giantswarm:observability:signals:grafana_alerting_rules
+              ),
+              "cluster_type", "management_cluster", "cluster_id", "{{ .Values.managementCluster.name }}"
+            )
+            or
+            label_replace(
+              (
+                giantswarm:observability:signals:mimir_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
+                or
+                giantswarm:observability:signals:loki_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
+                or
+                giantswarm:observability:signals:grafana_cloud_exporter_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
+                or
+                giantswarm:observability:signals:grafana_alerting_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
+              ),
+              "cluster_type", "workload_cluster", "", ""
+            )
+          )

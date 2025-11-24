@@ -481,13 +481,13 @@ spec:
     rules:
       - expr: sum(trivy_compliance_info{title!~".*Pod.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, compliance_id, compliance_name, severity, title, status)
         record: aggregation:cluster_compliance_info
-{{- if eq .Values.managementCluster.provider.kind "capa" }}
+  {{- if eq .Values.managementCluster.provider.kind "capa" }}
   # Keeps track of the versions of the CAPI infrastructure CRDs in the management cluster. Currently only used for CAPA.
   - name: capi_crds.grafana-cloud.recording
     rules:
       - expr: sum(capi_crd_info{resource_name=~".*infrastructure.cluster.x-k8s.io.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, version)
         record: aggregation:capi_infrastructure_crd_versions
-{{- end }}
+  {{- end }}
   - name: slos.grafana-cloud.recording
     rules:
       # Let's not send any of the slo:sli_error:ratio_ratexxx metrics but the slo:sli_error:ratio_rate5m rule to Grafana Cloud as it's not useful for the SLOs dashboard.
@@ -601,6 +601,8 @@ spec:
           ) >= 1
         record: aggregation:giantswarm:jobscrapingfailures
 
+  - name: signals.observability.grafana-cloud.recording
+    rules:
       # Observability platform product signals
       - expr: count_over_time(giantswarm:observability:grafana:unique_users:hourly[30d])
         record: aggregation:giantswarm:observability:signals:user_logins
@@ -612,30 +614,34 @@ spec:
       ## Mimir, Loki, GCE and Grafana Alerting rules aggregation
       - record: aggregation:giantswarm:observability:signals:rules
         expr: |
-          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
-            label_replace(
-              (
-                giantswarm:observability:signals:mimir_rules
-                or
-                giantswarm:observability:signals:loki_rules
-                or
-                giantswarm:observability:signals:grafana_cloud_exporter_rules
-                or
-                giantswarm:observability:signals:grafana_alerting_rules
-              ),
-              "cluster_type", "management_cluster", "cluster_id", "{{ .Values.managementCluster.name }}"
-            )
-            or
-            label_replace(
-              (
-                giantswarm:observability:signals:mimir_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
-                or
-                giantswarm:observability:signals:loki_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
-                or
-                giantswarm:observability:signals:grafana_cloud_exporter_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
-                or
-                giantswarm:observability:signals:grafana_alerting_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
-              ),
-              "cluster_type", "workload_cluster", "", ""
-            )
+          label_replace(
+            (
+              giantswarm:observability:signals:mimir_rules{cluster_id="{{ .Values.managementCluster.name }}"}
+              or
+              giantswarm:observability:signals:loki_rules{cluster_id="{{ .Values.managementCluster.name }}"}
+              or
+              giantswarm:observability:signals:grafana_cloud_exporter_rules{cluster_id="{{ .Values.managementCluster.name }}"}
+              or
+              giantswarm:observability:signals:grafana_alerting_rules{cluster_id="{{ .Values.managementCluster.name }}"}
+            ),
+            "cluster_type", "management_cluster", "", ""
           )
+          or
+          label_replace(
+            (
+              giantswarm:observability:signals:mimir_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
+              or
+              giantswarm:observability:signals:loki_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
+              or
+              giantswarm:observability:signals:grafana_cloud_exporter_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
+              or
+              giantswarm:observability:signals:grafana_alerting_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
+            ),
+            "cluster_type", "workload_cluster", "", ""
+          )
+      ## Mimir and Grafana Alerting fired alerts aggregation
+      - record: aggregation:giantswarm:observability:signals:fired_alerts
+        expr: |
+          giantswarm:observability:signals:mimir_fired_alerts
+          or
+          giantswarm:observability:signals:grafana_fired_alerts

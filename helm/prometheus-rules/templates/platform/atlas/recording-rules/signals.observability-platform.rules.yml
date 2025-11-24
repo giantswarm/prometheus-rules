@@ -1,0 +1,119 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4}}
+  name: signals.observability-platform.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+    - name: signals.observability-platform
+      rules:
+        # Mimir rules with extracted cluster_id and enriched labels
+        - record: giantswarm:observability:signals:mimir_rules
+          expr: |
+            sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
+              label_replace(
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, user, rule_group) (
+                          cortex_prometheus_rule_group_rules{cluster_type="management_cluster", rule_group=~".+"}
+                        ),
+                        "cluster_id", "$1", "rule_group", "/data/[^/]+/([^%/]+)%2F[^%/]+%2F[^%/]+%2F[^;]+;.*"
+                      ),
+                      "source_system", "mimir", "", ""
+                    ),
+                    "creation_mode", "clickops", "", ""
+                  ),
+                  "creation_mode", "gitops", "rule_group", "/data/[^/]+/[^%/]+%2F[^%/]+%2F[^%/]+%2F[^;]+;.*"
+                ),
+                "tenant", "$1", "user", "(.*)"
+              )
+            )
+
+        # Loki rules with extracted cluster_id and enriched labels
+        - record: giantswarm:observability:signals:loki_rules
+          expr: |
+            sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
+              label_replace(
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, user, rule_group) (
+                          loki_prometheus_rule_group_rules{cluster_type="management_cluster", rule_group=~".+"}
+                        ),
+                        "cluster_id", "$1", "rule_group", "/var/loki/rules-temp/[^/]+/[^-]+-[^-]+-(([a-z0-9]+(-[a-z0-9]+)*)-[a-z0-9]+((-[a-z0-9]+)*))\\.[^;]+;.*"
+                      ),
+                      "source_system", "loki", "", ""
+                    ),
+                    "creation_mode", "clickops", "", ""
+                  ),
+                  "creation_mode", "gitops", "rule_group", "/var/loki/rules-temp/[^/]+/[^-]+-[^-]+-[^-]+-[^;]+;.*"
+                ),
+                "tenant", "$1", "user", "(.*)"
+              )
+            )
+
+        # Grafana Cloud Exporter rules with enriched labels
+        - record: giantswarm:observability:signals:grafana_cloud_exporter_rules
+          expr: |
+            sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
+              label_replace(
+                label_replace(
+                  label_replace(
+                    sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, rule_group) (
+                      prometheus_rule_group_rules{cluster_type="management_cluster", rule_group=~".+"}
+                    ),
+                    "source_system", "grafana-cloud-exporter", "", ""
+                  ),
+                  "creation_mode", "gitops", "rule_group", "/etc/prometheus/rules/prometheus-mimir-to-grafana-cloud-rulefiles-0/[^-]+-[^-]+-[^.]+\\.yaml;.*"
+                ),
+                "tenant", "giantswarm", "", ""
+              )
+            )
+
+        # Grafana rules with enriched labels
+        - record: giantswarm:observability:signals:grafana_alerting_rules
+          expr: |
+            sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant, org) (
+              label_replace(
+                label_replace(
+                  label_replace(
+                    grafana_alerting_rule_group_rules{cluster_type="management_cluster", rule_group=~".+"},
+                    "source_system", "grafana", "", ""
+                  ),
+                  "creation_mode", "clickops", "", ""
+                ),
+                "tenant", "unknown", "", ""
+              )
+            )
+
+        # Base fired alerts from Mimir Alertmanager with tenant enrichment
+        - record: giantswarm:observability:signals:mimir_fired_alerts
+          expr: |
+            # Enrich alerts with tenant info by joining with mimir rules metric
+            sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant, source_system) (
+              label_replace(
+                  label_replace(
+                      cortex_alertmanager_alerts{state="active"},
+                      "source_system", "mimir", "", ""
+                  ),
+                  "tenant", "$1", "user", "(.*)"
+              )
+            )
+
+        # Fired alerts from Grafana Alerting with organization mapped to tenant
+        - record: giantswarm:observability:signals:grafana_fired_alerts
+          expr: |
+            sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, org, source_system) (
+              label_replace(
+                label_replace(
+                  grafana_alerting_alertmanager_alerts{state="active"},
+                  "tenant", "unknown", "", ""
+                ),
+                "source_system", "grafana", "", ""
+              )
+            )

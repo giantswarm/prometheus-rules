@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--Add alert rule usage metrics recording rule to collect Observability Platform signals.
+- Add alert rule usage metrics recording rule to collect Observability Platform signals.
 
 ### Changed
 

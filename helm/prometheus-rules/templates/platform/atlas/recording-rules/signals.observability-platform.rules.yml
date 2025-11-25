@@ -10,7 +10,7 @@ spec:
     - name: signals.observability-platform
       rules:
         # Mimir rules with extracted cluster_id and enriched labels
-        - record: giantswarm:observability:signals:mimir_rules
+        - record: giantswarm:observability:signals:rules
           expr: |
             sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
               label_replace(
@@ -34,7 +34,7 @@ spec:
             )
 
         # Loki rules with extracted cluster_id and enriched labels
-        - record: giantswarm:observability:signals:loki_rules
+        - record: giantswarm:observability:signals:rules
           expr: |
             sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
               label_replace(
@@ -58,7 +58,7 @@ spec:
             )
 
         # Grafana Cloud Exporter rules with enriched labels
-        - record: giantswarm:observability:signals:grafana_cloud_exporter_rules
+        - record: giantswarm:observability:signals:rules
           expr: |
             sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
               label_replace(
@@ -76,7 +76,7 @@ spec:
             )
 
         # Grafana rules with enriched labels
-        - record: giantswarm:observability:signals:grafana_alerting_rules
+        - record: giantswarm:observability:signals:rules
           expr: |
             sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant, org) (
               label_replace(

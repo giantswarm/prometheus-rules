@@ -615,28 +615,12 @@ spec:
       - record: aggregation:giantswarm:observability:signals:rules
         expr: |
           label_replace(
-            (
-              giantswarm:observability:signals:mimir_rules{cluster_id="{{ .Values.managementCluster.name }}"}
-              or
-              giantswarm:observability:signals:loki_rules{cluster_id="{{ .Values.managementCluster.name }}"}
-              or
-              giantswarm:observability:signals:grafana_cloud_exporter_rules{cluster_id="{{ .Values.managementCluster.name }}"}
-              or
-              giantswarm:observability:signals:grafana_alerting_rules{cluster_id="{{ .Values.managementCluster.name }}"}
-            ),
+            giantswarm:observability:signals:rules{cluster_id="{{ .Values.managementCluster.name }}"},
             "cluster_type", "management_cluster", "", ""
           )
           or
           label_replace(
-            (
-              giantswarm:observability:signals:mimir_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
-              or
-              giantswarm:observability:signals:loki_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
-              or
-              giantswarm:observability:signals:grafana_cloud_exporter_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
-              or
-              giantswarm:observability:signals:grafana_alerting_rules{cluster_id!="{{ .Values.managementCluster.name }}"}
-            ),
+            giantswarm:observability:signals:rules{cluster_id!="{{ .Values.managementCluster.name }}"},
             "cluster_type", "workload_cluster", "", ""
           )
       ## Mimir and Grafana Alerting fired alerts aggregation

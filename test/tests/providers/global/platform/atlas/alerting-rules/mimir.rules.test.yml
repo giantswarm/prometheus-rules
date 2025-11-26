@@ -188,6 +188,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: bc9160e50b52e89e0e49c840fea3d379
+              dashboardQueryParams: "orgId=2"
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       - alertname: MimirIngesterNeedsToBeScaledUp
@@ -207,6 +209,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: bc9160e50b52e89e0e49c840fea3d379
+              dashboardQueryParams: "orgId=2"
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       - alertname: MimirIngesterNeedsToBeScaledUp
@@ -260,6 +264,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: bc9160e50b52e89e0e49c840fea3d379
+              dashboardQueryParams: "orgId=2"
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-ingester/
       - alertname: MimirIngesterNeedsToBeScaledDown

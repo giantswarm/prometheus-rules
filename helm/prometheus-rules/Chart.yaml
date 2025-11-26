@@ -4,7 +4,7 @@ home: https://github.com/giantswarm/prometheus-rules
 icon: https://s.giantswarm.io/app-icons/1/png/default-app-light.png
 name: prometheus-rules
 appVersion: "0.1.0"
-version: "4.85.0"
+version: "4.86.0"
 annotations:
   application.giantswarm.io/team: "atlas"
   config.giantswarm.io/version: 1.x.x

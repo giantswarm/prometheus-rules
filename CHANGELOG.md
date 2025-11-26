@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add alert rule usage metrics recording rule to collect Observability Platform signals.
+- Add alerting routes rule usage metrics recording rule to collect Observability Platform signals.
+
 ### Changed
 
 - Update `OnPremCloudProviderAPIIsDown` alert runbook URL to point to new runbook location.

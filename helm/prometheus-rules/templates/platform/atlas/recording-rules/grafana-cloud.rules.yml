@@ -481,13 +481,13 @@ spec:
     rules:
       - expr: sum(trivy_compliance_info{title!~".*Pod.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, compliance_id, compliance_name, severity, title, status)
         record: aggregation:cluster_compliance_info
-{{- if eq .Values.managementCluster.provider.kind "capa" }}
+  {{- if eq .Values.managementCluster.provider.kind "capa" }}
   # Keeps track of the versions of the CAPI infrastructure CRDs in the management cluster. Currently only used for CAPA.
   - name: capi_crds.grafana-cloud.recording
     rules:
       - expr: sum(capi_crd_info{resource_name=~".*infrastructure.cluster.x-k8s.io.*"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, version)
         record: aggregation:capi_infrastructure_crd_versions
-{{- end }}
+  {{- end }}
   - name: slos.grafana-cloud.recording
     rules:
       # Let's not send any of the slo:sli_error:ratio_ratexxx metrics but the slo:sli_error:ratio_rate5m rule to Grafana Cloud as it's not useful for the SLOs dashboard.
@@ -601,6 +601,8 @@ spec:
           ) >= 1
         record: aggregation:giantswarm:jobscrapingfailures
 
+  - name: signals.observability.grafana-cloud.recording
+    rules:
       # Observability platform product signals
       - expr: count_over_time(giantswarm:observability:grafana:unique_users:hourly[30d])
         record: aggregation:giantswarm:observability:signals:user_logins
@@ -609,3 +611,142 @@ spec:
             sum_over_time(giantswarm:observability:grafana:dashboard_views:total[30d])
           )
         record: aggregation:giantswarm:observability:signals:dashboard_views:30d
+
+      ## Alertmanager routes
+      - expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant) (
+            observability_operator_alertmanager_routes
+          )
+        record: aggregation:giantswarm:observability:signals:alerting:routes
+
+      ## Mimir, Loki, GCE and Grafana Alerting rules aggregation
+      ### Mimir rules
+      - record: aggregation:giantswarm:observability:signals:rules
+        expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
+            label_replace(
+              label_replace(
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        label_replace(
+                          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, user, rule_group) (
+                            cortex_prometheus_rule_group_rules{cluster_type="management_cluster", rule_group=~".+"}
+                          ),
+                          "cluster_id", "$1", "rule_group", "/data/[^/]+/([^%/]+)%2F[^%/]+%2F[^%/]+%2F[^;]+;.*"
+                        ),
+                        "source_system", "mimir", "", ""
+                      ),
+                      "creation_mode", "clickops", "", ""
+                    ),
+                    "creation_mode", "gitops", "rule_group", "/data/[^/]+/[^%/]+%2F[^%/]+%2F[^%/]+%2F[^;]+;.*"
+                  ),
+                  "tenant", "$1", "user", "(.*)"
+                ),
+                "cluster_type", "workload_cluster", "", ""
+              ),
+              "cluster_type", "management_cluster", "cluster_id", "^{{ .Values.managementCluster.name }}$"
+            )
+          )
+
+      ### Loki rules
+      - record: aggregation:giantswarm:observability:signals:rules
+        expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
+            label_replace(
+              label_replace(
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        label_replace(
+                          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, user, rule_group) (
+                            loki_prometheus_rule_group_rules{cluster_type="management_cluster", rule_group=~".+"}
+                          ),
+                          "cluster_id", "$1", "rule_group", "/var/loki/rules-temp/[^/]+/[^-]+-[^-]+-(([a-z0-9]+(-[a-z0-9]+)*)-[a-z0-9]+((-[a-z0-9]+)*))\\.[^;]+;.*"
+                        ),
+                        "source_system", "loki", "", ""
+                      ),
+                      "creation_mode", "clickops", "", ""
+                    ),
+                    "creation_mode", "gitops", "rule_group", "/var/loki/rules-temp/[^/]+/[^-]+-[^-]+-[^-]+-[^;]+;.*"
+                  ),
+                  "tenant", "$1", "user", "(.*)"
+                ),
+                "cluster_type", "workload_cluster", "", ""
+              ),
+              "cluster_type", "management_cluster", "cluster_id", "^{{ .Values.managementCluster.name }}$"
+            )
+          )
+
+      ### GCE rules
+      - record: aggregation:giantswarm:observability:signals:rules
+        expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
+            label_replace(
+              label_replace(
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, rule_group) (
+                          prometheus_rule_group_rules{cluster_type="management_cluster", rule_group=~".+"}
+                        ),
+                        "source_system", "grafana-cloud-exporter", "", ""
+                      ),
+                      "creation_mode", "clickops", "", ""
+                    ),
+                    "creation_mode", "gitops", "rule_group", "/etc/prometheus/rules/prometheus-mimir-to-grafana-cloud-rulefiles-0/.*"
+                  ),
+                  "tenant", "giantswarm", "", ""
+                ),
+                "cluster_type", "workload_cluster", "", ""
+              ),
+              "cluster_type", "management_cluster", "cluster_id", "^{{ .Values.managementCluster.name }}$"
+            )
+          )
+
+      ### Grafana alerting rules
+      - record: aggregation:giantswarm:observability:signals:rules
+        expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant, org) (
+            label_replace(
+              label_replace(
+                label_replace(
+                  grafana_alerting_rule_group_rules{cluster_type="management_cluster", rule_group=~".+"},
+                  "source_system", "grafana", "", ""
+                ),
+                "creation_mode", "clickops", "", ""
+              ),
+              "tenant", "unknown", "", ""
+            )
+          )
+
+      # Mimir and Grafana Alerting fired alerts aggregation
+      ##  Fired alerts from Mimir
+      - record: aggregation:giantswarm:observability:signals:fired_alerts
+        expr: |
+          # Enrich alerts with tenant info by joining with mimir rules metric
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant, source_system) (
+            label_replace(
+                label_replace(
+                    cortex_alertmanager_alerts{state="active"},
+                    "source_system", "mimir", "", ""
+                ),
+                "tenant", "$1", "user", "(.*)"
+            )
+          )
+
+      ## Fired alerts from Grafana Alerting
+      - record: aggregation:giantswarm:observability:signals:fired_alerts
+        expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, org, source_system) (
+            label_replace(
+              label_replace(
+                grafana_alerting_alertmanager_alerts{state="active"},
+                "tenant", "unknown", "", ""
+              ),
+              "source_system", "grafana", "", ""
+            )
+          )

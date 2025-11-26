@@ -612,8 +612,15 @@ spec:
           )
         record: aggregation:giantswarm:observability:signals:dashboard_views:30d
 
-      # Mimir, Loki, GCE and Grafana Alerting rules aggregation
-      ## Mimir rules
+      ## Alertmanager routes
+      - expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant) (
+            observability_operator_alertmanager_routes
+          )
+        record: aggregation:giantswarm:observability:signals:alerting:routes
+
+      ## Mimir, Loki, GCE and Grafana Alerting rules aggregation
+      ### Mimir rules
       - record: aggregation:giantswarm:observability:signals:rules
         expr: |
           sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
@@ -643,7 +650,7 @@ spec:
             )
           )
 
-      ## Loki rules
+      ### Loki rules
       - record: aggregation:giantswarm:observability:signals:rules
         expr: |
           sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
@@ -673,7 +680,7 @@ spec:
             )
           )
 
-      ## GCE rules
+      ### GCE rules
       - record: aggregation:giantswarm:observability:signals:rules
         expr: |
           sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant) (
@@ -700,7 +707,7 @@ spec:
             )
           )
 
-      ## Grafana alerting rules
+      ### Grafana alerting rules
       - record: aggregation:giantswarm:observability:signals:rules
         expr: |
           sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, source_system, creation_mode, tenant, org) (

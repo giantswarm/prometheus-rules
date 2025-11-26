@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: fluxcd-atlas.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: fluxcd-atlas
+    rules:
+    #
+    # FluxKustomizationFailed
+    #
+    # Alerting for GiantSwarm management clusters silences Kustomization CRs.
+    #
+    - alert: FluxKustomizationFailed
+      annotations:
+        description: |-
+          {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-kustomization-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&KUSTOMIZATION_NAME={{ $labels.name }}`}}'
+      expr: gotk_resource_info{ready="False", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*", name="silences"} > 0
+      for: 20m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: releng

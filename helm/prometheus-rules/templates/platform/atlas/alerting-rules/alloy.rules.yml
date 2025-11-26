@@ -68,6 +68,28 @@ spec:
             cancel_if_outside_working_hours: "true"
             cancel_if_node_unschedulable: "true"
             cancel_if_node_not_ready: "true"
+    - name: alloy.events
+      rules:
+        - alert: TracingAndEventAgentDown
+          annotations:
+            __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
+            dashboardQueryParams: "orgId=2"
+            description: '{{`Scraping of all tracing-and-event-agent pods to check if one failed every 30 minutes.`}}'
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
+          expr: |-
+            kube_pod_info{pod=~"alloy-events.*"}
+            * on(cluster_id, pod)
+              group_left ()
+              up{job="alloy-events", container="alloy"} == 0
+          for: 30m
+          labels:
+            area: platform
+            severity: page
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+            cancel_if_node_unschedulable: "true"
+            cancel_if_node_not_ready: "true"
     - name: alloy.metrics
       rules:
         # This alert pages if monitoring-agent fails to send samples to its remote write endpoint.
@@ -81,10 +103,11 @@ spec:
           expr: |-
             count(
               label_replace(
-                (capi_cluster_status_condition{type="ControlPlaneReady", status="True"} == 1)
+                # TODO remove app="kube-state-metrics" filter when capi-monitoring-app has been removed from our MCs
+                (capi_cluster_status_condition{app="kube-state-metrics", type="ControlPlaneReady", status="True"} == 1)
                   * on (name, installation, pipeline, provider)
                   # We do not want to alert on clusters that are being deleted.
-                  (capi_cluster_status_phase{phase="Deleting"} == 0),
+                  (capi_cluster_status_phase{app="kube-state-metrics", phase="Deleting"} == 0),
                 "cluster_id",
                 "$1",
                 "name",
@@ -92,7 +115,7 @@ spec:
               )
             ) by (cluster_id, installation, pipeline, provider) > 0
             unless on (cluster_id) (
-              count(up{job=~"alloy-metrics|prometheus-agent"} > 0) by (cluster_id)
+              count(up{job=~"alloy-metrics"} > 0) by (cluster_id)
             )
           for: 20m
           labels:
@@ -113,7 +136,8 @@ spec:
           expr: |-
             count(
               label_replace(
-                capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+                # TODO remove app="kube-state-metrics" filter when capi-monitoring-app has been removed from our MCs
+                capi_cluster_status_condition{app="kube-state-metrics", type="ControlPlaneReady", status="True"},
                 "cluster_id",
                 "$1",
                 "name",
@@ -121,7 +145,7 @@ spec:
               ) == 1
             ) by (cluster_id, installation, pipeline, provider) > 0
             unless on (cluster_id) (
-              count(up{job=~"alloy-metrics|prometheus-agent"} > 0) by (cluster_id)
+              count(up{job=~"alloy-metrics"} > 0) by (cluster_id)
             )
           for: 2m
           labels:

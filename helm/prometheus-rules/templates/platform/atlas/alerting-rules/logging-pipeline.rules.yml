@@ -4,18 +4,17 @@ metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
   name: logging-pipeline.rules
-  namespace: {{ .Values.namespace  }}
+  namespace: {{ .Values.namespace }}
 spec:
   groups:
     - name: logging-pipeline
       rules:
         # Any alloy component that uses the loki.write component can throw such errors.
-        # This includes alloy-logs and the observability-gateway
         - alert: LogForwardingErrors
           annotations:
             __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
             dashboardQueryParams: "orgId=2"
-            description: '{{`More that 10% of the requests to Loki are failing.`}}'
+            description: '{{`{{ $value | printf "%.2f" }}% of the requests to Loki are failing for pod {{ $labels.pod }} (threshold 10%)`}}'
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
           expr: |-
             (
@@ -23,7 +22,7 @@ spec:
               *
                 (
                     (
-                      sum by (cluster_id, installation, provider, pipeline, namespace, job, instance) (
+                      sum by (cluster_id, installation, provider, pipeline, namespace, job, instance, pod) (
                         rate (
                           loki_write_request_duration_seconds_count{status_code!~"2.."}[5m:]
                         )
@@ -31,7 +30,7 @@ spec:
                     )
                   /
                     (
-                      sum by (cluster_id, installation, provider, pipeline, namespace, job, instance) (
+                      sum by (cluster_id, installation, provider, pipeline, namespace, job, instance, pod) (
                         rate (
                           loki_write_request_duration_seconds_count[5m:]
                         )
@@ -47,40 +46,3 @@ spec:
             team: atlas
             topic: observability
             cancel_if_outside_working_hours: "true"
-        # This alert pages when the loki source api component of the observability gateway is throwing errors
-        - alert: LogReceivingErrors
-          annotations:
-            __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
-            dashboardQueryParams: "orgId=2"
-            description: '{{`More that 10% of the loki requests to the observability gateway are failing.`}}'
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
-          expr: |-
-            (
-              100
-              *
-                (
-                    (
-                      sum by (cluster_id, installation, provider, pipeline, namespace, job, instance, route) (
-                        rate (
-                          loki_source_api_request_duration_seconds_count{route=~"(loki_)?api_v1_push", status_code!~"2.."}[5m:]
-                        )
-                      )
-                    )
-                  /
-                    (
-                      sum by (cluster_id, installation, provider, pipeline, namespace, job, instance, route) (
-                        rate (
-                          loki_source_api_request_duration_seconds_count{route=~"(loki_)?api_v1_push"}[5m:]
-                        )
-                      )
-                    )
-                )
-            )
-            > 10
-          for: 15m
-          labels:
-            area: platform
-            cancel_if_outside_working_hours: "true"
-            severity: page
-            team: atlas
-            topic: observability

@@ -1,0 +1,42 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: pods.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: pods
+    rules:
+    # PodsUnschedulable fires when too many pods are in `unschedulable` status in the `kube-system` namespace
+    # This is a signal something is wrong with the WC.
+    - alert: PodsUnschedulable
+      annotations:
+        description: '{{`Cluster {{ $labels.cluster_id }} has unschedulable kube-system pods.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/validate-cluster-health/
+        __dashboardUid__: unschedulable-pods
+        dashboardQueryParams: '{{`orgId=1&var-namespace=kube-system&var-cluster={{ $labels.cluster_id }}`}}'
+      expr: |-
+        count(
+          count_over_time(
+            # Have a list of unschedulable pods
+            count(
+              kube_pod_status_unschedulable{namespace="kube-system"}
+            ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, pod)
+          # only keep those that have been unschedulable for more than 10 minutes over the past 30 minutes
+          [30m:]) > 10
+        # count per cluster
+        ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+        # At least 2 pods should be unschedulable for the alert to page.
+        >= 2
+      for: 15m
+      labels:
+        area: kaas
+        # Let's start with business hours only, maybe 24x7 in the future
+        cancel_if_outside_working_hours: "true"
+        inhibit_cluster_broken: "true"
+        severity: page
+        team: {{ include "providerTeam" . }}
+        topic: workloadcluster

@@ -13,8 +13,8 @@ spec:
     - alert: FluxDeploymentNotSatisfied
       annotations:
         description: '{{`Flux deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", namespace=~"flux-.*"} > 0
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", namespace="flux-giantswarm"} > 0
       for: 30m
       labels:
         area: platform
@@ -31,8 +31,8 @@ spec:
       annotations:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-helmrelease/
-      expr: gotk_resource_info{ready="False", job="giantswarm/cluster-api-monitoring", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'
+      expr: gotk_resource_info{ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
       for: 10m
       labels:
         area: platform
@@ -51,7 +51,7 @@ spec:
       annotations:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-helmrelease/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'
       expr: gotk_resource_info{ready="False", job="kube-state-metrics", customresource_kind="HelmRelease", cluster_type="workload_cluster", organization="giantswarm"} > 0
       for: 10m
       labels:
@@ -71,8 +71,8 @@ spec:
       annotations:
         description: |-
           {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-kustomization/
-      expr: gotk_resource_info{ready="False", job="giantswarm/cluster-api-monitoring", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-kustomization-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&KUSTOMIZATION_NAME={{ $labels.name }}`}}'
+      expr: gotk_resource_info{ready="False", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*", name!="silences"} > 0
       for: 20m
       labels:
         area: platform
@@ -89,7 +89,7 @@ spec:
       annotations:
         description: |-
           {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-kustomization/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-kustomization-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&KUSTOMIZATION_NAME={{ $labels.name }}`}}'
       expr: gotk_resource_info{ready="False", job="kube-state-metrics", customresource_kind="Kustomization", cluster_type="workload_cluster", organization="giantswarm"} > 0
       for: 2h
       labels:
@@ -107,8 +107,8 @@ spec:
       annotations:
         description: |-
           {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-source/
-      expr: gotk_resource_info{ready="False", job="giantswarm/cluster-api-monitoring", customresource_kind=~"GitRepository|HelmRepository|Bucket", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&SOURCE_NAME={{ $labels.name }}`}}'
+      expr: gotk_resource_info{ready="False", customresource_kind=~"GitRepository|HelmRepository|Bucket|OCIRepository", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
       for: 2h
       labels:
         area: platform
@@ -125,8 +125,8 @@ spec:
       annotations:
         description: |-
           {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-failing-source/
-      expr: gotk_resource_info{ready="False", job="kube-state-metrics", customresource_kind=~"GitRepository|HelmRepository|Bucket", cluster_type="workload_cluster", organization="giantswarm"} > 0
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&SOURCE_NAME={{ $labels.name }}`}}'
+      expr: gotk_resource_info{ready="False", job="kube-state-metrics", customresource_kind=~"GitRepository|HelmRepository|Bucket|OCIRepository", cluster_type="workload_cluster", organization="giantswarm"} > 0
       for: 2h
       labels:
         area: platform
@@ -139,7 +139,7 @@ spec:
       annotations:
         description: |-
           {{`Flux object {{ $labels.kind }}/{{ $labels.name }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is below the error threshold of its error budget.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-slow-reconciliation/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-slow-reconciliation/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         1-sum_over_time(
         (
@@ -161,8 +161,8 @@ spec:
       annotations:
         description: |-
           {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }} has been suspended for 24h.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-suspended-for-too-long/
-      expr: gotk_resource_info{job="giantswarm/cluster-api-monitoring", cluster_type="management_cluster", exported_namespace="flux-giantswarm", suspended="true"} > 0
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-suspended/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      expr: gotk_resource_info{cluster_type="management_cluster", exported_namespace="flux-giantswarm", suspended="true"} > 0
       for: 24h
       labels:
         area: platform
@@ -174,7 +174,7 @@ spec:
       annotations:
         description: |-
           {{`Flux artifacts are stuck in work queue for over 1 hour and are not being reconciled.`}}
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluxcd-workqueue-too-long/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-workqueue/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         sum by (cluster_id, installation, name, namespace, pipeline, provider) (workqueue_unfinished_work_seconds{namespace="flux-giantswarm", cluster_type="management_cluster"}) > 3600.0
       for: 10m

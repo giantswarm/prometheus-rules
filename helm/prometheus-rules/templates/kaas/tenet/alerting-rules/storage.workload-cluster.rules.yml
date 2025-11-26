@@ -43,7 +43,7 @@ spec:
       # The right hand side of the or is necessary because we need to be alerted in clusters without the node-problem-detector.
       # Note that we add 1 to the disk free space so we still get alerted when the free bytes are 0.
       # We are also alerted if the free space is less than 500MB for 60 minutes.
-      expr: (( node_filesystem_free_bytes{cluster_type="workload_cluster",mountpoint=~"(/rootfs)?/var/lib/kubelet"} +1 < (500 * 1024 * 1024)) * on (node, cluster_type, cluster_id, installation, organization, pipeline, region, customer) (1 - problem_gauge{reason="KubeletDiskIsFull"}) or sum (node_filesystem_free_bytes{cluster_type="workload_cluster",mountpoint=~"(/rootfs)?/var/lib/kubelet"} +1 < (500 * 1024 * 1024)) by (node, cluster_type, cluster_id, installation, organization, pipeline, region, customer)) > 0
+      expr: (( node_filesystem_free_bytes{cluster_type="workload_cluster",mountpoint=~"(/rootfs)?/var/lib/kubelet"} +1 < (500 * 1024 * 1024)) * on (node, cluster_type, cluster_id, installation, organization, pipeline, region, customer) (1 - problem_gauge{reason="KubeletDiskIsFull"}) or sum (node_filesystem_free_bytes{cluster_type="workload_cluster",mountpoint=~"(/rootfs)?/var/lib/kubelet"} +1 < (500 * 1024 * 1024)) by (node, cluster_type, cluster_id, installation, organization, pipeline, provider, region, customer)) > 0
       for: 60m
       labels:
         area: kaas
@@ -57,7 +57,7 @@ spec:
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/low-disk-space/#log-volume
       # See above comment for the KubeletVolumeSpaceTooLow alert regarding the node-problem-detector.
       # We are also alerted if the free space is less than 10% for 30 minutes.
-      expr: (( 100 * (node_filesystem_free_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/log"} +1) / node_filesystem_size_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/log"} < 10) * on (node, cluster_type, cluster_id, installation, organization, pipeline, region, customer) (1 - problem_gauge{reason="VarLogDiskIsFull"}) or sum ((100 * node_filesystem_free_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/log"} +1)/ node_filesystem_size_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/log"} < 10) by (node, cluster_type, cluster_id, installation, organization, pipeline, region, customer)) > 0
+      expr: (( 100 * (node_filesystem_free_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/log"} +1) / node_filesystem_size_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/log"} < 10) * on (node, cluster_type, cluster_id, installation, organization, pipeline, region, customer) (1 - problem_gauge{reason="VarLogDiskIsFull"}) or sum ((100 * node_filesystem_free_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/log"} +1)/ node_filesystem_size_bytes{cluster_type="workload_cluster", mountpoint=~"(/rootfs)?/var/log"} < 10) by (node, cluster_type, cluster_id, installation, organization, pipeline, provider, region, customer)) > 0
       for: 60m
       labels:
         area: kaas

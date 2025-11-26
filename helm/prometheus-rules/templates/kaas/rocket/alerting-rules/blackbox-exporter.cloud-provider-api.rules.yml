@@ -15,7 +15,7 @@ spec:
     - alert: OnPremCloudProviderAPIIsDown
       annotations:
         description: '{{` blackbox-exporter on {{ $labels.cluster_id}} is unable to connect to the on-prem cloud provider API.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/onprem-cloud-provider-api-is-down/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/onprem-cloud-provider-api/
       expr: probe_success{cluster_type="management_cluster",job="prometheus-blackbox-exporter",target="http-cloud-provider-api"} == 0
       for: 5m
       labels:

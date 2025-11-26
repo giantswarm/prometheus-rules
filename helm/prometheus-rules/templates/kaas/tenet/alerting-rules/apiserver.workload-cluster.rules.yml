@@ -26,34 +26,21 @@ spec:
         team: tenet
         topic: kubernetes
 
-    - alert: WorkloadClusterAPIServerAdmissionWebhookErrors
-      annotations:
-        description: '{{`Kubernetes API Server {{ $labels.cluster_id }} having admission webhook errors (webhook: {{ $labels.name }}).`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/apiserver-admission-webhook-errors/
-      expr: rate(apiserver_admission_webhook_rejection_count{cluster_type="workload_cluster",error_type=~"calling_webhook_error|apiserver_internal_error",name!~"validate\\.kyverno\\.svc-fail|mutate\\.kyverno\\.svc-fail|validations\\.kong\\.konghq\\.com"}[5m]) > 0
-      for: 5m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: notify
-        team: tenet
-        topic: kubernetes
-
     # Webhooks that are not explicitely owner by any team (customer owned ones).
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutSolutionEngineers
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/apiserver-admission-webhook-errors/
       expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name!~".*(prometheus|vpa.k8s.io|linkerd|validate.nginx.ingress.kubernetes.io|kong.konghq.com|cert-manager.io|kyverno|app-admission-controller).*"}[5m])) by (cluster_id, installation, pipeline, provider, name, job, le)) > 5
-      for: 15m
+      for: 1h
       labels:
         area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: se
         topic: kubernetes
 
-      # Webhooks owned by Honeybadger
+    # Webhooks owned by Honeybadger
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutHoneybadger
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
@@ -67,7 +54,7 @@ spec:
         team: honeybadger
         topic: kubernetes
 
-      # Webhooks owned by Cabbage
+    # Webhooks owned by Cabbage
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutCabbage
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
@@ -81,7 +68,7 @@ spec:
         team: cabbage
         topic: kubernetes
 
-      # Webhooks owned by Phoenix
+    # Webhooks owned by Phoenix
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutPhoenix
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
@@ -95,7 +82,7 @@ spec:
         team: phoenix
         topic: kubernetes
 
-      # Webhooks owned by Atlas
+    # Webhooks owned by Atlas
     - alert: WorkloadClusterWebhookDurationExceedsTimeoutAtlas
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
@@ -107,4 +94,18 @@ spec:
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: atlas
+        topic: kubernetes
+
+    # Kyverno webhooks that may block critical objects
+    - alert: WorkloadClusterWebhookDurationExceedsTimeoutKyvernoCritical
+      annotations:
+        description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} takes very long or is timing out.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/apiserver-admission-webhook-errors/
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(kyverno.*fail).*"}[15m])) by (cluster_id, installation, pipeline, provider, name, job, le)) > 10
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: tenet
         topic: kubernetes

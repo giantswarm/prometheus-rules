@@ -189,9 +189,9 @@ tests:
     input_series:
       - series: 'up{job="alloy-metrics", cluster_id="golem", installation="golem", provider="capa", pipeline="testing"}'
         values: "_x60 1+0x60 0+0x60"
-      - series: 'capi_cluster_status_condition{type="ControlPlaneReady", status="True", name="golem", installation="golem", provider="capa", pipeline="testing"}'
+      - series: 'capi_cluster_status_condition{app="kube-state-metrics", type="ControlPlaneReady", status="True", name="golem", installation="golem", provider="capa", pipeline="testing"}'
         values: "1x180"
-      - series: 'capi_cluster_status_phase{phase="Deleting", name="golem", installation="golem", provider="capa", pipeline="testing"}'
+      - series: 'capi_cluster_status_phase{app="kube-state-metrics", phase="Deleting", name="golem", installation="golem", provider="capa", pipeline="testing"}'
         values: "0x150 1x30"
     alert_rule_test:
       - alertname: MonitoringAgentDown
@@ -390,3 +390,40 @@ tests:
         eval_time: 130m
       - alertname: InhibitionMonitoringAgentShardsNotSatisfied
         eval_time: 130m
+  # Test TracingAndEventAgentDown
+  - interval: 1m
+    input_series:
+      # Pod is up for 30m, then down for 30m, then up again
+      - series: 'up{job="alloy-events", container="alloy", pod="alloy-events-1", cluster_id="golem", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1+0x30 0+0x60 1+0x30"
+      - series: 'kube_pod_info{pod="alloy-events-1", cluster_id="golem", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x90"
+    alert_rule_test:
+      # Should not alert when pod is up
+      - alertname: TracingAndEventAgentDown
+        eval_time: 10m
+      # Should alert after 30m of pod down
+      - alertname: TracingAndEventAgentDown
+        eval_time: 65m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cancel_if_node_unschedulable: "true"
+              cancel_if_node_not_ready: "true"
+              cluster_id: golem
+              installation: golem
+              provider: capa
+              pipeline: testing
+              pod: alloy-events-1
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
+              dashboardQueryParams: "orgId=2"
+              description: "Scraping of all tracing-and-event-agent pods to check if one failed every 30 minutes."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/alloy/
+      # Should resolve after pod is up again
+      - alertname: TracingAndEventAgentDown
+        eval_time: 100m

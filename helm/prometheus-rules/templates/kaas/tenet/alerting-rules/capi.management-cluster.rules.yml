@@ -42,7 +42,7 @@ spec:
     - alert: ManagementClusterDeploymentMissingCAPI
       annotations:
         description: '{{`Deployment {{ $labels.deployment }} is missing.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/management-cluster-deployment-is-missing/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mc-deployment-missing/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capi-controller-manager", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
         or absent(kube_deployment_status_condition{namespace="giantswarm", condition="Available", deployment="capi-kubeadm-bootstrap-controller-manager", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
@@ -51,6 +51,7 @@ spec:
       labels:
         area: kaas
         cancel_if_kube_state_metrics_down: "true"
+        cancel_if_metrics_broken: "true"
         cancel_if_monitoring_agent_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page

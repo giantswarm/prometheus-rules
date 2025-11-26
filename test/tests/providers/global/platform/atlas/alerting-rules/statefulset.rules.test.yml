@@ -35,7 +35,7 @@ tests:
               topic: managementcluster
             exp_annotations:
               description: "Statefulset loki/loki-write is not satisfied."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION=gauss&CLUSTER=gauss&NAMESPACE=loki&KIND=statefulset&NAME=loki-write
       - alertname: StatefulsetNotSatisfiedAtlas
         eval_time: 4500m # 3 days + 3h
         exp_alerts:
@@ -57,6 +57,6 @@ tests:
               topic: managementcluster
             exp_annotations:
               description: "Statefulset loki/loki-write is not satisfied."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/deployment-not-satisfied/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION=gauss&CLUSTER=gauss&NAMESPACE=loki&KIND=statefulset&NAME=loki-write
       - alertname: StatefulsetNotSatisfiedAtlas
         eval_time: 4502m

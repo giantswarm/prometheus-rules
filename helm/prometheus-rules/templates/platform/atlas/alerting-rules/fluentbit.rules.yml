@@ -11,21 +11,6 @@ spec:
   groups:
   - name: fluentbit
     rules:
-    - alert: FluentbitTooManyErrors
-      annotations:
-        description: '{{`Fluentbit ({{ $labels.instance }}) is erroring.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluentbit-too-many-erros/
-        __dashboardUid__: fluentbit
-        dashboardQueryParams: "orgId=2"
-      # If we have some failures sending data, raise an alert
-      expr: rate(fluentbit_output_retries_failed_total[10m]) > 0
-      for: 20m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: atlas
-        topic: observability
     - alert: FluentbitDropRatio
       annotations:
         description: '{{`Fluentbit ({{ $labels.instance }}) is dropping more than 1% records.`}}'
@@ -33,7 +18,15 @@ spec:
         __dashboardUid__: fluentbit
         dashboardQueryParams: "orgId=2"
       # Check the ratio of dropped records over the total number of records.
-      expr: rate(fluentbit_output_dropped_records_total[10m]) / (rate(fluentbit_output_proc_records_total[10m]) + rate(fluentbit_output_dropped_records_total[10m])) > 0.01
+      # We only monitor this app on the management cluster so we don't get alerts if the customer misconfigures theirs.
+      expr: |-
+        rate(
+          fluentbit_output_dropped_records_total{cluster_type="management_cluster"}[10m])
+          / (
+            rate(fluentbit_output_proc_records_total{cluster_type="management_cluster"}[10m])
+            + rate(fluentbit_output_dropped_records_total{cluster_type="management_cluster"}[10m])
+          )
+        > 0.01
       for: 20m
       labels:
         area: platform

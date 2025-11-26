@@ -1,11 +1,396 @@
-# Changelog
-
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Added
+
+- Add alert rule usage metrics recording rule to collect Observability Platform signals.
+- Add alerting routes rule usage metrics recording rule to collect Observability Platform signals.
+
+### Changed
+
+- Update `OnPremCloudProviderAPIIsDown` alert runbook URL to point to new runbook location.
+- Change `apiserver_flowcontrol_request_concurrency_limit` to `apiserver_flowcontrol_nominal_limit_seats`, metric will be dropped in Kubernetes `v1.31`.
+
+## [4.85.0] - 2025-11-18
+
+### Fixed
+
+- Fix description for `WorkloadClusterDeploymentNotSatisfiedShield` WC alert.
+- Remove duplicate `DeploymentNotSatisfiedShield` MC alert.
+- Fix `KubeStateMetricsNotRetrievingMetrics` by not paging on leftover CAPI CRs.
+
+### Removed
+
+- Remove `credentiald` from `WorkloadClusterDeploymentNotSatisfiedShield` MC and WC alerts.
+
+## [4.84.0] - 2025-11-12
+
+### Added
+
+-Add dashboard views metrics recording rule to Grafana observability rules. The rule aggregates dashboard view counts over 30 days by dashboard ID and name.
+
+### Changed
+
+- Alert DexInvalidClientId: make matching rule more specific to prevent false positives
+
+### Fixed
+
+- Fix `ManagementClusterCertificateIsMissing` alert to only trigger for KaaS-specific certificates (provider-specific serving certificates or CAPI serving certificates).
+
+### Removed
+
+- Remove irsa-operator alerts
+
+## [4.83.0] - 2025-11-07
+
+### Changed
+
+- Update alert severity from 'page' to 'ticket' for `LokiNeedsToBeScaledDown`, `MimirIngesterNeedsToBeScaledDown`, and `MimirIngesterNeedsToBeScaledUp` alerts in Loki and Mimir alerting rules.
+
+## [4.82.0] - 2025-11-06
+
+### Added
+
+- Add `management-clusters.organizations.grafana-cloud.recording` recording rules to grafana cloud.
+
+### Removed
+
+- Clean up all that pertain to our old monitoring/logging agents:
+  - `PromtailDown`
+  - `PromtailRequestsErrors`
+  - `PromtailConflictsWithAlloy`
+  - `PrometheusAgentShardsMissing`
+  - `InhibitionPrometheusAgentShardsMissing`
+
+## [4.81.0] - 2025-10-30
+
+### Added
+
+- Add new alert `DexInvalidClientId`
+- Add log-based alert `MimirDistributorMaxInflightPushRequests` to detect high rate of "err-mimir-distributor-max-inflight-push-requests" errors in Mimir distributors instead of the previous `MimirDistributorReachingInflightPushRequestLimit` alert.
+
+### Changed
+
+- Update runbook URL for `ManagementClusterDeploymentMissingCAPA` and `ManagementClusterDeploymentMissingCAPI` alerts to point to the new runbook location with URL parameters for installation and cluster.
+
+### Fixed
+
+- Fix `MimirAlertmanagerNotificationsFailing` and `MimirAlertmanagerAlertsFailing` alerts to only page for giantswarm tenants.
+
+## [4.80.0] - 2025-10-29
+
+### Fixed
+
+- Fix alertmanager alerts to make them work with Mimir metric.
+
+### Removed
+
+- Tenet - Removal of noisy notify alerts that don't require immediate action
+  - Remove `WorkloadClusterAPIServerAdmissionWebhookErrors` - Too noisy, webhook errors are often transient and don't require immediate intervention
+  - Remove `KubeletPLEGLatencyTooHigh` - High PLEG latency is common and doesn't typically indicate actionable issues
+  - Remove `KubeletDockerOperationsErrorsTooHigh` - Docker operation errors are often transient and don't require immediate action
+  - Remove `KubeletConditionBad` - Kubelet condition alerts are too noisy and rarely actionable
+  - Remove `CadvisorDown` - Cadvisor downtime is often temporary and doesn't require immediate response
+
+## [4.79.1] - 2025-10-27
+
+### Fixed
+
+- Fix `KubeStateMetricsNotRetrievingMetrics` by ignoring SLO recording rules
+
+## [4.79.0] - 2025-10-27
+
+### Added
+
+- Add new alert `TracingAndEventAgentDown` to monitor alloy-event pods and page if any are down for 30 minutes.
+- Add new alert `OTLPExporterEnqueueFailures` and `OTLPTraceForwardingErrors` to page when the tracing pipeline is not working as expected.
+
+### Changed
+
+- Rename `PrometheusMissingGrafanaCloud` to `MimirToGrafanaCloudExporterMissingData`
+- Remove the `PrometheusRuleFailure` in favor of `MimirToGrafanaCloudExporterRuleEvaluationFailures` targetting only the Mimir to Grafana Cloud exporter.
+- Remove `MimirRulerEventsFailed` (based on an alloy metric that does not even exist) with `MimirRulerRulEvaluationFailures` for proper rule evaluation detection.
+- update test tools to latest versions
+- fix a few alerts to pass latest checks
+- better tests output
+- Improve `KubeStateMetricsDown` and `KubeStateMetricsNotRetrievingMetrics` alert efficiency.
+- Update runbook URL in several alerts referencing the "Deployment or StatefulSet not satisfied" runbook.
+
+### Fixed
+
+- Fix the `MonitoringAgentDown` alert which is currently erroring on all installations because both kube-state-metrics and cluster-api-monitoring app provide the same metrics.
+
+### Removed
+
+- Remove `LogReceivingErrors` as we do not use the observability gateway anymore.
+- Remove `PrometheusCantCommunicateWithKubernetesAPI` as it is now unused.
+- Remove `AppOperatorNotReady` alert.
+- Remove `CordonedAppExpired` alert.
+
+## [4.78.1] - 2025-10-22
+
+### Fixed
+
+- Fix `GrafanaPostgresqlRecoveryTestFailed` by relying on the new `kube_cnpg_cluster_info` metric introduced in kube-state-metrics (https://github.com/giantswarm/observability-bundle/pull/340)
+
+## [4.78.0] - 2025-10-21
+
+### Changed
+
+- Update app failure alerts to point to new runbook with variables (`ManagementClusterAppFailed`, `WorkloadClusterAppFailed`, `WorkloadClusterAppNotInstalled`)
+- Update `AppWithoutTeamAnnotation` alert runbook URL to point to migrated runbook
+- Update `ClusterCrossplaneResourcesNotReady` alert runbook URL to point to migrated runbook with templated variables
+- Update `ManagementClusterAppPendingUpdate`, `WorkloadClusterAppPendingUpdate`, and `ClusterUpgradeStuck` alert runbook URLs to point to migrated runbook with templated variables
+- Update `FluxSourceFailed` and `FluxWorkloadClusterSourceFailed` alert runbook URLs to point to migrated runbook with templated variables
+- Update `ChartOperatorDown` alert runbook URL to point to migrated runbook with templated variables
+- Update `FluxKustomizationFailed` and `FluxWorkloadClusterKustomizationFailed` alert runbook URLs to point to migrated runbook with templated variables
+- Update `FluxHelmReleaseFailed` and `FluxWorkloadClusterHelmReleaseFailed` alert runbook URLs to point to migrated runbook with templated variables
+- Adjust `PodsUnschedulable` alert trigger time: Pods have to be more than 10 minutes Pending for the alert to trigger
+- Update `FluxReconciliationLongErrorBudgetLow` alert runbook URL to point to migrated runbook with templated installation and cluster variables
+- Update `FluxSuspendedForTooLong` alert runbook URL to point to migrated runbook with templated installation and cluster variables
+- Update `FluxWorkqueueTooLong` alert runbook URL to point to migrated runbook with templated installation and cluster variables
+- Update `CapaTooManyReconciliations` alert with higher threshold from 1000 to 1500
+
+### Added
+
+- Add `TeleportKubeAgentInstancesNotReady` and `TeleportKubeAgentZeroReadyReplicas` alerts.
+
+### Changed
+
+- Update `ChartOrphanConfigMap` alert runbook URL to point to new runbook location with templated installation and cluster variables.
+
+## [4.77.2] - 2025-10-09
+
+### Changed
+
+- Update Zot runbook URL
+- Remove non-existing runbook_url from HelmHistorySecretCountTooHigh alert
+- Update tempo alerts
+
+## [4.77.1] - 2025-10-07
+
+### Changed
+
+- Alert `MimirToGrafanaCloudExporterTooManyRestarts` is less sensitive
+- Alert `PodsUnschedulable` gets a dashsboard link
+
+## [4.77.0] - 2025-10-02
+
+### Added
+
+- Add the observability signal for the setup activity which is the actual number of unique logins for observability platform users in the last month: `aggregation:giantswarm:observability:signals:user_logins`. This will be added to the observability platform signals dashboard in grafana cloud.
+
+## [4.76.0] - 2025-10-02
+
+### Added
+
+- Tempo alerts
+- Karpenter unregistered nodes
+
+## [4.75.0] - 2025-10-01
+
+### Added
+
+- New alert `ControlPlaneNodeMemoryPressureTaint`.
+- New alert `IRSAClaimNotReady` to monitor Crossplane IRSA objects.
+- Add quicker alerts for Kyverno's `svc-fail` validation/mutation webhooks taking very long or timing out
+- Add alerts for EFS pods
+
+### Fixed
+
+- Fixed runbook for alertmanager alerts
+
+### Changed
+
+- Update some runbook URLs to point to the actual URL instead of to a redirect
+- Remove aliases from runbook URL validation
+- Runbook URL validation refactored
+- Change runbook URL for AppExporterDown alert
+- Change runbook URL for OpeartorKit alerts
+
+## [4.74.1] - 2025-09-03
+
+### Changed
+
+- Update `falco` recording rule to make it work with new Falco version.
+
+## [4.74.0] - 2025-09-02
+
+### Added
+
+- New alert `MimirDistributorReachingInflightPushRequestLimit` to monitor when Mimir distributors are approaching their inflight push request limit (80% threshold).
+
+## [4.73.2] - 2025-08-29
+
+### Fixed
+
+- Fix `ClusterControlPlaneMachineStatusNotHealthy`: take workload cluster name from `cluster_name` label because `cluster_id` may be globally overridden in metrics
+
+### Changed
+
+- Change labels provided for `aggregation:docker:containers_from_deprecated_registries:*` recording rules, adding `namespace`, `pod` and `image` labels, removing `region` label.
+
+## [4.73.1] - 2025-08-27
+
+### Fixed
+
+- Fix `GrafanaPostgresqlRecoveryTestFailed` which relies on a metric that does not exist.
+
+### Added
+
+- Recording rule sending job scraping failures to Grafana Cloud
+
+## [4.73.0] - 2025-08-25
+
+### Added
+
+- Add Grafana cloud aggregations for use of deprecated registries (`aggregation:docker:containers_from_deprecated_registries:*`)
+
+## [4.72.7] - 2025-08-12
+
+### Changed
+
+- Make `KubeStateMetricsDown` page only during business hours
+
+## [4.72.6] - 2025-08-07
+
+### Changed
+
+- Update CAPA `InhibitionClusterWithoutWorkerNodes` to only apply to CAPA clusters.
+
+## [4.72.5] - 2025-07-31
+
+### Fixed
+
+- Fix provider label in cluster recording rules for hybrid installations.
+
+## [4.72.4] - 2025-07-31
+
+### Changed
+
+- Change `ClusterControlPlaneMachineStatusNotHealthy` to page
+
+## [4.72.3] - 2025-07-29
+
+### Added
+
+- Add `ClusterControlPlaneMachineStatusNotHealthy` alert (very broad, using `severity: notify` for testing how often it happens)
+
+## [4.72.2] - 2025-07-28
+
+### Fixed
+
+- Fix observability-platform overview regex patterns.
+
+## [4.72.1] - 2025-07-28
+
+### Fixed
+
+- Fix observability-platform overview recording rules.
+
+## [4.72.0] - 2025-07-23
+
+### Added
+
+- Added `CiliumOperatorRestartingTooOften` alert
+
+## [4.71.1] - 2025-07-22
+
+### Fixed
+
+- Rewrite Flux alerting rules towards the `gotk_resource_info` emitted by the Kube State Metrics.
+
+## [4.71.0] - 2025-07-21
+
+### Added
+
+- Add new observability recording rules for Grafana Cloud to be able to check the actual resource usage of the observability platform.
+
+## [4.70.0] - 2025-07-03
+
+### Added
+
+- Added `PodsUnschedulable` alert
+
+### Changed
+
+- LokiObjectStorageLowRate: don't page when WCs are being created
+
+## [4.69.0] - 2025-07-03
+
+### Added
+
+- add `GrafanaPostgresqlRecoveryTestFailed` alerting rule.
+
+### Changed
+
+- `PrometheusOperatorRejectedResources`: only page for MC resources
+
+### Removed
+
+- DuplicatePrometheusOperatorKubeletService was for clusters before v20, which we don't have anymore.
+
+## [4.68.0] - 2025-07-02
+
+### Changed
+
+- Update CoreDNS alerts to page only for resources in "kube-system" namespace.
+- Route `FluxKustomizationFailed` for `silences` kustomization to Atlas.
+
+## [4.67.0] - 2025-06-27
+
+### Changed
+
+- `FluentbitDropRatio` only pages for management cluster instances (giantswarm-managed).
+
+### Removed
+
+- Removed `FluentbitTooManyErrors` alerts, at this is already covered by `FluentbitDropRatio` alerts and they mostly page together.
+
+## [4.66.0] - 2025-06-24
+
+### Added
+
+- Added `cancel_if_metrics_broken` inhibition to following alerts:
+  - `ManagementClusterDeploymentMissingCAPA`
+  - `ManagementClusterDeploymentMissingCAPI`
+  - `ETCDBackupMetricsMissing`
+  - `PrometheusMissingGrafanaCloud`
+  - `MimirToGrafanaCloudExporterDown`
+  - `ManagementClusterDexAppMissing`
+- Add CiliumAgentPodPending alert for Cabbage.
+
+### Changed
+
+- `LogForwardingErrors` description improvement
+
+## [4.65.1] - 2025-06-16
+
+### Changed
+
+- Increase `MimirIngesterNeedsToBeScaledUp` alert's time to trigger from 6h to 12h to avoid noise coming from temporary spikes.
+- WorkloadClusterWebhookDurationExceedsTimeoutSolutionEngineers alert: make it page only during business hours, and increase delay to 1h before it pages
+- MetricForwardingErrors alert: make it less sensitive
+
+## [4.65.0] - 2025-06-10
+
+### Changed
+
+- Improved `ClusterAutoscalerFailedScaling` alert expression to reduce false positives by detecting ongoing scaling failures rather than cumulative historical failures.
+
+## [4.64.0] - 2025-06-05
+
+### Changed
+
+- Removed `grafana` from `DeploymentNotSatisfiedAtlas` because it's already monitored via `GrafanaDown` alert.
+- Rework Rocket's `ManagementClusterContainerIsRestartingTooFrequently` to use pod names as the selector.
+- Update alert for Cilium HelmRelease to match timeout.
+
+## [4.63.0] - 2025-06-02
 
 ### Added
 
@@ -20,8 +405,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rules unit tests: support for `$provider` template so we can move provider-specific tests to global tests.
 - Rules unit tests: simplify files organization by removing the `capi` folder. Also fixes a bug in cloud-director tests.
 - Rules linting: run against all configured providers.
-- Change `apiserver_flowcontrol_request_concurrency_limit` to `apiserver_flowcontrol_nominal_limit_seats`, metric will be dropped in Kubernetes `v1.31`.
-
+- Exclude more containers from Rocket's `ManagementClusterContainerIsRestartingTooFrequently` alert.
 ## [4.62.0] - 2025-05-15
 
 ### Added
@@ -3699,7 +4083,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.62.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.85.0...HEAD
+[4.85.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.84.0...v4.85.0
+[4.84.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.83.0...v4.84.0
+[4.83.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.82.0...v4.83.0
+[4.82.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.81.0...v4.82.0
+[4.81.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.80.0...v4.81.0
+[4.80.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.1...v4.80.0
+[4.79.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.0...v4.79.1
+[4.79.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.1...v4.79.0
+[4.78.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.0...v4.78.1
+[4.78.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.2...v4.78.0
+[4.77.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.1...v4.77.2
+[4.77.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.77.0...v4.77.1
+[4.77.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.76.0...v4.77.0
+[4.76.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.75.0...v4.76.0
+[4.75.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.1...v4.75.0
+[4.74.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.74.0...v4.74.1
+[4.74.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.2...v4.74.0
+[4.73.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.1...v4.73.2
+[4.73.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.73.0...v4.73.1
+[4.73.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.7...v4.73.0
+[4.72.7]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.6...v4.72.7
+[4.72.6]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.5...v4.72.6
+[4.72.5]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.4...v4.72.5
+[4.72.4]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.3...v4.72.4
+[4.72.3]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.2...v4.72.3
+[4.72.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.1...v4.72.2
+[4.72.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.72.0...v4.72.1
+[4.72.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.71.1...v4.72.0
+[4.71.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.71.0...v4.71.1
+[4.71.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.70.0...v4.71.0
+[4.70.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.69.0...v4.70.0
+[4.69.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.68.0...v4.69.0
+[4.68.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.67.0...v4.68.0
+[4.67.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.66.0...v4.67.0
+[4.66.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.65.1...v4.66.0
+[4.65.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.65.0...v4.65.1
+[4.65.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.64.0...v4.65.0
+[4.64.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.63.0...v4.64.0
+[4.63.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.62.0...v4.63.0
 [4.62.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.61.0...v4.62.0
 [4.61.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.60.0...v4.61.0
 [4.60.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.59.2...v4.60.0

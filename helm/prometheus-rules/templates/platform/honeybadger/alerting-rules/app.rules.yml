@@ -33,7 +33,6 @@ spec:
         cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        sig: none
         topic: releng
     - alert: ManagementClusterAppPendingUpdate
       annotations:
@@ -67,7 +66,6 @@ spec:
         cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        sig: none
         topic: releng
     # If apps can't be installed - only for supported apps
     - alert: WorkloadClusterAppNotInstalled
@@ -91,7 +89,6 @@ spec:
         cancel_if_outside_working_hours: "true"
         cancel_if_cluster_has_no_workers: "true"
         severity: page
-        sig: none
         topic: releng
     - alert: WorkloadClusterAppPendingUpdate
       annotations:

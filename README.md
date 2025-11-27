@@ -18,13 +18,14 @@
     - [`Absent` function](#absent-function)
     - [Useful links](#useful-links)
   - [Alert routing](#alert-routing)
-    - [Opsgenie routing](#opsgenie-routing)
+    - [PagerDuty routing](#pagerduty-routing)
     - [Inhibitions](#inhibitions)
   - [Recording rules](#recording-rules)
 - [Mixins management](#mixins)
   - [kubernetes-mixins](#kubernetes-mixins)
   - [mimir-mixins](#mimir-mixins)
   - [loki-mixins](#loki-mixins)
+  - [tempo-mixins](#tempo-mixins)
 - [Testing](#testing)
   - [Prometheus rules unit tests](#prometheus-rules-unit-tests)
   - [Test syntax](#test-syntax)
@@ -94,7 +95,6 @@ spec:
         cancel_if_cluster_status_updating: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
-        sig: none
         team: atlas
 ```
 
@@ -146,10 +146,12 @@ Log-based alerts are processed differently in the observability platform but app
 We follow standardized practices for organizing our alerts using PrometheusRule custom resources.
 
 #### Mandatory annotations
+
 - `description`: Detailed explanation of what happened and what the alert is monitoring
 - `runbook_url`: Link to a runbook page with incident management instructions
 
 #### Recommended annotations
+
 - `summary`: Brief overview of what the alert detected
 - `__dashboardUid__`: Unique identifier of the relevant dashboard
 - `__panelId__`: Specific panel ID within the referenced dashboard
@@ -158,24 +160,26 @@ We follow standardized practices for organizing our alerts using PrometheusRule 
 
 ##### Dashboard URL construction
 
-Alertmanager generates dashboard URLs for Opsgenie and Slack alerts using these rules:
+Alertmanager generates dashboard URLs for PagerDuty and Slack alerts using these rules:
 
 1. With only `__dashboardUid__`: `https://grafana.domain/__dashboardUid__`
 2. With both `__dashboardUid__` and `dashboardQueryParams`: `https://grafana.domain/__dashboardUid__?dashboardQueryParams`
 3. If `dashboardExternalUrl` is set: Uses the exact URL provided
 
 #### Mandatory labels
+
 - `area`: Functional area (e.g., platform, apps)
 - `team`: Responsible team identifier
-- `severity`: Alert severity level (page, notify)
+- `severity`: Alert severity level (page, notify, ticket, none for inhibitions and heartbeats)
 
 #### Optional labels
+
 - `cancel_if_*`: Labels used for alert inhibitions
-- `all_pipelines: "true"`: Ensures the alert is sent to Opsgenie regardless of installation's pipeline
+- `all_pipelines: "true"`: Ensures the alert is sent to PagerDuty regardless of installation's pipeline
 
 #### `Absent` function
 
-If you want to make sure a metrics exists on one cluster, you can't just use the `absent` function anymore.
+If you want to make sure a metric exists on one cluster, you can't just use the `absent` function anymore.
 With `mimir` we have metrics for all the clusters on a single database, and it makes detecting the absence of one metrics on one cluster much harder.
 
 To achieve such a test, you should do like [`MimirToGrafanaCloudExporterMissingData`](https://github.com/giantswarm/prometheus-rules/blob/d06a84e8369f4d0bafdf0d48f18120de15c8e18a/helm/prometheus-rules/templates/platform/atlas/alerting-rules/grafana-cloud.rules.yml#L33) alert does.
@@ -188,20 +192,21 @@ To achieve such a test, you should do like [`MimirToGrafanaCloudExporterMissingD
 
 ### Alert routing
 
-Alertmanager does the routing based on the labels menitoned above.
+Alertmanager does the routing based on the labels mentioned above.
 You can see the routing rules in alertmanager's config (opsctl open `alertmanager`, then go to `Status`), section `route:`.
 
-* are sent to opsgenie:
-  * all `severity=page` alerts
-* are sent to slack team-specific channels:
-  * `severity=page` or `severity=notify`
-  * `team` defines which channel to route to.
+**Alerts are routed as follows:**
 
-#### Opsgenie routing
-
-Opsgenie routing is defined in the `Teams` section of the Opsgenie application.
-
-Opsgenie route alerts based on the `team` label.
+* **Sent to PagerDuty:**
+  * All `severity=page` alerts
+* **Sent to GitHub Issues (via alertmanager-to-github):**
+  * All `severity=ticket` alerts
+* **Sent to Slack team-specific channels:**
+  * `severity=page` or `severity=notify` alerts
+  * The `team` label defines which channel to route to
+* **Inhibition alerts:**
+  * `severity=none` alerts are used for inhibition purposes and are not routed to external systems
+  * These alerts control when other alerts are suppressed based on conditions
 
 ### Inhibitions
 
@@ -219,29 +224,29 @@ Official documentation for inhibit rules can be found here: https://www.promethe
 
 The recording rules are located in `helm/prometheus-rules/templates/<area>/<team>/recording-rules` in the specific area/team to which they belong.
 
-### Mixins management
+## Mixins management
 
 #### kubernetes-mixins
 
-To Update `kubernetes-mixins` recording rules:
+To update `kubernetes-mixins` recording rules:
 
 * Follow the instructions in [giantswarm-kubernetes-mixin](https://github.com/giantswarm/giantswarm-kubernetes-mixin)
-* Run `./scripts/sync-kube-mixin.sh (?my-fancy-branch-or-tag)` to updated the `helm/prometheus-rules/templates/shared/recording-rules/kubernetes-mixins.rules.yml` folder.
-* make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards/tree/master/helm/dashboards/dashboards/mixin)
+* Run `./scripts/sync-kube-mixin.sh (?my-fancy-branch-or-tag)` to update the `helm/prometheus-rules/templates/shared/recording-rules/kubernetes-mixins.rules.yml` folder
+* Make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards/tree/master/helm/dashboards/dashboards/mixin)
 
 #### mimir-mixins
 
 To update `mimir-mixins` recording rules:
 
 * Run `./mimir/update.sh`
-* make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards)
+* Make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards)
 
 #### loki-mixins
 
 To update `loki-mixins` recording rules:
 
 * Run `./loki/update.sh`
-* make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards)
+* Make sure to update [grafana dashboards](https://github.com/giantswarm/dashboards)
 
 #### tempo-mixins
 
@@ -253,7 +258,7 @@ To update `tempo-mixins` alerting rules:
 
 You can run all tests by running `make test`.
 
-There are 4 different types tests implemented:
+There are 4 different types of tests implemented:
 
 - [Prometheus rules unit tests](#prometheus-rules-unit-tests)
 - [Alertmanager inhibition dependency check](#alertmanager-inhibition-dependency-check)
@@ -318,7 +323,7 @@ This is a good example of an input series for testing a `range` query.
 
 #### Test templating
 
-In order to reduce the need for provider-specific test files, you can use `$provider` in your test file and our tooling will replace it with the provider name.
+To reduce the need for provider-specific test files, you can use `$provider` in your test file and the tooling will replace it with the provider name.
 
 #### Test exceptions
 
@@ -372,7 +377,7 @@ make test-rules rules_type=loki
 
 #### Test "no data" case
 
-* It can be nice to test what happens when serie does not exist.
+* It can be nice to test what happens when a series does not exist.
 * For instance, You can have your first 60 iterations with no data like this: `_x60`
 
 #### Useful links
@@ -396,10 +401,10 @@ This is possible thanks to the alertmanager config file stored in the [observabi
 
 This is what we call the inhibition dependency chain.
 
-One can check whether inhibition labels (mostly "cancel_if_" prefixed ones) are well defined and triggered by a corresponding label in the alerting rules by running the `make test-inhibitions` command at the projet's root directory.
+You can check whether inhibition labels (mostly "cancel_if_" prefixed ones) are well defined and triggered by a corresponding label in the alerting rules by running the `make test-inhibitions` command at the project's root directory.
 
-This command will output the list of missing labels. Each of them will need to be defined in either the alerting rules or the alertmanager config file depending on its nature : either an inhibition label or its source label.
-If there is no labels outputed, this means tests passed and did not find missing inhibition labels.
+This command will output the list of missing labels. Each of them will need to be defined in either the alerting rules or the alertmanager config file depending on its nature: either an inhibition label or its source label.
+If no labels are output, this means tests passed and did not find missing inhibition labels.
 
 ![inhibition-graph](assets/inhibition-graph.png)
 

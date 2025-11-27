@@ -1,0 +1,56 @@
+name: Update Loki Mixins
+
+on:
+  schedule:
+    # Run on the 1st day of every month at 09:30 UTC
+    - cron: '30 9 1 * *'
+  workflow_dispatch: # Allow manual triggering
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-loki-mixins:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+      
+      - name: Install tools
+        run: make install-tools
+      
+      - name: Update Loki mixins
+        run: make update-loki-mixin
+      
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create Pull Request
+        if: steps.changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update Loki mixins from upstream'
+          title: 'chore: update Loki mixins from upstream'
+          body: |
+            This PR updates the Loki mixins from grafana/loki upstream repository.
+            
+            This is an automated update that runs monthly.
+          branch: update-loki-mixins-${{ github.run_number }}
+          delete-branch: true
+          draft: false

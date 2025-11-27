@@ -46,4 +46,7 @@ update-mimir-mixin: install-tools ##        Update Mimir mixins
 update-loki-mixin: install-tools ##        Update Loki mixins
 	./loki/update.sh
 
-update-mixin: update-mimir-mixin update-loki-mixin ##        Update all mixins
+update-tempo-mixin: install-tools ##        Update Tempo mixins
+	./tempo/update.sh
+
+update-mixin: update-mimir-mixin update-loki-mixin update-tempo-mixin ##        Update all mixins

@@ -313,17 +313,6 @@ spec:
     rules:
     - expr: sum(increase(grafana_analytics_sessions_total[60s]) / (132 / 99))without (user_email, user_name)
       record: aggregation:grafana_analytics_sessions_total
-  - name: dipstick.grafana-cloud.recording
-    rules:
-    # Ship dipstick policy metrics.
-    - expr: sum(dipstick_policyreport_policy_summary) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, policy_name, result)
-      record: aggregation:dipstick_policy_results
-    - expr: sum(dipstick_policyreport_policy_report_count) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-      record: aggregation:dipstick_policy_report_count
-    - expr: sum(dipstick_policyreport_last_update_duration_seconds) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-      record: aggregation:dipstick_policy_scrape_duration_seconds
-    - expr: sum(dipstick_policyreport_last_update_timestamp_seconds) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-      record: aggregation:dipstick_policy_last_scrape_timestamp_seconds
   - name: falco.grafana-cloud.recording
     rules:
     # Falco event counts

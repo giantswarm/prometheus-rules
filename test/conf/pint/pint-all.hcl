@@ -30,14 +30,7 @@ rule {
     required = true
   }
 
-  # Each alert must have an `area' label that's either 'kaas' or 'platform'.
-  label "area" {
-    severity = "bug"
-    value    = "(kaas|platform)"
-    required = true
-  }
-
-   # Each alert must have a 'runbook_url' annotation.
+  # Each alert must have a 'runbook_url' annotation.
   annotation "runbook_url" {
     severity = "bug"
     required = true
@@ -49,39 +42,24 @@ rule {
     required = true
   }
 
+  # Each alert must have a 'severity' label that's either 'page' or 'notify'.
+  label "severity" {
+    severity = "bug"
+    value    = "(page|notify)"
+    required = true
+  }
+
+  # Each alert must have an `area' label that's either 'kaas' or 'platform'.
+  label "area" {
+    severity = "bug"
+    value    = "(kaas|platform)"
+    required = true
+  }
+
   # Check how many times each alert would fire in the last 1d.
   alerts {
     range   = "1d"
     step    = "1m"
     resolve = "5m"
-  }
-}
-
-# Rule for regular alerts that need full annotation and severity requirements
-rule {
-  match {
-    kind = "alerting"
-    name = "!~Inhibition.*|.*Heartbeat.*"
-  }
-
-  # Each alert must have a 'severity' label that's either 'page', 'notify' or 'ticket'.
-  label "severity" {
-    severity = "bug"
-    value    = "(page|notify|ticket)"
-    required = true
-  }
-}
-
-# Rule for inhibition and heartbeat alerts with relaxed requirements
-rule {
-  match {
-    kind = "alerting"
-    name = "~Inhibition.*|.*Heartbeat.*"
-  }
-
-  label "severity" {
-    severity = "bug"
-    value    = "none"
-    required = true
   }
 }

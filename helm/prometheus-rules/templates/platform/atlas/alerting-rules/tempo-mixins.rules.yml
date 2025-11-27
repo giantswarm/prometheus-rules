@@ -165,7 +165,7 @@ spec:
             avg(tempodb_blocklist_length{cluster_type="management_cluster", container="compactor"}) by (cluster_id, installation, pipeline, provider, namespace) / avg(tempodb_blocklist_length{cluster_type="management_cluster", container="compactor"} offset 7d) by (cluster_id, installation, pipeline, provider, namespace) > 1.4
           for: 15m
           labels:
-            severity: none
+            severity: notify
             area: platform
             team: atlas
             topic: observability

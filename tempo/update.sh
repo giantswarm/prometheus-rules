@@ -64,7 +64,7 @@ update_rules() {
                 # This one fires for 2 days when a new cluster is created,
                 # so we don't want it to page until we run tempo all around.
                 rule="$(echo "$rule" \
-                    | sed 's/"severity": "page"/"severity": "none"/' \
+                    | sed 's/"severity": "page"/"severity": "notify"/' \
                     )"
                 ;;
             "TempoMetricsGeneratorPartitionLagCritical")

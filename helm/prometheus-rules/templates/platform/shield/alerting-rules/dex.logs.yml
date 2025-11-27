@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4}}
+  name: dex.logs.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+    - name: dex.logs
+      rules:
+        - alert: DexInvalidClientId
+          annotations:
+            description: '{{`Dex in {{ $labels.installation }} reports an invalid client ID.`}}'
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/dex-invalid-client-id/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+          expr: |-
+            sum(rate({scrape_job="kubernetes-pods", pod=~"dex.*"} |= `Invalid client_id` | logfmt | err =~ `Invalid client_id \(\"[a-zA-Z0-9+]{20,}.*` [1h])) by (installation, cluster_id) > 0
+          for: 5m
+          labels:
+            area: kaas
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: shield
+            topic: dex

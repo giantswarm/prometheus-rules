@@ -5,17 +5,87 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.86.0] - 2025-11-26
+
 ### Added
 
+- Add alert rule usage metrics recording rule to collect Observability Platform signals.
+- Add alerting routes rule usage metrics recording rule to collect Observability Platform signals.
+
+### Changed
+
+- Update `OnPremCloudProviderAPIIsDown` alert runbook URL to point to new runbook location.
+- Change `apiserver_flowcontrol_request_concurrency_limit` to `apiserver_flowcontrol_nominal_limit_seats`, metric will be dropped in Kubernetes `v1.31`.
+
+### Removed
+
+- Remove Dipstick references since we have archived the app and we don't run it anymore.
+
+## [4.85.0] - 2025-11-18
+
+### Fixed
+
+- Fix description for `WorkloadClusterDeploymentNotSatisfiedShield` WC alert.
+- Remove duplicate `DeploymentNotSatisfiedShield` MC alert.
+- Fix `KubeStateMetricsNotRetrievingMetrics` by not paging on leftover CAPI CRs.
+
+### Removed
+
+- Remove `credentiald` from `WorkloadClusterDeploymentNotSatisfiedShield` MC and WC alerts.
+
+## [4.84.0] - 2025-11-12
+
+### Added
+
+-Add dashboard views metrics recording rule to Grafana observability rules. The rule aggregates dashboard view counts over 30 days by dashboard ID and name.
+
+### Changed
+
+- Alert DexInvalidClientId: make matching rule more specific to prevent false positives
+
+### Fixed
+
+- Fix `ManagementClusterCertificateIsMissing` alert to only trigger for KaaS-specific certificates (provider-specific serving certificates or CAPI serving certificates).
+
+### Removed
+
+- Remove irsa-operator alerts
+
+## [4.83.0] - 2025-11-07
+
+### Changed
+
+- Update alert severity from 'page' to 'ticket' for `LokiNeedsToBeScaledDown`, `MimirIngesterNeedsToBeScaledDown`, and `MimirIngesterNeedsToBeScaledUp` alerts in Loki and Mimir alerting rules.
+
+## [4.82.0] - 2025-11-06
+
+### Added
+
+- Add `management-clusters.organizations.grafana-cloud.recording` recording rules to grafana cloud.
+
+### Removed
+
+- Clean up all that pertain to our old monitoring/logging agents:
+  - `PromtailDown`
+  - `PromtailRequestsErrors`
+  - `PromtailConflictsWithAlloy`
+  - `PrometheusAgentShardsMissing`
+  - `InhibitionPrometheusAgentShardsMissing`
+
+## [4.81.0] - 2025-10-30
+
+### Added
+
+- Add new alert `DexInvalidClientId`
 - Add log-based alert `MimirDistributorMaxInflightPushRequests` to detect high rate of "err-mimir-distributor-max-inflight-push-requests" errors in Mimir distributors instead of the previous `MimirDistributorReachingInflightPushRequestLimit` alert.
 
 ### Changed
 
 - Update runbook URL for `ManagementClusterDeploymentMissingCAPA` and `ManagementClusterDeploymentMissingCAPI` alerts to point to the new runbook location with URL parameters for installation and cluster.
 
-### Removed
+### Fixed
 
-- Remove Dipstick references since we have archived the app and we don't run it anymore.
+- Fix `MimirAlertmanagerNotificationsFailing` and `MimirAlertmanagerAlertsFailing` alerts to only page for giantswarm tenants.
 
 ## [4.80.0] - 2025-10-29
 
@@ -4019,7 +4089,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.80.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.86.0...HEAD
+[4.86.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.85.0...v4.86.0
+[4.85.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.84.0...v4.85.0
+[4.84.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.83.0...v4.84.0
+[4.83.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.82.0...v4.83.0
+[4.82.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.81.0...v4.82.0
+[4.81.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.80.0...v4.81.0
 [4.80.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.1...v4.80.0
 [4.79.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.79.0...v4.79.1
 [4.79.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.78.1...v4.79.0

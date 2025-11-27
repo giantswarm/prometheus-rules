@@ -7,35 +7,6 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: irsa-operator
-    rules:
-    - alert: IRSATooManyErrors
-      annotations:
-        description: '{{`IRSA bootstrap for Cluster {{ $labels.cluster_id }} failed.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/irsa-operator-error/
-        __dashboardUid__: bdiako8tt1b7kc
-        dashboardQueryParams: "orgId=2"
-      expr: irsa_operator_cluster_errors{cluster_type="management_cluster"} > 0
-      for: 10m
-      labels:
-        area: kaas
-        cancel_if_kube_state_metrics_down: "true"
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: phoenix
-        topic: aws
-    - alert: IRSAACMCertificateExpiringInLessThan45Days
-      annotations:
-        description: '{{`IRSA ACM certificate for Cluster {{ $labels.cluster_id }} ({{ $labels.certificate_name }}) will expire in less than 2 months.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/irsa-acm-certificate-expiring/
-      expr: min(irsa_operator_acm_certificate_not_after{cluster_type="management_cluster"}) by (cluster_id, installation, pipeline, provider, certificate_name) - time() < 3888000
-      for: 10m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: "true"
-        severity: page
-        team: phoenix
-        topic: aws
   - name: irsa-crossplane
     rules:
     - alert: IRSAClaimNotReady

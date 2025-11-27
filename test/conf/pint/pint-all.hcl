@@ -57,7 +57,7 @@ rule {
   }
 }
 
-# Rule for regular alerts that need full annotation and severity requirements
+# Rule for regular alerts
 rule {
   match {
     kind = "alerting"

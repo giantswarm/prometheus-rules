@@ -448,20 +448,9 @@ spec:
     # IAM roles for Service Accounts metrics
     - expr: sum(irsa_operator_cluster_errors) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, account_id, cluster_namespace)
       record: aggregation:giantswarm:irsa_operator_cluster_errors
-  - name: limits.aws.grafana-cloud.recording
-    rules:
-    # AWS service quotas metrics
-    - expr: sum(aws_servicequotas_operator_quota_increase_request_errors) by (account_id,cluster_id, cluster_type, customer, installation, pipeline, provider, region,cluster_namespace,service_name,quota_description,quota_code,quota_value)
-      record: aggregation:giantswarm:aws_servicequotas_operator_quota_increase_request_errors
-    - expr: sum(aws_servicequotas_operator_quota_history_request_errors) by (account_id,cluster_id, cluster_type, customer, installation, pipeline, provider, region,cluster_namespace,service_name,quota_description,quota_code,quota_value)
-      record: aggregation:giantswarm:aws_servicequotas_operator_quota_history_request_errors
-    - expr: sum(aws_servicequotas_operator_quota_applied_request_errors) by (account_id,cluster_id, cluster_type, customer, installation, pipeline, provider, region,cluster_namespace,service_name,quota_description,quota_code,quota_value)
-      record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_request_errors
-    - expr: sum(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region) / count(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-      record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_values
   - name: management-clusters.organizations.grafana-cloud.recording
     rules:
-    # Management Cluster Usage
+    # Observability operator organizations
     - expr: observability_operator_grafana_organization_info
       record: aggregation:observability:organization:organization_info
     - expr: observability_operator_grafana_organization_tenants

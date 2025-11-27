@@ -72,7 +72,7 @@ rule {
   }
 }
 
-# Rule for inhibition and heartbeat alerts with relaxed requirements
+# Rule for inhibition and heartbeat alerts
 rule {
   match {
     kind = "alerting"

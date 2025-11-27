@@ -38,3 +38,27 @@ spec:
                 [1m]
               )
             )
+        - record: giantswarm:observability:grafana:proxy_queries:total
+          expr: |
+            sum by (ip, agent, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+              count_over_time(
+                {cluster_id="{{ .Values.managementCluster.name }}", container="proxy", namespace="monitoring"}
+                | pattern `<ip> - - [<time>] "<method> <uri> <protocol>" <status> <size> "<referrer>" "<agent>" "<forwarded_for>"`
+                | method = `POST`
+                | uri =~ `/api/(ds/)?query(-history)?`
+                | status =~ `2..`
+                [1m]
+              )
+            )
+        - record: giantswarm:observability:grafana:explore_visits:total 
+          expr: |
+            sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+              count_over_time(
+                {cluster_id="{{ .Values.managementCluster.name }}", container="proxy", namespace="monitoring"}
+                | pattern `<ip> - - [<time>] "<method> <uri> <protocol>" <status> <size> "<referrer>" "<agent>" "<forwarded_for>"`
+                | (method = `GET` and uri =~ `/explore`) or referrer =~ `.*/explore.*`
+                | uri !~ `.*\.(js|css|svg|png|woff2)`
+                | status =~ `2..`
+                [1m]
+              )
+            )

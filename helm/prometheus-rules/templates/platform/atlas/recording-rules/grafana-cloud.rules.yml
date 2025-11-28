@@ -606,28 +606,14 @@ spec:
       # Observability platform product signals
       - expr: count_over_time(giantswarm:observability:grafana:unique_users:hourly[30d])
         record: aggregation:giantswarm:observability:signals:user_logins
-      - expr: |
-          sum by (dashboard_id, dashboard_name, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
-            sum_over_time(giantswarm:observability:grafana:dashboard_views:total[30d])
-          )
-        record: aggregation:giantswarm:observability:signals:dashboard_views:30d
-      - expr: |
-          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
-            sum_over_time(giantswarm:observability:grafana:explore_visits:total[30d])
-          )
-        record: aggregation:giantswarm:observability:signals:explore_visits:30d
-
-      - expr: |
-          sum by (ip, agent, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
-            sum_over_time(giantswarm:observability:grafana:proxy_queries:total[30d])
-          )
-        record: aggregation:giantswarm:observability:signals:proxy_queries:30d
-
-      - expr: |
-          sum by (app_name, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
-            sum_over_time(giantswarm:observability:grafana:drilldown_visits:total[30d])
-          )
-        record: aggregation:giantswarm:observability:signals:drilldown_visits:30d
+      - expr: giantswarm:observability:grafana:dashboard_views:total
+        record: aggregation:giantswarm:observability:signals:dashboard_views
+      - expr: giantswarm:observability:grafana:explore_visits:total
+        record: aggregation:giantswarm:observability:signals:explore_visits
+      - expr: giantswarm:observability:grafana:proxy_queries:total
+        record: aggregation:giantswarm:observability:signals:proxy_queries
+      - expr: giantswarm:observability:grafana:drilldown_visits:total
+        record: aggregation:giantswarm:observability:signals:drilldown_visits
 
       ## Alertmanager routes
       - expr: |

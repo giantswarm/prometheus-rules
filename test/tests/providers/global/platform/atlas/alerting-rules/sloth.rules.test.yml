@@ -29,7 +29,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Sloth is down."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/sloth-down/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/sloth-down/
   - interval: 1m
     input_series:
       - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="monitoring", container="sloth"}'
@@ -52,6 +52,6 @@ tests:
               topic: observability
             exp_annotations:
               description: Sloth is restarting too often.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/sloth-down/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/sloth-down/
       - alertname: SlothRestartingTooOften
         eval_time: 140m  # After 140m minutes, all should be back to normal

@@ -54,7 +54,7 @@ tests:
             exp_annotations:
               __dashboardUid__: servicemonitors-details
               dashboardQueryParams: "orgId=1"
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-job-scraping-failure/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/
               summary: "Monitoring agent failed to scrape all targets in a job."
               description: "Monitoring agents for cluster golem/golem has failed to scrape all targets in kube-controller-manager job."
           - exp_labels:
@@ -71,7 +71,7 @@ tests:
             exp_annotations:
               __dashboardUid__: servicemonitors-details
               dashboardQueryParams: "orgId=1"
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-job-scraping-failure/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/
               summary: "Monitoring agent failed to scrape all targets in a job."
               description: "Monitoring agents for cluster golem/golem has failed to scrape all targets in app-exporter job."
   
@@ -93,7 +93,7 @@ tests:
             exp_annotations:
               __dashboardUid__: servicemonitors-details
               dashboardQueryParams: "orgId=1"
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-job-scraping-failure/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/
               summary: "Monitoring agent failed to scrape all targets in a job."
               description: "Monitoring agents for cluster golem/golem has failed to scrape all targets in kube-controller-manager job."
 
@@ -140,6 +140,6 @@ tests:
             exp_annotations:
               summary: Monitoring agent fails to send samples to remote storage.
               description: Monitoring agent failed to send 10.7% of the samples to error-remote:http://error.com.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-pipeline/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/monitoring-pipeline/
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"

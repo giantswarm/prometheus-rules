@@ -14,7 +14,7 @@ spec:
     - alert: FluentbitDropRatio
       annotations:
         description: '{{`Fluentbit ({{ $labels.instance }}) is dropping more than 1% records.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluentbit-too-many-erros/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/fluentbit/
         __dashboardUid__: fluentbit
         dashboardQueryParams: "orgId=2"
       # Check the ratio of dropped records over the total number of records.
@@ -37,7 +37,7 @@ spec:
     - alert: FluentbitDown
       annotations:
         description: '{{`Fluentbit is down on node ({{ $labels.node }}).`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/fluentbit-down/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/fluentbit/
         __dashboardUid__: fluentbit
         dashboardQueryParams: "orgId=2"
       expr: sum(up{job="fluent-logshipping-app"}) by (job, cluster_id, installation, provider, pipeline, namespace, node) == 0

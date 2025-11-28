@@ -13,7 +13,7 @@ spec:
           annotations:
             description: '{{`Mimir distributor is experiencing high rate of "err-mimir-distributor-max-inflight-push-requests" errors. Rate: {{ printf "%.2f" $value }} errors/second over the last 10 minutes.`}}'
             summary: Mimir distributor max inflight push requests errors
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/
           expr: |-
             sum(rate({service_name="distributor"} |= "err-mimir-distributor-max-inflight-push-requests" [10m])) by (cluster_id, installation, provider, pipeline, namespace) > 0.1
           for: 15m

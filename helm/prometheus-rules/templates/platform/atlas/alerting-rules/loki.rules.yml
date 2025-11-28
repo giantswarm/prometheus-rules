@@ -15,7 +15,7 @@ spec:
     - alert: LokiRestartingTooOften
       annotations:
         description: '{{`Loki containers are restarting too often.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/
       expr: |
         increase(
           kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="loki"}[1h]
@@ -33,7 +33,7 @@ spec:
     - alert: LokiRequestErrors
       annotations:
         description: This alert checks that we have less than 10% errors on Loki requests.
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/
       expr: |
         100 * sum(rate(loki_request_duration_seconds_count{status_code=~"5..", cluster_type="management_cluster", namespace="loki"}[2m])) by (cluster_id, installation, provider, pipeline, namespace, job, route)
           /
@@ -50,7 +50,7 @@ spec:
     - alert: LokiRequestPanics
       annotations:
         description: This alert checks that we have no panic errors on Loki.
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/
       expr: |
         sum(increase(loki_panic_total[10m])) by (cluster_id, installation, provider, pipeline, namespace, job) > 0
       labels:
@@ -63,7 +63,7 @@ spec:
     - alert: LokiRingUnhealthy
       annotations:
         description: '{{`Loki pod {{ $labels.pod }} (namespace {{ $labels.namespace }}) sees {{ $value }} unhealthy ring members`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/
       expr: |
         sum by (job, cluster_id, container, customer, installation, provider, pipeline, name, namespace, organization, pod) (cortex_ring_members{state="Unhealthy", job=~"loki/.*"}) > 0
       for: 30m
@@ -77,7 +77,7 @@ spec:
     - alert: LokiNeedsToBeScaledDown
       annotations:
         description: '{{`Loki component {{ $labels.labelpod }} is consuming very few resources and needs to be scaled down.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/
       expr: |-
         sum by (cluster_id, installation, namespace, pipeline, provider, labelpod) (label_replace(container_memory_working_set_bytes{container="loki", namespace="loki", cluster_type="management_cluster"}, "labelpod", "$1", "pod", "(loki-[[:alnum:]]*)-.*")) 
           / 
@@ -101,7 +101,7 @@ spec:
         __dashboardUid__: loki-resources-overview
         dashboardQueryParams: "orgId=2"
         description: '{{`Loki component {{ $labels.horizontalpodautoscaler }} has reached its maxReplicas number but still needs to be scaled up.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/
       expr: |-
         (
           kube_horizontalpodautoscaler_status_desired_replicas{namespace="loki"} >=
@@ -129,7 +129,7 @@ spec:
         __dashboardUid__: loki-retention
         dashboardQueryParams: "orgId=2"
         description: 'Loki compactor has been failing compactions for more than 2 hours since last compaction.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/#lokicompactorfailedcompaction
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/#lokicompactorfailedcompaction
       # This alert checks if Loki's the last successful compaction run is older than 2 hours
       expr: (min by (cluster_id, installation, provider, pipeline) (time() - (loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds > 0)) > 60 * 60 * 2)
       for: 1h
@@ -144,7 +144,7 @@ spec:
         __dashboardUid__: loki-retention
         dashboardQueryParams: "orgId=2"
         description: 'Loki compactor has been failing compactions for more than 2 hours since start-up.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/#lokicompactorfailedcompaction
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/#lokicompactorfailedcompaction
       # This alert covers the special case at compactor startup, where the "normal" alert would always consider time `0` is more than 2 hours ago, yet we want to let it 2 hours + `for` duration.
       expr: max(max_over_time(loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{}[2h])) by (cluster_id, installation, provider, pipeline) == 0
       for: 1h
@@ -159,7 +159,7 @@ spec:
         __dashboardUid__: loki-canary
         dashboardQueryParams: "orgId=2"
         description: This alert checks that loki is not missing canary logs
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/
       expr: |
         (
           sum by (cluster_id, pod, installation, pipeline, provider)
@@ -181,7 +181,7 @@ spec:
         __dashboardUid__: loki-operational
         dashboardQueryParams: "orgId=2"
         description: '{{`Loki object storage write rate is down.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/
       expr: |
         rate(loki_rate_store_stream_rate_bytes_count{cluster_type="management_cluster"}[30m]) == 0
         # This part will fire the alert when the metric does not exist
@@ -206,7 +206,7 @@ spec:
     - alert: LokiLogTenantIdMissing
       annotations:
         description: '{{`Log lines are being dropped due to missing tenant id.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/loki-log/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/
       expr: |
         sum(rate(loki_process_dropped_lines_total{reason="no_tenant_id"}[5m])) by (cluster_id, installation, pipeline, provider) > 0
       for: 1h

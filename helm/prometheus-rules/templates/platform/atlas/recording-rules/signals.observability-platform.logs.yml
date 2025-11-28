@@ -39,11 +39,11 @@ spec:
         # Track total Grafana query requests (POST to query endpoints) to measure query activity
         - record: giantswarm:observability:grafana:proxy_queries:total
           expr: |
-            sum by (status, ip, agent, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+            sum by (status, method, ip, agent, cluster_id, cluster_type, customer, installation, pipeline, provider, region) 
+            (
               count_over_time(
                 {cluster_id="{{ .Values.managementCluster.name }}", container="proxy", namespace="monitoring"}
                 | pattern `<ip> - - [<time>] "<method> <uri> <protocol>" <status> <size> "<referrer>" "<agent>" "<forwarded_for>"`
-                | method = `POST`
                 | uri =~ `/api/(ds/)?query(-history)?`
                 [1m]
               )

@@ -31,7 +31,7 @@ tests:
               __dashboardUid__: bf9f456aad7108b2c808dbd9973e386f
               dashboardQueryParams: "orgId=2"
               description: "Component evaluations are taking too long under job alloy-controller, component_id comp1."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=golem&CLUSTER=golem
               summary: "Component evaluations are taking too long."
       - alertname: AlloySlowComponentEvaluations
         eval_time: 80m
@@ -64,7 +64,7 @@ tests:
               __dashboardUid__: bf9f456aad7108b2c808dbd9973e386f
               dashboardQueryParams: "orgId=2"
               description: "Unhealthy pods alloy-metrics-0 detected under job alloy-controller"
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=golem&CLUSTER=golem
               summary: "Unhealthy components detected."
       - alertname: AlloyUnhealthyComponents
         eval_time: 80m
@@ -113,7 +113,7 @@ tests:
               __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
               dashboardQueryParams: "orgId=2"
               description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=golem&CLUSTER=golem
       # Tests with 2 pods
       - alertname: LoggingAgentDown
         eval_time: 111m
@@ -137,7 +137,7 @@ tests:
               __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
               dashboardQueryParams: "orgId=2"
               description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=golem&CLUSTER=golem
       - alertname: LoggingAgentDown
         eval_time: 121m
       - alertname: LoggingAgentDown
@@ -162,7 +162,7 @@ tests:
               __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
               dashboardQueryParams: "orgId=2"
               description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=golem&CLUSTER=golem
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
@@ -182,7 +182,7 @@ tests:
               __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
               dashboardQueryParams: "orgId=2"
               description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=golem&CLUSTER=golem
 
   # Test MonitoringAgentDown
   - interval: 1m
@@ -211,7 +211,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=golem&CLUSTER=golem
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
@@ -231,7 +231,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=golem&CLUSTER=golem
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
@@ -250,7 +250,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=golem&CLUSTER=golem
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
@@ -274,7 +274,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=golem&CLUSTER=golem
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
@@ -293,7 +293,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=golem&CLUSTER=golem
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
@@ -314,7 +314,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=golem&CLUSTER=golem
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
@@ -348,7 +348,7 @@ tests:
             exp_annotations:
               description: "At least one of the monitoring agent shard is missing."
               summary: "Monitoring agent is missing shards."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=golem&CLUSTER=golem
       - alertname: MonitoringAgentShardsNotSatisfied
         eval_time: 60m
         exp_alerts:
@@ -367,7 +367,7 @@ tests:
             exp_annotations:
               description: "At least one of the monitoring agent shard is missing."
               summary: "Monitoring agent is missing shards."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=golem&CLUSTER=golem
       - alertname: InhibitionMonitoringAgentShardsNotSatisfied
         eval_time: 60m
         exp_alerts:
@@ -385,7 +385,7 @@ tests:
             exp_annotations:
               description: "At least one of the monitoring agent shard is missing."
               summary: "Monitoring agent is missing shards."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=golem&CLUSTER=golem
       - alertname: MonitoringAgentShardsNotSatisfied
         eval_time: 130m
       - alertname: InhibitionMonitoringAgentShardsNotSatisfied
@@ -423,7 +423,7 @@ tests:
               __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
               dashboardQueryParams: "orgId=2"
               description: "Scraping of all tracing-and-event-agent pods to check if one failed every 30 minutes."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=golem&CLUSTER=golem
       # Should resolve after pod is up again
       - alertname: TracingAndEventAgentDown
         eval_time: 100m

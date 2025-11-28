@@ -19,7 +19,7 @@ spec:
             __dashboardUid__: bf9f456aad7108b2c808dbd9973e386f
             dashboardQueryParams: "orgId=2"
             description: '{{`Component evaluations are taking too long under job {{ $labels.job }}, component_id {{ $labels.component_id }}.`}}'
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
             summary: Component evaluations are taking too long.
           expr: sum by (cluster_id, installation, provider, pipeline, namespace, job, component_id) (rate(alloy_component_evaluation_slow_seconds[10m])) > 0
           for: 15m
@@ -34,7 +34,7 @@ spec:
             __dashboardUid__: bf9f456aad7108b2c808dbd9973e386f
             dashboardQueryParams: "orgId=2"
             description: '{{`Unhealthy pods {{ $labels.pod }} detected under job {{ $labels.job }}`}}'
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
             summary: Unhealthy components detected.
           expr: sum by (cluster_id, installation, provider, pipeline, namespace, job, pod) (alloy_component_controller_running_components{health_type!="healthy"}) > 0
           for: 15m
@@ -53,7 +53,7 @@ spec:
             __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
             dashboardQueryParams: "orgId=2"
             description: '{{`Scraping of all logging-agent pods to check if one failed every 30 minutes.`}}'
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
           expr: |-
             kube_pod_info{pod=~"alloy-logs.*"}
             * on(cluster_id, pod)
@@ -75,7 +75,7 @@ spec:
             __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
             dashboardQueryParams: "orgId=2"
             description: '{{`Scraping of all tracing-and-event-agent pods to check if one failed every 30 minutes.`}}'
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
           expr: |-
             kube_pod_info{pod=~"alloy-events.*"}
             * on(cluster_id, pod)
@@ -97,7 +97,7 @@ spec:
           annotations:
             description: '{{`Monitoring agent fails to send samples.`}}'
             summary: Monitoring agent fails to send samples to remote write endpoint.
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
             __dashboardUid__: promRW001
             dashboardQueryParams: "orgId=1"
           expr: |-
@@ -130,7 +130,7 @@ spec:
           annotations:
             description: '{{`Monitoring agent fails to send samples.`}}'
             summary: Monitoring agent fails to send samples to remote write endpoint.
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
             __dashboardUid__: promRW001
             dashboardQueryParams: "orgId=1"
           expr: |-
@@ -159,7 +159,7 @@ spec:
           annotations:
             description: '{{`At least one of the monitoring agent shard is missing.`}}'
             summary: Monitoring agent is missing shards.
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
           expr: |-
             kube_statefulset_status_replicas{statefulset="alloy-metrics"}
               - kube_statefulset_status_replicas_ready{statefulset="alloy-metrics"}
@@ -177,7 +177,7 @@ spec:
           annotations:
             description: '{{`At least one of the monitoring agent shard is missing.`}}'
             summary: Monitoring agent is missing shards.
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
           expr: |-
             kube_statefulset_status_replicas{statefulset="alloy-metrics"}
               - kube_statefulset_status_replicas_ready{statefulset="alloy-metrics"}

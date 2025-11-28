@@ -432,11 +432,6 @@ spec:
       record: aggregation:kong:nginx_http_current_connections
     - expr: container_memory_usage_bytes{namespace=~"kong.*", container=~"proxy|ingress-controller"}
       record: aggregation:kong:memory_usage_bytes
-  - name: irsa.aws.grafana-cloud.recording
-    rules:
-    # IAM roles for Service Accounts metrics
-    - expr: sum(irsa_operator_cluster_errors) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, account_id, cluster_namespace)
-      record: aggregation:giantswarm:irsa_operator_cluster_errors
   - name: management-clusters.organizations.grafana-cloud.recording
     rules:
     # Observability operator organizations

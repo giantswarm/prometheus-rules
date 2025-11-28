@@ -623,6 +623,12 @@ spec:
           )
         record: aggregation:giantswarm:observability:signals:proxy_queries:30d
 
+      - expr: |
+          sum by (app_name, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+            sum_over_time(giantswarm:observability:grafana:drilldown_visits:total[30d])
+          )
+        record: aggregation:giantswarm:observability:signals:drilldown_visits:30d
+
       ## Alertmanager routes
       - expr: |
           sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant) (

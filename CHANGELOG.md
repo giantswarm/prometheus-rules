@@ -7,8 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add a new explore page visits metrics recording rule to collect Observability Platform signals
-- Add a new Grafana proxy queries metrics recording rule to collect Observability Platform signals.
+- Add Grafana proxy queries, explore page visits, and drilldown visits metrics recording rules to collect Observability Platform signals
 
 ## [4.86.0] - 2025-11-26
 

@@ -26,6 +26,7 @@ spec:
             )
         - record: giantswarm:observability:grafana:dashboard_views:total
           expr: |
+           sum by (dashboard_id, dashboard_name, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
               count_over_time (
                 {cluster_id="{{ .Values.managementCluster.name }}", container="proxy", namespace="monitoring"}
                 |~ "GET /d/|GET /api/dashboards/uid/"
@@ -36,6 +37,7 @@ spec:
                 | regexp `(?i)\/d\/(?P<dashboard_id>[^/]+)\/(?P<dashboard_name>[^/?\s]+)`
                 [1m]
               )
+            )
         # Track total Grafana query requests (POST to query endpoints) to measure query activity
         - record: giantswarm:observability:grafana:proxy_queries:total
           expr: |

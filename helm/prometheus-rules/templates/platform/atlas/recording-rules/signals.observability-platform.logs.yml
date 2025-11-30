@@ -65,14 +65,15 @@ spec:
         # Track drilldown visits (metricsdrilldown, exploretraces, lokiexplore)
         - record: giantswarm:observability:grafana:drilldown_visits:total
           expr: |
-            sum by (status, app_name, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+            sum by (status, app_name, action, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
               count_over_time(
-                {cluster_id="{{ .Values.managementCluster.name }}", container="proxy", namespace="monitoring"}
-                | pattern `<ip> - - [<time>] "<method> <uri> <protocol>" <status> <size> "<referrer>" "<agent>" "<forwarded_for>"`
-                | method = `GET`
-                | uri =~ `/a/grafana-(metricsdrilldown|exploretraces|lokiexplore)-app/(drilldown|explore).*`
-                | regexp `/a/grafana-(?P<app_name>[^/]+)-app/`
-                | uri !~ `.*\.(js|css|svg|png|woff2)`
+                {cluster_id="{{ .Values.managementCluster.name }}", container="grafana", namespace="monitoring"}
+                # Only logs where referer contains a Grafana app
+                |~ `referer="https://[^/]+/a/grafana-(metricsdrilldown|exploretraces|lokiexplore)-app/.*"`
+                # Extract app_name and action from referer
+                | regexp `referer="https://[^/]+/a/grafana-(?P<app_name>[^/]+)-app/(?P<action>[^?"]+)`
+                # Extract numeric status separately
+                | regexp `status=(?P<status>[0-9]+)`
                 [1m]
               )
             )

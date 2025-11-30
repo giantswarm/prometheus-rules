@@ -26,7 +26,7 @@ spec:
             )
         - record: giantswarm:observability:grafana:dashboard_views:total
           expr: |
-           sum by (dashboard_id, dashboard_name, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+            sum by (dashboard_id, dashboard_name, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
               count_over_time (
                 {cluster_id="{{ .Values.managementCluster.name }}", container="proxy", namespace="monitoring"}
                 |~ "GET /d/|GET /api/dashboards/uid/"

@@ -39,17 +39,40 @@ spec:
               )
             )
         # Track total Grafana query requests (POST to query endpoints) to measure query activity
-        - record: giantswarm:observability:grafana:proxy_queries:total
+        - record: giantswarm:observability:grafana:executed_queries:total
           expr: |
-            sum by (status, method, ip, agent, cluster_id, cluster_type, customer, installation, pipeline, provider, region) 
             (
-              count_over_time(
-                {cluster_id="{{ .Values.managementCluster.name }}", container="proxy", namespace="monitoring"}
-                | pattern `<ip> - - [<time>] "<method> <uri> <protocol>" <status> <size> "<referrer>" "<agent>" "<forwarded_for>"`
-                | uri =~ `/api/(ds/)?query(-history)?`
-                [1m]
+              sum by (ds_type, uname, statusCode, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+                count_over_time(
+                  (
+                    {cluster_id="{{ .Values.managementCluster.name }}", container="grafana"}
+                    |= "logger=tsdb.loki"
+                    |= "statusCode="                      # Keep only lines with statusCode
+                    | regexp `pluginId=(?P<ds_type>[^ ]+)`
+                    | regexp `uname=(?P<uname>[^ ]+)`
+                    | regexp `statusCode=(?P<statusCode>[0-9]+)`
+                  )[1m]
+                )
               )
             )
+            or
+            (
+              sum by (ds_type, uname, statusCode, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+                count_over_time(
+                  (
+                    {cluster_id="{{ .Values.managementCluster.name }}", container="grafana"}
+                    |= "path=/api/ds/query"
+                    != "logger=tsdb.loki"
+                    !~ "/a/grafana-(metricsdrilldown|exploretraces|lokiexplore)-app|/explore "
+                    |= "status="
+                    | regexp `uname=(?P<uname>[^ ]+)`
+                    | regexp `status=(?P<statusCode>[0-9]+)`
+                    | regexp `type%22%3A%22(?P<ds_type>[^%]+)`
+                  )[1m]
+                )
+              )
+            )
+
         # Track explore page visits (GET /explore or requests with explore referrer)
         - record: giantswarm:observability:grafana:explore_visits:total 
           expr: |

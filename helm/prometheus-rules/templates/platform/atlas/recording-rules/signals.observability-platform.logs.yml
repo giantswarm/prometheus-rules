@@ -47,7 +47,7 @@ spec:
                   (
                     {cluster_id="{{ .Values.managementCluster.name }}", container="grafana"}
                     |= "logger=tsdb.loki"
-                    |= "statusCode="                      # Keep only lines with statusCode
+                    |~ "statusCode=[0-9]+"
                     | regexp `pluginId=(?P<ds_type>[^ ]+)`
                     | regexp `uname=(?P<uname>[^ ]+)`
                     | regexp `statusCode=(?P<statusCode>[0-9]+)`

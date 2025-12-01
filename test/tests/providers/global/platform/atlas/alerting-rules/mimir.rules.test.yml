@@ -80,7 +80,7 @@ tests:
               __dashboardUid__: ffcd83628d7d4b5a03d1cafd159e6c9c
               dashboardQueryParams: "orgId=2"
               description: "Mimir component : mimir-ingester is down."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=gauss&CLUSTER=gauss
   - interval: 1m
     input_series:
       # test: none, rate > 0, rate = 0
@@ -108,13 +108,13 @@ tests:
               dashboardQueryParams: "orgId=2"
               description: "Mimir ruler mimir-ruler-0 has failed to evaluate rule(s) 5.00 time(s)."
               summary: Mimir ruler is failing rule evaluations.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/prometheus-rules/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/prometheus-rules/?INSTALLATION=golem&CLUSTER=golem
       - alertname: MimirRulerRuleEvaluationFailures
         eval_time: 160m
 
   - interval: 1m
     input_series:
-      - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container="mimir-ingester"}'
+      - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container="mimir-ingester", cluster_id="mycluster", installation="myinstall"}'
         values: "0+0x20 0+5x20 100+0x140" # 0 restarts after 20 minutes then we restart 5 times per minute for 20 minutes then we stop restarting for 140 minutes
       - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container="prometheus"}'
         values: "0+5x180"                 # prometheus container restarts 5 times per minute for 180 minutes
@@ -128,8 +128,10 @@ tests:
               all_pipelines: "true"
               area: platform
               cancel_if_outside_working_hours: "true"
+              cluster_id: "mycluster"
               cluster_type: management_cluster
               container: mimir-ingester
+              installation: "myinstall"
               namespace: mimir
               severity: page
               team: atlas
@@ -138,7 +140,7 @@ tests:
               __dashboardUid__: ffcd83628d7d4b5a03d1cafd159e6c9c
               dashboardQueryParams: "orgId=2"
               description: Mimir containers are restarting too often.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=myinstall&CLUSTER=mycluster
       - alertname: MimirRestartingTooOften
         eval_time: 140m  # After 140m minutes, all should be back to normal
   # Test for MimirIngesterNeedsToBeScaledUp alert
@@ -191,7 +193,7 @@ tests:
               __dashboardUid__: bc9160e50b52e89e0e49c840fea3d379
               dashboardQueryParams: "orgId=2"
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=golem&CLUSTER=golem
       - alertname: MimirIngesterNeedsToBeScaledUp
         eval_time: 20h
       - alertname: MimirIngesterNeedsToBeScaledUp
@@ -212,7 +214,7 @@ tests:
               __dashboardUid__: bc9160e50b52e89e0e49c840fea3d379
               dashboardQueryParams: "orgId=2"
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=golem&CLUSTER=golem
       - alertname: MimirIngesterNeedsToBeScaledUp
         eval_time: 40h
   # Test for MimirIngesterNeedsToBeScaledDown alert
@@ -267,7 +269,7 @@ tests:
               __dashboardUid__: bc9160e50b52e89e0e49c840fea3d379
               dashboardQueryParams: "orgId=2"
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=golem&CLUSTER=golem
       - alertname: MimirIngesterNeedsToBeScaledDown
         eval_time: 280m 
   # Test for MimirHPAReachedMaxReplicas alert
@@ -285,14 +287,14 @@ tests:
       #   desired_replicas > max_replicas AND current_utilization < target_utilization does not fire
       #   desired_replicas > max_replicas AND current_utilization = target_utilization does not fire
       #   desired_replicas > max_replicas AND current_utilization > target_utilization does fire
-      - series: 'kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="mimir-distributor", namespace="mimir"}'
+      - series: 'kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="mimir-distributor", namespace="mimir", cluster_id="myinstall", installation="myinstall"}'
         values: '3+0x360'
-      - series: 'kube_horizontalpodautoscaler_status_desired_replicas{horizontalpodautoscaler="mimir-distributor", namespace="mimir"}'
+      - series: 'kube_horizontalpodautoscaler_status_desired_replicas{horizontalpodautoscaler="mimir-distributor", namespace="mimir", cluster_id="myinstall", installation="myinstall"}'
         values: '2+0x120 3+0x120 4+0x120'
-      - series: 'kube_horizontalpodautoscaler_spec_target_metric{horizontalpodautoscaler="mimir-distributor", namespace="mimir", metric_name="cpu", metric_target_type="utilization"}'
+      - series: 'kube_horizontalpodautoscaler_spec_target_metric{horizontalpodautoscaler="mimir-distributor", namespace="mimir", metric_name="cpu", metric_target_type="utilization", cluster_id="myinstall", installation="myinstall"}'
         values: '90+0x360'
       # HPA current metric = 80% for 10mn, then increase to 90% for 10mn
-      - series: 'kube_horizontalpodautoscaler_status_target_metric{horizontalpodautoscaler="mimir-distributor", namespace="mimir", metric_name="cpu", metric_target_type="utilization"}'
+      - series: 'kube_horizontalpodautoscaler_status_target_metric{horizontalpodautoscaler="mimir-distributor", namespace="mimir", metric_name="cpu", metric_target_type="utilization", cluster_id="myinstall", installation="myinstall"}'
         values: '80+0x40 90+0x40 100+0x40 80+0x40 90+0x40 100+0x40 80+0x40 90+0x40 100+0x40'
     alert_rule_test:
       - alertname: MimirHPAReachedMaxReplicas
@@ -303,6 +305,8 @@ tests:
           -  exp_labels:
                area: platform
                cancel_if_outside_working_hours: "true"
+               cluster_id: "myinstall"
+               installation: "myinstall"
                severity: page
                team: atlas
                topic: observability
@@ -310,7 +314,7 @@ tests:
                namespace: mimir
              exp_annotations:
                description: "Mimir mimir-distributor HPA has reached maximum replicas and consume too much resources, it needs to be scaled up."
-               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/
+               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=myinstall&CLUSTER=myinstall
       - alertname: MimirHPAReachedMaxReplicas
         eval_time: 246m
       - alertname: MimirHPAReachedMaxReplicas
@@ -319,6 +323,8 @@ tests:
           -  exp_labels:
                area: platform
                cancel_if_outside_working_hours: "true"
+               cluster_id: "myinstall"
+               installation: "myinstall"
                severity: page
                team: atlas
                topic: observability
@@ -326,7 +332,7 @@ tests:
                namespace: mimir
              exp_annotations:
                description: "Mimir mimir-distributor HPA has reached maximum replicas and consume too much resources, it needs to be scaled up."
-               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/
+               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=myinstall&CLUSTER=myinstall
   # Test for MimirCompactorFailedCompaction alert
   - interval: 1m
     input_series:
@@ -356,7 +362,7 @@ tests:
               __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
               dashboardQueryParams: "orgId=2"
               description: Mimir compactor has been failing compactions for more than 2 hours since start-up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/#mimircompactorfailedcompaction
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/#mimircompactorfailedcompaction?INSTALLATION=golem&CLUSTER=golem
       - alertname: MimirCompactorFailedCompaction
         eval_time: 250m
       - alertname: MimirCompactorFailedCompaction
@@ -379,7 +385,7 @@ tests:
               __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
               dashboardQueryParams: "orgId=2"
               description: Mimir compactor has been failing its compactions for 2 hours.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/#mimircompactorfailedcompaction
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/#mimircompactorfailedcompaction?INSTALLATION=golem&CLUSTER=golem
 
   # Test for MimirContinuousTestFailingOnWrites alert
   - interval: 1m
@@ -409,7 +415,7 @@ tests:
               __dashboardUid__: mimir-continuous-test
               dashboardQueryParams: "orgId=2"
               description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because writes are failing."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=golem&CLUSTER=golem
       - alertname: MimirContinuousTestFailingOnWrites
         eval_time: 160m
 
@@ -441,7 +447,7 @@ tests:
               __dashboardUid__: mimir-continuous-test
               dashboardQueryParams: "orgId=2"
               description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because queries are failing."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=golem&CLUSTER=golem
       - alertname: MimirContinuousTestFailingOnReads
         eval_time: 160m
 
@@ -473,7 +479,7 @@ tests:
               __dashboardUid__: mimir-continuous-test
               dashboardQueryParams: "orgId=2"
               description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because queries are failing."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=golem&CLUSTER=golem
       - alertname: MimirContinuousTestFailing
         eval_time: 160m
 
@@ -504,7 +510,7 @@ tests:
               __dashboardUid__: mimir-continuous-test
               dashboardQueryParams: "orgId=2"
               description: "Mimir continuous test myinstall is not producing metrics."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=myinstall&CLUSTER=myinstall
       - alertname: MimirContinuousTestMissing
         eval_time: 150m
       - alertname: MimirContinuousTestMissing
@@ -525,7 +531,7 @@ tests:
               __dashboardUid__: mimir-continuous-test
               dashboardQueryParams: "orgId=2"
               description: "Mimir continuous test myinstall is not producing metrics."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=myinstall&CLUSTER=myinstall
 
   # Test for MimirDataPushFailures alert
   - interval: 1m
@@ -555,7 +561,7 @@ tests:
               __dashboardUid__: e1324ee2a434f4158c00a9ee279d3292
               dashboardQueryParams: "orgId=2"
               description: "Low rate of writes to the Mimir object store."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/#mimirdatapushfailures
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/#mimirdatapushfailures?INSTALLATION=myinstall&CLUSTER=myinstall
       - alertname: MimirDataPushFailures
         eval_time: 140m
 
@@ -592,7 +598,7 @@ tests:
               __dashboardUid__: 631e15d5d85afb2ca8e35d62984eeaa0
               dashboardQueryParams: "orgId=2"
               description: "Mimir ruler mimir-ruler-aaaaaaaaaa-bbbbb is experiencing 2.00% errors while evaluating rules."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=myinstall&CLUSTER=myinstall
 
   # Test for MimirAlertmanagerSyncConfigsFailing alert
   - interval: 1m
@@ -621,7 +627,7 @@ tests:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
               description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to read tenant configurations from storage."
-              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing
+              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagersyncconfigsfailing?INSTALLATION=myinstall&CLUSTER=myinstall
 
   # Test for MimirAlertmanagerRingCheckFailing alert
   - interval: 1m
@@ -650,7 +656,7 @@ tests:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
               description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is unable to check tenants ownership via the ring."
-              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing
+              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerringcheckfailing?INSTALLATION=myinstall&CLUSTER=myinstall
 
   # Test for MimirAlertmanagerReplicationFailing alert
   - interval: 1m
@@ -679,13 +685,13 @@ tests:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
               description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb is failing to replicating partial state to its replicas."
-              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing
+              runbook_url: https://grafana.com/docs/mimir/latest/operators-guide/mimir-runbooks/#mimiralertmanagerreplicationfailing?INSTALLATION=myinstall&CLUSTER=myinstall
 
   # Test for MimirAlertmanagerNotificationsFailing alert
   - interval: 1m
     input_series:
       # after 1h, slack notification fails during 2h then works again (15m group_interval) => alert fires after 3 successive failures
-      - series: 'cortex_alertmanager_notifications_failed_total{integration="slack", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb", user="giantswarm"}'
+      - series: 'cortex_alertmanager_notifications_failed_total{integration="slack", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb", user="giantswarm", installation="foo", cluster_id="bar"}'
         values: "0x60 1+0x15 2+0x15 3+0x15 4+0x15 5+0x15 6+0x15 7+0x15 8+0x15 8+0x120"
       # after 1h, slack notification fails 2 times during 30mn than works again => alert must not fires
       - series: 'cortex_alertmanager_notifications_failed_total{integration="webhook", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb", user="giantswarm"}'
@@ -703,8 +709,10 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
+              cluster_id: "bar"
               cluster_type: management_cluster
               integration: slack
+              installation: "foo"
               pod: mimir-alertmanager-aaaaaaaaaa-bbbbb
               severity: page
               team: atlas
@@ -714,7 +722,7 @@ tests:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
               description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb: slack notifications are failing."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-alertmanager/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-alertmanager/?INSTALLATION=foo&CLUSTER=bar
       - alertname:  MimirAlertmanagerNotificationsFailing
         eval_time: 240m
 
@@ -723,7 +731,7 @@ tests:
     input_series:
       # after 1h, pagerduty notification fails during 45m then works again for 1h, finally fails 1 time (group_interval=15m)
       # => alert fires after 2 successive failures only
-      - series: 'cortex_alertmanager_notifications_failed_total{integration="pagerduty", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb", user="giantswarm"}'
+      - series: 'cortex_alertmanager_notifications_failed_total{integration="pagerduty", cluster_type="management_cluster", pod="mimir-alertmanager-aaaaaaaaaa-bbbbb", user="giantswarm", installation="foo", cluster_id="bar"}'
         values: "0x60 1+0x15 2+0x15 2+0x15 2+0x60 3+0x15 3+0x60"
     alert_rule_test:
       - alertname:  MimirAlertmanagerAlertsFailing
@@ -735,8 +743,10 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
+              cluster_id: "bar"
               cluster_type: management_cluster
               integration: pagerduty
+              installation: "foo"
               pod: mimir-alertmanager-aaaaaaaaaa-bbbbb
               severity: notify
               team: atlas
@@ -746,7 +756,7 @@ tests:
               __dashboardUid__: b0d38d318bbddd80476246d4930f9e55
               dashboardQueryParams: "orgId=2"
               description: "Mimir alertmanager mimir-alertmanager-aaaaaaaaaa-bbbbb: pagerduty alerts are failing."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-alertmanager/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-alertmanager/?INSTALLATION=foo&CLUSTER=bar
       - alertname:  MimirAlertmanagerAlertsFailing
         eval_time: 180m
       - alertname:  MimirAlertmanagerAlertsFailing

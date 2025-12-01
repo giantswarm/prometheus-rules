@@ -12,7 +12,7 @@ spec:
     - alert: MimirToGrafanaCloudExporterDown
       annotations:
         description: '{{`Prometheus mimir-to-grafana-cloud is down.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-grafana-cloud-exporter/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-grafana-cloud-exporter/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
         __dashboardUid__: iWowmlSmk
         dashboardQueryParams: "orgId=1&var-cluster=mimir-to-grafana-cloud"
       # We can use absent function here because the prometheus mimir-to-grafana-cloud is a MC component only
@@ -29,7 +29,7 @@ spec:
     - alert: MimirToGrafanaCloudExporterMissingData
       annotations:
         description: 'Prometheus mimir-to-grafana-cloud is not sending data to Grafana Cloud.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana-cloud/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana-cloud/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: absent(prometheus_remote_storage_samples_total{remote_name="grafana-cloud", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
       for: 1h
       labels:
@@ -42,7 +42,7 @@ spec:
     - alert: MimirToGrafanaCloudExporterFailures
       annotations:
         description: '{{`Prometheus mimir-to-grafana-cloud is failing to read or write data.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-grafana-cloud-exporter/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-grafana-cloud-exporter/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
         __dashboardUid__: promRW001
         dashboardQueryParams: "orgId=1"
       # We can have encountered failures with remote read and/or remote write
@@ -70,7 +70,7 @@ spec:
     - alert: MimirToGrafanaCloudExporterTooManyRestarts
       annotations:
         description: '{{`Prometheus mimir-to-grafana-cloud is restarting too much.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-grafana-cloud-exporter/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-grafana-cloud-exporter/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
         __dashboardUid__: promRW001
         dashboardQueryParams: "orgId=1"
       expr: |
@@ -86,7 +86,7 @@ spec:
       annotations:
         description: '{{`Prometheus mimir-to-grafana-cloud has failed to evaluate rule(s) {{ printf "%.2f" $value }} time(s).`}}'
         summary: Prometheus is failing rule evaluations.
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/prometheus-rules/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/prometheus-rules/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: rate(prometheus_rule_evaluation_failures_total{job="mimir/mimir-to-grafana-cloud"}[5m]) > 0
       for: 1h
       labels:

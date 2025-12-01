@@ -12,7 +12,7 @@ spec:
     - alert: SlothDown
       annotations:
         description: 'Sloth is down.'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/sloth-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/sloth-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: count(up{job="monitoring/sloth"} == 0) by (cluster_id, installation, provider, pipeline) > 0
       for: 5m
       labels:
@@ -27,7 +27,7 @@ spec:
     - alert: SlothRestartingTooOften
       annotations:
         description: '{{`Sloth is restarting too often.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/sloth-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/sloth-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         increase(
           kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="monitoring", container="sloth"}[1h]

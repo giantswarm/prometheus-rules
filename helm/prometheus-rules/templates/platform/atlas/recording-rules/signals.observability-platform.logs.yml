@@ -28,7 +28,7 @@ spec:
           expr: |
             sum by (dashboard_id, dashboard_name, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
               count_over_time (
-                {cluster_id="{{ .Values.managementCluster.name }}", container="proxy", namespace="monitoring"}
+                {cluster_id="{{ .Values.managementCluster.name }}", container=~"proxy|controller", namespace=~"monitoring|kube-system"}
                 |~ "GET /d/|GET /api/dashboards/uid/"
                 | pattern `<ip> - - [<time>] "<method> <uri> <protocol>" <status> <size> "<referrer>" "<agent>" "<forwarded_for>"`
                 | method = `GET`
@@ -42,7 +42,7 @@ spec:
         - record: giantswarm:observability:grafana:executed_queries:total
           expr: |
             (
-              sum by (ds_type, uname, statusCode, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+              sum by (ds_type, uname, status_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
                 count_over_time(
                   (
                     {cluster_id="{{ .Values.managementCluster.name }}", container="grafana"}
@@ -50,14 +50,14 @@ spec:
                     |~ "statusCode=[0-9]+"
                     | regexp `pluginId=(?P<ds_type>[^ ]+)`
                     | regexp `uname=(?P<uname>[^ ]+)`
-                    | regexp `statusCode=(?P<statusCode>[0-9]+)`
+                    | regexp `statusCode=(?P<status_code>[0-9]+)`
                   )[1m]
                 )
               )
             )
             or
             (
-              sum by (ds_type, uname, statusCode, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+              sum by (ds_type, uname, status_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
                 count_over_time(
                   (
                     {cluster_id="{{ .Values.managementCluster.name }}", container="grafana"}
@@ -66,7 +66,7 @@ spec:
                     !~ "/a/grafana-(metricsdrilldown|exploretraces|lokiexplore)-app|/explore "
                     |~ "status=[0-9]+"
                     | regexp `uname=(?P<uname>[^ ]+)`
-                    | regexp `status=(?P<statusCode>[0-9]+)`
+                    | regexp `status=(?P<status_code>[0-9]+)`
                     | regexp `type%22%3A%22(?P<ds_type>[^%]+)`
                   )[1m]
                 )
@@ -76,38 +76,27 @@ spec:
         # Track explore page visits (GET /explore or requests with explore referrer)
         - record: giantswarm:observability:grafana:explore_visits:total 
           expr: |
-            sum by (statusCode, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
-                  count_over_time(
-                      {cluster_id="{{ .Values.managementCluster.name }}", container="proxy", namespace="monitoring"}
-                          | pattern `<ip> - - [<time>] "<method> <uri> <protocol>" <statusCode> <size> "<referrer>" "<agent>" "<forwarded_for>"`
-                          | (method = `GET` and uri =~ `/explore`) or referrer =~ `.*/explore.*`
-                          | uri !~ `.*\.(js|css|svg|png|woff2)`
-                      [1m]
-                  )
+            sum by (status_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+              count_over_time(
+                {cluster_id="{{ .Values.managementCluster.name }}", container=~"proxy|controller", namespace=~"monitoring|kube-system"}
+                  | pattern `<ip> - - [<time>] "<method> <uri> <protocol>" <status_code> <size> "<referrer>" "<agent>" "<forwarded_for>"`
+                  | (method = `GET` and uri =~ `/explore`) or referrer =~ `.*/explore.*`
+                  | uri !~ `.*\.(js|css|svg|png|woff2)`
+                [1m]
               )
-              or 
-              sum by (statusCode, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
-                  count_over_time(
-                      {cluster_id="{{ .Values.managementCluster.name }}", container="controller", namespace="kube-system"}
-                      | pattern `<ip> - - [<time>] "<method> <uri> <protocol>" <statusCode> <size> "<referrer>" "<agent>" "<forwarded_for>"`
-                      | (method = `GET` and uri =~ `/explore`) or referrer =~ `.*/explore.*`
-                      | uri !~ `.*\.(js|css|svg|png|woff2)`
-                      [1m]
-                  )
-              )
+            )
           ```
         # Track drilldown visits (metricsdrilldown, exploretraces, lokiexplore)
         - record: giantswarm:observability:grafana:drilldown_visits:total
           expr: |
-            sum by (status, app_name, action, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
+            sum by (status_code, app_name, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
               count_over_time(
-                {cluster_id="{{ .Values.managementCluster.name }}", container="grafana", namespace="monitoring"}
-                # Only logs where referer contains a Grafana app
-                |~ `referer="https://[^/]+/a/grafana-(metricsdrilldown|exploretraces|lokiexplore)-app/.*"`
-                # Extract app_name and action from referer
-                | regexp `referer="https://[^/]+/a/grafana-(?P<app_name>[^/]+)-app/(?P<action>[^?"]+)`
-                # Extract numeric status separately
-                | regexp `status=(?P<status>[0-9]+)`
-                [1m]
+                (
+                  {cluster_id="alba", container=~"proxy|controller", namespace=~"monitoring|kube-system"}
+                  | pattern `<ip> - - [<time>] "<method> <uri> <protocol>" <status_code> <size> "<referrer>" "<agent>" "<forwarded_for>"`
+                  | referrer =~ `https://grafana\.[^/]+/a/grafana-(?P<app_name>[^/]+)-app/(drilldown|explore).*`
+                  | uri !~ `.*\.(js|css|svg|png|woff2)`
+                  | regexp `https://grafana\.[^/]+/a/(?P<app_name>[^/]+)-app/(drilldown|explore).*`
+                )[1m]
               )
             )

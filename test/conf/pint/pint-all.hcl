@@ -1,4 +1,4 @@
- rule {
+rule {
   # Disallow spaces in label/annotation keys, they're only allowed in values.
   reject ".* +.*" {
     label_keys = true

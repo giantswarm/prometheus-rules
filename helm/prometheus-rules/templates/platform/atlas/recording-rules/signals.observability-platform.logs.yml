@@ -64,7 +64,7 @@ spec:
                     |= "path=/api/ds/query"
                     != "logger=tsdb.loki"
                     !~ "/a/grafana-(metricsdrilldown|exploretraces|lokiexplore)-app|/explore "
-                    |= "status="
+                    |~ "status=[0-9]+"
                     | regexp `uname=(?P<uname>[^ ]+)`
                     | regexp `status=(?P<statusCode>[0-9]+)`
                     | regexp `type%22%3A%22(?P<ds_type>[^%]+)`

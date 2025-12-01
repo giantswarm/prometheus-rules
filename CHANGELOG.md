@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Change `JobScrapingFailure` to page owner team and default to atlas if not set.
 
+### Removed
+
+- Remove cluster-autoscaler runbook which does not exist anymore
+
 ## [4.86.0] - 2025-11-26
 
 ### Added
@@ -20,6 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update `OnPremCloudProviderAPIIsDown` alert runbook URL to point to new runbook location.
 - Change `apiserver_flowcontrol_request_concurrency_limit` to `apiserver_flowcontrol_nominal_limit_seats`, metric will be dropped in Kubernetes `v1.31`.
+
+### Removed
+
+- Remove Dipstick references since we have archived the app and we don't run it anymore.
 
 ## [4.85.0] - 2025-11-18
 

@@ -14,7 +14,7 @@ spec:
     - alert: ConfigmapUnexpected
       annotations:
         description: '{{`{{ $labels.configmap }} configmap is not expected.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/atlas-app-configuration/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/atlas-app-configuration/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         kube_configmap_info{cluster_type="management_cluster", configmap=~".*(loki|mimir)-user-values"} > 0
       for: 2d
@@ -28,7 +28,7 @@ spec:
     - alert: SecretUnexpected
       annotations:
         description: '{{`{{ $labels.secret }} secret is not expected.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/atlas-app-configuration/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/atlas-app-configuration/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         kube_secret_info{cluster_type="management_cluster", secret=~".*(loki|mimir)-user-values"} > 0
       for: 2d

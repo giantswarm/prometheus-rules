@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'operatorkit_controller_errors_total{job="monitoring/silence-operator", controller="silence-controller", cluster_type="management_cluster"}'
+      - series: 'operatorkit_controller_errors_total{job="monitoring/silence-operator", controller="silence-controller", cluster_type="management_cluster", installation="myinstall", cluster_id="bar"}'
         values: "0x30 1+0x20 20x45 20-1x20 0x100"
     alert_rule_test:
       - alertname: SilenceOperatorReconcileErrors
@@ -17,6 +17,7 @@ tests:
               job: "monitoring/silence-operator"
               area: platform
               cancel_if_outside_working_hours: "true"
+              cluster_id: bar
               cluster_type: management_cluster
               controller: silence-controller
               installation: "myinstall"
@@ -25,6 +26,6 @@ tests:
               topic: "observability"
             exp_annotations:
               description: "silence-operator controller silence-controller too many reconcile errors."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/?INSTALLATION=myinstall&CLUSTER=bar
       - alertname: SilenceOperatorReconcileErrors
         eval_time: 215m

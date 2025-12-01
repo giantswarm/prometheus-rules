@@ -5,6 +5,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.87.0] - 2025-12-01
+
+### Removed
+
+- Remove cluster-autoscaler runbook which does not exist anymore
+
+### Changed
+
+- Runbook URLs updated
+
 ## [4.86.0] - 2025-11-26
 
 ### Added
@@ -16,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update `OnPremCloudProviderAPIIsDown` alert runbook URL to point to new runbook location.
 - Change `apiserver_flowcontrol_request_concurrency_limit` to `apiserver_flowcontrol_nominal_limit_seats`, metric will be dropped in Kubernetes `v1.31`.
+
+### Removed
+
+- Remove Dipstick references since we have archived the app and we don't run it anymore.
 
 ## [4.85.0] - 2025-11-18
 
@@ -4085,7 +4099,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.86.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.87.0...HEAD
+[4.87.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.86.0...v4.87.0
 [4.86.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.85.0...v4.86.0
 [4.85.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.84.0...v4.85.0
 [4.84.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.83.0...v4.84.0

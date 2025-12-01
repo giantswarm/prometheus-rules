@@ -14,7 +14,7 @@ spec:
     - alert: OperatorkitErrorRateTooHighHoneybadger
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.pod }} has reported errors. Please check logs.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: operatorkit_controller_error_total{pod=~"app-operator.*|chart-operator.*"} > 5
       for: 1m
       labels:
@@ -35,7 +35,7 @@ spec:
     - alert: OperatorkitErrorRateTooHighPhoenix
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.pod }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: rate(operatorkit_controller_error_total{pod=~"aws-.*"}[5m]) > 1
       for: 10m
       labels:
@@ -49,7 +49,7 @@ spec:
     - alert: OperatorkitErrorRateTooHighAWS
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.pod }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: operatorkit_controller_error_total{pod=~"aws-operator.+|cluster-operator.+"} > 5
       for: 1m
       labels:
@@ -62,7 +62,7 @@ spec:
     - alert: OperatorkitErrorRateTooHighKaas
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.pod }}@{{ $labels.app_version }} has reported errors. Please check the logs.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: operatorkit_controller_error_total{pod=~"ignition-operator.*|cert-operator.*|node-operator.*"} > 5
       for: 1m
       labels:
@@ -75,7 +75,7 @@ spec:
     - alert: OperatorNotReconcilingProviderTeam
       annotations:
         description: '{{`{{ $labels.namespace }}/{{ $labels.pod }}@{{ $labels.app_version }} has stopped the reconciliation. Please check logs.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: (sum by (cluster_id, installation, pipeline, provider, instance, pod, app_version, namespace)(increase(operatorkit_controller_event_count{pod=~"node-operator.*"}[10m])) == 0 and on (cluster_id, instance) (operatorkit_controller_deletion_timestamp or operatorkit_controller_creation_timestamp))
       for: 20m
       labels:

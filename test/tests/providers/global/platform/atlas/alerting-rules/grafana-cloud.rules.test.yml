@@ -29,7 +29,7 @@ tests:
               __dashboardUid__: iWowmlSmk
               dashboardQueryParams: "orgId=1&var-cluster=mimir-to-grafana-cloud"
               description: "Prometheus mimir-to-grafana-cloud is down."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-grafana-cloud-exporter-failing/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-grafana-cloud-exporter/?INSTALLATION=myinstall&CLUSTER=myinstall
       - alertname: MimirToGrafanaCloudExporterDown
         eval_time: 70m
       - alertname: MimirToGrafanaCloudExporterDown
@@ -55,7 +55,7 @@ tests:
               __dashboardUid__: iWowmlSmk
               dashboardQueryParams: "orgId=1&var-cluster=mimir-to-grafana-cloud"
               description: "Prometheus mimir-to-grafana-cloud is down."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-grafana-cloud-exporter-failing/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-grafana-cloud-exporter/?INSTALLATION=myinstall&CLUSTER=myinstall
       - alertname: MimirToGrafanaCloudExporterDown
         eval_time: 200m
   # Tests for `MimirToGrafanaCloudExporterFailures` alert
@@ -87,7 +87,7 @@ tests:
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               description: "Prometheus mimir-to-grafana-cloud is failing to read or write data."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-grafana-cloud-exporter-failing/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-grafana-cloud-exporter/?INSTALLATION=myinstall&CLUSTER=myinstall
       - alertname: MimirToGrafanaCloudExporterFailures
         eval_time: 200m
       - alertname: MimirToGrafanaCloudExporterFailures
@@ -107,7 +107,7 @@ tests:
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               description: "Prometheus mimir-to-grafana-cloud is failing to read or write data."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-grafana-cloud-exporter-failing/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-grafana-cloud-exporter/?INSTALLATION=myinstall&CLUSTER=myinstall
   # Tests for `MimirToGrafanaCloudExporterTooManyRestarts` alert
   - interval: 1m
     input_series:
@@ -161,6 +161,6 @@ tests:
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               description: "Prometheus mimir-to-grafana-cloud is restarting too much."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/mimir-grafana-cloud-exporter-failing/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir-grafana-cloud-exporter/?INSTALLATION=myinstall&CLUSTER=myinstall
       - alertname: MimirToGrafanaCloudExporterTooManyRestarts
         eval_time: 190m

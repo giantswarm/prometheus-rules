@@ -53,7 +53,7 @@ tests:
               __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
               dashboardQueryParams: "orgId=2"
               description: "The Alloy OTLP exporter has failed to send 15.0% of spans over the last 5 minutes."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/?INSTALLATION=golem&CLUSTER=golem
               summary: Alloy OTLP exporter is failing to send spans.
 
   # Test case 3: Exactly 10% failure rate (edge case) - should alert
@@ -82,7 +82,7 @@ tests:
               __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
               dashboardQueryParams: "orgId=2"
               description: "The Alloy OTLP exporter has failed to send 10.0% of spans over the last 5 minutes."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/?INSTALLATION=golem&CLUSTER=golem
               summary: Alloy OTLP exporter is failing to send spans.
 
   # Test case 4: No spans being sent at all - should not divide by zero
@@ -124,7 +124,7 @@ tests:
               __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
               dashboardQueryParams: "orgId=2"
               description: "The Alloy OTLP exporter has failed to send 17.6% of spans over the last 5 minutes."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/?INSTALLATION=golem&CLUSTER=golem
               summary: Alloy OTLP exporter is failing to send spans.
       # Should resolve after recovery
       - alertname: OTLPTraceForwardingErrors
@@ -176,7 +176,7 @@ tests:
               __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
               dashboardQueryParams: "orgId=2"
               description: "The Alloy OTLP exporter has failed to enqueue more than 100 spans per second on average over the last 5 minutes, indicating potential upstream issues."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/?INSTALLATION=golem&CLUSTER=golem
               summary: Alloy OTLP exporter enqueue failures exceed 100 spans/second over 5 minutes
 
   # Test case 3: Exactly 6000 enqueue failures per 5min (edge case) - should not alert
@@ -216,7 +216,7 @@ tests:
               __dashboardUid__: 9b6d37c8603e19e8922133984faad93d
               dashboardQueryParams: "orgId=2"
               description: "The Alloy OTLP exporter has failed to enqueue more than 100 spans per second on average over the last 5 minutes, indicating potential upstream issues."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/?INSTALLATION=golem&CLUSTER=golem
               summary: Alloy OTLP exporter enqueue failures exceed 100 spans/second over 5 minutes
       # Should resolve after failure rate drops
       - alertname: OTLPExporterEnqueueFailures

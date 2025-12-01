@@ -12,7 +12,7 @@ spec:
     - alert: "SilenceOperatorReconcileErrors"
       annotations:
         description: '{{`silence-operator controller {{ $labels.controller }} too many reconcile errors.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/operator-not-reconciling/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         avg_over_time(operatorkit_controller_errors_total{job="monitoring/silence-operator", cluster_type="management_cluster"}[20m]) > 0
       for: 1h
@@ -26,7 +26,7 @@ spec:
     - alert: SilenceOperatorSyncJobHasNotBeenScheduledForTooLong
       annotations:
         description: '{{`CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has not been scheduled for more than 1 day.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/job-has-not-been-scheduled-for-too-long/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/job-has-not-been-scheduled-for-too-long/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       # This alert triggers when the silence operator sync job did not schedule for more than 1 day
       # or if the job did not run successfully at least once in the last day
       expr: (time() - kube_cronjob_status_last_schedule_time{cronjob="silence-operator-sync", cluster_type="management_cluster"}) > 86400

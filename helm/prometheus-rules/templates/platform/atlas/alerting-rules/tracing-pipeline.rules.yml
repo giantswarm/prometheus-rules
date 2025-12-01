@@ -16,7 +16,7 @@ spec:
             dashboardQueryParams: "orgId=2"
             summary: Alloy OTLP exporter is failing to send spans.
             description: '{{`The Alloy OTLP exporter has failed to send {{ printf "%.1f" $value }}% of spans over the last 5 minutes.`}}'
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
           expr: |-
             (
               rate(otelcol_exporter_send_failed_spans_total{job="alloy-events"}[5m])
@@ -36,7 +36,7 @@ spec:
           annotations:
             summary: Alloy OTLP exporter enqueue failures exceed 100 spans/second over 5 minutes
             description: '{{`The Alloy OTLP exporter has failed to enqueue more than 100 spans per second on average over the last 5 minutes, indicating potential upstream issues.`}}'
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/tracing-pipeline/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
             __dashboardUid__: 9b6d37c8603e19e8922133984faad93d 
             dashboardQueryParams: "orgId=2"
           expr: rate(otelcol_exporter_enqueue_failed_spans_total{job="alloy-events"}[5m]) > 100

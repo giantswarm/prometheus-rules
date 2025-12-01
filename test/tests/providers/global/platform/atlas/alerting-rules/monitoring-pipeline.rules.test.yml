@@ -54,7 +54,7 @@ tests:
             exp_annotations:
               __dashboardUid__: servicemonitors-details
               dashboardQueryParams: "orgId=1"
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-job-scraping-failure/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION=golem&CLUSTER=golem
               summary: "Monitoring agent failed to scrape all targets in a job."
               description: "Monitoring agents for cluster golem/golem has failed to scrape all targets in kube-controller-manager job."
           - exp_labels:
@@ -71,7 +71,7 @@ tests:
             exp_annotations:
               __dashboardUid__: servicemonitors-details
               dashboardQueryParams: "orgId=1"
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-job-scraping-failure/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION=golem&CLUSTER=golem
               summary: "Monitoring agent failed to scrape all targets in a job."
               description: "Monitoring agents for cluster golem/golem has failed to scrape all targets in app-exporter job."
   
@@ -93,7 +93,7 @@ tests:
             exp_annotations:
               __dashboardUid__: servicemonitors-details
               dashboardQueryParams: "orgId=1"
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-job-scraping-failure/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION=golem&CLUSTER=golem
               summary: "Monitoring agent failed to scrape all targets in a job."
               description: "Monitoring agents for cluster golem/golem has failed to scrape all targets in kube-controller-manager job."
 
@@ -102,15 +102,15 @@ tests:
   - interval: 1m
     input_series:
       # Test case where alert should not fire (error rate < 10%)
-      - series: 'prometheus_remote_storage_samples_failed_total{remote_name="test-remote", url="http://example.com"}'
+      - series: 'prometheus_remote_storage_samples_failed_total{remote_name="test-remote", url="http://example.com", installation="foo", cluster_id="bar"}'
         values: '0+0x65 0+50x60' # Minimal failures for 2h+ period
-      - series: 'prometheus_remote_storage_samples_total{remote_name="test-remote", url="http://example.com"}'
+      - series: 'prometheus_remote_storage_samples_total{remote_name="test-remote", url="http://example.com", installation="foo", cluster_id="bar"}'
         values: '1000+1000x125' # Normal sample count
 
       # Test case where alert should fire (error rate > 10%)
-      - series: 'prometheus_remote_storage_samples_failed_total{remote_name="error-remote", url="http://error.com"}'
+      - series: 'prometheus_remote_storage_samples_failed_total{remote_name="error-remote", url="http://error.com", installation="foo", cluster_id="bar"}'
         values: '0+0x5 0+120x120' # Significant failures over time
-      - series: 'prometheus_remote_storage_samples_total{remote_name="error-remote", url="http://error.com"}'
+      - series: 'prometheus_remote_storage_samples_total{remote_name="error-remote", url="http://error.com", installation="foo", cluster_id="bar"}'
         values: '1000+1000x125' # Normal sample count
 
     alert_rule_test:
@@ -130,6 +130,8 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: MetricForwardingErrors
+              cluster_id: "bar"
+              installation: "foo"
               remote_name: error-remote
               url: http://error.com
               area: platform
@@ -140,6 +142,6 @@ tests:
             exp_annotations:
               summary: Monitoring agent fails to send samples to remote storage.
               description: Monitoring agent failed to send 10.7% of the samples to error-remote:http://error.com.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-pipeline/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/monitoring-pipeline/?INSTALLATION=foo&CLUSTER=bar
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"

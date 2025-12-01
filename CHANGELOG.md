@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove cluster-autoscaler runbook which does not exist anymore
 
+### Changed
+
+- Runbook URLs updated
+
 ## [4.86.0] - 2025-11-26
 
 ### Added

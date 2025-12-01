@@ -12,7 +12,7 @@ spec:
     - alert: GrafanaDown
       annotations:
         description: '{{`Grafana ({{ $labels.instance }}) is down.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
         __dashboardUid__: qRQXmRnik
         dashboardQueryParams: "orgId=2"
       expr: up{service="grafana", cluster_type="management_cluster"} == 0
@@ -26,7 +26,7 @@ spec:
     - alert: GrafanaPostgresqlReplicationFailure
       annotations:
         description: '{{`grafana-postgresql replication is lagging for pod {{ $labels.pod }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: sum(cnpg_pg_replication_lag{namespace="monitoring", pod=~"grafana-postgresql.*"}) by (pod, cluster_id, installation, pipeline, provider) > 300
       for: 10m
       labels:
@@ -38,7 +38,7 @@ spec:
     - alert: GrafanaPostgresqlArchivingFailure
       annotations:
         description: '{{`grafana-postgresql archiving failed for pod {{ $labels.pod }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: sum((cnpg_pg_stat_archiver_last_failed_time{namespace="monitoring", pod=~"grafana-postgresql.*"} - cnpg_pg_stat_archiver_last_archived_time{namespace="monitoring", pod=~"grafana-postgresql.*"})) by (pod, cluster_id, installation, pipeline, provider) > 1
       for: 5m
       labels:
@@ -50,7 +50,7 @@ spec:
     - alert: GrafanaPostgresqlRecoveryTestFailed
       annotations:
         description: '{{`grafana-postgresql db automated recovery test failed.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       # If we have a pod for grafana-postgresql-recovery-test postgresql cluster running for 1 hour, we can consider the recovery failed. This alert works because the test clusters are automatically deleted right after the tests are successful, and the grafana database is small so restore+tests never take that long.
       expr: |
         (

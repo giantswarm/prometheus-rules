@@ -12,7 +12,7 @@ spec:
         - alert: TeleportAuditLogsMissing
           annotations:
             description: Teleport audit logs are missing from installation {{`{{ $labels.installation }}`}}.
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/teleport-audit-logs-missing/
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/teleport-audit-logs-missing/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
           expr: |-
             absent_over_time({scrape_job="teleport.giantswarm.io"} [7d]) > 0
           for: 5m

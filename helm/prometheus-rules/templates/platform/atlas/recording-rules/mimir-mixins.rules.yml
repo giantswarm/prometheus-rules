@@ -1,3 +1,4 @@
+{{- if eq .Values.managementCluster.provider.flavor "capi" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -200,18 +201,28 @@ spec:
       rules:
         - expr: |
             # Convenience rule to get the number of replicas for both a deployment and a statefulset.
-            # Multi-zone deployments are grouped together removing the "zone-X" suffix.
+            #
+            # Notes:
+            # - Multi-zone deployments are grouped together removing the "zone-X" suffix.
+            # - To avoid "vector cannot contain metrics with the same labelset" errors we need to add an additional
+            #   label "deployment_without_zone" first, then run the aggregation, and finally rename "deployment_without_zone"
+            #   to "deployment".
             sum by (cluster_id, installation, pipeline, provider, namespace, deployment) (
               label_replace(
-                kube_deployment_spec_replicas,
-                # The question mark in "(.*?)" is used to make it non-greedy, otherwise it
-                # always matches everything and the (optional) zone is not removed.
-                "deployment", "$1", "deployment", "(.*?)(?:-zone-[a-z])?"
+                sum by (cluster_id, installation, pipeline, provider, namespace, deployment_without_zone) (
+                  label_replace(
+                    kube_deployment_spec_replicas,
+                    # The question mark in "(.*?)" is used to make it non-greedy, otherwise it
+                    # always matches everything and the (optional) zone is not removed.
+                    "deployment_without_zone", "$1", "deployment", "(.*?)(?:-zone-[a-z])?"
+                  )
+                )
+                or
+                sum by (cluster_id, installation, pipeline, provider, namespace, deployment_without_zone) (
+                  label_replace(kube_statefulset_replicas, "deployment_without_zone", "$1", "statefulset", "(.*?)(?:-zone-[a-z])?")
+                ),
+                "deployment", "$1", "deployment_without_zone", "(.*)"
               )
-            )
-            or
-            sum by (cluster_id, installation, pipeline, provider, namespace, deployment) (
-              label_replace(kube_statefulset_replicas, "deployment", "$1", "statefulset", "(.*?)(?:-zone-[a-z])?")
             )
           record: cluster_id_namespace_deployment:actual_replicas:count
         - expr: |
@@ -467,3 +478,4 @@ spec:
         - expr: |
             sum by(cluster_id, installation, pipeline, provider, namespace, pod) (rate(cortex_ingester_ingested_samples_total[1m]))
           record: cluster_id_namespace_pod:cortex_ingester_ingested_samples_total:rate1m
+{{- end }}

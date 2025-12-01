@@ -13,7 +13,7 @@ spec:
     - alert: KubeStateMetricsDown
       annotations:
         description: '{{`KubeStateMetrics is down.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
         count by (cluster_id, installation, provider, pipeline) (
           up{job="kube-state-metrics", endpoint="http"}
@@ -45,7 +45,7 @@ spec:
     - alert: KubeStateMetricsSlow
       annotations:
         description: '{{`KubeStateMetrics is too slow.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{handler="metrics", job="kube-state-metrics"}[5m])) by (le, cluster_id, installation, provider, pipeline)) > 15
       for: 15m
       labels:
@@ -61,7 +61,7 @@ spec:
     - alert: KubeStateMetricsNotRetrievingMetrics
       annotations:
         description: '{{`KubeStateMetrics is not retrieving metrics.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
         # When it looks up but we don't have metrics. We ignore the SLO alert that can be present even after 30 days after the cluster is deleted.
         count({job="kube-state-metrics", __name__=~"kube_.+"}) by (cluster_id, installation, provider, pipeline) <= 100
@@ -80,7 +80,7 @@ spec:
     - alert: KubeConfigMapCreatedMetricMissing
       annotations:
         description: '{{`kube_configmap_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
         (
           label_replace(
@@ -104,7 +104,7 @@ spec:
     - alert: KubeDaemonSetCreatedMetricMissing
       annotations:
         description: '{{`kube_daemonset_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
         (
           label_replace(
@@ -128,7 +128,7 @@ spec:
     - alert: KubeDeploymentCreatedMetricMissing
       annotations:
         description: '{{`kube_deployment_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
         (
           label_replace(
@@ -152,7 +152,7 @@ spec:
     - alert: KubeEndpointCreatedMetricMissing
       annotations:
         description: '{{`kube_endpoint_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
         (
           label_replace(
@@ -176,7 +176,7 @@ spec:
     - alert: KubeNamespaceCreatedMetricMissing
       annotations:
         description: '{{`kube_namespace_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
         (
           label_replace(
@@ -200,7 +200,7 @@ spec:
     - alert: KubeNodeCreatedMetricMissing
       annotations:
         description: '{{`kube_node_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
         (
           label_replace(
@@ -224,7 +224,7 @@ spec:
     - alert: KubePodCreatedMetricMissing
       annotations:
         description: '{{`kube_pod_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
         (
           label_replace(
@@ -248,7 +248,7 @@ spec:
     - alert: KubeReplicaSetCreatedMetricMissing
       annotations:
         description: '{{`kube_replicaset_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
         (
           label_replace(
@@ -272,7 +272,7 @@ spec:
     - alert: KubeSecretCreatedMetricMissing
       annotations:
         description: '{{`kube_secret_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
         (
           label_replace(
@@ -296,7 +296,7 @@ spec:
     - alert: KubeServiceCreatedMetricMissing
       annotations:
         description: '{{`kube_service_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
         (
           label_replace(

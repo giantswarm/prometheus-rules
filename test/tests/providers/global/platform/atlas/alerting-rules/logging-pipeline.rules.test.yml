@@ -38,7 +38,7 @@ tests:
               __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
               dashboardQueryParams: orgId=2
               description: "14.29% of the requests to Loki are failing for pod alloy-2j7z7 (threshold 10%)"
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/logging-pipeline/?INSTALLATION=gauss&CLUSTER=gauss
       - alertname: LogForwardingErrors
         eval_time: 330m
         exp_alerts:
@@ -57,4 +57,4 @@ tests:
               __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
               dashboardQueryParams: orgId=2
               description: "100.00% of the requests to Loki are failing for pod alloy-2j7z7 (threshold 10%)"
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/logging-pipeline/?INSTALLATION=gauss&CLUSTER=gauss

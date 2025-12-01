@@ -310,7 +310,7 @@ spec:
       # This alert pages after 3 consecutive notification failures for non-pagerduty integrations.
       # The 45m 'for' duration matches 3 Alertmanager group intervals (15m each), ensuring we only page if failures persist across three intervals.
       # The alert is restricted to the 'giantswarm' tenant to avoid paging for customer-related issues.
-      expr: rate(cortex_alertmanager_notifications_failed_total{integration!~"pagerduty", cluster_type="management_cluster", user="giantswarm"}[20m]) > 0
+      expr: rate(cortex_alertmanager_notifications_failed_total{integration!="pagerduty", cluster_type="management_cluster", user="giantswarm"}[20m]) > 0
       for: 45m
       labels:
         area: platform

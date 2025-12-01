@@ -44,14 +44,13 @@ spec:
             (
               sum by (ds_type, uname, status_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
                 count_over_time(
-                  (
-                    {cluster_id="{{ .Values.managementCluster.name }}", container="grafana"}
+                  {cluster_id="{{ .Values.managementCluster.name }}", container="grafana"}
                     |= "logger=tsdb.loki"
                     |~ "statusCode=[0-9]+"
                     | regexp `pluginId=(?P<ds_type>[^ ]+)`
                     | regexp `uname=(?P<uname>[^ ]+)`
                     | regexp `statusCode=(?P<status_code>[0-9]+)`
-                  )[1m]
+                  [1m]
                 )
               )
             )
@@ -59,8 +58,7 @@ spec:
             (
               sum by (ds_type, uname, status_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
                 count_over_time(
-                  (
-                    {cluster_id="{{ .Values.managementCluster.name }}", container="grafana"}
+                  {cluster_id="{{ .Values.managementCluster.name }}", container="grafana"}
                     |= "path=/api/ds/query"
                     != "logger=tsdb.loki"
                     !~ "/a/grafana-(metricsdrilldown|exploretraces|lokiexplore)-app|/explore "
@@ -68,7 +66,7 @@ spec:
                     | regexp `uname=(?P<uname>[^ ]+)`
                     | regexp `status=(?P<status_code>[0-9]+)`
                     | regexp `type%22%3A%22(?P<ds_type>[^%]+)`
-                  )[1m]
+                  [1m]
                 )
               )
             )
@@ -85,7 +83,7 @@ spec:
                 [1m]
               )
             )
-          ```
+
         # Track drilldown visits (metricsdrilldown, exploretraces, lokiexplore)
         - record: giantswarm:observability:grafana:drilldown_visits:total
           expr: |

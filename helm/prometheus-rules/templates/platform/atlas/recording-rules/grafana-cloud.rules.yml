@@ -602,8 +602,8 @@ spec:
         record: aggregation:giantswarm:observability:signals:dashboard_views:30d
       - expr: giantswarm:observability:grafana:explore_visits:total
         record: aggregation:giantswarm:observability:signals:explore_visits
-      - expr: giantswarm:observability:grafana:proxy_queries:total
-        record: aggregation:giantswarm:observability:signals:proxy_queries
+      - expr: giantswarm:observability:grafana:executed_queries:total
+        record: aggregation:giantswarm:observability:grafana:executed_queries:total
       - expr: giantswarm:observability:grafana:drilldown_visits:total
         record: aggregation:giantswarm:observability:signals:drilldown_visits
 

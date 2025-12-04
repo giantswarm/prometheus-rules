@@ -420,6 +420,16 @@ spec:
           ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, team, app, cronjob),
         "name", ",", "cronjob")
       record: aggregation:kyverno_policy_cronjob_status_team
+  - name: policy_api.grafana-cloud.recording
+    rules:
+    # Number of GS PolicyExceptions deployed.
+    - expr: sum(etcd_kubernetes_resources_count{kind="policyexceptions.policy.giantswarm.io"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, kind, organization)
+      record: aggregation:policy_api_gs_polex_count
+  - name: rbac-operator.grafana-cloud.recording
+    rules:
+    # Number of RoleBindingTemplates deployed to be reconciled by rbac-operator.
+    - expr: sum(etcd_kubernetes_resources_count{kind="rolebindingtemplates.auth.giantswarm.io"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, kind, organization)
+      record: aggregation:auth_rbac_operator_rolebinding_templates_count
   - name: starboard.grafana-cloud.recording
     rules:
     # Starboard unique vulnerability counts by severity

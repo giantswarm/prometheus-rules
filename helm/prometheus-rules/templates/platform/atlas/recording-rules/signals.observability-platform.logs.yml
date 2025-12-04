@@ -92,9 +92,9 @@ spec:
                 (
                   {cluster_id="{{ .Values.managementCluster.name }}", container=~"proxy|controller", namespace=~"monitoring|kube-system"}
                   | pattern `<ip> - - [<time>] "<method> <uri> <protocol>" <status_code> <size> "<referrer>" "<agent>" "<forwarded_for>"`
-                  | referrer =~ `https://grafana\.[^/]+/a/grafana-(?P<app_name>[^/]+)-app/(drilldown|explore).*`
+                  | referrer =~ `https://grafana[^/]+/a/grafana-(?P<app_name>[^/]+)-app/(drilldown|explore).*`
                   | uri !~ `.*\.(js|css|svg|png|woff2)`
-                  | regexp `https://grafana\.[^/]+/a/(?P<app_name>[^/]+)-app/(drilldown|explore).*`
+                  | regexp `https://grafana[^/]+/a/grafana-(?P<app_name>[^/]+)-app/(drilldown|explore).*`
                 )[1m]
               )
             )

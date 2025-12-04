@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `aggregation:auth_rbac_operator_rolebinding_templates_count` to report number of RoleBindingTemplates to Grafana Cloud.
+
 ## [4.87.0] - 2025-12-01
 
 ### Removed

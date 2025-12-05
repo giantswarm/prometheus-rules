@@ -38,9 +38,41 @@ spec:
       annotations:
         __dashboardUid__: servicemonitors-details
         dashboardQueryParams: "orgId=1"
-        description: '{{`Monitoring agents for cluster {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}'
-        summary: Monitoring agent failed to scrape all targets in a job.
+        summary: Monitoring agent failed to scrape all targets in for an app / job.
+        description: '{{`No targets reachable are for {{$labels.app}} by monitoring on cluster {{$labels.installation}}/{{$labels.cluster_id}} (job: {{$labels.job}})`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      # Alert fires when 100% of application instances are down (complete service outage).
+      # Calculates the ratio of failed scrape targets (up==0) to total targets per app/job.
+      # Joins with app_operator_app_info to include team ownership for proper alert routing.
+      # Only monitors apps deployed in org namespaces (org-*).
+      expr: |-
+        # This alert uses the same logic as the `aggregation:giantswarm:jobscrapingfailures` recording rule
+        (
+          (
+            count(label_join(up, "app", "-", "cluster_id", "app") == 0) by (app, job, installation, cluster_id, provider, pipeline)
+            /
+            count(label_join(up, "app", "-", "cluster_id", "app")) by (app, job, installation, cluster_id, provider, pipeline)
+          )
+          * on(app, cluster_id) group_left(team)
+            label_replace(app_operator_app_info{namespace=~"org-.+"}, "app", "$1", "name", "(.+)")
+        ) >= 1
+      for: 1d
+      labels:
+        area: platform
+        severity: notify
+        topic: observability
+        cancel_if_outside_working_hours: "true"
+    - alert: JobScrapingFailureMC
+      annotations:
+        __dashboardUid__: servicemonitors-details
+        dashboardQueryParams: "orgId=1"
+        summary: Monitoring agent failed to scrape all targets in for an app / job on a management cluster.
+        description: '{{`No targets reachable are for {{$labels.app}} by monitoring on management cluster {{$labels.installation}} (job: {{$labels.job}})`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      # Alert fires when 100% of application instances are down (complete service outage).
+      # Calculates the ratio of failed scrape targets (up==0) to total targets per app/job.
+      # Joins with app_operator_app_info to include team ownership for proper alert routing.
+      # Only monitors apps deployed in non org namespaces (NOT org-*).
       expr: |-
         # This alert uses the same logic as the `aggregation:giantswarm:jobscrapingfailures` recording rule
         (
@@ -50,7 +82,7 @@ spec:
             count(up) by (app, job, installation, cluster_id, provider, pipeline)
           )
           * on(app, cluster_id) group_left(team)
-            label_replace(app_operator_app_info, "app", "$1", "name", "[^-]+-(.+)")
+            label_replace(app_operator_app_info{namespace!~"org-.+"}, "app", "$1", "name", "(.+)")
         ) >= 1
       for: 1d
       labels:

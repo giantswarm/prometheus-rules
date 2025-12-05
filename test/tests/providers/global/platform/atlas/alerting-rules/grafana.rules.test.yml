@@ -24,7 +24,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Grafana (grafana) is down."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION=golem&CLUSTER=golem
               __dashboardUid__: qRQXmRnik
               dashboardQueryParams: "orgId=2"
   - interval: 1m
@@ -55,7 +55,7 @@ tests:
               cluster_id: "golem"
             exp_annotations:
               description: 'grafana-postgresql replication is lagging for pod grafana-postgresql-1.'
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION=golem&CLUSTER=golem
       - alertname: GrafanaPostgresqlReplicationFailure
         eval_time: 85m
         exp_alerts: []
@@ -89,7 +89,7 @@ tests:
               cluster_id: "golem"
             exp_annotations:
               description: 'grafana-postgresql archiving failed for pod grafana-postgresql-1.'
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION=golem&CLUSTER=golem
       - alertname: GrafanaPostgresqlArchivingFailure
         eval_time: 40m
         exp_alerts: []
@@ -117,7 +117,7 @@ tests:
               cluster_id: "golem"
             exp_annotations:
               description: 'grafana-postgresql db automated recovery test failed.'
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/grafana-down/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION=golem&CLUSTER=golem
       - alertname: GrafanaPostgresqlRecoveryTestFailed
         eval_time: 105m
         exp_alerts: []

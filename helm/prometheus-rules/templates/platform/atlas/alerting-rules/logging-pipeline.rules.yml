@@ -15,7 +15,7 @@ spec:
             __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
             dashboardQueryParams: "orgId=2"
             description: '{{`{{ $value | printf "%.2f" }}% of the requests to Loki are failing for pod {{ $labels.pod }} (threshold 10%)`}}'
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/logging-pipeline/
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/logging-pipeline/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
           expr: |-
             (
               100

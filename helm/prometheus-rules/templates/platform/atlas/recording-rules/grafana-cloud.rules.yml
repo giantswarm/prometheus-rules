@@ -420,6 +420,16 @@ spec:
           ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, team, app, cronjob),
         "name", ",", "cronjob")
       record: aggregation:kyverno_policy_cronjob_status_team
+  - name: policy_api.grafana-cloud.recording
+    rules:
+    # Number of GS PolicyExceptions deployed.
+    - expr: sum(etcd_kubernetes_resources_count{kind="policyexceptions.policy.giantswarm.io"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, kind, organization)
+      record: aggregation:policy_api_gs_polex_count
+  - name: rbac-operator.grafana-cloud.recording
+    rules:
+    # Number of RoleBindingTemplates deployed to be reconciled by rbac-operator.
+    - expr: sum(etcd_kubernetes_resources_count{kind="rolebindingtemplates.auth.giantswarm.io"}) by (cluster_id, cluster_type, customer, installation, pipeline, provider, kind, organization)
+      record: aggregation:auth_rbac_operator_rolebinding_templates_count
   - name: starboard.grafana-cloud.recording
     rules:
     # Starboard unique vulnerability counts by severity
@@ -432,25 +442,9 @@ spec:
       record: aggregation:kong:nginx_http_current_connections
     - expr: container_memory_usage_bytes{namespace=~"kong.*", container=~"proxy|ingress-controller"}
       record: aggregation:kong:memory_usage_bytes
-  - name: irsa.aws.grafana-cloud.recording
-    rules:
-    # IAM roles for Service Accounts metrics
-    - expr: sum(irsa_operator_cluster_errors) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, account_id, cluster_namespace)
-      record: aggregation:giantswarm:irsa_operator_cluster_errors
-  - name: limits.aws.grafana-cloud.recording
-    rules:
-    # AWS service quotas metrics
-    - expr: sum(aws_servicequotas_operator_quota_increase_request_errors) by (account_id,cluster_id, cluster_type, customer, installation, pipeline, provider, region,cluster_namespace,service_name,quota_description,quota_code,quota_value)
-      record: aggregation:giantswarm:aws_servicequotas_operator_quota_increase_request_errors
-    - expr: sum(aws_servicequotas_operator_quota_history_request_errors) by (account_id,cluster_id, cluster_type, customer, installation, pipeline, provider, region,cluster_namespace,service_name,quota_description,quota_code,quota_value)
-      record: aggregation:giantswarm:aws_servicequotas_operator_quota_history_request_errors
-    - expr: sum(aws_servicequotas_operator_quota_applied_request_errors) by (account_id,cluster_id, cluster_type, customer, installation, pipeline, provider, region,cluster_namespace,service_name,quota_description,quota_code,quota_value)
-      record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_request_errors
-    - expr: sum(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region) / count(aws_servicequotas_operator_quota_applied_values) by (account_id,service_name,quota_description,quota_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-      record: aggregation:giantswarm:aws_servicequotas_operator_quota_applied_values
   - name: management-clusters.organizations.grafana-cloud.recording
     rules:
-    # Management Cluster Usage
+    # Observability operator organizations
     - expr: observability_operator_grafana_organization_info
       record: aggregation:observability:organization:organization_info
     - expr: observability_operator_grafana_organization_tenants
@@ -593,13 +587,16 @@ spec:
   - name: signals.observability.grafana-cloud.recording
     rules:
       # Observability platform product signals
-      - expr: count_over_time(giantswarm:observability:grafana:unique_users:hourly[30d])
+      - expr: giantswarm:observability:grafana:unique_users:hourly
         record: aggregation:giantswarm:observability:signals:user_logins
-      - expr: |
-          sum by (dashboard_id, dashboard_name, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
-            sum_over_time(giantswarm:observability:grafana:dashboard_views:total[30d])
-          )
-        record: aggregation:giantswarm:observability:signals:dashboard_views:30d
+      - expr: giantswarm:observability:grafana:dashboard_views:total
+        record: aggregation:giantswarm:observability:signals:dashboard_views
+      - expr: giantswarm:observability:grafana:explore_visits:total
+        record: aggregation:giantswarm:observability:signals:explore_visits
+      - expr: giantswarm:observability:grafana:executed_queries:total
+        record: aggregation:giantswarm:observability:grafana:executed_queries:total
+      - expr: giantswarm:observability:grafana:drilldown_visits:total
+        record: aggregation:giantswarm:observability:signals:drilldown_visits
 
       ## Alertmanager routes
       - expr: |

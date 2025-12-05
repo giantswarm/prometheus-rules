@@ -13,7 +13,7 @@ spec:
       annotations:
         summary: Monitoring agent fails to send samples to remote storage.
         description: '{{`Monitoring agent failed to send {{ printf "%.1f" $value }}% of the samples to {{ $labels.remote_name}}:{{ $labels.url }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-pipeline/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/monitoring-pipeline/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
         __dashboardUid__: promRW001
         dashboardQueryParams: "orgId=1"
       expr: |-
@@ -40,7 +40,7 @@ spec:
         dashboardQueryParams: "orgId=1"
         description: '{{`Monitoring agents for cluster {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}'
         summary: Monitoring agent failed to scrape all targets in a job.
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-job-scraping-failure/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
         # This alert uses the same logic as the `aggregation:giantswarm:jobscrapingfailures` recording rule
         (
@@ -64,7 +64,7 @@ spec:
         dashboardQueryParams: "orgId=1"
         description: '{{`Monitoring agents for cluster {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}'
         summary: Monitoring agent failed to scrape all targets in a job.
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/monitoring-job-scraping-failure/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       ## We ignore bastion hosts node exporters
       expr: |-
         (

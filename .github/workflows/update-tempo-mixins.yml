@@ -1,0 +1,53 @@
+name: Update Tempo Mixins
+
+on:
+  schedule:
+    # Run on the 1st day of every month at 10:00 UTC
+    - cron: '0 10 1 * *'
+  workflow_dispatch: # Allow manual triggering
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-tempo-mixins:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.25'
+      
+      - name: Update Tempo mixins
+        run: make update-tempo-mixin
+      
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create Pull Request
+        if: steps.changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update Tempo mixins from upstream'
+          title: 'chore: update Tempo mixins from upstream'
+          body: |
+            This PR updates the Tempo mixins from grafana/tempo upstream repository.
+            
+            This is an automated update that runs monthly.
+          branch: update-tempo-mixins-${{ github.run_number }}
+          delete-branch: true
+          draft: false

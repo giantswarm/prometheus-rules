@@ -36,7 +36,7 @@ spec:
         topic: observability
     - alert: JobScrapingFailure
       annotations:
-        __dashboardUid__: servicemonitors-details
+        __dashboardUid__: alloy-metrics-targets
         dashboardQueryParams: "orgId=1"
         summary: Monitoring agent failed to scrape all targets in for an app / job.
         description: '{{`No targets reachable are for {{$labels.app}} by monitoring on cluster {{$labels.installation}}/{{$labels.cluster_id}} (job: {{$labels.job}})`}}'
@@ -64,7 +64,7 @@ spec:
         cancel_if_outside_working_hours: "true"
     - alert: JobScrapingFailureMC
       annotations:
-        __dashboardUid__: servicemonitors-details
+        __dashboardUid__: alloy-metrics-targets
         dashboardQueryParams: "orgId=1"
         summary: Monitoring agent failed to scrape all targets in for an app / job on a management cluster.
         description: '{{`No targets reachable are for {{$labels.app}} by monitoring on management cluster {{$labels.installation}} (job: {{$labels.job}})`}}'

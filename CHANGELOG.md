@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Change `JobScrapingFailure` to page owner team for failing apps (non MC)
 
+### Removed
+
+- Removed `CriticalJobScrapingFailure` as its superseeded by `JobScrapingFailure` and was not working as intended
+
 ## [4.87.0] - 2025-12-01
 
 ### Removed

@@ -94,53 +94,6 @@ tests:
               summary: "Monitoring agent failed to scrape all targets for an app / job on a management cluster."
               description: "No targets are reachable for prometheus-agent by monitoring on management cluster golem (job: prometheus-agent-metrics)"
 
-  # Test CriticalJobScrapingFailure
-  - interval: 1h
-    input_series:
-      - series: 'up{job="apiserver", installation="golem", cluster_id="golem", provider="capa", pipeline="testing"}'
-        values: "1+0x240"
-      # critical target up for 5d and down for 5d
-      - series: 'up{job="kube-controller-manager", installation="golem", cluster_id="golem", provider="capa", pipeline="testing"}'
-        values: "1+0x120 0+0x120"
-      - series: 'up{job="kube-scheduler", installation="golem", cluster_id="golem", provider="capa", pipeline="testing"}'
-        values: "1+0x240"
-      - series: 'up{job="kubelet", metrics_path="/metrics", installation="golem", cluster_id="golem", provider="capa", pipeline="testing"}'
-        values: "1+0x240"
-      - series: 'up{job="node-exporter", installation="golem", cluster_id="golem", provider="capa", pipeline="testing"}'
-        values: "1+0x240"
-      - series: 'up{job="kube-state-metrics", installation="golem", cluster_id="golem", provider="capa", pipeline="testing"}'
-        values: "1+0x240"
-    alert_rule_test:
-      # Alert should not fire before 3d
-      - alertname: CriticalJobScrapingFailure
-        eval_time: 30m
-        exp_alerts: []
-      - alertname: CriticalJobScrapingFailure
-        eval_time: 4d
-        exp_alerts: []
-      # Alert should fire after 3d of downtime for critical job
-      - alertname: CriticalJobScrapingFailure
-        eval_time: 9d
-        exp_alerts:
-          - exp_labels:
-              area: platform
-              severity: page
-              team: atlas
-              topic: observability
-              cluster_id: "golem"
-              installation: "golem"
-              provider: "capa"
-              pipeline: "testing"
-              job: "kube-controller-manager"
-              cancel_if_outside_working_hours: "true"
-            exp_annotations:
-              __dashboardUid__: servicemonitors-details
-              dashboardQueryParams: "orgId=1"
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION=golem&CLUSTER=golem
-              summary: "Monitoring agent failed to scrape all targets in a job."
-              description: "Monitoring agents for cluster golem/golem has failed to scrape all targets in kube-controller-manager job."
-
-
   # Test MetricForwardingErrors
   - interval: 1m
     input_series:

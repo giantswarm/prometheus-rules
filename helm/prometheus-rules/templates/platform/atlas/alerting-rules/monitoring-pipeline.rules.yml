@@ -90,34 +90,3 @@ spec:
         severity: notify
         topic: observability
         cancel_if_outside_working_hours: "true"
-    - alert: CriticalJobScrapingFailure
-      annotations:
-        __dashboardUid__: servicemonitors-details
-        dashboardQueryParams: "orgId=1"
-        description: '{{`Monitoring agents for cluster {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}'
-        summary: Monitoring agent failed to scrape all targets in a job.
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      ## We ignore bastion hosts node exporters
-      expr: |-
-        (
-          count(
-            (
-              up{job=~".*(apiserver|kube-controller-manager|kube-scheduler|node-exporter|kube-state-metrics).*"}
-              or
-              up{job="kubelet", metrics_path="/metrics"}
-            ) == 0
-          ) by (job, installation, cluster_id, provider, pipeline)
-          /
-          count(
-            up{job=~".*(apiserver|kube-controller-manager|kube-scheduler|node-exporter|kube-state-metrics).*"}
-            or
-            up{job="kubelet", metrics_path="/metrics"}
-          ) by (job, installation, cluster_id, provider, pipeline)
-        ) >= 1
-      for: 3d
-      labels:
-        area: platform
-        severity: page
-        team: atlas
-        topic: observability
-        cancel_if_outside_working_hours: "true"

@@ -24,13 +24,13 @@ tests:
       - series: 'app_operator_app_info{name="mycluster-otherapp", namespace="org-acme", team="team-phoenix", installation="golem", cluster_id="mycluster"}'
         values: "1+0x72"
     alert_rule_test:
-      # Alert should not fire before the service is down for 1d
+      # Alert should not fire before the service is down for 1h
       - alertname: JobScrapingFailure
-        eval_time: 40h
+        eval_time: 25h
         exp_alerts: []
-      # Alert should fire after being down for 1d (downtime starts at 25h, fires at 49h)
+      # Alert should fire after being down for 1h (downtime starts at 25h, fires at 26h)
       - alertname: JobScrapingFailure
-        eval_time: 49h
+        eval_time: 26h
         exp_alerts:
           - exp_labels:
               area: platform
@@ -67,13 +67,13 @@ tests:
       - series: 'app_operator_app_info{name="alloy", namespace="giantswarm", team="team-atlas", installation="golem", cluster_id="golem"}'
         values: "1+0x72"
     alert_rule_test:
-      # Alert should not fire before the service is down for 1d
+      # Alert should not fire before the service is down for 1h
       - alertname: JobScrapingFailureMC
-        eval_time: 40h
+        eval_time: 25h
         exp_alerts: []
-      # Alert should fire after being down for 1d (downtime starts at 25h, fires at 49h)
+      # Alert should fire after being down for 1h (downtime starts at 25h, fires at 26h)
       - alertname: JobScrapingFailureMC
-        eval_time: 49h
+        eval_time: 26h
         exp_alerts:
           - exp_labels:
               area: platform

@@ -56,7 +56,7 @@ spec:
           * on(app, cluster_id) group_left(team)
             label_replace(app_operator_app_info{namespace=~"org-.+"}, "app", "$1", "name", "(.+)")
         ) >= 1
-      for: 1d
+      for: 1h
       labels:
         area: platform
         severity: notify
@@ -84,7 +84,7 @@ spec:
           * on(app, cluster_id) group_left(team)
             label_replace(app_operator_app_info{namespace!~"org-.+"}, "app", "$1", "name", "(.+)")
         ) >= 1
-      for: 1d
+      for: 1h
       labels:
         area: platform
         severity: notify

@@ -38,10 +38,10 @@ spec:
       annotations:
         __dashboardUid__: alloy-metrics-targets
         dashboardQueryParams: "orgId=1"
-        summary: Monitoring agent failed to scrape all targets in for an app / job.
-        description: '{{`No targets reachable are for {{$labels.app}} by monitoring on cluster {{$labels.installation}}/{{$labels.cluster_id}} (job: {{$labels.job}})`}}'
+        summary: Monitoring agent failed to scrape all targets for an app / job.
+        description: '{{`No targets are reachable for {{$labels.app}} by monitoring agent on cluster {{$labels.installation}}/{{$labels.cluster_id}} (job: {{$labels.job}})`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      # Alert fires when 100% of application instances are down (complete service outage).
+      # Alert fires when 100% of an application instances are down (complete service outage).
       # Calculates the ratio of failed scrape targets (up==0) to total targets per app/job.
       # Joins with app_operator_app_info to include team ownership for proper alert routing.
       # Only monitors apps deployed in org namespaces (org-*).
@@ -66,8 +66,8 @@ spec:
       annotations:
         __dashboardUid__: alloy-metrics-targets
         dashboardQueryParams: "orgId=1"
-        summary: Monitoring agent failed to scrape all targets in for an app / job on a management cluster.
-        description: '{{`No targets reachable are for {{$labels.app}} by monitoring on management cluster {{$labels.installation}} (job: {{$labels.job}})`}}'
+        summary: Monitoring agent failed to scrape all targets for an app / job on a management cluster.
+        description: '{{`No targets are reachable for {{$labels.app}} by monitoring on management cluster {{$labels.installation}} (job: {{$labels.job}})`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       # Alert fires when 100% of application instances are down (complete service outage).
       # Calculates the ratio of failed scrape targets (up==0) to total targets per app/job.

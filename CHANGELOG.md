@@ -10,10 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Grafana proxy queries, explore page visits, and drilldown visits metrics recording rules to collect Observability Platform signals
 - Add `aggregation:auth_rbac_operator_rolebinding_templates_count` to report the number of RoleBindingTemplates to Grafana Cloud.
 - Add `aggregation:policy_api_gs_polex_count` to report the number of GS PolicyExceptions to Grafana Cloud.
+- Add `JobScrapingFailureMC` to page owner team for failing MC apps
 
 ### Changed
 
-- Change `JobScrapingFailure` to page owner team and default to atlas if not set.
+- Change `JobScrapingFailure` to page owner team for failing apps (non MC)
 
 ## [4.87.0] - 2025-12-01
 

@@ -583,6 +583,24 @@ spec:
               container, namespace, organization, team)
           ) >= 1
         record: aggregation:giantswarm:jobscrapingfailures
+      - expr: |-
+          # Measure how many targets are monitored by each Service/PodMonitor
+          # 1. Extract Service/PodMonitor name/namespace into resource label
+          #    - for prometheus_target_scrape_pool_targets, which hold the value we are interested in
+          #    - for kube_customresource_info, which is always 1 and contains the resource_app which is the app.kubernetes.io/instance label of the Service/PodMonitor
+          # 2. Join both metric on cluster_id and resource, preserve left handside labels and add resource_app
+          # 3. Set app label to cluster_id-app
+          # 4. Join with app_operator_app_info which holds the team label
+          # 5. Profit
+          label_join(
+            label_replace(prometheus_target_scrape_pool_targets, "resource", "$1", "scrape_job", "^(?:service|pod)Monitor/(.+)/[0-9]")
+            * on(cluster_id, resource) group_left(resource_app)
+            label_join(kube_customresource_info{customresource_kind=~"ServiceMonitor|PodMonitor"}, "resource", "/", "resource_namespace", "resource_name"),
+            "app", "-", "cluster_id", "resource_app"
+          )
+          * on(app, cluster_id) group_left(team)
+          label_replace(app_operator_app_info{namespace=~"org-.+"}, "app", "$1", "name", "(.+)")
+          record: aggregation:giantswarm:jobunmonitored
 
   - name: signals.observability.grafana-cloud.recording
     rules:

@@ -621,7 +621,7 @@ spec:
           )
           * on(app, cluster_id) group_left(team)
           label_replace(app_operator_app_info{namespace=~"org-.+"}, "app", "$1", "name", "(.+)")
-        record: aggregation:giantswarm:jobs_monitored_total
+        record: aggregation:giantswarm:targets_monitored_total
   - name: signals.observability.grafana-cloud.recording
     rules:
       # Observability platform product signals

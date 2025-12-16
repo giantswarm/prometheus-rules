@@ -583,6 +583,7 @@ spec:
             * on(app, cluster_id) group_left(team)
               label_replace(app_operator_app_info{namespace!~"org-.+"}, "app", "$1", "name", "(.+)")
           ) >= 1
+        record: aggregation:giantswarm:jobscrapingfailures
       - expr: |-
           # The purpose of this metrics is to detect when a Service/PodMonitor is not able to scrape any of its targets (e.g. usually Pod(s))
           #
@@ -620,7 +621,7 @@ spec:
           )
           * on(app, cluster_id) group_left(team)
           label_replace(app_operator_app_info{namespace=~"org-.+"}, "app", "$1", "name", "(.+)")
-          record: aggregation:giantswarm:jobs_monitored_total
+        record: aggregation:giantswarm:jobs_monitored_total
   - name: signals.observability.grafana-cloud.recording
     rules:
       # Observability platform product signals

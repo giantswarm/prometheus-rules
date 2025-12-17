@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `aggregation:openssf_scorecard_scorecard_check_score` to report the OpenSSF Check Score to Grafana Cloud.
+- Add `aggregation:openssf_scorecard_scorecard_overall_score` to report overall OpenSSF Score to Grafana Cloud.
+
 ## [4.88.1] - 2025-12-17
 
 ### Fixed

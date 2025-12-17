@@ -321,10 +321,10 @@ spec:
   - name: openssf-scorecard-exporter.grafana-cloud.recording
     rules:
     # OpenSSF Scorecard Check Score metric aggregation
-    - expr: sum(openssf_scorecard_check_score) by (cluster_id, cluster_type, installation, pipeline, provider, region, config, repo, check)
+    - expr: sum(openssf_scorecard_check_score) by (cluster_id, cluster_type, installation, pipeline, provider, region, config, repository, check)
       record: aggregation:openssf_scorecard_scorecard_check_score
     # OpenSSF Scorecard Overall Score metric aggregation
-    - expr: sum(openssf_scorecard_overall_score) by (cluster_id, cluster_type, installation, pipeline, provider, region, config, repo)
+    - expr: sum(openssf_scorecard_overall_score) by (cluster_id, cluster_type, installation, pipeline, provider, region, config, repository)
       record: aggregation:openssf_scorecard_overall_score
   - name: kyverno.grafana-cloud.recording
     rules:

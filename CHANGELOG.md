@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.89.1] - 2025-12-17
+
 ### Fixed
 
 - Fix typo in `openssf-scorecard-exporter` recording rules.
@@ -4124,7 +4126,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.1...HEAD
+[4.89.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.0...v4.89.1
 [4.89.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.88.1...v4.89.0
 [4.88.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.88.0...v4.88.1
 [4.88.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.87.0...v4.88.0

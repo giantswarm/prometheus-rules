@@ -33,7 +33,7 @@ spec:
                 | pattern `<ip> - - [<time>] "<method> <uri> <protocol>" <status> <size> "<referrer>" "<agent>" "<forwarded_for>"`
                 | method = `GET`
                 | uri =~ "(/d/|/api/dashboards/uid/).+"
-                | line_format "{{.uri}} ||| {{.referrer}}"
+                | line_format "{{`{{.uri}} ||| {{.referrer}}`}}"
                 | regexp `(?i)\/d\/(?P<dashboard_id>[^/]+)\/(?P<dashboard_name>[^/?\s]+)`
                 [1m]
               )

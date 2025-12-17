@@ -5,6 +5,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add data ingestion rate recording rules for Observability Platform signals:
+  - `aggregation:giantswarm:observability:signals:ingested_traces` - Tempo traces ingestion rate per tenant
+  - `aggregation:giantswarm:observability:signals:ingested_logs` - Loki logs ingestion rate per tenant
+  - `aggregation:giantswarm:observability:signals:ingested_metrics` - Mimir metrics ingestion rate per tenant
+- Add data source count recording rules for Observability Platform signals:
+  - `aggregation:giantswarm:observability:signals:metrics_datasource_count` - Count of ServiceMonitors and PodMonitors per tenant
+  - `aggregation:giantswarm:observability:signals:logs_datasource_count` - Count of PodLogs per tenant
+  - `aggregation:giantswarm:observability:signals:traces_datasource_count` - Count of unique services sending traces per tenant
+
 ## [4.89.0] - 2025-12-17
 
 ### Added

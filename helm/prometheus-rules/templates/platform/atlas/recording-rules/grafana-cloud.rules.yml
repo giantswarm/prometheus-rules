@@ -606,6 +606,35 @@ spec:
       - expr: giantswarm:observability:grafana:drilldown_visits:total
         record: aggregation:giantswarm:observability:signals:drilldown_visits
 
+      ## Data ingestion rates per tenant
+      # Tempo traces ingested per tenant
+      - expr: sum(rate(tempo_ingester_traces_created_total[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:ingested_traces
+      # Loki logs ingested per tenant
+      - expr: sum(rate(loki_distributor_lines_received_total[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:ingested_logs
+      # Mimir metrics ingested per tenant
+      - expr: sum(label_replace(rate(cortex_distributor_received_samples_total[5m]), "tenant", "$1", "user", "(.*)")) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:ingested_metrics
+
+      # Count metrics data sources (ServiceMonitors, PodMonitors) per tenant
+      # This will be available once KSM is configured to expose these CRDs (tracked in giantswarm/giantswarm#32792)
+      - expr: |
+          count(kube_servicemonitor_info) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+          or
+          count(kube_podmonitor_info) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:metrics_datasource_count
+
+      # Count logs data sources (PodLogs) per tenant
+      # This will be available once KSM is configured to expose these CRDs (tracked in giantswarm/giantswarm#32792)
+      - expr: count(kube_podlogs_info) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:logs_datasource_count
+
+      # Count traces data source counts per tenant by counting unique services sending traces using Tempo service graph metrics
+      # Note: Requires service graph to be enabled in Tempo configuration
+      - expr: count(count by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant, server) (rate(traces_service_graph_request_total[5m]) > 0)) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:traces_datasource_count
+
       ## Alertmanager routes
       - expr: |
           sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant) (

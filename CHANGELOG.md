@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix typo in `openssf-scorecard-exporter` recording rules.
+
 ## [4.89.0] - 2025-12-17
 
 ### Added

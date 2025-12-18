@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Alert on more critical Crossplane resources, such as IRSA, for alert `ClusterCrossplaneResourcesNotReady`
 
+### Changed
+
+- Rename aggregation `openssf_scorecard_scorecard_overall_score` to `openssf_scorecard_overall_score`.
+
 ## [4.89.1] - 2025-12-17
 
 ### Fixed

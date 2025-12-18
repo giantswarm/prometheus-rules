@@ -619,15 +619,38 @@ spec:
 
       # Count metrics data sources (ServiceMonitors, PodMonitors) per tenant
       # This will be available once KSM is configured to expose these CRDs (tracked in giantswarm/giantswarm#32792)
+      # The label_replace handles legacy metrics collection that used the team label instead of tenant.
+      # If neither tenant nor team label is set, we set tenant to "unknown" to ensure all metrics are captured.
       - expr: |
-          count(kube_servicemonitor_info) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+          count(
+            label_replace(kube_servicemonitor_info{tenant="", team=""}, "tenant", "unknown", "", "")
+            or
+            label_replace(kube_servicemonitor_info{tenant="", team=~".+"}, "tenant", "giantswarm", "", "")
+            or
+            kube_servicemonitor_info{tenant=~".+"}
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
           or
-          count(kube_podmonitor_info) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+          count(
+            label_replace(kube_podmonitor_info{tenant="", team=""}, "tenant", "unknown", "", "")
+            or
+            label_replace(kube_podmonitor_info{tenant="", team=~".+"}, "tenant", "giantswarm", "", "")
+            or
+            kube_podmonitor_info{tenant=~".+"}
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
         record: aggregation:giantswarm:observability:signals:metrics_datasource_count
 
       # Count logs data sources (PodLogs) per tenant
       # This will be available once KSM is configured to expose these CRDs (tracked in giantswarm/giantswarm#32792)
-      - expr: count(kube_podlogs_info) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+      # The label_replace handles legacy log collection that used the team label instead of tenant.
+      # If neither tenant nor team label is set, we set tenant to "unknown" to ensure all metrics are captured.
+      - expr: |
+          count(
+            label_replace(kube_podlogs_info{tenant="", team=""}, "tenant", "unknown", "", "")
+            or
+            label_replace(kube_podlogs_info{tenant="", team=~".+"}, "tenant", "giantswarm", "", "")
+            or
+            kube_podlogs_info{tenant=~".+"}
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
         record: aggregation:giantswarm:observability:signals:logs_datasource_count
 
       # Count traces data source counts per tenant by counting unique services sending traces using Tempo service graph metrics

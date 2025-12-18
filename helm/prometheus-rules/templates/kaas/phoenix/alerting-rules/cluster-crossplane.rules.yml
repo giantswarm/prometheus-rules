@@ -17,10 +17,10 @@ spec:
         description: '{{`Not all managed Crossplane resources of type "{{ $labels.gvk }}" on {{ $labels.cluster_id }} are ready. This could affect creation or health of workload clusters.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cluster-crossplane-resources/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       # Match critical resources deployed by cluster-aws via aws-nth-crossplane-resources,
-      # cilium-crossplane-resources, ...
+      # cilium-crossplane-resources, crossplane-fn-irsa, ...
       expr: |
         (
-        crossplane_managed_resource_exists{gvk=~"(iam.aws.upbound.io/.*, Kind=Role|sqs.aws.upbound.io/.*, Kind=Queue|sqs.aws.upbound.io/.*, Kind=QueuePolicy|cloudwatchevents.aws.upbound.io/.*, Kind=Rule|cloudwatchevents.aws.upbound.io/.*, Kind=Target|ec2.aws.upbound.io/.*, Kind=SecurityGroup*)"} != crossplane_managed_resource_ready{gvk=~"(iam.aws.upbound.io/.*, Kind=Role|sqs.aws.upbound.io/.*, Kind=Queue|sqs.aws.upbound.io/.*, Kind=QueuePolicy|cloudwatchevents.aws.upbound.io/.*, Kind=Rule|cloudwatchevents.aws.upbound.io/.*, Kind=Target|ec2.aws.upbound.io/.*, Kind=SecurityGroup*)"}
+        crossplane_managed_resource_exists{gvk=~"(iam.aws.upbound.io/.*, Kind=(Role.*|Policy)|sqs.aws.upbound.io/.*, Kind=Queue|sqs.aws.upbound.io/.*, Kind=QueuePolicy|cloudwatchevents.aws.upbound.io/.*, Kind=Rule|cloudwatchevents.aws.upbound.io/.*, Kind=Target|ec2.aws.upbound.io/.*, Kind=SecurityGroup|acm.aws.upbound.io/.*, Kind=Certificate|cloudfront.aws.upbound.io/.*, Kind=.+|iam.aws.upbound.io/.*, Kind=OpenIDConnectProvider|route53.aws.upbound.io/.*, Kind=Record|s3.aws.upbound.io/.*, Kind=Bucket.*)"} != crossplane_managed_resource_ready{gvk=~"(iam.aws.upbound.io/.*, Kind=(Role.*|Policy)|sqs.aws.upbound.io/.*, Kind=Queue|sqs.aws.upbound.io/.*, Kind=QueuePolicy|cloudwatchevents.aws.upbound.io/.*, Kind=Rule|cloudwatchevents.aws.upbound.io/.*, Kind=Target|ec2.aws.upbound.io/.*, Kind=SecurityGroup|acm.aws.upbound.io/.*, Kind=Certificate|cloudfront.aws.upbound.io/.*, Kind=.+|iam.aws.upbound.io/.*, Kind=OpenIDConnectProvider|route53.aws.upbound.io/.*, Kind=Record|s3.aws.upbound.io/.*, Kind=Bucket.*)"}
         ) OR
         iam_aws_upbound_role_ready{status="False", label_giantswarm_io_service_type="managed"} == 1 OR
         sqs_aws_upbound_queue_ready{status="False", label_giantswarm_io_service_type="managed"} == 1 OR

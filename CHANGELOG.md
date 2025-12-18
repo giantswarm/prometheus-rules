@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Alert on more critical Crossplane resources, such as IRSA, for alert `ClusterCrossplaneResourcesNotReady`
+
 ## [4.89.1] - 2025-12-17
 
 ### Fixed

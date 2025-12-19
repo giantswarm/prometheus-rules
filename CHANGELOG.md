@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Remove some unused labels from `openssf_scorecard` series.
+
 ## [4.89.2] - 2025-12-19
 
 ### Added

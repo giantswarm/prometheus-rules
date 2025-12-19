@@ -573,25 +573,63 @@ spec:
           )
         record: aggregation:slo:time_period:days
       - expr: |-
-          # The purpose of this metrics is to spot when a servicemonitor is broken, and not when a pod behind the servicemonitor is broken.
+          # The purpose of this metrics is to detect when a Service/PodMonitor is not able to scrape any of its targets (e.g. usually Pod(s))
           #
-          # If it's just a pod that is broken, some of the targets will work.
-          # If the whole servicemonitor is broken (misconfigured), then it can't scrape any pods.
-          #
+          # This rule does not detect when a single target is failing to be scraped, only when all targets are failing.
           # This behaviour reduces the amount of generated metrics, and makes them easier to interpret
+          #
+          # It does:
+          # - Calculates the ratio of failed scrape targets (up==0) to total targets per app/job.
+          # - Joins with app_operator_app_info to include team label.
+          # - Only monitors apps deployed in non org namespaces (NOT org-*).
           (
-            count(up{}== 0 )
-            by (job, installation, cluster_id, provider,
-              pipeline, cluster_type, metrics_path,
-              container, namespace, organization, team)
-            /
-            count(up{})
-            by (job, installation, cluster_id, provider,
-              pipeline, cluster_type, metrics_path,
-              container, namespace, organization, team)
+            (
+              count(up == 0) by (app, job, installation, cluster_id, provider, pipeline)
+              /
+              count(up) by (app, job, installation, cluster_id, provider, pipeline)
+            )
+            * on(app, cluster_id) group_left(team)
+              label_replace(app_operator_app_info{namespace!~"org-.+"}, "app", "$1", "name", "(.+)")
           ) >= 1
         record: aggregation:giantswarm:jobscrapingfailures
-
+      - expr: |-
+          # The purpose of this metrics is to detect when a Service/PodMonitor is not able to scrape any of its targets (e.g. usually Pod(s))
+          #
+          # This rule does not detect when a single target is failing to be scraped, only when all targets are failing.
+          # This behaviour reduces the amount of generated metrics, and makes them easier to interpret
+          #
+          # It does:
+          # - Calculates the ratio of failed scrape targets (up==0) to total targets per app/job.
+          # - Joins with app_operator_app_info to include team label.
+          # - Only monitors apps deployed in org namespaces (ONLY org-*).
+          (
+            (
+              count(label_join(up, "app", "-", "cluster_id", "app") == 0) by (app, job, installation, cluster_id, provider, pipeline)
+              /
+              count(label_join(up, "app", "-", "cluster_id", "app")) by (app, job, installation, cluster_id, provider, pipeline)
+            )
+            * on(app, cluster_id) group_left(team)
+              label_replace(app_operator_app_info{namespace=~"org-.+"}, "app", "$1", "name", "(.+)")
+          ) >= 1
+        record: aggregation:giantswarm:jobscrapingfailures
+      - expr: |-
+          # Measure how many targets are monitored by each Service/PodMonitor
+          # 1. Extract Service/PodMonitor name/namespace into resource label
+          #    - for prometheus_target_scrape_pool_targets, this holds the value we are interested in
+          #    - for kube_customresource_info, this is always 1 and contains the resource_app which is the app.kubernetes.io/instance label of the Service/PodMonitor
+          # 2. Join both metric on cluster_id and resource, preserve left handside labels and add resource_app
+          # 3. Set app label to <cluster_id>-<app>
+          # 4. Join with app_operator_app_info to add the team label
+          # 5. Profit
+          label_join(
+            label_replace(prometheus_target_scrape_pool_targets, "resource", "$1", "scrape_job", "^(?:service|pod)Monitor/(.+)/[0-9]")
+            * on(cluster_id, resource) group_left(resource_app)
+            label_join(kube_customresource_info{customresource_kind=~"ServiceMonitor|PodMonitor"}, "resource", "/", "resource_namespace", "resource_name"),
+            "app", "-", "cluster_id", "resource_app"
+          )
+          * on(app, cluster_id) group_left(team)
+          label_replace(app_operator_app_info{namespace=~"org-.+"}, "app", "$1", "name", "(.+)")
+        record: aggregation:giantswarm:observability:monitored_targets
   - name: signals.observability.grafana-cloud.recording
     rules:
       # Observability platform product signals

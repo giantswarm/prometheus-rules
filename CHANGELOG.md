@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Alert on more critical Crossplane resources, such as IRSA, for alert `ClusterCrossplaneResourcesNotReady`
+
+### Changed
+
+- Rename aggregation `openssf_scorecard_scorecard_overall_score` to `openssf_scorecard_overall_score`.
+
+## [4.89.1] - 2025-12-17
+
+### Fixed
+
+- Fix typo in `openssf-scorecard-exporter` recording rules.
+
+## [4.89.0] - 2025-12-17
+
+### Added
+
+- Add `aggregation:openssf_scorecard_scorecard_check_score` to report the OpenSSF Check Score to Grafana Cloud.
+- Add `aggregation:openssf_scorecard_scorecard_overall_score` to report overall OpenSSF Score to Grafana Cloud.
+
+## [4.88.1] - 2025-12-17
+
+### Fixed
+
+- Fix grafana dashboard views recording rules.
+
+## [4.88.0] - 2025-12-17
+
+### Added
+
 - Add Grafana proxy queries, explore page visits, and drilldown visits metrics recording rules to collect Observability Platform signals
 - Add `aggregation:auth_rbac_operator_rolebinding_templates_count` to report the number of RoleBindingTemplates to Grafana Cloud.
 - Add `aggregation:policy_api_gs_polex_count` to report the number of GS PolicyExceptions to Grafana Cloud.
@@ -4110,7 +4139,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.87.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.1...HEAD
+[4.89.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.0...v4.89.1
+[4.89.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.88.1...v4.89.0
+[4.88.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.88.0...v4.88.1
+[4.88.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.87.0...v4.88.0
 [4.87.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.86.0...v4.87.0
 [4.86.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.85.0...v4.86.0
 [4.85.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.84.0...v4.85.0

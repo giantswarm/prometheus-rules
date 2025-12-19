@@ -318,6 +318,14 @@ spec:
     # Falco event counts
     - expr: sum(falco_events{priority=~"0|1|2|3|4|5|6|7"} or label_replace(falcosecurity_falco_rules_matches_total{priority=~"0|1|2|3|4|5|6|7"}, "rule", "$1", "rule_name", "(.*)")) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, priority, rule)
       record: aggregation:falco_events
+  - name: openssf-scorecard-exporter.grafana-cloud.recording
+    rules:
+    # OpenSSF Scorecard Check Score metric aggregation
+    - expr: sum(openssf_scorecard_check_score) by (cluster_id, cluster_type, installation, pipeline, provider, region, config, repository, check)
+      record: aggregation:openssf_scorecard_check_score
+    # OpenSSF Scorecard Overall Score metric aggregation
+    - expr: sum(openssf_scorecard_overall_score) by (cluster_id, cluster_type, installation, pipeline, provider, region, config, repository)
+      record: aggregation:openssf_scorecard_overall_score
   - name: kyverno.grafana-cloud.recording
     rules:
     # Kyverno failing policies

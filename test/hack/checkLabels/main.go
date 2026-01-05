@@ -115,8 +115,9 @@ func getLabels(ruleList []promv1.PrometheusRule, matcher string) []string {
 		for _, group := range p.Spec.Groups {
 			for _, rule := range group.Rules {
 				for key := range rule.Labels {
-					// When the targetted label is found, adds it to the list if not already present in it
-					if matcher == "cancel_if_" && strings.HasPrefix(key, matcher) {
+					// When the targetted label is found, add it to the list if not already present in it
+					// There's an exception for `cancel_if_outside_working_hours` as it's managed in alertmanager config
+					if matcher == "cancel_if_" && key != "cancel_if_outside_working_hours" && strings.HasPrefix(key, matcher) {
 						labelList = addIfNotPresent(labelList, key)
 					} else if key == matcher {
 						labelList = addIfNotPresent(labelList, matcher)

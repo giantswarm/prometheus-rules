@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove some unused labels from `openssf_scorecard` series.
 
+### Changed
+
+- Inhibition tests ingnore "cancel_if_outside_working_hours" since it's a special case in alertmanager config
+
 ## [4.89.2] - 2025-12-19
 
 ### Added

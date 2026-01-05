@@ -15,6 +15,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `aggregation:giantswarm:observability:signals:metrics_datasource_count` - Count of ServiceMonitors and PodMonitors per tenant
   - `aggregation:giantswarm:observability:signals:logs_datasource_count` - Count of PodLogs per tenant
 
+### Changed
+
+- Remove some unused labels from `openssf_scorecard` series.
+
+## [4.89.2] - 2025-12-19
+
+### Added
+
+- Alert on more critical Crossplane resources, such as IRSA, for alert `ClusterCrossplaneResourcesNotReady`
+
+### Changed
+
+- Rename aggregation `openssf_scorecard_scorecard_overall_score` to `openssf_scorecard_overall_score`.
+
 ## [4.89.1] - 2025-12-17
 
 ### Fixed
@@ -4136,7 +4150,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.2...HEAD
+[4.89.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.1...v4.89.2
 [4.89.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.0...v4.89.1
 [4.89.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.88.1...v4.89.0
 [4.88.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.88.0...v4.88.1

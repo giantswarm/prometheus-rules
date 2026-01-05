@@ -609,6 +609,67 @@ spec:
       - expr: giantswarm:observability:grafana:drilldown_visits:total
         record: aggregation:giantswarm:observability:signals:drilldown_visits
 
+      ## Data ingestion rates per tenant
+      # Tempo traces ingested per tenant
+      - expr: sum(rate(tempo_ingester_traces_created_total[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:ingested_traces
+      # Loki logs ingested per tenant
+      - expr: sum(rate(loki_distributor_lines_received_total[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:ingested_logs
+      # Mimir metrics ingested per tenant
+      - expr: sum(label_replace(rate(cortex_distributor_received_samples_total[5m]), "tenant", "$1", "user", "(.*)")) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:ingested_metrics
+
+      # Count metrics data sources (ServiceMonitors, PodMonitors) per tenant
+      # This will be available once KSM is configured to expose these CRDs (tracked in giantswarm/giantswarm#32792)
+      # The label_replace handles legacy metrics collection that used the team label instead of tenant.
+      # If neither tenant nor team label is set, we set tenant to "unknown" to ensure all metrics are captured.
+      - expr: |
+          count(
+            label_replace(kube_servicemonitor_info{tenant="", team=""}, "tenant", "unknown", "", "")
+            or
+            label_replace(kube_servicemonitor_info{tenant="", team=~".+"}, "tenant", "giantswarm", "", "")
+            or
+            kube_servicemonitor_info{tenant=~".+"}
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+          or
+          count(
+            label_replace(kube_podmonitor_info{tenant="", team=""}, "tenant", "unknown", "", "")
+            or
+            label_replace(kube_podmonitor_info{tenant="", team=~".+"}, "tenant", "giantswarm", "", "")
+            or
+            kube_podmonitor_info{tenant=~".+"}
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:metrics_datasource_count
+
+      # Count logs data sources (PodLogs) per tenant
+      # This will be available once KSM is configured to expose these CRDs (tracked in giantswarm/giantswarm#32792)
+      # The label_replace handles legacy log collection that used the team label instead of tenant.
+      # If neither tenant nor team label is set, we set tenant to "unknown" to ensure all metrics are captured.
+      - expr: |
+          count(
+            label_replace(kube_podlogs_info{tenant="", team=""}, "tenant", "unknown", "", "")
+            or
+            label_replace(kube_podlogs_info{tenant="", team=~".+"}, "tenant", "giantswarm", "", "")
+            or
+            kube_podlogs_info{tenant=~".+"}
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:logs_datasource_count
+
+      # Count traces data sources (Instrumentation CRDs) per tenant
+      # TODO: Not yet implemented - there is no equivalent CRD metric being tracked for traces like there is for
+      # metrics (ServiceMonitors/PodMonitors) and logs (PodLogs). This would require adding a tenant resource attribute and update the tempo metrics-generator processor config
+      # For now, this metric is not available.
+      # - expr: |
+      #     count(
+      #       label_replace(kube_instrumentation_info{tenant="", team=""}, "tenant", "unknown", "", "")
+      #       or
+      #       label_replace(kube_instrumentation_info{tenant="", team=~".+"}, "tenant", "giantswarm", "", "")
+      #       or
+      #       kube_instrumentation_info{tenant=~".+"}
+      #     ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+      #   record: aggregation:giantswarm:observability:signals:traces_datasource_count
+
       ## Alertmanager routes
       - expr: |
           sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant) (

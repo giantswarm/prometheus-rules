@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.91.0] - 2026-01-08
+
 ### Added
 
 - Add data source count recording rules for Observability Platform signals:
@@ -4161,7 +4163,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.90.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.0...HEAD
+[4.91.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.90.0...v4.91.0
 [4.90.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.2...v4.90.0
 [4.89.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.1...v4.89.2
 [4.89.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.0...v4.89.1

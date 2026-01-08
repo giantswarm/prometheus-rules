@@ -656,19 +656,21 @@ spec:
           ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
         record: aggregation:giantswarm:observability:signals:logs_datasource_count
 
-      # Count traces data sources (Instrumentation CRDs) per tenant
-      # TODO: Not yet implemented - there is no equivalent CRD metric being tracked for traces like there is for
-      # metrics (ServiceMonitors/PodMonitors) and logs (PodLogs). This would require adding a tenant resource attribute and update the tempo metrics-generator processor config
-      # For now, this metric is not available.
-      # - expr: |
-      #     count(
-      #       label_replace(kube_instrumentation_info{tenant="", team=""}, "tenant", "unknown", "", "")
-      #       or
-      #       label_replace(kube_instrumentation_info{tenant="", team=~".+"}, "tenant", "giantswarm", "", "")
-      #       or
-      #       kube_instrumentation_info{tenant=~".+"}
-      #     ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
-      #   record: aggregation:giantswarm:observability:signals:traces_datasource_count
+      # Count traces data source counts per tenant by counting unique services sending traces using Tempo service graph metrics-generator processor config
+      # Note: Requires metrics generator to be enabled in Tempo configuration
+      - expr: |
+          count(
+            count(
+              label_replace(
+                traces_spanmetrics_calls_total{service!="tempo-vulture"},
+                "tenant",
+                "unknown",
+                "tenant",
+                "^$"
+              )
+            ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant, service)
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:traces_datasource_count
 
       ## Alertmanager routes
       - expr: |

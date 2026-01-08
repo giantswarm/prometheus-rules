@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add data source count recording rules for Observability Platform signals:
+  - `aggregation:giantswarm:observability:signals:traces_datasource_count` - Count of individual services per tenant
+
 ## [4.90.0] - 2026-01-05
 
 ### Added

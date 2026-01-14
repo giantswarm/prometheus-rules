@@ -32,57 +32,50 @@ spec:
       record: aggregation:giantswarm:app_upgrade_available
   - name: clusters.grafana-cloud.recording
     rules:
-    # This recording rule is used to list all clusters.
+    # The rules in this group are used to aggregate cluster information from capi_cluster_info metric.
+    # They are using a combination of label_replace functions to set the correct values for cluster_type (workaround for https://github.com/giantswarm/giantswarm/issues/35079) and provider labels (for hybrid MCs).
+    # Record rule to aggregate cluster info labels into a single metric with value 1 for each cluster.
     - expr: |-
         avg by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, exported_namespace) (
           label_replace(
             label_replace(
-              capi_cluster_info,
-              "provider",
-              "vsphere",
-              "infrastructure_reference_kind",
-              "VSphereCluster"
+              label_replace(
+                label_replace(
+                  capi_cluster_info,
+                  "provider",
+                  "vsphere",
+                  "infrastructure_reference_kind",
+                  "VSphereCluster"
+                ),
+                "cluster_id",
+                "$1",
+                "name",
+                "(.*)"
+              ),
+              "cluster_type", "workload_cluster", "cluster_id", ".*"
             ),
-            "cluster_id",
-            "$1",
-            "name",
-            "(.*)"
+            "cluster_type", "management_cluster", "cluster_id", "^{{ .Values.managementCluster.name }}$"
           ) >= 1
         )
       record: aggregation:giantswarm:cluster_info
     - expr: |-
-        (
-          sum(
-            cluster_service_cluster_info
-          )
-          by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-        ) / 2
-        or (
-          sum(
-            cluster_operator_cluster_status{release_version!=""}
-          )
-          by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-        )
-        or (
-          sum(
-            label_replace(
-              capi_cluster_info,
-              "provider",
-              "vsphere",
-              "infrastructure_reference_kind",
-              "VSphereCluster"
+        label_replace(
+          label_replace(
+            sum(
+              label_replace(
+                capi_cluster_info,
+                "provider",
+                "vsphere",
+                "infrastructure_reference_kind",
+                "VSphereCluster"
+              )
             )
-          )
-          by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+            by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region),
+            "cluster_type", "workload_cluster", "cluster_id", ".*"
+          ),
+          "cluster_type", "management_cluster", "cluster_id", "^{{ .Values.managementCluster.name }}$"
         )
       record: aggregation:giantswarm:cluster_release_version
-    - expr: avg_over_time(cluster_operator_cluster_create_transition[1w])
-      record: aggregation:giantswarm:cluster_transition_create
-    - expr: avg_over_time(cluster_operator_cluster_update_transition[1w])
-      record: aggregation:giantswarm:cluster_transition_update
-    # Scheduled cluster upgrade times
-    - expr: upgrade_schedule_operator_cluster_scheduled_upgrades_time
-      record: aggregation:giantswarm:cluster_scheduled_upgrades_time
   - name: docker.grafana-cloud.recording
     rules:
     - expr: sum(engine_daemon_image_actions_seconds_count) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, action)

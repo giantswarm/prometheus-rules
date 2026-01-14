@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Set `cluster_type` label correctly for workload and management clusters in `aggregation:giantswarm:cluster_info` and `aggregation:giantswarm:cluster_release_version` recording rules.
+
 ## [4.91.0] - 2026-01-08
 
 ### Added

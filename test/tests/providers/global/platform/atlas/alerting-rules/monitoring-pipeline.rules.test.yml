@@ -7,75 +7,53 @@ rule_files:
 evaluation_interval: 1h
 
 tests:
-  # Test JobScrapingFailure (for apps in org-* namespaces)
+  # Test JobScrapingFailure (combined test for both workload and management clusters)
   - interval: 1h
     input_series:
-      # App "myapp" in org namespace (workload cluster) - up for 1d, then down for 2d
-      - series: 'up{app="myapp", job="myapp-metrics", installation="golem", cluster_id="mycluster", provider="capa", pipeline="testing"}'
-        values: "1+0x24 0+0x48"
-      # App operator info for myapp in org namespace with team label
-      # Note: name must match what label_join creates (cluster_id-app = "mycluster-myapp")
-      - series: 'app_operator_app_info{name="mycluster-myapp", namespace="org-giantswarm", team="team-rocket", installation="golem", cluster_id="mycluster"}'
-        values: "1+0x72"
-      # Another app "otherapp" in org namespace - stays up
-      - series: 'up{app="otherapp", job="otherapp-metrics", installation="golem", cluster_id="mycluster", provider="capa", pipeline="testing"}'
-        values: "1+0x72"
-      # App operator info for otherapp
-      - series: 'app_operator_app_info{name="mycluster-otherapp", namespace="org-acme", team="team-phoenix", installation="golem", cluster_id="mycluster"}'
-        values: "1+0x72"
+      # Recording rule output for workload cluster app "myapp" - no failures for 1d, then all targets down for 2d
+      # Values: 0 for indexes 0-23 (t=0h-23h), then 1 for indexes 24-71 (t=24h-71h)
+      - series: 'aggregation:giantswarm:jobscrapingfailures{app="myapp", job="myapp-metrics", installation="golem", cluster_id="mycluster", provider="capa", pipeline="testing", namespace="org-giantswarm", team="team-rocket"}'
+        values: "0+0x23 1+0x48"
+      # Recording rule output for MC app "prometheus-agent" - no failures for 1d, then all targets down for 2d
+      - series: 'aggregation:giantswarm:jobscrapingfailures{app="prometheus-agent", job="prometheus-agent-metrics", installation="golem", cluster_id="golem", provider="capa", pipeline="testing", namespace="kube-system", team="team-atlas"}'
+        values: "0+0x23 1+0x48"
     alert_rule_test:
-      # Alert should not fire before the service is down for 1h
+      # Alert should not fire at 23h (before condition becomes true)
+      - alertname: JobScrapingFailure
+        eval_time: 23h
+        exp_alerts: []
+      # Alert should not fire at 24h (condition just became true, but hasn't been true for 1h yet)
+      - alertname: JobScrapingFailure
+        eval_time: 24h
+        exp_alerts: []
+      # Alert should fire at 25h (condition has been true for 1h, 'for: 1h' duration satisfied)
       - alertname: JobScrapingFailure
         eval_time: 25h
-        exp_alerts: []
-      # Alert should fire after being down for 1h (downtime starts at 25h, fires at 26h)
-      - alertname: JobScrapingFailure
-        eval_time: 26h
         exp_alerts:
+          # Workload cluster alert
           - exp_labels:
+              alertname: JobScrapingFailure
               area: platform
               severity: notify
               topic: observability
               cancel_if_outside_working_hours: "true"
-              app: "mycluster-myapp"
+              app: "myapp"
               cluster_id: "mycluster"
               installation: "golem"
               provider: "capa"
               pipeline: "testing"
               job: "myapp-metrics"
+              namespace: "org-giantswarm"
               team: "team-rocket"
             exp_annotations:
               __dashboardUid__: alloy-metrics-targets
               dashboardQueryParams: "orgId=1"
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION=golem&CLUSTER=mycluster
               summary: "Monitoring agent failed to scrape all targets for an app / job."
-              description: "No targets are reachable for mycluster-myapp by monitoring agent on cluster golem/mycluster (job: myapp-metrics)"
-
-  # Test JobScrapingFailureMC (for apps in non org-* namespaces - management clusters)
-  - interval: 1h
-    input_series:
-      # App "prometheus-agent" in kube-system namespace (management cluster) - up for 1d, then down for 2d
-      - series: 'up{app="prometheus-agent", job="prometheus-agent-metrics", installation="golem", cluster_id="golem", provider="capa", pipeline="testing"}'
-        values: "1+0x24 0+0x48"
-      # App operator info for prometheus-agent in non-org namespace with team label
-      - series: 'app_operator_app_info{name="prometheus-agent", namespace="kube-system", team="team-atlas", installation="golem", cluster_id="golem"}'
-        values: "1+0x72"
-      # Another app "alloy" in giantswarm namespace - stays up
-      - series: 'up{app="alloy", job="alloy-metrics", installation="golem", cluster_id="golem", provider="capa", pipeline="testing"}'
-        values: "1+0x72"
-      # App operator info for alloy
-      - series: 'app_operator_app_info{name="alloy", namespace="giantswarm", team="team-atlas", installation="golem", cluster_id="golem"}'
-        values: "1+0x72"
-    alert_rule_test:
-      # Alert should not fire before the service is down for 1h
-      - alertname: JobScrapingFailureMC
-        eval_time: 25h
-        exp_alerts: []
-      # Alert should fire after being down for 1h (downtime starts at 25h, fires at 26h)
-      - alertname: JobScrapingFailureMC
-        eval_time: 26h
-        exp_alerts:
+              description: "No targets are reachable for myapp by monitoring agent on cluster golem/mycluster (job: myapp-metrics)"
+          # Management cluster alert
           - exp_labels:
+              alertname: JobScrapingFailure
               area: platform
               severity: notify
               topic: observability
@@ -86,13 +64,14 @@ tests:
               provider: "capa"
               pipeline: "testing"
               job: "prometheus-agent-metrics"
+              namespace: "kube-system"
               team: "team-atlas"
             exp_annotations:
               __dashboardUid__: alloy-metrics-targets
               dashboardQueryParams: "orgId=1"
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION=golem&CLUSTER=golem
-              summary: "Monitoring agent failed to scrape all targets for an app / job on a management cluster."
-              description: "No targets are reachable for prometheus-agent by monitoring on management cluster golem (job: prometheus-agent-metrics)"
+              summary: "Monitoring agent failed to scrape all targets for an app / job."
+              description: "No targets are reachable for prometheus-agent by monitoring agent on cluster golem/golem (job: prometheus-agent-metrics)"
 
   # Test MetricForwardingErrors
   - interval: 1m

@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- skip role policy attachement for ClusterCrossplaneResourcesNotReady as it is not used
+
 ## [4.91.1] - 2026-01-14
 
 ### Changed

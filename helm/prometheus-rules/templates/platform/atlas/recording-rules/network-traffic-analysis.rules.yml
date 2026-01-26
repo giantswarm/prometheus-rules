@@ -8,6 +8,11 @@ metadata:
 spec:
   groups:
     - name: network_traffic_analysis
+      # Following rules have include/exclude filter for private IP ranges from RFC 1918 and additional AWS private IP range.
+      # 10.0.0.0/8: RFC 1918 private IPs
+      # 172.16.0.0/12: RFC 1918 private IPs
+      # 192.168.0.0/16: RFC 1918 private IPs
+      # 100.64.0.0/16: AWS network private IP range
       rules:
         # Measure network traffic in bytes per second sent to public internet
         - expr: |

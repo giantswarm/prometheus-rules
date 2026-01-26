@@ -1,0 +1,45 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: network-traffic-analysis.recording.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    - name: network_traffic_analysis
+      # Following rules have include/exclude filter for private IP ranges from RFC 1918 and additional AWS private IP range.
+      # 10.0.0.0/8: RFC 1918 private IPs
+      # 172.16.0.0/12: RFC 1918 private IPs
+      # 192.168.0.0/16: RFC 1918 private IPs
+      # 100.64.0.0/16: AWS network private IP range
+      rules:
+        # Measure network traffic in bytes per second sent to public internet
+        - expr: |
+            sum by (k8s_src_namespace, cluster_id, installation, pipeline, provider) (
+              rate(
+                beyla_network_flow_bytes_total{
+                  dst_address!~"^(10\\..*|100\\.(1[0-9][0-9]|[6-9][0-9]|[1-9])\\..*|172\\.(1[6-9]|2[0-9]|3[01])\\..*|192\\.168\\..*)",
+                  direction="request"
+                }[5m]
+              )
+            )
+          record: network_traffic_analysis:beyla_network_flow_bytes_public:rate5m
+        # Measure network traffic in bytes per second between availability zones
+        - expr: |
+            sum by (k8s_src_namespace, cluster_id, installation, pipeline, provider) (
+              rate(
+                beyla_network_flow_bytes_total{
+                  dst_address=~"^(10\\..*|100\\.(1[0-9][0-9]|[6-9][0-9]|[1-9])\\..*|172\\.(1[6-9]|2[0-9]|3[01])\\..*|192\\.168\\..*)",
+                  direction="request",
+                  src_zone!="",
+                  dst_zone!=""
+                }[5m]
+              )
+              unless on (dst_zone, src_zone)
+              label_replace(
+                beyla_network_flow_bytes_total{src_zone!="", dst_zone!=""},
+                "dst_zone", "$1", "src_zone", "(.*)"
+              )
+            )
+          record: network_traffic_analysis:beyla_network_flow_bytes_cross_az:rate5m

@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add recording rules for Network Traffic Analysis dashboards as `network_traffic_analysis:beyla_network_flow_bytes_*` rules.
+
 ## [4.91.2] - 2026-01-20
 
 ### Changed

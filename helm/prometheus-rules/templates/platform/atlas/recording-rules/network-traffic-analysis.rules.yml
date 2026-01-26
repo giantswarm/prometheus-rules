@@ -16,7 +16,7 @@ spec:
       rules:
         # Measure network traffic in bytes per second sent to public internet
         - expr: |
-            sum by (k8s_src_namespace, cluster_id) (
+            sum by (k8s_src_namespace, cluster_id, installation, pipeline, provider) (
               rate(
                 beyla_network_flow_bytes_total{
                   dst_address!~"^(10\\..*|100\\.(1[0-9][0-9]|[6-9][0-9]|[1-9])\\..*|172\\.(1[6-9]|2[0-9]|3[01])\\..*|192\\.168\\..*)",
@@ -27,7 +27,7 @@ spec:
           record: network_traffic_analysis:beyla_network_flow_bytes_public:rate5m
         # Measure network traffic in bytes per second between availability zones
         - expr: |
-            sum by (k8s_src_namespace, cluster_id) (
+            sum by (k8s_src_namespace, cluster_id, installation, pipeline, provider) (
               rate(
                 beyla_network_flow_bytes_total{
                   dst_address!~"^(10\\..*|100\\.(1[0-9][0-9]|[6-9][0-9]|[1-9])\\..*|172\\.(1[6-9]|2[0-9]|3[01])\\..*|192\\.168\\..*)",

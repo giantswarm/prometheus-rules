@@ -1,0 +1,125 @@
+---
+rule_files:
+  - network-traffic-analysis.rules.yml
+
+tests:
+  # Test network_traffic_analysis:beyla_network_flow_bytes_public:rate5m
+  # This rule should measure traffic to public internet (excluding private IP ranges)
+  - interval: 1m
+    input_series:
+      # Traffic to public IP (8.8.8.8 - Google DNS)
+      - series: 'beyla_network_flow_bytes_total{dst_address="8.8.8.8", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+1000x10"
+      # Traffic to another public IP (1.1.1.1 - Cloudflare DNS)
+      - series: 'beyla_network_flow_bytes_total{dst_address="1.1.1.1", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+500x10"
+      # Traffic to RFC 1918 private IP (10.0.0.1) - should be excluded
+      - series: 'beyla_network_flow_bytes_total{dst_address="10.0.0.1", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+2000x10"
+      # Traffic to RFC 1918 private IP (172.16.0.1) - should be excluded
+      - series: 'beyla_network_flow_bytes_total{dst_address="172.16.0.1", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+1000x10"
+      # Traffic to RFC 1918 private IP (192.168.1.1) - should be excluded
+      - series: 'beyla_network_flow_bytes_total{dst_address="192.168.1.1", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+1000x10"
+      # Traffic to AWS private IP range (100.64.0.1) - should be excluded
+      - series: 'beyla_network_flow_bytes_total{dst_address="100.64.0.1", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+1000x10"
+      # Traffic from different namespace
+      - series: 'beyla_network_flow_bytes_total{dst_address="8.8.4.4", direction="request", k8s_src_namespace="kube-system", cluster_id="golem"}'
+        values: "0+2000x10"
+    promql_expr_test:
+      - expr: network_traffic_analysis:beyla_network_flow_bytes_public:rate5m
+        eval_time: 10m
+        exp_samples:
+          # Expected rate for default namespace: (1000 + 500) bytes per minute over 5m = 1500/60 = 25 bytes/sec
+          - labels: 'network_traffic_analysis:beyla_network_flow_bytes_public:rate5m{cluster_id="golem", k8s_src_namespace="default"}'
+            value: 25
+          # Expected rate for kube-system namespace: 2000 bytes per minute over 5m = 2000/60 = 33.333... bytes/sec
+          - labels: 'network_traffic_analysis:beyla_network_flow_bytes_public:rate5m{cluster_id="golem", k8s_src_namespace="kube-system"}'
+            value: 33.333333333333336
+
+  # Test network_traffic_analysis:beyla_network_flow_bytes_cross_az:rate5m
+  # This rule should measure traffic between different availability zones (excluding same-zone traffic)
+  - interval: 1m
+    input_series:
+      # Traffic from us-east-1a to us-east-1b (cross-AZ, public IP) - should be included
+      - series: 'beyla_network_flow_bytes_total{dst_address="8.8.8.8", direction="request", k8s_src_namespace="default", cluster_id="golem", src_zone="us-east-1a", dst_zone="us-east-1b"}'
+        values: "0+1000x10"
+      # Traffic from us-east-1a to us-east-1a (same-AZ, public IP) - should be excluded
+      - series: 'beyla_network_flow_bytes_total{dst_address="1.1.1.1", direction="request", k8s_src_namespace="default", cluster_id="golem", src_zone="us-east-1a", dst_zone="us-east-1a"}'
+        values: "0+2000x10"
+      # Traffic from us-east-1b to us-east-1c (cross-AZ, public IP) - should be included
+      - series: 'beyla_network_flow_bytes_total{dst_address="8.8.4.4", direction="request", k8s_src_namespace="default", cluster_id="golem", src_zone="us-east-1b", dst_zone="us-east-1c"}'
+        values: "0+500x10"
+      # Traffic to private IP (cross-AZ) - should be excluded
+      - series: 'beyla_network_flow_bytes_total{dst_address="10.0.0.1", direction="request", k8s_src_namespace="default", cluster_id="golem", src_zone="us-east-1a", dst_zone="us-east-1b"}'
+        values: "0+3000x10"
+      # Traffic without zone labels - should be excluded
+      - series: 'beyla_network_flow_bytes_total{dst_address="8.8.8.8", direction="request", k8s_src_namespace="default", cluster_id="golem", src_zone="", dst_zone=""}'
+        values: "0+1000x10"
+      # Traffic from different namespace (cross-AZ, public IP)
+      - series: 'beyla_network_flow_bytes_total{dst_address="1.1.1.1", direction="request", k8s_src_namespace="kube-system", cluster_id="golem", src_zone="eu-west-1a", dst_zone="eu-west-1b"}'
+        values: "0+2000x10"
+    promql_expr_test:
+      - expr: network_traffic_analysis:beyla_network_flow_bytes_cross_az:rate5m
+        eval_time: 10m
+        exp_samples:
+          # Expected rate for default namespace: (1000 + 500) bytes per minute over 5m = 1500/60 = 25 bytes/sec
+          - labels: 'network_traffic_analysis:beyla_network_flow_bytes_cross_az:rate5m{cluster_id="golem", k8s_src_namespace="default"}'
+            value: 25
+          # Expected rate for kube-system namespace: 2000 bytes per minute over 5m = 2000/60 = 33.333... bytes/sec
+          - labels: 'network_traffic_analysis:beyla_network_flow_bytes_cross_az:rate5m{cluster_id="golem", k8s_src_namespace="kube-system"}'
+            value: 33.333333333333336
+
+  # Test edge cases for private IP filtering
+  - interval: 1m
+    input_series:
+      # Edge of 10.0.0.0/8 range
+      - series: 'beyla_network_flow_bytes_total{dst_address="10.255.255.255", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+1000x10"
+      - series: 'beyla_network_flow_bytes_total{dst_address="11.0.0.0", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+1000x10"
+      # Edge of 172.16.0.0/12 range
+      - series: 'beyla_network_flow_bytes_total{dst_address="172.31.255.255", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+1000x10"
+      - series: 'beyla_network_flow_bytes_total{dst_address="172.32.0.0", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+1000x10"
+      # Edge of 192.168.0.0/16 range
+      - series: 'beyla_network_flow_bytes_total{dst_address="192.168.255.255", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+1000x10"
+      - series: 'beyla_network_flow_bytes_total{dst_address="192.169.0.0", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+1000x10"
+      # Edge of AWS private range pattern (100.1-9, 100.60-99, 100.100-199)
+      # 100.127.255.255 is in 100.100-199 range - should be excluded
+      - series: 'beyla_network_flow_bytes_total{dst_address="100.127.255.255", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+1000x10"
+      # 100.128.0.0 is also in 100.100-199 range - should be excluded
+      - series: 'beyla_network_flow_bytes_total{dst_address="100.128.0.0", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+1000x10"
+    promql_expr_test:
+      - expr: network_traffic_analysis:beyla_network_flow_bytes_public:rate5m
+        eval_time: 10m
+        exp_samples:
+          # Only public IPs should be counted: 11.0.0.0, 172.32.0.0, 192.169.0.0
+          # Note: 100.128.0.0 is excluded because it matches the AWS range pattern (100.100-199.x.x)
+          # Total: 3 * 1000 bytes per minute over 5m = 3000/60 = 50 bytes/sec
+          - labels: 'network_traffic_analysis:beyla_network_flow_bytes_public:rate5m{cluster_id="golem", k8s_src_namespace="default"}'
+            value: 50
+
+  # Test that response direction traffic is excluded
+  - interval: 1m
+    input_series:
+      # Request direction to public IP - should be included
+      - series: 'beyla_network_flow_bytes_total{dst_address="8.8.8.8", direction="request", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+1000x10"
+      # Response direction from public IP - should be excluded
+      - series: 'beyla_network_flow_bytes_total{dst_address="8.8.8.8", direction="response", k8s_src_namespace="default", cluster_id="golem"}'
+        values: "0+2000x10"
+    promql_expr_test:
+      - expr: network_traffic_analysis:beyla_network_flow_bytes_public:rate5m
+        eval_time: 10m
+        exp_samples:
+          # Only request direction should be counted: 1000 bytes per minute over 5m = 1000/60 = 16.666... bytes/sec
+          - labels: 'network_traffic_analysis:beyla_network_flow_bytes_public:rate5m{cluster_id="golem", k8s_src_namespace="default"}'
+            value: 16.666666666666668

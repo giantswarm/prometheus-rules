@@ -30,7 +30,7 @@ spec:
             sum by (k8s_src_namespace, cluster_id, installation, pipeline, provider) (
               rate(
                 beyla_network_flow_bytes_total{
-                  dst_address!~"^(10\\..*|100\\.(1[0-9][0-9]|[6-9][0-9]|[1-9])\\..*|172\\.(1[6-9]|2[0-9]|3[01])\\..*|192\\.168\\..*)",
+                  dst_address=~"^(10\\..*|100\\.(1[0-9][0-9]|[6-9][0-9]|[1-9])\\..*|172\\.(1[6-9]|2[0-9]|3[01])\\..*|192\\.168\\..*)",
                   direction="request",
                   src_zone!="",
                   dst_zone!=""

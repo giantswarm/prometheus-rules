@@ -40,34 +40,37 @@ tests:
             value: 33.333333333333336
 
   # Test network_traffic_analysis:beyla_network_flow_bytes_cross_az:rate5m
-  # This rule should measure traffic between different availability zones (excluding same-zone traffic)
+  # This rule should measure traffic to PRIVATE IPs between different availability zones (excluding same-zone and public traffic)
   - interval: 1m
     input_series:
-      # Traffic from us-east-1a to us-east-1b (cross-AZ, public IP) - should be included
+      # Traffic from us-east-1a to us-east-1b (cross-AZ, public IP) - should be excluded (not private)
       - series: 'beyla_network_flow_bytes_total{dst_address="8.8.8.8", direction="request", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", src_zone="us-east-1a", dst_zone="us-east-1b"}'
-        values: "0+1000x10"
-      # Traffic from us-east-1a to us-east-1a (same-AZ, public IP) - should be excluded
-      - series: 'beyla_network_flow_bytes_total{dst_address="1.1.1.1", direction="request", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", src_zone="us-east-1a", dst_zone="us-east-1a"}'
-        values: "0+2000x10"
-      # Traffic from us-east-1b to us-east-1c (cross-AZ, public IP) - should be included
-      - series: 'beyla_network_flow_bytes_total{dst_address="8.8.4.4", direction="request", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", src_zone="us-east-1b", dst_zone="us-east-1c"}'
         values: "0+500x10"
-      # Traffic to private IP (cross-AZ) - should be excluded
-      - series: 'beyla_network_flow_bytes_total{dst_address="10.0.0.1", direction="request", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", src_zone="us-east-1a", dst_zone="us-east-1b"}'
-        values: "0+3000x10"
-      # Traffic without zone labels - should be excluded
-      - series: 'beyla_network_flow_bytes_total{dst_address="8.8.8.8", direction="request", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", src_zone="", dst_zone=""}'
+      # Traffic from us-east-1a to us-east-1a (same-AZ, private IP) - should be excluded (same zone)
+      - series: 'beyla_network_flow_bytes_total{dst_address="10.0.0.1", direction="request", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", src_zone="us-east-1a", dst_zone="us-east-1a"}'
+        values: "0+2000x10"
+      # Traffic from us-east-1b to us-east-1c (cross-AZ, private IP 10.x) - should be included
+      - series: 'beyla_network_flow_bytes_total{dst_address="10.1.2.3", direction="request", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", src_zone="us-east-1b", dst_zone="us-east-1c"}'
         values: "0+1000x10"
-      # Traffic from different namespace (cross-AZ, public IP)
-      - series: 'beyla_network_flow_bytes_total{dst_address="1.1.1.1", direction="request", k8s_src_namespace="kube-system", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", src_zone="eu-west-1a", dst_zone="eu-west-1b"}'
+      # Traffic to private IP 172.16.x (cross-AZ) - should be included
+      - series: 'beyla_network_flow_bytes_total{dst_address="172.16.0.1", direction="request", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", src_zone="us-east-1a", dst_zone="us-east-1b"}'
+        values: "0+500x10"
+      # Traffic to private IP 192.168.x (cross-AZ) - should be included
+      - series: 'beyla_network_flow_bytes_total{dst_address="192.168.1.1", direction="request", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", src_zone="us-east-1a", dst_zone="us-east-1c"}'
+        values: "0+500x10"
+      # Traffic without zone labels (private IP) - should be excluded (no zones)
+      - series: 'beyla_network_flow_bytes_total{dst_address="10.0.0.2", direction="request", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", src_zone="", dst_zone=""}'
+        values: "0+1000x10"
+      # Traffic from different namespace (cross-AZ, private IP)
+      - series: 'beyla_network_flow_bytes_total{dst_address="10.2.3.4", direction="request", k8s_src_namespace="kube-system", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", src_zone="eu-west-1a", dst_zone="eu-west-1b"}'
         values: "0+2000x10"
     promql_expr_test:
       - expr: network_traffic_analysis:beyla_network_flow_bytes_cross_az:rate5m
         eval_time: 10m
         exp_samples:
-          # Expected rate for default namespace: (1000 + 500) bytes per minute over 5m = 1500/60 = 25 bytes/sec
+          # Expected rate for default namespace: (1000 + 500 + 500) bytes per minute over 5m = 2000/60 = 33.333... bytes/sec
           - labels: 'network_traffic_analysis:beyla_network_flow_bytes_cross_az:rate5m{cluster_id="golem", installation="golem", k8s_src_namespace="default", pipeline="testing", provider="$provider"}'
-            value: 25
+            value: 33.333333333333336
           # Expected rate for kube-system namespace: 2000 bytes per minute over 5m = 2000/60 = 33.333... bytes/sec
           - labels: 'network_traffic_analysis:beyla_network_flow_bytes_cross_az:rate5m{cluster_id="golem", installation="golem", k8s_src_namespace="kube-system", pipeline="testing", provider="$provider"}'
             value: 33.333333333333336

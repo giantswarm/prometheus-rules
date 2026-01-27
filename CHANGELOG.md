@@ -388,6 +388,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix observability-platform overview recording rules.
 
+### Changed
+
+- Page `providerTeam` instead of `tenet` for the `WorkloadClusterNodeUnexpectedTaintNodeCAPIUninitialized` alert.
+
 ## [4.72.0] - 2025-07-23
 
 ### Added

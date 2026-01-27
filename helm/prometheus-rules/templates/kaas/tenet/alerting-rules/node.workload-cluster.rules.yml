@@ -152,7 +152,7 @@ spec:
         severity: page
         team: se
         topic: infrastructure
-    - alert: providerTeam
+    - alert: WorkloadClusterNodeUnexpectedTaintNodeCAPIUninitialized
       annotations:
         description: '{{`Node {{ $labels.node }} in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has CAPI taint node.cluster.x-k8s.io/uninitialized for too long`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/unexpected-taint-capi/

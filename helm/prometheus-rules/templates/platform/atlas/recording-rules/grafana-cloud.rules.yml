@@ -656,7 +656,7 @@ spec:
             label_replace(prometheus_target_scrape_pool_targets, "resource", "$1", "scrape_job", "^serviceMonitor/(.+)/[0-9]")
             * on(cluster_id, resource) group_left(app_instance)
             label_join(kube_servicemonitor_info, "resource", "/", "namespace", "name"),
-            "app", "$1 "app_instance", "(.+)"
+            "app", "$1", "app_instance", "(.+)"
           )
           * on(app, cluster_id) group_left(team)
           label_replace(app_operator_app_info{namespace!~"org-.+"}, "app", "$1", "name", "(.+)")
@@ -673,7 +673,7 @@ spec:
             label_replace(prometheus_target_scrape_pool_targets, "resource", "$1", "scrape_job", "^podMonitor/(.+)/[0-9]")
             * on(cluster_id, resource) group_left(app_instance)
             label_join(kube_podmonitor_info, "resource", "/", "namespace", "name"),
-            "app", "$1 "app_instance", "(.+)"
+            "app", "$1", "app_instance", "(.+)"
           )
           * on(app, cluster_id) group_left(team)
           label_replace(app_operator_app_info{namespace!~"org-.+"}, "app", "$1", "name", "(.+)")

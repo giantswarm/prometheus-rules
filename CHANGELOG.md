@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add recording rules for Network Traffic Analysis dashboards as `network_traffic_analysis:beyla_network_flow_bytes_*` rules.
 
+### Changed
+
+- Update runbook URL for AWS Load Balancer controller alerts
+- Remove vintage alert `WorkloadClusterNodeUnexpectedTaintNodeWithImpairedVolumes`
+
 ## [4.91.2] - 2026-01-20
 
 ### Changed

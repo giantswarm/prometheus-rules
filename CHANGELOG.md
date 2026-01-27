@@ -5,6 +5,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add recording rules for Network Traffic Analysis dashboards as `network_traffic_analysis:beyla_network_flow_bytes_*` rules.
+
+## [4.91.2] - 2026-01-20
+
+### Changed
+
+- skip role policy attachement for ClusterCrossplaneResourcesNotReady as it is not used
+
+## [4.91.1] - 2026-01-14
+
+### Changed
+
+- Set `cluster_type` label correctly for workload and management clusters in `aggregation:giantswarm:cluster_info` and `aggregation:giantswarm:cluster_release_version` recording rules.
+
 ## [4.91.0] - 2026-01-08
 
 ### Added
@@ -4168,7 +4184,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.2...HEAD
+[4.91.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.1...v4.91.2
+[4.91.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.0...v4.91.1
 [4.91.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.90.0...v4.91.0
 [4.90.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.2...v4.90.0
 [4.89.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.1...v4.89.2

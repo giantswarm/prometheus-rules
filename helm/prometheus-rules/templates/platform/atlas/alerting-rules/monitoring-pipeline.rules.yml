@@ -36,53 +36,16 @@ spec:
         topic: observability
     - alert: JobScrapingFailure
       annotations:
-        __dashboardUid__: servicemonitors-details
+        __dashboardUid__: alloy-metrics-targets
         dashboardQueryParams: "orgId=1"
-        description: '{{`Monitoring agents for cluster {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}'
-        summary: Monitoring agent failed to scrape all targets in a job.
+        summary: Monitoring agent failed to scrape all targets for an app / job.
+        description: '{{`No targets are reachable for {{$labels.app}} by monitoring agent on cluster {{$labels.installation}}/{{$labels.cluster_id}} (job: {{$labels.job}})`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: |-
-        # This alert uses the same logic as the `aggregation:giantswarm:jobscrapingfailures` recording rule
-        (
-          count(up == 0) by (job, installation, cluster_id, provider, pipeline)
-          /
-          count(up) by (job, installation, cluster_id, provider, pipeline)
-        ) >= 1
-      for: 1d
+      # This alert fires when 100% of an application targets are down (complete service outage).
+      expr: aggregation:giantswarm:jobscrapingfailures >= 1
+      for: 1h
       labels:
         area: platform
         severity: notify
-        team: atlas
-        topic: observability
-        cancel_if_outside_working_hours: "true"
-    - alert: CriticalJobScrapingFailure
-      annotations:
-        __dashboardUid__: servicemonitors-details
-        dashboardQueryParams: "orgId=1"
-        description: '{{`Monitoring agents for cluster {{$labels.installation}}/{{$labels.cluster_id}} has failed to scrape all targets in {{$labels.job}} job.`}}'
-        summary: Monitoring agent failed to scrape all targets in a job.
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      ## We ignore bastion hosts node exporters
-      expr: |-
-        (
-          count(
-            (
-              up{job=~".*(apiserver|kube-controller-manager|kube-scheduler|node-exporter|kube-state-metrics).*"}
-              or
-              up{job="kubelet", metrics_path="/metrics"}
-            ) == 0
-          ) by (job, installation, cluster_id, provider, pipeline)
-          /
-          count(
-            up{job=~".*(apiserver|kube-controller-manager|kube-scheduler|node-exporter|kube-state-metrics).*"}
-            or
-            up{job="kubelet", metrics_path="/metrics"}
-          ) by (job, installation, cluster_id, provider, pipeline)
-        ) >= 1
-      for: 3d
-      labels:
-        area: platform
-        severity: page
-        team: atlas
         topic: observability
         cancel_if_outside_working_hours: "true"

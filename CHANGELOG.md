@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove the deprecated `logging-operator` from the `DeploymentNotSatisfiedAtlas` alert.
+
 ### Added
 
 - Add recording rules for Network Traffic Analysis dashboards as `network_traffic_analysis:beyla_network_flow_bytes_*` rules.

@@ -619,9 +619,15 @@ spec:
           # - Join with kube_servicemonitor_info using the ServiceMonitor namespace/name, to include the app_instance label
           # - Join with app_operator_app_info to include the team label, only for apps from org namepsaces
           label_join(
-            label_replace(prometheus_target_scrape_pool_targets, "resource", "$1", "scrape_job", "^serviceMonitor/(.+)/[0-9]")
+            label_replace(
+              sum(prometheus_target_scrape_pool_targets) by (installation, cluster_id, provider, pipeline, scrape_job),
+              "resource", "$1", "scrape_job", "^serviceMonitor/(.+)/[0-9]"
+            )
             * on(cluster_id, resource) group_left(app_instance)
-            label_join(kube_servicemonitor_info, "resource", "/", "namespace", "name"),
+            label_join(
+              kube_servicemonitor_info,
+              "resource", "/", "namespace", "name"
+            ),
             "app", "-", "cluster_id", "app_instance"
           )
           * on(app, cluster_id) group_left(team)
@@ -636,9 +642,15 @@ spec:
           # - Join with kube_podmonitor_info using the PodMonitor namespace/name, to include the app_instance label
           # - Join with app_operator_app_info to include the team label, only for apps from org namepsaces
           label_join(
-            label_replace(prometheus_target_scrape_pool_targets, "resource", "$1", "scrape_job", "^podMonitor/(.+)/[0-9]")
+            label_replace(
+              sum(prometheus_target_scrape_pool_targets) by (installation, cluster_id, provider, pipeline, scrape_job),
+              "resource", "$1", "scrape_job", "^podMonitor/(.+)/[0-9]"
+            )
             * on(cluster_id, resource) group_left(app_instance)
-            label_join(kube_podmonitor_info, "resource", "/", "namespace", "name"),
+            label_join(
+              kube_podmonitor_info,
+              "resource", "/", "namespace", "name"
+            ),
             "app", "-", "cluster_id", "app_instance"
           )
           * on(app, cluster_id) group_left(team)
@@ -653,9 +665,15 @@ spec:
           # - Join with kube_servicemonitor_info using the ServiceMonitor namespace/name, to include the app_instance label
           # - Join with app_operator_app_info to include the team label, only for apps from non org namepsaces
           label_replace(
-            label_replace(prometheus_target_scrape_pool_targets, "resource", "$1", "scrape_job", "^serviceMonitor/(.+)/[0-9]")
+            label_replace(
+              sum(prometheus_target_scrape_pool_targets) by (installation, cluster_id, provider, pipeline, scrape_job),
+              "resource", "$1", "scrape_job", "^serviceMonitor/(.+)/[0-9]"
+            )
             * on(cluster_id, resource) group_left(app_instance)
-            label_join(kube_servicemonitor_info, "resource", "/", "namespace", "name"),
+            label_join(
+              kube_servicemonitor_info,
+              "resource", "/", "namespace", "name"
+            ),
             "app", "$1", "app_instance", "(.+)"
           )
           * on(app, cluster_id) group_left(team)
@@ -670,9 +688,15 @@ spec:
           # - Join with kube_podmonitor_info using the PodMonitor namespace/name, to include the app_instance label
           # - Join with app_operator_app_info to include the team label, only for apps from non org namepsaces
           label_replace(
-            label_replace(prometheus_target_scrape_pool_targets, "resource", "$1", "scrape_job", "^podMonitor/(.+)/[0-9]")
+            label_replace(
+              sum(prometheus_target_scrape_pool_targets) by (installation, cluster_id, provider, pipeline, scrape_job),
+              "resource", "$1", "scrape_job", "^podMonitor/(.+)/[0-9]"
+            )
             * on(cluster_id, resource) group_left(app_instance)
-            label_join(kube_podmonitor_info, "resource", "/", "namespace", "name"),
+            label_join(
+              kube_podmonitor_info,
+              "resource", "/", "namespace", "name"
+            ),
             "app", "$1", "app_instance", "(.+)"
           )
           * on(app, cluster_id) group_left(team)

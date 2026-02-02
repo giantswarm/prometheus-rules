@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.93.0] - 2026-02-02
+
 ### Added
 
 - Add `aggregation:giantswarm:jobs_monitored_total` to report the number of target being monitored per app, with the app's owner `team` label.
@@ -4198,7 +4200,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.92.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.93.0...HEAD
+[4.93.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.92.0...v4.93.0
 [4.92.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.2...v4.92.0
 [4.91.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.1...v4.91.2
 [4.91.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.0...v4.91.1

@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: envoy-gateway.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: envoy-gateway
+    rules:
+    - alert: EnvoyGatewayDeploymentNotSatisfied
+      annotations:
+        description: '{{`Envoy Gateway Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
+      expr: kube_deployment_status_replicas_available{namespace="envoy-gateway-system", deployment="envoy-gateway"} / (kube_deployment_status_replicas_available{namespace="envoy-gateway-system", deployment="envoy-gateway"} + kube_deployment_status_replicas_unavailable{namespace="envoy-gateway-system", deployment="envoy-gateway"}) * 100 <= 50
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: cabbage
+        topic: envoy-gateway

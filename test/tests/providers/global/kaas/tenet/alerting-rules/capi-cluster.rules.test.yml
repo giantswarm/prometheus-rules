@@ -33,7 +33,7 @@ tests:
               provider: capa
             exp_annotations:
               description: "Cluster giantswarm/clippaxy stuck in Pending phase."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-cluster/
               __dashboardUid__: bdi7iswg81czkcasd
               dashboardQueryParams: "orgId=2"
       - alertname: ClusterStatusNotReady
@@ -53,7 +53,7 @@ tests:
               type: Ready
             exp_annotations:
               description: "Cluster giantswarm/grumpy is not ready."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-cluster/
               __dashboardUid__: bdi7iswg81czkcasd
               dashboardQueryParams: "orgId=2"
       - alertname: ClusterPaused
@@ -72,7 +72,7 @@ tests:
               paused_value: "true"
             exp_annotations:
               description: "The cluster giantswarm/grumpy is paused."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-cluster/
               __dashboardUid__: bdi7iswg81czkcasd
               dashboardQueryParams: "orgId=2"
 
@@ -143,4 +143,4 @@ tests:
               topic: managementcluster
             exp_annotations:
               description: "Cluster 'giantswarm/oopsie' has one or more non-ready control plane nodes. Failing cluster upgrade/node-roll?"
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-cluster/

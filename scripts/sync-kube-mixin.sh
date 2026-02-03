@@ -19,6 +19,7 @@ function tune_rules {
     # Latest mixins use SLO instead of classic metrics in several places
     # but we dropped these SLO metrics
     sed -i 's/apiserver_request_slo_duration_seconds/apiserver_request_duration_seconds/g' "$RULESFILE"
+    sed -i 's/apiserver_request_sli_duration_seconds/apiserver_request_duration_seconds/g' "$RULESFILE"
     sed -i 's/cluster_id/cluster_id, installation, pipeline, provider/g' "$RULESFILE"
 }
 

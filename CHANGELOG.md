@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Bump kube-mixins to 1.4.1
+
 ## [4.94.0] - 2026-02-04
 
 ### Added

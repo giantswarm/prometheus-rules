@@ -9,9 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove the deprecated `logging-operator` from the `DeploymentNotSatisfiedAtlas` alert.
 
+## [4.93.0] - 2026-02-02
+
+### Added
+
+- Add `aggregation:giantswarm:jobs_monitored_total` to report the number of target being monitored per app, with the app's owner `team` label.
+
+### Changed
+
+- Update `aggregation:giantswarm:jobscrapingfailures` to report failing jobs for both MC and non-MC apps, enriched with the app's owner `team` label.
+
+## [4.92.0] - 2026-01-26
+
 ### Added
 
 - Add recording rules for Network Traffic Analysis dashboards as `network_traffic_analysis:beyla_network_flow_bytes_*` rules.
+
+### Changed
+
+- Update runbook URL for AWS Load Balancer controller alerts
+- Remove vintage alert `WorkloadClusterNodeUnexpectedTaintNodeWithImpairedVolumes`
 
 ## [4.91.2] - 2026-01-20
 
@@ -391,6 +408,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix observability-platform overview recording rules.
+
+### Changed
+
+- Page `providerTeam` instead of `tenet` for the `WorkloadClusterNodeUnexpectedTaintNodeCAPIUninitialized` alert.
 
 ## [4.72.0] - 2025-07-23
 
@@ -4183,7 +4204,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.93.0...HEAD
+[4.93.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.92.0...v4.93.0
+[4.92.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.2...v4.92.0
 [4.91.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.1...v4.91.2
 [4.91.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.0...v4.91.1
 [4.91.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.90.0...v4.91.0

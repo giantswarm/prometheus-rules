@@ -22,3 +22,15 @@ spec:
         severity: page
         team: cabbage
         topic: envoy-gateway
+    - alert: EnvoyProxyDeploymentNotSatisfied
+      annotations:
+        description: '{{`Envoy Proxy Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
+      expr: envoy_proxy_deployment_status_replicas_available / (envoy_proxy_deployment_status_replicas_available + envoy_proxy_deployment_status_replicas_unavailable) * 100 <= 50
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: cabbage
+        topic: envoy-gateway

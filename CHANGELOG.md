@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove the deprecated `logging-operator` from the `DeploymentNotSatisfiedAtlas` alert.
+
 ## [4.93.0] - 2026-02-02
 
 ### Added

@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove the deprecated `logging-operator` from the `DeploymentNotSatisfiedAtlas` alert.
 
+### Fixed
+
+- Fix capi-cluster runbook URL
+
 ## [4.93.0] - 2026-02-02
 
 ### Added

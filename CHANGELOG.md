@@ -5,6 +5,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add Envoy Gateway alerting rules:
+  - `EnvoyGatewayDeploymentNotSatisfied` - alerts when Envoy Gateway deployment is not satisfied.
+  - `EnvoyProxyDeploymentNotSatisfied` - alerts when Envoy Proxy deployment is not satisfied.
+- Add Envoy Proxy recording rules:
+  - `envoy_proxy_deployment_status_replicas_available`
+  - `envoy_proxy_deployment_status_replicas_unavailable`
+
 ### Removed
 
 - Remove the deprecated `logging-operator` from the `DeploymentNotSatisfiedAtlas` alert.

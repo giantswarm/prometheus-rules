@@ -36,7 +36,7 @@ spec:
     - alert: CiliumAPITooSlow
       annotations:
         description: '{{`Cilium API processing time is >50s pod="{{ $labels.pod }}" node="{{ $labels.node }}" method="{{ $labels.method}}" path="{{ $labels.path }}"`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cilium-performance-issues/#slow-cilium-api
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-performance-issues/#slow-cilium-api
       expr: avg(rate(cilium_agent_api_process_time_seconds_sum{}[5m])/rate(cilium_agent_api_process_time_seconds_count{}[5m]) > 50) by (cluster_id, node, pod, method, path, installation, pipeline, provider)
       for: 20m
       labels:

@@ -41,7 +41,7 @@ spec:
     - alert: CertManagerTooManyCertificateRequests
       annotations:
         description: '{{`There are too many CertificateRequests in cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cert-requests-too-many/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cert-requests-too-many/
       expr: sum by (cluster_id, installation, pipeline, provider) (etcd_kubernetes_resources_count{kind="certificaterequests.cert-manager.io"}) > 10000
       for: 15m
       labels:

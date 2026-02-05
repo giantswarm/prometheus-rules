@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix duplicate rendered manifest name by renaming rule in `tracing-pipeline.rules.yml` to `tracing-pipeline.rules` (was `logging-pipeline.rules`).
+- Fix duplicate rendered manifest name by renaming rule in `helm/prometheus-rules/templates/platform/atlas/alerting-rules/tracing-pipeline.rules.yml` to `tracing-pipeline.rules` (was `logging-pipeline.rules`).
+- Fix duplicate rendered manifest name by renaming rule in `helm/prometheus-rules/templates/platform/shield/alerting-rules/general.rules.yml` to `general.rules` (was `kyverno.rules`).
 
 ## [4.94.0] - 2026-02-04
 

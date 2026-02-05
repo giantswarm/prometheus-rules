@@ -7,323 +7,6 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-  - name: kube-apiserver-burnrate.rules
-    rules:
-      - expr: |
-          (
-            (
-              # too slow
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[1d]))
-              -
-              (
-                (
-                  sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le="1"}[1d]))
-                  or
-                  vector(0)
-                )
-                +
-                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le="5"}[1d]))
-                +
-                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le="30"}[1d]))
-              )
-            )
-            +
-            # errors
-            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[1d]))
-          )
-          /
-          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[1d]))
-        labels:
-          verb: read
-        record: apiserver_request:burnrate1d
-      - expr: |
-          (
-            (
-              # too slow
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[1h]))
-              -
-              (
-                (
-                  sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le="1"}[1h]))
-                  or
-                  vector(0)
-                )
-                +
-                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le="5"}[1h]))
-                +
-                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le="30"}[1h]))
-              )
-            )
-            +
-            # errors
-            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[1h]))
-          )
-          /
-          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[1h]))
-        labels:
-          verb: read
-        record: apiserver_request:burnrate1h
-      - expr: |
-          (
-            (
-              # too slow
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[2h]))
-              -
-              (
-                (
-                  sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le="1"}[2h]))
-                  or
-                  vector(0)
-                )
-                +
-                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le="5"}[2h]))
-                +
-                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le="30"}[2h]))
-              )
-            )
-            +
-            # errors
-            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[2h]))
-          )
-          /
-          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[2h]))
-        labels:
-          verb: read
-        record: apiserver_request:burnrate2h
-      - expr: |
-          (
-            (
-              # too slow
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[30m]))
-              -
-              (
-                (
-                  sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le="1"}[30m]))
-                  or
-                  vector(0)
-                )
-                +
-                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le="5"}[30m]))
-                +
-                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le="30"}[30m]))
-              )
-            )
-            +
-            # errors
-            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[30m]))
-          )
-          /
-          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[30m]))
-        labels:
-          verb: read
-        record: apiserver_request:burnrate30m
-      - expr: |
-          (
-            (
-              # too slow
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[3d]))
-              -
-              (
-                (
-                  sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le="1"}[3d]))
-                  or
-                  vector(0)
-                )
-                +
-                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le="5"}[3d]))
-                +
-                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le="30"}[3d]))
-              )
-            )
-            +
-            # errors
-            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[3d]))
-          )
-          /
-          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[3d]))
-        labels:
-          verb: read
-        record: apiserver_request:burnrate3d
-      - expr: |
-          (
-            (
-              # too slow
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[5m]))
-              -
-              (
-                (
-                  sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le="1"}[5m]))
-                  or
-                  vector(0)
-                )
-                +
-                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le="5"}[5m]))
-                +
-                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le="30"}[5m]))
-              )
-            )
-            +
-            # errors
-            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[5m]))
-          )
-          /
-          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[5m]))
-        labels:
-          verb: read
-        record: apiserver_request:burnrate5m
-      - expr: |
-          (
-            (
-              # too slow
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[6h]))
-              -
-              (
-                (
-                  sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le="1"}[6h]))
-                  or
-                  vector(0)
-                )
-                +
-                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le="5"}[6h]))
-                +
-                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le="30"}[6h]))
-              )
-            )
-            +
-            # errors
-            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[6h]))
-          )
-          /
-          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[6h]))
-        labels:
-          verb: read
-        record: apiserver_request:burnrate6h
-      - expr: |
-          (
-            (
-              # too slow
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[1d]))
-              -
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le="1"}[1d]))
-            )
-            +
-            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[1d]))
-          )
-          /
-          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[1d]))
-        labels:
-          verb: write
-        record: apiserver_request:burnrate1d
-      - expr: |
-          (
-            (
-              # too slow
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[1h]))
-              -
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le="1"}[1h]))
-            )
-            +
-            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[1h]))
-          )
-          /
-          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[1h]))
-        labels:
-          verb: write
-        record: apiserver_request:burnrate1h
-      - expr: |
-          (
-            (
-              # too slow
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[2h]))
-              -
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le="1"}[2h]))
-            )
-            +
-            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[2h]))
-          )
-          /
-          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[2h]))
-        labels:
-          verb: write
-        record: apiserver_request:burnrate2h
-      - expr: |
-          (
-            (
-              # too slow
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[30m]))
-              -
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le="1"}[30m]))
-            )
-            +
-            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[30m]))
-          )
-          /
-          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[30m]))
-        labels:
-          verb: write
-        record: apiserver_request:burnrate30m
-      - expr: |
-          (
-            (
-              # too slow
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[3d]))
-              -
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le="1"}[3d]))
-            )
-            +
-            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[3d]))
-          )
-          /
-          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[3d]))
-        labels:
-          verb: write
-        record: apiserver_request:burnrate3d
-      - expr: |
-          (
-            (
-              # too slow
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[5m]))
-              -
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le="1"}[5m]))
-            )
-            +
-            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[5m]))
-          )
-          /
-          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[5m]))
-        labels:
-          verb: write
-        record: apiserver_request:burnrate5m
-      - expr: |
-          (
-            (
-              # too slow
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[6h]))
-              -
-              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le="1"}[6h]))
-            )
-            +
-            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[6h]))
-          )
-          /
-          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[6h]))
-        labels:
-          verb: write
-        record: apiserver_request:burnrate6h
-  - name: kube-apiserver-histogram.rules
-    rules:
-      - expr: |
-          histogram_quantile(0.99, sum by (cluster_id, installation, pipeline, provider, le, resource) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[5m]))) > 0
-        labels:
-          quantile: "0.99"
-          verb: read
-        record: cluster_quantile:apiserver_request_duration_seconds:histogram_quantile
-      - expr: |
-          histogram_quantile(0.99, sum by (cluster_id, installation, pipeline, provider, le, resource) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[5m]))) > 0
-        labels:
-          quantile: "0.99"
-          verb: write
-        record: cluster_quantile:apiserver_request_duration_seconds:histogram_quantile
   - interval: 3m
     name: kube-apiserver-availability.rules
     rules:
@@ -341,39 +24,35 @@ spec:
           verb: write
         record: code:apiserver_request_total:increase30d
       - expr: |
-          sum by (cluster_id, installation, pipeline, provider, verb, scope) (increase(apiserver_request_duration_seconds_count[1h]))
-        record: cluster_verb_scope:apiserver_request_duration_seconds_count:increase1h
-      - expr: |
-          sum by (cluster_id, installation, pipeline, provider, verb, scope) (avg_over_time(cluster_verb_scope:apiserver_request_duration_seconds_count:increase1h[30d]) * 24 * 30)
-        record: cluster_verb_scope:apiserver_request_duration_seconds_count:increase30d
-      - expr: |
           sum by (cluster_id, installation, pipeline, provider, verb, scope, le) (increase(apiserver_request_duration_seconds_bucket[1h]))
         record: cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase1h
       - expr: |
           sum by (cluster_id, installation, pipeline, provider, verb, scope, le) (avg_over_time(cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase1h[30d]) * 24 * 30)
         record: cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d
       - expr: |
+          sum by (cluster_id, installation, pipeline, provider, verb, scope) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase1h{le="+Inf"})
+        record: cluster_verb_scope:apiserver_request_duration_seconds_count:increase1h
+      - expr: |
+          sum by (cluster_id, installation, pipeline, provider, verb, scope) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{le="+Inf"})
+        record: cluster_verb_scope:apiserver_request_duration_seconds_count:increase30d
+      - expr: |
           1 - (
             (
               # write too slow
               sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope:apiserver_request_duration_seconds_count:increase30d{verb=~"POST|PUT|PATCH|DELETE"})
               -
-              sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"POST|PUT|PATCH|DELETE",le="1"})
+              sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"POST|PUT|PATCH|DELETE",le=~"1(\\.0)?"} or vector(0))
             ) +
             (
               # read too slow
               sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope:apiserver_request_duration_seconds_count:increase30d{verb=~"LIST|GET"})
               -
               (
-                (
-                  sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"LIST|GET",scope=~"resource|",le="1"})
-                  or
-                  vector(0)
-                )
+                sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"LIST|GET",scope=~"resource|",le=~"1(\\.0)?"} or vector(0))
                 +
-                sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"LIST|GET",scope="namespace",le="5"})
+                sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"LIST|GET",scope="namespace",le=~"5(\\.0)?"} or vector(0))
                 +
-                sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"LIST|GET",scope="cluster",le="30"})
+                sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"LIST|GET",scope="cluster",le=~"30(\\.0)?"} or vector(0))
               )
             ) +
             # errors
@@ -390,15 +69,11 @@ spec:
             -
             (
               # too slow
-              (
-                sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"LIST|GET",scope=~"resource|",le="1"})
-                or
-                vector(0)
-              )
+              sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"LIST|GET",scope=~"resource|",le=~"1(\\.0)?"} or vector(0))
               +
-              sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"LIST|GET",scope="namespace",le="5"})
+              sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"LIST|GET",scope="namespace",le=~"5(\\.0)?"} or vector(0))
               +
-              sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"LIST|GET",scope="cluster",le="30"})
+              sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"LIST|GET",scope="cluster",le=~"30(\\.0)?"} or vector(0))
             )
             +
             # errors
@@ -415,7 +90,7 @@ spec:
               # too slow
               sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope:apiserver_request_duration_seconds_count:increase30d{verb=~"POST|PUT|PATCH|DELETE"})
               -
-              sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"POST|PUT|PATCH|DELETE",le="1"})
+              sum by (cluster_id, installation, pipeline, provider) (cluster_verb_scope_le:apiserver_request_duration_seconds_bucket:increase30d{verb=~"POST|PUT|PATCH|DELETE",le=~"1(\\.0)?"} or vector(0))
             )
             +
             # errors
@@ -448,8 +123,332 @@ spec:
       - expr: |
           sum by (cluster_id, installation, pipeline, provider, code, verb) (increase(apiserver_request_total{app="kubernetes",verb=~"LIST|GET|POST|PUT|PATCH|DELETE",code=~"5.."}[1h]))
         record: code_verb:apiserver_request_total:increase1h
-  - name: k8s.rules
+  - name: kube-apiserver-burnrate.rules
     rules:
+      - expr: |
+          (
+            (
+              # too slow
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[1d]))
+              -
+              (
+                (
+                  sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le=~"1(\\.0)?"}[1d]))
+                  or
+                  vector(0)
+                )
+                +
+                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le=~"5(\\.0)?"}[1d]))
+                +
+                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le=~"30(\\.0)?"}[1d]))
+              )
+            )
+            +
+            # errors
+            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[1d]))
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[1d]))
+        labels:
+          verb: read
+        record: apiserver_request:burnrate1d
+      - expr: |
+          (
+            (
+              # too slow
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[1h]))
+              -
+              (
+                (
+                  sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le=~"1(\\.0)?"}[1h]))
+                  or
+                  vector(0)
+                )
+                +
+                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le=~"5(\\.0)?"}[1h]))
+                +
+                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le=~"30(\\.0)?"}[1h]))
+              )
+            )
+            +
+            # errors
+            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[1h]))
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[1h]))
+        labels:
+          verb: read
+        record: apiserver_request:burnrate1h
+      - expr: |
+          (
+            (
+              # too slow
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[2h]))
+              -
+              (
+                (
+                  sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le=~"1(\\.0)?"}[2h]))
+                  or
+                  vector(0)
+                )
+                +
+                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le=~"5(\\.0)?"}[2h]))
+                +
+                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le=~"30(\\.0)?"}[2h]))
+              )
+            )
+            +
+            # errors
+            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[2h]))
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[2h]))
+        labels:
+          verb: read
+        record: apiserver_request:burnrate2h
+      - expr: |
+          (
+            (
+              # too slow
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[30m]))
+              -
+              (
+                (
+                  sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le=~"1(\\.0)?"}[30m]))
+                  or
+                  vector(0)
+                )
+                +
+                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le=~"5(\\.0)?"}[30m]))
+                +
+                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le=~"30(\\.0)?"}[30m]))
+              )
+            )
+            +
+            # errors
+            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[30m]))
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[30m]))
+        labels:
+          verb: read
+        record: apiserver_request:burnrate30m
+      - expr: |
+          (
+            (
+              # too slow
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[3d]))
+              -
+              (
+                (
+                  sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le=~"1(\\.0)?"}[3d]))
+                  or
+                  vector(0)
+                )
+                +
+                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le=~"5(\\.0)?"}[3d]))
+                +
+                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le=~"30(\\.0)?"}[3d]))
+              )
+            )
+            +
+            # errors
+            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[3d]))
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[3d]))
+        labels:
+          verb: read
+        record: apiserver_request:burnrate3d
+      - expr: |
+          (
+            (
+              # too slow
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[5m]))
+              -
+              (
+                (
+                  sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le=~"1(\\.0)?"}[5m]))
+                  or
+                  vector(0)
+                )
+                +
+                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le=~"5(\\.0)?"}[5m]))
+                +
+                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le=~"30(\\.0)?"}[5m]))
+              )
+            )
+            +
+            # errors
+            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[5m]))
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[5m]))
+        labels:
+          verb: read
+        record: apiserver_request:burnrate5m
+      - expr: |
+          (
+            (
+              # too slow
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[6h]))
+              -
+              (
+                (
+                  sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope=~"resource|",le=~"1(\\.0)?"}[6h]))
+                  or
+                  vector(0)
+                )
+                +
+                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="namespace",le=~"5(\\.0)?"}[6h]))
+                +
+                sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward",scope="cluster",le=~"30(\\.0)?"}[6h]))
+              )
+            )
+            +
+            # errors
+            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET",code=~"5.."}[6h]))
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"LIST|GET"}[6h]))
+        labels:
+          verb: read
+        record: apiserver_request:burnrate6h
+      - expr: |
+          (
+            (
+              # too slow
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[1d]))
+              -
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le=~"1(\\.0)?"}[1d]))
+            )
+            +
+            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[1d]))
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[1d]))
+        labels:
+          verb: write
+        record: apiserver_request:burnrate1d
+      - expr: |
+          (
+            (
+              # too slow
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[1h]))
+              -
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le=~"1(\\.0)?"}[1h]))
+            )
+            +
+            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[1h]))
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[1h]))
+        labels:
+          verb: write
+        record: apiserver_request:burnrate1h
+      - expr: |
+          (
+            (
+              # too slow
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[2h]))
+              -
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le=~"1(\\.0)?"}[2h]))
+            )
+            +
+            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[2h]))
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[2h]))
+        labels:
+          verb: write
+        record: apiserver_request:burnrate2h
+      - expr: |
+          (
+            (
+              # too slow
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[30m]))
+              -
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le=~"1(\\.0)?"}[30m]))
+            )
+            +
+            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[30m]))
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[30m]))
+        labels:
+          verb: write
+        record: apiserver_request:burnrate30m
+      - expr: |
+          (
+            (
+              # too slow
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[3d]))
+              -
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le=~"1(\\.0)?"}[3d]))
+            )
+            +
+            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[3d]))
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[3d]))
+        labels:
+          verb: write
+        record: apiserver_request:burnrate3d
+      - expr: |
+          (
+            (
+              # too slow
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[5m]))
+              -
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le=~"1(\\.0)?"}[5m]))
+            )
+            +
+            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[5m]))
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[5m]))
+        labels:
+          verb: write
+        record: apiserver_request:burnrate5m
+      - expr: |
+          (
+            (
+              # too slow
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_count{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[6h]))
+              -
+              sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward",le=~"1(\\.0)?"}[6h]))
+            )
+            +
+            sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",code=~"5.."}[6h]))
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider) (rate(apiserver_request_total{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE"}[6h]))
+        labels:
+          verb: write
+        record: apiserver_request:burnrate6h
+  - name: kube-apiserver-histogram.rules
+    rules:
+      - expr: |
+          histogram_quantile(0.99, sum by (cluster_id, installation, pipeline, provider, le, resource) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"LIST|GET",subresource!~"proxy|attach|log|exec|portforward"}[5m]))) > 0
+        labels:
+          quantile: "0.99"
+          verb: read
+        record: cluster_quantile:apiserver_request_duration_seconds:histogram_quantile
+      - expr: |
+          histogram_quantile(0.99, sum by (cluster_id, installation, pipeline, provider, le, resource) (rate(apiserver_request_duration_seconds_bucket{app="kubernetes",verb=~"POST|PUT|PATCH|DELETE",subresource!~"proxy|attach|log|exec|portforward"}[5m]))) > 0
+        labels:
+          quantile: "0.99"
+          verb: write
+        record: cluster_quantile:apiserver_request_duration_seconds:histogram_quantile
+  - name: k8s.rules.container_cpu_usage_seconds_total
+    rules:
+      - expr: |
+          sum by (cluster_id, installation, pipeline, provider, namespace, pod, container) (
+            rate(container_cpu_usage_seconds_total{app="cadvisor", image!=""}[5m])
+          ) * on (cluster_id, installation, pipeline, provider, namespace, pod) group_left(node) topk by (cluster_id, installation, pipeline, provider, namespace, pod) (
+            1, max by(cluster_id, installation, pipeline, provider, namespace, pod, node) (kube_pod_info{node!=""})
+          )
+        record: node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m
       - expr: |
           sum by (cluster_id, installation, pipeline, provider, namespace, pod, container) (
             irate(container_cpu_usage_seconds_total{app="cadvisor", image!=""}[5m])
@@ -457,32 +456,42 @@ spec:
             1, max by(cluster_id, installation, pipeline, provider, namespace, pod, node) (kube_pod_info{node!=""})
           )
         record: node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate
+  - name: k8s.rules.container_memory_working_set_bytes
+    rules:
       - expr: |
           container_memory_working_set_bytes{app="cadvisor", image!=""}
-          * on (namespace, pod) group_left(node) topk by(namespace, pod) (1,
-            max by(namespace, pod, node) (kube_pod_info{node!=""})
+          * on (cluster_id, installation, pipeline, provider, namespace, pod) group_left(node) topk by(cluster_id, installation, pipeline, provider, namespace, pod) (1,
+            max by(cluster_id, installation, pipeline, provider, namespace, pod, node) (kube_pod_info{node!=""})
           )
         record: node_namespace_pod_container:container_memory_working_set_bytes
+  - name: k8s.rules.container_memory_rss
+    rules:
       - expr: |
           container_memory_rss{app="cadvisor", image!=""}
-          * on (namespace, pod) group_left(node) topk by(namespace, pod) (1,
-            max by(namespace, pod, node) (kube_pod_info{node!=""})
+          * on (cluster_id, installation, pipeline, provider, namespace, pod) group_left(node) topk by(cluster_id, installation, pipeline, provider, namespace, pod) (1,
+            max by(cluster_id, installation, pipeline, provider, namespace, pod, node) (kube_pod_info{node!=""})
           )
         record: node_namespace_pod_container:container_memory_rss
+  - name: k8s.rules.container_memory_cache
+    rules:
       - expr: |
           container_memory_cache{app="cadvisor", image!=""}
-          * on (namespace, pod) group_left(node) topk by(namespace, pod) (1,
-            max by(namespace, pod, node) (kube_pod_info{node!=""})
+          * on (cluster_id, installation, pipeline, provider, namespace, pod) group_left(node) topk by(cluster_id, installation, pipeline, provider, namespace, pod) (1,
+            max by(cluster_id, installation, pipeline, provider, namespace, pod, node) (kube_pod_info{node!=""})
           )
         record: node_namespace_pod_container:container_memory_cache
+  - name: k8s.rules.container_memory_swap
+    rules:
       - expr: |
           container_memory_swap{app="cadvisor", image!=""}
-          * on (namespace, pod) group_left(node) topk by(namespace, pod) (1,
-            max by(namespace, pod, node) (kube_pod_info{node!=""})
+          * on (cluster_id, installation, pipeline, provider, namespace, pod) group_left(node) topk by(cluster_id, installation, pipeline, provider, namespace, pod) (1,
+            max by(cluster_id, installation, pipeline, provider, namespace, pod, node) (kube_pod_info{node!=""})
           )
         record: node_namespace_pod_container:container_memory_swap
+  - name: k8s.rules.container_memory_requests
+    rules:
       - expr: |
-          kube_pod_container_resource_requests{resource="memory",job="kube-state-metrics"}  * on (namespace, pod, cluster_id, installation, pipeline, provider)
+          kube_pod_container_resource_requests{resource="memory",app="kube-state-metrics"}  * on (namespace, pod, cluster_id, installation, pipeline, provider)
           group_left() max by (namespace, pod, cluster_id, installation, pipeline, provider) (
             (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
           )
@@ -491,15 +500,17 @@ spec:
           sum by (namespace, cluster_id, installation, pipeline, provider) (
               sum by (namespace, pod, cluster_id, installation, pipeline, provider) (
                   max by (namespace, pod, container, cluster_id, installation, pipeline, provider) (
-                    kube_pod_container_resource_requests{resource="memory",job="kube-state-metrics"}
+                    kube_pod_container_resource_requests{resource="memory",app="kube-state-metrics"}
                   ) * on(namespace, pod, cluster_id, installation, pipeline, provider) group_left() max by (namespace, pod, cluster_id, installation, pipeline, provider) (
                     kube_pod_status_phase{phase=~"Pending|Running"} == 1
                   )
               )
           )
         record: namespace_memory:kube_pod_container_resource_requests:sum
+  - name: k8s.rules.container_cpu_requests
+    rules:
       - expr: |
-          kube_pod_container_resource_requests{resource="cpu",job="kube-state-metrics"}  * on (namespace, pod, cluster_id, installation, pipeline, provider)
+          kube_pod_container_resource_requests{resource="cpu",app="kube-state-metrics"}  * on (namespace, pod, cluster_id, installation, pipeline, provider)
           group_left() max by (namespace, pod, cluster_id, installation, pipeline, provider) (
             (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
           )
@@ -508,15 +519,17 @@ spec:
           sum by (namespace, cluster_id, installation, pipeline, provider) (
               sum by (namespace, pod, cluster_id, installation, pipeline, provider) (
                   max by (namespace, pod, container, cluster_id, installation, pipeline, provider) (
-                    kube_pod_container_resource_requests{resource="cpu",job="kube-state-metrics"}
+                    kube_pod_container_resource_requests{resource="cpu",app="kube-state-metrics"}
                   ) * on(namespace, pod, cluster_id, installation, pipeline, provider) group_left() max by (namespace, pod, cluster_id, installation, pipeline, provider) (
                     kube_pod_status_phase{phase=~"Pending|Running"} == 1
                   )
               )
           )
         record: namespace_cpu:kube_pod_container_resource_requests:sum
+  - name: k8s.rules.container_memory_limits
+    rules:
       - expr: |
-          kube_pod_container_resource_limits{resource="memory",job="kube-state-metrics"}  * on (namespace, pod, cluster_id, installation, pipeline, provider)
+          kube_pod_container_resource_limits{resource="memory",app="kube-state-metrics"}  * on (namespace, pod, cluster_id, installation, pipeline, provider)
           group_left() max by (namespace, pod, cluster_id, installation, pipeline, provider) (
             (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
           )
@@ -525,39 +538,60 @@ spec:
           sum by (namespace, cluster_id, installation, pipeline, provider) (
               sum by (namespace, pod, cluster_id, installation, pipeline, provider) (
                   max by (namespace, pod, container, cluster_id, installation, pipeline, provider) (
-                    kube_pod_container_resource_limits{resource="memory",job="kube-state-metrics"}
+                    kube_pod_container_resource_limits{resource="memory",app="kube-state-metrics"}
                   ) * on(namespace, pod, cluster_id, installation, pipeline, provider) group_left() max by (namespace, pod, cluster_id, installation, pipeline, provider) (
                     kube_pod_status_phase{phase=~"Pending|Running"} == 1
                   )
               )
           )
         record: namespace_memory:kube_pod_container_resource_limits:sum
+  - name: k8s.rules.container_cpu_limits
+    rules:
       - expr: |
-          kube_pod_container_resource_limits{resource="cpu",job="kube-state-metrics"}  * on (namespace, pod, cluster_id, installation, pipeline, provider)
+          kube_pod_container_resource_limits{resource="cpu",app="kube-state-metrics"}  * on (namespace, pod, cluster_id, installation, pipeline, provider)
           group_left() max by (namespace, pod, cluster_id, installation, pipeline, provider) (
-           (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
-           )
+            (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
+          )
         record: cluster:namespace:pod_cpu:active:kube_pod_container_resource_limits
       - expr: |
           sum by (namespace, cluster_id, installation, pipeline, provider) (
               sum by (namespace, pod, cluster_id, installation, pipeline, provider) (
                   max by (namespace, pod, container, cluster_id, installation, pipeline, provider) (
-                    kube_pod_container_resource_limits{resource="cpu",job="kube-state-metrics"}
+                    kube_pod_container_resource_limits{resource="cpu",app="kube-state-metrics"}
                   ) * on(namespace, pod, cluster_id, installation, pipeline, provider) group_left() max by (namespace, pod, cluster_id, installation, pipeline, provider) (
                     kube_pod_status_phase{phase=~"Pending|Running"} == 1
                   )
               )
           )
         record: namespace_cpu:kube_pod_container_resource_limits:sum
+  - name: k8s.rules.pod_owner
+    rules:
       - expr: |
           max by (cluster_id, installation, pipeline, provider, namespace, workload, pod) (
             label_replace(
               label_replace(
-                kube_pod_owner{job="kube-state-metrics", owner_kind="ReplicaSet"},
+                kube_pod_owner{app="kube-state-metrics", owner_kind="ReplicaSet"},
                 "replicaset", "$1", "owner_name", "(.*)"
-              ) * on(replicaset, namespace) group_left(owner_name) topk by(replicaset, namespace) (
-                1, max by (replicaset, namespace, owner_name) (
-                  kube_replicaset_owner{job="kube-state-metrics"}
+              ) * on (cluster_id, installation, pipeline, provider, replicaset, namespace) group_left(owner_name) topk by(cluster_id, installation, pipeline, provider, replicaset, namespace) (
+                1, max by (cluster_id, installation, pipeline, provider, replicaset, namespace, owner_name) (
+                  kube_replicaset_owner{app="kube-state-metrics", owner_kind=""}
+                )
+              ),
+              "workload", "$1", "replicaset", "(.*)"
+            )
+          )
+        labels:
+          workload_type: replicaset
+        record: namespace_workload_pod:kube_pod_owner:relabel
+      - expr: |
+          max by (cluster_id, installation, pipeline, provider, namespace, workload, pod) (
+            label_replace(
+              label_replace(
+                kube_pod_owner{app="kube-state-metrics", owner_kind="ReplicaSet"},
+                "replicaset", "$1", "owner_name", "(.*)"
+              ) * on(replicaset, namespace, cluster_id, installation, pipeline, provider) group_left(owner_name) topk by(cluster_id, installation, pipeline, provider, replicaset, namespace) (
+                1, max by (cluster_id, installation, pipeline, provider, replicaset, namespace, owner_name) (
+                  kube_replicaset_owner{app="kube-state-metrics", owner_kind="Deployment"}
                 )
               ),
               "workload", "$1", "owner_name", "(.*)"
@@ -569,7 +603,7 @@ spec:
       - expr: |
           max by (cluster_id, installation, pipeline, provider, namespace, workload, pod) (
             label_replace(
-              kube_pod_owner{job="kube-state-metrics", owner_kind="DaemonSet"},
+              kube_pod_owner{app="kube-state-metrics", owner_kind="DaemonSet"},
               "workload", "$1", "owner_name", "(.*)"
             )
           )
@@ -579,83 +613,146 @@ spec:
       - expr: |
           max by (cluster_id, installation, pipeline, provider, namespace, workload, pod) (
             label_replace(
-              kube_pod_owner{job="kube-state-metrics", owner_kind="StatefulSet"},
-              "workload", "$1", "owner_name", "(.*)"
-            )
+              kube_pod_owner{app="kube-state-metrics", owner_kind="StatefulSet"},
+            "workload", "$1", "owner_name", "(.*)")
           )
         labels:
           workload_type: statefulset
         record: namespace_workload_pod:kube_pod_owner:relabel
       - expr: |
-          max by (cluster_id, installation, pipeline, provider, namespace, workload, pod) (
-            label_replace(
-              kube_pod_owner{job="kube-state-metrics", owner_kind="Job"},
-              "workload", "$1", "owner_name", "(.*)"
-            )
+          group by (cluster_id, installation, pipeline, provider, namespace, workload, pod) (
+            label_join(
+              group by (cluster_id, installation, pipeline, provider, namespace, job_name, pod, owner_name) (
+                label_join(
+                  kube_pod_owner{app="kube-state-metrics", owner_kind="Job"}
+                , "job_name", "", "owner_name")
+              )
+              * on (cluster_id, installation, pipeline, provider, namespace, job_name) group_left()
+              group by (cluster_id, installation, pipeline, provider, namespace, job_name) (
+                kube_job_owner{app="kube-state-metrics", owner_kind=~"Pod|"}
+              )
+            , "workload", "", "owner_name")
           )
         labels:
           workload_type: job
         record: namespace_workload_pod:kube_pod_owner:relabel
+      - expr: |
+          max by (cluster_id, installation, pipeline, provider, namespace, workload, pod) (
+            label_replace(
+              kube_pod_owner{app="kube-state-metrics", owner_kind="", owner_name=""},
+            "workload", "$1", "pod", "(.+)")
+          )
+        labels:
+          workload_type: barepod
+        record: namespace_workload_pod:kube_pod_owner:relabel
+      - expr: |
+          max by (cluster_id, installation, pipeline, provider, namespace, workload, pod) (
+            label_replace(
+              kube_pod_owner{app="kube-state-metrics", owner_kind="Node"},
+            "workload", "$1", "pod", "(.+)")
+          )
+        labels:
+          workload_type: staticpod
+        record: namespace_workload_pod:kube_pod_owner:relabel
+      - expr: |
+          group by (cluster_id, installation, pipeline, provider, namespace, workload, workload_type, pod) (
+            label_join(
+              label_join(
+                group by (cluster_id, installation, pipeline, provider, namespace, job_name, pod) (
+                  label_join(
+                    kube_pod_owner{app="kube-state-metrics", owner_kind="Job"}
+                  , "job_name", "", "owner_name")
+                )
+                * on (cluster_id, installation, pipeline, provider, namespace, job_name) group_left(owner_kind, owner_name)
+                group by (cluster_id, installation, pipeline, provider, namespace, job_name, owner_kind, owner_name) (
+                  kube_job_owner{app="kube-state-metrics", owner_kind!="Pod", owner_kind!=""}
+                )
+              , "workload", "", "owner_name")
+            , "workload_type", "", "owner_kind")
+
+            OR
+
+            label_replace(
+              label_replace(
+                label_replace(
+                  kube_pod_owner{app="kube-state-metrics", owner_kind="ReplicaSet"}
+                  , "replicaset", "$1", "owner_name", "(.+)"
+                )
+                * on(cluster_id, installation, pipeline, provider, namespace, replicaset) group_left(owner_kind, owner_name)
+                group by (cluster_id, installation, pipeline, provider, namespace, replicaset, owner_kind, owner_name) (
+                  kube_replicaset_owner{app="kube-state-metrics", owner_kind!="Deployment", owner_kind!=""}
+                )
+              , "workload", "$1", "owner_name", "(.+)")
+              OR
+              label_replace(
+                group by (cluster_id, installation, pipeline, provider, namespace, pod, owner_name, owner_kind) (
+                  kube_pod_owner{app="kube-state-metrics", owner_kind!="ReplicaSet", owner_kind!="DaemonSet", owner_kind!="StatefulSet", owner_kind!="Job", owner_kind!="Node", owner_kind!=""}
+                )
+                , "workload", "$1", "owner_name", "(.+)"
+              )
+            , "workload_type", "$1", "owner_kind", "(.+)")
+          )
+        record: namespace_workload_pod:kube_pod_owner:relabel
   - name: kube-scheduler.rules
     rules:
       - expr: |
-          histogram_quantile(0.99, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
+          histogram_quantile(0.99, sum(rate(scheduler_scheduling_attempt_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
           quantile: "0.99"
-        record: cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
+        record: cluster_quantile:scheduler_scheduling_attempt_duration_seconds:histogram_quantile
       - expr: |
           histogram_quantile(0.99, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
           quantile: "0.99"
         record: cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
       - expr: |
-          histogram_quantile(0.99, sum(rate(scheduler_binding_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
+          histogram_quantile(0.99, sum(rate(scheduler_pod_scheduling_sli_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
           quantile: "0.99"
-        record: cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
+        record: cluster_quantile:scheduler_pod_scheduling_sli_duration_seconds:histogram_quantile
       - expr: |
-          histogram_quantile(0.9, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
+          histogram_quantile(0.9, sum(rate(scheduler_scheduling_attempt_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
           quantile: "0.9"
-        record: cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
+        record: cluster_quantile:scheduler_scheduling_attempt_duration_seconds:histogram_quantile
       - expr: |
           histogram_quantile(0.9, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
           quantile: "0.9"
         record: cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
       - expr: |
-          histogram_quantile(0.9, sum(rate(scheduler_binding_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
+          histogram_quantile(0.9, sum(rate(scheduler_pod_scheduling_sli_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
           quantile: "0.9"
-        record: cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
+        record: cluster_quantile:scheduler_pod_scheduling_sli_duration_seconds:histogram_quantile
       - expr: |
-          histogram_quantile(0.5, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
+          histogram_quantile(0.5, sum(rate(scheduler_scheduling_attempt_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
           quantile: "0.5"
-        record: cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
+        record: cluster_quantile:scheduler_scheduling_attempt_duration_seconds:histogram_quantile
       - expr: |
           histogram_quantile(0.5, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
           quantile: "0.5"
         record: cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
       - expr: |
-          histogram_quantile(0.5, sum(rate(scheduler_binding_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
+          histogram_quantile(0.5, sum(rate(scheduler_pod_scheduling_sli_duration_seconds_bucket{app="kube-scheduler"}[5m])) without(instance, pod))
         labels:
           quantile: "0.5"
-        record: cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
+        record: cluster_quantile:scheduler_pod_scheduling_sli_duration_seconds:histogram_quantile
   - name: node.rules
     rules:
       - expr: |
           topk by(cluster_id, installation, pipeline, provider, namespace, pod) (1,
             max by (cluster_id, installation, pipeline, provider, node, namespace, pod) (
-              label_replace(kube_pod_info{job="kube-state-metrics",node!=""}, "pod", "$1", "pod", "(.*)")
+              label_replace(kube_pod_info{app="kube-state-metrics",node!=""}, "pod", "$1", "pod", "(.*)")
           ))
         record: 'node_namespace_pod:kube_pod_info:'
       - expr: |
           count by (cluster_id, installation, pipeline, provider, node) (
             node_cpu_seconds_total{mode="idle",app="node-exporter"}
-            * on (namespace, pod) group_left(node)
-            topk by(namespace, pod) (1, node_namespace_pod:kube_pod_info:)
+            * on (cluster_id, installation, pipeline, provider, namespace, pod) group_left(node)
+            topk by(cluster_id, installation, pipeline, provider, namespace, pod) (1, node_namespace_pod:kube_pod_info:)
           )
         record: node:node_num_cpu:sum
       - expr: |
@@ -684,17 +781,32 @@ spec:
   - name: kubelet.rules
     rules:
       - expr: |
-          histogram_quantile(0.99, sum(rate(kubelet_pleg_relist_duration_seconds_bucket[5m])) by (cluster_id, installation, pipeline, provider, instance, le) * on(cluster_id, installation, pipeline, provider, instance) group_left(node) kubelet_node_name{app="kubelet"})
+          histogram_quantile(
+            0.99,
+            sum(rate(kubelet_pleg_relist_duration_seconds_bucket{app="kubelet"}[5m])) by (cluster_id, installation, pipeline, provider, instance, le)
+            * on(cluster_id, installation, pipeline, provider, instance) group_left (node)
+            max by (cluster_id, installation, pipeline, provider, instance, node) (kubelet_node_name{app="kubelet"})
+          )
         labels:
           quantile: "0.99"
         record: node_quantile:kubelet_pleg_relist_duration_seconds:histogram_quantile
       - expr: |
-          histogram_quantile(0.9, sum(rate(kubelet_pleg_relist_duration_seconds_bucket[5m])) by (cluster_id, installation, pipeline, provider, instance, le) * on(cluster_id, installation, pipeline, provider, instance) group_left(node) kubelet_node_name{app="kubelet"})
+          histogram_quantile(
+            0.9,
+            sum(rate(kubelet_pleg_relist_duration_seconds_bucket{app="kubelet"}[5m])) by (cluster_id, installation, pipeline, provider, instance, le)
+            * on(cluster_id, installation, pipeline, provider, instance) group_left (node)
+            max by (cluster_id, installation, pipeline, provider, instance, node) (kubelet_node_name{app="kubelet"})
+          )
         labels:
           quantile: "0.9"
         record: node_quantile:kubelet_pleg_relist_duration_seconds:histogram_quantile
       - expr: |
-          histogram_quantile(0.5, sum(rate(kubelet_pleg_relist_duration_seconds_bucket[5m])) by (cluster_id, installation, pipeline, provider, instance, le) * on(cluster_id, installation, pipeline, provider, instance) group_left(node) kubelet_node_name{app="kubelet"})
+          histogram_quantile(
+            0.5,
+            sum(rate(kubelet_pleg_relist_duration_seconds_bucket{app="kubelet"}[5m])) by (cluster_id, installation, pipeline, provider, instance, le)
+            * on(cluster_id, installation, pipeline, provider, instance) group_left (node)
+            max by (cluster_id, installation, pipeline, provider, instance, node) (kubelet_node_name{app="kubelet"})
+          )
         labels:
           quantile: "0.5"
         record: node_quantile:kubelet_pleg_relist_duration_seconds:histogram_quantile

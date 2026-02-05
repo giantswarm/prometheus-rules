@@ -13,7 +13,7 @@ spec:
     - alert: CiliumBPFMapAlmostFull
       annotations:
         description: '{{`Cilium BPF map is about to fill up.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cilium-bpf-map/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-bpf-map/
       expr: avg(cilium_bpf_map_pressure) by (cluster_id, installation, pipeline, provider, map_name) * 100 > 80
       for: 15m
       labels:
@@ -25,7 +25,7 @@ spec:
     - alert: CiliumBPFMapFull
       annotations:
         description: '{{`Cilium BPF map is about filled up.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cilium-bpf-map/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-bpf-map/
       expr: avg(cilium_bpf_map_pressure) by (cluster_id, installation, pipeline, provider, map_name) * 100 > 95
       for: 15m
       labels:

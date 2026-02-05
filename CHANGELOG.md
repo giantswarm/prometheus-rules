@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.94.1] - 2026-02-05
+
 ### Changed
 
 - Bump kube-mixins to 1.4.1
@@ -4228,7 +4230,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.94.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.94.1...HEAD
+[4.94.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.94.0...v4.94.1
 [4.94.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.93.0...v4.94.0
 [4.93.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.92.0...v4.93.0
 [4.92.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.2...v4.92.0

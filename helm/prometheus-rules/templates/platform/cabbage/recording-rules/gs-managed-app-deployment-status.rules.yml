@@ -43,3 +43,13 @@ spec:
           "(.*)"
         )
       record: managed_app_deployment_spec_replicas
+    - expr: |
+        kube_deployment_status_replicas_available
+          * on (cluster_id, cluster_type, pod, namespace, deployment) group_left ()
+            kube_deployment_labels{namespace="envoy-gateway-system", label_app_kubernetes_io_component="proxy", label_app_kubernetes_io_name="envoy"}
+      record: envoy_proxy_deployment_status_replicas_available
+    - expr: |
+        kube_deployment_status_replicas_unavailable
+          * on (cluster_id, cluster_type, pod, namespace, deployment) group_left ()
+            kube_deployment_labels{namespace="envoy-gateway-system", label_app_kubernetes_io_component="proxy", label_app_kubernetes_io_name="envoy"}
+      record: envoy_proxy_deployment_status_replicas_unavailable

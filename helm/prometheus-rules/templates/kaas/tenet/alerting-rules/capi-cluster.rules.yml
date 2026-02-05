@@ -30,7 +30,7 @@ spec:
           annotations:
             description: |-
               {{`Cluster {{ $labels.exported_namespace }}/{{ $labels.cluster_id }} stuck in {{ $labels.phase }} phase.`}}
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-cluster/
             __dashboardUid__: bdi7iswg81czkcasd
             dashboardQueryParams: "orgId=2"
         - alert: ClusterStatusNotReady
@@ -55,7 +55,7 @@ spec:
           annotations:
             description: |-
               {{`Cluster {{ $labels.exported_namespace }}/{{ $labels.cluster_id }} is not ready.`}}
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-cluster/
             __dashboardUid__: bdi7iswg81czkcasd
             dashboardQueryParams: "orgId=2"
         - alert: ClusterPaused
@@ -80,7 +80,7 @@ spec:
           annotations:
             description: |-
               {{`The cluster {{ $labels.exported_namespace }}/{{ $labels.cluster_id }} is paused.`}}
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-cluster/
             __dashboardUid__: bdi7iswg81czkcasd
             dashboardQueryParams: "orgId=2"
         - alert: ClusterControlPlaneMachineStatusNotHealthy
@@ -133,4 +133,4 @@ spec:
           annotations:
             description: |-
               {{`Cluster '{{ $labels.namespace }}/{{ $labels.cluster_id }}' has one or more non-ready control plane nodes. Failing cluster upgrade/node-roll?`}}
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-cluster/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-cluster/

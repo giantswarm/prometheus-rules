@@ -93,7 +93,7 @@ spec:
     - alert: CiliumOperatorPodRestartingTooOften
       annotations:
         description: '{{`cilium-operator is restarting too often in cluster {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cilium-troubleshooting/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
       expr: 1 - sum(increase(kube_pod_container_status_restarts_total{container="cilium-operator"}[10m])) by (container, cluster_id, cluster_type, customer, installation, pipeline, provider, region)/100 < 0.98
       for: 10m
       labels:

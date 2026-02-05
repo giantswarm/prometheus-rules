@@ -4,7 +4,7 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: kyverno.rules
+  name: general.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:

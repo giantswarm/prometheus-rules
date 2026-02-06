@@ -61,7 +61,7 @@ spec:
       annotations:
         description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has no leader.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/etcd-has-no-leader/
-      expr: etcd_server_has_leader{cluster_type="workload_cluster", container!~"loki", provider!="eks"} == 0
+      expr: etcd_server_has_leader{cluster_type="workload_cluster", container!="loki", provider!="eks"} == 0
       for: 35m
       labels:
         area: kaas

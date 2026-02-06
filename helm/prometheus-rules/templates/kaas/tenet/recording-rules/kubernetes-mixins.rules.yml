@@ -6,6 +6,7 @@ metadata:
   name: kube-mixins.recording.rules
   namespace: {{ .Values.namespace  }}
 spec:
+  # pint file/disable promql/impossible
   groups:
   - interval: 3m
     name: kube-apiserver-availability.rules

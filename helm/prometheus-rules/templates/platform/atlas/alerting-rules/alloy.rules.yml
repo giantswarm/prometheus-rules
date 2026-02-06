@@ -115,7 +115,7 @@ spec:
               )
             ) by (cluster_id, installation, pipeline, provider) > 0
             unless on (cluster_id) (
-              count(up{job=~"alloy-metrics"} > 0) by (cluster_id)
+              count(up{job="alloy-metrics"} > 0) by (cluster_id)
             )
           for: 20m
           labels:
@@ -145,7 +145,7 @@ spec:
               ) == 1
             ) by (cluster_id, installation, pipeline, provider) > 0
             unless on (cluster_id) (
-              count(up{job=~"alloy-metrics"} > 0) by (cluster_id)
+              count(up{job="alloy-metrics"} > 0) by (cluster_id)
             )
           for: 2m
           labels:

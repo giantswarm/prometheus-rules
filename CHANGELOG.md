@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- KubeStateMetricsNotRetrievingMetrics performance tuning
+
 ## [4.94.1] - 2026-02-05
 
 ### Changed

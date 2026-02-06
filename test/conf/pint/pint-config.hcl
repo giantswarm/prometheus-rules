@@ -44,3 +44,7 @@ rule {
     resolve = "5m"
   }
 }
+
+check "promql/regexp" {
+  smelly = false
+}

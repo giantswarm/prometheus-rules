@@ -63,8 +63,9 @@ spec:
         description: '{{`KubeStateMetrics is not retrieving metrics.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
-        # When it looks up but we don't have metrics. We ignore the SLO alert that can be present even after 30 days after the cluster is deleted.
-        count({job="kube-state-metrics", __name__=~"kube_.+"}) by (cluster_id, installation, provider, pipeline) <= 100
+        # When it looks up but we don't have metrics.
+        # `kube_pod_status_phase` is standard and one of the main KSM metrics, and a small cluster has around 600 of these.
+        count(kube_pod_status_phase{job="kube-state-metrics"}) by (cluster_id, installation, provider, pipeline) <= 100
       for: 20m
       labels:
         area: platform

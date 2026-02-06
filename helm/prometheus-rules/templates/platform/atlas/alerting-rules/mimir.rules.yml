@@ -245,7 +245,7 @@ spec:
               pipeline="{{ .Values.managementCluster.pipeline }}"
             }
           )
-        )
+        ) >= 0
       for: 10m
       labels:
         area: platform

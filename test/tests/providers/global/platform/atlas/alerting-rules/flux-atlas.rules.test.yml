@@ -3,6 +3,7 @@ rule_files:
   - flux-atlas.rules.yml
 
 tests:
+  # Test: silences kustomization failing alone → alert fires
   - interval: 1m
     input_series:
       - series: 'gotk_resource_info{ready="False", job="giantswarm/cluster-api-monitoring", installation="test", cluster_id="test", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="silences"}'
@@ -29,3 +30,15 @@ tests:
             exp_annotations:
               description: "Flux Kustomization silences in ns flux-giantswarm on test/test is stuck in Failed state."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-kustomization-failed/?INSTALLATION=test&CLUSTER=test&NAMESPACE=flux-giantswarm&KUSTOMIZATION_NAME=silences"
+
+  # Test: silences and parent flux kustomization both failing → alert does NOT fire
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{ready="False", job="giantswarm/cluster-api-monitoring", installation="test", cluster_id="test", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="silences"}'
+        values: "1x60"
+      - series: 'gotk_resource_info{ready="False", job="giantswarm/cluster-api-monitoring", installation="test", cluster_id="test", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="flux"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: FluxKustomizationFailed
+        eval_time: 30m
+        exp_alerts: []

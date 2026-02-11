@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Aggregate `MimirRestartingTooOften` to fire once per installation instead of per container. [#35283](https://github.com/giantswarm/giantswarm/issues/35283)
+- Add `inhibit_metrics_broken` to `MimirRestartingTooOften` and `cancel_if_metrics_broken` to `MimirContinuousTestMissing` to suppress redundant pages when Mimir is restarting. [#35283](https://github.com/giantswarm/giantswarm/issues/35283)
+- Add `all_pipelines` to `MimirContinuousTestMissing` to page out of business hours. [#35283](https://github.com/giantswarm/giantswarm/issues/35283)
+
 ## [4.94.2] - 2026-02-09
 
 ### Changed

@@ -129,10 +129,8 @@ tests:
               area: platform
               cancel_if_outside_working_hours: "true"
               cluster_id: "mycluster"
-              cluster_type: management_cluster
-              container: mimir-ingester
+              inhibit_metrics_broken: "true"
               installation: "myinstall"
-              namespace: mimir
               severity: page
               team: atlas
               topic: observability
@@ -496,7 +494,9 @@ tests:
         eval_time: 70m
         exp_alerts:
           - exp_labels:
+              all_pipelines: "true"
               area: platform
+              cancel_if_metrics_broken: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
               inhibit_metrics_broken: "true"
@@ -517,7 +517,9 @@ tests:
         eval_time: 230m
         exp_alerts:
           - exp_labels:
+              all_pipelines: "true"
               area: platform
+              cancel_if_metrics_broken: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
               inhibit_metrics_broken: "true"

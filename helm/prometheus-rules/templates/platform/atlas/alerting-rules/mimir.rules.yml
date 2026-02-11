@@ -31,8 +31,10 @@ spec:
         description: '{{`Mimir containers are restarting too often.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
-        increase(
-          kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container!="prometheus"}[1h]
+        max by (cluster_id, installation, provider, pipeline) (
+          increase(
+            kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="mimir", container!="prometheus"}[1h]
+          )
         ) > 5
       for: 5m
       labels:
@@ -40,6 +42,7 @@ spec:
         # This label is used to ensure the alert go through even for non-stable installations
         all_pipelines: "true"
         cancel_if_outside_working_hours: "true"
+        inhibit_metrics_broken: "true"
         severity: page
         team: atlas
         topic: observability
@@ -248,7 +251,9 @@ spec:
         ) >= 0
       for: 10m
       labels:
+        all_pipelines: "true"
         area: platform
+        cancel_if_metrics_broken: "true"
         cancel_if_outside_working_hours: "true"
         inhibit_metrics_broken: "true"
         severity: page

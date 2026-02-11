@@ -38,10 +38,10 @@ spec:
         ) > 5
       for: 5m
       labels:
-        area: platform
         # This label is used to ensure the alert go through even for non-stable installations
         all_pipelines: "true"
-        cancel_if_outside_working_hours: "true"
+        area: platform
+        cancel_if_metrics_broken: "true"
         inhibit_metrics_broken: "true"
         severity: page
         team: atlas
@@ -251,10 +251,10 @@ spec:
         ) >= 0
       for: 10m
       labels:
+        # This label is used to ensure the alert go through even for non-stable installations
         all_pipelines: "true"
         area: platform
         cancel_if_metrics_broken: "true"
-        cancel_if_outside_working_hours: "true"
         inhibit_metrics_broken: "true"
         severity: page
         team: atlas

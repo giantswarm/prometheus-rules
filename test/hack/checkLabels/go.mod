@@ -11,7 +11,7 @@ require (
 	sigs.k8s.io/yaml v1.6.0
 )
 
-require github.com/prometheus/alertmanager v0.31.0
+require github.com/prometheus/alertmanager v0.31.1
 
 require (
 	github.com/aws/aws-sdk-go v1.55.5 // indirect

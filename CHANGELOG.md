@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change team annotation in `Chart.yaml` to OpenContainers format (`io.giantswarm.application.team`).
+
 ### Fixed
 
 - Suppress `FluxKustomizationFailed` page for `silences` kustomization when the parent `flux` kustomization is also failing. ([giantswarm/giantswarm#35354](https://github.com/giantswarm/giantswarm/issues/35354))

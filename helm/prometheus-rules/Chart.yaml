@@ -3,7 +3,7 @@ description: A Helm chart for Giant Swarm prometheus alerting and recording rule
 home: https://github.com/giantswarm/prometheus-rules
 icon: https://s.giantswarm.io/app-icons/1/png/default-app-light.png
 name: prometheus-rules
-appVersion: "4.95.0"
-version: "4.95.0"
+appVersion: "4.96.0"
+version: "4.96.0"
 annotations:
   io.giantswarm.application.team: "atlas"

@@ -10,18 +10,6 @@ spec:
   groups:
   - name: aws-load-balancer-controller
     rules:
-    - alert: AWSLoadBalancerControllerAWSAPIErrors
-      annotations:
-        description: '{{`AWS load balancer controller pod {{ $labels.namespace}}/{{ $labels.pod }} on {{ $labels.cluster_id}} is throwing {{ $labels.error_code }} errors when contacting AWS API.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alb-errors/
-      expr: sum(increase(aws_api_calls_total{cluster_type="workload_cluster", error_code != "", provider=~"capa|eks"}[20m])) by (cluster_id, error_code, installation, namespace, pipeline, provider, pod) > 0
-      for: 40m
-      labels:
-        area: kaas
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
-        severity: page
-        team: phoenix
-        topic: alb
     - alert: AWSLoadBalancerControllerReconcileErrors
       annotations:
         description: '{{`AWS load balancer controller pod {{ $labels.namespace }}/{{ $labels.pod }} on {{ $labels.cluster_id }} is throwing errors while reconciling the {{ $labels.controller }} controller.`}}'

@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove `AWSLoadBalancerControllerAWSAPIErrors` alert as it's already covered by `AWSLoadBalancerControllerReconcileErrors`.
+
 ## [4.95.0] - 2026-02-12
 
 ### Changed

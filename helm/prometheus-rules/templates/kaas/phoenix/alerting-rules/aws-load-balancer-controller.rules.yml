@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
   name: aws-load-balancer-controller.rules
-  namespace: {{ .Values.namespace  }}
+  namespace: {{ .Values.namespace }}
 spec:
   groups:
   - name: aws-load-balancer-controller
@@ -22,6 +22,7 @@ spec:
         severity: page
         team: phoenix
         topic: alb
+        inhibit_alb_controller_aws_api_errors: "true"
     - alert: AWSLoadBalancerControllerReconcileErrors
       annotations:
         description: '{{`AWS load balancer controller pod {{ $labels.namespace }}/{{ $labels.pod }} on {{ $labels.cluster_id }} is throwing errors while reconciling the {{ $labels.controller }} controller.`}}'
@@ -34,3 +35,4 @@ spec:
         severity: page
         team: phoenix
         topic: alb
+        cancel_if_alb_controller_aws_api_errors: "true"

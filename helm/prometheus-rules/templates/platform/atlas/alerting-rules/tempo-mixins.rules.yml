@@ -347,7 +347,7 @@ spec:
             description: '{{`Tempo block-builder partitions mismatch in {{ $labels.cluster_id }}/{{ $labels.namespace }}.`}}'
             runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoBlockBuildersPartitionsMismatch
           expr: |
-            max(tempo_partition_ring_partitions{cluster_type="management_cluster", name=~"livestore-partitions", state=~"Active|Inactive"}) by (namespace,cluster_id)
+            max(tempo_partition_ring_partitions{cluster_type="management_cluster", name="livestore-partitions", state=~"Active|Inactive"}) by (installation, pipeline, provider, namespace,cluster_id)
             >
             sum(tempo_block_builder_owned_partitions) by(namespace,cluster_id)
           for: 10m
@@ -362,8 +362,8 @@ spec:
             description: '{{`Some live-store partitions are unowned in {{ $labels.cluster_id }}/{{ $labels.namespace }}.`}}'
             runbook_url: https://github.com/grafana/tempo/tree/main/operations/tempo-mixin/runbook.md#TempoLiveStoresPartitionsUnowned
           expr: |
-            max by(namespace, cluster_id) (
-              tempo_partition_ring_partitions{cluster_type="management_cluster", name=~"livestore-partitions", state=~"Active|Inactive"}
+            max by(installation, pipeline, provider, namespace, cluster_id) (
+              tempo_partition_ring_partitions{cluster_type="management_cluster", name="livestore-partitions", state=~"Active|Inactive"}
             )
             >
             count(count by (partition,namespace,cluster_id) (

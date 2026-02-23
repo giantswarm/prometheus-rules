@@ -114,6 +114,26 @@ update_rules() {
                     | sed 's/container=~/container=/' \
                 )"
                 ;;
+            "TempoBlockBuildersPartitionsMismatch")
+                # Template is using `pod` label but the query removes it.
+                rule="$(echo "$rule" \
+                    | sed 's/ by (/ by (installation, pipeline, provider, /'
+                )"
+                # Unnecessary regexp match on static string
+                rule="$(echo "$rule" \
+                    | sed 's/name=~/name=/' \
+                )"
+                ;;
+            "TempoLiveStoresPartitionsUnowned")
+                # Template is using `pod` label but the query removes it.
+                rule="$(echo "$rule" \
+                    | sed 's/max by(/max by(installation, pipeline, provider, /'
+                )"
+                # Unnecessary regexp match on static string
+                rule="$(echo "$rule" \
+                    | sed 's/name=~/name=/' \
+                )"
+                ;;
             *)
                 ;;
         esac

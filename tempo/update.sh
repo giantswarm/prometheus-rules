@@ -33,7 +33,8 @@ apply_global_sed_fixes() {
       sed 's/{}/{cluster_type=\\\"management_cluster\\\"}/g' | # Only apply this alert to management clusters - this one is where there is no selector
       sed 's/'\''/ /g' | # Fix single quotes in alert messages
       sed 's/\(message": "\)\(.*\)"/description": "{{`\2`}}"/g' | # Wrap alert messages in double curly braces to avoid Helm template parsing issues. Also, rename the field to `description`.
-      sed 's/, namespace=~\\"\.\*\\"//g' #| # Remove useless namespace selector
+      sed 's/, namespace=~\\"\.\*\\"//g' | # Remove useless namespace selector
+      sed 's/\[1m\]/[2m]/g' # With 1m scraping interval, evaluation interval should be at least 2m.
 }
 
 update_rules() {

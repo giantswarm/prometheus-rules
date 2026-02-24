@@ -24,11 +24,11 @@ tests:
       - series: 'memcached_items_total{cluster_id="bar", cluster_type="management_cluster", installation="myinstall", job="mimir/metadata-cache"}'
         values: "10000+60x600"
     alert_rule_test:
-      - alertname: memcachedLowHitRatio
+      - alertname: MemcachedLowHitRatio
         eval_time: 24h
-      - alertname: memcachedLowHitRatio
+      - alertname: MemcachedLowHitRatio
         eval_time: 72h
-      - alertname: memcachedLowHitRatio
+      - alertname: MemcachedLowHitRatio
         eval_time: 80h
         exp_alerts:
           - exp_labels:

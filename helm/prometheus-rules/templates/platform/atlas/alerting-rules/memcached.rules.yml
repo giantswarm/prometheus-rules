@@ -10,7 +10,7 @@ spec:
   groups:
   - name: memcached
     rules:
-    - alert: memcachedLowHitRatio
+    - alert: MemcachedLowHitRatio
       annotations:
         description: '{{`Memcached {{ $labels.job }} has a low hit ratio.`}}'
         # Currently only mimir has memcached metrics. Probably later we need a dedicated runbook

@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `memcachedLowHitRatio` alert that creates ticket for underperforming memcached instances.
+
 ### Removed
 
 - Remove `AWSLoadBalancerControllerAWSAPIErrors` alert as it's already covered by `AWSLoadBalancerControllerReconcileErrors`.

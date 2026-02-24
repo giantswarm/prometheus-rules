@@ -1,0 +1,44 @@
+---
+rule_files:
+- memcached.rules.yml
+
+tests:
+  - interval: 10m # alert pages after 1d. A longer interval makes the test faster.
+    input_series:
+      # Test a cache with high eviction rate
+      - series: 'memcached_commands_total{cluster_id="bar", cluster_type="management_cluster", installation="myinstall", job="mimir/chunks-cache", command="get", status="hit"}'
+        values: "0+60x288 2880+0x288"
+      - series: 'memcached_commands_total{cluster_id="bar", cluster_type="management_cluster", installation="myinstall", job="mimir/chunks-cache", command="get", status="miss"}'
+        values: "0+0x288 0+60x288"
+      - series: 'memcached_items_evicted_total{cluster_id="bar", cluster_type="management_cluster", installation="myinstall", job="mimir/chunks-cache"}'
+        values: "10000+60x600"
+      - series: 'memcached_items_total{cluster_id="bar", cluster_type="management_cluster", installation="myinstall", job="mimir/chunks-cache"}'
+        values: "10000+60x600"
+      # Test a cache with low eviction rate
+      - series: 'memcached_commands_total{cluster_id="bar", cluster_type="management_cluster", installation="myinstall", job="mimir/metadata-cache", command="get", status="hit"}'
+        values: "0+60x288 2880+0x288"
+      - series: 'memcached_commands_total{cluster_id="bar", cluster_type="management_cluster", installation="myinstall", job="mimir/metadata-cache", command="get", status="miss"}'
+        values: "0+0x288 0+60x288"
+      - series: 'memcached_items_evicted_total{cluster_id="bar", cluster_type="management_cluster", installation="myinstall", job="mimir/metadata-cache"}'
+        values: "10000+0x600"
+      - series: 'memcached_items_total{cluster_id="bar", cluster_type="management_cluster", installation="myinstall", job="mimir/metadata-cache"}'
+        values: "10000+60x600"
+    alert_rule_test:
+      - alertname: MemcachedLowHitRatio
+        eval_time: 24h
+      - alertname: MemcachedLowHitRatio
+        eval_time: 72h
+      - alertname: MemcachedLowHitRatio
+        eval_time: 80h
+        exp_alerts:
+          - exp_labels:
+              job: "mimir/chunks-cache"
+              area: platform
+              cluster_id: bar
+              installation: "myinstall"
+              severity: "ticket"
+              team: "atlas"
+              topic: "managementcluster"
+            exp_annotations:
+              description: "Memcached mimir/chunks-cache has a low hit ratio."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=myinstall&CLUSTER=bar"

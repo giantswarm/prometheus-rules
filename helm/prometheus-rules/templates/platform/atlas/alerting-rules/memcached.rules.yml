@@ -1,0 +1,47 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: memcached.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: memcached
+    rules:
+    - alert: MemcachedLowHitRatio
+      annotations:
+        description: '{{`Memcached {{ $labels.job }} has a low hit ratio.`}}'
+        # Currently only mimir has memcached metrics. Probably later we need a dedicated runbook
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      expr: |-
+        # This alert triggers when hit rate is low AND eviction rate is high.
+        # This is to avoid pages for new cache instances, that have low hit rate because they're empty.
+        # hit rate
+        sum(
+            rate(
+                memcached_commands_total{cluster_type="management_cluster", command="get", status="hit"}
+                [1h]
+            )
+        ) by (job, cluster_id, installation, pipeline, provider)
+        /
+        sum(
+            rate(
+                memcached_commands_total{cluster_type="management_cluster", command="get"}
+                [1h]
+            )
+        ) by (job, cluster_id, installation, pipeline, provider) < 0.7
+        and on (job, cluster_id, installation, pipeline, provider)
+        # eviction rate
+        (
+            sum by(job, cluster_id, installation, pipeline, provider) (rate(memcached_items_evicted_total{cluster_type="management_cluster"}[1h]))
+            /
+            sum by(job, cluster_id, installation, pipeline, provider) (rate(memcached_items_total{cluster_type="management_cluster"}[1h]))
+        ) > 0.8
+      for: 1d
+      labels:
+        area: platform
+        severity: ticket
+        team: atlas
+        topic: managementcluster

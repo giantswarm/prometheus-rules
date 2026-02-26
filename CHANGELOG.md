@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Rely on metrics-provided team labels for the `FluxHelmReleaseFailed` alert with the `honeybadger` team as backup, not default.
 
+### Changed
+
+- Updated tempo rules to latest mixins
+- Fixed tempo rules evaluation interval which was too short
+- CI: Added basic logql linting
+
 ## [4.96.1] - 2026-02-26
 
 ### Fixed

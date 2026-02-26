@@ -10,7 +10,7 @@ clean: ## Clean the git work dir and remove all untracked files
 ##@ Testing
 
 .PHONY: test
-test: install-tools template-chart test-rules test-inhibitions test-runbooks ## Run all tests
+test: install-tools template-chart test-rules test-inhibitions test-runbooks logql-lint ## Run all tests
 
 install-tools:
 	./test/hack/bin/fetch-tools.sh
@@ -40,8 +40,7 @@ pint-all: install-tools template-chart ## Run pint with extra checks
 	./test/hack/bin/run-pint.sh test/conf/pint/pint-all.hcl ${PINT_TEAM_FILTER}
 
 logql-lint: install-tools template-chart ## Run logql-lint
-	make -C test/hack/logql-lint/ build
-	./test/hack/logql-lint/logql-lint ./test/hack/output/
+	./test/hack/bin/logql-lint ./test/hack/output/
 
 ##@ Mixins
 update-mimir-mixin: install-tools ##        Update Mimir mixins

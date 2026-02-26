@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Rely on metrics-provided team labels for the `FluxHelmReleaseFailed` alert with the `honeybadger` team as backup, not default.
+
 ## [4.96.1] - 2026-02-26
 
 ### Fixed

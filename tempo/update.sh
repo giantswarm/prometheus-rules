@@ -5,7 +5,8 @@
 
 set -eau o pipefail
 
-BRANCHREF="heads/main"
+#BRANCHREF="heads/main" # breaking changes are coming with v3. Switch back to main once we update to v3.
+BRANCHREF="heads/release-v2.10"
 MIXIN_URL="https://raw.githubusercontent.com/grafana/tempo/refs/$BRANCHREF/operations/tempo-mixin-compiled/alerts.yaml"
 OUTPUT_FILE="$(pwd)/helm/prometheus-rules/templates/platform/atlas/alerting-rules/tempo-mixins.rules.yml"
 

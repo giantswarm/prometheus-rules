@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `ManagementClusterHasLessThanThreeNodes` now that worker nodes no longer have node-role labels.
+
 ## [4.96.0] - 2026-02-26
 
 ### Added

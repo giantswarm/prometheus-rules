@@ -38,7 +38,6 @@ spec:
         area: platform
         cancel_if_outside_working_hours: "true"
         severity: page
-        team: {{`{{ $labels.team }}`}}
         topic: releng
         namespace: |-
           {{`{{ $labels.exported_namespace }}`}}

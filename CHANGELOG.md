@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated tempo rules to latest mixins
 - Fixed tempo rules evaluation interval which was too short
+- CI: Added basic logql linting
 
 ## [4.96.1] - 2026-02-26
 

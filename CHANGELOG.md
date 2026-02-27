@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- memcached alert: link to memcached dashboard
+
 ## [4.97.0] - 2026-02-27
 
 ### Changed

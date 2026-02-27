@@ -40,5 +40,7 @@ tests:
               team: "atlas"
               topic: "managementcluster"
             exp_annotations:
+              __dashboardUid__: "memcached-overview"
+              dashboardQueryParams: "orgId=2"
               description: "Memcached mimir/chunks-cache has a low hit ratio."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=myinstall&CLUSTER=bar"

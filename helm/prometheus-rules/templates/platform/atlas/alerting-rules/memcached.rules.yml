@@ -12,6 +12,8 @@ spec:
     rules:
     - alert: MemcachedLowHitRatio
       annotations:
+        __dashboardUid__: memcached-overview
+        dashboardQueryParams: "orgId=2"
         description: '{{`Memcached {{ $labels.job }} has a low hit ratio.`}}'
         # Currently only mimir has memcached metrics. Probably later we need a dedicated runbook
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'

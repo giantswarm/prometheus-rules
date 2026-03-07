@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Rely on metrics-provided team labels for the `FluxHelmReleaseFailed` alert with the `honeybadger` team as backup, not default.
+
 ### Changed
 
 - kyverno mutating webhook alert: move from honeybadger to shield

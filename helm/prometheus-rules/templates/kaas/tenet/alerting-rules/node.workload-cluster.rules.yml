@@ -129,7 +129,7 @@ spec:
     - alert: WorkloadClusterMasterMemoryUsageTooHigh
       annotations:
         description: '{{`Machine {{ $labels.instance }} in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} memory usage is too high (less than 10% and 2G of allocatable memory).`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/master-machine-usage-too-high/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/control-plane-cpu-usage/
       expr: |-
         ( ( (
               ( node_memory_MemTotal_bytes{cluster_type="workload_cluster"}

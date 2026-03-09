@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - kyverno mutating webhook alert: move from honeybadger to shield
 - memcached alert: link to memcached dashboard
+- Update runbook URLs
 
 ## [4.97.0] - 2026-02-27
 

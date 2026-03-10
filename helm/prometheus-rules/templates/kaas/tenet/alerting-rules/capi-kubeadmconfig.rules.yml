@@ -30,4 +30,4 @@ spec:
           annotations:
             description: |-
               {{`KubeadmConfig {{$labels.exported_namespace}}/{{$labels.name}} in cluster {{$labels.cluster_id}} encountered errors while generating a data secret`}}
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-kubeadmconfig/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-resources/

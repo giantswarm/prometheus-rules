@@ -13,7 +13,7 @@ spec:
     - alert: NodeExporterCollectorFailed
       annotations:
         description: '{{`NodeExporter Collector {{ $labels.collector }} on {{ $labels.instance }} is failed.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/node-exporter-device-error/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/node-exporter/
         # TODO(@giantswarm/team-atlas): the namespace filter should be removed when this completed https://github.com/giantswarm/roadmap/issues/3791, see https://github.com/giantswarm/prometheus-rules/pull/1491
       expr: node_scrape_collector_success{collector!~"conntrack|bonding|hwmon|powersupplyclass|mdadm|nfs|nfsd|tapestats|fibrechannel|nvme|watchdog", namespace="kube-system"} == 0
       for: 5m
@@ -29,7 +29,7 @@ spec:
     - alert: IncorrectResourceUsageData
       annotations:
         description: '{{`Data used in the Grafana Cloud Resource Usage dashboard is incorrect for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/resource-usage-dashboard/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana-cloud/
       expr: |
         quantile_over_time(0.9, aggregation:node:cpu_cores_total[120m:30m])  / on(cluster_id, cluster_type, customer, installation, pipeline, provider, region)  quantile_over_time(0.9, (sum(machine_cpu_cores)by(cluster_id, cluster_type, customer, installation, pipeline, provider, region))[120m:30m]) < 0.9
         or

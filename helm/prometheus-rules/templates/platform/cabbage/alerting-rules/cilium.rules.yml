@@ -48,7 +48,7 @@ spec:
     - alert: CiliumNetworkPolicyFailed
       annotations:
         description: '{{`Too many Cilium Network Policy errors.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/unsupported-cilium-network-policy/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/unsupported-cilium-network-policy/
       # cilium_policy_change_total - for cilium >=1.15
       # cilium_policy_import_errors_total - for cilium <1.15
       expr: max(rate(cilium_policy_change_total{outcome=~"fail.*"}[20m]) OR rate(cilium_policy_import_errors_total[20m])) by (cluster_id, installation, pipeline, provider) > 0
@@ -79,7 +79,7 @@ spec:
     - alert: CiliumAgentPodPending
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending in cluster {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/pod-stuck-in-pending/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/pod-stuck-in-pending/
       expr: kube_pod_status_phase{namespace="kube-system",pod=~"(cilium-.*)",phase="Pending"} == 1
       for: 15m
       labels:

@@ -12,7 +12,7 @@ spec:
     - alert: VpaComponentTooManyRestarts
       annotations:
         description: This pages when one of the vpa's component has restarted too much over the last 10min.
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/vpa-component-too-many-restarts/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/vpa-troubleshooting/
       expr: |
         1 - sum(increase(kube_pod_container_status_restarts_total{container=~"recommender|updater|admission-controller"}[10m])) by (container, cluster_id, cluster_type, customer, installation, pipeline, provider, region)/100 < 0.98
           or

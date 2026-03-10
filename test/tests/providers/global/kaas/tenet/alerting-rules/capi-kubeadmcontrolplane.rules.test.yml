@@ -37,7 +37,7 @@ tests:
               exported_namespace: giantswarm
             exp_annotations:
               description: "The clusters failing kubeadmcontrolplane giantswarm/failing-72jzy does not match the expected number of replicas for longer than 90 minutes."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-kubeadmcontrolplane/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-resources/
               __dashboardUid__: bdi7iswg81czkcasd
               dashboardQueryParams: "orgId=2"
       - alertname: KubeadmControlPlanePaused
@@ -57,6 +57,6 @@ tests:
               paused_value: "true"
             exp_annotations:
               description: "The clusters grumpy kubeadmcontrolplane giantswarm/grumpy-72r5c is paused."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-kubeadmcontrolplane/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-resources/
               __dashboardUid__: bdi7iswg81czkcasd
               dashboardQueryParams: "orgId=2"

@@ -30,7 +30,7 @@ tests:
               exported_namespace: giantswarm
             exp_annotations:
               description: "The clusters clippaxy machinedeployment giantswarm/clippaxy-def00 is not healthy."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-machinedeployment/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-resources/
               __dashboardUid__: bdi7iswg81czkcasd
               dashboardQueryParams: "orgId=2"
       - alertname: MachineDeploymentPaused
@@ -50,6 +50,6 @@ tests:
               paused_value: "true"
             exp_annotations:
               description: "The clusters grumpy machinedeployment giantswarm/grumpy-def99 is paused."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-machinedeployment/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-resources/
               __dashboardUid__: bdi7iswg81czkcasd
               dashboardQueryParams: "orgId=2"

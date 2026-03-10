@@ -35,7 +35,7 @@ spec:
     - alert: ManagementClusterCPUUsageTooHigh
       annotations:
         description: '{{`Management cluster {{ $labels.cluster_id }} cpu usage is too high.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/management-cluster-resource-limit-reached/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/management-cluster-resource-limit/
       expr: avg_over_time(aggregation:kubernetes:pod_resource_requests_cpu_cores{cluster_type="management_cluster"}[30m]) / on (cluster_id) group_left avg_over_time(aggregation:kubernetes:node_allocatable_cpu_cores_total{cluster_type="management_cluster"}[30m]) > 0.93
       for: 1h
       labels:
@@ -47,7 +47,7 @@ spec:
     - alert: ManagementClusterMemoryUsageTooHigh
       annotations:
         description: '{{`Management cluster {{ $labels.cluster_id }} memory usage is too high.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/management-cluster-resource-limit-reached/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/management-cluster-resource-limit/
       expr: avg_over_time(aggregation:kubernetes:pod_resource_requests_memory_bytes{cluster_type="management_cluster"}[30m]) / on (cluster_id) group_left avg_over_time(aggregation:kubernetes:node_allocatable_memory_bytes{cluster_type="management_cluster"}[30m]) > 0.93
       for: 1h
       labels:
@@ -71,7 +71,7 @@ spec:
       # Prometheus and phoenix containers are excluded
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/container-is-restarting-too-often/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/container-restarting/
       expr: increase(kube_pod_container_status_restarts_total{cluster_type="management_cluster", pod!~"grafana.*|prometheus.*|silence.*|teleport.*|.*-admission-controller.*|.*-aws-.*|aws-.*|route53-manager.*|cilium.*|external-dns.*|falco.*|kyverno.*|postgres.*|exception.*|edgedb.*|athena.*|app.*"}[1h]) > 5
       for: 5m
       labels:

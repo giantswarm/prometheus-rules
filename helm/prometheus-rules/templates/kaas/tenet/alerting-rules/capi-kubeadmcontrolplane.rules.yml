@@ -31,7 +31,7 @@ spec:
           annotations:
             description: |-
               {{`The clusters {{$labels.cluster_id}} kubeadmcontrolplane {{$labels.exported_namespace}}/{{$labels.name}} does not match the expected number of replicas for longer than 90 minutes.`}}
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-kubeadmcontrolplane/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-resources/
             __dashboardUid__: bdi7iswg81czkcasd
             dashboardQueryParams: "orgId=2"
         - alert: KubeadmControlPlanePaused
@@ -56,6 +56,6 @@ spec:
           annotations:
             description: |-
               {{`The clusters {{$labels.cluster_id}} kubeadmcontrolplane {{$labels.exported_namespace}}/{{$labels.name}} is paused.`}}
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capi-kubeadmcontrolplane/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capi-resources/
             __dashboardUid__: bdi7iswg81czkcasd
             dashboardQueryParams: "orgId=2"

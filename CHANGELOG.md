@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Migrate Team Shield ops recipes to runbooks.
+- JobScrapingFailure severity lowered from "notify" to "none"
 
 ## [4.98.0] - 2026-03-10
 

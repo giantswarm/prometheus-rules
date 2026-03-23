@@ -28,7 +28,7 @@ spec:
     - alert: CertManagerDown
       annotations:
         description: '{{`cert-manager in namespace {{ $labels.namespace }} is down.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cert-manager-down/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cert-manager-troubleshooting/
       expr: label_replace(up{container=~"cert-manager(-app-controller)?"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
       for: 15m
       labels:

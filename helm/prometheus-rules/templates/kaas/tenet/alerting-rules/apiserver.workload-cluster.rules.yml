@@ -45,7 +45,7 @@ spec:
       annotations:
         description: '{{`Kubernetes API Server admission webhook {{ $labels.name }} is timing out.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/admission-webhook-errors/
-      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(kyverno|app-admission-controller).*"}[5m])) by (cluster_id, installation, pipeline, provider, name, job, le)) > 5
+      expr: histogram_quantile(0.95, sum(rate(apiserver_admission_webhook_admission_duration_seconds_bucket{cluster_type="workload_cluster", name=~".*(app-admission-controller).*"}[5m])) by (cluster_id, installation, pipeline, provider, name, job, le)) > 5
       for: 15m
       labels:
         area: kaas

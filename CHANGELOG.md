@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update `GrafanaPostgresqlRecoveryTestFailed` alert to only fire when Grafana PostgreSQL recovery tests are failing for more than 1 day.
 - Migrate Team Shield ops recipes to runbooks.
+- Remove kyverno from WorkloadClusterWebhookDurationExceedsTimeoutHoneybadger
 
 ## [4.98.0] - 2026-03-10
 

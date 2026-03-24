@@ -12,7 +12,7 @@ spec:
     - alert: ManagementClusterPodPendingCAPI
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/pod-stuck-in-pending/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/pod-stuck-in-pending/
       expr: kube_pod_status_phase{namespace="giantswarm",pod=~"capi.*|",phase="Pending", cluster_type="management_cluster"} == 1
       for: 15m
       labels:
@@ -26,7 +26,7 @@ spec:
     - alert: ManagementClusterContainerIsRestartingTooFrequentlyCAPI
       annotations:
         description: '{{`Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting too often.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/container-is-restarting-too-often/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/container-restarting/
         __dashboardUid__: bdi7iswg81czkcasd
         dashboardQueryParams: "orgId=2"
       expr: label_join(increase(kube_pod_container_status_restarts_total{container=~"capi.*", cluster_type="management_cluster"}[1h]), "service", "/", "namespace", "pod") > 6

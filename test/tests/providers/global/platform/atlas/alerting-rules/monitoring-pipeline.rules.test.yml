@@ -42,7 +42,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              severity: notify
+              severity: none
               team: atlas
               topic: observability
               cancel_if_outside_working_hours: "true"
@@ -59,7 +59,7 @@ tests:
               description: "Monitoring agents for cluster golem/golem has failed to scrape all targets in kube-controller-manager job."
           - exp_labels:
               area: platform
-              severity: notify
+              severity: none
               team: atlas
               topic: observability
               cancel_if_outside_working_hours: "true"

@@ -5,6 +5,184 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update `GrafanaPostgresqlRecoveryTestFailed` alert to only fire when Grafana PostgreSQL recovery tests are failing for more than 1 day.
+- Migrate Team Shield ops recipes to runbooks.
+- Remove kyverno from WorkloadClusterWebhookDurationExceedsTimeoutHoneybadger
+
+## [4.98.0] - 2026-03-10
+
+### Changed
+
+- kyverno mutating webhook alert: move from honeybadger to shield
+- memcached alert: link to memcached dashboard
+- Update runbook URLs from ops-recipes to runbooks for migrated content.
+
+## [4.97.0] - 2026-02-27
+
+### Changed
+
+- Updated tempo rules to latest mixins
+- Fixed tempo rules evaluation interval which was too short
+- CI: Added basic logql linting
+
+## [4.96.1] - 2026-02-26
+
+### Fixed
+
+- Fix `ManagementClusterHasLessThanThreeNodes` now that worker nodes no longer have node-role labels.
+
+## [4.96.0] - 2026-02-26
+
+### Added
+
+- Add `memcachedLowHitRatio` alert that creates ticket for underperforming memcached instances.
+
+### Removed
+
+- Remove `AWSLoadBalancerControllerAWSAPIErrors` alert as it's already covered by `AWSLoadBalancerControllerReconcileErrors`.
+
+## [4.95.0] - 2026-02-12
+
+### Changed
+
+- Aggregate `MimirRestartingTooOften` to fire once per installation instead of per container. [#35283](https://github.com/giantswarm/giantswarm/issues/35283)
+- Add `inhibit_metrics_broken` to `MimirRestartingTooOften` and `cancel_if_metrics_broken` to `MimirContinuousTestMissing` to suppress redundant pages when Mimir is restarting. [#35283](https://github.com/giantswarm/giantswarm/issues/35283)
+- Add `all_pipelines` to `MimirContinuousTestMissing` to page out of business hours. [#35283](https://github.com/giantswarm/giantswarm/issues/35283)
+- Change team annotation in `Chart.yaml` to OpenContainers format (`io.giantswarm.application.team`).
+
+### Fixed
+
+- Suppress `FluxKustomizationFailed` page for `silences` kustomization when the parent `flux` kustomization is also failing. ([giantswarm/giantswarm#35354](https://github.com/giantswarm/giantswarm/issues/35354))
+
+## [4.94.2] - 2026-02-09
+
+### Changed
+
+- KubeStateMetricsNotRetrievingMetrics performance tuning
+
+## [4.94.1] - 2026-02-05
+
+### Changed
+
+- Bump kube-mixins to 1.4.1
+
+### Fixed
+
+- Fix duplicate rendered manifest name by renaming rule in `helm/prometheus-rules/templates/platform/atlas/alerting-rules/tracing-pipeline.rules.yml` to `tracing-pipeline.rules` (was `logging-pipeline.rules`).
+- Fix duplicate rendered manifest name by renaming rule in `helm/prometheus-rules/templates/platform/shield/alerting-rules/general.rules.yml` to `general.rules` (was `kyverno.rules`).
+
+## [4.94.0] - 2026-02-04
+
+### Added
+
+- Add Envoy Gateway alerting rules:
+  - `EnvoyGatewayDeploymentNotSatisfied` - alerts when Envoy Gateway deployment is not satisfied.
+  - `EnvoyProxyDeploymentNotSatisfied` - alerts when Envoy Proxy deployment is not satisfied.
+- Add Envoy Proxy recording rules:
+  - `envoy_proxy_deployment_status_replicas_available`
+  - `envoy_proxy_deployment_status_replicas_unavailable`
+
+### Removed
+
+- Remove the deprecated `logging-operator` from the `DeploymentNotSatisfiedAtlas` alert.
+
+### Fixed
+
+- Fix capi-cluster runbook URL
+
+## [4.93.0] - 2026-02-02
+
+### Added
+
+- Add `aggregation:giantswarm:jobs_monitored_total` to report the number of target being monitored per app, with the app's owner `team` label.
+
+### Changed
+
+- Update `aggregation:giantswarm:jobscrapingfailures` to report failing jobs for both MC and non-MC apps, enriched with the app's owner `team` label.
+
+## [4.92.0] - 2026-01-26
+
+### Added
+
+- Add recording rules for Network Traffic Analysis dashboards as `network_traffic_analysis:beyla_network_flow_bytes_*` rules.
+
+### Changed
+
+- Update runbook URL for AWS Load Balancer controller alerts
+- Remove vintage alert `WorkloadClusterNodeUnexpectedTaintNodeWithImpairedVolumes`
+
+## [4.91.2] - 2026-01-20
+
+### Changed
+
+- skip role policy attachement for ClusterCrossplaneResourcesNotReady as it is not used
+
+## [4.91.1] - 2026-01-14
+
+### Changed
+
+- Set `cluster_type` label correctly for workload and management clusters in `aggregation:giantswarm:cluster_info` and `aggregation:giantswarm:cluster_release_version` recording rules.
+
+## [4.91.0] - 2026-01-08
+
+### Added
+
+- Add data source count recording rules for Observability Platform signals:
+  - `aggregation:giantswarm:observability:signals:traces_datasource_count` - Count of individual services per tenant
+
+## [4.90.0] - 2026-01-05
+
+### Added
+
+- Add data ingestion rate recording rules for Observability Platform signals:
+  - `aggregation:giantswarm:observability:signals:ingested_traces` - Tempo traces ingestion rate per tenant
+  - `aggregation:giantswarm:observability:signals:ingested_logs` - Loki logs ingestion rate per tenant
+  - `aggregation:giantswarm:observability:signals:ingested_metrics` - Mimir metrics ingestion rate per tenant
+- Add data source count recording rules for Observability Platform signals:
+  - `aggregation:giantswarm:observability:signals:metrics_datasource_count` - Count of ServiceMonitors and PodMonitors per tenant
+  - `aggregation:giantswarm:observability:signals:logs_datasource_count` - Count of PodLogs per tenant
+
+### Changed
+
+- Remove some unused labels from `openssf_scorecard` series.
+
+### Changed
+
+- Inhibition tests ingnore "cancel_if_outside_working_hours" since it's a special case in alertmanager config
+
+## [4.89.2] - 2025-12-19
+
+### Added
+
+- Alert on more critical Crossplane resources, such as IRSA, for alert `ClusterCrossplaneResourcesNotReady`
+
+### Changed
+
+- Rename aggregation `openssf_scorecard_scorecard_overall_score` to `openssf_scorecard_overall_score`.
+
+## [4.89.1] - 2025-12-17
+
+### Fixed
+
+- Fix typo in `openssf-scorecard-exporter` recording rules.
+
+## [4.89.0] - 2025-12-17
+
+### Added
+
+- Add `aggregation:openssf_scorecard_scorecard_check_score` to report the OpenSSF Check Score to Grafana Cloud.
+- Add `aggregation:openssf_scorecard_scorecard_overall_score` to report overall OpenSSF Score to Grafana Cloud.
+
+## [4.88.1] - 2025-12-17
+
+### Fixed
+
+- Fix grafana dashboard views recording rules.
+
+## [4.88.0] - 2025-12-17
+
 ### Added
 
 - Add Grafana proxy queries, explore page visits, and drilldown visits metrics recording rules to collect Observability Platform signals
@@ -322,6 +500,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix observability-platform overview recording rules.
+
+### Changed
+
+- Page `providerTeam` instead of `tenet` for the `WorkloadClusterNodeUnexpectedTaintNodeCAPIUninitialized` alert.
 
 ## [4.72.0] - 2025-07-23
 
@@ -4115,7 +4297,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.87.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.98.0...HEAD
+[4.98.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.97.0...v4.98.0
+[4.97.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.96.1...v4.97.0
+[4.96.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.96.0...v4.96.1
+[4.96.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.95.0...v4.96.0
+[4.95.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.94.2...v4.95.0
+[4.94.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.94.1...v4.94.2
+[4.94.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.94.0...v4.94.1
+[4.94.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.93.0...v4.94.0
+[4.93.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.92.0...v4.93.0
+[4.92.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.2...v4.92.0
+[4.91.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.1...v4.91.2
+[4.91.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.91.0...v4.91.1
+[4.91.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.90.0...v4.91.0
+[4.90.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.2...v4.90.0
+[4.89.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.1...v4.89.2
+[4.89.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.89.0...v4.89.1
+[4.89.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.88.1...v4.89.0
+[4.88.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.88.0...v4.88.1
+[4.88.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.87.0...v4.88.0
 [4.87.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.86.0...v4.87.0
 [4.86.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.85.0...v4.86.0
 [4.85.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.84.0...v4.85.0

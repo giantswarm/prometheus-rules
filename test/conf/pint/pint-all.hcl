@@ -85,3 +85,7 @@ rule {
     required = true
   }
 }
+
+check "promql/regexp" {
+  smelly = false
+}

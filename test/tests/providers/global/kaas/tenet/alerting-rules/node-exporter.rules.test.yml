@@ -32,7 +32,7 @@ tests:
               topic: "observability"
             exp_annotations:
               description: "NodeExporter Collector cpu on 10.0.5.111:10300 is failed."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/node-exporter-device-error/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/node-exporter/
       - alertname: NodeExporterCollectorFailed
         eval_time: 70m
   # Tests for `IncorrectResourceUsageData` alert
@@ -92,7 +92,7 @@ tests:
               topic: "observability"
             exp_annotations:
               description: 'Data used in the Grafana Cloud Resource Usage dashboard is incorrect for cluster mycluster.'
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/resource-usage-dashboard/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana-cloud/
       # Test case 3 (cpu): incorrect value for 20m yield no alert
       - alertname: IncorrectResourceUsageData
         eval_time: 721m
@@ -121,7 +121,7 @@ tests:
               topic: "observability"
             exp_annotations:
               description: 'Data used in the Grafana Cloud Resource Usage dashboard is incorrect for cluster mycluster.'
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/resource-usage-dashboard/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana-cloud/
       # Test case 3 (memory): incorrect value for 20m yield no alert
       - alertname: IncorrectResourceUsageData
         eval_time: 1620m

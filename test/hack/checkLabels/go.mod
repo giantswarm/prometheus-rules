@@ -1,39 +1,42 @@
 module checkLabels
 
-go 1.24.0
+go 1.25.0
 
-toolchain go1.25.5
+toolchain go1.26.1
 
 require (
 	// Try to keep version in sync with our prometheus rule CRD version.
 	// see https://github.com/giantswarm/prometheus-operator-crd/blob/master/helm/prometheus-operator-crd/Chart.yaml#L11
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.87.0
+	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.90.0
 	sigs.k8s.io/yaml v1.6.0
 )
 
-require github.com/prometheus/alertmanager v0.29.0
+require github.com/prometheus/alertmanager v0.31.1
 
 require (
 	github.com/aws/aws-sdk-go v1.55.5 // indirect
-	github.com/aws/aws-sdk-go-v2 v1.39.2 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.31.12 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.18.16 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.9 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.9 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.9 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.9 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.29.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.38.6 // indirect
-	github.com/aws/smithy-go v1.23.0 // indirect
+	github.com/aws/aws-sdk-go-v2 v1.41.1 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.32.7 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.19.7 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.17 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.17 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.17 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.17 // indirect
+	github.com/aws/aws-sdk-go-v2/service/signin v1.0.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.30.9 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.13 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.41.6 // indirect
+	github.com/aws/smithy-go v1.24.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jpillora/backoff v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -43,25 +46,26 @@ require (
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
 	github.com/prometheus/client_golang v1.23.2 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
-	github.com/prometheus/common v0.67.1 // indirect
+	github.com/prometheus/common v0.67.5 // indirect
 	github.com/prometheus/common/sigv4 v0.1.0 // indirect
 	github.com/prometheus/procfs v0.16.1 // indirect
-	github.com/prometheus/sigv4 v0.2.1 // indirect
+	github.com/prometheus/sigv4 v0.4.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
-	go.yaml.in/yaml/v2 v2.4.3 // indirect
-	golang.org/x/net v0.46.0 // indirect
-	golang.org/x/oauth2 v0.31.0 // indirect
-	golang.org/x/sys v0.37.0 // indirect
-	golang.org/x/text v0.30.0 // indirect
-	google.golang.org/protobuf v1.36.10 // indirect
+	go.yaml.in/yaml/v2 v2.4.4 // indirect
+	golang.org/x/net v0.52.0 // indirect
+	golang.org/x/oauth2 v0.34.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
+	golang.org/x/text v0.35.0 // indirect
+	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	k8s.io/api v0.34.2 // indirect
-	k8s.io/apimachinery v0.34.2 // indirect
-	k8s.io/klog/v2 v2.130.1 // indirect
-	k8s.io/utils v0.0.0-20251002143259-bc988d571ff4 // indirect
+	k8s.io/api v0.35.2 // indirect
+	k8s.io/apimachinery v0.35.2 // indirect
+	k8s.io/klog/v2 v2.140.0 // indirect
+	k8s.io/kube-openapi v0.0.0-20260317180543-43fb72c5454a // indirect
+	k8s.io/utils v0.0.0-20260210185600-b8788abfbbc2 // indirect
 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.7.0 // indirect
-	sigs.k8s.io/structured-merge-diff/v6 v6.3.0 // indirect
+	sigs.k8s.io/structured-merge-diff/v6 v6.3.2 // indirect
 )

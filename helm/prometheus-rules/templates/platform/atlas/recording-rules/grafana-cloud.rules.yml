@@ -32,57 +32,50 @@ spec:
       record: aggregation:giantswarm:app_upgrade_available
   - name: clusters.grafana-cloud.recording
     rules:
-    # This recording rule is used to list all clusters.
+    # The rules in this group are used to aggregate cluster information from capi_cluster_info metric.
+    # They are using a combination of label_replace functions to set the correct values for cluster_type (workaround for https://github.com/giantswarm/giantswarm/issues/35079) and provider labels (for hybrid MCs).
+    # Record rule to aggregate cluster info labels into a single metric with value 1 for each cluster.
     - expr: |-
         avg by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, exported_namespace) (
           label_replace(
             label_replace(
-              capi_cluster_info,
-              "provider",
-              "vsphere",
-              "infrastructure_reference_kind",
-              "VSphereCluster"
+              label_replace(
+                label_replace(
+                  capi_cluster_info,
+                  "provider",
+                  "vsphere",
+                  "infrastructure_reference_kind",
+                  "VSphereCluster"
+                ),
+                "cluster_id",
+                "$1",
+                "name",
+                "(.*)"
+              ),
+              "cluster_type", "workload_cluster", "cluster_id", ".*"
             ),
-            "cluster_id",
-            "$1",
-            "name",
-            "(.*)"
+            "cluster_type", "management_cluster", "cluster_id", "^{{ .Values.managementCluster.name }}$"
           ) >= 1
         )
       record: aggregation:giantswarm:cluster_info
     - expr: |-
-        (
-          sum(
-            cluster_service_cluster_info
-          )
-          by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-        ) / 2
-        or (
-          sum(
-            cluster_operator_cluster_status{release_version!=""}
-          )
-          by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
-        )
-        or (
-          sum(
-            label_replace(
-              capi_cluster_info,
-              "provider",
-              "vsphere",
-              "infrastructure_reference_kind",
-              "VSphereCluster"
+        label_replace(
+          label_replace(
+            sum(
+              label_replace(
+                capi_cluster_info,
+                "provider",
+                "vsphere",
+                "infrastructure_reference_kind",
+                "VSphereCluster"
+              )
             )
-          )
-          by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
+            by (release_version, cluster_id, cluster_type, customer, installation, pipeline, provider, region),
+            "cluster_type", "workload_cluster", "cluster_id", ".*"
+          ),
+          "cluster_type", "management_cluster", "cluster_id", "^{{ .Values.managementCluster.name }}$"
         )
       record: aggregation:giantswarm:cluster_release_version
-    - expr: avg_over_time(cluster_operator_cluster_create_transition[1w])
-      record: aggregation:giantswarm:cluster_transition_create
-    - expr: avg_over_time(cluster_operator_cluster_update_transition[1w])
-      record: aggregation:giantswarm:cluster_transition_update
-    # Scheduled cluster upgrade times
-    - expr: upgrade_schedule_operator_cluster_scheduled_upgrades_time
-      record: aggregation:giantswarm:cluster_scheduled_upgrades_time
   - name: docker.grafana-cloud.recording
     rules:
     - expr: sum(engine_daemon_image_actions_seconds_count) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, action)
@@ -318,6 +311,17 @@ spec:
     # Falco event counts
     - expr: sum(falco_events{priority=~"0|1|2|3|4|5|6|7"} or label_replace(falcosecurity_falco_rules_matches_total{priority=~"0|1|2|3|4|5|6|7"}, "rule", "$1", "rule_name", "(.*)")) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, priority, rule)
       record: aggregation:falco_events
+  - name: openssf-scorecard-exporter.grafana-cloud.recording
+    rules:
+    # OpenSSF Scorecard average Check Score metric aggregation
+    - expr: avg(openssf_scorecard_check_score >= 0) by (check, cluster_id, config, installation, pipeline, provider, organization)
+      record: aggregation:openssf_scorecard_check_score
+    # OpenSSF Scorecard missing Check Score metric aggregation
+    - expr: count(openssf_scorecard_check_score < 0) by (check, cluster_id, config, installation, pipeline, provider, organization)
+      record: aggregation:openssf_scorecard_check_score_missing_count
+    # OpenSSF Scorecard Overall Score metric aggregation
+    - expr: sum(openssf_scorecard_overall_score) by (cluster_id, config, installation, pipeline, provider, organization, repository)
+      record: aggregation:openssf_scorecard_overall_score
   - name: kyverno.grafana-cloud.recording
     rules:
     # Kyverno failing policies
@@ -565,25 +569,139 @@ spec:
           )
         record: aggregation:slo:time_period:days
       - expr: |-
-          # The purpose of this metrics is to spot when a servicemonitor is broken, and not when a pod behind the servicemonitor is broken.
+          # This metric detects when any targets (e.g. Pods) for a given Service/PodMonitor are not being scraped.
+          # It filters only apps deployed in non-org namespaces which name are in <app instance> format.
           #
-          # If it's just a pod that is broken, some of the targets will work.
-          # If the whole servicemonitor is broken (misconfigured), then it can't scrape any pods.
-          #
+          # This rule does not detect when a single target is failing to be scraped but only when all targets are failing.
           # This behaviour reduces the amount of generated metrics, and makes them easier to interpret
+          #
+          # It does:
+          # - Calculates the ratio of failed scrape targets (up==0) to total targets per app/job.
+          # - Joins with app_operator_app_info to include team label.
+          # - Only monitors apps deployed in non org namespaces (NOT org-*).
           (
-            count(up{}== 0 )
-            by (job, installation, cluster_id, provider,
-              pipeline, cluster_type, metrics_path,
-              container, namespace, organization, team)
-            /
-            count(up{})
-            by (job, installation, cluster_id, provider,
-              pipeline, cluster_type, metrics_path,
-              container, namespace, organization, team)
+            (
+              count(up == 0) by (app, job, installation, cluster_id, provider, pipeline)
+              /
+              count(up) by (app, job, installation, cluster_id, provider, pipeline)
+            )
+            * on(app, cluster_id) group_left(team)
+              label_replace(app_operator_app_info{namespace!~"org-.+"}, "app", "$1", "name", "(.+)")
           ) >= 1
         record: aggregation:giantswarm:jobscrapingfailures
-
+      - expr: |-
+          # This metric detects when any targets (e.g. Pods) for a given Service/PodMonitor are not being scraped.
+          # It filters only apps deployed in org namespaces which name are in <cluster id>-<app instance> format.
+          #
+          # This rule does not detect when a single target is failing to be scraped but only when all targets are failing.
+          # This behaviour reduces the amount of generated metrics, and makes them easier to interpret
+          #
+          # It does:
+          # - Calculates the ratio of failed scrape targets (up==0) to total targets per app/job.
+          # - Joins with app_operator_app_info to include team label.
+          # - Only monitors apps deployed in org namespaces (ONLY org-*).
+          (
+            (
+              count(label_join(up, "app", "-", "cluster_id", "app") == 0) by (app, job, installation, cluster_id, provider, pipeline)
+              /
+              count(label_join(up, "app", "-", "cluster_id", "app")) by (app, job, installation, cluster_id, provider, pipeline)
+            )
+            * on(app, cluster_id) group_left(team)
+              label_replace(app_operator_app_info{namespace=~"org-.+"}, "app", "$1", "name", "(.+)")
+          ) >= 1
+        record: aggregation:giantswarm:jobscrapingfailures
+      - expr: |-
+          # This metric measures how many targets are monitored by each ServiceMonitor
+          # It filters only apps deployed in org namespaces which name are in <cluster id>-<app instance> format.
+          #
+          # It does:
+          # - Read the number of targets using prometheus_target_scrape_pool_targets
+          # - Join with kube_servicemonitor_info using the ServiceMonitor namespace/name, to include the app_instance label
+          # - Join with app_operator_app_info to include the team label, only for apps from org namepsaces
+          label_join(
+            label_replace(
+              sum(prometheus_target_scrape_pool_targets) by (installation, cluster_id, provider, pipeline, scrape_job),
+              "resource", "$1", "scrape_job", "^serviceMonitor/(.+)/[0-9]"
+            )
+            * on(cluster_id, resource) group_left(app_instance)
+            label_join(
+              kube_servicemonitor_info,
+              "resource", "/", "namespace", "name"
+            ),
+            "app", "-", "cluster_id", "app_instance"
+          )
+          * on(app, cluster_id) group_left(team)
+          label_replace(app_operator_app_info{namespace=~"org-.+"}, "app", "$1", "name", "(.+)")
+        record: aggregation:giantswarm:observability:monitored_targets
+      - expr: |-
+          # This metric measures how many targets are monitored by each PodMonitor
+          # It filters only apps deployed in org namespaces which name are in <cluster id>-<app instance> format.
+          #
+          # It does:
+          # - Read the number of targets using prometheus_target_scrape_pool_targets
+          # - Join with kube_podmonitor_info using the PodMonitor namespace/name, to include the app_instance label
+          # - Join with app_operator_app_info to include the team label, only for apps from org namepsaces
+          label_join(
+            label_replace(
+              sum(prometheus_target_scrape_pool_targets) by (installation, cluster_id, provider, pipeline, scrape_job),
+              "resource", "$1", "scrape_job", "^podMonitor/(.+)/[0-9]"
+            )
+            * on(cluster_id, resource) group_left(app_instance)
+            label_join(
+              kube_podmonitor_info,
+              "resource", "/", "namespace", "name"
+            ),
+            "app", "-", "cluster_id", "app_instance"
+          )
+          * on(app, cluster_id) group_left(team)
+          label_replace(app_operator_app_info{namespace=~"org-.+"}, "app", "$1", "name", "(.+)")
+        record: aggregation:giantswarm:observability:monitored_targets
+      - expr: |-
+          # This metric measures how many targets are monitored by each ServiceMonitor
+          # It filters only apps deployed in org namespaces which name are in <app instance> format.
+          #
+          # It does:
+          # - Read the number of targets using prometheus_target_scrape_pool_targets
+          # - Join with kube_servicemonitor_info using the ServiceMonitor namespace/name, to include the app_instance label
+          # - Join with app_operator_app_info to include the team label, only for apps from non org namepsaces
+          label_replace(
+            label_replace(
+              sum(prometheus_target_scrape_pool_targets) by (installation, cluster_id, provider, pipeline, scrape_job),
+              "resource", "$1", "scrape_job", "^serviceMonitor/(.+)/[0-9]"
+            )
+            * on(cluster_id, resource) group_left(app_instance)
+            label_join(
+              kube_servicemonitor_info,
+              "resource", "/", "namespace", "name"
+            ),
+            "app", "$1", "app_instance", "(.+)"
+          )
+          * on(app, cluster_id) group_left(team)
+          label_replace(app_operator_app_info{namespace!~"org-.+"}, "app", "$1", "name", "(.+)")
+        record: aggregation:giantswarm:observability:monitored_targets
+      - expr: |-
+          # This metric measures how many targets are monitored by each PodMonitor
+          # It filters only apps deployed in org namespaces which name are in <app instance> format.
+          #
+          # It does:
+          # - Read the number of targets using prometheus_target_scrape_pool_targets
+          # - Join with kube_podmonitor_info using the PodMonitor namespace/name, to include the app_instance label
+          # - Join with app_operator_app_info to include the team label, only for apps from non org namepsaces
+          label_replace(
+            label_replace(
+              sum(prometheus_target_scrape_pool_targets) by (installation, cluster_id, provider, pipeline, scrape_job),
+              "resource", "$1", "scrape_job", "^podMonitor/(.+)/[0-9]"
+            )
+            * on(cluster_id, resource) group_left(app_instance)
+            label_join(
+              kube_podmonitor_info,
+              "resource", "/", "namespace", "name"
+            ),
+            "app", "$1", "app_instance", "(.+)"
+          )
+          * on(app, cluster_id) group_left(team)
+          label_replace(app_operator_app_info{namespace!~"org-.+"}, "app", "$1", "name", "(.+)")
+        record: aggregation:giantswarm:observability:monitored_targets
   - name: signals.observability.grafana-cloud.recording
     rules:
       # Observability platform product signals
@@ -597,6 +715,69 @@ spec:
         record: aggregation:giantswarm:observability:grafana:executed_queries:total
       - expr: giantswarm:observability:grafana:drilldown_visits:total
         record: aggregation:giantswarm:observability:signals:drilldown_visits
+
+      ## Data ingestion rates per tenant
+      # Tempo traces ingested per tenant
+      - expr: sum(rate(tempo_ingester_traces_created_total[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:ingested_traces
+      # Loki logs ingested per tenant
+      - expr: sum(rate(loki_distributor_lines_received_total[5m])) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:ingested_logs
+      # Mimir metrics ingested per tenant
+      - expr: sum(label_replace(rate(cortex_distributor_received_samples_total[5m]), "tenant", "$1", "user", "(.*)")) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:ingested_metrics
+
+      # Count metrics data sources (ServiceMonitors, PodMonitors) per tenant
+      # This will be available once KSM is configured to expose these CRDs (tracked in giantswarm/giantswarm#32792)
+      # The label_replace handles legacy metrics collection that used the team label instead of tenant.
+      # If neither tenant nor team label is set, we set tenant to "unknown" to ensure all metrics are captured.
+      - expr: |
+          count(
+            label_replace(kube_servicemonitor_info{tenant="", team=""}, "tenant", "unknown", "", "")
+            or
+            label_replace(kube_servicemonitor_info{tenant="", team=~".+"}, "tenant", "giantswarm", "", "")
+            or
+            kube_servicemonitor_info{tenant=~".+"}
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+          or
+          count(
+            label_replace(kube_podmonitor_info{tenant="", team=""}, "tenant", "unknown", "", "")
+            or
+            label_replace(kube_podmonitor_info{tenant="", team=~".+"}, "tenant", "giantswarm", "", "")
+            or
+            kube_podmonitor_info{tenant=~".+"}
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:metrics_datasource_count
+
+      # Count logs data sources (PodLogs) per tenant
+      # This will be available once KSM is configured to expose these CRDs (tracked in giantswarm/giantswarm#32792)
+      # The label_replace handles legacy log collection that used the team label instead of tenant.
+      # If neither tenant nor team label is set, we set tenant to "unknown" to ensure all metrics are captured.
+      - expr: |
+          count(
+            label_replace(kube_podlogs_info{tenant="", team=""}, "tenant", "unknown", "", "")
+            or
+            label_replace(kube_podlogs_info{tenant="", team=~".+"}, "tenant", "giantswarm", "", "")
+            or
+            kube_podlogs_info{tenant=~".+"}
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:logs_datasource_count
+
+      # Count traces data source counts per tenant by counting unique services sending traces using Tempo service graph metrics-generator processor config
+      # Note: Requires metrics generator to be enabled in Tempo configuration
+      - expr: |
+          count(
+            count(
+              label_replace(
+                traces_spanmetrics_calls_total{service!="tempo-vulture"},
+                "tenant",
+                "unknown",
+                "tenant",
+                "^$"
+              )
+            ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant, service)
+          ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, tenant)
+        record: aggregation:giantswarm:observability:signals:traces_datasource_count
 
       ## Alertmanager routes
       - expr: |

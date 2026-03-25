@@ -2,13 +2,14 @@
 set -euo pipefail
 
 # let's have reproducable tests - pin to specific versions
-ARCHITECT_VERSION="7.3.0"
+ARCHITECT_VERSION="7.4.0"
 HELM_VERSION="4.0.0"
 JQ_VERSION="1.8.1"
-LOKITOOL_VERSION="3.6.2"
-PINT_VERSION="0.78.0"
-PROMETHEUS_VERSION="3.8.0"
-YQ_VERSION="4.49.2"
+LOKITOOL_VERSION="3.6.7"
+PINT_VERSION="0.79.0"
+PROMETHEUS_VERSION="3.10.0"
+YQ_VERSION="4.52.4"
+LOGQLLINT_VERSION="0.0.2"
 
 GIT_WORKDIR=$(git rev-parse --show-toplevel)
 OS_BASE="$(uname -s)"
@@ -28,6 +29,7 @@ Linux*)
     export PROMETHEUS_SOURCE="https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz"
     export YQ_BIN_FILE="yq_linux_amd64"
     export YQ_SOURCE="https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64.tar.gz"
+    export LOGQLLINT_SOURCE="https://github.com/giantswarm/logql-lint/releases/download/v${LOGQLLINT_VERSION}/logql-lint-v${LOGQLLINT_VERSION}-linux-amd64.tar.gz"
     ;;
 
 Darwin*)
@@ -44,6 +46,7 @@ Darwin*)
     export PROMETHEUS_SOURCE="https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.darwin-amd64.tar.gz"
     export YQ_BIN_FILE="yq_darwin_amd64"
     export YQ_SOURCE="https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_darwin_amd64.tar.gz"
+    export LOGQLLINT_VERSION="https://github.com/giantswarm/logql-lint/releases/download/v${LOGQLLINT_VERSION}/logql-lint-v${LOGQLLINT_VERSION}-darwin-amd64.tar.gz"
     ;;
 
 *)
@@ -160,6 +163,11 @@ main() {
         "${GIT_WORKDIR}/test/hack/bin/yq" \
         "$YQ_SOURCE" \
         "$YQ_BIN_FILE"
+
+    extract \
+        "${GIT_WORKDIR}/test/hack/bin/logql-lint" \
+        "$LOGQLLINT_SOURCE" \
+        "logql-lint"
 }
 
 main "$@"

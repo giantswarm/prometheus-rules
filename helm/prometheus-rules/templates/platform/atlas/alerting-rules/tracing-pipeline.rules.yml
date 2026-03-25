@@ -3,7 +3,7 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: logging-pipeline.rules
+  name: tracing-pipeline.rules
   namespace: {{ .Values.namespace }}
 spec:
   groups:

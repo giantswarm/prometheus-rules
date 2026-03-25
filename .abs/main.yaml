@@ -1,2 +1,3 @@
+replace-app-version-with-git: true
 replace-chart-version-with-git: true
 generate-metadata: true

@@ -26,11 +26,11 @@ main () {
         done
     else
         for provider in "${PROVIDERS[@]}"; do
-            mapfile -t PINT_FILES_LIST < <(find test/hack/output/generated/$provider/ -name "*.rules.yml")
+            mapfile -t PINT_FILES_LIST < <(find test/hack/output/generated/"$provider"/ -name "*.rules.yml")
         done
     fi
 
-    test/hack/bin/pint -c "$PINT_CONFIG" lint "${PINT_FILES_LIST[@]}"
+    test/hack/bin/pint -c "$PINT_CONFIG" lint --fail-on=warning "${PINT_FILES_LIST[@]}"
 }
 
 main "$@"

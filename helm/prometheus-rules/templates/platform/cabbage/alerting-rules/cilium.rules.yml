@@ -13,7 +13,7 @@ spec:
     - alert: CiliumBPFMapAlmostFull
       annotations:
         description: '{{`Cilium BPF map is about to fill up.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cilium-bpf-map/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-bpf-map/
       expr: avg(cilium_bpf_map_pressure) by (cluster_id, installation, pipeline, provider, map_name) * 100 > 80
       for: 15m
       labels:
@@ -25,7 +25,7 @@ spec:
     - alert: CiliumBPFMapFull
       annotations:
         description: '{{`Cilium BPF map is about filled up.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cilium-bpf-map/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-bpf-map/
       expr: avg(cilium_bpf_map_pressure) by (cluster_id, installation, pipeline, provider, map_name) * 100 > 95
       for: 15m
       labels:
@@ -36,7 +36,7 @@ spec:
     - alert: CiliumAPITooSlow
       annotations:
         description: '{{`Cilium API processing time is >50s pod="{{ $labels.pod }}" node="{{ $labels.node }}" method="{{ $labels.method}}" path="{{ $labels.path }}"`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cilium-performance-issues/#slow-cilium-api
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-performance-issues/#slow-cilium-api
       expr: avg(rate(cilium_agent_api_process_time_seconds_sum{}[5m])/rate(cilium_agent_api_process_time_seconds_count{}[5m]) > 50) by (cluster_id, node, pod, method, path, installation, pipeline, provider)
       for: 20m
       labels:
@@ -48,7 +48,7 @@ spec:
     - alert: CiliumNetworkPolicyFailed
       annotations:
         description: '{{`Too many Cilium Network Policy errors.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/unsupported-cilium-network-policy/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/unsupported-cilium-network-policy/
       # cilium_policy_change_total - for cilium >=1.15
       # cilium_policy_import_errors_total - for cilium <1.15
       expr: max(rate(cilium_policy_change_total{outcome=~"fail.*"}[20m]) OR rate(cilium_policy_import_errors_total[20m])) by (cluster_id, installation, pipeline, provider) > 0
@@ -79,7 +79,7 @@ spec:
     - alert: CiliumAgentPodPending
       annotations:
         description: '{{`Pod {{ $labels.namespace }}/{{ $labels.pod }} is stuck in Pending in cluster {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/pod-stuck-in-pending/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/pod-stuck-in-pending/
       expr: kube_pod_status_phase{namespace="kube-system",pod=~"(cilium-.*)",phase="Pending"} == 1
       for: 15m
       labels:
@@ -93,7 +93,7 @@ spec:
     - alert: CiliumOperatorPodRestartingTooOften
       annotations:
         description: '{{`cilium-operator is restarting too often in cluster {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/cilium-troubleshooting/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
       expr: 1 - sum(increase(kube_pod_container_status_restarts_total{container="cilium-operator"}[10m])) by (container, cluster_id, cluster_type, customer, installation, pipeline, provider, region)/100 < 0.98
       for: 10m
       labels:

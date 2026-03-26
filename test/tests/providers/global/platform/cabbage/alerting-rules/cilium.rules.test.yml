@@ -74,7 +74,7 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Too many Cilium Network Policy errors."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/unsupported-cilium-network-policy/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/unsupported-cilium-network-policy/
       # cilium_policy_change_total{outcome="success"}
       - alertname: CiliumNetworkPolicyFailed
         eval_time: 110m
@@ -98,4 +98,4 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Too many Cilium Network Policy errors."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/unsupported-cilium-network-policy/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/unsupported-cilium-network-policy/

@@ -51,7 +51,7 @@ spec:
       for: 1d
       labels:
         area: platform
-        severity: notify
+        severity: none
         team: atlas
         topic: observability
         cancel_if_outside_working_hours: "true"

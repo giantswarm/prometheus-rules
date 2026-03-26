@@ -5,9 +5,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
+### Changed
 
 - Rely on metrics-provided team labels for the `FluxHelmReleaseFailed` alert with the `honeybadger` team as backup, not default.
+
+## [4.99.0] - 2026-03-26
+
+### Changed
+
+- Update `GrafanaPostgresqlRecoveryTestFailed` alert to only fire when Grafana PostgreSQL recovery tests are failing for more than 1 day.
+- Migrate Team Shield ops recipes to runbooks.
+- JobScrapingFailure severity lowered from "notify" to "none"
+- Remove kyverno from WorkloadClusterWebhookDurationExceedsTimeoutHoneybadger
+
+## [4.98.0] - 2026-03-10
+
+### Changed
+
+- kyverno mutating webhook alert: move from honeybadger to shield
+- memcached alert: link to memcached dashboard
+- Update runbook URLs from ops-recipes to runbooks for migrated content.
+
+## [4.97.0] - 2026-02-27
 
 ### Changed
 
@@ -4275,7 +4294,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.96.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.99.0...HEAD
+[4.99.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.98.0...v4.99.0
+[4.98.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.97.0...v4.98.0
+[4.97.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.96.1...v4.97.0
 [4.96.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.96.0...v4.96.1
 [4.96.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.95.0...v4.96.0
 [4.95.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.94.2...v4.95.0

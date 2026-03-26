@@ -12,7 +12,7 @@ spec:
           annotations:
             description: |
               Karpenter machine {{`{{ $labels.name }}`}} on cluster {{`{{ $labels.cluster_id }}`}} has been not Ready for more than 30 minutes. Might be that Karpenter is not able to register new nodes to the cluster.
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/karpenter/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/karpenter/
           expr: karpenter_machine_status_condition{type="Ready", status="True"} == 0
           for: 30m
           labels:
@@ -26,7 +26,7 @@ spec:
           annotations:
             description: |
               Provisioner {{`{{ $labels.provisioner }}`}} on cluster {{`{{ $labels.cluster_id }}`}} is almost full.
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/karpenter/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/karpenter/
           expr: karpenter_provisioner_usage_pct > 90
           for: 72h
           labels:
@@ -40,7 +40,7 @@ spec:
           annotations:
             description: |
               Karpenter on cluster {{`{{ $labels.cluster_id }}`}} is getting errors during API calls to the cloud provider.
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/karpenter/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/karpenter/
           expr: rate(karpenter_cloudprovider_errors_total{}[5m]) > 0.1
           for: 10m
           labels:
@@ -54,7 +54,7 @@ spec:
           annotations:
             description: |
               Karpenter on cluster {{`{{ $labels.cluster_id }}`}} has unregistered nodes.
-            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/karpenter/
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/karpenter/
           expr: count(kube_node_spec_taint{key="karpenter.sh/unregistered", value="karpenter", effect="NoExecute"}) by (cluster_id, installation, pipeline, provider) > 0
           for: 10m
           labels:

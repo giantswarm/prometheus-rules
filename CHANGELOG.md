@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.99.0] - 2026-03-26
+
 ### Changed
 
 - Update `GrafanaPostgresqlRecoveryTestFailed` alert to only fire when Grafana PostgreSQL recovery tests are failing for more than 1 day.
@@ -4288,7 +4290,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.98.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.99.0...HEAD
+[4.99.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.98.0...v4.99.0
 [4.98.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.97.0...v4.98.0
 [4.97.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.96.1...v4.97.0
 [4.96.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.96.0...v4.96.1

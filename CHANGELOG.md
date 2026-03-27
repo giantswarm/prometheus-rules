@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.101.0] - 2026-03-27
+
 ### Added
 
 - Add `aggregation:giantswarm:helm_release_info` for the Grafana Cloud.
@@ -4308,7 +4310,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.100.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.101.0...HEAD
+[4.101.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.100.0...v4.101.0
 [4.100.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.99.0...v4.100.0
 [4.99.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.98.0...v4.99.0
 [4.98.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.97.0...v4.98.0

@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `aggregation:giantswarm:helm_release_info` for the Grafana Cloud.
+
 ### Changed
 
 - Switch alert rules source from `kube-state-metrics` to `flux-ksm`.

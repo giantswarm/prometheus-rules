@@ -27,7 +27,7 @@ tests:
               customresource_kind: "Kustomization"
               exported_namespace: "flux-giantswarm"
               installation: "test"
-              job: "giantswarm/cluster-api-monitoring"
+              job: "flux-ksm"
               name: "flux"
               severity: "page"
               suspended: "true"

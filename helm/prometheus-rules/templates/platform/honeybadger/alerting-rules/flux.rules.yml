@@ -34,7 +34,7 @@ spec:
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'
       expr: |
         label_replace(
-          gotk_resource_info{ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"},
+          gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"},
           "team", "honeybadger", "team", "^$"
         ) > 0
       for: 10m
@@ -75,7 +75,7 @@ spec:
         description: |-
           {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-kustomization-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&KUSTOMIZATION_NAME={{ $labels.name }}`}}'
-      expr: gotk_resource_info{ready="False", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*", name!="silences"} > 0
+      expr: gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*", name!="silences"} > 0
       for: 20m
       labels:
         area: platform
@@ -111,7 +111,7 @@ spec:
         description: |-
           {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&SOURCE_NAME={{ $labels.name }}`}}'
-      expr: gotk_resource_info{ready="False", customresource_kind=~"GitRepository|HelmRepository|Bucket|OCIRepository", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
+      expr: gotk_resource_info{job="flux-ksm", ready="False", customresource_kind=~"GitRepository|HelmRepository|Bucket|OCIRepository", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
       for: 2h
       labels:
         area: platform
@@ -165,7 +165,7 @@ spec:
         description: |-
           {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }} has been suspended for 24h.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-suspended/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: gotk_resource_info{cluster_type="management_cluster", exported_namespace="flux-giantswarm", suspended="true"} > 0
+      expr: gotk_resource_info{job="flux-ksm", cluster_type="management_cluster", exported_namespace="flux-giantswarm", suspended="true"} > 0
       for: 24h
       labels:
         area: platform

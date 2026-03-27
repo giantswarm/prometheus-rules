@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Switch alert rules source from `kube-state-metrics` to `flux-ksm`.
+
 ### Removed
 
 - Remove `DexInvalidClientId` alert.

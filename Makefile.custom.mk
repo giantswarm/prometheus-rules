@@ -39,8 +39,8 @@ pint-all: install-tools template-chart ## Run pint with extra checks
 	GENERATE_ONLY=true bash test/hack/bin/verify-rules.sh
 	./test/hack/bin/run-pint.sh test/conf/pint/pint-all.hcl ${PINT_TEAM_FILTER}
 
-logql-lint: install-tools template-chart ## Run logql-lint
-	./test/hack/bin/logql-lint ./test/hack/output/
+logql-lint: install-tools template-chart test-rules ## Run logql-lint
+	./test/hack/bin/logql-lint ./test/hack/output/generated/*/*/*/*/*.logs.yml -l cluster_id,installation,pipeline,provider
 
 ##@ Mixins
 update-mimir-mixin: install-tools ##        Update Mimir mixins

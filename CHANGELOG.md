@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Switch alert rules source from `kube-state-metrics` to `flux-ksm`.
+- logql-lint in CI: check for all mandatory aggregations.
 
 ### Removed
 

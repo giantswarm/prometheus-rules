@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add support for Proxmox.
+
 ## [4.101.0] - 2026-03-27
 
 ### Added

@@ -58,7 +58,7 @@ spec:
       expr: |
         gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace!~"flux-giantswarm|giantswarm|org-t-.*", team!~"^$|noteam"} > 0
         unless on(name, exported_namespace)
-        ALERTS{alertname="FluxHelmReleaseFailed", alertstate="firing"}
+        ALERTS{alertname="FluxHelmReleaseFailed"}
       for: 10m
       labels:
         area: platform

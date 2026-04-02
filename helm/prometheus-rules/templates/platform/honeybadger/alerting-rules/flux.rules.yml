@@ -23,9 +23,9 @@ spec:
         team: honeybadger
         topic: managementcluster
 #
-# FluxHelmReleaseFailed
+# FluxGiantswarmHelmReleaseFailed
 #
-# Alerting for GiantSwarm management clusters HelmRelease CRs in .*giantswarm.* namespaces.
+# Alerting for GiantSwarm management clusters HelmRelease CRs in flux-giantswarm and giantswarm namespaces.
 #
     - alert: FluxGiantswarmHelmReleaseFailed
       annotations:
@@ -46,7 +46,7 @@ spec:
         namespace: |-
           {{`{{ $labels.exported_namespace }}`}}
 #
-# FluxHelmReleaseFailed
+# FluxCustomerHelmReleaseFailed
 #
 # Alerting for GiantSwarm management clusters HelmRelease CRs in remaining namespaces.
 #
@@ -55,10 +55,10 @@ spec:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'
-      {{- $phoenix_components := "aws-ebs-csi-driver|cloud-provider-aws|azure-cloud-controller-manager|azure-cloud-node-manager|azuredisk-csi-driver|azurefile-csi-driver|cloud-provider-vsphere|cloud-provider-cloud-director|cloud-provider-proxmox" }}
-      {{- $tenet_components := "vertical-pod-autoscaler-crd" }}
       expr: |
-        gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace!~"flux-giantswarm|giantswarm|org-t-.*", team!~"^$|noteam", name!~"(.+)-({{ $phoenix_components }}|{{ $tenet_components }})"} > 0
+        gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace!~"flux-giantswarm|giantswarm|org-t-.*", team!~"^$|noteam"} > 0
+        unless on(name, exported_namespace)
+        ALERTS{alertname="FluxHelmReleaseFailed", alertstate="firing"}
       for: 10m
       labels:
         area: platform

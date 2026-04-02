@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Split the Honeybadger's `FluxHelmReleaseFailed` alert into two - `FluxGiantswarmHelmReleaseFailed` and `FluxCustomerHelmReleaseFailed`.
+
 ### Added
 
 - Add support for Proxmox.

@@ -25,18 +25,40 @@ spec:
 #
 # FluxHelmReleaseFailed
 #
-# Alerting for GiantSwarm management clusters HelmRelease CRs.
+# Alerting for GiantSwarm management clusters HelmRelease CRs in .*giantswarm.* namespaces.
 #
-    - alert: FluxHelmReleaseFailed
+    - alert: FluxGiantswarmHelmReleaseFailed
       annotations:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'
       expr: |
         label_replace(
-          gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"},
+          gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace=~"flux-giantswarm|giantswarm"},
           "team", "honeybadger", "team", "^$"
         ) > 0
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        topic: releng
+        namespace: |-
+          {{`{{ $labels.exported_namespace }}`}}
+#
+# FluxHelmReleaseFailed
+#
+# Alerting for GiantSwarm management clusters HelmRelease CRs in remaining namespaces.
+#
+    - alert: FluxCustomerHelmReleaseFailed
+      annotations:
+        description: |-
+          {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'
+      {{- $phoenix_components := "aws-ebs-csi-driver|cloud-provider-aws|azure-cloud-controller-manager|azure-cloud-node-manager|azuredisk-csi-driver|azurefile-csi-driver|cloud-provider-vsphere|cloud-provider-cloud-director|cloud-provider-proxmox" }}
+      {{- $tenet_components := "vertical-pod-autoscaler-crd" }}
+      expr: |
+        gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace!~"flux-giantswarm|giantswarm|org-t-.*", team!~"^$|noteam", name!~"(.+)-({{ $phoenix_components }}|{{ $tenet_components }})"} > 0
       for: 10m
       labels:
         area: platform
@@ -50,7 +72,7 @@ spec:
 #
 # Alerting for GiantSwarm-owned workload clusters. The `organization` label makes sure of that.
 #
-    - alert: FluxWorkloadClusterHelmReleaseFailed
+    - alert: FluxGiantswarmWorkloadClusterHelmReleaseFailed
       annotations:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}

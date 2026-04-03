@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `network_traffic_analysis:beyla_network_flow_bytes_total:rate5m` recording rule for total network traffic rate.
+
 ### Changed
 
 - Split the Honeybadger's `FluxHelmReleaseFailed` alert into two - `FluxGiantswarmHelmReleaseFailed` and `FluxCustomerHelmReleaseFailed`.

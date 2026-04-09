@@ -34,3 +34,25 @@ spec:
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: phoenix
+
+    # Similar to `ClusterCrossplaneResourcesNotReady`
+    - alert: ClusterCrossplaneResourcesNotSynced
+      annotations:
+        description: '{{`Not all managed Crossplane resources of type "{{ $labels.gvk }}" on {{ $labels.cluster_id }} are synced. This could affect creation or health of workload clusters.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cluster-crossplane-resources/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      expr: |
+        (
+        crossplane_managed_resource_exists{gvk=~"(iam.aws.upbound.io/.*, Kind=(Role|RolePolicy|Policy)|sqs.aws.upbound.io/.*, Kind=Queue|sqs.aws.upbound.io/.*, Kind=QueuePolicy|cloudwatchevents.aws.upbound.io/.*, Kind=Rule|cloudwatchevents.aws.upbound.io/.*, Kind=Target|ec2.aws.upbound.io/.*, Kind=SecurityGroup|acm.aws.upbound.io/.*, Kind=Certificate|cloudfront.aws.upbound.io/.*, Kind=.+|iam.aws.upbound.io/.*, Kind=OpenIDConnectProvider|route53.aws.upbound.io/.*, Kind=Record|s3.aws.upbound.io/.*, Kind=Bucket.*)"} != crossplane_managed_resource_synced{gvk=~"(iam.aws.upbound.io/.*, Kind=(Role|RolePolicy|Policy)|sqs.aws.upbound.io/.*, Kind=Queue|sqs.aws.upbound.io/.*, Kind=QueuePolicy|cloudwatchevents.aws.upbound.io/.*, Kind=Rule|cloudwatchevents.aws.upbound.io/.*, Kind=Target|ec2.aws.upbound.io/.*, Kind=SecurityGroup|acm.aws.upbound.io/.*, Kind=Certificate|cloudfront.aws.upbound.io/.*, Kind=.+|iam.aws.upbound.io/.*, Kind=OpenIDConnectProvider|route53.aws.upbound.io/.*, Kind=Record|s3.aws.upbound.io/.*, Kind=Bucket.*)"}
+        ) OR
+        iam_aws_upbound_role_synced{status="False", label_giantswarm_io_service_type="managed"} == 1 OR
+        sqs_aws_upbound_queue_synced{status="False", label_giantswarm_io_service_type="managed"} == 1 OR
+        sqs_aws_upbound_queuepolicy_synced{status="False", label_giantswarm_io_service_type="managed"} == 1 OR
+        cloudwatchevents_aws_upbound_rule_synced{status="False", label_giantswarm_io_service_type="managed"} == 1 OR
+        cloudwatchevents_aws_upbound_target_synced{status="False", label_giantswarm_io_service_type="managed"} == 1 OR
+        ec2_aws_upbound_securitygroup_synced{status="False", label_giantswarm_io_service_type="managed"} == 1
+      for: 60m # less severe than "Ready" status
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: phoenix

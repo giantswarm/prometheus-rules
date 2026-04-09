@@ -24,3 +24,26 @@ tests:
             exp_annotations:
               description: 'Not all managed Crossplane resources of type "cloudwatchevents.aws.upbound.io/v1beta1, Kind=Rule" on mymc are ready. This could affect creation or health of workload clusters.'
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cluster-crossplane-resources/?INSTALLATION=test-installation&CLUSTER=mymc
+
+  - interval: 1m
+    input_series:
+      - series: 'crossplane_managed_resource_exists{gvk="sqs.aws.upbound.io/v1beta1, Kind=Queue", cluster_id="mymc", installation="test-installation"}'
+        values: "6x70"
+      - series: 'crossplane_managed_resource_synced{gvk="sqs.aws.upbound.io/v1beta1, Kind=Queue", cluster_id="mymc", installation="test-installation"}'
+        values: "5x70"
+
+    alert_rule_test:
+      - alertname: ClusterCrossplaneResourcesNotSynced
+        eval_time: 20m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "false"
+              cluster_id: "mymc"
+              gvk: "sqs.aws.upbound.io/v1beta1, Kind=Queue"
+              installation: "test-installation"
+              severity: page
+              team: phoenix
+            exp_annotations:
+              description: 'Not all managed Crossplane resources of type "sqs.aws.upbound.io/v1beta1, Kind=Queue" on mymc are synced. This could affect creation or health of workload clusters.'
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cluster-crossplane-resources/?INSTALLATION=test-installation&CLUSTER=mymc

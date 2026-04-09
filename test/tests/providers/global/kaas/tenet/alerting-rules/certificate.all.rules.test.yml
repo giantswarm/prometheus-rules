@@ -92,3 +92,71 @@ tests:
     alert_rule_test:
       - alertname: GiantswarmManagedCertificateCRWillExpireInLessThanTwoWeeks
         eval_time: 10d
+  # KyvernoCertificateSecretWillExpireInLessThanTwoDays - rotation: old cert expiring, new cert valid - should NOT fire
+  - interval: 1d
+    input_series:
+      # Old certificate - expires at day 3 (259200 seconds)
+      - series: 'cert_exporter_secret_not_after{cluster_id="test01", cluster_type="management_cluster", installation="test01", pipeline="stable", provider="capa", name="kyverno-svc.kyverno.svc.kyverno-tls-ca", namespace="kube-system", exported_namespace="kyverno", secretkey="tls.crt", certificatename="old-cert"}'
+        values: "259200x10"
+      # New certificate - expires at day 31 (2678400 seconds)
+      - series: 'cert_exporter_secret_not_after{cluster_id="test01", cluster_type="management_cluster", installation="test01", pipeline="stable", provider="capa", name="kyverno-svc.kyverno.svc.kyverno-tls-ca", namespace="kube-system", exported_namespace="kyverno", secretkey="tls.crt", certificatename="new-cert"}'
+        values: "2678400x10"
+    alert_rule_test:
+      - alertname: KyvernoCertificateSecretWillExpireInLessThanTwoDays
+        eval_time: 2d
+  # KyvernoCertificateSecretWillExpireInLessThanTwoDays - all certs expiring - SHOULD fire
+  - interval: 1d
+    input_series:
+      # Old certificate - expires at day 3
+      - series: 'cert_exporter_secret_not_after{cluster_id="test01", cluster_type="management_cluster", installation="test01", pipeline="stable", provider="capa", name="kyverno-svc.kyverno.svc.kyverno-tls-ca", namespace="kube-system", exported_namespace="kyverno", secretkey="tls.crt", certificatename="old-cert"}'
+        values: "259200x10"
+      # New certificate - also expires at day 4 (345600 seconds)
+      - series: 'cert_exporter_secret_not_after{cluster_id="test01", cluster_type="management_cluster", installation="test01", pipeline="stable", provider="capa", name="kyverno-svc.kyverno.svc.kyverno-tls-ca", namespace="kube-system", exported_namespace="kyverno", secretkey="tls.crt", certificatename="new-cert"}'
+        values: "345600x10"
+    alert_rule_test:
+      - alertname: KyvernoCertificateSecretWillExpireInLessThanTwoDays
+        eval_time: 3d
+        exp_alerts:
+          - exp_labels:
+              alertname: KyvernoCertificateSecretWillExpireInLessThanTwoDays
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: test01
+              exported_namespace: kyverno
+              installation: test01
+              name: kyverno-svc.kyverno.svc.kyverno-tls-ca
+              pipeline: stable
+              provider: capa
+              secretkey: tls.crt
+              severity: notify
+              team: shield
+              topic: kyverno
+            exp_annotations:
+              description: "Kyverno Certificate stored in Secret kyverno/kyverno-svc.kyverno.svc.kyverno-tls-ca on test01 will expire in less than two days."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kyverno-troubleshooting/
+  # KyvernoCertificateSecretWillExpireInLessThanTwoDays - single cert expiring - SHOULD fire
+  - interval: 1d
+    input_series:
+      - series: 'cert_exporter_secret_not_after{cluster_id="test01", cluster_type="management_cluster", installation="test01", pipeline="stable", provider="capa", name="kyverno-svc.kyverno.svc.kyverno-tls-ca", namespace="kube-system", exported_namespace="kyverno", secretkey="tls.crt", certificatename="the-cert"}'
+        values: "259200x10"
+    alert_rule_test:
+      - alertname: KyvernoCertificateSecretWillExpireInLessThanTwoDays
+        eval_time: 2d
+        exp_alerts:
+          - exp_labels:
+              alertname: KyvernoCertificateSecretWillExpireInLessThanTwoDays
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: test01
+              exported_namespace: kyverno
+              installation: test01
+              name: kyverno-svc.kyverno.svc.kyverno-tls-ca
+              pipeline: stable
+              provider: capa
+              secretkey: tls.crt
+              severity: notify
+              team: shield
+              topic: kyverno
+            exp_annotations:
+              description: "Kyverno Certificate stored in Secret kyverno/kyverno-svc.kyverno.svc.kyverno-tls-ca on test01 will expire in less than two days."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kyverno-troubleshooting/

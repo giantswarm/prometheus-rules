@@ -25,7 +25,7 @@ spec:
     - alert: KongOOMKill
       annotations:
         description: '{{`Kong container {{ $labels.namespace }}/{{ $labels.pod }}/{{ $labels.container }} is being OOMKilled.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kong-debugging/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&POD={{ $labels.pod }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kong-debugging/#kongoomkill?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&POD={{ $labels.pod }}`}}'
       expr: kube_pod_container_status_restarts_total{namespace=~"kong.*"} - kube_pod_container_status_restarts_total{namespace=~"kong.*"} offset 1h >= 5 AND ignoring(reason) kube_pod_container_status_last_terminated_reason{namespace=~"kong.*", reason="OOMKilled"} > 0
       for: 10m
       labels:

@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Exclude `/userinfo` handler from `DexErrorRateHigh` alert to avoid pages caused by external clients polling with expired tokens.
+
 ## [4.103.0] - 2026-04-13
 
 ### Changed

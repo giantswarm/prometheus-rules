@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.103.0] - 2026-04-13
+
 ### Changed
 
 - Update `KyvernoCertificateSecretWillExpireInLessThanTwoDays` alert logic for [new cert-exporter logic](https://github.com/giantswarm/cert-exporter/blob/master/CHANGELOG.md#2100---2026-03-10) for overlapping certificates.
@@ -4329,7 +4331,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.102.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.103.0...HEAD
+[4.103.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.102.0...v4.103.0
 [4.102.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.101.0...v4.102.0
 [4.101.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.100.0...v4.101.0
 [4.100.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.99.0...v4.100.0

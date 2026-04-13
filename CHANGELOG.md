@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update `KyvernoCertificateSecretWillExpireInLessThanTwoDays` alert logic for [new cert-exporter logic](https://github.com/giantswarm/cert-exporter/blob/master/CHANGELOG.md#2100---2026-03-10) for overlapping certificates.
 
+### Added
+
+- Add `KongOOMKill` alert for Kong containers being OOMKilled.
+
 ## [4.102.0] - 2026-04-08
 
 ### Changed

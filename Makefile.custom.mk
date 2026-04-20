@@ -5,12 +5,12 @@ clean-dry-run: ## dry run for `make clean` - print all untracked files
 .PHONY: clean
 clean: ## Clean the git work dir and remove all untracked files
 	# clean stage
-	git clean -xdf -- test/hack/bin test/hack/output test/hack/checkLabels
+	git clean -xdf -- test/hack/bin test/hack/output test/hack/checkLabels test/hack/logql-lint
 
 ##@ Testing
 
 .PHONY: test
-test: install-tools template-chart test-rules test-inhibitions test-runbooks ## Run all tests
+test: install-tools template-chart test-rules test-inhibitions test-runbooks logql-lint ## Run all tests
 
 install-tools:
 	./test/hack/bin/fetch-tools.sh
@@ -38,6 +38,9 @@ pint: install-tools template-chart ## Run pint
 pint-all: install-tools template-chart ## Run pint with extra checks
 	GENERATE_ONLY=true bash test/hack/bin/verify-rules.sh
 	./test/hack/bin/run-pint.sh test/conf/pint/pint-all.hcl ${PINT_TEAM_FILTER}
+
+logql-lint: install-tools template-chart test-rules ## Run logql-lint
+	./test/hack/bin/logql-lint ./test/hack/output/generated/*/*/*/*/*.logs.yml -l cluster_id,installation,pipeline,provider
 
 ##@ Mixins
 update-mimir-mixin: install-tools ##        Update Mimir mixins

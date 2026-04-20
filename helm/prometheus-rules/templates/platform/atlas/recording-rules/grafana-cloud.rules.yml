@@ -30,6 +30,10 @@ spec:
       record: aggregation:giantswarm:app_deployed_workload_cluster_total
     - expr: count(app_operator_app_info{upgrade_available="true",namespace!="giantswarm"}) by (app, catalog, latest_version, namespace, version, cluster_id, cluster_type, customer, installation, pipeline, provider, region)
       record: aggregation:giantswarm:app_upgrade_available
+  - name: flux.grafana-cloud.recording
+    rules:
+    - expr: gotk_resource_info{job="flux-ksm",customresource_kind="HelmRelease",cluster_type="management_cluster"}
+      record: aggregation:giantswarm:helm_release_info
   - name: clusters.grafana-cloud.recording
     rules:
     # The rules in this group are used to aggregate cluster information from capi_cluster_info metric.

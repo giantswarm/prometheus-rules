@@ -51,15 +51,12 @@ spec:
       annotations:
         description: '{{`grafana-postgresql db automated recovery test failed.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      # If we have a pod for grafana-postgresql-recovery-test postgresql cluster running for 1 hour, we can consider the recovery failed. This alert works because the test clusters are automatically deleted right after the tests are successful, and the grafana database is small so restore+tests never take that long.
+      # Fires when all existing grafana-postgresql recovery test Jobs have failed. Clears as soon as a new Job succeeds.
       expr: |
-        (
-          # On v33+ clusters, we introduced the kube_cnpg_cluster_info metric to complement kube_pod_info for better reliability.
-          count(kube_cnpg_cluster_info{cluster_type="management_cluster", name="grafana-postgresql-recovery-test", namespace="monitoring"}) by (cluster_id, installation, pipeline, provider)
-          or
-          sum(kube_pod_info{cluster_type="management_cluster", namespace="monitoring", pod=~"grafana-postgresql-recovery-test-[0-9]+"}) by (cluster_id, installation, pipeline, provider)
-        ) >= 1
-      for: 1h
+        min by (cluster_id, installation, pipeline, provider) (
+          kube_job_failed{job_name=~"grafana-postgresql-recovery-test.+", namespace="monitoring", condition="true"}
+        ) == 1
+      for: 1d
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"

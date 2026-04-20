@@ -31,7 +31,7 @@ observability.giantswarm.io/tenant: giantswarm
 {{- end -}}
 
 {{- define "providerTeam" -}}
-'{{`{{ if or (eq .Labels.provider "cloud-director") (eq .Labels.provider "vsphere") }}rocket{{ else }}phoenix{{ end }}`}}'
+'{{`{{ if or (eq .Labels.provider "cloud-director") (eq .Labels.provider "vsphere") (eq .Labels.provider "proxmox")  }}rocket{{ else }}phoenix{{ end }}`}}'
 {{- end -}}
 
 {{- define "workingHoursOnly" -}}

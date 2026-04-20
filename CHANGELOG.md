@@ -5,6 +5,88 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Exclude `/userinfo` handler from `DexErrorRateHigh` alert to avoid pages caused by external clients polling with expired tokens.
+
+## [4.103.0] - 2026-04-13
+
+### Changed
+
+- Update `KyvernoCertificateSecretWillExpireInLessThanTwoDays` alert logic for [new cert-exporter logic](https://github.com/giantswarm/cert-exporter/blob/master/CHANGELOG.md#2100---2026-03-10) for overlapping certificates.
+
+### Added
+
+- Add `KongOOMKill` alert for Kong containers being OOMKilled.
+
+## [4.102.0] - 2026-04-08
+
+### Changed
+
+- Split the Honeybadger's `FluxHelmReleaseFailed` alert into two - `FluxGiantswarmHelmReleaseFailed` and `FluxCustomerHelmReleaseFailed`.
+
+### Added
+
+- Add support for Proxmox.
+
+## [4.101.0] - 2026-03-27
+
+### Added
+
+- Add `aggregation:giantswarm:helm_release_info` for the Grafana Cloud.
+
+### Changed
+
+- Switch alert rules source from `kube-state-metrics` to `flux-ksm`.
+- logql-lint in CI: check for all mandatory aggregations.
+
+### Removed
+
+- Remove `DexInvalidClientId` alert.
+
+## [4.100.0] - 2026-03-26
+
+### Changed
+
+- Rely on metrics-provided team labels for the `FluxHelmReleaseFailed` alert with the `honeybadger` team as backup, not default.
+
+## [4.99.0] - 2026-03-26
+
+### Changed
+
+- Update `GrafanaPostgresqlRecoveryTestFailed` alert to only fire when Grafana PostgreSQL recovery tests are failing for more than 1 day.
+- Migrate Team Shield ops recipes to runbooks.
+- JobScrapingFailure severity lowered from "notify" to "none"
+- Remove kyverno from WorkloadClusterWebhookDurationExceedsTimeoutHoneybadger
+
+## [4.98.0] - 2026-03-10
+
+### Changed
+
+- kyverno mutating webhook alert: move from honeybadger to shield
+- memcached alert: link to memcached dashboard
+- Update runbook URLs from ops-recipes to runbooks for migrated content.
+
+## [4.97.0] - 2026-02-27
+
+### Changed
+
+- Updated tempo rules to latest mixins
+- Fixed tempo rules evaluation interval which was too short
+- CI: Added basic logql linting
+
+## [4.96.1] - 2026-02-26
+
+### Fixed
+
+- Fix `ManagementClusterHasLessThanThreeNodes` now that worker nodes no longer have node-role labels.
+
+## [4.96.0] - 2026-02-26
+
+### Added
+
+- Add `memcachedLowHitRatio` alert that creates ticket for underperforming memcached instances.
+
 ### Removed
 
 - Remove `AWSLoadBalancerControllerAWSAPIErrors` alert as it's already covered by `AWSLoadBalancerControllerReconcileErrors`.
@@ -4253,7 +4335,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.95.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.103.0...HEAD
+[4.103.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.102.0...v4.103.0
+[4.102.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.101.0...v4.102.0
+[4.101.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.100.0...v4.101.0
+[4.100.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.99.0...v4.100.0
+[4.99.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.98.0...v4.99.0
+[4.98.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.97.0...v4.98.0
+[4.97.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.96.1...v4.97.0
+[4.96.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.96.0...v4.96.1
+[4.96.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.95.0...v4.96.0
 [4.95.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.94.2...v4.95.0
 [4.94.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.94.1...v4.94.2
 [4.94.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.94.0...v4.94.1

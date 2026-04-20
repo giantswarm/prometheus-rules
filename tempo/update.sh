@@ -5,7 +5,8 @@
 
 set -eau o pipefail
 
-BRANCHREF="heads/main"
+#BRANCHREF="heads/main" # breaking changes are coming with v3. Switch back to main once we update to v3.
+BRANCHREF="heads/release-v2.10"
 MIXIN_URL="https://raw.githubusercontent.com/grafana/tempo/refs/$BRANCHREF/operations/tempo-mixin-compiled/alerts.yaml"
 OUTPUT_FILE="$(pwd)/helm/prometheus-rules/templates/platform/atlas/alerting-rules/tempo-mixins.rules.yml"
 
@@ -33,7 +34,8 @@ apply_global_sed_fixes() {
       sed 's/{}/{cluster_type=\\\"management_cluster\\\"}/g' | # Only apply this alert to management clusters - this one is where there is no selector
       sed 's/'\''/ /g' | # Fix single quotes in alert messages
       sed 's/\(message": "\)\(.*\)"/description": "{{`\2`}}"/g' | # Wrap alert messages in double curly braces to avoid Helm template parsing issues. Also, rename the field to `description`.
-      sed 's/, namespace=~\\"\.\*\\"//g' #| # Remove useless namespace selector
+      sed 's/, namespace=~\\"\.\*\\"//g' | # Remove useless namespace selector
+      sed 's/\[1m\]/[2m]/g' # With 1m scraping interval, evaluation interval should be at least 2m.
 }
 
 update_rules() {
@@ -111,6 +113,26 @@ update_rules() {
                 # Unnecessary regexp match on static string
                 rule="$(echo "$rule" \
                     | sed 's/container=~/container=/' \
+                )"
+                ;;
+            "TempoBlockBuildersPartitionsMismatch")
+                # Template is using `pod` label but the query removes it.
+                rule="$(echo "$rule" \
+                    | sed 's/ by (/ by (installation, pipeline, provider, /'
+                )"
+                # Unnecessary regexp match on static string
+                rule="$(echo "$rule" \
+                    | sed 's/name=~/name=/' \
+                )"
+                ;;
+            "TempoLiveStoresPartitionsUnowned")
+                # Template is using `pod` label but the query removes it.
+                rule="$(echo "$rule" \
+                    | sed 's/max by(/max by(installation, pipeline, provider, /'
+                )"
+                # Unnecessary regexp match on static string
+                rule="$(echo "$rule" \
+                    | sed 's/name=~/name=/' \
                 )"
                 ;;
             *)

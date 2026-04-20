@@ -51,7 +51,7 @@ spec:
     - alert: FluentbitDaemonSetNotSatisfied
       annotations:
         description: '{{`Daemonset {{ $labels.namespace}}/{{ $labels.daemonset }} is not satisfied.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/daemonset-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/daemonset-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
         __dashboardUid__: fluentbit
         dashboardQueryParams: "orgId=2"
       expr: kube_daemonset_status_number_unavailable{daemonset="fluent-logshipping-app"} > 0

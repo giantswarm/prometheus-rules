@@ -36,20 +36,20 @@ spec:
         topic: envoy-gateway
     - alert: EnvoyHighDownstreamHTTP5xxErrorRate
       annotations:
-        description: '{{`More than 5% of downstream HTTP responses are 5xx on {{ $labels.pod }} ({{ $value | printf \"%.1f\" }}%)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
-      expr: | 
+        description: '{{`More than 5% of downstream HTTP responses are 5xx on {{ $labels.pod }} ({{ $value | printf "%.1f" }}%)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      expr: |
         sum(
           rate(envoy_http_downstream_rq_xx{envoy_response_code_class="5"}[5m])
-        ) by (pod) 
-          / 
+        ) by (pod, namespace, cluster_id, installation, pipeline, provider)
+          /
         sum(
           rate(envoy_http_downstream_rq_completed[5m])
-        ) by (pod) 
-        * 100 > 5 
+        ) by (pod, namespace, cluster_id, installation, pipeline, provider)
+        * 100 > 5
         and sum(
           rate(envoy_http_downstream_rq_completed[5m])
-        ) by (pod) > 0
+        ) by (pod, namespace, cluster_id, installation, pipeline, provider) > 0
       for: 10m
       labels:
         area: platform
@@ -84,14 +84,14 @@ spec:
       annotations:
         description: '{{`More than 10% of downstream requests timeout for gateway {{ $labels.gateway_name }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
-      expr: | 
+      expr: |
         sum(
           envoy_http_downstream_rq_timeout
-        ) by (gateway_name) 
-          / 
+        ) by (gateway_name, cluster_id, installation, pipeline, provider)
+          /
         sum(
           envoy_http_downstream_rq_completed
-        ) by (gateway_name) 
+        ) by (gateway_name, cluster_id, installation, pipeline, provider)
         * 100 > 10
       for: 10m
       labels:
@@ -119,24 +119,24 @@ spec:
       expr: | 
           # Option A: accepted but config never reached the proxy
           (gatewayapi_gateway_status{type="Accepted"} == 1)
-            and on(name, namespace)
+            and on(name, namespace, cluster_id, installation, pipeline, provider)
           (gatewayapi_gateway_status{type="Programmed"} == 0)
           or
           # Option B: controller rejected the resource entirely
           (gatewayapi_gateway_status{type="Accepted"} == 0)
-            and on(name, namespace) (
+            and on(name, namespace, cluster_id, installation, pipeline, provider) (
               (time() - gatewayapi_gateway_created) > 120
             )
           or
           # Option C: stuck — not programmed 5+ minutes after creation
           (gatewayapi_gateway_status{type="Programmed"} == 0)
-            and on(name, namespace) (
+            and on(name, namespace, cluster_id, installation, pipeline, provider) (
               (time() - gatewayapi_gateway_created) > 300
             )
           or
           # Option D: regression — was programmed recently, now isn't
           (gatewayapi_gateway_status{type="Programmed"} == 0)
-            and on(name, namespace) (
+            and on(name, namespace, cluster_id, installation, pipeline, provider) (
               max_over_time(gatewayapi_gateway_status{type="Programmed"}[10m]) == 1
             )
       for: 10m

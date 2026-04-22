@@ -37,7 +37,7 @@ spec:
     - alert: EnvoyHighDownstreamHTTP5xxErrorRate
       annotations:
         description: '{{`More than 5% of downstream HTTP responses are 5xx on {{ $labels.pod }} ({{ $value | printf "%.1f" }}%)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       expr: |
         sum(
           rate(envoy_http_downstream_rq_xx{envoy_response_code_class="5"}[5m])
@@ -60,7 +60,7 @@ spec:
     - alert: EnvoyHighClusterUpstream5xxErrorRate
       annotations:
         description: '{{`More than 5% of upstream requests return 5xx in cluster {{ $labels.envoy_cluster_name }} on {{ $labels.pod }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       expr: | 
         rate(
           envoy_cluster_upstream_rq_xx{envoy_response_code_class="5"}[5m]
@@ -83,7 +83,7 @@ spec:
     - alert: EnvoyHighDownstreamRequestTimeoutRate
       annotations:
         description: '{{`More than 10% of downstream requests timeout for gateway {{ $labels.gateway_name }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       expr: |
         sum(
           envoy_http_downstream_rq_timeout
@@ -103,7 +103,7 @@ spec:
     - alert: EnvoyClusterCircuitBreakerTripped
       annotations:
         description: '{{`Circuit breaker is open for cluster {{ $labels.envoy_cluster_name }} on {{ $labels.pod }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       expr: envoy_cluster_circuit_breakers_cx_open == 1 or envoy_cluster_circuit_breakers_rq_open == 1
       for: 10m
       labels:
@@ -115,7 +115,7 @@ spec:
     - alert: EnvoyControllerNotReconcilingGateway
       annotations:
         description: '{{`Envoy Gateway controller is having issues reconciling {{ $labels.name }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       expr: | 
           # Option A: accepted but config never reached the proxy
           (gatewayapi_gateway_status{type="Accepted"} == 1)

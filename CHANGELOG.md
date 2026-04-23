@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.105.1] - 2026-04-23
+
+### Fixed
+
+- Added namespace label to metrics used in `EnvoyControllerNotReconcilingGateway` alert to avoid noise.
+
 ## [4.105.0] - 2026-04-23
 
 ### Added
@@ -4343,7 +4349,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.105.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.105.1...HEAD
+[4.105.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.105.0...v4.105.1
 [4.105.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.104.0...v4.105.0
 [4.104.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.103.0...v4.104.0
 [4.103.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.102.0...v4.103.0

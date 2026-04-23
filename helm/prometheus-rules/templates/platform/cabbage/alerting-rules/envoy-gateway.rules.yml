@@ -118,26 +118,26 @@ spec:
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       expr: | 
           # Option A: accepted but config never reached the proxy
-          (gatewayapi_gateway_status{type="Accepted"} == 1)
+          (gatewayapi_gateway_status{type="Accepted", namespace="envoy-gateway-system"} == 1)
             and on(name, namespace, cluster_id, installation, pipeline, provider)
-          (gatewayapi_gateway_status{type="Programmed"} == 0)
+          (gatewayapi_gateway_status{type="Programmed", namespace="envoy-gateway-system"} == 0)
           or
           # Option B: controller rejected the resource entirely
-          (gatewayapi_gateway_status{type="Accepted"} == 0)
+          (gatewayapi_gateway_status{type="Accepted", namespace="envoy-gateway-system"} == 0)
             and on(name, namespace, cluster_id, installation, pipeline, provider) (
-              (time() - gatewayapi_gateway_created) > 120
+              (time() - gatewayapi_gateway_created{namespace="envoy-gateway-system"}) > 120
             )
           or
           # Option C: stuck — not programmed 5+ minutes after creation
-          (gatewayapi_gateway_status{type="Programmed"} == 0)
+          (gatewayapi_gateway_status{type="Programmed", namespace="envoy-gateway-system"} == 0)
             and on(name, namespace, cluster_id, installation, pipeline, provider) (
-              (time() - gatewayapi_gateway_created) > 300
+              (time() - gatewayapi_gateway_created{namespace="envoy-gateway-system"}) > 300
             )
           or
           # Option D: regression — was programmed recently, now isn't
-          (gatewayapi_gateway_status{type="Programmed"} == 0)
+          (gatewayapi_gateway_status{type="Programmed", namespace="envoy-gateway-system"} == 0)
             and on(name, namespace, cluster_id, installation, pipeline, provider) (
-              max_over_time(gatewayapi_gateway_status{type="Programmed"}[10m]) == 1
+              max_over_time(gatewayapi_gateway_status{type="Programmed", namespace="envoy-gateway-system"}[10m]) == 1
             )
       for: 10m
       labels:

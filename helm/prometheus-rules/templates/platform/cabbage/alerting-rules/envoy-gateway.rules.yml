@@ -34,3 +34,115 @@ spec:
         severity: page
         team: cabbage
         topic: envoy-gateway
+    - alert: EnvoyHighDownstreamHTTP5xxErrorRate
+      annotations:
+        description: '{{`More than 5% of downstream HTTP responses are 5xx on {{ $labels.pod }} ({{ $value | printf "%.1f" }}%)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      expr: |
+        sum(
+          rate(envoy_http_downstream_rq_xx{envoy_response_code_class="5"}[5m])
+        ) by (pod, namespace, cluster_id, installation, pipeline, provider)
+          /
+        sum(
+          rate(envoy_http_downstream_rq_completed[5m])
+        ) by (pod, namespace, cluster_id, installation, pipeline, provider)
+        * 100 > 5
+        and sum(
+          rate(envoy_http_downstream_rq_completed[5m])
+        ) by (pod, namespace, cluster_id, installation, pipeline, provider) > 0
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: envoy-gateway
+    - alert: EnvoyHighClusterUpstream5xxErrorRate
+      annotations:
+        description: '{{`More than 5% of upstream requests return 5xx in cluster {{ $labels.envoy_cluster_name }} on {{ $labels.pod }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      expr: | 
+        rate(
+          envoy_cluster_upstream_rq_xx{envoy_response_code_class="5"}[5m]
+        ) 
+          / 
+        rate(
+          envoy_cluster_upstream_rq_completed[5m]
+        ) 
+        * 100 > 5 
+        and rate(
+          envoy_cluster_upstream_rq_completed[5m]
+        ) > 0
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: envoy-gateway
+    - alert: EnvoyHighDownstreamRequestTimeoutRate
+      annotations:
+        description: '{{`More than 10% of downstream requests timeout for gateway {{ $labels.gateway_name }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      expr: |
+        sum(
+          envoy_http_downstream_rq_timeout
+        ) by (gateway_name, namespace, cluster_id, installation, pipeline, provider)
+          /
+        sum(
+          envoy_http_downstream_rq_completed
+        ) by (gateway_name, namespace, cluster_id, installation, pipeline, provider)
+        * 100 > 10
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: envoy-gateway
+    - alert: EnvoyClusterCircuitBreakerTripped
+      annotations:
+        description: '{{`Circuit breaker is open for cluster {{ $labels.envoy_cluster_name }} on {{ $labels.pod }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      expr: envoy_cluster_circuit_breakers_cx_open == 1 or envoy_cluster_circuit_breakers_rq_open == 1
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: envoy-gateway
+    - alert: EnvoyControllerNotReconcilingGateway
+      annotations:
+        description: '{{`Envoy Gateway controller is having issues reconciling {{ $labels.name }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      expr: | 
+          # Option A: accepted but config never reached the proxy
+          (gatewayapi_gateway_status{type="Accepted"} == 1)
+            and on(name, namespace, cluster_id, installation, pipeline, provider)
+          (gatewayapi_gateway_status{type="Programmed"} == 0)
+          or
+          # Option B: controller rejected the resource entirely
+          (gatewayapi_gateway_status{type="Accepted"} == 0)
+            and on(name, namespace, cluster_id, installation, pipeline, provider) (
+              (time() - gatewayapi_gateway_created) > 120
+            )
+          or
+          # Option C: stuck — not programmed 5+ minutes after creation
+          (gatewayapi_gateway_status{type="Programmed"} == 0)
+            and on(name, namespace, cluster_id, installation, pipeline, provider) (
+              (time() - gatewayapi_gateway_created) > 300
+            )
+          or
+          # Option D: regression — was programmed recently, now isn't
+          (gatewayapi_gateway_status{type="Programmed"} == 0)
+            and on(name, namespace, cluster_id, installation, pipeline, provider) (
+              max_over_time(gatewayapi_gateway_status{type="Programmed"}[10m]) == 1
+            )
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: envoy-gateway

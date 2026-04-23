@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add alerts for Envoy Gateway.
+
 ## [4.104.0] - 2026-04-20
 
 ### Changed

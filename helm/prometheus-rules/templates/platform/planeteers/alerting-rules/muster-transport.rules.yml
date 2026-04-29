@@ -1,0 +1,65 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: muster-transport.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+    - name: muster-transport
+      rules:
+        # tbot-provisioned identity Secret cannot be loaded — tbot is not running,
+        # the Secret was deleted/recreated, or the watcher broke. Pages because
+        # any failure here breaks the Teleport transport for at least one MCPServer
+        # and is recoverable only by an operator.
+        - alert: MusterTransportSecretMissing
+          annotations:
+            description: '{{`muster failed to load tbot identity Secret {{ $labels.secret }} in cluster {{ $labels.cluster_id }}. tbot may not be running, or the Secret was deleted/recreated. Check the tbot Deployment in muster-system.`}}'
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/muster-transport-secret-missing/
+          expr: sum by (cluster_id, installation, pipeline, provider, secret) (rate(muster_transport_secret_load_total{result="error"}[5m])) > 0
+          for: 5m
+          labels:
+            area: platform
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: planeteers
+            topic: muster
+        # An MCPServer CR references a Teleport cluster that is not in muster's
+        # helm clusters[] list. This is GitOps drift between
+        # giantswarm-management-clusters (CR location) and the muster Deployment
+        # values, not a service outage. Notify rather than page.
+        - alert: MusterTransportClusterDrift
+          annotations:
+            description: '{{`An MCPServer CR is requesting a transport cluster that is not configured in muster on {{ $labels.cluster_id }}. Either add the cluster to muster''s helm clusters[] in giantswarm-management-clusters, or kubectl patch the offending CR. MCPServer.status.conditions[type=TransportReady] names the cluster.`}}'
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/muster-transport-cluster-drift/
+          expr: sum by (cluster_id, installation, pipeline, provider) (rate(muster_transport_lookup_total{result="cluster_unknown"}[5m])) > 0
+          for: 10m
+          labels:
+            area: platform
+            cancel_if_outside_working_hours: "true"
+            severity: notify
+            team: planeteers
+            topic: muster
+        # RFC 8693 token-exchange error rate above 5%. Likely causes: remote Dex
+        # regression, expired client-credentials Secret, network/Teleport
+        # disruption. Notify rather than page — token-exchange caching means
+        # short-lived disruption is largely absorbed; sustained errors warrant
+        # a human eye on the connector.
+        - alert: MusterTokenExchangeFailures
+          annotations:
+            description: '{{`The Dex RFC 8693 token-exchange path on muster ({{ $labels.cluster_id }}) is failing for more than 5% of requests over the last 5 minutes. Likely causes: remote Dex regression, expired client-credentials Secret, or network/Teleport disruption.`}}'
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/muster-token-exchange-failures/
+          expr: |-
+            (
+              sum by (cluster_id, installation, pipeline, provider) (rate(muster_token_exchange_total{result="error"}[5m]))
+              /
+              sum by (cluster_id, installation, pipeline, provider) (rate(muster_token_exchange_total[5m]))
+            ) > 0.05
+          for: 10m
+          labels:
+            area: platform
+            cancel_if_outside_working_hours: "true"
+            severity: notify
+            team: planeteers
+            topic: muster

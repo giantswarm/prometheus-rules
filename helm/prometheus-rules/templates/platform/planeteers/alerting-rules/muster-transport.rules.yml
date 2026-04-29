@@ -31,7 +31,7 @@ spec:
         # values, not a service outage. Notify rather than page.
         - alert: MusterTransportClusterDrift
           annotations:
-            description: '{{`An MCPServer CR is requesting a transport cluster that is not configured in muster on {{ $labels.cluster_id }}. Either add the cluster to muster's helm clusters[] in giantswarm-management-clusters, or kubectl patch the offending CR. MCPServer.status.conditions[type=TransportReady] names the cluster.`}}'
+            description: '{{`An MCPServer CR is requesting a transport cluster that is not configured in muster on {{ $labels.cluster_id }}. Either add the cluster to muster''s helm clusters[] in giantswarm-management-clusters, or kubectl patch the offending CR. MCPServer.status.conditions[type=TransportReady] names the cluster.`}}'
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/muster-transport-cluster-drift/
           expr: sum by (cluster_id, installation, pipeline, provider) (rate(muster_transport_lookup_total{result="cluster_unknown"}[5m])) > 0
           for: 10m

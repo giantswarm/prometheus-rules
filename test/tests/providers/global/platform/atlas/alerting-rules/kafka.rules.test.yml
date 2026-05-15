@@ -1,0 +1,58 @@
+---
+rule_files:
+  - kafka.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'kubelet_volume_stats_available_bytes{persistentvolumeclaim="data-my-cluster-kafka-0"}'
+        values: "10+0x20"
+      - series: 'kubelet_volume_stats_capacity_bytes{persistentvolumeclaim="data-my-cluster-kafka-0"}'
+        values: "100+0x20"
+    alert_rule_test:
+      - alertname: KafkaRunningOutOfSpace
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              persistentvolumeclaim: data-my-cluster-kafka-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "There are only 10 percent available at data-my-cluster-kafka-0 PVC."
+              summary: "Kafka is running out of free disk space."
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_server_replicamanager_underreplicatedpartitions{kubernetes_pod_name="my-cluster-kafka-0"}'
+        values: "2+0x10"
+    alert_rule_test:
+      - alertname: KafkaUnderReplicatedPartitions
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              kubernetes_pod_name: my-cluster-kafka-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "There are 2 under-replicated partitions on my-cluster-kafka-0."
+              summary: "Kafka under-replicated partitions."
+
+  - interval: 1m
+    input_series: []
+    alert_rule_test:
+      - alertname: KafkaBrokerContainersDown
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              container: kafka
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "All `kafka` containers have been down or in CrashLoopBackOff status for 3 minutes."
+              summary: "All `kafka` containers down or in CrashLoopBackOff status."

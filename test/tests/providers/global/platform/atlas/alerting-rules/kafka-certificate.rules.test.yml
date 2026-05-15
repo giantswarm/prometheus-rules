@@ -1,0 +1,26 @@
+---
+rule_files:
+  - kafka-certificate.rules.yml
+
+tests:
+  # time() starts at 0 in promtool tests. 30 days = 2592000 seconds.
+  # 2_000_000_000 ms = 2_000_000 s, which is below the 2_592_000 threshold for the entire test window.
+  - interval: 1m
+    input_series:
+      - series: 'strimzi_certificate_expiration_timestamp_ms{type="cluster-ca", cluster="my-cluster", resource_namespace="kafka"}'
+        values: "2000000000+0x20"
+    alert_rule_test:
+      - alertname: KafkaCertificateExpiration
+        eval_time: 10m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cluster: my-cluster
+              resource_namespace: kafka
+              severity: none
+              team: atlas
+              topic: kafka
+              type: cluster-ca
+            exp_annotations:
+              description: "Certificate of type cluster-ca in cluster my-cluster in namespace kafka will expire in less than 30 days."
+              summary: "Certificate will expire in less than 30 days."

@@ -1,0 +1,41 @@
+---
+rule_files:
+  - kafka-exporter.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'kafka_topic_partition_under_replicated_partition{topic="my-topic", partition="0"}'
+        values: "1+0x10"
+    alert_rule_test:
+      - alertname: KafkaExporterUnderReplicatedPartition
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              partition: "0"
+              severity: none
+              team: atlas
+              topic: my-topic
+            exp_annotations:
+              description: "Topic my-topic has 1 under-replicated partition 0."
+              summary: "Topic has under-replicated partitions."
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_consumergroup_lag{consumergroup="my-group", topic="my-topic", partition="0"}'
+        values: "5000+0x10"
+    alert_rule_test:
+      - alertname: KafkaExporterTooLargeConsumerGroupLag
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              consumergroup: my-group
+              partition: "0"
+              severity: none
+              team: atlas
+              topic: my-topic
+            exp_annotations:
+              description: "Consumer group my-group lag is too big (5000) on topic my-topic/partition 0."
+              summary: "Consumer group lag is too big."

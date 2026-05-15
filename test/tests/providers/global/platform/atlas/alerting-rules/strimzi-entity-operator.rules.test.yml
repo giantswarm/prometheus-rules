@@ -1,0 +1,32 @@
+---
+rule_files:
+  - strimzi-entity-operator.rules.yml
+
+tests:
+  - interval: 1m
+    input_series: []
+    alert_rule_test:
+      - alertname: StrimziTopicOperatorContainerDown
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              container: topic-operator
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Container topic-operator in Entity Operator pod has been down or in CrashLoopBackOff status for 3 minutes."
+              summary: "Container topic-operator in Entity Operator pod down or in CrashLoopBackOff status."
+      - alertname: StrimziUserOperatorContainerDown
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              container: user-operator
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Container user-operator in Entity Operator pod has been down or in CrashLoopBackOff status for 3 minutes."
+              summary: "Container user-operator in Entity Operator pod down or in CrashLoopBackOff status."

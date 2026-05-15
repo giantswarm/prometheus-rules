@@ -1,0 +1,19 @@
+---
+rule_files:
+  - mirrormaker2.rules.yml
+
+tests:
+  - interval: 1m
+    input_series: []
+    alert_rule_test:
+      - alertname: KafkaMirrorMaker2ContainerDown
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "All Kafka Mirror Maker 2 containers have been down or in CrashLoopBackOff status for 3 minutes."
+              summary: "All Kafka Mirror Maker 2 containers down or in CrashLoopBackOff status."

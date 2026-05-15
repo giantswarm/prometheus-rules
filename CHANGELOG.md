@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add Kafka and Strimzi alerting rules under team atlas (severity `none`).
+
 ## [4.105.1] - 2026-04-23
 
 ### Fixed

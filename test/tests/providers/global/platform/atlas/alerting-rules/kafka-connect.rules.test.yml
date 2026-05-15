@@ -1,0 +1,38 @@
+---
+rule_files:
+  - kafka-connect.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'kafka_connect_connector_status{namespace="kafka", pod="my-connect-0", status="failed"}'
+        values: "1+0x10"
+    alert_rule_test:
+      - alertname: KafkaConnectFailedConnector
+        eval_time: 10m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              pod: my-connect-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka instance on pod kafka/my-connect-0 has 1 connector(s) in failed state during last 5 minutes."
+              summary: "Kafka Connect Connector failure."
+
+  - interval: 1m
+    input_series: []
+    alert_rule_test:
+      - alertname: KafkaConnectContainersDown
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "All Kafka Connect containers have been down or in CrashLoopBackOff status for 3 minutes."
+              summary: "All Kafka Connect containers down or in CrashLoopBackOff status."

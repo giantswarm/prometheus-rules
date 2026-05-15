@@ -1,0 +1,37 @@
+---
+rule_files:
+  - kafka-bridge.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'strimzi_bridge_kafka_producer_request_latency_avg{clientId="my-client"}'
+        values: "20+0x10"
+    alert_rule_test:
+      - alertname: KafkaBridgeAvgProducerLatency
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              clientId: my-client
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "The average producer request latency is 20 on my-client."
+              summary: "Kafka Bridge producer average request latency."
+
+  - interval: 1m
+    input_series: []
+    alert_rule_test:
+      - alertname: KafkaBridgeContainersDown
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "All Kafka Bridge containers have been down or in CrashLoopBackOff status for 3 minutes."
+              summary: "All Kafka Bridge containers down or in CrashLoopBackOff status."

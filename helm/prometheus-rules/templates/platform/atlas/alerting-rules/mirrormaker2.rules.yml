@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: mirrormaker2.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    - name: mirrormaker2
+      rules:
+        - alert: KafkaMirrorMaker2ContainerDown
+          annotations:
+            description: All Kafka Mirror Maker 2 containers have been down or in CrashLoopBackOff status for 3 minutes.
+            summary: All Kafka Mirror Maker 2 containers down or in CrashLoopBackOff status.
+          expr: absent(container_last_seen{container=~".+-mirrormaker2",pod=~".+-mirrormaker2-.+"})
+          for: 3m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka

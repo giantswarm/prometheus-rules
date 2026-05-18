@@ -10,7 +10,7 @@ spec:
     - name: strimzi-cluster-operator
       rules:
         - alert: StrimziClusterOperatorContainerDown
-          expr: count((container_last_seen{container="strimzi-cluster-operator"} > (time() - 90))) < 1 or absent(container_last_seen{container="strimzi-cluster-operator"})
+          expr: count by (cluster_id, installation, pipeline, provider) ((container_last_seen{container="strimzi-cluster-operator"} > (time() - 90))) < 1 or absent(container_last_seen{container="strimzi-cluster-operator"})
           for: 1m
           labels:
             area: platform

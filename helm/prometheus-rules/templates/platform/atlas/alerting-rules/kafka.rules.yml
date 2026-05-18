@@ -32,7 +32,7 @@ spec:
             summary: 'Kafka under replicated partitions'
             description: '{{`There are {{ $value }} under replicated partitions on {{ $labels.kubernetes_pod_name }}`}}'
         - alert: KafkaAbnormalControllerState
-          expr: sum(kafka_controller_kafkacontroller_activecontrollercount) by (strimzi_io_name, namespace) != 1
+          expr: sum(kafka_controller_kafkacontroller_activecontrollercount) by (cluster_id, installation, pipeline, provider, strimzi_io_name, namespace) != 1
           for: 10s
           labels:
             area: platform
@@ -43,7 +43,7 @@ spec:
             summary: 'Kafka abnormal controller state'
             description: '{{`Kafka instance {{ $labels.strimzi_io_name }} on namespace {{ $labels.namespace }} has {{ $value }} active controllers`}}'
         - alert: KafkaOfflinePartitions
-          expr: sum(kafka_controller_kafkacontroller_offlinepartitionscount) by (namespace, pod) > 0
+          expr: sum(kafka_controller_kafkacontroller_offlinepartitionscount) by (cluster_id, installation, pipeline, provider, namespace, pod) > 0
           for: 10s
           labels:
             area: platform
@@ -98,7 +98,7 @@ spec:
             summary: 'All `kafka` containers down or in CrashLookBackOff status'
             description: 'All `kafka` containers have been down or in CrashLookBackOff status for 3 minutes'
         - alert: KafkaContainerRestartedInTheLast5Minutes
-          expr: count(count_over_time(container_last_seen{container="kafka"}[5m])) > 2 * count(container_last_seen{container="kafka",pod=~".+-kafka-[0-9]+"})
+          expr: count by (cluster_id, installation, pipeline, provider) (count_over_time(container_last_seen{container="kafka"}[5m])) > 2 * count by (cluster_id, installation, pipeline, provider) (container_last_seen{container="kafka",pod=~".+-kafka-[0-9]+"})
           for: 5m
           labels:
             area: platform

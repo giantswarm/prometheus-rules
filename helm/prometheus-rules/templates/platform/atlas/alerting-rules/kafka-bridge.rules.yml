@@ -54,7 +54,7 @@ spec:
             summary: 'Kafka Bridge consumer average commit latency'
             description: '{{`The average consumer commit latency is {{ $value }} on {{ $labels.clientId }}`}}'
         - alert: KafkaBridgeHttp4xxErrorRate
-          expr: strimzi_bridge_http_server_requests_total{code=~"^4..$", container=~"^.+-bridge", path !="/favicon.ico"} > 10
+          expr: strimzi_bridge_http_server_requests_total{code=~"4..", container=~".+-bridge", path !="/favicon.ico"} > 10
           for: 1m
           labels:
             area: platform
@@ -65,7 +65,7 @@ spec:
             summary: 'Kafka Bridge returns code 4xx too often'
             description: '{{`Kafka Bridge returns code 4xx too much ({{ $value }}) for the path {{ $labels.path }}`}}'
         - alert: KafkaBridgeHttp5xxErrorRate
-          expr: strimzi_bridge_http_server_requests_total{code=~"^5..$", container=~"^.+-bridge", path !="/favicon.ico"} > 10
+          expr: strimzi_bridge_http_server_requests_total{code=~"5..", container=~".+-bridge", path !="/favicon.ico"} > 10
           for: 1m
           labels:
             area: platform

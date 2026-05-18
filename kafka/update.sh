@@ -118,6 +118,39 @@ rename_alert strimzi-cluster-operator ClusterOperatorContainerDown StrimziCluste
 rename_alert strimzi-entity-operator  TopicOperatorContainerDown   StrimziTopicOperatorContainerDown
 rename_alert strimzi-entity-operator  UserOperatorContainerDown    StrimziUserOperatorContainerDown
 
+# Patch upstream expressions so they comply with `make pint` checks at Giant
+# Swarm: aggregations must preserve the required cluster_id/installation/
+# pipeline/provider labels, and regexp matchers must not carry redundant
+# ^/$ anchors. These edits are reapplied on every sync so we keep them after
+# pulling a new Strimzi release.
+REQUIRED_LABELS='cluster_id, installation, pipeline, provider'
+
+# kafka-bridge: drop redundant ^/$ anchors in regex matchers.
+sed -i \
+    -e 's@code=~"\^4\.\.\$"@code=~"4.."@g' \
+    -e 's@code=~"\^5\.\.\$"@code=~"5.."@g' \
+    -e 's@container=~"\^\.+-bridge"@container=~".+-bridge"@g' \
+    "${OUTPUT_DIR}/kafka-bridge.rules.yml"
+
+# kafka-connect: preserve required labels when aggregating.
+sed -i \
+    -e "s@\(sum(kafka_connect_connector_status{status=\"failed\"})\) by (namespace, pod)@\\1 by (${REQUIRED_LABELS}, namespace, pod)@" \
+    -e "s@\(sum(kafka_connect_worker_connector_failed_task_count)\) by (namespace, pod)@\\1 by (${REQUIRED_LABELS}, namespace, pod)@" \
+    "${OUTPUT_DIR}/kafka-connect.rules.yml"
+
+# kafka: preserve required labels when aggregating.
+sed -i \
+    -e "s@\(sum(kafka_controller_kafkacontroller_activecontrollercount)\) by (strimzi_io_name, namespace)@\\1 by (${REQUIRED_LABELS}, strimzi_io_name, namespace)@" \
+    -e "s@\(sum(kafka_controller_kafkacontroller_offlinepartitionscount)\) by (namespace, pod)@\\1 by (${REQUIRED_LABELS}, namespace, pod)@" \
+    -e "s@count(count_over_time(container_last_seen{container=\"kafka\"}\[5m\]))@count by (${REQUIRED_LABELS}) (count_over_time(container_last_seen{container=\"kafka\"}[5m]))@" \
+    -e "s@\* count(container_last_seen{container=\"kafka\",pod=~\".+-kafka-\[0-9\]+\"})@* count by (${REQUIRED_LABELS}) (container_last_seen{container=\"kafka\",pod=~\".+-kafka-[0-9]+\"})@" \
+    "${OUTPUT_DIR}/kafka.rules.yml"
+
+# strimzi-cluster-operator: preserve required labels when aggregating.
+sed -i \
+    -e "s@count((container_last_seen{container=\"strimzi-cluster-operator\"} > (time() - 90)))@count by (${REQUIRED_LABELS}) ((container_last_seen{container=\"strimzi-cluster-operator\"} > (time() - 90)))@" \
+    "${OUTPUT_DIR}/strimzi-cluster-operator.rules.yml"
+
 echo
 echo "Done. Review with:  git diff -- ${OUTPUT_DIR#${GIT_ROOT}/}"
 echo "Validate with:      make test-rules"

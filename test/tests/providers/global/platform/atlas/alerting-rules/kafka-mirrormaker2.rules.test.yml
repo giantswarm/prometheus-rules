@@ -1,6 +1,6 @@
 ---
 rule_files:
-  - mirrormaker2.rules.yml
+  - kafka-mirrormaker2.rules.yml
 
 tests:
   - interval: 1m

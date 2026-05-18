@@ -3,11 +3,11 @@ kind: PrometheusRule
 metadata:
   labels:
     {{- include "labels.common" . | nindent 4 }}
-  name: mirrormaker2.rules
+  name: kafka-mirrormaker2.rules
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-    - name: mirrormaker2
+    - name: kafka-mirrormaker2
       rules:
         - alert: KafkaMirrorMaker2ContainerDown
           annotations:

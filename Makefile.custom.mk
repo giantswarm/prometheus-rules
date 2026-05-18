@@ -52,4 +52,7 @@ update-loki-mixin: install-tools ##        Update Loki mixins
 update-tempo-mixin: install-tools ##        Update Tempo mixins
 	./tempo/update.sh
 
+update-kafka-rules: install-tools ##        Update Kafka and Strimzi rules from the upstream Strimzi release
+	./kafka/update.sh
+
 update-mixin: update-mimir-mixin update-loki-mixin update-tempo-mixin ##        Update all mixins

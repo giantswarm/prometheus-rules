@@ -7,12 +7,9 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-    - name: cluster-operator
+    - name: strimzi-cluster-operator
       rules:
         - alert: StrimziClusterOperatorContainerDown
-          annotations:
-            description: The Strimzi Cluster Operator has been down for longer than 90 seconds.
-            summary: Strimzi Cluster Operator down.
           expr: count((container_last_seen{container="strimzi-cluster-operator"} > (time() - 90))) < 1 or absent(container_last_seen{container="strimzi-cluster-operator"})
           for: 1m
           labels:
@@ -20,3 +17,6 @@ spec:
             severity: none
             team: atlas
             topic: kafka
+          annotations:
+            summary: 'Cluster Operator down'
+            description: 'The Cluster Operator has been down for longer than 90 seconds'

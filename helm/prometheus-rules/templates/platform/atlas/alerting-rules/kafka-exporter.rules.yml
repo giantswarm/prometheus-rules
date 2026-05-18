@@ -7,36 +7,35 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-    - name: kafka-exporter-topic
+    - name: kafka-exporter
       rules:
-        # `topic` is dropped from alert labels here because it collides with the Kafka `topic` label on the source metric.
         - alert: KafkaExporterUnderReplicatedPartition
-          annotations:
-            description: '{{`Topic {{ $labels.topic }} has {{ $value }} under-replicated partition {{ $labels.partition }}.`}}'
-            summary: Topic has under-replicated partitions.
           expr: kafka_topic_partition_under_replicated_partition > 0
           for: 10s
           labels:
             area: platform
             severity: none
             team: atlas
-        - alert: KafkaExporterTooLargeConsumerGroupLag
           annotations:
-            description: '{{`Consumer group {{ $labels.consumergroup }} lag is too big ({{ $value }}) on topic {{ $labels.topic }}/partition {{ $labels.partition }}.`}}'
-            summary: Consumer group lag is too big.
+            summary: 'Topic has under-replicated partitions'
+            description: '{{`Topic  {{ $labels.topic }} has {{ $value }} under-replicated partition {{ $labels.partition }}`}}'
+        - alert: KafkaExporterTooLargeConsumerGroupLag
           expr: kafka_consumergroup_lag > 1000
           for: 10s
           labels:
             area: platform
             severity: none
             team: atlas
-        - alert: KafkaExporterNoMessageForTooLong
           annotations:
-            description: '{{`There are no messages in topic {{ $labels.topic }}/partition {{ $labels.partition }} for 10 minutes.`}}'
-            summary: No message for 10 minutes.
+            summary: 'Consumer group lag is too big'
+            description: '{{`Consumer group {{ $labels.consumergroup}} lag is too big ({{ $value }}) on topic {{ $labels.topic }}/partition {{ $labels.partition }}`}}'
+        - alert: KafkaExporterNoMessageForTooLong
           expr: changes(kafka_topic_partition_current_offset[10m]) == 0
           for: 10s
           labels:
             area: platform
             severity: none
             team: atlas
+          annotations:
+            summary: 'No message for 10 minutes'
+            description: '{{`There is no messages in topic {{ $labels.topic}}/partition {{ $labels.partition }} for 10 minutes`}}'

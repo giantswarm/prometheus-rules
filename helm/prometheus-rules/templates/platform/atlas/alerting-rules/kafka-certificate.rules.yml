@@ -7,13 +7,10 @@ metadata:
   namespace: {{ .Values.namespace  }}
 spec:
   groups:
-    - name: kafka-certificates
+    - name: kafka-certificate
       interval: 1m0s
       rules:
         - alert: KafkaCertificateExpiration
-          annotations:
-            description: '{{`Certificate of type {{ $labels.type }} in cluster {{ $labels.cluster }} in namespace {{ $labels.resource_namespace }} will expire in less than 30 days.`}}'
-            summary: Certificate will expire in less than 30 days.
           expr: |
             strimzi_certificate_expiration_timestamp_ms/1000 - time() < 30 * 24 * 60 * 60
           for: 5m
@@ -22,3 +19,6 @@ spec:
             severity: none
             team: atlas
             topic: kafka
+          annotations:
+            summary: 'Certificate will expire in less than 30 days'
+            description: '{{`Certificate of type {{ $labels.type }} in cluster {{ $labels.cluster }} in namespace {{ $labels.resource_namespace }} will expire in less than 30 days`}}'

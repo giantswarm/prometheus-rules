@@ -10,9 +10,6 @@ spec:
     - name: kafka-connect
       rules:
         - alert: KafkaConnectContainersDown
-          annotations:
-            description: All Kafka Connect containers have been down or in CrashLoopBackOff status for 3 minutes.
-            summary: All Kafka Connect containers down or in CrashLoopBackOff status.
           expr: absent(container_last_seen{container=~".+-connect",pod=~".+-connect-.+"})
           for: 3m
           labels:
@@ -20,10 +17,10 @@ spec:
             severity: none
             team: atlas
             topic: kafka
-        - alert: KafkaConnectFailedConnector
           annotations:
-            description: '{{`Kafka instance on pod {{ $labels.namespace }}/{{ $labels.pod }} has {{ $value }} connector(s) in failed state during last 5 minutes.`}}'
-            summary: Kafka Connect Connector failure.
+            summary: 'All Kafka Connect containers down or in CrashLookBackOff status'
+            description: 'All Kafka Connect containers have been down or in CrashLookBackOff status for 3 minutes'
+        - alert: KafkaConnectFailedConnector
           expr: sum(kafka_connect_connector_status{status="failed"}) by (namespace, pod) > 0
           for: 5m
           labels:
@@ -31,10 +28,10 @@ spec:
             severity: none
             team: atlas
             topic: kafka
-        - alert: KafkaConnectFailedTask
           annotations:
-            description: '{{`Kafka instance on pod {{ $labels.namespace }}/{{ $labels.pod }} has {{ $value }} task(s) in failed state during last 5 minutes.`}}'
-            summary: Kafka Connect Task failure.
+            summary: 'Kafka Connect Connector Failure'
+            description: '{{`Kafka instance on pod {{ $labels.namespace }}/{{ $labels.pod }} has {{ $value }} connector(s) in failed state during last 5 minutes`}}'
+        - alert: KafkaConnectFailedTask
           expr: sum(kafka_connect_worker_connector_failed_task_count) by (namespace, pod) > 0
           for: 5m
           labels:
@@ -42,3 +39,6 @@ spec:
             severity: none
             team: atlas
             topic: kafka
+          annotations:
+            summary: 'Kafka Connect Task Failure'
+            description: '{{`Kafka instance on pod {{ $labels.namespace }}/{{ $labels.pod }} has {{ $value }} task(s) in failed state during last 5 minutes`}}'

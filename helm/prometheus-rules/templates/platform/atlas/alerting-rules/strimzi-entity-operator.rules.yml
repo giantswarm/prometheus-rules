@@ -10,9 +10,6 @@ spec:
     - name: strimzi-entity-operator
       rules:
         - alert: StrimziTopicOperatorContainerDown
-          annotations:
-            description: Container topic-operator in Entity Operator pod has been down or in CrashLoopBackOff status for 3 minutes.
-            summary: Container topic-operator in Entity Operator pod down or in CrashLoopBackOff status.
           expr: absent(container_last_seen{container="topic-operator",pod=~".+-entity-operator-.+"})
           for: 3m
           labels:
@@ -20,10 +17,10 @@ spec:
             severity: none
             team: atlas
             topic: kafka
-        - alert: StrimziUserOperatorContainerDown
           annotations:
-            description: Container user-operator in Entity Operator pod has been down or in CrashLoopBackOff status for 3 minutes.
-            summary: Container user-operator in Entity Operator pod down or in CrashLoopBackOff status.
+            summary: 'Container topic-operator in Entity Operator pod down or in CrashLookBackOff status'
+            description: 'Container topic-operator in Entity Operator pod has been or in CrashLookBackOff status for 3 minutes'
+        - alert: StrimziUserOperatorContainerDown
           expr: absent(container_last_seen{container="user-operator",pod=~".+-entity-operator-.+"})
           for: 3m
           labels:
@@ -31,3 +28,6 @@ spec:
             severity: none
             team: atlas
             topic: kafka
+          annotations:
+            summary: 'Container user-operator in Entity Operator pod down or in CrashLookBackOff status'
+            description: 'Container user-operator in Entity Operator pod have been down or in CrashLookBackOff status for 3 minutes'

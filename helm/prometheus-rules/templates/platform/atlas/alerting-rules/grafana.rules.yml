@@ -39,8 +39,17 @@ spec:
       annotations:
         description: '{{`grafana-postgresql archiving failed for pod {{ $labels.pod }}.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: sum((cnpg_pg_stat_archiver_last_failed_time{namespace="monitoring", pod=~"grafana-postgresql.*"} - cnpg_pg_stat_archiver_last_archived_time{namespace="monitoring", pod=~"grafana-postgresql.*"})) by (pod, cluster_id, installation, pipeline, provider) > 1
-      for: 5m
+      # If "failed" happened during the 5min (300s) before "archived", raise an alert
+      # Only take max to avoid alerting for standby pods
+      expr: |
+        max(
+            sum(
+                ( cnpg_pg_stat_archiver_last_failed_time{namespace="monitoring", pod=~"grafana-postgresql.*"}
+                - cnpg_pg_stat_archiver_last_archived_time{namespace="monitoring", pod=~"grafana-postgresql.*"})
+            ) by (pod, cluster_id, installation, pipeline, provider)
+        ) by (pod, cluster_id, installation, pipeline, provider)
+        > 300
+      for: 10m
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"

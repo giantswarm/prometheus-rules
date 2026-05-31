@@ -56,3 +56,79 @@ tests:
             exp_annotations:
               description: "All `kafka` containers have been down or in CrashLookBackOff status for 3 minutes"
               summary: "All `kafka` containers down or in CrashLookBackOff status"
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_controller_kafkacontroller_fencedbrokercount{strimzi_io_name="my-cluster-kafka", namespace="kafka", pod="my-cluster-controller-3"}'
+        values: "1+0x10"
+    alert_rule_test:
+      - alertname: KafkaBrokerFenced
+        eval_time: 6m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              severity: none
+              strimzi_io_name: my-cluster-kafka
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka cluster my-cluster-kafka in namespace kafka has 1 fenced (unavailable) broker(s)"
+              summary: "Kafka broker fenced from the cluster"
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_server_kafkaserver_brokerstate{namespace="kafka", pod="my-cluster-broker-0"}'
+        values: "6+0x10"
+    alert_rule_test:
+      - alertname: KafkaBrokerNotRunning
+        eval_time: 6m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              pod: my-cluster-broker-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka broker kafka/my-cluster-broker-0 is not in the running state (state 6) for more than 5 minutes"
+              summary: "Kafka broker not in running state"
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_server_brokertopicmetrics_failedproducerequestspersec_total{namespace="kafka", pod="my-cluster-broker-0", topic="my-topic"}'
+        values: "0+120x15"
+    alert_rule_test:
+      - alertname: KafkaFailedProduceRequests
+        eval_time: 11m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              pod: my-cluster-broker-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka broker kafka/my-cluster-broker-0 is rejecting 2 produce request(s) per second"
+              summary: "Kafka broker is failing produce requests"
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_server_brokertopicmetrics_failedfetchrequestspersec_total{namespace="kafka", pod="my-cluster-broker-0", topic="my-topic"}'
+        values: "0+120x15"
+    alert_rule_test:
+      - alertname: KafkaFailedFetchRequests
+        eval_time: 11m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              pod: my-cluster-broker-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka broker kafka/my-cluster-broker-0 is rejecting 2 fetch request(s) per second"
+              summary: "Kafka broker is failing fetch requests"

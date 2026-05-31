@@ -108,3 +108,47 @@ spec:
           annotations:
             summary: 'One or more Kafka containers restarted too often'
             description: 'One or more Kafka containers were restarted too often within the last 5 minutes'
+        - alert: KafkaBrokerFenced
+          expr: max by (cluster_id, installation, pipeline, provider, strimzi_io_name, namespace) (kafka_controller_kafkacontroller_fencedbrokercount) > 0
+          for: 5m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka broker fenced from the cluster'
+            description: '{{`Kafka cluster {{ $labels.strimzi_io_name }} in namespace {{ $labels.namespace }} has {{ $value }} fenced (unavailable) broker(s)`}}'
+        - alert: KafkaBrokerNotRunning
+          expr: kafka_server_kafkaserver_brokerstate != 3
+          for: 5m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka broker not in running state'
+            description: '{{`Kafka broker {{ $labels.namespace }}/{{ $labels.pod }} is not in the running state (state {{ $value }}) for more than 5 minutes`}}'
+        - alert: KafkaFailedProduceRequests
+          expr: sum by (cluster_id, installation, pipeline, provider, namespace, pod) (rate(kafka_server_brokertopicmetrics_failedproducerequestspersec_total[5m])) > 1
+          for: 5m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka broker is failing produce requests'
+            description: '{{`Kafka broker {{ $labels.namespace }}/{{ $labels.pod }} is rejecting {{ $value }} produce request(s) per second`}}'
+        - alert: KafkaFailedFetchRequests
+          expr: sum by (cluster_id, installation, pipeline, provider, namespace, pod) (rate(kafka_server_brokertopicmetrics_failedfetchrequestspersec_total[5m])) > 1
+          for: 5m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka broker is failing fetch requests'
+            description: '{{`Kafka broker {{ $labels.namespace }}/{{ $labels.pod }} is rejecting {{ $value }} fetch request(s) per second`}}'

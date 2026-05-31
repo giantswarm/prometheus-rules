@@ -15,5 +15,5 @@ tests:
               team: atlas
               topic: kafka
             exp_annotations:
-              description: "All Kafka Mirror Maker 2 containers have been down or in CrashLoopBackOff status for 3 minutes."
-              summary: "All Kafka Mirror Maker 2 containers down or in CrashLoopBackOff status."
+              description: "All Kafka Mirror Maker 2 containers have been down or in CrashLookBackOff status for 3 minutes"
+              summary: "All Kafka Mirror Maker 2 containers down or in CrashLookBackOff status"

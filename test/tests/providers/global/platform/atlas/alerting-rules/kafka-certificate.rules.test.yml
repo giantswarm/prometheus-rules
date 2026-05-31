@@ -22,5 +22,5 @@ tests:
               topic: kafka
               type: cluster-ca
             exp_annotations:
-              description: "Certificate of type cluster-ca in cluster my-cluster in namespace kafka will expire in less than 30 days."
-              summary: "Certificate will expire in less than 30 days."
+              description: "Certificate of type cluster-ca in cluster my-cluster in namespace kafka will expire in less than 30 days"
+              summary: "Certificate will expire in less than 30 days"

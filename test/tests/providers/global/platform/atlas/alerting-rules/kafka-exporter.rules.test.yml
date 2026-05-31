@@ -18,8 +18,8 @@ tests:
               team: atlas
               topic: my-topic
             exp_annotations:
-              description: "Topic my-topic has 1 under-replicated partition 0."
-              summary: "Topic has under-replicated partitions."
+              description: "Topic  my-topic has 1 under-replicated partition 0"
+              summary: "Topic has under-replicated partitions"
 
   - interval: 1m
     input_series:
@@ -37,5 +37,5 @@ tests:
               team: atlas
               topic: my-topic
             exp_annotations:
-              description: "Consumer group my-group lag is too big (5000) on topic my-topic/partition 0."
-              summary: "Consumer group lag is too big."
+              description: "Consumer group my-group lag is too big (5000) on topic my-topic/partition 0"
+              summary: "Consumer group lag is too big"

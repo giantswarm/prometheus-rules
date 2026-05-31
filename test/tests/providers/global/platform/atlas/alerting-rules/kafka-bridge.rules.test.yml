@@ -18,8 +18,8 @@ tests:
               team: atlas
               topic: kafka
             exp_annotations:
-              description: "The average producer request latency is 20 on my-client."
-              summary: "Kafka Bridge producer average request latency."
+              description: "The average producer request latency is 20 on my-client"
+              summary: "Kafka Bridge producer average request latency"
 
   - interval: 1m
     input_series: []
@@ -33,5 +33,5 @@ tests:
               team: atlas
               topic: kafka
             exp_annotations:
-              description: "All Kafka Bridge containers have been down or in CrashLoopBackOff status for 3 minutes."
-              summary: "All Kafka Bridge containers down or in CrashLoopBackOff status."
+              description: "All Kafka Bridge containers have been down or in CrashLookBackOff status for 3 minutes"
+              summary: "All Kafka Bridge containers down or in CrashLookBackOff status"

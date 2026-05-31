@@ -20,8 +20,8 @@ tests:
               team: atlas
               topic: kafka
             exp_annotations:
-              description: "There are only 10 percent available at data-my-cluster-kafka-0 PVC."
-              summary: "Kafka is running out of free disk space."
+              description: "There are only 10 percent available at data-my-cluster-kafka-0 PVC"
+              summary: "Kafka is running out of free disk space"
 
   - interval: 1m
     input_series:
@@ -38,8 +38,8 @@ tests:
               team: atlas
               topic: kafka
             exp_annotations:
-              description: "There are 2 under-replicated partitions on my-cluster-kafka-0."
-              summary: "Kafka under-replicated partitions."
+              description: "There are 2 under replicated partitions on my-cluster-kafka-0"
+              summary: "Kafka under replicated partitions"
 
   - interval: 1m
     input_series: []
@@ -54,5 +54,5 @@ tests:
               team: atlas
               topic: kafka
             exp_annotations:
-              description: "All `kafka` containers have been down or in CrashLoopBackOff status for 3 minutes."
-              summary: "All `kafka` containers down or in CrashLoopBackOff status."
+              description: "All `kafka` containers have been down or in CrashLookBackOff status for 3 minutes"
+              summary: "All `kafka` containers down or in CrashLookBackOff status"

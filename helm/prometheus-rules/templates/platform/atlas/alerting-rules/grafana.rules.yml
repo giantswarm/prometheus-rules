@@ -68,7 +68,7 @@ spec:
               (kube_job_complete{job_name=~"grafana-postgresql-recovery-test-[0-9]+", namespace="monitoring", condition="true"} == 1)
             )
         )
-      for: 1d
+      for: 13h
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"

@@ -111,13 +111,13 @@ tests:
       - series: 'kube_job_complete{job_name="grafana-postgresql-recovery-test-003", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
         values: "_x1450 1+0x50"
     alert_rule_test:
-      # Before 1 day, alert is still pending - not firing.
+      # Before 13h, alert is still pending - not firing.
       - alertname: GrafanaPostgresqlRecoveryTestFailed
-        eval_time: 1430m
+        eval_time: 770m
         exp_alerts: []
-      # After 1 day of the latest job being a failure, alert fires.
+      # After 13h of the latest job being a failure, alert fires.
       - alertname: GrafanaPostgresqlRecoveryTestFailed
-        eval_time: 1445m
+        eval_time: 790m
         exp_alerts:
           - exp_labels:
               area: platform

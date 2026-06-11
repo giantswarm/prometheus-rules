@@ -166,9 +166,9 @@ tests:
         exp_alerts: []
   # Test: GrafanaPostgresqlRecoveryTestFailed do not fire after 2 failing jobs.
   # Timeline:
-  # - minute 1  Job 001 fails.
+  # - minute 1  Job 001 fails.     Alert starts pending.
   # - hour   6  Job 002 fails.
-  # - hour  12  Job 003 succeeds.
+  # - hour  12  Job 003 succeeds.  Alert clears.
   - interval: 1m
     # Jobs are run every 6 hour (360 minutes), with a history limit set to 1 for both successful and failed jobs, no ttl is set so finished jobs stays until a next job with the same status replaces it, leading to failed job staying indefinitely regardless of newer successful jobs.
     # kube_job_status_start_time equals the time (in seconds) at which the job started, so each series only appears from that point on.

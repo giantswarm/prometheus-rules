@@ -10,7 +10,7 @@ spec:
     - name: kafka
       rules:
         - alert: KafkaRunningOutOfSpace
-          expr: kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"data(-[0-9]+)?-(.+)-kafka-[0-9]+"} * 100 / kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~"data(-[0-9]+)?-(.+)-kafka-[0-9]+"} < 15
+          expr: kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"data(-[0-9]+)?-(.+)-(kafka|broker|controller)-[0-9]+"} * 100 / kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~"data(-[0-9]+)?-(.+)-(kafka|broker|controller)-[0-9]+"} < 15
           for: 10s
           labels:
             area: platform
@@ -76,7 +76,7 @@ spec:
             summary: 'Kafka offline log directories'
             description: '{{`There are {{ $value }} offline log directories on {{ $labels.kubernetes_pod_name }}`}}'
         - alert: KafkaScrapeProblem
-          expr: up{kubernetes_namespace!~"openshift-.+",kubernetes_pod_name=~".+-kafka-[0-9]+"} == 0
+          expr: up{kubernetes_namespace!~"openshift-.+",kubernetes_pod_name=~".+-(kafka|broker|controller)-[0-9]+"} == 0
           for: 3m
           labels:
             area: platform
@@ -87,7 +87,7 @@ spec:
             summary: '{{`Prometheus unable to scrape metrics from {{ $labels.kubernetes_pod_name }}/{{ $labels.instance }}`}}'
             description: '{{`Prometheus was unable to scrape metrics from {{ $labels.kubernetes_pod_name }}/{{ $labels.instance }} for more than 3 minutes`}}'
         - alert: KafkaBrokerContainersDown
-          expr: absent(container_last_seen{container="kafka",pod=~".+-kafka-[0-9]+"})
+          expr: absent(container_last_seen{container="kafka",pod=~".+-(kafka|broker|controller)-[0-9]+"})
           for: 3m
           labels:
             area: platform
@@ -98,7 +98,7 @@ spec:
             summary: 'All `kafka` containers down or in CrashLookBackOff status'
             description: 'All `kafka` containers have been down or in CrashLookBackOff status for 3 minutes'
         - alert: KafkaContainerRestartedInTheLast5Minutes
-          expr: count by (cluster_id, installation, pipeline, provider) (count_over_time(container_last_seen{container="kafka"}[5m])) > 2 * count by (cluster_id, installation, pipeline, provider) (container_last_seen{container="kafka",pod=~".+-kafka-[0-9]+"})
+          expr: count by (cluster_id, installation, pipeline, provider) (count_over_time(container_last_seen{container="kafka"}[5m])) > 2 * count by (cluster_id, installation, pipeline, provider) (container_last_seen{container="kafka",pod=~".+-(kafka|broker|controller)-[0-9]+"})
           for: 5m
           labels:
             area: platform

@@ -5,9 +5,9 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'kubelet_volume_stats_available_bytes{persistentvolumeclaim="data-my-cluster-kafka-0"}'
+      - series: 'kubelet_volume_stats_available_bytes{persistentvolumeclaim="data-0-my-cluster-broker-0"}'
         values: "10+0x20"
-      - series: 'kubelet_volume_stats_capacity_bytes{persistentvolumeclaim="data-my-cluster-kafka-0"}'
+      - series: 'kubelet_volume_stats_capacity_bytes{persistentvolumeclaim="data-0-my-cluster-broker-0"}'
         values: "100+0x20"
     alert_rule_test:
       - alertname: KafkaRunningOutOfSpace
@@ -15,12 +15,12 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              persistentvolumeclaim: data-my-cluster-kafka-0
+              persistentvolumeclaim: data-0-my-cluster-broker-0
               severity: none
               team: atlas
               topic: kafka
             exp_annotations:
-              description: "There are only 10 percent available at data-my-cluster-kafka-0 PVC"
+              description: "There are only 10 percent available at data-0-my-cluster-broker-0 PVC"
               summary: "Kafka is running out of free disk space"
 
   - interval: 1m

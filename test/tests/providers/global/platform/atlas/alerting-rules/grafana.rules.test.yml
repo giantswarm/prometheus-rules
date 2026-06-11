@@ -96,20 +96,22 @@ tests:
   # Test: the most recent recovery test job that failed started after the most recent one that succeeded, for over 1 day, triggers the alert. A newer successful job clears it.
   - interval: 1m
     input_series:
-      # An older job succeeded (start_time 100), then a newer job failed (start_time 200) and keeps failing.
+      # start_time equals the time (in seconds) at which the job started, so each series only appears from that point on.
+      # An job starts at 60s (minute 1) and succeeds.
       - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-001", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "100+0x1500"
+        values: "_x1 60+0x1459"
       - series: 'kube_job_complete{job_name="grafana-postgresql-recovery-test-001", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "1+0x1500"
+        values: "_x1 1+0x1459"
+      # A newer job starts at 120s (minute 2) and keeps failing.
       - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-002", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "200+0x1500"
+        values: "_x2 120+0x1458"
       - series: 'kube_job_failed{job_name="grafana-postgresql-recovery-test-002", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "1+0x1500"
-      # At minute 1450, a newer job succeeds (start_time 300), clearing the alert.
+        values: "_x2 1+0x1458"
+      # At minute 1450, an even newer job starts (start_time 87000s = 1450 minutes) and succeeds, clearing the alert.
       - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-003", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "_x1450 300+0x50"
+        values: "_x1450 87000+0x10"
       - series: 'kube_job_complete{job_name="grafana-postgresql-recovery-test-003", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "_x1450 1+0x50"
+        values: "_x1450 1+0x10"
     alert_rule_test:
       # Before 13h, alert is still pending - not firing.
       - alertname: GrafanaPostgresqlRecoveryTestFailed
@@ -136,18 +138,19 @@ tests:
       - alertname: GrafanaPostgresqlRecoveryTestFailed
         eval_time: 1460m
         exp_alerts: []
-  # Test: the most recent recovery test job succeeded - alert should NOT fire even after 1 day.
+  # Test: the most recent recovery test job succeeds - alert should NOT fire even after 1 day.
   - interval: 1m
     input_series:
-      # An older job failed (start_time 100), then a newer job succeeded (start_time 200).
+      # start_time equals the time (in seconds) at which the job starts, so each series only appears from that point on.
+      # An older job starts at 60s (minute 1) and fails, then a newer job starts at 120s (minute 2) and succeeds.
       - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-001", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "100+0x1500"
+        values: "_x1 60+0x1444"
       - series: 'kube_job_failed{job_name="grafana-postgresql-recovery-test-001", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "1+0x1500"
+        values: "_x1 1+0x1444"
       - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-002", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "200+0x1500"
+        values: "_x2 120+0x1443"
       - series: 'kube_job_complete{job_name="grafana-postgresql-recovery-test-002", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "1+0x1500"
+        values: "_x2 1+0x1443"
     alert_rule_test:
       - alertname: GrafanaPostgresqlRecoveryTestFailed
         eval_time: 1445m

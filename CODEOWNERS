@@ -1,3 +1,5 @@
+# Managed in https://github.com/giantswarm/github/tree/main/repositories/override/prometheus-rules/CODEOWNERS
+
 * @giantswarm/team-atlas
 /helm/prometheus-rules/templates/kaas/phoenix/ @giantswarm/team-phoenix
 /helm/prometheus-rules/templates/kaas/rocket/ @giantswarm/team-rocket

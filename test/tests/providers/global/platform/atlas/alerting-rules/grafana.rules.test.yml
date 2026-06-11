@@ -93,33 +93,59 @@ tests:
       - alertname: GrafanaPostgresqlArchivingFailure
         eval_time: 40m
         exp_alerts: []
-  # Test: the most recent recovery test job that failed started after the most recent one that succeeded, for over 1 day, triggers the alert. A newer successful job clears it.
+  # Test: GrafanaPostgresqlRecoveryTestFailed fires after 3 failed jobs (for 13h) and a newer successful job clears it.
+  # Timeline:
+  # - minute 1  Job 001 succeeds.
+  # - hour   6  Job 002 fails.    Alert starts pending.
+  # - hour  12  Job 003 fails.
+  # - hour  18  Job 004 fails.    Alert fires.
+  # - hour  24  Job 005 succeeds. Alert clears.
   - interval: 1m
+    # Jobs are run every 6 hour (360 minutes), with a history limit set to 1 for both successful and failed jobs, no ttl is set so finished jobs stays until a next job with the same status replaces it, leading to failed job staying indefinitely regardless of newer successful jobs.
+    # kube_job_status_start_time equals the time (in seconds) at which the job started, so each series only appears from that point on.
     input_series:
-      # start_time equals the time (in seconds) at which the job started, so each series only appears from that point on.
-      # An job starts at 60s (minute 1) and succeeds.
+      # A job succeeds at minute 1 and stays until the next successful job in 1440 minutes (24 hours).
       - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-001", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "_x1 60+0x1459"
+        values: "_x1 60+0x1440"
       - series: 'kube_job_complete{job_name="grafana-postgresql-recovery-test-001", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "_x1 1+0x1459"
-      # A newer job starts at 120s (minute 2) and keeps failing.
+        values: "_x1 1+0x1440"
+      # A job fails at hour 6 (360 minutes or 21600 seconds).
       - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-002", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "_x2 120+0x1458"
+        values: "_x360 21600+0x360"
       - series: 'kube_job_failed{job_name="grafana-postgresql-recovery-test-002", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "_x2 1+0x1458"
-      # At minute 1450, an even newer job starts (start_time 87000s = 1450 minutes) and succeeds, clearing the alert.
+        values: "_x360 1+0x360"
+      # A job fails at hour 12 (720 minutes or 43200 seconds).
       - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-003", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "_x1450 87000+0x10"
-      - series: 'kube_job_complete{job_name="grafana-postgresql-recovery-test-003", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "_x1450 1+0x10"
+        values: "_x720 43200+0x360"
+      - series: 'kube_job_failed{job_name="grafana-postgresql-recovery-test-003", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x720 1+0x360"
+      # A job fails at hour 18 (1080 minutes or 64800 seconds).
+      - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-004", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x1080 64800+0x360"
+      - series: 'kube_job_failed{job_name="grafana-postgresql-recovery-test-004", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x1080 1+0x360"
+      # A job succeeds at hour 24 (1440 minutes or 86400 seconds).
+      - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-005", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x1440 86400+0x360"
+      - series: 'kube_job_complete{job_name="grafana-postgresql-recovery-test-005", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x1440 1+0x360"
     alert_rule_test:
-      # Before 13h, alert is still pending - not firing.
+      # Before third failure (13h after first failure), alert not firing.
       - alertname: GrafanaPostgresqlRecoveryTestFailed
-        eval_time: 770m
+        eval_time: 60m
         exp_alerts: []
-      # After 13h of the latest job being a failure, alert fires.
       - alertname: GrafanaPostgresqlRecoveryTestFailed
-        eval_time: 790m
+        eval_time: 360m
+        exp_alerts: []
+      - alertname: GrafanaPostgresqlRecoveryTestFailed
+        eval_time: 720m
+        exp_alerts: []
+      - alertname: GrafanaPostgresqlRecoveryTestFailed
+        eval_time: 1080m
+        exp_alerts: []
+      # After 13h of the first failure (6h + 13h = 1140 seconds), alert fires.
+      - alertname: GrafanaPostgresqlRecoveryTestFailed
+        eval_time: 1140m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -134,9 +160,9 @@ tests:
             exp_annotations:
               description: 'grafana-postgresql db automated recovery test failed.'
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION=golem&CLUSTER=golem
-      # After a newer successful job appears, alert clears.
+      # After a newer successful job, alert clears.
       - alertname: GrafanaPostgresqlRecoveryTestFailed
-        eval_time: 1460m
+        eval_time: 1440m
         exp_alerts: []
   # Test: the most recent recovery test job succeeds - alert should NOT fire even after 1 day.
   - interval: 1m

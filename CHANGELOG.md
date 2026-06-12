@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## Fixed
+## [4.107.1] - 2026-06-11
+
+### Fixed
 
 - Fix GrafanaPostgresqlRecoveryTestFailed alert
 
@@ -4367,7 +4369,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.107.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.107.1...HEAD
+[4.107.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.107.0...v4.107.1
 [4.107.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.106.0...v4.107.0
 [4.106.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.105.1...v4.106.0
 [4.105.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.105.0...v4.105.1

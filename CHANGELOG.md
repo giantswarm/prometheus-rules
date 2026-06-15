@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Improved `GrafanaPostgresqlArchivingFailure` alert to avoid false positives
+
 ## [4.107.1] - 2026-06-11
 
 ### Fixed

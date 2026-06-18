@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Improved `GrafanaPostgresqlArchivingFailure` alert to avoid false positives
+- Split `FluxCriticalDeploymentNotSatisfied` into critical and non-critical part.
 
 ## [4.107.1] - 2026-06-11
 

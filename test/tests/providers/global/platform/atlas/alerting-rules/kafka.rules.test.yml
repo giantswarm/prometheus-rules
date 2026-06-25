@@ -5,26 +5,6 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'kubelet_volume_stats_available_bytes{persistentvolumeclaim="data-0-my-cluster-broker-0"}'
-        values: "10+0x20"
-      - series: 'kubelet_volume_stats_capacity_bytes{persistentvolumeclaim="data-0-my-cluster-broker-0"}'
-        values: "100+0x20"
-    alert_rule_test:
-      - alertname: KafkaRunningOutOfSpace
-        eval_time: 12m
-        exp_alerts:
-          - exp_labels:
-              area: platform
-              persistentvolumeclaim: data-0-my-cluster-broker-0
-              severity: none
-              team: atlas
-              topic: kafka
-            exp_annotations:
-              description: "There are only 10 percent available at data-0-my-cluster-broker-0 PVC"
-              summary: "Kafka is running out of free disk space"
-
-  - interval: 1m
-    input_series:
       - series: 'kafka_server_replicamanager_underreplicatedpartitions{kubernetes_pod_name="my-cluster-broker-0"}'
         values: "2+0x15"
     alert_rule_test:
@@ -120,26 +100,6 @@ tests:
 
   - interval: 1m
     input_series:
-      # Counter climbs by 1 every minute => increase over 1h is well above the threshold of 5.
-      - series: 'kube_pod_container_status_restarts_total{container="kafka", namespace="kafka", pod="my-cluster-broker-0"}'
-        values: "0+1x90"
-    alert_rule_test:
-      - alertname: KafkaContainerRestartingTooOften
-        eval_time: 75m
-        exp_alerts:
-          - exp_labels:
-              area: platform
-              namespace: kafka
-              pod: my-cluster-broker-0
-              severity: none
-              team: atlas
-              topic: kafka
-            exp_annotations:
-              description: "Kafka container in pod kafka/my-cluster-broker-0 restarted 60 times in the last hour"
-              summary: "Kafka container restarting too often"
-
-  - interval: 1m
-    input_series:
       - series: 'kafka_controller_kafkacontroller_fencedbrokercount{strimzi_io_name="my-cluster-kafka", namespace="kafka", pod="my-cluster-controller-3"}'
         values: "1+0x10"
     alert_rule_test:
@@ -156,25 +116,6 @@ tests:
             exp_annotations:
               description: "Kafka cluster my-cluster-kafka in namespace kafka has 1 fenced (unavailable) broker(s)"
               summary: "Kafka broker fenced from the cluster"
-
-  - interval: 1m
-    input_series:
-      - series: 'kafka_server_kafkaserver_brokerstate{namespace="kafka", pod="my-cluster-broker-0"}'
-        values: "6+0x10"
-    alert_rule_test:
-      - alertname: KafkaBrokerNotRunning
-        eval_time: 6m
-        exp_alerts:
-          - exp_labels:
-              area: platform
-              namespace: kafka
-              pod: my-cluster-broker-0
-              severity: none
-              team: atlas
-              topic: kafka
-            exp_annotations:
-              description: "Kafka broker kafka/my-cluster-broker-0 is not in the running state (state 6) for more than 5 minutes"
-              summary: "Kafka broker not in running state"
 
   - interval: 1m
     input_series:

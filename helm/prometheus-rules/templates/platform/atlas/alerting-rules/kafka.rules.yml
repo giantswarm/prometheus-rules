@@ -9,17 +9,6 @@ spec:
   groups:
     - name: kafka
       rules:
-        - alert: KafkaRunningOutOfSpace
-          expr: kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"data(-[0-9]+)?-(.+)-(kafka|broker|controller)-[0-9]+"} * 100 / kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~"data(-[0-9]+)?-(.+)-(kafka|broker|controller)-[0-9]+"} < 15
-          for: 10m
-          labels:
-            area: platform
-            severity: none
-            team: atlas
-            topic: kafka
-          annotations:
-            summary: 'Kafka is running out of free disk space'
-            description: '{{`There are only {{ $value }} percent available at {{ $labels.persistentvolumeclaim }} PVC`}}'
         - alert: KafkaUnderReplicatedPartitions
           expr: kafka_server_replicamanager_underreplicatedpartitions > 0
           for: 10m
@@ -75,28 +64,6 @@ spec:
           annotations:
             summary: 'Kafka has offline replicas'
             description: '{{`There are {{ $value }} offline replica(s) on {{ $labels.kubernetes_pod_name }}, indicating a failed or offline log directory`}}'
-        - alert: KafkaScrapeProblem
-          expr: up{kubernetes_pod_name=~".+-(kafka|broker|controller)-[0-9]+"} == 0
-          for: 3m
-          labels:
-            area: platform
-            severity: none
-            team: atlas
-            topic: kafka
-          annotations:
-            summary: '{{`Prometheus unable to scrape metrics from {{ $labels.kubernetes_pod_name }}/{{ $labels.instance }}`}}'
-            description: '{{`Prometheus was unable to scrape metrics from {{ $labels.kubernetes_pod_name }}/{{ $labels.instance }} for more than 3 minutes`}}'
-        - alert: KafkaContainerRestartingTooOften
-          expr: max by (cluster_id, installation, pipeline, provider, namespace, pod) (increase(kube_pod_container_status_restarts_total{container="kafka", pod=~".+-(kafka|broker|controller)-[0-9]+"}[1h])) > 5
-          for: 5m
-          labels:
-            area: platform
-            severity: none
-            team: atlas
-            topic: kafka
-          annotations:
-            summary: 'Kafka container restarting too often'
-            description: '{{`Kafka container in pod {{ $labels.namespace }}/{{ $labels.pod }} restarted {{ $value }} times in the last hour`}}'
         - alert: KafkaBrokerFenced
           expr: max by (cluster_id, installation, pipeline, provider, strimzi_io_name, namespace) (kafka_controller_kafkacontroller_fencedbrokercount) > 0
           for: 5m
@@ -108,17 +75,6 @@ spec:
           annotations:
             summary: 'Kafka broker fenced from the cluster'
             description: '{{`Kafka cluster {{ $labels.strimzi_io_name }} in namespace {{ $labels.namespace }} has {{ $value }} fenced (unavailable) broker(s)`}}'
-        - alert: KafkaBrokerNotRunning
-          expr: kafka_server_kafkaserver_brokerstate != 3
-          for: 5m
-          labels:
-            area: platform
-            severity: none
-            team: atlas
-            topic: kafka
-          annotations:
-            summary: 'Kafka broker not in running state'
-            description: '{{`Kafka broker {{ $labels.namespace }}/{{ $labels.pod }} is not in the running state (state {{ $value }}) for more than 5 minutes`}}'
         - alert: KafkaFailedProduceRequests
           expr: sum by (cluster_id, installation, pipeline, provider, namespace, pod) (rate(kafka_server_brokertopicmetrics_failedproducerequestspersec_total[5m])) > 1
           for: 5m

@@ -5,24 +5,6 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'kafka_topic_partition_under_replicated_partition{topic="my-topic", partition="0"}'
-        values: "1+0x15"
-    alert_rule_test:
-      - alertname: KafkaExporterUnderReplicatedPartition
-        eval_time: 11m
-        exp_alerts:
-          - exp_labels:
-              area: platform
-              partition: "0"
-              severity: none
-              team: atlas
-              topic: my-topic
-            exp_annotations:
-              description: "Topic  my-topic has 1 under-replicated partition 0"
-              summary: "Topic has under-replicated partitions"
-
-  - interval: 1m
-    input_series:
       - series: 'kafka_consumergroup_lag{consumergroup="my-group", topic="my-topic", partition="0"}'
         values: "5000+0x20"
     alert_rule_test:

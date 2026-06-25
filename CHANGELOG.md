@@ -9,10 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add Kafka and Strimzi alerting rules under team atlas (severity `none`).
-  - Validated expressions against a live KRaft cluster: replaced the dead `KafkaOfflineLogDirectoryCount` (metric not exported by the Strimzi metrics reporter) with `KafkaOfflineReplicas`, rewrote the broken `KafkaContainerRestartedInTheLast5Minutes` as `KafkaContainerRestartingTooOften`, made the Kafka Bridge 4xx/5xx rules rate-based, and replaced placeholder `for: 10s` durations with values that tolerate rolling restarts.
-  - Made every Kafka alert multi-cluster safe and focused on actual faults: removed the `absent()`-based container-down alerts (`KafkaBrokerContainersDown`, `KafkaBridgeContainersDown`, `KafkaConnectContainersDown`, `KafkaMirrorMaker2ContainerDown`) which fire globally and cannot attribute to a cluster, replaced the MirrorMaker 2 container-down alert with `KafkaMirrorMaker2FailedConnector`/`KafkaMirrorMaker2FailedTask`, and dropped the OpenShift namespace filter from `KafkaScrapeProblem`.
-  - Pruned to alert on symptoms rather than causes: dropped `KafkaRunningOutOfSpace`, `KafkaScrapeProblem`, `KafkaContainerRestartingTooOften`, `KafkaBrokerNotRunning`, and the duplicate `KafkaExporterUnderReplicatedPartition`; replaced the Strimzi operator container-down alerts (`StrimziClusterOperatorContainerDown`, `StrimziTopicOperatorContainerDown`, `StrimziUserOperatorContainerDown`) with a single `StrimziReconciliationFailing` alert based on `strimzi_reconciliations_failed_total`.
+- Add Kafka and Strimzi alerting rules under team atlas (severity `none`). Adapted from the upstream Strimzi example PrometheusRules and rewritten to the `strimziMetricsReporter` metric names exported on our clusters, validated against a live KRaft cluster.
 
 ### Changed
 

@@ -65,18 +65,23 @@ tests:
       # Then, for the next 10 minutes, archiving fails so the last failed archived time is updated.
       # Then archiving works again for 20 minutes so the last failed archived time stays the same.
       - series: 'cnpg_pg_stat_archiver_last_failed_time{namespace="monitoring", pod="grafana-postgresql-1", cluster_id="golem", cluster_type="management_cluster", installation="golem"}'
-        values: "-1+0x20 1200+60x10 1800+0x20"
+        values: "-1+0x20 1200+60x20 2400+0x20"
       # For the first 20 minutes archiving works fine.
-      # Then, for the next 10 minutes, the last archived time stays the same as archiving is not succeeding anymore.
+      # Then, for the next 20 minutes, the last archived time stays the same as archiving is not succeeding anymore.
       # Then archiving works again for 20 minutes
       - series: 'cnpg_pg_stat_archiver_last_archived_time{namespace="monitoring", pod="grafana-postgresql-1", cluster_id="golem", cluster_type="management_cluster", installation="golem"}'
-        values: "0+60x20 1200+0x10 1800+60x20"
+        values: "0+60x20 1200+0x20 2400+60x20"
+      # We also have the standby postgresql instance that does no backups, so its values are always -1
+      #- series: 'cnpg_pg_stat_archiver_last_archived_time{namespace="monitoring", pod="grafana-postgresql-2", cluster_id="golem", cluster_type="management_cluster", installation="golem"}'
+      #  values: "-1+0x60"
+      #- series: 'cnpg_pg_stat_archiver_last_failed_time{namespace="monitoring", pod="grafana-postgresql-1", cluster_id="golem", cluster_type="management_cluster", installation="golem"}'
+      #  values: "-1+0x60"
     alert_rule_test:
       - alertname: GrafanaPostgresqlArchivingFailure
         eval_time: 15m
         exp_alerts: []
       - alertname: GrafanaPostgresqlArchivingFailure
-        eval_time: 30m
+        eval_time: 40m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -91,27 +96,61 @@ tests:
               description: 'grafana-postgresql archiving failed for pod grafana-postgresql-1.'
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION=golem&CLUSTER=golem
       - alertname: GrafanaPostgresqlArchivingFailure
-        eval_time: 40m
+        eval_time: 50m
         exp_alerts: []
-  # Test: all recovery jobs failed for over 1 day triggers alert, new successful job clears it.
+  # Test: GrafanaPostgresqlRecoveryTestFailed fires after 3 failed jobs (for 13h) and a newer successful job clears it.
+  # Timeline:
+  # - minute 1  Job 001 succeeds.
+  # - hour   6  Job 002 fails.    Alert starts pending.
+  # - hour  12  Job 003 fails.
+  # - hour  18  Job 004 fails.    Alert fires.
+  # - hour  24  Job 005 succeeds. Alert clears.
   - interval: 1m
+    # Jobs are run every 6 hour (360 minutes), with a history limit set to 1 for both successful and failed jobs, no ttl is set so finished jobs stays until a next job with the same status replaces it, leading to failed job staying indefinitely regardless of newer successful jobs.
+    # kube_job_status_start_time equals the time (in seconds) at which the job started, so each series only appears from that point on.
     input_series:
-      # Two failed jobs persist for 1500 minutes (~25h).
-      # At minute 1450, a new successful job appears.
-      - series: 'kube_job_failed{job_name="grafana-postgresql-recovery-test-001", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "1+0x1500"
+      # A job succeeds at minute 1 and stays until the next successful job at hour 24 (1440 minutes)
+      - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-001", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x1 60+0x1440"
+      - series: 'kube_job_complete{job_name="grafana-postgresql-recovery-test-001", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x1 1+0x1440"
+      # A job fails at hour 6 (360 minutes or 21600 seconds).
+      - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-002", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x360 21600+0x360"
       - series: 'kube_job_failed{job_name="grafana-postgresql-recovery-test-002", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "1+0x1500"
+        values: "_x360 1+0x360"
+      # A job fails at hour 12 (720 minutes or 43200 seconds).
+      - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-003", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x720 43200+0x360"
       - series: 'kube_job_failed{job_name="grafana-postgresql-recovery-test-003", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "_x1450 0+0x50"
+        values: "_x720 1+0x360"
+      # A job fails at hour 18 (1080 minutes or 64800 seconds).
+      - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-004", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x1080 64800+0x360"
+      - series: 'kube_job_failed{job_name="grafana-postgresql-recovery-test-004", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x1080 1+0x360"
+      # A job succeeds at hour 24 (1440 minutes or 86400 seconds).
+      - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-005", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x1440 86400+0x360"
+      - series: 'kube_job_complete{job_name="grafana-postgresql-recovery-test-005", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x1440 1+0x360"
     alert_rule_test:
-      # Before 1 day, alert is still pending - not firing.
+      # Before third failure (13h after first failure), alert not firing.
       - alertname: GrafanaPostgresqlRecoveryTestFailed
-        eval_time: 1430m
+        eval_time: 60m
         exp_alerts: []
-      # After 1 day of all jobs failing, alert fires.
       - alertname: GrafanaPostgresqlRecoveryTestFailed
-        eval_time: 1445m
+        eval_time: 360m
+        exp_alerts: []
+      - alertname: GrafanaPostgresqlRecoveryTestFailed
+        eval_time: 720m
+        exp_alerts: []
+      - alertname: GrafanaPostgresqlRecoveryTestFailed
+        eval_time: 1080m
+        exp_alerts: []
+      # After 13h of the first failure (6h + 13h = 1140 seconds), alert fires.
+      - alertname: GrafanaPostgresqlRecoveryTestFailed
+        eval_time: 1140m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -126,18 +165,48 @@ tests:
             exp_annotations:
               description: 'grafana-postgresql db automated recovery test failed.'
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION=golem&CLUSTER=golem
-      # After a successful job appears, alert clears.
+      # After a newer successful job, alert clears.
       - alertname: GrafanaPostgresqlRecoveryTestFailed
-        eval_time: 1460m
+        eval_time: 1440m
         exp_alerts: []
-  # Test: one job succeeded, one failed - alert should NOT fire even after 1 day.
+  # Test: GrafanaPostgresqlRecoveryTestFailed do not fire after 2 failing jobs.
+  # Timeline:
+  # - minute 1  Job 001 fails.     Alert starts pending.
+  # - hour   6  Job 002 fails.
+  # - hour  12  Job 003 succeeds.  Alert clears.
   - interval: 1m
+    # Jobs are run every 6 hour (360 minutes), with a history limit set to 1 for both successful and failed jobs, no ttl is set so finished jobs stays until a next job with the same status replaces it, leading to failed job staying indefinitely regardless of newer successful jobs.
+    # kube_job_status_start_time equals the time (in seconds) at which the job started, so each series only appears from that point on.
     input_series:
+      # A job fails at minute 1.
+      - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-001", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x1 60+0x360"
       - series: 'kube_job_failed{job_name="grafana-postgresql-recovery-test-001", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "1+0x1500"
+        values: "_x1 1+0x360"
+      # A job fails at hour 6 (360 minutes or 21600 seconds).
+      - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-002", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x360 21600+0x360"
       - series: 'kube_job_failed{job_name="grafana-postgresql-recovery-test-002", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
-        values: "0+0x1500"
+        values: "_x360 1+0x360"
+      # A job succeeds at hour 12 (720 minutes or 43200 seconds).
+      - series: 'kube_job_status_start_time{job_name="grafana-postgresql-recovery-test-003", namespace="monitoring", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x720 43200+0x360"
+      - series: 'kube_job_complete{job_name="grafana-postgresql-recovery-test-003", namespace="monitoring", condition="true", cluster_id="golem", installation="golem", pipeline="stable", provider="aws"}'
+        values: "_x720 1+0x360"
+    # The alert never fires
     alert_rule_test:
       - alertname: GrafanaPostgresqlRecoveryTestFailed
-        eval_time: 1445m
+        eval_time: 60m
+        exp_alerts: []
+      - alertname: GrafanaPostgresqlRecoveryTestFailed
+        eval_time: 360m
+        exp_alerts: []
+      - alertname: GrafanaPostgresqlRecoveryTestFailed
+        eval_time: 720m
+        exp_alerts: []
+      - alertname: GrafanaPostgresqlRecoveryTestFailed
+        eval_time: 720m
+        exp_alerts: []
+      - alertname: GrafanaPostgresqlRecoveryTestFailed
+        eval_time: 780m
         exp_alerts: []

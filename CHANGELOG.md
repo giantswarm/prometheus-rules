@@ -1,3 +1,5 @@
+# Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -11,6 +13,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Validated expressions against a live KRaft cluster: replaced the dead `KafkaOfflineLogDirectoryCount` (metric not exported by the Strimzi metrics reporter) with `KafkaOfflineReplicas`, rewrote the broken `KafkaContainerRestartedInTheLast5Minutes` as `KafkaContainerRestartingTooOften`, made the Kafka Bridge 4xx/5xx rules rate-based, and replaced placeholder `for: 10s` durations with values that tolerate rolling restarts.
   - Made every Kafka alert multi-cluster safe and focused on actual faults: removed the `absent()`-based container-down alerts (`KafkaBrokerContainersDown`, `KafkaBridgeContainersDown`, `KafkaConnectContainersDown`, `KafkaMirrorMaker2ContainerDown`) which fire globally and cannot attribute to a cluster, replaced the MirrorMaker 2 container-down alert with `KafkaMirrorMaker2FailedConnector`/`KafkaMirrorMaker2FailedTask`, and dropped the OpenShift namespace filter from `KafkaScrapeProblem`.
   - Pruned to alert on symptoms rather than causes: dropped `KafkaRunningOutOfSpace`, `KafkaScrapeProblem`, `KafkaContainerRestartingTooOften`, `KafkaBrokerNotRunning`, and the duplicate `KafkaExporterUnderReplicatedPartition`; replaced the Strimzi operator container-down alerts (`StrimziClusterOperatorContainerDown`, `StrimziTopicOperatorContainerDown`, `StrimziUserOperatorContainerDown`) with a single `StrimziReconciliationFailing` alert based on `strimzi_reconciliations_failed_total`.
+
+### Changed
+
+- Improved `GrafanaPostgresqlArchivingFailure` alert to avoid false positives
+- Split `FluxCriticalDeploymentNotSatisfied` into critical and non-critical part.
+
+### Removed
+
+- Remove `caicloud-event-exporter` test fixture from `crossplane.rules.test.yml` — the app is being removed (giantswarm/giantswarm#34186).
+
+## [4.107.1] - 2026-06-11
+
+### Fixed
+
+- Fix GrafanaPostgresqlRecoveryTestFailed alert
+
+## [4.107.0] - 2026-05-26
+
+### Changed
+
+- Disable `EnvoyHighDownstreamHTTP5xxErrorRate` and `EnvoyHighClusterUpstream5xxErrorRate` alerts by commenting alerts definitions.
+
+## [4.106.0] - 2026-05-14
+
+### Added
+
+- Adding temporary metrics for Konfigure Operator.
 
 ## [4.105.1] - 2026-04-23
 
@@ -4356,7 +4385,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.105.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.107.1...HEAD
+[4.107.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.107.0...v4.107.1
+[4.107.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.106.0...v4.107.0
+[4.106.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.105.1...v4.106.0
 [4.105.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.105.0...v4.105.1
 [4.105.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.104.0...v4.105.0
 [4.104.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.103.0...v4.104.0

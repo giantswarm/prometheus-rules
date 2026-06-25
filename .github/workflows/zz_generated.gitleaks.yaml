@@ -2,12 +2,13 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/57c68171868158d915a92dd45201bbeadaa17214/pkg/gen/input/workflows/internal/file/gitleaks.yaml.template
+#    https://github.com/giantswarm/devctl/blob/3dc3a7c589ba8beeac28039d88572be2aaa07319/pkg/gen/input/workflows/internal/file/gitleaks.yaml.template
 #
 name: gitleaks
 
 on:
   - pull_request
+  - merge_group
 
 permissions: {}
 

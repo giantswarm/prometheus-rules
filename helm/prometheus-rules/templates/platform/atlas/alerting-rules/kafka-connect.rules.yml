@@ -9,17 +9,6 @@ spec:
   groups:
     - name: kafka-connect
       rules:
-        - alert: KafkaConnectContainersDown
-          expr: absent(container_last_seen{container=~".+-connect",pod=~".+-connect-.+"})
-          for: 3m
-          labels:
-            area: platform
-            severity: none
-            team: atlas
-            topic: kafka
-          annotations:
-            summary: 'All Kafka Connect containers down or in CrashLookBackOff status'
-            description: 'All Kafka Connect containers have been down or in CrashLookBackOff status for 3 minutes'
         - alert: KafkaConnectFailedConnector
           expr: sum(kafka_connect_connector_status{status="failed"}) by (cluster_id, installation, pipeline, provider, namespace, pod) > 0
           for: 5m

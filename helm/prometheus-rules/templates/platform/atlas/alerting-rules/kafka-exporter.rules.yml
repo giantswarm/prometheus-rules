@@ -29,6 +29,9 @@ spec:
           annotations:
             summary: 'Consumer group lag is too big'
             description: '{{`Consumer group {{ $labels.consumergroup}} lag is too big ({{ $value }}) on topic {{ $labels.topic }}/partition {{ $labels.partition }}`}}'
+        # Potential false positive: this fires for any partition that simply has no
+        # new messages for 10 minutes, which is normal for low-traffic or idle topics.
+        # Keep severity low and consider scoping to topics where continuous traffic is expected.
         - alert: KafkaExporterNoMessageForTooLong
           expr: changes(kafka_topic_partition_current_offset[10m]) == 0
           for: 10s

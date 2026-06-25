@@ -9,14 +9,25 @@ spec:
   groups:
     - name: kafka-mirrormaker2
       rules:
-        - alert: KafkaMirrorMaker2ContainerDown
-          expr: absent(container_last_seen{container=~".+-mirrormaker2",pod=~".+-mirrormaker2-.+"})
-          for: 3m
+        - alert: KafkaMirrorMaker2FailedConnector
+          expr: sum(kafka_connect_connector_status{status="failed", pod=~".+-mirrormaker2-.+"}) by (cluster_id, installation, pipeline, provider, namespace, pod) > 0
+          for: 5m
           labels:
             area: platform
             severity: none
             team: atlas
             topic: kafka
           annotations:
-            summary: 'All Kafka Mirror Maker 2 containers down or in CrashLookBackOff status'
-            description: 'All Kafka Mirror Maker 2 containers have been down or in CrashLookBackOff status for 3 minutes'
+            summary: 'Kafka Mirror Maker 2 connector failure'
+            description: '{{`Kafka Mirror Maker 2 on pod {{ $labels.namespace }}/{{ $labels.pod }} has {{ $value }} connector(s) in failed state during last 5 minutes`}}'
+        - alert: KafkaMirrorMaker2FailedTask
+          expr: sum(kafka_connect_worker_connector_failed_task_count{pod=~".+-mirrormaker2-.+"}) by (cluster_id, installation, pipeline, provider, namespace, pod) > 0
+          for: 5m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka Mirror Maker 2 task failure'
+            description: '{{`Kafka Mirror Maker 2 on pod {{ $labels.namespace }}/{{ $labels.pod }} has {{ $value }} task(s) in failed state during last 5 minutes`}}'

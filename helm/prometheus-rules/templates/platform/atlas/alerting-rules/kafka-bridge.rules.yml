@@ -9,17 +9,6 @@ spec:
   groups:
     - name: kafka-bridge
       rules:
-        - alert: KafkaBridgeContainersDown
-          expr: absent(container_last_seen{container=~".+-bridge",pod=~".+-bridge-.+"})
-          for: 3m
-          labels:
-            area: platform
-            severity: none
-            team: atlas
-            topic: kafka
-          annotations:
-            summary: 'All Kafka Bridge containers down or in CrashLookBackOff status'
-            description: 'All Kafka Bridge containers have been down or in CrashLookBackOff status for 3 minutes'
         - alert: KafkaBridgeAvgProducerLatency
           expr: strimzi_bridge_kafka_producer_request_latency_avg > 10
           for: 3m

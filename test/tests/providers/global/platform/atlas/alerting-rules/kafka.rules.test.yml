@@ -119,22 +119,6 @@ tests:
               summary: "Kafka has offline replicas"
 
   - interval: 1m
-    input_series: []
-    alert_rule_test:
-      - alertname: KafkaBrokerContainersDown
-        eval_time: 5m
-        exp_alerts:
-          - exp_labels:
-              area: platform
-              container: kafka
-              severity: none
-              team: atlas
-              topic: kafka
-            exp_annotations:
-              description: "All `kafka` containers have been down or in CrashLookBackOff status for 3 minutes"
-              summary: "All `kafka` containers down or in CrashLookBackOff status"
-
-  - interval: 1m
     input_series:
       # Counter climbs by 1 every minute => increase over 1h is well above the threshold of 5.
       - series: 'kube_pod_container_status_restarts_total{container="kafka", namespace="kafka", pod="my-cluster-broker-0"}'

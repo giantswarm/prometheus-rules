@@ -21,18 +21,3 @@ tests:
             exp_annotations:
               description: "Kafka instance on pod kafka/my-connect-0 has 1 connector(s) in failed state during last 5 minutes"
               summary: "Kafka Connect Connector Failure"
-
-  - interval: 1m
-    input_series: []
-    alert_rule_test:
-      - alertname: KafkaConnectContainersDown
-        eval_time: 5m
-        exp_alerts:
-          - exp_labels:
-              area: platform
-              severity: none
-              team: atlas
-              topic: kafka
-            exp_annotations:
-              description: "All Kafka Connect containers have been down or in CrashLookBackOff status for 3 minutes"
-              summary: "All Kafka Connect containers down or in CrashLookBackOff status"

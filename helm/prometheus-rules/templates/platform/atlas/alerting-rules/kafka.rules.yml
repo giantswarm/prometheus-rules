@@ -76,7 +76,7 @@ spec:
             summary: 'Kafka has offline replicas'
             description: '{{`There are {{ $value }} offline replica(s) on {{ $labels.kubernetes_pod_name }}, indicating a failed or offline log directory`}}'
         - alert: KafkaScrapeProblem
-          expr: up{kubernetes_namespace!~"openshift-.+",kubernetes_pod_name=~".+-(kafka|broker|controller)-[0-9]+"} == 0
+          expr: up{kubernetes_pod_name=~".+-(kafka|broker|controller)-[0-9]+"} == 0
           for: 3m
           labels:
             area: platform
@@ -86,17 +86,6 @@ spec:
           annotations:
             summary: '{{`Prometheus unable to scrape metrics from {{ $labels.kubernetes_pod_name }}/{{ $labels.instance }}`}}'
             description: '{{`Prometheus was unable to scrape metrics from {{ $labels.kubernetes_pod_name }}/{{ $labels.instance }} for more than 3 minutes`}}'
-        - alert: KafkaBrokerContainersDown
-          expr: absent(container_last_seen{container="kafka",pod=~".+-(kafka|broker|controller)-[0-9]+"})
-          for: 3m
-          labels:
-            area: platform
-            severity: none
-            team: atlas
-            topic: kafka
-          annotations:
-            summary: 'All `kafka` containers down or in CrashLookBackOff status'
-            description: 'All `kafka` containers have been down or in CrashLookBackOff status for 3 minutes'
         - alert: KafkaContainerRestartingTooOften
           expr: max by (cluster_id, installation, pipeline, provider, namespace, pod) (increase(kube_pod_container_status_restarts_total{container="kafka", pod=~".+-(kafka|broker|controller)-[0-9]+"}[1h])) > 5
           for: 5m

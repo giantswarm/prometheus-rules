@@ -11,7 +11,7 @@ spec:
       rules:
         - alert: KafkaRunningOutOfSpace
           expr: kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"data(-[0-9]+)?-(.+)-(kafka|broker|controller)-[0-9]+"} * 100 / kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~"data(-[0-9]+)?-(.+)-(kafka|broker|controller)-[0-9]+"} < 15
-          for: 10s
+          for: 10m
           labels:
             area: platform
             severity: none
@@ -22,7 +22,7 @@ spec:
             description: '{{`There are only {{ $value }} percent available at {{ $labels.persistentvolumeclaim }} PVC`}}'
         - alert: KafkaUnderReplicatedPartitions
           expr: kafka_server_replicamanager_underreplicatedpartitions > 0
-          for: 10s
+          for: 10m
           labels:
             area: platform
             severity: none
@@ -33,7 +33,7 @@ spec:
             description: '{{`There are {{ $value }} under replicated partitions on {{ $labels.kubernetes_pod_name }}`}}'
         - alert: KafkaAbnormalControllerState
           expr: sum(kafka_controller_kafkacontroller_activecontrollercount) by (cluster_id, installation, pipeline, provider, strimzi_io_name, namespace) != 1
-          for: 10s
+          for: 5m
           labels:
             area: platform
             severity: none
@@ -44,7 +44,7 @@ spec:
             description: '{{`Kafka instance {{ $labels.strimzi_io_name }} on namespace {{ $labels.namespace }} has {{ $value }} active controllers`}}'
         - alert: KafkaOfflinePartitions
           expr: sum(kafka_controller_kafkacontroller_offlinepartitionscount) by (cluster_id, installation, pipeline, provider, namespace, pod) > 0
-          for: 10s
+          for: 5m
           labels:
             area: platform
             severity: none
@@ -55,7 +55,7 @@ spec:
             description: '{{`Kafka instance on pod {{ $labels.namespace }}/{{ $labels.pod }} has {{ $value }} partition(s) with no leader`}}'
         - alert: KafkaUnderMinIsrPartitionCount
           expr: kafka_server_replicamanager_underminisrpartitioncount > 0
-          for: 10s
+          for: 5m
           labels:
             area: platform
             severity: none
@@ -64,17 +64,17 @@ spec:
           annotations:
             summary: 'Kafka under min ISR partitions'
             description: '{{`There are {{ $value }} partitions under the min ISR on {{ $labels.kubernetes_pod_name }}`}}'
-        - alert: KafkaOfflineLogDirectoryCount
-          expr: kafka_log_logmanager_offlinelogdirectorycount > 0
-          for: 10s
+        - alert: KafkaOfflineReplicas
+          expr: kafka_server_replicamanager_offlinereplicacount > 0
+          for: 5m
           labels:
             area: platform
             severity: none
             team: atlas
             topic: kafka
           annotations:
-            summary: 'Kafka offline log directories'
-            description: '{{`There are {{ $value }} offline log directories on {{ $labels.kubernetes_pod_name }}`}}'
+            summary: 'Kafka has offline replicas'
+            description: '{{`There are {{ $value }} offline replica(s) on {{ $labels.kubernetes_pod_name }}, indicating a failed or offline log directory`}}'
         - alert: KafkaScrapeProblem
           expr: up{kubernetes_namespace!~"openshift-.+",kubernetes_pod_name=~".+-(kafka|broker|controller)-[0-9]+"} == 0
           for: 3m
@@ -97,8 +97,8 @@ spec:
           annotations:
             summary: 'All `kafka` containers down or in CrashLookBackOff status'
             description: 'All `kafka` containers have been down or in CrashLookBackOff status for 3 minutes'
-        - alert: KafkaContainerRestartedInTheLast5Minutes
-          expr: count by (cluster_id, installation, pipeline, provider) (count_over_time(container_last_seen{container="kafka"}[5m])) > 2 * count by (cluster_id, installation, pipeline, provider) (container_last_seen{container="kafka",pod=~".+-(kafka|broker|controller)-[0-9]+"})
+        - alert: KafkaContainerRestartingTooOften
+          expr: max by (cluster_id, installation, pipeline, provider, namespace, pod) (increase(kube_pod_container_status_restarts_total{container="kafka", pod=~".+-(kafka|broker|controller)-[0-9]+"}[1h])) > 5
           for: 5m
           labels:
             area: platform
@@ -106,8 +106,8 @@ spec:
             team: atlas
             topic: kafka
           annotations:
-            summary: 'One or more Kafka containers restarted too often'
-            description: 'One or more Kafka containers were restarted too often within the last 5 minutes'
+            summary: 'Kafka container restarting too often'
+            description: '{{`Kafka container in pod {{ $labels.namespace }}/{{ $labels.pod }} restarted {{ $value }} times in the last hour`}}'
         - alert: KafkaBrokerFenced
           expr: max by (cluster_id, installation, pipeline, provider, strimzi_io_name, namespace) (kafka_controller_kafkacontroller_fencedbrokercount) > 0
           for: 5m

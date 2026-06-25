@@ -11,7 +11,7 @@ tests:
         values: "100+0x20"
     alert_rule_test:
       - alertname: KafkaRunningOutOfSpace
-        eval_time: 5m
+        eval_time: 12m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -25,21 +25,98 @@ tests:
 
   - interval: 1m
     input_series:
-      - series: 'kafka_server_replicamanager_underreplicatedpartitions{kubernetes_pod_name="my-cluster-kafka-0"}'
-        values: "2+0x10"
+      - series: 'kafka_server_replicamanager_underreplicatedpartitions{kubernetes_pod_name="my-cluster-broker-0"}'
+        values: "2+0x15"
     alert_rule_test:
       - alertname: KafkaUnderReplicatedPartitions
-        eval_time: 5m
+        eval_time: 12m
         exp_alerts:
           - exp_labels:
               area: platform
-              kubernetes_pod_name: my-cluster-kafka-0
+              kubernetes_pod_name: my-cluster-broker-0
               severity: none
               team: atlas
               topic: kafka
             exp_annotations:
-              description: "There are 2 under replicated partitions on my-cluster-kafka-0"
+              description: "There are 2 under replicated partitions on my-cluster-broker-0"
               summary: "Kafka under replicated partitions"
+
+  - interval: 1m
+    input_series:
+      # Two controllers both reporting active => split-brain (sum != 1).
+      - series: 'kafka_controller_kafkacontroller_activecontrollercount{strimzi_io_name="my-cluster-kafka", namespace="kafka", pod="my-cluster-controller-3"}'
+        values: "1+0x10"
+      - series: 'kafka_controller_kafkacontroller_activecontrollercount{strimzi_io_name="my-cluster-kafka", namespace="kafka", pod="my-cluster-controller-4"}'
+        values: "1+0x10"
+    alert_rule_test:
+      - alertname: KafkaAbnormalControllerState
+        eval_time: 6m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              severity: none
+              strimzi_io_name: my-cluster-kafka
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka instance my-cluster-kafka on namespace kafka has 2 active controllers"
+              summary: "Kafka abnormal controller state"
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_controller_kafkacontroller_offlinepartitionscount{namespace="kafka", pod="my-cluster-controller-4"}'
+        values: "3+0x10"
+    alert_rule_test:
+      - alertname: KafkaOfflinePartitions
+        eval_time: 6m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              pod: my-cluster-controller-4
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka instance on pod kafka/my-cluster-controller-4 has 3 partition(s) with no leader"
+              summary: "Kafka offline partitions"
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_server_replicamanager_underminisrpartitioncount{kubernetes_pod_name="my-cluster-broker-0"}'
+        values: "1+0x10"
+    alert_rule_test:
+      - alertname: KafkaUnderMinIsrPartitionCount
+        eval_time: 6m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              kubernetes_pod_name: my-cluster-broker-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "There are 1 partitions under the min ISR on my-cluster-broker-0"
+              summary: "Kafka under min ISR partitions"
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_server_replicamanager_offlinereplicacount{kubernetes_pod_name="my-cluster-broker-0"}'
+        values: "2+0x10"
+    alert_rule_test:
+      - alertname: KafkaOfflineReplicas
+        eval_time: 6m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              kubernetes_pod_name: my-cluster-broker-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "There are 2 offline replica(s) on my-cluster-broker-0, indicating a failed or offline log directory"
+              summary: "Kafka has offline replicas"
 
   - interval: 1m
     input_series: []
@@ -56,6 +133,26 @@ tests:
             exp_annotations:
               description: "All `kafka` containers have been down or in CrashLookBackOff status for 3 minutes"
               summary: "All `kafka` containers down or in CrashLookBackOff status"
+
+  - interval: 1m
+    input_series:
+      # Counter climbs by 1 every minute => increase over 1h is well above the threshold of 5.
+      - series: 'kube_pod_container_status_restarts_total{container="kafka", namespace="kafka", pod="my-cluster-broker-0"}'
+        values: "0+1x90"
+    alert_rule_test:
+      - alertname: KafkaContainerRestartingTooOften
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              pod: my-cluster-broker-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka container in pod kafka/my-cluster-broker-0 restarted 60 times in the last hour"
+              summary: "Kafka container restarting too often"
 
   - interval: 1m
     input_series:

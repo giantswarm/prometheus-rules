@@ -22,7 +22,7 @@ spec:
             description: 'All Kafka Bridge containers have been down or in CrashLookBackOff status for 3 minutes'
         - alert: KafkaBridgeAvgProducerLatency
           expr: strimzi_bridge_kafka_producer_request_latency_avg > 10
-          for: 10s
+          for: 3m
           labels:
             area: platform
             severity: none
@@ -33,7 +33,7 @@ spec:
             description: '{{`The average producer request latency is {{ $value }} on {{ $labels.clientId }}`}}'
         - alert: KafkaBridgeAvgConsumerFetchLatency
           expr: strimzi_bridge_kafka_consumer_fetch_latency_avg > 500
-          for: 10s
+          for: 3m
           labels:
             area: platform
             severity: none
@@ -44,7 +44,7 @@ spec:
             description: '{{`The average consumer fetch latency is {{ $value }} on {{ $labels.clientId }}`}}'
         - alert: KafkaBridgeAvgConsumerCommitLatency
           expr: strimzi_bridge_kafka_consumer_commit_latency_avg > 200
-          for: 10s
+          for: 3m
           labels:
             area: platform
             severity: none
@@ -54,7 +54,7 @@ spec:
             summary: 'Kafka Bridge consumer average commit latency'
             description: '{{`The average consumer commit latency is {{ $value }} on {{ $labels.clientId }}`}}'
         - alert: KafkaBridgeHttp4xxErrorRate
-          expr: strimzi_bridge_http_server_requests_total{code=~"4..", container=~".+-bridge", path !="/favicon.ico"} > 10
+          expr: sum by (cluster_id, installation, pipeline, provider, namespace, pod, path) (increase(strimzi_bridge_http_server_requests_total{code=~"4..", container=~".+-bridge", path!="/favicon.ico"}[5m])) > 10
           for: 1m
           labels:
             area: platform
@@ -65,7 +65,7 @@ spec:
             summary: 'Kafka Bridge returns code 4xx too often'
             description: '{{`Kafka Bridge returns code 4xx too much ({{ $value }}) for the path {{ $labels.path }}`}}'
         - alert: KafkaBridgeHttp5xxErrorRate
-          expr: strimzi_bridge_http_server_requests_total{code=~"5..", container=~".+-bridge", path !="/favicon.ico"} > 10
+          expr: sum by (cluster_id, installation, pipeline, provider, namespace, pod, path) (increase(strimzi_bridge_http_server_requests_total{code=~"5..", container=~".+-bridge", path!="/favicon.ico"}[5m])) > 10
           for: 1m
           labels:
             area: platform

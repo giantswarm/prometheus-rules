@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add Kafka and Strimzi alerting rules under team atlas (severity `none`).
+  - Validated expressions against a live KRaft cluster: replaced the dead `KafkaOfflineLogDirectoryCount` (metric not exported by the Strimzi metrics reporter) with `KafkaOfflineReplicas`, rewrote the broken `KafkaContainerRestartedInTheLast5Minutes` as `KafkaContainerRestartingTooOften`, made the Kafka Bridge 4xx/5xx rules rate-based, and replaced placeholder `for: 10s` durations with values that tolerate rolling restarts.
 
 ## [4.105.1] - 2026-04-23
 

@@ -6,10 +6,10 @@ tests:
   - interval: 1m
     input_series:
       - series: 'kafka_topic_partition_under_replicated_partition{topic="my-topic", partition="0"}'
-        values: "1+0x10"
+        values: "1+0x15"
     alert_rule_test:
       - alertname: KafkaExporterUnderReplicatedPartition
-        eval_time: 5m
+        eval_time: 11m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -24,10 +24,10 @@ tests:
   - interval: 1m
     input_series:
       - series: 'kafka_consumergroup_lag{consumergroup="my-group", topic="my-topic", partition="0"}'
-        values: "5000+0x10"
+        values: "5000+0x20"
     alert_rule_test:
       - alertname: KafkaExporterTooLargeConsumerGroupLag
-        eval_time: 5m
+        eval_time: 16m
         exp_alerts:
           - exp_labels:
               area: platform

@@ -11,7 +11,7 @@ spec:
       rules:
         - alert: KafkaExporterUnderReplicatedPartition
           expr: kafka_topic_partition_under_replicated_partition > 0
-          for: 10s
+          for: 10m
           labels:
             area: platform
             severity: none
@@ -21,7 +21,7 @@ spec:
             description: '{{`Topic  {{ $labels.topic }} has {{ $value }} under-replicated partition {{ $labels.partition }}`}}'
         - alert: KafkaExporterTooLargeConsumerGroupLag
           expr: kafka_consumergroup_lag > 1000
-          for: 10s
+          for: 15m
           labels:
             area: platform
             severity: none

@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'kafka_connect_connector_status{namespace="kafka", pod="my-cluster-mirrormaker2-0", status="failed"}'
+      - series: 'kafka_connect_connector_metrics_status_info{namespace="kafka", pod="my-cluster-mirrormaker2-0", status="failed"}'
         values: "1+0x10"
     alert_rule_test:
       - alertname: KafkaMirrorMaker2FailedConnector
@@ -24,7 +24,7 @@ tests:
 
   - interval: 1m
     input_series:
-      - series: 'kafka_connect_worker_connector_failed_task_count{namespace="kafka", pod="my-cluster-mirrormaker2-0"}'
+      - series: 'kafka_connect_connect_worker_metrics_connector_failed_task_count{namespace="kafka", pod="my-cluster-mirrormaker2-0"}'
         values: "2+0x10"
     alert_rule_test:
       - alertname: KafkaMirrorMaker2FailedTask

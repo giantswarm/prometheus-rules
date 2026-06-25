@@ -10,7 +10,7 @@ spec:
     - name: kafka-connect
       rules:
         - alert: KafkaConnectFailedConnector
-          expr: sum(kafka_connect_connector_status{status="failed"}) by (cluster_id, installation, pipeline, provider, namespace, pod) > 0
+          expr: sum(kafka_connect_connector_metrics_status_info{status="failed"}) by (cluster_id, installation, pipeline, provider, namespace, pod) > 0
           for: 5m
           labels:
             area: platform
@@ -21,7 +21,7 @@ spec:
             summary: 'Kafka Connect Connector Failure'
             description: '{{`Kafka instance on pod {{ $labels.namespace }}/{{ $labels.pod }} has {{ $value }} connector(s) in failed state during last 5 minutes`}}'
         - alert: KafkaConnectFailedTask
-          expr: sum(kafka_connect_worker_connector_failed_task_count) by (cluster_id, installation, pipeline, provider, namespace, pod) > 0
+          expr: sum(kafka_connect_connect_worker_metrics_connector_failed_task_count) by (cluster_id, installation, pipeline, provider, namespace, pod) > 0
           for: 5m
           labels:
             area: platform

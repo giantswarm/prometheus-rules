@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'kafka_connect_connector_status{namespace="kafka", pod="my-connect-0", status="failed"}'
+      - series: 'kafka_connect_connector_metrics_status_info{namespace="kafka", pod="my-connect-0", status="failed"}'
         values: "1+0x10"
     alert_rule_test:
       - alertname: KafkaConnectFailedConnector

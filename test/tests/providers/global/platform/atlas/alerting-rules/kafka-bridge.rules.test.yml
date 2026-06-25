@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'strimzi_bridge_kafka_producer_request_latency_avg{clientId="my-client"}'
+      - series: 'kafka_producer_producer_metrics_request_latency_avg{client_id="my-client", container="my-bridge-bridge"}'
         values: "20+0x10"
     alert_rule_test:
       - alertname: KafkaBridgeAvgProducerLatency
@@ -13,7 +13,8 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              clientId: my-client
+              client_id: my-client
+              container: my-bridge-bridge
               severity: none
               team: atlas
               topic: kafka

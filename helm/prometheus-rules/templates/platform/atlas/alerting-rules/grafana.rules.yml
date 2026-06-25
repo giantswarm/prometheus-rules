@@ -39,7 +39,17 @@ spec:
       annotations:
         description: '{{`grafana-postgresql archiving failed for pod {{ $labels.pod }}.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: sum((cnpg_pg_stat_archiver_last_failed_time{namespace="monitoring", pod=~"grafana-postgresql.*"} - cnpg_pg_stat_archiver_last_archived_time{namespace="monitoring", pod=~"grafana-postgresql.*"})) by (pod, cluster_id, installation, pipeline, provider) > 1
+      # Alert when archive failures advance faster than successful archives.
+      # rate() on both timestamp metrics also gives us liveness: standby pods
+      # (including an old primary just after a failover) have flat metrics, so
+      # both rates are 0 and the difference is 0 — no alert. A healthy primary
+      # has rate(archived) > rate(failed), so the difference is negative. Only
+      # an actively-failing primary has rate(failed) > rate(archived).
+      expr: |
+        max by (pod, cluster_id, installation, pipeline, provider) (
+            rate(cnpg_pg_stat_archiver_last_failed_time{namespace="monitoring", pod=~"grafana-postgresql.*"}[5m])
+          - rate(cnpg_pg_stat_archiver_last_archived_time{namespace="monitoring", pod=~"grafana-postgresql.*"}[5m])
+        ) > 0
       for: 5m
       labels:
         area: platform
@@ -51,12 +61,24 @@ spec:
       annotations:
         description: '{{`grafana-postgresql db automated recovery test failed.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/grafana/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      # Fires when all existing grafana-postgresql recovery test Jobs have failed. Clears as soon as a new Job succeeds.
+      # Fires when the most recent grafana-postgresql recovery test Job that failed started after the most recent one that succeeded. Clears as soon as a newer Job succeeds.
       expr: |
-        min by (cluster_id, installation, pipeline, provider) (
-          kube_job_failed{job_name=~"grafana-postgresql-recovery-test.+", namespace="monitoring", condition="true"}
-        ) == 1
-      for: 1d
+        (
+            max by(cluster_id, installation, pipeline, provider) (
+              kube_job_status_start_time{job_name=~"grafana-postgresql-recovery-test-[0-9]+", namespace="monitoring"}
+              and on(job_name)
+              (kube_job_failed{job_name=~"grafana-postgresql-recovery-test-[0-9]+", namespace="monitoring", condition="true"} == 1)
+            )
+        )
+          >
+        (
+            max by(cluster_id, installation, pipeline, provider) (
+              kube_job_status_start_time{job_name=~"grafana-postgresql-recovery-test-[0-9]+", namespace="monitoring"}
+              and on(job_name)
+              (kube_job_complete{job_name=~"grafana-postgresql-recovery-test-[0-9]+", namespace="monitoring", condition="true"} == 1)
+            )
+        )
+      for: 13h
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"

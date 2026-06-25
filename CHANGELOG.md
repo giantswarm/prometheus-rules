@@ -1,3 +1,5 @@
+# Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -5,9 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Improved `GrafanaPostgresqlArchivingFailure` alert to avoid false positives
+- Split `FluxCriticalDeploymentNotSatisfied` into critical and non-critical part.
+
 ### Removed
 
 - Remove `caicloud-event-exporter` test fixture from `crossplane.rules.test.yml` — the app is being removed (giantswarm/giantswarm#34186).
+
+## [4.107.1] - 2026-06-11
+
+### Fixed
+
+- Fix GrafanaPostgresqlRecoveryTestFailed alert
 
 ## [4.107.0] - 2026-05-26
 
@@ -4365,7 +4378,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.107.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.107.1...HEAD
+[4.107.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.107.0...v4.107.1
 [4.107.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.106.0...v4.107.0
 [4.106.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.105.1...v4.106.0
 [4.105.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.105.0...v4.105.1

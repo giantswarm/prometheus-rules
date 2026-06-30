@@ -1,0 +1,42 @@
+rule_files:
+  - etcd.workload-cluster.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      # wc1: quorum lost - 2 of 3 etcd members report no leader - should fire after 2m
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="workload_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="wc1", pod="etcd-wc1-0"}'
+        values: "0+0x10"
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="workload_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="wc1", pod="etcd-wc1-1"}'
+        values: "0+0x10"
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="workload_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="wc1", pod="etcd-wc1-2"}'
+        values: "1+0x10"
+      # a non-etcd component (e.g. loki's dskit ring) can also expose etcd_server_has_leader.
+      # the app="etcd" whitelist must exclude it: if counted, the denominator would become 4,
+      # dropping the ratio to exactly 0.5 (not > 0.5) and suppressing the alert - so this guards the selector
+      - series: 'etcd_server_has_leader{app="loki", cluster_type="workload_cluster", provider="capa", pipeline="stable", container="loki", installation="myinst", cluster_id="wc1", pod="loki-wc1-0"}'
+        values: "1+0x10"
+      # wc2: single member without a leader (1 of 3) - not quorum loss - should NOT fire
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="workload_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="wc2", pod="etcd-wc2-0"}'
+        values: "0+0x10"
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="workload_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="wc2", pod="etcd-wc2-1"}'
+        values: "1+0x10"
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="workload_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="wc2", pod="etcd-wc2-2"}'
+        values: "1+0x10"
+    alert_rule_test:
+      - alertname: WorkloadClusterEtcdQuorumLost
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "false"
+              severity: notify
+              team: tenet
+              topic: etcd
+              cluster_id: wc1
+              installation: myinst
+              provider: capa
+              pipeline: stable
+            exp_annotations:
+              description: "Etcd on workload cluster myinst/wc1 has lost quorum: a majority of members report no leader."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-troubleshooting/

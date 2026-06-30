@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `ManagementClusterEtcdQuorumLost` and `WorkloadClusterEtcdQuorumLost` alerts that fire when a majority of etcd members report no leader (quorum loss). Shipped as `severity: notify` for an initial observation period before promoting to `page`.
+
 ### Changed
 
 - Improved `GrafanaPostgresqlArchivingFailure` alert to avoid false positives

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Point `ClusterCertificateExpirationMetricsMissing` runbook URL to the migrated `absent-metrics` runbook.
 - Improved `GrafanaPostgresqlArchivingFailure` alert to avoid false positives
 - Split `FluxCriticalDeploymentNotSatisfied` into critical and non-critical part.
+- Polish Konfigure Operator alerts.
 
 ### Removed
 

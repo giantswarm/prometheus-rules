@@ -1,0 +1,63 @@
+# Originally imported from upstream Strimzi example PrometheusRules:
+#   https://github.com/strimzi/strimzi-kafka-operator/tree/1.0.0/examples/metrics/prometheus-install/prometheus-rules
+# then adapted to Giant Swarm atlas conventions (common labels, rule names,
+# team/area/severity labels, pint-compliant aggregations) and rewritten to the
+# strimziMetricsReporter metric names actually exported on our clusters.
+#
+# These files are now hand-maintained -- there is no regeneration script.
+# See kafka/MONITORING.md for the metric-name mapping and cluster-side setup.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: kafka-bridge.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    - name: kafka-bridge
+      rules:
+        - alert: KafkaBridgeAvgConsumerFetchLatency
+          expr: kafka_consumer_consumer_fetch_manager_metrics_fetch_latency_avg{container=~".+-bridge"} > 500
+          for: 3m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka Bridge consumer average fetch latency'
+            description: '{{`The average consumer fetch latency is {{ $value }} on {{ $labels.client_id }}`}}'
+        - alert: KafkaBridgeAvgConsumerCommitLatency
+          expr: kafka_consumer_consumer_coordinator_metrics_commit_latency_avg{container=~".+-bridge"} > 200
+          for: 3m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka Bridge consumer average commit latency'
+            description: '{{`The average consumer commit latency is {{ $value }} on {{ $labels.client_id }}`}}'
+        - alert: KafkaBridgeHttp4xxErrorRate
+          expr: sum by (cluster_id, installation, pipeline, provider, namespace, pod, path) (increase(strimzi_bridge_http_server_requests_total{code=~"4..", container=~".+-bridge", path!="/favicon.ico"}[5m])) > 10
+          for: 1m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka Bridge returns code 4xx too often'
+            description: '{{`Kafka Bridge returns code 4xx too much ({{ $value }}) for the path {{ $labels.path }}`}}'
+        - alert: KafkaBridgeHttp5xxErrorRate
+          expr: sum by (cluster_id, installation, pipeline, provider, namespace, pod, path) (increase(strimzi_bridge_http_server_requests_total{code=~"5..", container=~".+-bridge", path!="/favicon.ico"}[5m])) > 10
+          for: 1m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka Bridge returns code 5xx too often'
+            description: '{{`Kafka Bridge returns code 5xx too much ({{ $value }}) for the path {{ $labels.path }}`}}'

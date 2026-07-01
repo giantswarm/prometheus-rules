@@ -1,0 +1,24 @@
+---
+rule_files:
+  - strimzi-operator.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      # Reconciliations keep failing every cycle => sustained non-zero failure rate.
+      - series: 'strimzi_reconciliations_failed_total{kind="KafkaUser", namespace="kafka"}'
+        values: "0+1x40"
+    alert_rule_test:
+      - alertname: StrimziReconciliationFailing
+        eval_time: 20m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              kind: KafkaUser
+              namespace: kafka
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              summary: "Strimzi operator failing to reconcile resources"
+              description: "Strimzi is failing to reconcile KafkaUser resources in namespace kafka"

@@ -1,0 +1,42 @@
+# Originally imported from upstream Strimzi example PrometheusRules:
+#   https://github.com/strimzi/strimzi-kafka-operator/tree/1.0.0/examples/metrics/prometheus-install/prometheus-rules
+# then adapted to Giant Swarm atlas conventions (common labels, rule names,
+# team/area/severity labels, pint-compliant aggregations) and rewritten to the
+# strimziMetricsReporter metric names actually exported on our clusters.
+#
+# These files are now hand-maintained -- there is no regeneration script.
+# See kafka/MONITORING.md for the metric-name mapping and cluster-side setup.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: kafka-exporter.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    - name: kafka-exporter
+      rules:
+        - alert: KafkaExporterTooLargeConsumerGroupLag
+          expr: kafka_consumergroup_lag > 1000
+          for: 15m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+          annotations:
+            summary: 'Consumer group lag is too big'
+            description: '{{`Consumer group {{ $labels.consumergroup}} lag is too big ({{ $value }}) on topic {{ $labels.topic }}/partition {{ $labels.partition }}`}}'
+        # Potential false positive: this fires for any partition that simply has no
+        # new messages for 10 minutes, which is normal for low-traffic or idle topics.
+        # Keep severity low and consider scoping to topics where continuous traffic is expected.
+        - alert: KafkaExporterNoMessageForTooLong
+          expr: changes(kafka_topic_partition_current_offset[10m]) == 0
+          for: 10s
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+          annotations:
+            summary: 'No message for 10 minutes'
+            description: '{{`There is no messages in topic {{ $labels.topic}}/partition {{ $labels.partition }} for 10 minutes`}}'

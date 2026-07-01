@@ -1,0 +1,107 @@
+# Originally imported from upstream Strimzi example PrometheusRules:
+#   https://github.com/strimzi/strimzi-kafka-operator/tree/1.0.0/examples/metrics/prometheus-install/prometheus-rules
+# then adapted to Giant Swarm atlas conventions (common labels, rule names,
+# team/area/severity labels, pint-compliant aggregations) and rewritten to the
+# strimziMetricsReporter metric names actually exported on our clusters.
+#
+# These files are now hand-maintained -- there is no regeneration script.
+# See kafka/MONITORING.md for the metric-name mapping and cluster-side setup.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: kafka.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    - name: kafka
+      rules:
+        - alert: KafkaUnderReplicatedPartitions
+          expr: kafka_server_replicamanager_underreplicatedpartitions > 0
+          for: 10m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka under replicated partitions'
+            description: '{{`There are {{ $value }} under replicated partitions on {{ $labels.kubernetes_pod_name }}`}}'
+        - alert: KafkaAbnormalControllerState
+          expr: sum(kafka_controller_kafkacontroller_activecontrollercount) by (cluster_id, installation, pipeline, provider, strimzi_io_name, namespace) != 1
+          for: 5m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka abnormal controller state'
+            description: '{{`Kafka instance {{ $labels.strimzi_io_name }} on namespace {{ $labels.namespace }} has {{ $value }} active controllers`}}'
+        - alert: KafkaOfflinePartitions
+          expr: sum(kafka_controller_kafkacontroller_offlinepartitionscount) by (cluster_id, installation, pipeline, provider, namespace, pod) > 0
+          for: 5m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka offline partitions'
+            description: '{{`Kafka instance on pod {{ $labels.namespace }}/{{ $labels.pod }} has {{ $value }} partition(s) with no leader`}}'
+        - alert: KafkaUnderMinIsrPartitionCount
+          expr: kafka_server_replicamanager_underminisrpartitioncount > 0
+          for: 5m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka under min ISR partitions'
+            description: '{{`There are {{ $value }} partitions under the min ISR on {{ $labels.kubernetes_pod_name }}`}}'
+        - alert: KafkaOfflineReplicas
+          expr: kafka_server_replicamanager_offlinereplicacount > 0
+          for: 5m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka has offline replicas'
+            description: '{{`There are {{ $value }} offline replica(s) on {{ $labels.kubernetes_pod_name }}, indicating a failed or offline log directory`}}'
+        - alert: KafkaBrokerFenced
+          expr: max by (cluster_id, installation, pipeline, provider, strimzi_io_name, namespace) (kafka_controller_kafkacontroller_fencedbrokercount) > 0
+          for: 5m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka broker fenced from the cluster'
+            description: '{{`Kafka cluster {{ $labels.strimzi_io_name }} in namespace {{ $labels.namespace }} has {{ $value }} fenced (unavailable) broker(s)`}}'
+        - alert: KafkaFailedProduceRequests
+          expr: sum by (cluster_id, installation, pipeline, provider, namespace, pod) (rate(kafka_server_brokertopicmetrics_failedproducerequestspersec_total[5m])) > 1
+          for: 5m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka broker is failing produce requests'
+            description: '{{`Kafka broker {{ $labels.namespace }}/{{ $labels.pod }} is rejecting {{ $value }} produce request(s) per second`}}'
+        - alert: KafkaFailedFetchRequests
+          expr: sum by (cluster_id, installation, pipeline, provider, namespace, pod) (rate(kafka_server_brokertopicmetrics_failedfetchrequestspersec_total[5m])) > 1
+          for: 5m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Kafka broker is failing fetch requests'
+            description: '{{`Kafka broker {{ $labels.namespace }}/{{ $labels.pod }} is rejecting {{ $value }} fetch request(s) per second`}}'

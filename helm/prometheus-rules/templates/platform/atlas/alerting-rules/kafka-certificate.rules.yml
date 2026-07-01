@@ -1,0 +1,32 @@
+# Originally imported from upstream Strimzi example PrometheusRules:
+#   https://github.com/strimzi/strimzi-kafka-operator/tree/1.0.0/examples/metrics/prometheus-install/prometheus-rules
+# then adapted to Giant Swarm atlas conventions (common labels, rule names,
+# team/area/severity labels, pint-compliant aggregations) and rewritten to the
+# strimziMetricsReporter metric names actually exported on our clusters.
+#
+# These files are now hand-maintained -- there is no regeneration script.
+# See kafka/MONITORING.md for the metric-name mapping and cluster-side setup.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: kafka-certificate.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    - name: kafka-certificate
+      interval: 1m0s
+      rules:
+        - alert: KafkaCertificateExpiration
+          expr: |
+            strimzi_certificate_expiration_timestamp_ms/1000 - time() < 30 * 24 * 60 * 60
+          for: 5m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Certificate will expire in less than 30 days'
+            description: '{{`Certificate of type {{ $labels.type }} in cluster {{ $labels.cluster }} in namespace {{ $labels.resource_namespace }} will expire in less than 30 days`}}'

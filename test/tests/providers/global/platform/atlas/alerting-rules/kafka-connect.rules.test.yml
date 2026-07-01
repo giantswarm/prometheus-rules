@@ -1,0 +1,23 @@
+---
+rule_files:
+  - kafka-connect.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'kafka_connect_connector_metrics_status_info{namespace="kafka", pod="my-connect-0", status="failed"}'
+        values: "1+0x10"
+    alert_rule_test:
+      - alertname: KafkaConnectFailedConnector
+        eval_time: 10m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              pod: my-connect-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka instance on pod kafka/my-connect-0 has 1 connector(s) in failed state during last 5 minutes"
+              summary: "Kafka Connect Connector Failure"

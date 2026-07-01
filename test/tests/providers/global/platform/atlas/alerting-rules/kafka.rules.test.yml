@@ -1,0 +1,156 @@
+---
+rule_files:
+  - kafka.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'kafka_server_replicamanager_underreplicatedpartitions{kubernetes_pod_name="my-cluster-broker-0"}'
+        values: "2+0x15"
+    alert_rule_test:
+      - alertname: KafkaUnderReplicatedPartitions
+        eval_time: 12m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              kubernetes_pod_name: my-cluster-broker-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "There are 2 under replicated partitions on my-cluster-broker-0"
+              summary: "Kafka under replicated partitions"
+
+  - interval: 1m
+    input_series:
+      # Two controllers both reporting active => split-brain (sum != 1).
+      - series: 'kafka_controller_kafkacontroller_activecontrollercount{strimzi_io_name="my-cluster-kafka", namespace="kafka", pod="my-cluster-controller-3"}'
+        values: "1+0x10"
+      - series: 'kafka_controller_kafkacontroller_activecontrollercount{strimzi_io_name="my-cluster-kafka", namespace="kafka", pod="my-cluster-controller-4"}'
+        values: "1+0x10"
+    alert_rule_test:
+      - alertname: KafkaAbnormalControllerState
+        eval_time: 6m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              severity: none
+              strimzi_io_name: my-cluster-kafka
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka instance my-cluster-kafka on namespace kafka has 2 active controllers"
+              summary: "Kafka abnormal controller state"
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_controller_kafkacontroller_offlinepartitionscount{namespace="kafka", pod="my-cluster-controller-4"}'
+        values: "3+0x10"
+    alert_rule_test:
+      - alertname: KafkaOfflinePartitions
+        eval_time: 6m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              pod: my-cluster-controller-4
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka instance on pod kafka/my-cluster-controller-4 has 3 partition(s) with no leader"
+              summary: "Kafka offline partitions"
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_server_replicamanager_underminisrpartitioncount{kubernetes_pod_name="my-cluster-broker-0"}'
+        values: "1+0x10"
+    alert_rule_test:
+      - alertname: KafkaUnderMinIsrPartitionCount
+        eval_time: 6m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              kubernetes_pod_name: my-cluster-broker-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "There are 1 partitions under the min ISR on my-cluster-broker-0"
+              summary: "Kafka under min ISR partitions"
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_server_replicamanager_offlinereplicacount{kubernetes_pod_name="my-cluster-broker-0"}'
+        values: "2+0x10"
+    alert_rule_test:
+      - alertname: KafkaOfflineReplicas
+        eval_time: 6m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              kubernetes_pod_name: my-cluster-broker-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "There are 2 offline replica(s) on my-cluster-broker-0, indicating a failed or offline log directory"
+              summary: "Kafka has offline replicas"
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_controller_kafkacontroller_fencedbrokercount{strimzi_io_name="my-cluster-kafka", namespace="kafka", pod="my-cluster-controller-3"}'
+        values: "1+0x10"
+    alert_rule_test:
+      - alertname: KafkaBrokerFenced
+        eval_time: 6m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              severity: none
+              strimzi_io_name: my-cluster-kafka
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka cluster my-cluster-kafka in namespace kafka has 1 fenced (unavailable) broker(s)"
+              summary: "Kafka broker fenced from the cluster"
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_server_brokertopicmetrics_failedproducerequestspersec_total{namespace="kafka", pod="my-cluster-broker-0", topic="my-topic"}'
+        values: "0+120x15"
+    alert_rule_test:
+      - alertname: KafkaFailedProduceRequests
+        eval_time: 11m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              pod: my-cluster-broker-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka broker kafka/my-cluster-broker-0 is rejecting 2 produce request(s) per second"
+              summary: "Kafka broker is failing produce requests"
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_server_brokertopicmetrics_failedfetchrequestspersec_total{namespace="kafka", pod="my-cluster-broker-0", topic="my-topic"}'
+        values: "0+120x15"
+    alert_rule_test:
+      - alertname: KafkaFailedFetchRequests
+        eval_time: 11m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              pod: my-cluster-broker-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka broker kafka/my-cluster-broker-0 is rejecting 2 fetch request(s) per second"
+              summary: "Kafka broker is failing fetch requests"

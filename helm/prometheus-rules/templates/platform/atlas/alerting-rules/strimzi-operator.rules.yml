@@ -1,0 +1,30 @@
+# Originally imported from upstream Strimzi example PrometheusRules:
+#   https://github.com/strimzi/strimzi-kafka-operator/tree/1.0.0/examples/metrics/prometheus-install/prometheus-rules
+# then adapted to Giant Swarm atlas conventions (common labels, rule names,
+# team/area/severity labels, pint-compliant aggregations) and rewritten to the
+# strimziMetricsReporter metric names actually exported on our clusters.
+#
+# These files are now hand-maintained -- there is no regeneration script.
+# See kafka/MONITORING.md for the metric-name mapping and cluster-side setup.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: strimzi-operator.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+    - name: strimzi-operator
+      rules:
+        - alert: StrimziReconciliationFailing
+          expr: sum by (cluster_id, installation, pipeline, provider, namespace, kind) (rate(strimzi_reconciliations_failed_total[10m])) > 0
+          for: 15m
+          labels:
+            area: platform
+            severity: none
+            team: atlas
+            topic: kafka
+          annotations:
+            summary: 'Strimzi operator failing to reconcile resources'
+            description: '{{`Strimzi is failing to reconcile {{ $labels.kind }} resources in namespace {{ $labels.namespace }}`}}'

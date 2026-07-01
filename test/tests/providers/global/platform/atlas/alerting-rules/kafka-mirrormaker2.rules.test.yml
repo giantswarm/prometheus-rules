@@ -1,0 +1,42 @@
+---
+rule_files:
+  - kafka-mirrormaker2.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'kafka_connect_connector_metrics_status_info{namespace="kafka", pod="my-cluster-mirrormaker2-0", status="failed"}'
+        values: "1+0x10"
+    alert_rule_test:
+      - alertname: KafkaMirrorMaker2FailedConnector
+        eval_time: 10m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              pod: my-cluster-mirrormaker2-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka Mirror Maker 2 on pod kafka/my-cluster-mirrormaker2-0 has 1 connector(s) in failed state during last 5 minutes"
+              summary: "Kafka Mirror Maker 2 connector failure"
+
+  - interval: 1m
+    input_series:
+      - series: 'kafka_connect_connect_worker_metrics_connector_failed_task_count{namespace="kafka", pod="my-cluster-mirrormaker2-0"}'
+        values: "2+0x10"
+    alert_rule_test:
+      - alertname: KafkaMirrorMaker2FailedTask
+        eval_time: 10m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              namespace: kafka
+              pod: my-cluster-mirrormaker2-0
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "Kafka Mirror Maker 2 on pod kafka/my-cluster-mirrormaker2-0 has 2 task(s) in failed state during last 5 minutes"
+              summary: "Kafka Mirror Maker 2 task failure"

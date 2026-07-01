@@ -1,0 +1,23 @@
+---
+rule_files:
+  - kafka-bridge.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'kafka_consumer_consumer_fetch_manager_metrics_fetch_latency_avg{client_id="my-client", container="my-bridge-bridge"}'
+        values: "600+0x10"
+    alert_rule_test:
+      - alertname: KafkaBridgeAvgConsumerFetchLatency
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              client_id: my-client
+              container: my-bridge-bridge
+              severity: none
+              team: atlas
+              topic: kafka
+            exp_annotations:
+              description: "The average consumer fetch latency is 600 on my-client"
+              summary: "Kafka Bridge consumer average fetch latency"

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add Kafka and Strimzi alerting rules under team atlas (severity `none`). Adapted from the upstream Strimzi example PrometheusRules and rewritten to the `strimziMetricsReporter` metric names exported on our clusters, validated against a live KRaft cluster.
+
 ## [4.109.0] - 2026-06-30
 
 ### Added

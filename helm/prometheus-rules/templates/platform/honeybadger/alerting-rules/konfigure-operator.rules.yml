@@ -27,7 +27,7 @@ spec:
             description: |-
               This is temporary alert meant to test the theory of possible non-200 responses causing
               configuration wipe-out. See the https://github.com/giantswarm/giantswarm/issues/36392
-          expr: konfigure_operator_schema_fetch_total{status_code!~"200|0"} > 0
+          expr: increase(konfigure_operator_schema_fetch_total{status_code!~"200|0"}[1d]) > 0
           labels:
             area: platform
             cancel_if_outside_working_hours: "true"
@@ -39,7 +39,7 @@ spec:
             description: |-
               This is temporary alert meant to test the theory of possible non-200 responses causing
               configuration wipe-out. See the https://github.com/giantswarm/giantswarm/issues/36392
-          expr: konfigure_operator_schema_fetch_total{status_code!~"200|0"} > 0
+          expr: increase(konfigure_operator_schema_fetch_total{status_code!~"200|0"}[1d]) > 0
           labels:
             area: platform
             severity: notify

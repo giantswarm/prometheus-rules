@@ -68,6 +68,18 @@ spec:
         severity: page
         team: tenet
         topic: etcd
+    - alert: ManagementClusterEtcdQuorumLost
+      annotations:
+        description: '{{`Etcd on cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has lost quorum: a majority of members report no leader.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-troubleshooting/
+      expr: count by (cluster_id, installation, pipeline, provider)(etcd_server_has_leader{app="etcd", cluster_type="management_cluster", provider!="eks"} == 0) / count by (cluster_id, installation, pipeline, provider)(etcd_server_has_leader{app="etcd", cluster_type="management_cluster", provider!="eks"}) > 0.5
+      for: 2m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: tenet
+        topic: etcd
     - alert: ManagementClusterEtcdMetricsMissing
       annotations:
         description: '{{`Etcd metrics missing for {{ $labels.cluster_id }}.`}}'

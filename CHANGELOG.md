@@ -11,10 +11,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add Kafka and Strimzi alerting rules under team atlas (severity `none`). Adapted from the upstream Strimzi example PrometheusRules and rewritten to the `strimziMetricsReporter` metric names exported on our clusters, validated against a live KRaft cluster.
 
+## [4.109.0] - 2026-06-30
+
+### Added
+
+- Add `ManagementClusterEtcdQuorumLost` and `WorkloadClusterEtcdQuorumLost` alerts that fire when a majority of etcd members report no leader (quorum loss). Shipped as `severity: notify` for an initial observation period before promoting to `page`.
+
+## [4.108.0] - 2026-06-30
+
 ### Changed
 
+- Point `ClusterCertificateExpirationMetricsMissing` runbook URL to the migrated `absent-metrics` runbook.
 - Improved `GrafanaPostgresqlArchivingFailure` alert to avoid false positives
 - Split `FluxCriticalDeploymentNotSatisfied` into critical and non-critical part.
+- Polish Konfigure Operator alerts.
+- Updated tracing-pipeline runbook URL
 
 ### Removed
 
@@ -4382,7 +4393,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.107.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.109.0...HEAD
+[4.109.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.108.0...v4.109.0
+[4.108.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.107.1...v4.108.0
 [4.107.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.107.0...v4.107.1
 [4.107.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.106.0...v4.107.0
 [4.106.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.105.1...v4.106.0

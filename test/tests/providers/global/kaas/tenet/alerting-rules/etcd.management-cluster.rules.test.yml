@@ -1,0 +1,49 @@
+rule_files:
+  - etcd.management-cluster.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      # alpha: quorum lost - 2 of 3 members report no leader - should fire after 2m
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="alpha", pod="etcd-alpha-0"}'
+        values: "0+0x10"
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="alpha", pod="etcd-alpha-1"}'
+        values: "0+0x10"
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="alpha", pod="etcd-alpha-2"}'
+        values: "1+0x10"
+      # beta: single member without a leader (1 of 3) - not quorum loss - should NOT fire
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="beta", pod="etcd-beta-0"}'
+        values: "0+0x10"
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="beta", pod="etcd-beta-1"}'
+        values: "1+0x10"
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="beta", pod="etcd-beta-2"}'
+        values: "1+0x10"
+      # gamma: transient leader election - 2 of 3 lose the leader for 1m only (< 2m for) - should NOT fire
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="gamma", pod="etcd-gamma-0"}'
+        values: "0 1+0x10"
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="gamma", pod="etcd-gamma-1"}'
+        values: "0 1+0x10"
+      - series: 'etcd_server_has_leader{app="etcd", cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="gamma", pod="etcd-gamma-2"}'
+        values: "1+0x10"
+    alert_rule_test:
+      # before 2m the true quorum loss is still pending - nothing fires
+      - alertname: ManagementClusterEtcdQuorumLost
+        eval_time: 1m
+        exp_alerts: []
+      # after 2m only alpha (real quorum loss) fires; beta and gamma stay quiet
+      - alertname: ManagementClusterEtcdQuorumLost
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "false"
+              severity: notify
+              team: tenet
+              topic: etcd
+              cluster_id: alpha
+              installation: myinst
+              provider: capa
+              pipeline: stable
+            exp_annotations:
+              description: "Etcd on cluster myinst/alpha has lost quorum: a majority of members report no leader."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-troubleshooting/

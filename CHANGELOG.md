@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.110.0] - 2026-07-01
+
 ### Added
 
 - Add Kafka and Strimzi alerting rules under team atlas (severity `none`). Adapted from the upstream Strimzi example PrometheusRules and rewritten to the `strimziMetricsReporter` metric names exported on our clusters, validated against a live KRaft cluster.
@@ -4393,7 +4395,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.109.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.110.0...HEAD
+[4.110.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.109.0...v4.110.0
 [4.109.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.108.0...v4.109.0
 [4.108.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.107.1...v4.108.0
 [4.107.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.107.0...v4.107.1

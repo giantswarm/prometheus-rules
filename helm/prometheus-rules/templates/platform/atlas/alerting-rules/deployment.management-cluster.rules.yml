@@ -114,7 +114,8 @@ spec:
       for: 60m
       labels:
         area: platform
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        # Business-hours only for now; move to OOBH (page via the platform area) once bumblebee on-call is established.
+        cancel_if_outside_working_hours: "true"
         severity: page
         team: bumblebee
         topic: managementcluster

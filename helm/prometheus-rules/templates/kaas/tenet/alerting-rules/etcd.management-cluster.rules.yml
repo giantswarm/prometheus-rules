@@ -26,7 +26,19 @@ spec:
       annotations:
         description: '{{`Etcd ({{ $labels.pod }}) in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has a too high commit duration.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-troubleshooting/
-      expr: histogram_quantile(0.95, rate(etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="management_cluster", provider!="eks"}[5m])) > 1.0
+      expr: histogram_quantile(0.99, rate(etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="management_cluster", provider!="eks"}[5m])) > 0.25
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: notify
+        team: tenet
+        topic: etcd
+    - alert: ManagementClusterEtcdWALFsyncDurationTooHigh
+      annotations:
+        description: '{{`Etcd ({{ $labels.pod }}) in cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has a too high WAL fsync duration, indicating slow disk I/O that can cascade into leader elections and quorum loss.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-troubleshooting/
+      expr: histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket{cluster_type="management_cluster", provider!="eks"}[5m])) > 0.5
       for: 15m
       labels:
         area: kaas

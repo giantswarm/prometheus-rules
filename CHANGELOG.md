@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `ManagementClusterEtcdWALFsyncDurationTooHigh` and `WorkloadClusterEtcdWALFsyncDurationTooHigh` alerts (`severity: notify`) firing when etcd WAL fsync p99 exceeds 0.5s for 15m, catching slow disk I/O before it cascades into leader elections and quorum loss.
+
+### Changed
+
+- Tighten `ManagementClusterEtcdCommitDurationTooHigh` and `WorkloadClusterEtcdCommitDurationTooHigh` from p95 > 1.0s to p99 > 0.25s (aligned with the upstream etcd mixin) for earlier detection of backend commit latency.
+
 ## [4.110.0] - 2026-07-01
 
 ### Added

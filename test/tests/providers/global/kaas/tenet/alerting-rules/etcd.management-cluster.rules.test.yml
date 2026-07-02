@@ -47,3 +47,79 @@ tests:
             exp_annotations:
               description: "Etcd on cluster myinst/alpha has lost quorum: a majority of members report no leader."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-troubleshooting/
+
+  # WAL fsync latency: a slow-disk instance (p99 ~8s) fires, a healthy one (p99 ~8ms) stays quiet
+  - interval: 1m
+    input_series:
+      # slow: all fsync observations land in the (4s, 8s] bucket -> p99 ~8s, well above the 0.5s threshold
+      - series: 'etcd_disk_wal_fsync_duration_seconds_bucket{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="slow", pod="etcd-slow-0", le="0.5"}'
+        values: "0+0x40"
+      - series: 'etcd_disk_wal_fsync_duration_seconds_bucket{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="slow", pod="etcd-slow-0", le="4"}'
+        values: "0+0x40"
+      - series: 'etcd_disk_wal_fsync_duration_seconds_bucket{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="slow", pod="etcd-slow-0", le="8"}'
+        values: "0+100x40"
+      - series: 'etcd_disk_wal_fsync_duration_seconds_bucket{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="slow", pod="etcd-slow-0", le="+Inf"}'
+        values: "0+100x40"
+      # healthy: all fsync observations land in the (<=8ms] bucket -> p99 ~8ms, no alert
+      - series: 'etcd_disk_wal_fsync_duration_seconds_bucket{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="fast", pod="etcd-fast-0", le="0.008"}'
+        values: "0+100x40"
+      - series: 'etcd_disk_wal_fsync_duration_seconds_bucket{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="fast", pod="etcd-fast-0", le="8"}'
+        values: "0+100x40"
+      - series: 'etcd_disk_wal_fsync_duration_seconds_bucket{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="fast", pod="etcd-fast-0", le="+Inf"}'
+        values: "0+100x40"
+    alert_rule_test:
+      - alertname: ManagementClusterEtcdWALFsyncDurationTooHigh
+        eval_time: 20m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "false"
+              severity: notify
+              team: tenet
+              topic: etcd
+              cluster_id: slow
+              cluster_type: management_cluster
+              installation: myinst
+              provider: capa
+              pipeline: stable
+              pod: etcd-slow-0
+            exp_annotations:
+              description: "Etcd (etcd-slow-0) in cluster myinst/slow has a too high WAL fsync duration, indicating slow disk I/O that can cascade into leader elections and quorum loss."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-troubleshooting/
+
+  # backend commit latency: a slow-disk instance (p99 ~8s) fires the tightened 0.25s threshold, a healthy one stays quiet
+  - interval: 1m
+    input_series:
+      - series: 'etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="slow", pod="etcd-slow-0", le="0.25"}'
+        values: "0+0x40"
+      - series: 'etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="slow", pod="etcd-slow-0", le="4"}'
+        values: "0+0x40"
+      - series: 'etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="slow", pod="etcd-slow-0", le="8"}'
+        values: "0+100x40"
+      - series: 'etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="slow", pod="etcd-slow-0", le="+Inf"}'
+        values: "0+100x40"
+      - series: 'etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="fast", pod="etcd-fast-0", le="0.008"}'
+        values: "0+100x40"
+      - series: 'etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="fast", pod="etcd-fast-0", le="8"}'
+        values: "0+100x40"
+      - series: 'etcd_disk_backend_commit_duration_seconds_bucket{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="fast", pod="etcd-fast-0", le="+Inf"}'
+        values: "0+100x40"
+    alert_rule_test:
+      - alertname: ManagementClusterEtcdCommitDurationTooHigh
+        eval_time: 20m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "false"
+              severity: notify
+              team: tenet
+              topic: etcd
+              cluster_id: slow
+              cluster_type: management_cluster
+              installation: myinst
+              provider: capa
+              pipeline: stable
+              pod: etcd-slow-0
+            exp_annotations:
+              description: "Etcd (etcd-slow-0) in cluster myinst/slow has a too high commit duration."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-troubleshooting/

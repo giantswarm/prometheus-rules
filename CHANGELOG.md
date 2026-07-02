@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add `DeploymentNotSatisfiedBumblebee` paging on unavailable deployments in the bumblebee namespaces (`agentic-platform`, `kagent`, `mcp-kubernetes`, `mcp-runbooks`).
+- Add `DeploymentNotSatisfiedBumblebee` paging on unavailable deployments in the bumblebee namespaces (`agentic-platform`, `kagent`, `mcp-kubernetes`).
 
 ## [4.110.0] - 2026-07-01
 

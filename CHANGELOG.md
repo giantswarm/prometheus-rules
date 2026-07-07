@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tighten `ManagementClusterEtcdCommitDurationTooHigh` and `WorkloadClusterEtcdCommitDurationTooHigh` from p95 > 1.0s to p99 > 0.25s (aligned with the upstream etcd mixin) for earlier detection of backend commit latency.
 - Add `DeploymentNotSatisfiedBumblebee` paging on unavailable deployments in the bumblebee namespaces (`agentic-platform`, `kagent`, `mcp-kubernetes`).
 
+### Removed
+
+- Remove `KonfigureOperatorSchemaFetchFailed` alert. Failing to fetch the schema now results in a setup error, marking the `Konfiguration` as failed with errormessage in status.
+- Remove `KonfigureOperatorSchemaFetchFailedAreaOnCall` alert. Failing to fetch the schema now results in a setup error, marking the `Konfiguration` as failed with errormessage in status.
+
 ## [4.110.0] - 2026-07-01
 
 ### Added

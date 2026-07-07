@@ -106,3 +106,16 @@ spec:
         severity: page
         team: shield
         topic: managementcluster
+    - alert: DeploymentNotSatisfiedBumblebee
+      annotations:
+        description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
+      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", namespace=~"agentic-platform|kagent|mcp-kubernetes"} > 0
+      for: 60m
+      labels:
+        area: platform
+        # Business-hours only for now; move to OOBH (page via the platform area) once bumblebee on-call is established.
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: bumblebee
+        topic: managementcluster

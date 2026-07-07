@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.111.0] - 2026-07-07
+
 ### Added
 
 - Add `ManagementClusterEtcdWALFsyncDurationTooHigh` and `WorkloadClusterEtcdWALFsyncDurationTooHigh` alerts (`severity: notify`) firing when etcd WAL fsync p99 exceeds 0.5s for 15m, catching slow disk I/O before it cascades into leader elections and quorum loss.
@@ -4409,7 +4411,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.110.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.111.0...HEAD
+[4.111.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.110.0...v4.111.0
 [4.110.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.109.0...v4.110.0
 [4.109.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.108.0...v4.109.0
 [4.108.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.107.1...v4.108.0

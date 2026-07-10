@@ -58,6 +58,18 @@ spec:
         severity: page
         team: cabbage
         topic: ingress
+    - alert: IngressControllerConfigReloadRateTooHigh
+      annotations:
+        description: '{{`Ingress Controller {{ $labels.controller_class }} in cluster {{ $labels.cluster_id }} is reloading its config too often ({{ $value | printf "%.1f" }} reloads/min over the last hour).`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/managed-app-nginx-ic/
+      expr: max by (cluster_id, installation, pipeline, provider, namespace, controller_class) (rate(nginx_ingress_controller_success[60m])) * 60 > 1
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: cabbage
+        topic: ingress
     - alert: IngressControllerDown
       annotations:
         description: '{{`Ingress Controller in namespace {{ $labels.namespace }}) is down.`}}'

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `WorkloadClusterAuditLogVolumeSpike` alert (team shield, `severity: notify`) firing when a workload cluster's kube-apiserver audit event rate stays more than 3x above its level 24h ago (and above an absolute floor) for 1h, catching runaway audit log growth.
+
 ## [4.111.0] - 2026-07-07
 
 ### Added

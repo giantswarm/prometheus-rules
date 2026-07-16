@@ -1,0 +1,52 @@
+---
+rule_files:
+  - api-audit-logs.rules.yml
+
+tests:
+  # Sustained spike: baseline ~5 events/s (minutes 0-90), current ~60 events/s
+  # (minutes 1440-1530). 60 > 3*5 and 60 > 20, held for more than 1h -> fires.
+  # The `user` label is dropped by the `by (...)` aggregation.
+  - interval: 1m
+    input_series:
+      - series: 'k8s_api_audit_requests_total{cluster_id="12345", cluster_type="workload_cluster", customer="giantswarm", installation="golem", pipeline="stable", provider="capa", user="system:serviceaccount:kube-system:foo"}'
+        values: "0+300x1439 432000+3600x90"
+    alert_rule_test:
+      - alertname: WorkloadClusterAuditLogVolumeSpike
+        eval_time: 1530m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "12345"
+              customer: giantswarm
+              installation: golem
+              pipeline: stable
+              provider: capa
+              severity: notify
+              team: shield
+              topic: security
+            exp_annotations:
+              description: "Audit log volume on workload cluster 12345 (installation golem) has been sustained at 60 API audit events/s, more than 3x its level 24h ago."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/workload-cluster-audit-log-volume/
+              __dashboardUid__: api-audit-volume
+
+  # Steady traffic: constant ~5 events/s throughout -> current == baseline -> no alert.
+  - interval: 1m
+    input_series:
+      - series: 'k8s_api_audit_requests_total{cluster_id="12345", cluster_type="workload_cluster", customer="giantswarm", installation="golem", pipeline="stable", provider="capa", user="system:serviceaccount:kube-system:foo"}'
+        values: "0+300x1530"
+    alert_rule_test:
+      - alertname: WorkloadClusterAuditLogVolumeSpike
+        eval_time: 1530m
+        exp_alerts: []
+
+  # Relative spike but below the absolute floor: baseline ~1 events/s, current
+  # ~10 events/s. 10 > 3*1 but 10 < 20 -> noise guard suppresses it -> no alert.
+  - interval: 1m
+    input_series:
+      - series: 'k8s_api_audit_requests_total{cluster_id="12345", cluster_type="workload_cluster", customer="giantswarm", installation="golem", pipeline="stable", provider="capa", user="system:serviceaccount:kube-system:foo"}'
+        values: "0+60x1439 86340+600x90"
+    alert_rule_test:
+      - alertname: WorkloadClusterAuditLogVolumeSpike
+        eval_time: 1530m
+        exp_alerts: []

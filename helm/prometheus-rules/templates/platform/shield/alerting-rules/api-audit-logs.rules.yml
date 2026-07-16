@@ -1,0 +1,43 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: api-audit-logs.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+    - name: api-audit-logs
+      rules:
+        # Fires when a workload cluster's kube-apiserver audit event rate stays
+        # more than 3x above its own level 24h ago for a sustained period.
+        # The trailing `> 20` is a noise guard so quiet clusters whose baseline
+        # is near zero don't alert on a trivial absolute increase; tune the
+        # multiplier (3), the guard (20 events/s ~= 2.7 GiB/day at 1600 B/event)
+        # and the windows once real traffic has been observed.
+        - alert: WorkloadClusterAuditLogVolumeSpike
+          annotations:
+            description: >-
+              Audit log volume on workload cluster {{`{{ $labels.cluster_id }}`}} (installation {{`{{ $labels.installation }}`}})
+              has been sustained at {{`{{ $value | humanize }}`}} API audit events/s, more than 3x its level 24h ago.
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/workload-cluster-audit-log-volume/
+            __dashboardUid__: api-audit-volume
+          expr: |-
+            (
+                sum by (cluster_id, installation, pipeline, provider, customer) (
+                  rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m])
+                )
+              >
+                3 * sum by (cluster_id, installation, pipeline, provider, customer) (
+                  rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m] offset 1d)
+                )
+            )
+            > 20
+          for: 1h
+          labels:
+            area: platform
+            cancel_if_outside_working_hours: "true"
+            severity: notify
+            team: shield
+            topic: security

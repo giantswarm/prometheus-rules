@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Exclude `aks` clusters from the etcd and etcd-volume alerts (`etcd.workload-cluster`, `etcd.management-cluster`, `storage.workload-cluster`, `storage.management-cluster`), matching the existing `eks` exclusion: AKS control planes are Azure-managed and expose no etcd metrics, so `WorkloadClusterEtcdMetricsMissing` would page for every AKS cluster.
+- Add `aks` to the `external-dns` alert provider list.
+
 ## [4.111.0] - 2026-07-07
 
 ### Added

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add Envoy Gateway alerts `EnvoyProxySDSInitFetchTimeout` (page, 24/7) and `EnvoyProxyListenersStuckWarming` (notify) to detect proxies that silently stop serving after an SDS secret fetch never completes — a state that does not self-heal and was previously invisible (pods stay Ready, control plane reports Programmed). See [envoyproxy/gateway#9519](https://github.com/envoyproxy/gateway/issues/9519).
+
 ### Changed
 
 - Exclude `aks` clusters from the etcd and etcd-volume alerts (`etcd.workload-cluster`, `etcd.management-cluster`, `storage.workload-cluster`, `storage.management-cluster`), matching the existing `eks` exclusion: AKS control planes are Azure-managed and expose no etcd metrics, so `WorkloadClusterEtcdMetricsMissing` would page for every AKS cluster.

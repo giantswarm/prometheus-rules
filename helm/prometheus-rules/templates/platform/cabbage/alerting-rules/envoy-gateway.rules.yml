@@ -146,3 +146,27 @@ spec:
         severity: page
         team: cabbage
         topic: envoy-gateway
+    - alert: EnvoyProxySDSInitFetchTimeout
+      annotations:
+        description: '{{`Envoy proxy {{ $labels.pod }} timed out fetching TLS secret {{ $labels.envoy_xds_resource_name }} over SDS and has not recovered. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519).`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      expr: envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system"} > 0
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "false"
+        severity: page
+        team: cabbage
+        topic: envoy-gateway
+    - alert: EnvoyProxyListenersStuckWarming
+      annotations:
+        description: '{{`Envoy proxy {{ $labels.pod }} has had listeners stuck in warming state for over 15m, so its latest configuration is not being served (it may still be serving the previous config). A persistently warming listener that never becomes active points at an xDS resource (e.g. an SDS secret) that never arrives.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      expr: envoy_listener_manager_total_listeners_warming{namespace="envoy-gateway-system"} > 0
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: cabbage
+        topic: envoy-gateway

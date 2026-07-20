@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add Envoy Gateway alerts `EnvoyProxySDSInitFetchTimeout` (page, 24/7) and `EnvoyProxyListenersStuckWarming` (notify) to detect proxies that silently stop serving after an SDS secret fetch never completes — a state that does not self-heal and was previously invisible (pods stay Ready, control plane reports Programmed). See [envoyproxy/gateway#9519](https://github.com/envoyproxy/gateway/issues/9519).
-- Add `IngressControllerConfigReloadRateTooHigh` alert (`severity: notify`, working hours only) firing when nginx ingress config reloads exceed 1/min averaged over the last hour, catching config flapping.
+- Add `IngressControllerConfigReloadRateTooHigh` alert (`severity: page`, working hours only) firing when nginx ingress config reloads exceed 1/min averaged over the last hour, catching config flapping.
 
 ### Changed
 

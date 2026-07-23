@@ -104,3 +104,32 @@ spec:
         severity: page
         team: cabbage
         topic: cilium
+    - alert: CiliumHubbleTLSCertificateWillExpireSoon
+      annotations:
+        description: '{{`Hubble TLS certificate {{ $labels.secretkey }} in Secret {{ $labels.exported_namespace }}/{{ $labels.name }} on {{ $labels.installation }}/{{ $labels.cluster_id }} will expire in less than 30 days. Hubble certificate renewal is broken on this cluster; hubble-relay will lose flow data when the certificate expires.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-hubble-tls-certificates/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      # Covers leaf certs (tls.crt) and the embedded Cilium CA copy (ca.crt) in the hubble secrets.
+      # With the cronJob renewal method leafs are re-issued every 4 months with 12 months validity,
+      # so anything closer than 30 days to expiry means renewal is broken (or the cluster is still
+      # on the legacy helm method, which never renews).
+      expr: (cert_exporter_secret_not_after{name=~"hubble-server-certs|hubble-relay-client-certs|hubble-relay-server-certs|hubble-ui-client-certs"} - time()) < 30 * 24 * 60 * 60
+      for: 5m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: cilium
+    - alert: CiliumHubbleCertificateRenewalJobFailed
+      annotations:
+        description: '{{`Hubble certificate renewal job {{ $labels.namespace }}/{{ $labels.job_name }} on {{ $labels.installation }}/{{ $labels.cluster_id }} failed. Certgen may be refusing to renew leaf certificates because the Cilium CA is close to expiry.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-hubble-tls-certificates/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      expr: kube_job_failed{namespace="kube-system", job_name=~"hubble-generate-certs.*", condition="true"} == 1
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        severity: page
+        team: cabbage
+        topic: cilium

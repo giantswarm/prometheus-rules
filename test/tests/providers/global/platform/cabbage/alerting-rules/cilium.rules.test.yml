@@ -99,3 +99,64 @@ tests:
             exp_annotations:
               description: "Too many Cilium Network Policy errors."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/unsupported-cilium-network-policy/
+  # CiliumHubbleTLSCertificateWillExpireSoon
+  - interval: 1m
+    input_series:
+      # hubble cert: valid for 40 days during the first hour, then 20 days remaining
+      - series: 'cert_exporter_secret_not_after{name="hubble-server-certs", exported_namespace="kube-system", secretkey="tls.crt", installation="alba", cluster_id="odp01"}'
+        values: "3456000+0x59 1728000+0x120"
+      # non-hubble cert about to expire: must NOT match the name filter
+      - series: 'cert_exporter_secret_not_after{name="some-other-certs", exported_namespace="kube-system", secretkey="tls.crt", installation="alba", cluster_id="odp01"}'
+        values: "864000+0x180"
+    alert_rule_test:
+      - alertname: CiliumHubbleTLSCertificateWillExpireSoon
+        eval_time: 30m
+      - alertname: CiliumHubbleTLSCertificateWillExpireSoon
+        eval_time: 90m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_outside_working_hours: "true"
+              name: hubble-server-certs
+              exported_namespace: kube-system
+              secretkey: tls.crt
+              installation: alba
+              cluster_id: odp01
+            exp_annotations:
+              description: "Hubble TLS certificate tls.crt in Secret kube-system/hubble-server-certs on alba/odp01 will expire in less than 30 days. Hubble certificate renewal is broken on this cluster; hubble-relay will lose flow data when the certificate expires."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-hubble-tls-certificates/?INSTALLATION=alba&CLUSTER=odp01"
+  # CiliumHubbleCertificateRenewalJobFailed
+  - interval: 1m
+    input_series:
+      # certgen job starts failing after 30 minutes
+      - series: 'kube_job_failed{namespace="kube-system", job_name="hubble-generate-certs-a1b2c", condition="true", installation="alba", cluster_id="odp01"}'
+        values: "0+0x29 1+0x90"
+      # failed job with another name: must NOT match the job_name filter
+      - series: 'kube_job_failed{namespace="kube-system", job_name="some-other-job", condition="true", installation="alba", cluster_id="odp01"}'
+        values: "1+0x120"
+    alert_rule_test:
+      - alertname: CiliumHubbleCertificateRenewalJobFailed
+        eval_time: 20m
+      - alertname: CiliumHubbleCertificateRenewalJobFailed
+        eval_time: 35m
+      - alertname: CiliumHubbleCertificateRenewalJobFailed
+        eval_time: 60m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_outside_working_hours: "true"
+              cancel_if_kube_state_metrics_down: "true"
+              namespace: kube-system
+              job_name: hubble-generate-certs-a1b2c
+              condition: "true"
+              installation: alba
+              cluster_id: odp01
+            exp_annotations:
+              description: "Hubble certificate renewal job kube-system/hubble-generate-certs-a1b2c on alba/odp01 failed. Certgen may be refusing to renew leaf certificates because the Cilium CA is close to expiry."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-hubble-tls-certificates/?INSTALLATION=alba&CLUSTER=odp01"

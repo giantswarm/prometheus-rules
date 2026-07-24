@@ -10,30 +10,54 @@ spec:
   groups:
     - name: api-audit-logs
       rules:
-        # Fires when a workload cluster's kube-apiserver audit event rate stays
-        # more than 3x above its own level 24h ago for a sustained period.
-        # The trailing `> 20` is a noise guard so quiet clusters whose baseline
-        # is near zero don't alert on a trivial absolute increase; tune the
-        # multiplier (3), the guard (20 events/s ~= 2.7 GiB/day at 1600 B/event)
-        # and the windows once real traffic has been observed.
+        # Fires when a single kube-apiserver user (ServiceAccount / identity) on a
+        # workload cluster sustains a high audit event rate, so the alert names the
+        # workload responsible instead of just the cluster. A user fires when either:
+        #   * its rate is more than 3x its own level 24h ago (runaway existing user), or
+        #   * it had no audit traffic 24h ago at all (a freshly deployed workload /
+        #     bad actor, which has no baseline to compare against).
+        # Both branches share the `> 20` floor (20 events/s ~= 2.7 GiB/day at 1600
+        # B/event) so a per-user trickle doesn't page. Tune the multiplier (3), the
+        # floor (20) and the windows once real per-user traffic has been observed.
         - alert: WorkloadClusterAuditLogVolumeSpike
           annotations:
             description: >-
-              Audit log volume on workload cluster {{`{{ $labels.cluster_id }}`}} (installation {{`{{ $labels.installation }}`}})
-              has been sustained at {{`{{ $value | humanize }}`}} API audit events/s, more than 3x its level 24h ago.
+              User {{`{{ $labels.user }}`}} on workload cluster {{`{{ $labels.cluster_id }}`}} (installation {{`{{ $labels.installation }}`}})
+              has been sustained at {{`{{ $value | humanize }}`}} API audit events/s — more than 3x its level 24h ago, or newly appeared — likely a workload flooding the API audit log.
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/workload-cluster-audit-log-volume/
             __dashboardUid__: api-audit-volume
           expr: |-
             (
-                sum by (cluster_id, installation, pipeline, provider, customer) (
-                  rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m])
+                (
+                  sum by (cluster_id, installation, pipeline, provider, customer, user) (
+                    rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m])
+                  )
+                > 20
                 )
-              >
-                3 * sum by (cluster_id, installation, pipeline, provider, customer) (
+              and
+                (
+                  sum by (cluster_id, installation, pipeline, provider, customer, user) (
+                    rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m])
+                  )
+                >
+                  3 * sum by (cluster_id, installation, pipeline, provider, customer, user) (
+                    rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m] offset 1d)
+                  )
+                )
+            )
+            or
+            (
+                (
+                  sum by (cluster_id, installation, pipeline, provider, customer, user) (
+                    rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m])
+                  )
+                > 20
+                )
+              unless
+                sum by (cluster_id, installation, pipeline, provider, customer, user) (
                   rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m] offset 1d)
                 )
             )
-            > 20
           for: 1h
           labels:
             area: platform

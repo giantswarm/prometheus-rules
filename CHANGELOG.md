@@ -10,6 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add `WorkloadClusterAuditLogVolumeSpike` alert (team shield, `severity: notify`) firing when a single kube-apiserver user (ServiceAccount/identity) on a workload cluster sustains an audit event rate more than 3x above its own level 24h ago — or newly appears with no prior baseline — above an absolute floor for 1h, naming the workload responsible for runaway audit log growth.
+- Add `CiliumHubbleTLSCertificateWillExpireSoon` alert (`severity: page`, working hours only) firing when a Hubble TLS certificate secret (`hubble-server-certs`, `hubble-relay-client-certs`, `hubble-relay-server-certs`, `hubble-ui-client-certs` — leaf and embedded CA) expires in less than 30 days, on both management and workload clusters. The previous catch-all secret alert only covered management clusters, so Hubble cert expiry on workload clusters broke hubble-relay unnoticed ([giantswarm#37201](https://github.com/giantswarm/giantswarm/issues/37201)).
+- Add `CiliumHubbleCertificateRenewalJobFailed` alert (`severity: page`, working hours only) firing when a `hubble-generate-certs` certgen job fails — including certgen refusing to renew leaf certificates because the Cilium CA is close to expiry (early CA warning, since certgen never rotates the CA).
+- Add Envoy Gateway alerts `EnvoyProxySDSInitFetchTimeout` (page, 24/7) and `EnvoyProxyListenersStuckWarming` (notify) to detect proxies that silently stop serving after an SDS secret fetch never completes — a state that does not self-heal and was previously invisible (pods stay Ready, control plane reports Programmed). See [envoyproxy/gateway#9519](https://github.com/envoyproxy/gateway/issues/9519).
+- Add `IngressControllerConfigReloadRateTooHigh` alert (`severity: page`, working hours only) firing when nginx ingress config reloads exceed 1/min averaged over the last hour, catching config flapping.
+
+### Changed
+
+- Exclude `aks` clusters from the etcd and etcd-volume alerts (`etcd.workload-cluster`, `etcd.management-cluster`, `storage.workload-cluster`, `storage.management-cluster`), matching the existing `eks` exclusion: AKS control planes are Azure-managed and expose no etcd metrics, so `WorkloadClusterEtcdMetricsMissing` would page for every AKS cluster.
+- Add `aks` to the `external-dns` alert provider list.
 
 ## [4.111.0] - 2026-07-07
 

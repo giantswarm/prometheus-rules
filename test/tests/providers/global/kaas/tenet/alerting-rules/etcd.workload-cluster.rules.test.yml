@@ -116,3 +116,31 @@ tests:
             exp_annotations:
               description: "Etcd (etcd-slow-0) on workload cluster myinst/slow has a too high commit duration."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-troubleshooting/
+
+  # etcd metrics missing: clusters with a managed control plane (eks, aks) expose no etcd
+  # metrics and must not fire; a capz cluster with scrape targets but no etcd metrics must fire
+  - interval: 1m
+    input_series:
+      - series: 'up{cluster_type="workload_cluster", provider="capz", pipeline="stable", installation="myinst", cluster_id="selfmanaged", job="kubelet"}'
+        values: "1+0x70"
+      - series: 'up{cluster_type="workload_cluster", provider="aks", pipeline="stable", installation="myinst", cluster_id="managedaks", job="kubelet"}'
+        values: "1+0x70"
+      - series: 'up{cluster_type="workload_cluster", provider="eks", pipeline="stable", installation="myinst", cluster_id="managedeks", job="kubelet"}'
+        values: "1+0x70"
+    alert_rule_test:
+      - alertname: WorkloadClusterEtcdMetricsMissing
+        eval_time: 65m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              severity: page
+              team: tenet
+              topic: etcd
+              cluster_id: selfmanaged
+              installation: myinst
+              provider: capz
+              pipeline: stable
+            exp_annotations:
+              description: "Etcd metrics missing for cluster myinst/selfmanaged."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-troubleshooting/

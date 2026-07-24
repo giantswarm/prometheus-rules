@@ -1,0 +1,63 @@
+---
+rule_files:
+  - envoy-gateway.rules.yml
+
+tests:
+  # EnvoyProxySDSInitFetchTimeout: counter stays >0 from onset until pod restart.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", pod="envoy-internal-abc", envoy_xds_resource_name="envoy-gateway-system/gateway-internal-https-tls", installation="ferret", cluster_id="shd-mgmt-1-use1"}'
+        # healthy for 20m, then wedged (2) and never recovers
+        values: "0x20 2+0x40"
+    alert_rule_test:
+      # not firing while healthy
+      - alertname: EnvoyProxySDSInitFetchTimeout
+        eval_time: 15m
+      # within the 10m for-window after onset: not yet firing
+      - alertname: EnvoyProxySDSInitFetchTimeout
+        eval_time: 25m
+      # sustained past the for-window: firing, and still firing well into the outage
+      - alertname: EnvoyProxySDSInitFetchTimeout
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "false"
+              namespace: envoy-gateway-system
+              pod: envoy-internal-abc
+              envoy_xds_resource_name: envoy-gateway-system/gateway-internal-https-tls
+              installation: ferret
+              cluster_id: shd-mgmt-1-use1
+            exp_annotations:
+              description: "Envoy proxy envoy-internal-abc timed out fetching TLS secret envoy-gateway-system/gateway-internal-https-tls over SDS and has not recovered. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519)."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=ferret&CLUSTER=shd-mgmt-1-use1&NAMESPACE=envoy-gateway-system"
+
+  # EnvoyProxyListenersStuckWarming: a listener that never leaves warming state.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_listener_manager_total_listeners_warming{namespace="envoy-gateway-system", pod="envoy-internal-abc", installation="ferret", cluster_id="shd-mgmt-1-use1"}'
+        values: "0x20 1+0x40"
+    alert_rule_test:
+      # within the 15m for-window: not yet firing
+      - alertname: EnvoyProxyListenersStuckWarming
+        eval_time: 30m
+      # sustained past 15m: firing
+      - alertname: EnvoyProxyListenersStuckWarming
+        eval_time: 40m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: notify
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "true"
+              namespace: envoy-gateway-system
+              pod: envoy-internal-abc
+              installation: ferret
+              cluster_id: shd-mgmt-1-use1
+            exp_annotations:
+              description: "Envoy proxy envoy-internal-abc has had listeners stuck in warming state for over 15m, so its latest configuration is not being served (it may still be serving the previous config). A persistently warming listener that never becomes active points at an xDS resource (e.g. an SDS secret) that never arrives."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=ferret&CLUSTER=shd-mgmt-1-use1&NAMESPACE=envoy-gateway-system"

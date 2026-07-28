@@ -3,17 +3,19 @@ rule_files:
   - envoy-gateway.rules.yml
 
 tests:
-  # EnvoyProxySDSInitFetchTimeout: counter stays >0 from onset until pod restart.
+  # EnvoyProxySDSInitFetchTimeout: a *fresh* TLS secret fetch timeout.
+  # The counter latches (stays >0 until the pod restarts), so the alert triggers on the increment
+  # and is then held for 2h by max_over_time.
   - interval: 1m
     input_series:
       - series: 'envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", pod="envoy-internal-abc", envoy_xds_resource_name="envoy-gateway-system/gateway-internal-https-tls", installation="ferret", cluster_id="shd-mgmt-1-use1"}'
-        # healthy for 20m, then wedged (2) and never recovers
-        values: "0x20 2+0x40"
+        # healthy for 20m, then wedged (2) and the latched counter never moves again
+        values: "0x20 2+0x180"
     alert_rule_test:
       # not firing while healthy
       - alertname: EnvoyProxySDSInitFetchTimeout
         eval_time: 15m
-      # within the 2m for-window after onset (counter first >0 at 21m): not yet firing
+      # within the 2m for-window after onset (increment first seen at 21m): not yet firing
       - alertname: EnvoyProxySDSInitFetchTimeout
         eval_time: 22m
       # sustained past the for-window: firing ~2m after onset
@@ -32,11 +34,11 @@ tests:
               installation: ferret
               cluster_id: shd-mgmt-1-use1
             exp_annotations:
-              description: "Envoy proxy envoy-internal-abc timed out fetching TLS secret envoy-gateway-system/gateway-internal-https-tls over SDS and has not recovered. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519)."
+              description: "Envoy proxy envoy-internal-abc timed out fetching TLS secret envoy-gateway-system/gateway-internal-https-tls over SDS within the last 15m. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519)."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=ferret&CLUSTER=shd-mgmt-1-use1&NAMESPACE=envoy-gateway-system"
-      # still firing well into the outage
+      # still firing well after the 15m increase() window closed, thanks to the 2h max_over_time hold
       - alertname: EnvoyProxySDSInitFetchTimeout
-        eval_time: 45m
+        eval_time: 60m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -50,8 +52,63 @@ tests:
               installation: ferret
               cluster_id: shd-mgmt-1-use1
             exp_annotations:
-              description: "Envoy proxy envoy-internal-abc timed out fetching TLS secret envoy-gateway-system/gateway-internal-https-tls over SDS and has not recovered. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519)."
+              description: "Envoy proxy envoy-internal-abc timed out fetching TLS secret envoy-gateway-system/gateway-internal-https-tls over SDS within the last 15m. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519)."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=ferret&CLUSTER=shd-mgmt-1-use1&NAMESPACE=envoy-gateway-system"
+      # the 2h hold has expired and the counter never incremented again: the alert self-clears.
+      # The state-based backstop for a proxy that is still wedged is a separate alert.
+      - alertname: EnvoyProxySDSInitFetchTimeout
+        eval_time: 160m
+      # a TLS secret must never trigger the OAuth2 companion alert
+      - alertname: EnvoyProxyOAuth2SecretInitFetchTimeout
+        eval_time: 23m
+
+  # A latched counter that timed out long ago and never incremented again must not page.
+  # This is the spurious "firing forever" case the freshness window fixes.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", pod="envoy-internal-abc", envoy_xds_resource_name="envoy-gateway-system/gateway-internal-https-tls", installation="ferret", cluster_id="shd-mgmt-1-use1"}'
+        values: "3x180"
+    alert_rule_test:
+      - alertname: EnvoyProxySDSInitFetchTimeout
+        eval_time: 30m
+      - alertname: EnvoyProxySDSInitFetchTimeout
+        eval_time: 120m
+      - alertname: EnvoyProxySDSInitFetchTimeout
+        eval_time: 180m
+
+  # EnvoyProxyOAuth2SecretInitFetchTimeout: OAuth2 client/hmac secrets are a different (notify)
+  # failure class and must not reach the paging alert.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", pod="envoy-external-def", envoy_xds_resource_name="oauth2/client_secret/gazelle-dex-oauth2", installation="gazelle", cluster_id="operations"}'
+        values: "0x20 1+0x180"
+    alert_rule_test:
+      # within the 5m for-window after onset (increment first seen at 21m): not yet firing
+      - alertname: EnvoyProxyOAuth2SecretInitFetchTimeout
+        eval_time: 24m
+      # sustained past the for-window
+      - alertname: EnvoyProxyOAuth2SecretInitFetchTimeout
+        eval_time: 27m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: notify
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "true"
+              namespace: envoy-gateway-system
+              pod: envoy-external-def
+              envoy_xds_resource_name: oauth2/client_secret/gazelle-dex-oauth2
+              installation: gazelle
+              cluster_id: operations
+            exp_annotations:
+              description: "Envoy proxy envoy-external-def timed out fetching OAuth2 secret oauth2/client_secret/gazelle-dex-oauth2 over SDS within the last 15m. OIDC authentication on the routes covered by that SecurityPolicy may fail until the proxy pod is restarted."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=gazelle&CLUSTER=operations&NAMESPACE=envoy-gateway-system"
+      # an OAuth2 secret must never trigger the paging TLS alert
+      - alertname: EnvoyProxySDSInitFetchTimeout
+        eval_time: 27m
+      - alertname: EnvoyProxySDSInitFetchTimeout
+        eval_time: 60m
 
   # EnvoyProxyListenersStuckWarming: a listener that never leaves warming state.
   - interval: 1m

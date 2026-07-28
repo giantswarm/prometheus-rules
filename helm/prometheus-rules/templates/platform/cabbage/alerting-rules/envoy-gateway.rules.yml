@@ -148,17 +148,49 @@ spec:
         topic: envoy-gateway
     - alert: EnvoyProxySDSInitFetchTimeout
       annotations:
-        description: '{{`Envoy proxy {{ $labels.pod }} timed out fetching TLS secret {{ $labels.envoy_xds_resource_name }} over SDS and has not recovered. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519).`}}'
+        description: '{{`Envoy proxy {{ $labels.pod }} timed out fetching TLS secret {{ $labels.envoy_xds_resource_name }} over SDS within the last 15m. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519).`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
-      expr: envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system"} > 0
-      # envoy_sds_init_fetch_timeout is a latching counter: once incremented it stays >0 until
-      # the pod restarts, and the wedged state never self-heals. A long `for` therefore buys no
-      # flap protection, it only delays the page — keep it short so we page before customer impact.
+      # envoy_sds_init_fetch_timeout is a latching counter: once incremented it stays >0 until the
+      # pod restarts. A bare `> 0` therefore keeps paging for a timeout that may have happened days
+      # ago and had no lasting impact, so trigger on a *fresh* increment instead:
+      #   increase(...[15m]) > 0        detects the timeout as it happens.
+      #   max_over_time(...[2h:1m])     holds the alert for 2h after the last increment. The wedge
+      #     does not self-heal while the counter stays static, so a bare increase() would resolve
+      #     after 15m with the proxy still broken.
+      # The oauth2/* exclusion keeps this alert on the TLS wedge it describes; OAuth2
+      # client_secret/hmac_secret timeouts are a different failure, alerted separately.
+      expr: |
+        max_over_time(
+          (
+            increase(
+              envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", envoy_xds_resource_name!~"oauth2/.*"}[15m]
+            ) > 0
+          )[2h:1m]
+        )
       for: 2m
       labels:
         area: platform
         cancel_if_outside_working_hours: "false"
         severity: page
+        team: cabbage
+        topic: envoy-gateway
+    - alert: EnvoyProxyOAuth2SecretInitFetchTimeout
+      annotations:
+        description: '{{`Envoy proxy {{ $labels.pod }} timed out fetching OAuth2 secret {{ $labels.envoy_xds_resource_name }} over SDS within the last 15m. OIDC authentication on the routes covered by that SecurityPolicy may fail until the proxy pod is restarted.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      expr: |
+        max_over_time(
+          (
+            increase(
+              envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", envoy_xds_resource_name=~"oauth2/.*"}[15m]
+            ) > 0
+          )[2h:1m]
+        )
+      for: 5m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
         team: cabbage
         topic: envoy-gateway
     - alert: EnvoyProxyListenersStuckWarming

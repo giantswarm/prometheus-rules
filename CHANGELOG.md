@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.113.0] - 2026-07-28
+
 ### Added
 
 - Add `EnvoyProxyOAuth2SecretInitFetchTimeout` alert (`severity: notify`, working hours only) for SDS init fetch timeouts on OAuth2 `client_secret`/`hmac_secret` resources. These break OIDC authentication on the routes covered by the affected `SecurityPolicy` until the proxy pod is restarted, but they are a different (non-paging) failure class than the TLS listener wedge, so they are now alerted separately instead of paging via `EnvoyProxySDSInitFetchTimeout`.
@@ -4434,7 +4436,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.112.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.113.0...HEAD
+[4.113.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.112.0...v4.113.0
 [4.112.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.111.0...v4.112.0
 [4.111.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.110.0...v4.111.0
 [4.110.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.109.0...v4.110.0

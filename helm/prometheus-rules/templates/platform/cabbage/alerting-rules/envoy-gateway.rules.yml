@@ -151,7 +151,10 @@ spec:
         description: '{{`Envoy proxy {{ $labels.pod }} timed out fetching TLS secret {{ $labels.envoy_xds_resource_name }} over SDS and has not recovered. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519).`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       expr: envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system"} > 0
-      for: 10m
+      # envoy_sds_init_fetch_timeout is a latching counter: once incremented it stays >0 until
+      # the pod restarts, and the wedged state never self-heals. A long `for` therefore buys no
+      # flap protection, it only delays the page — keep it short so we page before customer impact.
+      for: 2m
       labels:
         area: platform
         cancel_if_outside_working_hours: "false"

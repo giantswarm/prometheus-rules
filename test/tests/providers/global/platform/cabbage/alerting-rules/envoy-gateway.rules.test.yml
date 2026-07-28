@@ -13,10 +13,28 @@ tests:
       # not firing while healthy
       - alertname: EnvoyProxySDSInitFetchTimeout
         eval_time: 15m
-      # within the 10m for-window after onset: not yet firing
+      # within the 2m for-window after onset (counter first >0 at 21m): not yet firing
       - alertname: EnvoyProxySDSInitFetchTimeout
-        eval_time: 25m
-      # sustained past the for-window: firing, and still firing well into the outage
+        eval_time: 22m
+      # sustained past the for-window: firing ~2m after onset
+      - alertname: EnvoyProxySDSInitFetchTimeout
+        eval_time: 23m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "false"
+              namespace: envoy-gateway-system
+              pod: envoy-internal-abc
+              envoy_xds_resource_name: envoy-gateway-system/gateway-internal-https-tls
+              installation: ferret
+              cluster_id: shd-mgmt-1-use1
+            exp_annotations:
+              description: "Envoy proxy envoy-internal-abc timed out fetching TLS secret envoy-gateway-system/gateway-internal-https-tls over SDS and has not recovered. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519)."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=ferret&CLUSTER=shd-mgmt-1-use1&NAMESPACE=envoy-gateway-system"
+      # still firing well into the outage
       - alertname: EnvoyProxySDSInitFetchTimeout
         eval_time: 45m
         exp_alerts:

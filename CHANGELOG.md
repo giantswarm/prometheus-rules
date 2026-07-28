@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `EnvoyProxyTLSHandshakesFailing` alert (`severity: page`, 24/7, `for: 5m`) firing when an Envoy proxy listener errors on TLS connections at a meaningful rate while zero handshakes succeed. Unlike `EnvoyProxySDSInitFetchTimeout`, which only catches an SDS secret that never arrived, this observes the actual serving path and is cause-agnostic: it catches any "listener up, serving broken" state — expired or mis-issued certificate, SDS starvation, or a wedged proxy. Two incidents (2026-07-17 and 2026-07-28) saw Envoy stop serving while the Deployment reported 2/2 Ready and the Gateway stayed `Programmed: True`, so every deployed alert stayed silent. The error rate is floored at 0.05/s rather than `> 0`, because on an idle listener a single stray probe satisfies `> 0` while `rate(handshake) == 0` is legitimately true — the unfloored form would have paged ~10 times in 7 days across gazelle and ferret, twice on production workload clusters.
+
 ## [4.112.0] - 2026-07-28
 
 ### Added

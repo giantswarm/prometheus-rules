@@ -79,3 +79,94 @@ tests:
             exp_annotations:
               description: "Envoy proxy envoy-internal-abc has had listeners stuck in warming state for over 15m, so its latest configuration is not being served (it may still be serving the previous config). A persistently warming listener that never becomes active points at an xDS resource (e.g. an SDS secret) that never arrives."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=ferret&CLUSTER=shd-mgmt-1-use1&NAMESPACE=envoy-gateway-system"
+
+  # EnvoyProxyTLSHandshakesFailing — healthy proxy: handshakes vastly dominate a non-zero
+  # trickle of connection errors. Modelled on the real gazelle/operations baseline
+  # (282362 handshakes vs 1204 errors). Note the error rate here (4/min = 0.067/s) is above
+  # the alert's 0.05/s floor on purpose: it is the `rate(handshake) == 0` conjunct, not the
+  # floor, that must keep this healthy proxy silent.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_listener_ssl_handshake{namespace="envoy-gateway-system", pod="envoy-operations-xyz", envoy_listener_address="0.0.0.0_10443", installation="gazelle", cluster_id="operations"}'
+        values: "0+1000x90"
+      - series: 'envoy_listener_ssl_connection_error{namespace="envoy-gateway-system", pod="envoy-operations-xyz", envoy_listener_address="0.0.0.0_10443", installation="gazelle", cluster_id="operations"}'
+        values: "0+4x90"
+    alert_rule_test:
+      - alertname: EnvoyProxyTLSHandshakesFailing
+        eval_time: 30m
+      - alertname: EnvoyProxyTLSHandshakesFailing
+        eval_time: 60m
+      - alertname: EnvoyProxyTLSHandshakesFailing
+        eval_time: 90m
+
+  # EnvoyProxyTLSHandshakesFailing — idle listener false-positive guard. No successful
+  # handshakes at all (so `rate(handshake) == 0` is legitimately true the whole time) plus two
+  # stray errors, e.g. a port scan or an aborted connection. 1 error per 10m is 0.0017/s, well
+  # under the 0.05/s floor, so this must stay silent. The unhardened `rate(error) > 0` draft
+  # would have fired here — this is the case that produced real false pages on gazelle/ferret.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_listener_ssl_handshake{namespace="envoy-gateway-system", pod="envoy-idle-abc", envoy_listener_address="0.0.0.0_10443", installation="ferret", cluster_id="prod-wrkld-3-use1"}'
+        values: "0x90"
+      - series: 'envoy_listener_ssl_connection_error{namespace="envoy-gateway-system", pod="envoy-idle-abc", envoy_listener_address="0.0.0.0_10443", installation="ferret", cluster_id="prod-wrkld-3-use1"}'
+        values: "0x40 1x20 2x30"
+    alert_rule_test:
+      - alertname: EnvoyProxyTLSHandshakesFailing
+        eval_time: 45m
+      - alertname: EnvoyProxyTLSHandshakesFailing
+        eval_time: 50m
+      - alertname: EnvoyProxyTLSHandshakesFailing
+        eval_time: 65m
+      - alertname: EnvoyProxyTLSHandshakesFailing
+        eval_time: 85m
+
+  # EnvoyProxyTLSHandshakesFailing — the incident: the proxy serves normally, then every TLS
+  # handshake starts failing. The handshake counter goes flat while the error counter climbs.
+  # rate(handshake[10m]) reaches 0 at t=39m (last increase was at t=30m), so with `for: 5m`
+  # the alert fires from t=44m and stays firing, as the state does not self-heal.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_listener_ssl_handshake{namespace="envoy-gateway-system", pod="envoy-internal-abc", envoy_listener_address="0.0.0.0_10443", installation="ferret", cluster_id="shd-mgmt-1-use1"}'
+        values: "0+60x30 1800+0x60"
+      - series: 'envoy_listener_ssl_connection_error{namespace="envoy-gateway-system", pod="envoy-internal-abc", envoy_listener_address="0.0.0.0_10443", installation="ferret", cluster_id="shd-mgmt-1-use1"}'
+        values: "0+0x30 60+60x60"
+    alert_rule_test:
+      # healthy: handshakes still succeeding
+      - alertname: EnvoyProxyTLSHandshakesFailing
+        eval_time: 35m
+      # sustained past the for-window
+      - alertname: EnvoyProxyTLSHandshakesFailing
+        eval_time: 50m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "false"
+              namespace: envoy-gateway-system
+              pod: envoy-internal-abc
+              envoy_listener_address: 0.0.0.0_10443
+              installation: ferret
+              cluster_id: shd-mgmt-1-use1
+            exp_annotations:
+              description: "Envoy proxy envoy-internal-abc is failing every TLS handshake on listener 0.0.0.0_10443: connections are erroring while not a single handshake succeeds, so the listener still accepts connections but serves nothing. The pod can stay Ready and the Gateway Programmed throughout, so this does not self-heal — the proxy pod most likely must be restarted. Cause-agnostic: an expired or mis-issued certificate, an SDS secret that never arrived, or an otherwise wedged proxy."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=ferret&CLUSTER=shd-mgmt-1-use1&NAMESPACE=envoy-gateway-system"
+      # still firing well into the outage
+      - alertname: EnvoyProxyTLSHandshakesFailing
+        eval_time: 80m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "false"
+              namespace: envoy-gateway-system
+              pod: envoy-internal-abc
+              envoy_listener_address: 0.0.0.0_10443
+              installation: ferret
+              cluster_id: shd-mgmt-1-use1
+            exp_annotations:
+              description: "Envoy proxy envoy-internal-abc is failing every TLS handshake on listener 0.0.0.0_10443: connections are erroring while not a single handshake succeeds, so the listener still accepts connections but serves nothing. The pod can stay Ready and the Gateway Programmed throughout, so this does not self-heal — the proxy pod most likely must be restarted. Cause-agnostic: an expired or mis-issued certificate, an SDS secret that never arrived, or an otherwise wedged proxy."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=ferret&CLUSTER=shd-mgmt-1-use1&NAMESPACE=envoy-gateway-system"

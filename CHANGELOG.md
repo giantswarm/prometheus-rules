@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.112.0] - 2026-07-28
+
 ### Added
 
 - Add `CiliumHubbleTLSCertificateWillExpireSoon` alert (`severity: page`, working hours only) firing when a Hubble TLS certificate secret (`hubble-server-certs`, `hubble-relay-client-certs`, `hubble-relay-server-certs`, `hubble-ui-client-certs` — leaf and embedded CA) expires in less than 30 days, on both management and workload clusters. The previous catch-all secret alert only covered management clusters, so Hubble cert expiry on workload clusters broke hubble-relay unnoticed ([giantswarm#37201](https://github.com/giantswarm/giantswarm/issues/37201)).
@@ -4424,7 +4426,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.111.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.112.0...HEAD
+[4.112.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.111.0...v4.112.0
 [4.111.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.110.0...v4.111.0
 [4.110.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.109.0...v4.110.0
 [4.109.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.108.0...v4.109.0

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `EnvoyProxyOAuth2SecretInitFetchTimeout` alert (`severity: notify`, working hours only) for SDS init fetch timeouts on OAuth2 `client_secret`/`hmac_secret` resources. These break OIDC authentication on the routes covered by the affected `SecurityPolicy` until the proxy pod is restarted, but they are a different (non-paging) failure class than the TLS listener wedge, so they are now alerted separately instead of paging via `EnvoyProxySDSInitFetchTimeout`.
+
+### Changed
+
+- Make `EnvoyProxySDSInitFetchTimeout` fire on *fresh* SDS timeouts only. `envoy_sds_init_fetch_timeout` is a latching counter, so the previous `> 0` expression kept paging forever for a timeout that may have happened days ago (observed on `gazelle`: 14 firing series for timeouts last incremented on 2026-07-24, on healthy proxy pods). The alert now uses `increase(...[15m]) > 0` held for 2h via `max_over_time(...[2h:1m])`, and only matches non-OAuth2 SDS resources, matching the "TLS secret" failure its description covers.
+
 ## [4.112.0] - 2026-07-28
 
 ### Added

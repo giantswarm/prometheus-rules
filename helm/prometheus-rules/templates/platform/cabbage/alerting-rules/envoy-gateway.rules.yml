@@ -173,3 +173,39 @@ spec:
         severity: notify
         team: cabbage
         topic: envoy-gateway
+    - alert: EnvoyProxyTLSHandshakesFailing
+      annotations:
+        description: '{{`Envoy proxy {{ $labels.pod }} is failing every TLS handshake on listener {{ $labels.envoy_listener_address }}: connections are erroring while not a single handshake succeeds, so the listener still accepts connections but serves nothing. The pod can stay Ready and the Gateway Programmed throughout, so this does not self-heal — the proxy pod most likely must be restarted. Cause-agnostic: an expired or mis-issued certificate, an SDS secret that never arrived, or an otherwise wedged proxy.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      expr: |
+        # Cause-agnostic "listener up, serving broken" detector: TLS connections error at a
+        # meaningful rate while *zero* handshakes succeed on the same listener.
+        rate(envoy_listener_ssl_connection_error{namespace="envoy-gateway-system"}[10m]) > 0.05
+          and
+        rate(envoy_listener_ssl_handshake{namespace="envoy-gateway-system"}[10m]) == 0
+      # Both series carry an identical label set (they come from the same scrape target and are
+      # both labelled per pod and envoy_listener_address), so the implicit full-label match of
+      # `and` joins them exactly. Do NOT switch this to an explicit
+      # `and on(pod, namespace, cluster_id, installation, pipeline, provider)` like the other
+      # alerts here use: that would drop envoy_listener_address from the match and let an error
+      # on one listener pair up with an idle sibling listener on the same pod.
+      #
+      # The 0.05/s floor (~3 errors/min) is what makes this safe on idle listeners, where a
+      # single stray probe or aborted connection keeps `rate(...) > 0` true for a whole rate
+      # window while `rate(handshake) == 0` is legitimately true. Measured over 7d on gazelle
+      # and ferret, the error rate seen while handshakes were zero peaked at 0.0093/s, so this
+      # keeps a ~5x margin; a listener that actually serves traffic runs at 0.1-1.1 handshakes/s
+      # and would produce errors well above the floor if it started failing them all.
+      # The unhardened `rate(error) > 0` form would have paged ~10 times in those 7 days,
+      # including twice on production workload clusters.
+      #
+      # NOTE: do NOT use envoy_listener_ssl_no_certificate for this. Despite the name it counts
+      # handshakes where the *client* presented no certificate, and on our proxies it equals the
+      # total handshake count exactly — it would fire permanently.
+      for: 5m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "false"
+        severity: page
+        team: cabbage
+        topic: envoy-gateway

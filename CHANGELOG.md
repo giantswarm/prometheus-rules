@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Raise `CAPATooManyReconciliations` threshold from 1500 to 4000 reconciliations per 10m. A recent removal of a watch filter on the `awsmachine` controller means CAPI now cascades reconciles across the full AWSMachine fleet on more events, pushing sustained rates on busy installations (e.g. `alba`, ~2000-2700/10m) above the old threshold with no corresponding errors. The alert should reflect this until the watch filter is restored.
+
 ## [4.113.0] - 2026-07-28
 
 ### Added

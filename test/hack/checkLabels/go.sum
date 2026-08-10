@@ -440,6 +440,8 @@ github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.92.1 h
 github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.92.1/go.mod h1:eGo3VN8Kq5Fd0M7Cdx0oqbIxo753t99ojUZFVQkO1UM=
 github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.93.0 h1:ZIouJCjC8R/XHxzGpOw+/czH9pVzg6wteYhLjJ80XGQ=
 github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.93.0/go.mod h1:rZ+wRKDneCC/jJk24Mdb+6bAc6y/UjRliuMz6U20s6Y=
+github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.93.1 h1:RP+/GISMkna7VpDx3wa52oYIyIjNU+iQxV6sDnY2uCA=
+github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.93.1/go.mod h1:rZ+wRKDneCC/jJk24Mdb+6bAc6y/UjRliuMz6U20s6Y=
 github.com/prometheus/alertmanager v0.28.0 h1:sLN+6HhZet8hrbmGHLAHWsTXgZSVCvq9Ix3U3wvivqc=
 github.com/prometheus/alertmanager v0.28.0/go.mod h1:/okSnb2LlodbMlRoOWQEKtqI/coOo2NKZDm2Hu9QHLQ=
 github.com/prometheus/alertmanager v0.28.1 h1:BK5pCoAtaKg01BYRUJhEDV1tqJMEtYBGzPw8QdvnnvA=

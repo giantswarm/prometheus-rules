@@ -1,0 +1,49 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4}}
+  name: teleport-audit-delivery.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+    - name: teleport-audit-delivery
+      rules:
+        # Fires per source cluster when no probe-generated Teleport audit
+        # event was ingested for it in 45m (expected: >=3). The probe
+        # guarantees every cluster produces >=4 events/h, so silence is
+        # always a delivery failure — or a dead probe, in which case this
+        # fires for every cluster fleet-wide (fail closed); the runbook's
+        # first step is to check the probe.
+        - alert: TeleportAuditProbeMissing
+          annotations:
+            description: 'No Teleport audit events from cluster {{`{{ $labels.cluster_id }}`}} (installation {{`{{ $labels.installation }}`}}) reached its Loki for 45m — audit log delivery for this cluster is broken.'
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/teleport-audit-log-delivery/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+          expr: |-
+            count(
+              label_replace(
+                (capi_cluster_status_condition{app="kube-state-metrics", type="ControlPlaneReady", status="True"} == 1)
+                  * on (name, installation, pipeline, provider)
+                  (capi_cluster_status_phase{app="kube-state-metrics", phase="Deleting"} == 0),
+                "cluster_id",
+                "$1",
+                "name",
+                "(.*)"
+              )
+            ) by (cluster_id, installation, pipeline, provider) > 0
+            unless on (cluster_id) (
+              max by (cluster_id) (giantswarm:teleport_audit:probe_events:count_45m) > 0
+            )
+          # Grace budget for a newly-ControlPlaneReady cluster: teleport-kube-agent
+          # install/registration, plus up to 15m probe cadence, plus Loki
+          # ingestion, ruler evaluation, and Mimir remote-write, routinely
+          # exceeds 20m end-to-end. Phase 3 fault-injection testing may tune
+          # this further.
+          for: 40m
+          labels:
+            area: platform
+            cancel_if_cluster_has_no_workers: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: atlas
+            topic: observability

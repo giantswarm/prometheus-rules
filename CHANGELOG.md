@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Make `IngressControllerDown` quorum-based instead of per-replica. The alert paged on any single `up == 0` ingress target held for 15m, which is not an outage on a controller running tens of replicas. Observed on `agama-pcn01` on 2026-08-04 (2 pages between 01:23 and 03:25 CEST): one pod out of ~30 in the same controller kept hitting the 10s scrape timeout on its `/metrics` endpoint for 17-37m at a stretch while staying `Ready` with 0 restarts and serving traffic, and every other replica was healthy. The same shape caused the 2026-07-23 `alligator-p-fr-omni` page (3 new pods in `ImagePullBackOff` while 5 old-ReplicaSet pods served traffic). The alert now only fires once more than 50% of a controller's replicas are down, grouped per `job` so the small internal ingress controller sharing the namespace with the public one is still evaluated on its own replica count. One series per down pod is still emitted so the `ip` label survives for the `cancel_if_kubelet_down` inhibition. Raising `for` alone would not have helped: the observed unscrapable stretches reached 37m.
+- Make `IngressControllerDown` quorum-based instead of per-replica.
 
 ## [4.113.0] - 2026-07-28
 

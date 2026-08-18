@@ -4,9 +4,6 @@ rule_files:
 
 tests:
   # IngressControllerDown must NOT page when a single replica out of many is unscrapable.
-  # This is the agama-pcn01 case from 2026-08-04: one pod's /metrics endpoint kept hitting the
-  # 10s scrape timeout for 20-40m at a time while the pod stayed Ready and served traffic, and
-  # the other 30 replicas were fine. The old per-pod `up == 0` rule paged twice that night.
   - interval: 1m
     input_series:
       # the flapping target: long contiguous stretches of up == 0, well past the 15m for-window
@@ -29,8 +26,6 @@ tests:
         eval_time: 180m
 
   # A rollout that leaves a minority of new replicas unscrapable must not page either.
-  # This is the alligator-p-fr-omni case from 2026-07-23: 3 new pods stuck in ImagePullBackOff
-  # while the old ReplicaSet kept serving traffic from 5 healthy pods.
   - interval: 1m
     input_series:
       - series: 'up{pod="ingress-nginx-app-controller-new-1", node="ip-10-0-0-1.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="alligator", cluster_id="p-fr-omni"}'

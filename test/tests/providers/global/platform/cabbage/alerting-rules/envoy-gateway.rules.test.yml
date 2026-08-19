@@ -140,7 +140,7 @@ tests:
   # EnvoyGatewayConfigUpdateRateTooHigh: xDS config churn on the control plane.
   - interval: 1m
     input_series:
-      - series: 'xds_snapshot_create_total{namespace="envoy-gateway-system", status="success", pod="envoy-gateway-abc", installation="ferret", cluster_id="shd-mgmt-1-use1", pipeline="stable", provider="capa"}'
+      - series: 'xds_snapshot_create_total{namespace="envoy-gateway-system", status="success", pod="envoy-gateway-abc", installation="myinstall", cluster_id="my-cluster", pipeline="stable", provider="capa"}'
         # quiet for an hour, then a sustained burst of 3 snapshots/min
         values: "0x60 3+3x119"
     alert_rule_test:
@@ -161,20 +161,20 @@ tests:
               topic: envoy-gateway
               cancel_if_outside_working_hours: "true"
               namespace: envoy-gateway-system
-              installation: ferret
-              cluster_id: shd-mgmt-1-use1
+              installation: myinstall
+              cluster_id: my-cluster
               pipeline: stable
               provider: capa
             exp_annotations:
-              description: "Envoy Gateway in cluster shd-mgmt-1-use1 is regenerating its xDS configuration too often (3.0 updates/min over the last hour). xDS updates are applied hot, so the concern is not the cost of the updates themselves but the config churn upstream: flapping Gateway API resources, a hot-looping controller, or a flood of route changes."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=ferret&CLUSTER=shd-mgmt-1-use1&NAMESPACE=envoy-gateway-system"
+              description: "Envoy Gateway in cluster my-cluster is regenerating its xDS configuration too often (3.0 updates/min over the last hour). xDS updates are applied hot, so the concern is not the cost of the updates themselves but the config churn upstream: flapping Gateway API resources, a hot-looping controller, or a flood of route changes."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
 
   # EnvoyProxyConfigUpdateRejected: the proxy NACKs a pushed config and keeps serving the old one.
   # Like the SDS timeout counters, *_update_rejected latches, so the alert triggers on the increment
   # and is then held for 2h.
   - interval: 1m
     input_series:
-      - series: 'envoy_listener_manager_lds_update_rejected{namespace="envoy-gateway-system", pod="envoy-internal-abc", gateway_name="giantswarm-default", installation="ferret", cluster_id="shd-mgmt-1-use1"}'
+      - series: 'envoy_listener_manager_lds_update_rejected{namespace="envoy-gateway-system", pod="envoy-internal-abc", gateway_name="giantswarm-default", installation="myinstall", cluster_id="my-cluster"}'
         values: "0x20 1+0x180"
     alert_rule_test:
       # not firing while the proxy accepts every update
@@ -196,11 +196,11 @@ tests:
               namespace: envoy-gateway-system
               pod: envoy-internal-abc
               gateway_name: giantswarm-default
-              installation: ferret
-              cluster_id: shd-mgmt-1-use1
+              installation: myinstall
+              cluster_id: my-cluster
             exp_annotations:
               description: "Envoy proxy envoy-internal-abc rejected an xDS configuration update (NACK) in the last 15m and keeps serving its previous configuration, while the Gateway still reports Programmed and the pod stays Ready. Check the *_update_rejected counters on the proxy admin /stats and the envoy-gateway logs for the rejection reason."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=ferret&CLUSTER=shd-mgmt-1-use1&NAMESPACE=envoy-gateway-system"
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
       # still firing well after the 15m increase() window closed, thanks to the 2h max_over_time hold
       - alertname: EnvoyProxyConfigUpdateRejected
         eval_time: 60m
@@ -214,11 +214,11 @@ tests:
               namespace: envoy-gateway-system
               pod: envoy-internal-abc
               gateway_name: giantswarm-default
-              installation: ferret
-              cluster_id: shd-mgmt-1-use1
+              installation: myinstall
+              cluster_id: my-cluster
             exp_annotations:
               description: "Envoy proxy envoy-internal-abc rejected an xDS configuration update (NACK) in the last 15m and keeps serving its previous configuration, while the Gateway still reports Programmed and the pod stays Ready. Check the *_update_rejected counters on the proxy admin /stats and the envoy-gateway logs for the rejection reason."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=ferret&CLUSTER=shd-mgmt-1-use1&NAMESPACE=envoy-gateway-system"
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
       # the 2h hold has expired and the counter never incremented again: the alert self-clears
       - alertname: EnvoyProxyConfigUpdateRejected
         eval_time: 160m
@@ -226,7 +226,7 @@ tests:
   # EnvoyProxyConfigUpdateRejected also covers the other xDS types via the `or` chain.
   - interval: 1m
     input_series:
-      - series: 'envoy_http_rds_update_rejected{namespace="envoy-gateway-system", pod="envoy-external-def", gateway_name="giantswarm-external", installation="gazelle", cluster_id="operations"}'
+      - series: 'envoy_http_rds_update_rejected{namespace="envoy-gateway-system", pod="envoy-external-def", gateway_name="giantswarm-external", installation="myinstall", cluster_id="my-cluster-2"}'
         values: "0x20 1+0x60"
     alert_rule_test:
       - alertname: EnvoyProxyConfigUpdateRejected
@@ -243,8 +243,8 @@ tests:
               namespace: envoy-gateway-system
               pod: envoy-external-def
               gateway_name: giantswarm-external
-              installation: gazelle
-              cluster_id: operations
+              installation: myinstall
+              cluster_id: my-cluster-2
             exp_annotations:
               description: "Envoy proxy envoy-external-def rejected an xDS configuration update (NACK) in the last 15m and keeps serving its previous configuration, while the Gateway still reports Programmed and the pod stays Ready. Check the *_update_rejected counters on the proxy admin /stats and the envoy-gateway logs for the rejection reason."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=gazelle&CLUSTER=operations&NAMESPACE=envoy-gateway-system"
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster-2&NAMESPACE=envoy-gateway-system"

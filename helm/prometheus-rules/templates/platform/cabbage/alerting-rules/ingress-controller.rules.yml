@@ -72,9 +72,17 @@ spec:
         topic: ingress
     - alert: IngressControllerDown
       annotations:
-        description: '{{`Ingress Controller in namespace {{ $labels.namespace }}) is down.`}}'
+        description: '{{`More than half of the Ingress Controller replicas of {{ $labels.job }} in namespace {{ $labels.namespace }} are down ({{ $labels.pod }} is one of them).`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/managed-app-nginx-ic/
-      expr: label_replace(up{pod=~".*(ingress-nginx|nginx-ingress-controller).*"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
+      expr: |
+        label_replace(up{pod=~".*(ingress-nginx|nginx-ingress-controller).*"}, "ip", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+).*") == 0
+        and on (cluster_id, installation, namespace, job)
+        (
+          count by (cluster_id, installation, namespace, job) (up{pod=~".*(ingress-nginx|nginx-ingress-controller).*"} == 0)
+          /
+          count by (cluster_id, installation, namespace, job) (up{pod=~".*(ingress-nginx|nginx-ingress-controller).*"})
+          > 0.5
+        )
       for: 15m
       labels:
         area: platform

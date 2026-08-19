@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `EnvoyGatewayConfigUpdateRateTooHigh` alert (`severity: page`, working hours only) firing when Envoy Gateway regenerates its xDS config more than 1/min averaged over the last hour, catching config churn ([giantswarm#37146](https://github.com/giantswarm/giantswarm/issues/37146)).
 - Add `EnvoyProxyConfigUpdateRejected` alert (`severity: page`, working hours only) firing when an Envoy proxy NACKs a pushed xDS config and keeps serving the previous one, which is otherwise invisible (pods stay Ready, the Gateway reports Programmed).
 
+### Changed
+
+- Update `CAPATooManyReconciliations` alert with higher threshold from 1500 to 5000. The healthy baseline is fleet-proportional (the awsmachine controller resyncs all AWSMachines and their owner Machines every 10m), and the largest CAPA fleet (~1100 machines) has a 90-day max of ~3000 reconciliations per 10m, keeping the alert flapping since 2026-07-30. A genuine hot loop still crosses 5000 within one evaluation window.
+
 ## [4.113.0] - 2026-07-28
 
 ### Added

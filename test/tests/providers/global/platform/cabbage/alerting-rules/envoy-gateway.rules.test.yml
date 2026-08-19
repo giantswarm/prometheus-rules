@@ -8,7 +8,7 @@ tests:
   # and is then held for 2h by max_over_time.
   - interval: 1m
     input_series:
-      - series: 'envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", pod="envoy-internal-abc", envoy_xds_resource_name="envoy-gateway-system/gateway-internal-https-tls", installation="ferret", cluster_id="shd-mgmt-1-use1"}'
+      - series: 'envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", pod="envoy-internal-abc", envoy_xds_resource_name="envoy-gateway-system/gateway-internal-https-tls", installation="myinstall", cluster_id="my-cluster"}'
         # healthy for 20m, then wedged (2) and the latched counter never moves again
         values: "0x20 2+0x180"
     alert_rule_test:
@@ -31,11 +31,11 @@ tests:
               namespace: envoy-gateway-system
               pod: envoy-internal-abc
               envoy_xds_resource_name: envoy-gateway-system/gateway-internal-https-tls
-              installation: ferret
-              cluster_id: shd-mgmt-1-use1
+              installation: myinstall
+              cluster_id: my-cluster
             exp_annotations:
               description: "Envoy proxy envoy-internal-abc timed out fetching TLS secret envoy-gateway-system/gateway-internal-https-tls over SDS within the last 15m. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519)."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=ferret&CLUSTER=shd-mgmt-1-use1&NAMESPACE=envoy-gateway-system"
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
       # still firing well after the 15m increase() window closed, thanks to the 2h max_over_time hold
       - alertname: EnvoyProxySDSInitFetchTimeout
         eval_time: 60m
@@ -49,11 +49,11 @@ tests:
               namespace: envoy-gateway-system
               pod: envoy-internal-abc
               envoy_xds_resource_name: envoy-gateway-system/gateway-internal-https-tls
-              installation: ferret
-              cluster_id: shd-mgmt-1-use1
+              installation: myinstall
+              cluster_id: my-cluster
             exp_annotations:
               description: "Envoy proxy envoy-internal-abc timed out fetching TLS secret envoy-gateway-system/gateway-internal-https-tls over SDS within the last 15m. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519)."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=ferret&CLUSTER=shd-mgmt-1-use1&NAMESPACE=envoy-gateway-system"
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
       # the 2h hold has expired and the counter never incremented again: the alert self-clears.
       # The state-based backstop for a proxy that is still wedged is a separate alert.
       - alertname: EnvoyProxySDSInitFetchTimeout
@@ -66,7 +66,7 @@ tests:
   # This is the spurious "firing forever" case the freshness window fixes.
   - interval: 1m
     input_series:
-      - series: 'envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", pod="envoy-internal-abc", envoy_xds_resource_name="envoy-gateway-system/gateway-internal-https-tls", installation="ferret", cluster_id="shd-mgmt-1-use1"}'
+      - series: 'envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", pod="envoy-internal-abc", envoy_xds_resource_name="envoy-gateway-system/gateway-internal-https-tls", installation="myinstall", cluster_id="my-cluster"}'
         values: "3x180"
     alert_rule_test:
       - alertname: EnvoyProxySDSInitFetchTimeout
@@ -80,7 +80,7 @@ tests:
   # failure class and must not reach the paging alert.
   - interval: 1m
     input_series:
-      - series: 'envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", pod="envoy-external-def", envoy_xds_resource_name="oauth2/client_secret/gazelle-dex-oauth2", installation="gazelle", cluster_id="operations"}'
+      - series: 'envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", pod="envoy-external-def", envoy_xds_resource_name="oauth2/client_secret/dex-oauth2", installation="myinstall", cluster_id="my-cluster-2"}'
         values: "0x20 1+0x180"
     alert_rule_test:
       # within the 5m for-window after onset (increment first seen at 21m): not yet firing
@@ -98,12 +98,12 @@ tests:
               cancel_if_outside_working_hours: "true"
               namespace: envoy-gateway-system
               pod: envoy-external-def
-              envoy_xds_resource_name: oauth2/client_secret/gazelle-dex-oauth2
-              installation: gazelle
-              cluster_id: operations
+              envoy_xds_resource_name: oauth2/client_secret/dex-oauth2
+              installation: myinstall
+              cluster_id: my-cluster-2
             exp_annotations:
-              description: "Envoy proxy envoy-external-def timed out fetching OAuth2 secret oauth2/client_secret/gazelle-dex-oauth2 over SDS within the last 15m. OIDC authentication on the routes covered by that SecurityPolicy may fail until the proxy pod is restarted."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=gazelle&CLUSTER=operations&NAMESPACE=envoy-gateway-system"
+              description: "Envoy proxy envoy-external-def timed out fetching OAuth2 secret oauth2/client_secret/dex-oauth2 over SDS within the last 15m. OIDC authentication on the routes covered by that SecurityPolicy may fail until the proxy pod is restarted."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster-2&NAMESPACE=envoy-gateway-system"
       # an OAuth2 secret must never trigger the paging TLS alert
       - alertname: EnvoyProxySDSInitFetchTimeout
         eval_time: 27m
@@ -113,7 +113,7 @@ tests:
   # EnvoyProxyListenersStuckWarming: a listener that never leaves warming state.
   - interval: 1m
     input_series:
-      - series: 'envoy_listener_manager_total_listeners_warming{namespace="envoy-gateway-system", pod="envoy-internal-abc", installation="ferret", cluster_id="shd-mgmt-1-use1"}'
+      - series: 'envoy_listener_manager_total_listeners_warming{namespace="envoy-gateway-system", pod="envoy-internal-abc", installation="myinstall", cluster_id="my-cluster"}'
         values: "0x20 1+0x40"
     alert_rule_test:
       # within the 15m for-window: not yet firing
@@ -131,8 +131,120 @@ tests:
               cancel_if_outside_working_hours: "true"
               namespace: envoy-gateway-system
               pod: envoy-internal-abc
-              installation: ferret
-              cluster_id: shd-mgmt-1-use1
+              installation: myinstall
+              cluster_id: my-cluster
             exp_annotations:
               description: "Envoy proxy envoy-internal-abc has had listeners stuck in warming state for over 15m, so its latest configuration is not being served (it may still be serving the previous config). A persistently warming listener that never becomes active points at an xDS resource (e.g. an SDS secret) that never arrives."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=ferret&CLUSTER=shd-mgmt-1-use1&NAMESPACE=envoy-gateway-system"
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
+
+  # EnvoyGatewayConfigUpdateRateTooHigh: xDS config churn on the control plane.
+  - interval: 1m
+    input_series:
+      - series: 'xds_snapshot_create_total{namespace="envoy-gateway-system", status="success", pod="envoy-gateway-abc", installation="myinstall", cluster_id="my-cluster", pipeline="stable", provider="capa"}'
+        # quiet for an hour, then a sustained burst of 3 snapshots/min
+        values: "0x60 3+3x119"
+    alert_rule_test:
+      # no churn at all: silent
+      - alertname: EnvoyGatewayConfigUpdateRateTooHigh
+        eval_time: 60m
+      # burst started, but the hourly average has not crossed 1/min yet
+      - alertname: EnvoyGatewayConfigUpdateRateTooHigh
+        eval_time: 75m
+      # the 60m rate window is now entirely inside the burst: 3/min, sustained past the 15m for-window
+      - alertname: EnvoyGatewayConfigUpdateRateTooHigh
+        eval_time: 180m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "true"
+              namespace: envoy-gateway-system
+              installation: myinstall
+              cluster_id: my-cluster
+              pipeline: stable
+              provider: capa
+            exp_annotations:
+              description: "Envoy Gateway in cluster my-cluster is regenerating its configuration too often (3.0 updates/min over the last hour)."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
+
+  # EnvoyProxyConfigUpdateRejected: the proxy NACKs a pushed config and keeps serving the old one.
+  # Like the SDS timeout counters, *_update_rejected latches, so the alert triggers on the increment
+  # and is then held for 2h.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_listener_manager_lds_update_rejected{namespace="envoy-gateway-system", pod="envoy-internal-abc", gateway_name="giantswarm-default", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x20 1+0x180"
+    alert_rule_test:
+      # not firing while the proxy accepts every update
+      - alertname: EnvoyProxyConfigUpdateRejected
+        eval_time: 15m
+      # within the 5m for-window after onset (increment first seen at 21m): not yet firing
+      - alertname: EnvoyProxyConfigUpdateRejected
+        eval_time: 24m
+      # sustained past the for-window
+      - alertname: EnvoyProxyConfigUpdateRejected
+        eval_time: 27m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "true"
+              namespace: envoy-gateway-system
+              pod: envoy-internal-abc
+              gateway_name: giantswarm-default
+              installation: myinstall
+              cluster_id: my-cluster
+            exp_annotations:
+              description: "Envoy proxy envoy-internal-abc rejected a configuration update in the last 15m and keeps serving its previous configuration."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
+      # still firing well after the 15m increase() window closed, thanks to the 2h max_over_time hold
+      - alertname: EnvoyProxyConfigUpdateRejected
+        eval_time: 60m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "true"
+              namespace: envoy-gateway-system
+              pod: envoy-internal-abc
+              gateway_name: giantswarm-default
+              installation: myinstall
+              cluster_id: my-cluster
+            exp_annotations:
+              description: "Envoy proxy envoy-internal-abc rejected a configuration update in the last 15m and keeps serving its previous configuration."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
+      # the 2h hold has expired and the counter never incremented again: the alert self-clears
+      - alertname: EnvoyProxyConfigUpdateRejected
+        eval_time: 160m
+
+  # EnvoyProxyConfigUpdateRejected also covers the other xDS types via the `or` chain.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_http_rds_update_rejected{namespace="envoy-gateway-system", pod="envoy-external-def", gateway_name="giantswarm-external", installation="myinstall", cluster_id="my-cluster-2"}'
+        values: "0x20 1+0x60"
+    alert_rule_test:
+      - alertname: EnvoyProxyConfigUpdateRejected
+        eval_time: 15m
+      - alertname: EnvoyProxyConfigUpdateRejected
+        eval_time: 27m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "true"
+              namespace: envoy-gateway-system
+              pod: envoy-external-def
+              gateway_name: giantswarm-external
+              installation: myinstall
+              cluster_id: my-cluster-2
+            exp_annotations:
+              description: "Envoy proxy envoy-external-def rejected a configuration update in the last 15m and keeps serving its previous configuration."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster-2&NAMESPACE=envoy-gateway-system"

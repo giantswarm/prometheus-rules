@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `EnvoyGatewayConfigUpdateRateTooHigh` alert (`severity: page`, working hours only) firing when Envoy Gateway regenerates its xDS config more than 1/min averaged over the last hour, catching config churn ([giantswarm#37146](https://github.com/giantswarm/giantswarm/issues/37146)).
+- Add `EnvoyProxyConfigUpdateRejected` alert (`severity: page`, working hours only) firing when an Envoy proxy NACKs a pushed xDS config and keeps serving the previous one, which is otherwise invisible (pods stay Ready, the Gateway reports Programmed).
+
 ## [4.113.0] - 2026-07-28
 
 ### Added

@@ -205,3 +205,46 @@ spec:
         severity: notify
         team: cabbage
         topic: envoy-gateway
+    - alert: EnvoyGatewayConfigUpdateRateTooHigh
+      annotations:
+        description: '{{`Envoy Gateway in cluster {{ $labels.cluster_id }} is regenerating its configuration too often ({{ $value | printf "%.1f" }} updates/min over the last hour).`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      # xds_snapshot_create_total is incremented once per xDS snapshot built from the xds-IR, which is
+      # the Envoy Gateway equivalent of nginx writing a new config and reloading. The namespace matcher
+      # is required: the metric name is generic and must only match the Envoy Gateway control plane.
+      # `max by` without `pod` collapses the control-plane replicas into one series per cluster.
+      expr: max by (cluster_id, installation, pipeline, provider, namespace) (rate(xds_snapshot_create_total{namespace="envoy-gateway-system", status="success"}[60m])) * 60 > 1
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: envoy-gateway
+    - alert: EnvoyProxyConfigUpdateRejected
+      annotations:
+        description: '{{`Envoy proxy {{ $labels.pod }} rejected a configuration update in the last 15m and keeps serving its previous configuration.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      # Same latching-counter handling as EnvoyProxySDSInitFetchTimeout: the *_update_rejected counters
+      # never decrease until the pod restarts, so a bare `> 0` would keep paging for a rejection that
+      # happened days ago. increase(...[15m]) > 0 catches the rejection as it happens and
+      # max_over_time(...[2h:1m]) holds the alert for 2h, since a rejected config does not heal on its
+      # own while the counter stays static. Do not simplify this back to `> 0`.
+      # `or` rather than a sum: a proxy that exports only some of the four counters (e.g. no SDS
+      # resources) would make a sum-based expression evaluate to nothing.
+      expr: |
+        max_over_time(
+          (
+            increase(envoy_listener_manager_lds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
+            or increase(envoy_cluster_manager_cds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
+            or increase(envoy_http_rds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
+            or increase(envoy_sds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
+          )[2h:1m]
+        )
+      for: 5m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: envoy-gateway

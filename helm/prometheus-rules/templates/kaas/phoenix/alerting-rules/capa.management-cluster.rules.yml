@@ -65,8 +65,9 @@ spec:
       annotations:
         description: '{{`The {{ $labels.controller }} in CAPA is reconciling too frequently.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/capa-too-many-reconciliations/
-      # Computes the absolute number of reconciliation loops over the past 10 minutes (600 seconds). Fires as soon as that count exceeds 1000. 1.667 reconciliations/second on average.
-      expr: increase(controller_runtime_reconcile_total{app="cluster-api-provider-aws"}[10m]) > 1500
+      # Computes the absolute number of reconciliation loops over the past 10 minutes (600 seconds). Fires as soon as that count exceeds 5000 (8.33 reconciliations/second on average).
+      # The healthy baseline is fleet-proportional: the awsmachine controller resyncs every AWSMachine (and its owner Machine) each 10m sync-period, so an MC with N machines legitimately does up to ~3xN reconciliations per 10m. Sized against the largest CAPA fleet (~1100 machines, 90d max ~3000/10m); a real hot loop (>=10 reconciles/s = 6000/10m) still crosses this within one window.
+      expr: increase(controller_runtime_reconcile_total{app="cluster-api-provider-aws"}[10m]) > 5000
       for: 15m
       labels:
         area: kaas

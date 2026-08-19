@@ -207,7 +207,7 @@ spec:
         topic: envoy-gateway
     - alert: EnvoyGatewayConfigUpdateRateTooHigh
       annotations:
-        description: '{{`Envoy Gateway in cluster {{ $labels.cluster_id }} is regenerating its xDS configuration too often ({{ $value | printf "%.1f" }} updates/min over the last hour). xDS updates are applied hot, so the concern is not the cost of the updates themselves but the config churn upstream: flapping Gateway API resources, a hot-looping controller, or a flood of route changes.`}}'
+        description: '{{`Envoy Gateway in cluster {{ $labels.cluster_id }} is regenerating its configuration too often ({{ $value | printf "%.1f" }} updates/min over the last hour).`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       # xds_snapshot_create_total is incremented once per xDS snapshot built from the xds-IR, which is
       # the Envoy Gateway equivalent of nginx writing a new config and reloading. The namespace matcher
@@ -223,7 +223,7 @@ spec:
         topic: envoy-gateway
     - alert: EnvoyProxyConfigUpdateRejected
       annotations:
-        description: '{{`Envoy proxy {{ $labels.pod }} rejected an xDS configuration update (NACK) in the last 15m and keeps serving its previous configuration, while the Gateway still reports Programmed and the pod stays Ready. Check the *_update_rejected counters on the proxy admin /stats and the envoy-gateway logs for the rejection reason.`}}'
+        description: '{{`Envoy proxy {{ $labels.pod }} rejected a configuration update in the last 15m and keeps serving its previous configuration.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       # Same latching-counter handling as EnvoyProxySDSInitFetchTimeout: the *_update_rejected counters
       # never decrease until the pod restarts, so a bare `> 0` would keep paging for a rejection that

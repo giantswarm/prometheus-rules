@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `TeleportAuditProbeMissing` alert (`severity: page`, working hours only) firing when no Teleport probes reach Loki for 45 minutes.
+- Add Loki recording rule `giantswarm:teleport_audit:probe_events:count_15m` reporting the number of observed probe events as metric series.
+
 ## [4.113.0] - 2026-07-28
 
 ### Added

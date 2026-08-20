@@ -8,19 +8,19 @@ metadata:
 spec:
   groups:
     - name: teleport-audit-probe.logs
+      interval: 1m
       rules:
         # Counts audit events produced by the audit-pipeline-probe bot, per
-        # source cluster, as ingested by this installation's Loki. The metric
-        # is remote-written to Mimir; its absence for a cluster is the
-        # delivery-failure signal (see TeleportAuditProbeMissing).
-        - record: giantswarm:teleport_audit:probe_events:count_45m
+        # source cluster, as ingested by this installation's Loki.
+        # 15m window to avoid unnecessary load on Loki, but still catches the probe cadence.
+        - record: giantswarm:teleport_audit:probe_events:count_15m
           expr: |
             sum by (cluster_id, installation, pipeline, provider) (
               count_over_time(
                 {scrape_job="teleport.giantswarm.io"}
                   |= "bot-audit-pipeline-probe"
-                  | json
+                  | json fields_user="fields.user"
                   | fields_user = "bot-audit-pipeline-probe"
-                [45m]
+                [15m]
               )
             )

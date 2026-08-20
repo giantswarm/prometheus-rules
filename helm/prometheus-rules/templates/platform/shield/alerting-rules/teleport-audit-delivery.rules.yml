@@ -10,11 +10,7 @@ spec:
     - name: teleport-audit-delivery
       rules:
         # Fires per source cluster when no probe-generated Teleport audit
-        # event was ingested for it in 45m (expected: >=3). The probe
-        # guarantees every cluster produces >=4 events/h, so silence is
-        # always a delivery failure — or a dead probe, in which case this
-        # fires for every cluster fleet-wide (fail closed); the runbook's
-        # first step is to check the probe.
+        # event was ingested for it in the trailing 45m (probe runs every 15m, so >=3 failed probes).
         - alert: TeleportAuditProbeMissing
           annotations:
             description: 'No Teleport audit events from cluster {{`{{ $labels.cluster_id }}`}} (installation {{`{{ $labels.installation }}`}}) reached its Loki for 45m — audit log delivery for this cluster is broken.'
@@ -32,18 +28,16 @@ spec:
               )
             ) by (cluster_id, installation, pipeline, provider) > 0
             unless on (cluster_id) (
-              max by (cluster_id) (giantswarm:teleport_audit:probe_events:count_45m) > 0
+              max by (cluster_id) (
+                max_over_time(giantswarm:teleport_audit:probe_events:count_15m[35m])
+              ) > 0
             )
-          # Grace budget for a newly-ControlPlaneReady cluster: teleport-kube-agent
-          # install/registration, plus up to 15m probe cadence, plus Loki
-          # ingestion, ruler evaluation, and Mimir remote-write, routinely
-          # exceeds 20m end-to-end. Phase 3 fault-injection testing may tune
-          # this further.
+          # for: 40m covers new clusters as well as gaps or latency in reporting.
           for: 40m
           labels:
             area: platform
             cancel_if_cluster_has_no_workers: "true"
             cancel_if_outside_working_hours: "true"
             severity: page
-            team: atlas
+            team: shield
             topic: observability

@@ -12,6 +12,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `TeleportAuditProbeMissing` alert (`severity: page`, working hours only) firing when no Teleport probes reach Loki for 45 minutes.
 - Add Loki recording rule `giantswarm:teleport_audit:probe_events:count_15m` reporting the number of observed probe events as metric series.
 
+### Changed
+
+- Add `agent-platform` to the `DeploymentNotSatisfiedBumblebee` namespace selector, next to `agentic-platform`. The Agent Platform namespace is renamed per installation, so both names must match while the fleet migrates.
+
+## [4.114.1] - 2026-08-20
+
+### Changed
+
+- Base `EnvoyGatewayConfigUpdateRateTooHigh` on `status_update_total` instead of `xds_snapshot_create_total`, and lower it to `severity: notify`. Envoy Gateway rebuilds its whole xDS snapshot on every backend endpoint change, so ordinary pod rollouts drove the old expression to 6.6/min and paged on clusters where no Gateway API resource had changed. Unlike nginx, which updates endpoints without reloading, the snapshot counter is not a config-churn signal.
+
+## [4.114.0] - 2026-08-20
+
+### Added
+
+- Add `EnvoyGatewayConfigUpdateRateTooHigh` alert (`severity: page`, working hours only) firing when Envoy Gateway regenerates its xDS config more than 1/min averaged over the last hour, catching config churn ([giantswarm#37146](https://github.com/giantswarm/giantswarm/issues/37146)).
+- Add `EnvoyProxyConfigUpdateRejected` alert (`severity: page`, working hours only) firing when an Envoy proxy NACKs a pushed xDS config and keeps serving the previous one, which is otherwise invisible (pods stay Ready, the Gateway reports Programmed).
+
+### Changed
+
+- Update `CAPATooManyReconciliations` alert with higher threshold from 1500 to 5000. The healthy baseline is fleet-proportional (the awsmachine controller resyncs all AWSMachines and their owner Machines every 10m), and the largest CAPA fleet (~1100 machines) has a 90-day max of ~3000 reconciliations per 10m, keeping the alert flapping since 2026-07-30. A genuine hot loop still crosses 5000 within one evaluation window.
+
 ## [4.113.0] - 2026-07-28
 
 ### Added
@@ -4441,7 +4462,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.113.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.114.1...HEAD
+[4.114.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.114.0...v4.114.1
+[4.114.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.113.0...v4.114.0
 [4.113.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.112.0...v4.113.0
 [4.112.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.111.0...v4.112.0
 [4.111.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.110.0...v4.111.0

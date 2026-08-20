@@ -207,18 +207,28 @@ spec:
         topic: envoy-gateway
     - alert: EnvoyGatewayConfigUpdateRateTooHigh
       annotations:
-        description: '{{`Envoy Gateway in cluster {{ $labels.cluster_id }} is regenerating its configuration too often ({{ $value | printf "%.1f" }} updates/min over the last hour).`}}'
+        description: '{{`Envoy Gateway configuration in cluster {{ $labels.cluster_id }} is changing too often ({{ $value | printf "%.1f" }} resource updates/min over the last hour).`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
-      # xds_snapshot_create_total is incremented once per xDS snapshot built from the xds-IR, which is
-      # the Envoy Gateway equivalent of nginx writing a new config and reloading. The namespace matcher
-      # is required: the metric name is generic and must only match the Envoy Gateway control plane.
-      # `max by` without `pod` collapses the control-plane replicas into one series per cluster.
-      expr: max by (cluster_id, installation, pipeline, provider, namespace) (rate(xds_snapshot_create_total{namespace="envoy-gateway-system", status="success"}[60m])) * 60 > 1
+      # Envoy Gateway writes a status back only when a Gateway API resource actually changes, so
+      # status_update_total tracks config churn: Gateways, HTTPRoutes and policies being added,
+      # removed or edited. The fleet-wide per-cluster peak over 7 days is 0.4/min, so 1/min is a
+      # generous threshold.
+      #
+      # This used to key off xds_snapshot_create_total, which is far too noisy to alert on: Envoy
+      # Gateway rebuilds the whole xDS snapshot whenever a backend EndpointSlice changes, so ordinary
+      # pod rollouts drove it to 6.6/min on a cluster where no Gateway API resource changed at all.
+      # nginx updates its endpoints in-process without reloading, which is why its reload counter
+      # works as a config-churn signal and the snapshot counter does not.
+      #
+      # The namespace matcher is required: the metric name is generic and must only match the Envoy
+      # Gateway control plane. sum-then-max adds up the resource kinds while keeping the control-plane
+      # replicas from double counting.
+      expr: max by (cluster_id, installation, pipeline, provider, namespace) (sum by (cluster_id, installation, pipeline, provider, namespace, pod) (rate(status_update_total{namespace="envoy-gateway-system", status="success"}[60m]))) * 60 > 1
       for: 15m
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
-        severity: page
+        severity: notify
         team: cabbage
         topic: envoy-gateway
     - alert: EnvoyProxyConfigUpdateRejected

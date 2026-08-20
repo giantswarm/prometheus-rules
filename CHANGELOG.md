@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `network_traffic_analysis:beyla_network_flow_bytes_total:rate5m` recording rule for total network traffic rate.
+
 ### Changed
 
 - Base `EnvoyGatewayConfigUpdateRateTooHigh` on `status_update_total` instead of `xds_snapshot_create_total`, and lower it to `severity: notify`. Envoy Gateway rebuilds its whole xDS snapshot on every backend endpoint change, so ordinary pod rollouts drove the old expression to 6.6/min and paged on clusters where no Gateway API resource had changed. Unlike nginx, which updates endpoints without reloading, the snapshot counter is not a config-churn signal.

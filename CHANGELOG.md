@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.114.0] - 2026-08-20
+
 ### Added
 
 - Add `EnvoyGatewayConfigUpdateRateTooHigh` alert (`severity: page`, working hours only) firing when Envoy Gateway regenerates its xDS config more than 1/min averaged over the last hour, catching config churn ([giantswarm#37146](https://github.com/giantswarm/giantswarm/issues/37146)).
@@ -4445,7 +4447,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.113.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.114.0...HEAD
+[4.114.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.113.0...v4.114.0
 [4.113.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.112.0...v4.113.0
 [4.112.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.111.0...v4.112.0
 [4.111.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.110.0...v4.111.0

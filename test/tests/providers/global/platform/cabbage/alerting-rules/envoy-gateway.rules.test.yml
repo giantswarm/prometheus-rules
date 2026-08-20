@@ -137,17 +137,24 @@ tests:
               description: "Envoy proxy envoy-internal-abc has had listeners stuck in warming state for over 15m, so its latest configuration is not being served (it may still be serving the previous config). A persistently warming listener that never becomes active points at an xDS resource (e.g. an SDS secret) that never arrives."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
 
-  # EnvoyGatewayConfigUpdateRateTooHigh: xDS config churn on the control plane.
+  # EnvoyGatewayConfigUpdateRateTooHigh: Gateway API resource churn on the control plane.
+  # The rates of every kind add up, and only status="success" counts.
   - interval: 1m
     input_series:
-      - series: 'xds_snapshot_create_total{namespace="envoy-gateway-system", status="success", pod="envoy-gateway-abc", installation="myinstall", cluster_id="my-cluster", pipeline="stable", provider="capa"}'
-        # quiet for an hour, then a sustained burst of 3 snapshots/min
-        values: "0x60 3+3x119"
+      - series: 'status_update_total{namespace="envoy-gateway-system", status="success", kind="HTTPRoute", pod="envoy-gateway-abc", installation="myinstall", cluster_id="my-cluster", pipeline="stable", provider="capa"}'
+        # quiet for an hour, then a sustained 2 updates/min
+        values: "0x60 2+2x119"
+      - series: 'status_update_total{namespace="envoy-gateway-system", status="success", kind="Gateway", pod="envoy-gateway-abc", installation="myinstall", cluster_id="my-cluster", pipeline="stable", provider="capa"}'
+        # ... plus 1 update/min on another kind, for 3/min in total
+        values: "0x60 1+1x119"
+      - series: 'status_update_total{namespace="envoy-gateway-system", status="no_action", kind="HTTPRoute", pod="envoy-gateway-abc", installation="myinstall", cluster_id="my-cluster", pipeline="stable", provider="capa"}'
+        # reconciles that changed no status must not count towards churn
+        values: "0+10x179"
     alert_rule_test:
       # no churn at all: silent
       - alertname: EnvoyGatewayConfigUpdateRateTooHigh
         eval_time: 60m
-      # burst started, but the hourly average has not crossed 1/min yet
+      # churn started, but the hourly average has not crossed 1/min yet
       - alertname: EnvoyGatewayConfigUpdateRateTooHigh
         eval_time: 75m
       # the 60m rate window is now entirely inside the burst: 3/min, sustained past the 15m for-window
@@ -156,7 +163,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              severity: page
+              severity: notify
               team: cabbage
               topic: envoy-gateway
               cancel_if_outside_working_hours: "true"
@@ -166,7 +173,7 @@ tests:
               pipeline: stable
               provider: capa
             exp_annotations:
-              description: "Envoy Gateway in cluster my-cluster is regenerating its configuration too often (3.0 updates/min over the last hour)."
+              description: "Envoy Gateway configuration in cluster my-cluster is changing too often (3.0 resource updates/min over the last hour)."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
 
   # EnvoyProxyConfigUpdateRejected: the proxy NACKs a pushed config and keeps serving the old one.

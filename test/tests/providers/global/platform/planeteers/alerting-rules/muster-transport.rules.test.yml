@@ -1,0 +1,153 @@
+---
+rule_files:
+  - muster-transport.rules.yml
+
+tests:
+  # MusterTransportSecretMissing
+  # Counter increases by 1 every minute for 30 minutes, simulating tbot identity
+  # Secret load failures. Then the counter stops incrementing for 30 minutes,
+  # so rate(...[5m]) collapses back to zero and the alert resolves.
+  - interval: 1m
+    input_series:
+      - series: 'muster_transport_secret_load_total{secret="tbot-identity-mcp-glean", result="error", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="capa"}'
+        values: "0+1x30 30+0x30"
+    alert_rule_test:
+      # Before the 5m for: window completes, the alert is still pending.
+      - alertname: MusterTransportSecretMissing
+        eval_time: 4m
+        exp_alerts: []
+      # After 5m of sustained failures + the 5m for window the alert fires.
+      - alertname: MusterTransportSecretMissing
+        eval_time: 15m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              severity: page
+              team: planeteers
+              topic: muster
+              cluster_id: gazelle
+              installation: gazelle
+              pipeline: stable
+              provider: capa
+              secret: tbot-identity-mcp-glean
+            exp_annotations:
+              description: 'muster failed to load tbot identity Secret tbot-identity-mcp-glean in cluster gazelle. tbot may not be running, or the Secret was deleted/recreated. Check the tbot Deployment in muster-system.'
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/muster-transport-secret-missing/
+      # Once the counter stops incrementing the rate falls to zero and the
+      # alert clears (well past the for: window).
+      - alertname: MusterTransportSecretMissing
+        eval_time: 50m
+        exp_alerts: []
+
+  # MusterTransportSecretMissing — non-firing window: only successful loads.
+  - interval: 1m
+    input_series:
+      - series: 'muster_transport_secret_load_total{secret="tbot-identity-mcp-glean", result="ok", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="capa"}'
+        values: "0+1x60"
+    alert_rule_test:
+      - alertname: MusterTransportSecretMissing
+        eval_time: 30m
+        exp_alerts: []
+
+  # MusterTransportClusterDrift
+  # An MCPServer references a cluster muster doesn't know about: the
+  # cluster_unknown counter increases steadily for 30 minutes.
+  - interval: 1m
+    input_series:
+      - series: 'muster_transport_lookup_total{result="cluster_unknown", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="capa"}'
+        values: "0+1x40 40+0x30"
+    alert_rule_test:
+      # Below the 10m for: window — pending.
+      - alertname: MusterTransportClusterDrift
+        eval_time: 9m
+        exp_alerts: []
+      # Past the for window with sustained drift — firing.
+      - alertname: MusterTransportClusterDrift
+        eval_time: 25m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              severity: notify
+              team: planeteers
+              topic: muster
+              cluster_id: gazelle
+              installation: gazelle
+              pipeline: stable
+              provider: capa
+            exp_annotations:
+              description: "An MCPServer CR is requesting a transport cluster that is not configured in muster on gazelle. Either add the cluster to muster's helm clusters[] in giantswarm-management-clusters, or kubectl patch the offending CR. MCPServer.status.conditions[type=TransportReady] names the cluster."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/muster-transport-cluster-drift/
+      # Drift stops incrementing — rate drops to zero, alert resolves.
+      - alertname: MusterTransportClusterDrift
+        eval_time: 60m
+        exp_alerts: []
+
+  # MusterTransportClusterDrift — non-firing: only resolved lookups.
+  - interval: 1m
+    input_series:
+      - series: 'muster_transport_lookup_total{result="resolved", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="capa"}'
+        values: "0+10x60"
+    alert_rule_test:
+      - alertname: MusterTransportClusterDrift
+        eval_time: 30m
+        exp_alerts: []
+
+  # MusterTokenExchangeFailures — firing case
+  # Errors at 1/min, total at 10/min → error ratio = 10% > 5% threshold.
+  - interval: 1m
+    input_series:
+      - series: 'muster_token_exchange_total{result="error", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="capa"}'
+        values: "0+1x40 40+0x30"
+      - series: 'muster_token_exchange_total{result="success", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="capa"}'
+        values: "0+9x40 360+9x30"
+    alert_rule_test:
+      # Below the 10m for: window — pending.
+      - alertname: MusterTokenExchangeFailures
+        eval_time: 9m
+        exp_alerts: []
+      # Past the for window with sustained 10% error rate — firing.
+      - alertname: MusterTokenExchangeFailures
+        eval_time: 25m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              severity: notify
+              team: planeteers
+              topic: muster
+              cluster_id: gazelle
+              installation: gazelle
+              pipeline: stable
+              provider: capa
+            exp_annotations:
+              description: 'The Dex RFC 8693 token-exchange path on muster (gazelle) is failing for more than 5% of requests over the last 5 minutes. Likely causes: remote Dex regression, expired client-credentials Secret, or network/Teleport disruption.'
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/muster-token-exchange-failures/
+
+  # MusterTokenExchangeFailures — non-firing case 1: total non-zero, errors zero.
+  # Confirms the ratio expression doesn't false-positive when all exchanges
+  # succeed.
+  - interval: 1m
+    input_series:
+      - series: 'muster_token_exchange_total{result="success", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="capa"}'
+        values: "0+10x60"
+      - series: 'muster_token_exchange_total{result="cache_hit", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="capa"}'
+        values: "0+5x60"
+    alert_rule_test:
+      - alertname: MusterTokenExchangeFailures
+        eval_time: 30m
+        exp_alerts: []
+
+  # MusterTokenExchangeFailures — non-firing case 2: low error rate (~2%) below
+  # the 5% threshold.
+  - interval: 1m
+    input_series:
+      - series: 'muster_token_exchange_total{result="error", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="capa"}'
+        values: "0+1x60"
+      - series: 'muster_token_exchange_total{result="success", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="capa"}'
+        values: "0+50x60"
+    alert_rule_test:
+      - alertname: MusterTokenExchangeFailures
+        eval_time: 30m
+        exp_alerts: []

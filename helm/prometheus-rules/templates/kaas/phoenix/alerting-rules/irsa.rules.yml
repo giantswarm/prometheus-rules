@@ -12,7 +12,7 @@ spec:
     - alert: IRSAClaimNotReady
       annotations:
         description: '{{`IRSAClaim {{ $labels.name }} in Cluster {{ $labels.installation }} is not ready.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/ops-recipes/irsaclaim-not-ready/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/irsa/
       expr: irsaclaim_status_conditions{type="Ready", status="False"} > 0
       for: 30m
       labels:

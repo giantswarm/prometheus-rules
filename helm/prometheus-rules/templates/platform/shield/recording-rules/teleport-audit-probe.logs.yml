@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4}}
+  name: teleport-audit-probe.logs.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+    - name: teleport-audit-probe.logs
+      interval: 1m
+      rules:
+        # Counts audit events produced by the audit-pipeline-probe bot, per
+        # source cluster, as ingested by this installation's Loki.
+        # 15m window to avoid unnecessary load on Loki, but still catches the probe cadence.
+        - record: giantswarm:teleport_audit:probe_events:count_15m
+          expr: |
+            sum by (cluster_id, installation, pipeline, provider) (
+              count_over_time(
+                {scrape_job="teleport.giantswarm.io"}
+                  |= "bot-audit-pipeline-probe"
+                  | json fields_user="fields.user"
+                  | fields_user = "bot-audit-pipeline-probe"
+                [15m]
+              )
+            )

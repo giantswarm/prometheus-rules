@@ -7,9 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `TeleportAuditProbeMissing` alert (`severity: page`, working hours only) firing when no Teleport probes reach Loki for 45 minutes.
+- Add Loki recording rule `giantswarm:teleport_audit:probe_events:count_15m` reporting the number of observed probe events as metric series.
+
 ### Changed
 
 - Add `agent-platform` to the `DeploymentNotSatisfiedBumblebee` namespace selector, next to `agentic-platform`. The Agent Platform namespace is renamed per installation, so both names must match while the fleet migrates.
+
+### Removed
+
+- Remove `TeleportAuditLogsMissing` alert in favor of `TeleportAuditProbeMissing`.
 
 ## [4.114.1] - 2026-08-20
 

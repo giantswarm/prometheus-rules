@@ -36,3 +36,116 @@ tests:
             exp_annotations:
               description: "Flux Kustomization flux in ns flux-giantswarm on test has been suspended for 24h."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-suspended/?INSTALLATION=test&CLUSTER="
+
+  # giantswarm#37456 - during the egress incident (giantswarm#37391) the sources that failed lived in
+  # `default` and `org-*`, which the old `.*giantswarm.*` selector excluded. This is the case that must page.
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="default", customresource_kind="GitRepository", name="provisioners", ready="False"}'
+        values: "1x60"
+      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="default", customresource_kind="GitRepository", name="team-apps", ready="False"}'
+        values: "1x60"
+    alert_rule_test:
+      # not yet firing before `for: 30m` has elapsed
+      - alertname: FluxSourceFailed
+        eval_time: 25m
+        exp_alerts: []
+      - alertname: FluxSourceFailed
+        eval_time: 35m
+        exp_alerts:
+          - exp_labels:
+              alertname: "FluxSourceFailed"
+              area: platform
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_metrics_broken: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "false"
+              cluster_id: "myinstall"
+              customresource_kind: "GitRepository"
+              exported_namespace: "default"
+              installation: "myinstall"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "page"
+              team: "honeybadger"
+              topic: "releng"
+            exp_annotations:
+              description: "2 Flux GitRepository source(s) in ns default on myinstall/myinstall are stuck in Failed state."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION=myinstall&CLUSTER=myinstall&NAMESPACE=default"
+
+  # giantswarm#37456 - flux-ksm stopped reporting for 4h during the incident, which silently disabled every
+  # other alert in this file. FluxMetricsMissing is the dead-man's switch for that.
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="flux-giantswarm", customresource_kind="Kustomization", name="flux", ready="True"}'
+        values: "1x30"
+    alert_rule_test:
+      # metrics still present
+      - alertname: FluxMetricsMissing
+        eval_time: 20m
+        exp_alerts: []
+      - alertname: FluxMetricsMissing
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels:
+              alertname: "FluxMetricsMissing"
+              area: platform
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_metrics_broken: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "false"
+              cluster_id: "myinstall"
+              cluster_type: "management_cluster"
+              installation: "myinstall"
+              job: "flux-ksm"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "page"
+              team: "honeybadger"
+              topic: "releng"
+            exp_annotations:
+              description: "Flux metrics are missing on myinstall: no gotk_resource_info from flux-ksm, so no Flux alert can fire."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-metrics-missing/?INSTALLATION=myinstall&CLUSTER=myinstall"
+
+  # giantswarm#37456 - noise guard. On a large customer MC, 2-4 customer Kustomizations are chronically
+  # `ready="False"` and 5-21 are chronically `suspended`, every day. Neither may ever page.
+  # interval must stay <= the 5m lookback delta, otherwise the series goes stale between rule evaluations
+  # and the `for:` timer resets instead of accumulating.
+  - interval: 5m
+    input_series:
+      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="default", customresource_kind="Kustomization", name="team-workloads", ready="False"}'
+        values: "1x2160"
+      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="default", customresource_kind="Kustomization", name="team-config", suspended="true", ready="True"}'
+        values: "1x2160"
+    alert_rule_test:
+      # a failing customer Kustomization must not page - that is a customer concern, not an egress signal
+      - alertname: FluxKustomizationFailed
+        eval_time: 100h
+        exp_alerts: []
+      # suspended for 48h is normal on a customer MC - must stay quiet
+      - alertname: FluxCustomerSuspendedForTooLong
+        eval_time: 48h
+        exp_alerts: []
+      # suspended for over 7d becomes a Slack notification (severity: notify), never a page
+      - alertname: FluxCustomerSuspendedForTooLong
+        eval_time: 175h
+        exp_alerts:
+          - exp_labels:
+              alertname: "FluxCustomerSuspendedForTooLong"
+              area: platform
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_metrics_broken: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "myinstall"
+              customresource_kind: "Kustomization"
+              exported_namespace: "default"
+              installation: "myinstall"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "notify"
+              team: "honeybadger"
+              topic: "releng"
+            exp_annotations:
+              description: "1 Flux Kustomization(s) in ns default on myinstall have been suspended for 7 days."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-suspended/?INSTALLATION=myinstall&CLUSTER=myinstall"

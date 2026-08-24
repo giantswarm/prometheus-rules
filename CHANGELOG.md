@@ -7,10 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `FluxMetricsMissing` alert (`severity: page`, 24/7) firing when `flux-ksm` stops reporting `gotk_resource_info` for 30m. Every other Flux alert is built on that metric, so its absence silently disables all of them — during [giantswarm#37391](https://github.com/giantswarm/giantswarm/issues/37391) it was gone for four hours ([giantswarm#37456](https://github.com/giantswarm/giantswarm/issues/37456)).
+- Add `FluxCustomerSuspendedForTooLong` alert (`severity: notify`) for Flux objects suspended for over 7 days outside `flux-giantswarm`. A suspended Kustomization silently blocked reconciliation during the incident and nothing surfaced it. Notify-only because customers routinely and legitimately suspend objects.
+
 ### Changed
 
 - `LokiRestartingTooOften` - increased threshold
 - `LoggingAgentMissingOnNode` - increased `for` to 2h.
+- Widen `FluxSourceFailed` to every namespace, not just `.*giantswarm.*`, and aggregate it per namespace/kind. On a customer MC the vast majority of sources live in `default` and `org-*` — on one observed MC, ~570 of ~660 — so a loss of internet egress failed hundreds of sources without a single alert matching ([giantswarm#37456](https://github.com/giantswarm/giantswarm/issues/37456)).
+- Page 24/7 on `FluxSourceFailed` and `FluxWorkloadClusterSourceFailed` (`cancel_if_outside_working_hours: "false"`) and cut `for: 2h` to `30m`. If Flux cannot fetch its sources, nothing can be delivered to the cluster, including the mitigation an oncaller is applying. Both alerts now also carry the `cancel_if_kube_state_metrics_down`, `cancel_if_metrics_broken` and `cancel_if_monitoring_agent_down` inhibitions so a monitoring blackout does not double-page.
 
 ## [4.118.0] - 2026-08-31
 

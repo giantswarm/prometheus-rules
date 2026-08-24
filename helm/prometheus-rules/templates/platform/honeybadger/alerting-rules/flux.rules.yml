@@ -143,13 +143,23 @@ spec:
     - alert: FluxSourceFailed
       annotations:
         description: |-
-          {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&SOURCE_NAME={{ $labels.name }}`}}'
-      expr: gotk_resource_info{job="flux-ksm", ready="False", customresource_kind=~"GitRepository|HelmRepository|Bucket|OCIRepository", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
-      for: 2h
+          {{`{{ $value }} Flux {{ $labels.customresource_kind }} source(s) in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} are stuck in Failed state.`}}
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}`}}'
+      # Covers every namespace: on a customer MC most sources live in `default` and `org-*` (giantswarm#37456).
+      # Aggregated per namespace/kind because a loss of egress fails hundreds of sources at once.
+      expr: |
+        count by (cluster_id, customresource_kind, exported_namespace, installation, pipeline, provider) (
+          gotk_resource_info{job="flux-ksm", ready="False", customresource_kind=~"GitRepository|HelmRepository|Bucket|OCIRepository", cluster_type="management_cluster"}
+        ) > 0
+      for: 30m
       labels:
         area: platform
-        cancel_if_outside_working_hours: "true"
+        # Pages 24/7 on purpose: if Flux cannot fetch its sources, nothing can be delivered to the cluster,
+        # including the mitigation an oncaller is trying to apply. See giantswarm#37391.
+        cancel_if_outside_working_hours: "false"
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_metrics_broken: "true"
+        cancel_if_monitoring_agent_down: "true"
         severity: page
         team: honeybadger
         topic: releng
@@ -164,10 +174,14 @@ spec:
           {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&SOURCE_NAME={{ $labels.name }}`}}'
       expr: gotk_resource_info{ready="False", job="kube-state-metrics", customresource_kind=~"GitRepository|HelmRepository|Bucket|OCIRepository", cluster_type="workload_cluster", organization="giantswarm"} > 0
-      for: 2h
+      for: 30m
       labels:
         area: platform
-        cancel_if_outside_working_hours: "true"
+        # Pages 24/7, same reasoning as FluxSourceFailed. See giantswarm#37391.
+        cancel_if_outside_working_hours: "false"
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_metrics_broken: "true"
+        cancel_if_monitoring_agent_down: "true"
         severity: page
         team: honeybadger
         topic: releng
@@ -204,6 +218,55 @@ spec:
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
+        severity: page
+        team: honeybadger
+        topic: releng
+#
+# FluxCustomerSuspendedForTooLong
+#
+# Suspended objects outside `flux-giantswarm` are legitimately paused by customers, so this never pages -
+# it only makes "paused for weeks" discoverable. One silently blocked reconciliation during giantswarm#37391.
+#
+    - alert: FluxCustomerSuspendedForTooLong
+      annotations:
+        description: |-
+          {{`{{ $value }} Flux {{ $labels.customresource_kind }}(s) in ns {{ $labels.exported_namespace }} on {{ $labels.installation }} have been suspended for 7 days.`}}
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-suspended/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      expr: |
+        count by (cluster_id, customresource_kind, exported_namespace, installation, pipeline, provider) (
+          gotk_resource_info{job="flux-ksm", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", suspended="true"}
+        ) > 0
+      for: 7d
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_metrics_broken: "true"
+        cancel_if_monitoring_agent_down: "true"
+        severity: notify
+        team: honeybadger
+        topic: releng
+#
+# FluxMetricsMissing
+#
+# Dead-man's switch for Flux alerting itself: every other alert here is built on `gotk_resource_info`, so
+# when flux-ksm stops reporting they all silently stop being able to fire (giantswarm#37391, for four hours).
+# Uses the Mimir-safe `absent()` pattern (see README, "Absent function").
+#
+    - alert: FluxMetricsMissing
+      annotations:
+        description: |-
+          {{`Flux metrics are missing on {{ $labels.installation }}: no gotk_resource_info from flux-ksm, so no Flux alert can fire.`}}
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-metrics-missing/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      expr: absent(gotk_resource_info{job="flux-ksm", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
+      for: 30m
+      labels:
+        area: platform
+        # Pages 24/7: while this fires, Flux alerting is blind.
+        cancel_if_outside_working_hours: "false"
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_metrics_broken: "true"
+        cancel_if_monitoring_agent_down: "true"
         severity: page
         team: honeybadger
         topic: releng

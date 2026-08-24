@@ -1,0 +1,43 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4}}
+  name: teleport-audit-delivery.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+    - name: teleport-audit-delivery
+      rules:
+        # Fires per source cluster when no probe-generated Teleport audit
+        # event was ingested for it in the trailing 45m (probe runs every 15m, so >=3 failed probes).
+        - alert: TeleportAuditProbeMissing
+          annotations:
+            description: 'No Teleport audit events from cluster {{`{{ $labels.cluster_id }}`}} (installation {{`{{ $labels.installation }}`}}) reached its Loki for 45m — audit log delivery for this cluster is broken.'
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/teleport-audit-log-delivery/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+          expr: |-
+            count(
+              label_replace(
+                (capi_cluster_status_condition{app="kube-state-metrics", type="ControlPlaneReady", status="True"} == 1)
+                  * on (name, installation, pipeline, provider)
+                  (capi_cluster_status_phase{app="kube-state-metrics", phase="Deleting"} == 0),
+                "cluster_id",
+                "$1",
+                "name",
+                "(.*)"
+              )
+            ) by (cluster_id, installation, pipeline, provider) > 0
+            unless on (cluster_id) (
+              max by (cluster_id) (
+                max_over_time(giantswarm:teleport_audit:probe_events:count_15m[35m])
+              ) > 0
+            )
+          # for: 40m covers new clusters as well as gaps or latency in reporting.
+          for: 40m
+          labels:
+            area: platform
+            cancel_if_cluster_has_no_workers: "true"
+            cancel_if_outside_working_hours: "true"
+            severity: page
+            team: shield
+            topic: observability

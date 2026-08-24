@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: apiserver-slo.recording.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  # Pre-aggregate `apiserver_request_total` per cluster so the apiserver-availability SLI can be
+  # computed from these instead of scanning every raw series over its window.
+  # The grouping labels and metric selectors must stay in sync with
+  # areas/kaas/teams/tenet/apiserver/slos/availability.yaml in giantswarm/sloth-rules.
+  - interval: 1m
+    name: apiserver-slo.recording
+    rules:
+      - expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) (rate(apiserver_request_total{code=~"(5..|429)"}[5m]))
+        record: gs_slo:apiserver_request_errors:rate5m
+      - expr: |
+          sum by (cluster_id, cluster_type, customer, installation, pipeline, provider, region) (rate(apiserver_request_total[5m]))
+        record: gs_slo:apiserver_request_total:rate5m

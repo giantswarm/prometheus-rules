@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Make `IngressControllerDown` alert quorum-based instead of per-replica.
+
 ## [4.115.0] - 2026-08-24
 
 ### Added

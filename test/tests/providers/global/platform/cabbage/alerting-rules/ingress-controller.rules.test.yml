@@ -1,0 +1,223 @@
+---
+rule_files:
+  - ingress-controller.rules.yml
+
+tests:
+  - interval: 1m
+    input_series:
+      # the flapping target: continuously up == 0, well past the 15m for-window
+      - series: 'up{pod="ingress-nginx-app-controller-abc-pod01", node="ip-10-0-0-1.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "0x180"
+      # seven healthy peers of the same controller
+      - series: 'up{pod="ingress-nginx-app-controller-abc-pod02", node="ip-10-0-0-2.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x180"
+      - series: 'up{pod="ingress-nginx-app-controller-abc-pod03", node="ip-10-0-0-3.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x180"
+      - series: 'up{pod="ingress-nginx-app-controller-abc-pod04", node="ip-10-0-0-4.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x180"
+      - series: 'up{pod="ingress-nginx-app-controller-abc-pod05", node="ip-10-0-0-5.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x180"
+      - series: 'up{pod="ingress-nginx-app-controller-abc-pod06", node="ip-10-0-0-6.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x180"
+      - series: 'up{pod="ingress-nginx-app-controller-abc-pod07", node="ip-10-0-0-7.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x180"
+      - series: 'up{pod="ingress-nginx-app-controller-abc-pod08", node="ip-10-0-0-8.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x180"
+    alert_rule_test:
+      # 1 of 8 down = 12.5%, below the 25% threshold: no alert at any point
+      - alertname: IngressControllerDown
+        eval_time: 20m
+      - alertname: IngressControllerDown
+        eval_time: 60m
+      - alertname: IngressControllerDown
+        eval_time: 180m
+
+  # Threshold boundary: exactly 25% down must NOT page, because the expression uses `> 0.25`
+  # and not `>= 0.25`. This pins the comparison operator.
+  - interval: 1m
+    input_series:
+      - series: 'up{pod="ingress-nginx-app-controller-abc-aaa", node="ip-10-0-0-1.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "0x180"
+      - series: 'up{pod="ingress-nginx-app-controller-abc-bbb", node="ip-10-0-0-2.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x180"
+      - series: 'up{pod="ingress-nginx-app-controller-abc-ccc", node="ip-10-0-0-3.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x180"
+      - series: 'up{pod="ingress-nginx-app-controller-abc-ddd", node="ip-10-0-0-4.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x180"
+    alert_rule_test:
+      # 1 of 4 down = exactly 25%: no page
+      - alertname: IngressControllerDown
+        eval_time: 20m
+      - alertname: IngressControllerDown
+        eval_time: 180m
+
+  # A rollout that leaves a minority of new replicas unscrapable: the 2026-07-23 case where 3 new pods were stuck in ImagePullBackOff while the old
+  # ReplicaSet kept serving traffic from 5 healthy pods. At 3 of 8 down = 37.5% this is above the
+  # 25% threshold, so it pages. NOTE: with a 50% threshold this case stayed silent.
+  - interval: 1m
+    input_series:
+      - series: 'up{pod="ingress-nginx-app-controller-new-1", node="ip-10-0-0-1.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="pangolin", cluster_id="demo02"}'
+        values: "0x180"
+      - series: 'up{pod="ingress-nginx-app-controller-new-2", node="ip-10-0-0-2.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="pangolin", cluster_id="demo02"}'
+        values: "0x180"
+      - series: 'up{pod="ingress-nginx-app-controller-new-3", node="ip-10-0-0-3.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="pangolin", cluster_id="demo02"}'
+        values: "0x180"
+      - series: 'up{pod="ingress-nginx-app-controller-old-1", node="ip-10-0-0-4.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="pangolin", cluster_id="demo02"}'
+        values: "1x180"
+      - series: 'up{pod="ingress-nginx-app-controller-old-2", node="ip-10-0-0-5.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="pangolin", cluster_id="demo02"}'
+        values: "1x180"
+      - series: 'up{pod="ingress-nginx-app-controller-old-3", node="ip-10-0-0-6.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="pangolin", cluster_id="demo02"}'
+        values: "1x180"
+      - series: 'up{pod="ingress-nginx-app-controller-old-4", node="ip-10-0-0-7.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="pangolin", cluster_id="demo02"}'
+        values: "1x180"
+      - series: 'up{pod="ingress-nginx-app-controller-old-5", node="ip-10-0-0-8.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="pangolin", cluster_id="demo02"}'
+        values: "1x180"
+    alert_rule_test:
+      # inside the 15m for-window: not yet firing
+      - alertname: IngressControllerDown
+        eval_time: 10m
+      # sustained past the for-window: one instance per down pod
+      - alertname: IngressControllerDown
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: ingress
+              cancel_if_outside_working_hours: "false"
+              cancel_if_kubelet_down: "true"
+              pod: ingress-nginx-app-controller-new-1
+              node: ip-10-0-0-1.eu-west-1.compute.internal
+              ip: 10.0.0.1
+              namespace: ingress-controllers
+              job: ingress-nginx-app-controller-metrics
+              installation: pangolin
+              cluster_id: demo02
+            exp_annotations:
+              description: "More than 25% of the Ingress Controller replicas of ingress-nginx-app-controller-metrics in namespace ingress-controllers are down (ingress-nginx-app-controller-new-1 is one of them)."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/managed-app-nginx-ic/"
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: ingress
+              cancel_if_outside_working_hours: "false"
+              cancel_if_kubelet_down: "true"
+              pod: ingress-nginx-app-controller-new-2
+              node: ip-10-0-0-2.eu-west-1.compute.internal
+              ip: 10.0.0.2
+              namespace: ingress-controllers
+              job: ingress-nginx-app-controller-metrics
+              installation: pangolin
+              cluster_id: demo02
+            exp_annotations:
+              description: "More than 25% of the Ingress Controller replicas of ingress-nginx-app-controller-metrics in namespace ingress-controllers are down (ingress-nginx-app-controller-new-2 is one of them)."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/managed-app-nginx-ic/"
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: ingress
+              cancel_if_outside_working_hours: "false"
+              cancel_if_kubelet_down: "true"
+              pod: ingress-nginx-app-controller-new-3
+              node: ip-10-0-0-3.eu-west-1.compute.internal
+              ip: 10.0.0.3
+              namespace: ingress-controllers
+              job: ingress-nginx-app-controller-metrics
+              installation: pangolin
+              cluster_id: demo02
+            exp_annotations:
+              description: "More than 25% of the Ingress Controller replicas of ingress-nginx-app-controller-metrics in namespace ingress-controllers are down (ingress-nginx-app-controller-new-3 is one of them)."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/managed-app-nginx-ic/"
+
+  # A real outage must still page: a majority of the controller's replicas go down and stay down.
+  - interval: 1m
+    input_series:
+      - series: 'up{pod="ingress-nginx-app-controller-abc-aaa", node="ip-10-0-0-1.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x20 0x180"
+      - series: 'up{pod="ingress-nginx-app-controller-abc-bbb", node="ip-10-0-0-2.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x20 0x180"
+      - series: 'up{pod="ingress-nginx-app-controller-abc-ccc", node="ip-10-0-0-3.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x200"
+    alert_rule_test:
+      # healthy before the outage
+      - alertname: IngressControllerDown
+        eval_time: 15m
+      # 2 of 3 down = 66% from 21m, but still inside the 15m for-window
+      - alertname: IngressControllerDown
+        eval_time: 30m
+      # sustained past the for-window: pages, one instance per down pod, ip label populated
+      - alertname: IngressControllerDown
+        eval_time: 40m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: ingress
+              cancel_if_outside_working_hours: "false"
+              cancel_if_kubelet_down: "true"
+              pod: ingress-nginx-app-controller-abc-aaa
+              node: ip-10-0-0-1.eu-west-1.compute.internal
+              ip: 10.0.0.1
+              namespace: ingress-controllers
+              job: ingress-nginx-app-controller-metrics
+              installation: narwhal
+              cluster_id: demo01
+            exp_annotations:
+              description: "More than 25% of the Ingress Controller replicas of ingress-nginx-app-controller-metrics in namespace ingress-controllers are down (ingress-nginx-app-controller-abc-aaa is one of them)."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/managed-app-nginx-ic/"
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: ingress
+              cancel_if_outside_working_hours: "false"
+              cancel_if_kubelet_down: "true"
+              pod: ingress-nginx-app-controller-abc-bbb
+              node: ip-10-0-0-2.eu-west-1.compute.internal
+              ip: 10.0.0.2
+              namespace: ingress-controllers
+              job: ingress-nginx-app-controller-metrics
+              installation: narwhal
+              cluster_id: demo01
+            exp_annotations:
+              description: "More than 25% of the Ingress Controller replicas of ingress-nginx-app-controller-metrics in namespace ingress-controllers are down (ingress-nginx-app-controller-abc-bbb is one of them)."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/managed-app-nginx-ic/"
+
+  # A single-replica ingress controller must still page when its only replica is down, and the
+  # small internal controller must be evaluated separately from the large public one sharing the
+  # same namespace. Here the public controller is fully healthy while the internal one is down.
+  - interval: 1m
+    input_series:
+      - series: 'up{pod="internal-ingress-nginx-app-controller-x", node="ip-10-0-0-9.eu-west-1.compute.internal", namespace="ingress-controllers", job="internal-ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "0x180"
+      - series: 'up{pod="ingress-nginx-app-controller-abc-aaa", node="ip-10-0-0-1.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x180"
+      - series: 'up{pod="ingress-nginx-app-controller-abc-bbb", node="ip-10-0-0-2.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x180"
+      - series: 'up{pod="ingress-nginx-app-controller-abc-ccc", node="ip-10-0-0-3.eu-west-1.compute.internal", namespace="ingress-controllers", job="ingress-nginx-app-controller-metrics", installation="narwhal", cluster_id="demo01"}'
+        values: "1x180"
+    alert_rule_test:
+      - alertname: IngressControllerDown
+        eval_time: 20m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: ingress
+              cancel_if_outside_working_hours: "false"
+              cancel_if_kubelet_down: "true"
+              pod: internal-ingress-nginx-app-controller-x
+              node: ip-10-0-0-9.eu-west-1.compute.internal
+              ip: 10.0.0.9
+              namespace: ingress-controllers
+              job: internal-ingress-nginx-app-controller-metrics
+              installation: narwhal
+              cluster_id: demo01
+            exp_annotations:
+              description: "More than 25% of the Ingress Controller replicas of internal-ingress-nginx-app-controller-metrics in namespace ingress-controllers are down (internal-ingress-nginx-app-controller-x is one of them)."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/managed-app-nginx-ic/"

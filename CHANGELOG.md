@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.115.0] - 2026-08-24
+
 ### Added
 
 - Add `TeleportAuditProbeMissing` alert (`severity: page`, working hours only) firing when no Teleport probes reach Loki for 45 minutes.
@@ -4466,7 +4468,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.114.1...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.115.0...HEAD
+[4.115.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.114.1...v4.115.0
 [4.114.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.114.0...v4.114.1
 [4.114.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.113.0...v4.114.0
 [4.113.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.112.0...v4.113.0

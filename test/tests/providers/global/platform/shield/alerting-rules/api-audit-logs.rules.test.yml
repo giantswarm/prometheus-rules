@@ -51,8 +51,8 @@ tests:
               pipeline: stable
               provider: capa
               severity: notify
-              team: shield
-              topic: security
+              team: tenet
+              topic: kubernetes
               user: "system:serviceaccount:default:evil-workload"
             exp_annotations:
               description: "User system:serviceaccount:default:evil-workload on workload cluster 12345 (installation golem) has been sustained at 60 API audit events/s — more than 3x its level 24h ago, or newly appeared — likely a workload flooding the API audit log."

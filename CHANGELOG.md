@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Narrow the `DeploymentNotSatisfiedBumblebee` namespace selector to `agent-platform`. The `agent.*-platform` pattern covered the migration window; every installation now runs the platform in `agent-platform`.
 - Point the `IRSAClaimNotReady` and `CAPATooManyReconciliations` `runbook_url` annotations at their runbooks instead of the retired `ops-recipes` pages, so on-call lands on the runbook directly rather than through a redirect.
+- Point the log-based alert example in the README at `/docs/support-and-ops/runbooks/log-errors/`. The `ops-recipes` path it used has been retired in favour of runbooks.
+- Remove the orphaned `crsync.rules.test.yml`. Its rule file was deleted in #1376, so the test referenced a `crsync.rules.yml` that no longer exists, and it still asserted a retired `ops-recipes` runbook URL.
 
 ### Fixed
 
@@ -42,8 +44,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Point the log-based alert example in the README at `/docs/support-and-ops/runbooks/log-errors/`. The `ops-recipes` path it used has been retired in favour of runbooks.
-- Remove the orphaned `crsync.rules.test.yml`. Its rule file was deleted in #1376, so the test referenced a `crsync.rules.yml` that no longer exists, and it still asserted a retired `ops-recipes` runbook URL.
-- Add `agent-platform` to the `DeploymentNotSatisfiedBumblebee` namespace selector, next to `agentic-platform`. The Agent Platform namespace is renamed per installation, so both names must match while the fleet migrates.
 
 ### Removed
 

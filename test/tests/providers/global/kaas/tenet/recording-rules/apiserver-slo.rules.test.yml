@@ -1,0 +1,39 @@
+---
+rule_files:
+  - apiserver-slo.rules.yml
+
+tests:
+  # The pre-aggregation must keep clusters separate and must sum 5xx and 429 into the error
+  # rate, so that errors/total reproduces the ratio the SLI used to compute from raw data.
+  - interval: 1m
+    input_series:
+      # workload cluster: 600 req/min OK, 60 req/min 5xx, 60 req/min 429 => total 12/s, errors 2/s
+      - series: 'apiserver_request_total{code="200", cluster_id="test-wc", cluster_type="workload_cluster", customer="test-customer", installation="test-installation", pipeline="testing", provider="$provider", region="test-region"}'
+        values: "0+600x20"
+      - series: 'apiserver_request_total{code="500", cluster_id="test-wc", cluster_type="workload_cluster", customer="test-customer", installation="test-installation", pipeline="testing", provider="$provider", region="test-region"}'
+        values: "0+60x20"
+      - series: 'apiserver_request_total{code="429", cluster_id="test-wc", cluster_type="workload_cluster", customer="test-customer", installation="test-installation", pipeline="testing", provider="$provider", region="test-region"}'
+        values: "0+60x20"
+      # management cluster: 300 req/min OK only => total 5/s, no error series at all
+      - series: 'apiserver_request_total{code="200", cluster_id="test-mc", cluster_type="management_cluster", customer="test-customer", installation="test-installation", pipeline="testing", provider="$provider", region="test-region"}'
+        values: "0+300x20"
+    promql_expr_test:
+      - expr: gs_slo:apiserver_request_errors:rate5m
+        eval_time: 10m
+        exp_samples:
+          - labels: 'gs_slo:apiserver_request_errors:rate5m{cluster_id="test-wc", cluster_type="workload_cluster", customer="test-customer", installation="test-installation", pipeline="testing", provider="$provider", region="test-region"}'
+            value: 2
+      - expr: gs_slo:apiserver_request_total:rate5m
+        eval_time: 10m
+        exp_samples:
+          - labels: 'gs_slo:apiserver_request_total:rate5m{cluster_id="test-mc", cluster_type="management_cluster", customer="test-customer", installation="test-installation", pipeline="testing", provider="$provider", region="test-region"}'
+            value: 5
+          - labels: 'gs_slo:apiserver_request_total:rate5m{cluster_id="test-wc", cluster_type="workload_cluster", customer="test-customer", installation="test-installation", pipeline="testing", provider="$provider", region="test-region"}'
+            value: 12
+      # This is the expression the SLI evaluates once chained. A cluster with no errors must
+      # yield no sample here rather than 0, so the SLI's `or` fallback keeps working.
+      - expr: sum(avg_over_time(gs_slo:apiserver_request_errors:rate5m[5m])) by (cluster_id) / sum(avg_over_time(gs_slo:apiserver_request_total:rate5m[5m])) by (cluster_id)
+        eval_time: 10m
+        exp_samples:
+          - labels: '{cluster_id="test-wc"}'
+            value: 0.16666666666666666

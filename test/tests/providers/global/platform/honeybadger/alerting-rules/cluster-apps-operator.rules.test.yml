@@ -1,0 +1,59 @@
+---
+rule_files:
+  - cluster-apps-operator.rules.yml
+
+tests:
+  # A cluster whose services CIDR is readable never alerts. This is the state of
+  # every cluster in normal operation.
+  - interval: 1m
+    input_series:
+      - series: 'cluster_apps_operator_cluster_service_cidr_missing{installation="exampleinstallation",cluster_id="examplecluster",cluster_namespace="org-example"}'
+        values: '0x120'
+    alert_rule_test:
+      - alertname: ClusterServiceCIDRMissing
+        eval_time: 60m
+        exp_alerts: []
+
+  # The services CIDR goes missing and stays missing: alerts after `for: 30m`,
+  # and resolves once the field comes back.
+  - interval: 1m
+    input_series:
+      - series: 'cluster_apps_operator_cluster_service_cidr_missing{installation="exampleinstallation",cluster_id="examplecluster",cluster_namespace="org-example"}'
+        values: '0x10 1x50 0x60'
+    alert_rule_test:
+      # Missing since minute 10, so not yet past `for: 30m`.
+      - alertname: ClusterServiceCIDRMissing
+        eval_time: 35m
+        exp_alerts: []
+      - alertname: ClusterServiceCIDRMissing
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              alertname: "ClusterServiceCIDRMissing"
+              area: "platform"
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_outside_working_hours: "false"
+              cluster_id: "examplecluster"
+              cluster_namespace: "org-example"
+              installation: "exampleinstallation"
+              severity: "notify"
+              team: "honeybadger"
+              topic: "releng"
+            exp_annotations:
+              description: "Cluster org-example/examplecluster has no services CIDR, so cluster-apps-operator is emitting the installation default clusterDNSIP."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cluster-service-cidr-missing/?INSTALLATION=exampleinstallation&CLUSTER=examplecluster"
+      # Field restored at minute 60, so the alert clears.
+      - alertname: ClusterServiceCIDRMissing
+        eval_time: 100m
+        exp_alerts: []
+
+  # A short blip during cluster creation, where the CR exists before
+  # clusterNetwork is populated, must not page anyone.
+  - interval: 1m
+    input_series:
+      - series: 'cluster_apps_operator_cluster_service_cidr_missing{installation="exampleinstallation",cluster_id="examplecluster",cluster_namespace="org-example"}'
+        values: '1x10 0x60'
+    alert_rule_test:
+      - alertname: ClusterServiceCIDRMissing
+        eval_time: 20m
+        exp_alerts: []

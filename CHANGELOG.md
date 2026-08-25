@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `ClusterServiceCIDRMissing` (team honeybadger), firing when
+  `cluster_apps_operator_cluster_service_cidr_missing > 0` -- a `Cluster` CR from which
+  `cluster-apps-operator` cannot read `spec.clusterNetwork.services.cidrBlocks`, so it emits the
+  installation-default `clusterDNSIP` instead. `chart-operator` runs `hostNetwork` with
+  `dnsPolicy: None` and uses that value as its only resolver, so a wrong one breaks every chart pull
+  on the cluster and stays dormant until the next one -- see
+  [giantswarm/giantswarm#37031](https://github.com/giantswarm/giantswarm/issues/37031). `for: 30m`
+  rides out the cluster-creation window where the CR exists before `clusterNetwork` is populated.
+  The metric is `0` on every cluster across the fleet today, so this is silent until it regresses.
+
 ## [4.117.0] - 2026-08-25
 
 ### Removed

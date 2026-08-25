@@ -32,7 +32,7 @@ tests:
               alertname: "ClusterServiceCIDRMissing"
               area: "platform"
               cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_outside_working_hours: "false"
+              cancel_if_outside_working_hours: "true"
               cluster_id: "examplecluster"
               cluster_namespace: "org-example"
               installation: "exampleinstallation"

@@ -14,13 +14,12 @@ spec:
     # spec.clusterNetwork.services.cidrBlocks and falls back to the
     # installation-wide default when that field is absent. chart-operator runs
     # hostNetwork with dnsPolicy: None and uses clusterDNSIP as its only
-    # resolver, so a wrong value breaks every chart pull on the cluster -- and
-    # stays dormant until the next one. The fallback used to be silent, which is
-    # how giantswarm/giantswarm#37031 went unnoticed fleet-wide.
+    # resolver, so a wrong value breaks every chart pull on the cluster and
+    # stays dormant until the next one.
     #
-    # This is 0 for every cluster in normal operation: the cluster chart makes
-    # services.cidrBlocks required with a default, so a 1 means either a Cluster
-    # CR not produced by that chart, or the field moving again.
+    # Expected to be 0 everywhere: the cluster chart makes services.cidrBlocks
+    # required with a default. Not urgent enough to notify out of hours -- when
+    # it does fire, nothing breaks until the next chart pull.
     - alert: ClusterServiceCIDRMissing
       annotations:
         description: '{{`Cluster {{ $labels.cluster_namespace }}/{{ $labels.cluster_id }} has no services CIDR, so cluster-apps-operator is emitting the installation default clusterDNSIP.`}}'
@@ -30,7 +29,7 @@ spec:
       labels:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
-        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        cancel_if_outside_working_hours: "true"
         severity: notify
         team: honeybadger
         topic: releng

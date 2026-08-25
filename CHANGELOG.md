@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Drop the `kube-apiserver-burnrate.rules` recording rules, which no Giant Swarm alert or dashboard consumes.
 
+### Added
+
+- Add `gs_slo:apiserver_request_errors:rate5m` and `gs_slo:apiserver_request_total:rate5m` recording rules, pre-aggregating `apiserver_request_total` per cluster for the apiserver-availability SLI.
+
+## [4.116.0] - 2026-08-24
+
+### Changed
+
+- Make `IngressControllerDown` alert quorum-based instead of per-replica.
+
 ## [4.115.0] - 2026-08-24
 
 ### Added
@@ -4472,7 +4482,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.115.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.116.0...HEAD
+[4.116.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.115.0...v4.116.0
 [4.115.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.114.1...v4.115.0
 [4.114.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.114.0...v4.114.1
 [4.114.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.113.0...v4.114.0

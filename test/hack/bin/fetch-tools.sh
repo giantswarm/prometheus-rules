@@ -2,13 +2,13 @@
 set -euo pipefail
 
 # let's have reproducable tests - pin to specific versions
-ARCHITECT_VERSION="8.2.1"
+ARCHITECT_VERSION="8.4.0"
 HELM_VERSION="4.0.0"
 JQ_VERSION="1.8.1"
-LOKITOOL_VERSION="3.7.3"
+LOKITOOL_VERSION="3.7.6"
 PINT_VERSION="0.79.0"
-PROMETHEUS_VERSION="3.13.1"
-YQ_VERSION="4.53.3"
+PROMETHEUS_VERSION="3.14.0"
+YQ_VERSION="4.53.6"
 LOGQLLINT_VERSION="0.0.2"
 
 GIT_WORKDIR=$(git rev-parse --show-toplevel)
@@ -18,7 +18,8 @@ case "${OS_BASE}" in
 Linux*)
     TAR_CMD="$(command -v tar)"
 
-    export ARCHITECT_SOURCE="https://github.com/giantswarm/architect/releases/download/v${ARCHITECT_VERSION}/architect-v${ARCHITECT_VERSION}-linux-amd64.tar.gz"
+    export ARCHITECT_BIN_FILE="architect-linux-amd64"
+    export ARCHITECT_SOURCE="https://github.com/giantswarm/architect/releases/download/v${ARCHITECT_VERSION}/architect-linux-amd64"
     export HELM_SOURCE="https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz"
     export JQ_BIN_FILE="jq-linux-amd64"
     export JQ_SOURCE="https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}/jq-linux-amd64"
@@ -35,7 +36,8 @@ Linux*)
 Darwin*)
     TAR_CMD="$(command -v gtar)"
 
-    export ARCHITECT_SOURCE="https://github.com/giantswarm/architect/releases/download/v${ARCHITECT_VERSION}/architect-v${ARCHITECT_VERSION}-darwin-amd64.tar.gz"
+    export ARCHITECT_BIN_FILE="architect-darwin-amd64"
+    export ARCHITECT_SOURCE="https://github.com/giantswarm/architect/releases/download/v${ARCHITECT_VERSION}/architect-darwin-amd64"
     export HELM_SOURCE="https://get.helm.sh/helm-v${HELM_VERSION}-darwin-amd64.tar.gz"
     export JQ_BIN_FILE="jq-macos-amd64"
     export JQ_SOURCE="https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}/jq-macos-amd64"
@@ -46,7 +48,7 @@ Darwin*)
     export PROMETHEUS_SOURCE="https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.darwin-amd64.tar.gz"
     export YQ_BIN_FILE="yq_darwin_amd64"
     export YQ_SOURCE="https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_darwin_amd64.tar.gz"
-    export LOGQLLINT_VERSION="https://github.com/giantswarm/logql-lint/releases/download/v${LOGQLLINT_VERSION}/logql-lint-v${LOGQLLINT_VERSION}-darwin-amd64.tar.gz"
+    export LOGQLLINT_SOURCE="https://github.com/giantswarm/logql-lint/releases/download/v${LOGQLLINT_VERSION}/logql-lint-v${LOGQLLINT_VERSION}-darwin-amd64.tar.gz"
     ;;
 
 *)
@@ -131,7 +133,7 @@ main() {
     extract \
         "${GIT_WORKDIR}/test/hack/bin/architect" \
         "$ARCHITECT_SOURCE" \
-        "architect"
+        "$ARCHITECT_BIN_FILE"
 
     extract \
         "${GIT_WORKDIR}/test/hack/bin/helm" \

@@ -7,12 +7,81 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Narrow the `DeploymentNotSatisfiedBumblebee` namespace selector to `agent-platform`. The `agent.*-platform` pattern covered the migration window; every installation now runs the platform in `agent-platform`.
+
+### Fixed
+
+- Fix the `KongOOMKill` runbook URL: the anchor was placed before the query string, so the runbook never received its variables.
+
+## [4.117.0] - 2026-08-25
+
+### Removed
+
+- Drop the `kube-apiserver-burnrate.rules` recording rules, which no Giant Swarm alert or dashboard consumes.
+
+### Added
+
+- Add `gs_slo:apiserver_request_errors:rate5m` and `gs_slo:apiserver_request_total:rate5m` recording rules, pre-aggregating `apiserver_request_total` per cluster for the apiserver-availability SLI.
+
+## [4.116.0] - 2026-08-24
+
+### Changed
+
+- Make `IngressControllerDown` alert quorum-based instead of per-replica.
+
+## [4.115.0] - 2026-08-24
+
+### Added
+
+- Add `TeleportAuditProbeMissing` alert (`severity: page`, working hours only) firing when no Teleport probes reach Loki for 45 minutes.
+- Add Loki recording rule `giantswarm:teleport_audit:probe_events:count_15m` reporting the number of observed probe events as metric series.
+
+### Changed
+
+- Add `agent-platform` to the `DeploymentNotSatisfiedBumblebee` namespace selector, next to `agentic-platform`. The Agent Platform namespace is renamed per installation, so both names must match while the fleet migrates.
+
+### Removed
+
+- Remove `TeleportAuditLogsMissing` alert in favor of `TeleportAuditProbeMissing`.
+
+## [4.114.1] - 2026-08-20
+
+### Changed
+
+- Base `EnvoyGatewayConfigUpdateRateTooHigh` on `status_update_total` instead of `xds_snapshot_create_total`, and lower it to `severity: notify`. Envoy Gateway rebuilds its whole xDS snapshot on every backend endpoint change, so ordinary pod rollouts drove the old expression to 6.6/min and paged on clusters where no Gateway API resource had changed. Unlike nginx, which updates endpoints without reloading, the snapshot counter is not a config-churn signal.
+
+## [4.114.0] - 2026-08-20
+
+### Added
+
+- Add `EnvoyGatewayConfigUpdateRateTooHigh` alert (`severity: page`, working hours only) firing when Envoy Gateway regenerates its xDS config more than 1/min averaged over the last hour, catching config churn ([giantswarm#37146](https://github.com/giantswarm/giantswarm/issues/37146)).
+- Add `EnvoyProxyConfigUpdateRejected` alert (`severity: page`, working hours only) firing when an Envoy proxy NACKs a pushed xDS config and keeps serving the previous one, which is otherwise invisible (pods stay Ready, the Gateway reports Programmed).
+
+### Changed
+
+- Update `CAPATooManyReconciliations` alert with higher threshold from 1500 to 5000. The healthy baseline is fleet-proportional (the awsmachine controller resyncs all AWSMachines and their owner Machines every 10m), and the largest CAPA fleet (~1100 machines) has a 90-day max of ~3000 reconciliations per 10m, keeping the alert flapping since 2026-07-30. A genuine hot loop still crosses 5000 within one evaluation window.
+
+## [4.113.0] - 2026-07-28
+
+### Added
+
+- Add `EnvoyProxyOAuth2SecretInitFetchTimeout` alert (`severity: notify`, working hours only) for SDS init fetch timeouts on OAuth2 `client_secret`/`hmac_secret` resources. These break OIDC authentication on the routes covered by the affected `SecurityPolicy` until the proxy pod is restarted, but they are a different (non-paging) failure class than the TLS listener wedge, so they are now alerted separately instead of paging via `EnvoyProxySDSInitFetchTimeout`.
+
+### Changed
+
+- Make `EnvoyProxySDSInitFetchTimeout` fire on *fresh* SDS timeouts only. `envoy_sds_init_fetch_timeout` is a latching counter, so the previous `> 0` expression kept paging forever for a timeout that may have happened days ago (observed on `gazelle`: 14 firing series for timeouts last incremented on 2026-07-24, on healthy proxy pods). The alert now uses `increase(...[15m]) > 0` held for 2h via `max_over_time(...[2h:1m])`, and only matches non-OAuth2 SDS resources, matching the "TLS secret" failure its description covers.
+
+## [4.112.0] - 2026-07-28
+
 ### Added
 
 - Add `WorkloadClusterAuditLogVolumeSpike` alert (team shield, `severity: notify`) firing when a single kube-apiserver user (ServiceAccount/identity) on a workload cluster sustains an audit event rate more than 3x above its own level 24h ago — or newly appears with no prior baseline — above an absolute floor for 1h, naming the workload responsible for runaway audit log growth.
 - Add `CiliumHubbleTLSCertificateWillExpireSoon` alert (`severity: page`, working hours only) firing when a Hubble TLS certificate secret (`hubble-server-certs`, `hubble-relay-client-certs`, `hubble-relay-server-certs`, `hubble-ui-client-certs` — leaf and embedded CA) expires in less than 30 days, on both management and workload clusters. The previous catch-all secret alert only covered management clusters, so Hubble cert expiry on workload clusters broke hubble-relay unnoticed ([giantswarm#37201](https://github.com/giantswarm/giantswarm/issues/37201)).
 - Add `CiliumHubbleCertificateRenewalJobFailed` alert (`severity: page`, working hours only) firing when a `hubble-generate-certs` certgen job fails — including certgen refusing to renew leaf certificates because the Cilium CA is close to expiry (early CA warning, since certgen never rotates the CA).
-- Add Envoy Gateway alerts `EnvoyProxySDSInitFetchTimeout` (page, 24/7) and `EnvoyProxyListenersStuckWarming` (notify) to detect proxies that silently stop serving after an SDS secret fetch never completes — a state that does not self-heal and was previously invisible (pods stay Ready, control plane reports Programmed). See [envoyproxy/gateway#9519](https://github.com/envoyproxy/gateway/issues/9519).
+
+- Add Envoy Gateway alerts `EnvoyProxySDSInitFetchTimeout` (page, 24/7, `for: 2m`) and `EnvoyProxyListenersStuckWarming` (notify) to detect proxies that silently stop serving after an SDS secret fetch never completes — a state that does not self-heal and was previously invisible (pods stay Ready, control plane reports Programmed). `envoy_sds_init_fetch_timeout` is a latching counter, so a long `for` would only delay the page without adding flap protection ([giantswarm#37283](https://github.com/giantswarm/giantswarm/issues/37283)). See [envoyproxy/gateway#9519](https://github.com/envoyproxy/gateway/issues/9519).
 - Add `IngressControllerConfigReloadRateTooHigh` alert (`severity: page`, working hours only) firing when nginx ingress config reloads exceed 1/min averaged over the last hour, catching config flapping.
 
 ### Changed
@@ -4424,7 +4493,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.111.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.117.0...HEAD
+[4.117.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.116.0...v4.117.0
+[4.116.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.115.0...v4.116.0
+[4.115.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.114.1...v4.115.0
+[4.114.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.114.0...v4.114.1
+[4.114.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.113.0...v4.114.0
+[4.113.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.112.0...v4.113.0
+[4.112.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.111.0...v4.112.0
 [4.111.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.110.0...v4.111.0
 [4.110.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.109.0...v4.110.0
 [4.109.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.108.0...v4.109.0

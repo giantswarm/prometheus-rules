@@ -1,0 +1,165 @@
+---
+rule_files:
+  - internet-egress.rules.yml
+
+tests:
+  # One availability zone loses egress: a stable fraction of the cluster failing, sustained, while the rest
+  # stays healthy. 3 of 8 probes = 37.5%, which is what one zone of three looks like.
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-4"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-5"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-6"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-7"}'
+        values: "1x60"
+    alert_rule_test:
+      # not yet firing before `for: 15m` has elapsed
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 10m
+        exp_alerts: []
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts:
+          - exp_annotations:
+              description: "37.5% of nodes on myinstall/myinstall cannot reach the internet. A single availability zone losing egress looks like 33-50% here."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
+            exp_labels:
+              alertname: "ClusterInternetEgressUnavailable"
+              area: platform
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_metrics_broken: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "false"
+              cluster_id: "myinstall"
+              installation: "myinstall"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "page"
+              team: "cabbage"
+              topic: "network"
+
+  # Whole cluster loses egress - must page just the same.
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-4"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-5"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-6"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-7"}'
+        values: "0x60"
+    alert_rule_test:
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts:
+          - exp_annotations:
+              description: "100% of nodes on myinstall/myinstall cannot reach the internet. A single availability zone losing egress looks like 33-50% here."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
+            exp_labels:
+              alertname: "ClusterInternetEgressUnavailable"
+              area: platform
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_metrics_broken: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "false"
+              cluster_id: "myinstall"
+              installation: "myinstall"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "page"
+              team: "cabbage"
+              topic: "network"
+
+  # Noise case. Measured over 30 days on two installations, the normal background is isolated single-node
+  # probe failures peaking at 17% of a cluster. 1 of 8 = 12.5% must stay quiet.
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-4"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-5"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-6"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-7"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts: []
+
+  # A brief blip must not page. A firewall change landing can fail every probe in a cluster for a single
+  # scrape and then recover.
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "1x5 0x5 1x50"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "1x5 0x5 1x50"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "1x5 0x5 1x50"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-4"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-5"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-6"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-7"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts: []
+
+  # Healthy cluster - no alert.
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-4"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-5"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-6"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-7"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts: []

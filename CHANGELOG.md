@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `ClusterInternetEgressUnavailable` alert (`severity: page`, 24/7) firing when at least 20% of a cluster's nodes cannot reach one of the probed internet domains.
+
 ### Changed
 
 - Narrow the `DeploymentNotSatisfiedBumblebee` namespace selector to `agent-platform`. The `agent.*-platform` pattern covered the migration window; every installation now runs the platform in `agent-platform`.

@@ -1,0 +1,63 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: internet-egress.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: internet-egress
+    rules:
+#
+# ClusterInternetEgressUnavailable
+#
+# net-exporter cannot detect loss of internet egress: its DNS check is sent to the CoreDNS ClusterIP, so it
+# measures CoreDNS's egress rather than each node's, and if the CoreDNS pods sit in a healthy zone every node
+# reports success. Its network check dials in-cluster pod IPs, and its NTP check is configured to the
+# cloud provider's link-local time service. None of them leave the VPC.
+#
+# prometheus-blackbox-exporter does have the signal: it runs as a DaemonSet probing an external HTTPS endpoint
+# from every node, so it has per-node - and therefore per-availability-zone - coverage.
+#
+# The threshold is a fraction of a cluster's probes, not `> 0`. Measured over 30 days on two installations, the
+# normal background is isolated single-node probe failures reaching at most 17% of a cluster, while a single
+# availability zone of two or three is 33-50%, so `>= 0.2` separates them cleanly.
+#
+# There is deliberately no kube_pod_info/kube_node_labels join here to resolve the availability zone. The zone
+# is useful context, but joining for it makes this rule inherit kube-state-metrics' availability, and
+# kube_pod_info emits duplicate series for a pod while it is churning - which makes the join fail with
+# `found duplicate series` rather than return a value. A rule that errors cannot fire, and node churn is
+# exactly what a loss of egress causes. The runbook carries the zone-attribution query instead.
+#
+# `cancel_if_kube_state_metrics_down` is absent for the same reason: this rule does not read kube-state-metrics,
+# so kube-state-metrics being down must not suppress it.
+#
+    - alert: ClusterInternetEgressUnavailable
+      annotations:
+        description: |-
+          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach the internet. A single availability zone losing egress looks like 33-50% here.`}}
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      expr: |
+        (
+          count by (cluster_id, installation, pipeline, provider) (
+            probe_success{job=~".*prometheus-blackbox-exporter.*", target="http-giantswarm"} == 0
+          )
+          /
+          count by (cluster_id, installation, pipeline, provider) (
+            probe_success{job=~".*prometheus-blackbox-exporter.*", target="http-giantswarm"}
+          )
+        ) >= 0.2
+      for: 15m
+      labels:
+        area: platform
+        # Pages 24/7 on purpose: a cluster that cannot reach the internet cannot pull images, reconcile Flux,
+        # or receive the mitigation an oncaller is applying.
+        cancel_if_outside_working_hours: "false"
+        cancel_if_cluster_has_no_workers: "true"
+        cancel_if_metrics_broken: "true"
+        cancel_if_monitoring_agent_down: "true"
+        severity: page
+        team: cabbage
+        topic: network

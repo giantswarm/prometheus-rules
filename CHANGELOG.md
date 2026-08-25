@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Narrow the `DeploymentNotSatisfiedBumblebee` namespace selector to `agent-platform`. The `agent.*-platform` pattern covered the migration window; every installation now runs the platform in `agent-platform`.
 
+### Fixed
+
+- Fix the `KongOOMKill` runbook URL: the anchor was placed before the query string, so the runbook never received its variables.
+
 ## [4.117.0] - 2026-08-25
 
 ### Removed

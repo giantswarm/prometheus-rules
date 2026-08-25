@@ -17,7 +17,6 @@ platform/atlas/recording-rules/loki-mixins.rules.yml
 platform/atlas/recording-rules/mimir-mixins.rules.yml
 platform/cabbage/alerting-rules/coredns.rules.yml
 platform/cabbage/alerting-rules/external-dns.rules.yml
-platform/cabbage/alerting-rules/ingress-controller.rules.yml
 platform/cabbage/alerting-rules/dns.rules.yml
 platform/cabbage/recording-rules/gs-managed-app-deployment-status.rules.yml
 platform/honeybadger/alerting-rules/chart.rules.yml

@@ -63,5 +63,5 @@ spec:
             area: platform
             cancel_if_outside_working_hours: "true"
             severity: notify
-            team: shield
-            topic: security
+            team: tenet
+            topic: kubernetes

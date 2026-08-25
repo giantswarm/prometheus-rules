@@ -18,8 +18,15 @@ spec:
 # reports success. Its network check dials in-cluster pod IPs, and its NTP check is configured to the
 # cloud provider's link-local time service. None of them leave the VPC.
 #
-# prometheus-blackbox-exporter does have the signal: it runs as a DaemonSet probing an external HTTPS endpoint
+# prometheus-blackbox-exporter does have the signal: it runs as a DaemonSet probing external HTTPS endpoints
 # from every node, so it has per-node - and therefore per-availability-zone - coverage.
+#
+# The rule covers every external domain the exporter probes, and fires per target. An allowlist-style firewall
+# change can block a single domain while the others stay reachable - during the incident behind this alert,
+# www.giantswarm.io stayed green for three hours while the cluster could not pull images - so one representative
+# endpoint proves egress is broken when it fails, but never proves egress is healthy (giantswarm/giantswarm#33409).
+# Targets absent on a cluster (older prometheus-blackbox-exporter releases only probe http-giantswarm) simply
+# produce no series and cannot fire.
 #
 # The threshold is a fraction of a cluster's probes, not `> 0`. Measured over 30 days on two installations, the
 # normal background is isolated single-node probe failures reaching at most 17% of a cluster, while a single
@@ -37,16 +44,16 @@ spec:
     - alert: ClusterInternetEgressUnavailable
       annotations:
         description: |-
-          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach the internet. A single availability zone losing egress looks like 33-50% here.`}}
+          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach {{ $labels.target }}. A single availability zone losing egress looks like 33-50% here. Other domains still reachable means an allowlist-style block of this domain rather than a full loss of egress.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         (
-          count by (cluster_id, installation, pipeline, provider) (
-            probe_success{job=~".*prometheus-blackbox-exporter.*", target="http-giantswarm"} == 0
+          count by (cluster_id, installation, pipeline, provider, target) (
+            probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"http-giantswarm|http-github|http-gsoci-registry|http-grafana"} == 0
           )
           /
-          count by (cluster_id, installation, pipeline, provider) (
-            probe_success{job=~".*prometheus-blackbox-exporter.*", target="http-giantswarm"}
+          count by (cluster_id, installation, pipeline, provider, target) (
+            probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"http-giantswarm|http-github|http-gsoci-registry|http-grafana"}
           )
         ) >= 0.2
       for: 15m

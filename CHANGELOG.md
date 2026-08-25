@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Drop the `kube-apiserver-burnrate.rules` recording rules, which no Giant Swarm alert or dashboard consumes.
+
 ### Added
 
 - Add `gs_slo:apiserver_request_errors:rate5m` and `gs_slo:apiserver_request_total:rate5m` recording rules, pre-aggregating `apiserver_request_total` per cluster for the apiserver-availability SLI.

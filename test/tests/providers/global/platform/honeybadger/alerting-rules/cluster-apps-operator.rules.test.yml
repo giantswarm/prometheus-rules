@@ -36,7 +36,7 @@ tests:
               cluster_id: "examplecluster"
               cluster_namespace: "org-example"
               installation: "exampleinstallation"
-              severity: "notify"
+              severity: "page"
               team: "honeybadger"
               topic: "releng"
             exp_annotations:

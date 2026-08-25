@@ -18,8 +18,9 @@ spec:
     # stays dormant until the next one.
     #
     # Expected to be 0 everywhere: the cluster chart makes services.cidrBlocks
-    # required with a default. Not urgent enough to notify out of hours -- when
-    # it does fire, nothing breaks until the next chart pull.
+    # required with a default, so anything else needs a human. Inhibited outside
+    # working hours -- when it fires nothing is broken yet, the breakage lands on
+    # the next chart pull.
     - alert: ClusterServiceCIDRMissing
       annotations:
         description: '{{`Cluster {{ $labels.cluster_namespace }}/{{ $labels.cluster_id }} has no services CIDR, so cluster-apps-operator is emitting the installation default clusterDNSIP.`}}'
@@ -30,6 +31,6 @@ spec:
         area: platform
         cancel_if_cluster_control_plane_unhealthy: "true"
         cancel_if_outside_working_hours: "true"
-        severity: notify
+        severity: page
         team: honeybadger
         topic: releng

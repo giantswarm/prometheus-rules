@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Point the `IRSAClaimNotReady` and `CAPATooManyReconciliations` `runbook_url` annotations at their runbooks instead of the retired `ops-recipes` pages.
+- Fix remaining Tenet links to ops-recipes.
 
 ### Fixed
 

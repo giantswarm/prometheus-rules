@@ -10,10 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Narrow the `DeploymentNotSatisfiedBumblebee` namespace selector to `agent-platform`. The `agent.*-platform` pattern covered the migration window; every installation now runs the platform in `agent-platform`.
+- Point the `IRSAClaimNotReady` and `CAPATooManyReconciliations` `runbook_url` annotations at their runbooks instead of the retired `ops-recipes` pages, so on-call lands on the runbook directly rather than through a redirect.
+- Point the log-based alert example in the README at `/docs/support-and-ops/runbooks/log-errors/`. The `ops-recipes` path it used has been retired in favour of runbooks.
+- Remove the orphaned `crsync.rules.test.yml`. Its rule file was deleted in #1376, so the test referenced a `crsync.rules.yml` that no longer exists, and it still asserted a retired `ops-recipes` runbook URL.
+
+### Fixed
+
+- Point the `IRSAClaimNotReady` and `CAPATooManyReconciliations` `runbook_url` annotations at their runbooks instead of the retired `ops-recipes` pages.
 
 ### Fixed
 
 - Fix the `KongOOMKill` runbook URL: the anchor was placed before the query string, so the runbook never received its variables.
+- Point the log-based alert example in the README at its runbook instead of the retired `ops-recipes` pages.
+- Remove the orphaned `crsync.rules.test.yml`.
 
 ## [4.117.0] - 2026-08-25
 

@@ -28,6 +28,13 @@ spec:
 # Targets absent on a cluster (older prometheus-blackbox-exporter releases only probe http-giantswarm) simply
 # produce no series and cannot fire.
 #
+# The selector matches the `egress-` name prefix rather than an explicit domain list, so per-installation
+# overrides of prometheus-blackbox-exporter's `serviceMonitor.externalTargets` (regional or customer-specific
+# domains) are covered without touching this rule. It deliberately does NOT match `http-.*`: the exporter also
+# serves internal probes carrying that shape (`http-api`, and `http-irsawebhook` from irsa-servicemonitors),
+# which must never page as internet egress. `http-giantswarm` predates the prefix convention and keeps its name
+# so fleets on older exporter releases stay covered.
+#
 # The threshold is a fraction of a cluster's probes, not `> 0`. Measured over 30 days on two installations, the
 # normal background is isolated single-node probe failures reaching at most 17% of a cluster, while a single
 # availability zone of two or three is 33-50%, so `>= 0.2` separates them cleanly.
@@ -49,11 +56,11 @@ spec:
       expr: |
         (
           count by (cluster_id, installation, pipeline, provider, target) (
-            probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"http-giantswarm|http-github|http-gsoci-registry|http-grafana"} == 0
+            probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+|http-giantswarm"} == 0
           )
           /
           count by (cluster_id, installation, pipeline, provider, target) (
-            probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"http-giantswarm|http-github|http-gsoci-registry|http-grafana"}
+            probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+|http-giantswarm"}
           )
         ) >= 0.2
       for: 15m

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `WorkloadClusterAuditLogVolumeSpike` alert (`severity: notify`, working hours only) firing when a single kube-apiserver user on a workload cluster sustains a high API audit event rate.
+
 ### Changed
 
 - Narrow the `DeploymentNotSatisfiedBumblebee` namespace selector to `agent-platform`. The `agent.*-platform` pattern covered the migration window; every installation now runs the platform in `agent-platform`.
@@ -86,7 +90,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add `WorkloadClusterAuditLogVolumeSpike` alert (team tenet, `severity: notify`) firing when a single kube-apiserver user (ServiceAccount/identity) on a workload cluster sustains an audit event rate more than 3x above its own level 24h ago — or newly appears with no prior baseline — above an absolute floor for 1h, naming the workload responsible for runaway audit log growth.
 - Add `CiliumHubbleTLSCertificateWillExpireSoon` alert (`severity: page`, working hours only) firing when a Hubble TLS certificate secret (`hubble-server-certs`, `hubble-relay-client-certs`, `hubble-relay-server-certs`, `hubble-ui-client-certs` — leaf and embedded CA) expires in less than 30 days, on both management and workload clusters. The previous catch-all secret alert only covered management clusters, so Hubble cert expiry on workload clusters broke hubble-relay unnoticed ([giantswarm#37201](https://github.com/giantswarm/giantswarm/issues/37201)).
 - Add `CiliumHubbleCertificateRenewalJobFailed` alert (`severity: page`, working hours only) firing when a `hubble-generate-certs` certgen job fails — including certgen refusing to renew leaf certificates because the Cilium CA is close to expiry (early CA warning, since certgen never rotates the CA).
 

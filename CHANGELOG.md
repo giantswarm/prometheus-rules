@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `MimirRestartingTooOften` - increased threshold
 - Narrow the `DeploymentNotSatisfiedBumblebee` namespace selector to `agent-platform`. The `agent.*-platform` pattern covered the migration window; every installation now runs the platform in `agent-platform`.
 - Point the `IRSAClaimNotReady` and `CAPATooManyReconciliations` `runbook_url` annotations at their runbooks instead of the retired `ops-recipes` pages, so on-call lands on the runbook directly rather than through a redirect.
 - Point the log-based alert example in the README at `/docs/support-and-ops/runbooks/log-errors/`. The `ops-recipes` path it used has been retired in favour of runbooks.

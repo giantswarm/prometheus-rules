@@ -31,9 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Point the `IRSAClaimNotReady` and `CAPATooManyReconciliations` `runbook_url` annotations at their runbooks instead of the retired `ops-recipes` pages.
 - Fix remaining Tenet links to ops-recipes.
-
-### Fixed
-
 - Fix the `KongOOMKill` runbook URL: the anchor was placed before the query string, so the runbook never received its variables.
 - Point the log-based alert example in the README at its runbook instead of the retired `ops-recipes` pages.
 - Remove the orphaned `crsync.rules.test.yml`.

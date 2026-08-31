@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add `ClusterInternetEgressUnavailable` alert (`severity: page`, 24/7) firing when at least 20% of a cluster's nodes cannot reach one of the probed internet domains.
 - Add `WorkloadClusterAuditLogVolumeSpike` alert (`severity: notify`, working hours only) firing when a single kube-apiserver user on a workload cluster sustains a high API audit event rate.
 
 ### Changed

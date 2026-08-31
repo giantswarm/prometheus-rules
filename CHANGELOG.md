@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.118.0] - 2026-08-31
+
 ### Added
 
 - Add `ClusterInternetEgressUnavailable` alert (`severity: page`, 24/7) firing when at least 20% of a cluster's nodes cannot reach one of the probed internet domains.
@@ -4513,7 +4515,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.117.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.0...HEAD
+[4.118.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.117.0...v4.118.0
 [4.117.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.116.0...v4.117.0
 [4.116.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.115.0...v4.116.0
 [4.115.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.114.1...v4.115.0

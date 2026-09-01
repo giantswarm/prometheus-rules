@@ -65,7 +65,7 @@ spec:
               )
             )
             and on (cluster_id) (count by (cluster_id) (up{job="alloy-logs"}) > 0)
-          for: 30m
+          for: 2h
           labels:
             area: platform
             severity: page

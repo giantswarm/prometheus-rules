@@ -69,66 +69,60 @@ tests:
       - alertname: AlloyUnhealthyComponents
         eval_time: 80m
 
-  # Test LoggingAgentDown
+  # Test LoggingAgentMissingOnNode
   - interval: 1m
     input_series:
-      # For the first 80min: test with 1 pod: none, up, down
-      - series: 'up{container="alloy", cluster_id="golem", cluster_type="management_cluster", installation="golem", job="alloy-logs", pod="alloy-logs-1xxxx", provider="capa", pipeline="testing"}'
-        values: "_x20 1+0x20 0+0x40"
-      - series: kube_pod_info{cluster_id="golem", cluster_type="management_cluster", installation="golem", pod="alloy-logs-1xxxx", node="ip-10-0-5-1.eu-west-1.compute.internal", provider="capa", pipeline="testing"}
-        values: "1x180"
-      # From 80min: test with 2 pods: 1 up and 1 down, 2 up, 2 down.
-      - series: 'up{container="alloy", cluster_id="golem", cluster_type="management_cluster", installation="golem", job="alloy-logs", pod="alloy-logs-2xxxx", provider="capa", pipeline="testing"}'
-        values: "_x80 1+0x40 1+0x20 0+0x40"
-      - series: kube_pod_info{cluster_id="golem", cluster_type="management_cluster", installation="golem", pod="alloy-logs-2xxxx", node="ip-10-0-5-2.eu-west-1.compute.internal", provider="capa", pipeline="testing"}
-        values: "1x180"
-      - series: 'up{container="alloy", cluster_type="management_cluster", cluster_id="golem", installation="golem", job="alloy-logs", pod="alloy-logs-3xxxx", provider="capa", pipeline="testing"}'
-        values: "_x80 0+0x40 1+0x20 0+0x40"
-      - series: kube_pod_info{cluster_id="golem", cluster_type="management_cluster", installation="golem", pod="alloy-logs-3xxxx", node="ip-10-0-5-3.eu-west-1.compute.internal", provider="capa", pipeline="testing"}
-        values: "1x180"
+      # Node 1: healthy logging agent for the whole test, never alerts.
+      - series: 'kube_node_info{cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", node="ip-10-0-5-1.eu-west-1.compute.internal"}'
+        values: "1x400"
+      - series: 'kube_pod_info{cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", pod="alloy-logs-1xxxx", node="ip-10-0-5-1.eu-west-1.compute.internal"}'
+        values: "1x400"
+      - series: 'up{container="alloy", job="alloy-logs", cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", pod="alloy-logs-1xxxx"}'
+        values: "1x400"
+      # Node 2: agent evicted at t=60, back at t=240. The pod object lingers, so kube_pod_info
+      # continues, but the pod leaves the Service endpoints so the `up` series stops rather than
+      # going to 0.
+      - series: 'kube_node_info{cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", node="ip-10-0-5-2.eu-west-1.compute.internal"}'
+        values: "1x400"
+      - series: 'kube_pod_info{cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", pod="alloy-logs-2xxxx", node="ip-10-0-5-2.eu-west-1.compute.internal"}'
+        values: "1x400"
+      - series: 'up{container="alloy", job="alloy-logs", cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", pod="alloy-logs-2xxxx"}'
+        values: "1+0x60 _x179 1+0x160"
+      # Node 3: never got a pod at all, e.g. a taint the DaemonSet does not tolerate.
+      # No kube_pod_info and no `up` series exist for it.
+      - series: 'kube_node_info{cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", node="ip-10-0-5-3.eu-west-1.compute.internal"}'
+        values: "1x400"
+      # Node 4: pod stays in the endpoints but its scrape starts failing (up == 0) at t=60.
+      # A failing scrape must leave the node uncovered, same as a missing pod.
+      - series: 'kube_node_info{cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", node="ip-10-0-5-4.eu-west-1.compute.internal"}'
+        values: "1x400"
+      - series: 'kube_pod_info{cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", pod="alloy-logs-4xxxx", node="ip-10-0-5-4.eu-west-1.compute.internal"}'
+        values: "1x400"
+      - series: 'up{container="alloy", job="alloy-logs", cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", pod="alloy-logs-4xxxx"}'
+        values: "1+0x60 0+0x339"
+      # A cluster running no logging agent at all. The guard must keep this quiet.
+      - series: 'kube_node_info{cluster_id="nologs", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", node="ip-10-0-9-1.eu-west-1.compute.internal"}'
+        values: "1x400"
     alert_rule_test:
-      - alertname: LoggingAgentDown
-        eval_time: 10m
-      - alertname: LoggingAgentDown
-        eval_time: 30m
-      - alertname: LoggingAgentDown
-        eval_time: 71m
+      # Node 3 is uncovered from the start but `for: 2h` has not elapsed yet.
+      - alertname: LoggingAgentMissingOnNode
+        eval_time: 60m
+      # Node 3 only. Nodes 2 and 4 lost their agent around t=60, so they are still pending.
+      - alertname: LoggingAgentMissingOnNode
+        eval_time: 130m
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_outside_working_hours: "true"
-              cancel_if_node_unschedulable: "true"
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_monitoring_agent_down: "true"
               cancel_if_node_not_ready: "true"
-              cluster_id: golem
-              cluster_type: management_cluster
-              installation: golem
-              node: ip-10-0-5-1.eu-west-1.compute.internal
-              pipeline: testing
-              pod: alloy-logs-1xxxx
-              provider: capa
-              severity: page
-              team: atlas
-              topic: observability
-            exp_annotations:
-              __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
-              dashboardQueryParams: "orgId=2"
-              description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=golem&CLUSTER=golem
-      # Tests with 2 pods
-      - alertname: LoggingAgentDown
-        eval_time: 111m
-        exp_alerts:
-          - exp_labels:
-              area: platform
-              cancel_if_outside_working_hours: "true"
               cancel_if_node_unschedulable: "true"
-              cancel_if_node_not_ready: "true"
-              cluster_id: golem
-              cluster_type: management_cluster
-              installation: golem
+              cancel_if_outside_working_hours: "true"
+              cluster_id: mycluster
+              cluster_type: workload_cluster
+              installation: myinstall
               node: ip-10-0-5-3.eu-west-1.compute.internal
               pipeline: testing
-              pod: alloy-logs-3xxxx
               provider: capa
               severity: page
               team: atlas
@@ -136,24 +130,26 @@ tests:
             exp_annotations:
               __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
               dashboardQueryParams: "orgId=2"
-              description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=golem&CLUSTER=golem
-      - alertname: LoggingAgentDown
-        eval_time: 121m
-      - alertname: LoggingAgentDown
-        eval_time: 180m
+              description: "Node ip-10-0-5-3.eu-west-1.compute.internal has no running logging-agent pod, its logs are not being collected."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=myinstall&CLUSTER=mycluster
+              summary: Node without a logging agent.
+      # Node 2 (evicted), node 3 (never scheduled) and node 4 (scrape failing).
+      # The `nologs` cluster stays quiet.
+      - alertname: LoggingAgentMissingOnNode
+        eval_time: 200m
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_outside_working_hours: "true"
-              cancel_if_node_unschedulable: "true"
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_monitoring_agent_down: "true"
               cancel_if_node_not_ready: "true"
-              cluster_id: golem
-              cluster_type: management_cluster
-              installation: golem
+              cancel_if_node_unschedulable: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: mycluster
+              cluster_type: workload_cluster
+              installation: myinstall
               node: ip-10-0-5-2.eu-west-1.compute.internal
               pipeline: testing
-              pod: alloy-logs-2xxxx
               provider: capa
               severity: page
               team: atlas
@@ -161,19 +157,21 @@ tests:
             exp_annotations:
               __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
               dashboardQueryParams: "orgId=2"
-              description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=golem&CLUSTER=golem
+              description: "Node ip-10-0-5-2.eu-west-1.compute.internal has no running logging-agent pod, its logs are not being collected."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=myinstall&CLUSTER=mycluster
+              summary: Node without a logging agent.
           - exp_labels:
               area: platform
-              cancel_if_outside_working_hours: "true"
-              cancel_if_node_unschedulable: "true"
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_monitoring_agent_down: "true"
               cancel_if_node_not_ready: "true"
-              cluster_id: golem
-              cluster_type: management_cluster
-              installation: golem
+              cancel_if_node_unschedulable: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: mycluster
+              cluster_type: workload_cluster
+              installation: myinstall
               node: ip-10-0-5-3.eu-west-1.compute.internal
               pipeline: testing
-              pod: alloy-logs-3xxxx
               provider: capa
               severity: page
               team: atlas
@@ -181,8 +179,79 @@ tests:
             exp_annotations:
               __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
               dashboardQueryParams: "orgId=2"
-              description: "Scraping of all logging-agent pods to check if one failed every 30 minutes."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=golem&CLUSTER=golem
+              description: "Node ip-10-0-5-3.eu-west-1.compute.internal has no running logging-agent pod, its logs are not being collected."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=myinstall&CLUSTER=mycluster
+              summary: Node without a logging agent.
+          - exp_labels:
+              area: platform
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_node_not_ready: "true"
+              cancel_if_node_unschedulable: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: mycluster
+              cluster_type: workload_cluster
+              installation: myinstall
+              node: ip-10-0-5-4.eu-west-1.compute.internal
+              pipeline: testing
+              provider: capa
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
+              dashboardQueryParams: "orgId=2"
+              description: "Node ip-10-0-5-4.eu-west-1.compute.internal has no running logging-agent pod, its logs are not being collected."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=myinstall&CLUSTER=mycluster
+              summary: Node without a logging agent.
+      # Node 2 recovered at t=240. Nodes 3 and 4 are still uncovered.
+      - alertname: LoggingAgentMissingOnNode
+        eval_time: 300m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_node_not_ready: "true"
+              cancel_if_node_unschedulable: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: mycluster
+              cluster_type: workload_cluster
+              installation: myinstall
+              node: ip-10-0-5-3.eu-west-1.compute.internal
+              pipeline: testing
+              provider: capa
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
+              dashboardQueryParams: "orgId=2"
+              description: "Node ip-10-0-5-3.eu-west-1.compute.internal has no running logging-agent pod, its logs are not being collected."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=myinstall&CLUSTER=mycluster
+              summary: Node without a logging agent.
+          - exp_labels:
+              area: platform
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_node_not_ready: "true"
+              cancel_if_node_unschedulable: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: mycluster
+              cluster_type: workload_cluster
+              installation: myinstall
+              node: ip-10-0-5-4.eu-west-1.compute.internal
+              pipeline: testing
+              provider: capa
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              __dashboardUid__: 53c1ecddc3a1d5d4b8d6cd0c23676c31
+              dashboardQueryParams: "orgId=2"
+              description: "Node ip-10-0-5-4.eu-west-1.compute.internal has no running logging-agent pod, its logs are not being collected."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=myinstall&CLUSTER=mycluster
+              summary: Node without a logging agent.
 
   # Test MonitoringAgentDown
   - interval: 1m

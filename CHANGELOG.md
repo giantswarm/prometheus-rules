@@ -9,12 +9,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `LoggingAgentMissingOnNode` - increased `for` to 2h.
+
+## [4.118.0] - 2026-08-31
+
+### Added
+
+- Add `ClusterInternetEgressUnavailable` alert (`severity: page`, 24/7) firing when at least 20% of a cluster's nodes cannot reach one of the probed internet domains.
+- Add `LoggingAgentMissingOnNode` alert (`severity: page`) firing when a node has no running `alloy-logs` pod.
+- Add `WorkloadClusterAuditLogVolumeSpike` alert (`severity: notify`, working hours only) firing when a single kube-apiserver user on a workload cluster sustains a high API audit event rate.
+
+### Removed
+
+- Remove `LoggingAgentDown` alert, superseded by `LoggingAgentMissingOnNode`.
+
+### Changed
+
+- `MimirRestartingTooOften` - increased threshold
 - Narrow the `DeploymentNotSatisfiedBumblebee` namespace selector to `agent-platform`. The `agent.*-platform` pattern covered the migration window; every installation now runs the platform in `agent-platform`.
 - Point the `IRSAClaimNotReady` and `CAPATooManyReconciliations` `runbook_url` annotations at their runbooks instead of the retired `ops-recipes` pages, so on-call lands on the runbook directly rather than through a redirect.
+- Point the log-based alert example in the README at `/docs/support-and-ops/runbooks/log-errors/`. The `ops-recipes` path it used has been retired in favour of runbooks.
+- Remove the orphaned `crsync.rules.test.yml`. Its rule file was deleted in #1376, so the test referenced a `crsync.rules.yml` that no longer exists, and it still asserted a retired `ops-recipes` runbook URL.
 
 ### Fixed
 
+- Point the `IRSAClaimNotReady` and `CAPATooManyReconciliations` `runbook_url` annotations at their runbooks instead of the retired `ops-recipes` pages.
+- Fix remaining Tenet links to ops-recipes.
 - Fix the `KongOOMKill` runbook URL: the anchor was placed before the query string, so the runbook never received its variables.
+- Point the log-based alert example in the README at its runbook instead of the retired `ops-recipes` pages.
+- Remove the orphaned `crsync.rules.test.yml`.
 
 ## [4.117.0] - 2026-08-25
 
@@ -4495,7 +4518,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.117.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.0...HEAD
+[4.118.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.117.0...v4.118.0
 [4.117.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.116.0...v4.117.0
 [4.116.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.115.0...v4.116.0
 [4.115.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.114.1...v4.115.0

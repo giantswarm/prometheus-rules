@@ -19,7 +19,7 @@ spec:
       expr: |
         increase(
           kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="loki"}[1h]
-        ) > 5
+        ) > 10
       for: 5m
       labels:
         area: platform

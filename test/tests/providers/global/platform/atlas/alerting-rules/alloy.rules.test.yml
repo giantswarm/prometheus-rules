@@ -74,42 +74,42 @@ tests:
     input_series:
       # Node 1: healthy logging agent for the whole test, never alerts.
       - series: 'kube_node_info{cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", node="ip-10-0-5-1.eu-west-1.compute.internal"}'
-        values: "1x180"
+        values: "1x400"
       - series: 'kube_pod_info{cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", pod="alloy-logs-1xxxx", node="ip-10-0-5-1.eu-west-1.compute.internal"}'
-        values: "1x180"
+        values: "1x400"
       - series: 'up{container="alloy", job="alloy-logs", cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", pod="alloy-logs-1xxxx"}'
-        values: "1x180"
-      # Node 2: agent evicted at t=60, back at t=120. The pod object lingers, so kube_pod_info
+        values: "1x400"
+      # Node 2: agent evicted at t=60, back at t=240. The pod object lingers, so kube_pod_info
       # continues, but the pod leaves the Service endpoints so the `up` series stops rather than
       # going to 0.
       - series: 'kube_node_info{cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", node="ip-10-0-5-2.eu-west-1.compute.internal"}'
-        values: "1x180"
+        values: "1x400"
       - series: 'kube_pod_info{cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", pod="alloy-logs-2xxxx", node="ip-10-0-5-2.eu-west-1.compute.internal"}'
-        values: "1x180"
+        values: "1x400"
       - series: 'up{container="alloy", job="alloy-logs", cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", pod="alloy-logs-2xxxx"}'
-        values: "1+0x60 _x59 1+0x60"
+        values: "1+0x60 _x179 1+0x160"
       # Node 3: never got a pod at all, e.g. a taint the DaemonSet does not tolerate.
       # No kube_pod_info and no `up` series exist for it.
       - series: 'kube_node_info{cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", node="ip-10-0-5-3.eu-west-1.compute.internal"}'
-        values: "1x180"
+        values: "1x400"
       # Node 4: pod stays in the endpoints but its scrape starts failing (up == 0) at t=60.
       # A failing scrape must leave the node uncovered, same as a missing pod.
       - series: 'kube_node_info{cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", node="ip-10-0-5-4.eu-west-1.compute.internal"}'
-        values: "1x180"
+        values: "1x400"
       - series: 'kube_pod_info{cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", pod="alloy-logs-4xxxx", node="ip-10-0-5-4.eu-west-1.compute.internal"}'
-        values: "1x180"
+        values: "1x400"
       - series: 'up{container="alloy", job="alloy-logs", cluster_id="mycluster", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", pod="alloy-logs-4xxxx"}'
-        values: "1+0x60 0+0x119"
+        values: "1+0x60 0+0x339"
       # A cluster running no logging agent at all. The guard must keep this quiet.
       - series: 'kube_node_info{cluster_id="nologs", cluster_type="workload_cluster", installation="myinstall", provider="capa", pipeline="testing", node="ip-10-0-9-1.eu-west-1.compute.internal"}'
-        values: "1x180"
+        values: "1x400"
     alert_rule_test:
-      # Node 3 is uncovered from the start but `for: 30m` has not elapsed yet.
+      # Node 3 is uncovered from the start but `for: 2h` has not elapsed yet.
       - alertname: LoggingAgentMissingOnNode
-        eval_time: 20m
-      # Node 3 only. Node 2 is still healthy.
+        eval_time: 60m
+      # Node 3 only. Nodes 2 and 4 lost their agent around t=60, so they are still pending.
       - alertname: LoggingAgentMissingOnNode
-        eval_time: 40m
+        eval_time: 130m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -136,7 +136,7 @@ tests:
       # Node 2 (evicted), node 3 (never scheduled) and node 4 (scrape failing).
       # The `nologs` cluster stays quiet.
       - alertname: LoggingAgentMissingOnNode
-        eval_time: 110m
+        eval_time: 200m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -204,9 +204,9 @@ tests:
               description: "Node ip-10-0-5-4.eu-west-1.compute.internal has no running logging-agent pod, its logs are not being collected."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/?INSTALLATION=myinstall&CLUSTER=mycluster
               summary: Node without a logging agent.
-      # Node 2 recovered at t=120. Nodes 3 and 4 are still uncovered.
+      # Node 2 recovered at t=240. Nodes 3 and 4 are still uncovered.
       - alertname: LoggingAgentMissingOnNode
-        eval_time: 160m
+        eval_time: 300m
         exp_alerts:
           - exp_labels:
               area: platform

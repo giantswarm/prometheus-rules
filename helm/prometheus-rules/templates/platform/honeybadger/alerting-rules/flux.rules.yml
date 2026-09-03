@@ -136,21 +136,42 @@ spec:
         team: honeybadger
         topic: releng
 #
+# FluxSourceCriticalFailed
+#
+# Our own GitRepositories, which an oncaller needs to pull a change through Flux at any hour.
+#
+    - alert: FluxSourceCriticalFailed
+      annotations:
+        description: |-
+          {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&SOURCE_NAME={{ $labels.name }}`}}'
+      expr: gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="GitRepository", cluster_type="management_cluster", exported_namespace="flux-giantswarm"} > 0
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "false"
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_metrics_broken: "true"
+        cancel_if_monitoring_agent_down: "true"
+        severity: page
+        team: honeybadger
+        topic: releng
+#
 # FluxSourceFailed
 #
-# Alerting for GiantSwarm management clusters Flux source-related CRs.
+# Remaining source kinds. A package that cannot be pulled says little about the service, so working hours.
+# GitRepository is excluded: FluxSourceCriticalFailed covers it.
 #
     - alert: FluxSourceFailed
       annotations:
         description: |-
           {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&SOURCE_NAME={{ $labels.name }}`}}'
-      expr: gotk_resource_info{job="flux-ksm", ready="False", customresource_kind=~"GitRepository|HelmRepository|Bucket|OCIRepository", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
+      expr: gotk_resource_info{job="flux-ksm", ready="False", customresource_kind=~"HelmRepository|Bucket|OCIRepository", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
       for: 30m
       labels:
         area: platform
-        # 24/7: our namespaces only, so this is a service availability signal.
-        cancel_if_outside_working_hours: "false"
+        cancel_if_outside_working_hours: "true"
         cancel_if_kube_state_metrics_down: "true"
         cancel_if_metrics_broken: "true"
         cancel_if_monitoring_agent_down: "true"

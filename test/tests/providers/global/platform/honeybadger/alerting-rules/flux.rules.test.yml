@@ -37,20 +37,20 @@ tests:
               description: "Flux Kustomization flux in ns flux-giantswarm on test has been suspended for 24h."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-suspended/?INSTALLATION=test&CLUSTER="
 
-  # a giantswarm-namespace source stuck in Failed must page, per-source
+  # our GitRepository is the only 24/7 page: an oncaller needs it to push a change at any hour
   - interval: 1m
     input_series:
       - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="flux-giantswarm", customresource_kind="GitRepository", name="giantswarm-config", ready="False"}'
         values: "1x60"
     alert_rule_test:
-      - alertname: FluxSourceFailed
+      - alertname: FluxSourceCriticalFailed
         eval_time: 25m
         exp_alerts: []
-      - alertname: FluxSourceFailed
+      - alertname: FluxSourceCriticalFailed
         eval_time: 35m
         exp_alerts:
           - exp_labels:
-              alertname: "FluxSourceFailed"
+              alertname: "FluxSourceCriticalFailed"
               area: platform
               cancel_if_kube_state_metrics_down: "true"
               cancel_if_metrics_broken: "true"
@@ -72,6 +72,46 @@ tests:
             exp_annotations:
               description: "Flux GitRepository giantswarm-config in ns flux-giantswarm on myinstall/myinstall is stuck in Failed state."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION=myinstall&CLUSTER=myinstall&NAMESPACE=flux-giantswarm&SOURCE_NAME=giantswarm-config"
+      # GitRepository is excluded from FluxSourceFailed, so it must not double-fire
+      - alertname: FluxSourceFailed
+        eval_time: 35m
+        exp_alerts: []
+
+  # other source kinds are working hours only, never 24/7
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="giantswarm", customresource_kind="OCIRepository", name="appcatalog", ready="False"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: FluxSourceFailed
+        eval_time: 35m
+        exp_alerts:
+          - exp_labels:
+              alertname: "FluxSourceFailed"
+              area: platform
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_metrics_broken: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "myinstall"
+              cluster_type: "management_cluster"
+              customresource_kind: "OCIRepository"
+              exported_namespace: "giantswarm"
+              installation: "myinstall"
+              job: "flux-ksm"
+              name: "appcatalog"
+              pipeline: "stable"
+              provider: "$provider"
+              ready: "False"
+              severity: "page"
+              team: "honeybadger"
+              topic: "releng"
+            exp_annotations:
+              description: "Flux OCIRepository appcatalog in ns giantswarm on myinstall/myinstall is stuck in Failed state."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION=myinstall&CLUSTER=myinstall&NAMESPACE=giantswarm&SOURCE_NAME=appcatalog"
+      - alertname: FluxSourceCriticalFailed
+        eval_time: 35m
+        exp_alerts: []
 
   # customer-namespace sources are out of scope and must stay quiet
   - interval: 1m
@@ -82,6 +122,9 @@ tests:
         values: "1x60"
     alert_rule_test:
       - alertname: FluxSourceFailed
+        eval_time: 35m
+        exp_alerts: []
+      - alertname: FluxSourceCriticalFailed
         eval_time: 35m
         exp_alerts: []
 

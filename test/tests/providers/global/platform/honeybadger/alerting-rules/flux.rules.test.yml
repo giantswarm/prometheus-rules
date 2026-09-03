@@ -129,30 +129,8 @@ tests:
       - alertname: FluxKustomizationFailed
         eval_time: 100h
         exp_alerts: []
-      # 48h suspended is normal, must stay quiet
-      - alertname: FluxCustomerSuspendedForTooLong
-        eval_time: 48h
-        exp_alerts: []
-      # over 7d becomes a notify, never a page
-      - alertname: FluxCustomerSuspendedForTooLong
+      # a suspended customer Kustomization must not alert at all: FluxSuspendedForTooLong is
+      # scoped to flux-giantswarm, and customers pausing their own objects is not ours to report
+      - alertname: FluxSuspendedForTooLong
         eval_time: 175h
-        exp_alerts:
-          - exp_labels:
-              alertname: "FluxCustomerSuspendedForTooLong"
-              area: platform
-              cancel_if_kube_state_metrics_down: "true"
-              cancel_if_metrics_broken: "true"
-              cancel_if_monitoring_agent_down: "true"
-              cancel_if_outside_working_hours: "true"
-              cluster_id: "myinstall"
-              customresource_kind: "Kustomization"
-              exported_namespace: "default"
-              installation: "myinstall"
-              pipeline: "stable"
-              provider: "$provider"
-              severity: "notify"
-              team: "honeybadger"
-              topic: "releng"
-            exp_annotations:
-              description: "1 Flux Kustomization(s) in ns default on myinstall have been suspended for 7 days."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-suspended/?INSTALLATION=myinstall&CLUSTER=myinstall"
+        exp_alerts: []

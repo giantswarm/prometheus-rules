@@ -215,30 +215,6 @@ spec:
         team: honeybadger
         topic: releng
 #
-# FluxCustomerSuspendedForTooLong
-#
-# Customers legitimately pause their own objects, so notify only. Surfaces "paused for weeks".
-#
-    - alert: FluxCustomerSuspendedForTooLong
-      annotations:
-        description: |-
-          {{`{{ $value }} Flux {{ $labels.customresource_kind }}(s) in ns {{ $labels.exported_namespace }} on {{ $labels.installation }} have been suspended for 7 days.`}}
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-suspended/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: |
-        count by (cluster_id, customresource_kind, exported_namespace, installation, pipeline, provider) (
-          gotk_resource_info{job="flux-ksm", cluster_type="management_cluster", exported_namespace!="flux-giantswarm", suspended="true"}
-        ) > 0
-      for: 7d
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        cancel_if_kube_state_metrics_down: "true"
-        cancel_if_metrics_broken: "true"
-        cancel_if_monitoring_agent_down: "true"
-        severity: notify
-        team: honeybadger
-        topic: releng
-#
 # FluxMetricsMissing
 #
 # Flux uptime, from source-controller's own metric. `gotk_resource_info` is flux-ksm's, not Flux's.

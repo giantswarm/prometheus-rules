@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add `FluxMetricsMissing` alert firing when `source-controller` stops emitting reconcile metrics for 30m, i.e. Flux is not running or not reconciling. Reads `gotk_reconcile_duration_seconds_count`, published by the controller itself, rather than `gotk_resource_info`, which comes from the `flux-ksm` kube-state-metrics instance and so reports KSM's health rather than Flux's.
-- Add `FluxCustomerSuspendedForTooLong` alert (`severity: notify`) for Flux objects suspended for over 7 days outside `flux-giantswarm`. Long-suspended Kustomizations are what blocked the [giantswarm#37391](https://github.com/giantswarm/giantswarm/issues/37391) mitigation and nothing surfaced them. Notify-only because customers routinely and legitimately suspend objects.
 
 ### Changed
 

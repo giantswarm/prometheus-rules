@@ -37,14 +37,12 @@ tests:
               description: "Flux Kustomization flux in ns flux-giantswarm on test has been suspended for 24h."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-suspended/?INSTALLATION=test&CLUSTER="
 
-  # giantswarm#37456 - a giantswarm-namespace source stuck in Failed state must page. Per-source, so the
-  # failing source is named; the aggregated form was dropped once the namespace widening was reverted.
+  # a giantswarm-namespace source stuck in Failed must page, per-source
   - interval: 1m
     input_series:
       - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="flux-giantswarm", customresource_kind="GitRepository", name="giantswarm-config", ready="False"}'
         values: "1x60"
     alert_rule_test:
-      # not yet firing before `for: 30m` has elapsed
       - alertname: FluxSourceFailed
         eval_time: 25m
         exp_alerts: []
@@ -75,8 +73,7 @@ tests:
               description: "Flux GitRepository giantswarm-config in ns flux-giantswarm on myinstall/myinstall is stuck in Failed state."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION=myinstall&CLUSTER=myinstall&NAMESPACE=flux-giantswarm&SOURCE_NAME=giantswarm-config"
 
-  # Customer-namespace sources are deliberately out of scope: they are a living system that fails routinely
-  # and harmlessly, and during giantswarm#37391 no source failed in any namespace anyway. This must stay quiet.
+  # customer-namespace sources are out of scope and must stay quiet
   - interval: 1m
     input_series:
       - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="default", customresource_kind="GitRepository", name="team-apps", ready="False"}'
@@ -88,18 +85,15 @@ tests:
         eval_time: 35m
         exp_alerts: []
 
-  # Flux uptime. source-controller publishes this metric itself; gotk_resource_info comes from the flux-ksm
-  # kube-state-metrics instance, so it reports KSM's health rather than Flux's.
+  # Flux uptime, from source-controller's own metric
   - interval: 1m
     input_series:
       - series: 'gotk_reconcile_duration_seconds_count{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-giantswarm/source-controller", cluster_type="management_cluster", kind="GitRepository", name="giantswarm-config"}'
         values: "1x30"
     alert_rule_test:
-      # metrics still arriving
       - alertname: FluxMetricsMissing
         eval_time: 20m
         exp_alerts: []
-      # series stops after 30m; fires once `for: 30m` has elapsed on top of that
       - alertname: FluxMetricsMissing
         eval_time: 75m
         exp_alerts:
@@ -122,10 +116,8 @@ tests:
               description: "Flux is not reconciling on myinstall: no reconcile metrics from source-controller."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-metrics-missing/?INSTALLATION=myinstall&CLUSTER=myinstall"
 
-  # giantswarm#37456 - noise guard. On a large customer MC, 2-4 customer Kustomizations are chronically
-  # `ready="False"` and 5-21 are chronically `suspended`, every day. Neither may ever page.
-  # interval must stay <= the 5m lookback delta, otherwise the series goes stale between rule evaluations
-  # and the `for:` timer resets instead of accumulating.
+  # noise guard: chronically failing and suspended customer objects must never page
+  # interval must stay <= the 5m lookback delta, or the series goes stale and the `for:` timer resets
   - interval: 5m
     input_series:
       - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="default", customresource_kind="Kustomization", name="team-workloads", ready="False"}'
@@ -133,15 +125,15 @@ tests:
       - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="default", customresource_kind="Kustomization", name="team-config", suspended="true", ready="True"}'
         values: "1x2160"
     alert_rule_test:
-      # a failing customer Kustomization must not page - that is a customer concern, not an egress signal
+      # a failing customer Kustomization must not page
       - alertname: FluxKustomizationFailed
         eval_time: 100h
         exp_alerts: []
-      # suspended for 48h is normal on a customer MC - must stay quiet
+      # 48h suspended is normal, must stay quiet
       - alertname: FluxCustomerSuspendedForTooLong
         eval_time: 48h
         exp_alerts: []
-      # suspended for over 7d becomes a Slack notification (severity: notify), never a page
+      # over 7d becomes a notify, never a page
       - alertname: FluxCustomerSuspendedForTooLong
         eval_time: 175h
         exp_alerts:

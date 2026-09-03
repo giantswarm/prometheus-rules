@@ -149,8 +149,7 @@ spec:
       for: 30m
       labels:
         area: platform
-        # Pages 24/7: scoped to our own namespaces, so this only fires when Flux cannot fetch a source we
-        # own, which is a managed-service availability problem rather than customer config churn.
+        # 24/7: our namespaces only, so this is a service availability signal.
         cancel_if_outside_working_hours: "false"
         cancel_if_kube_state_metrics_down: "true"
         cancel_if_metrics_broken: "true"
@@ -218,9 +217,7 @@ spec:
 #
 # FluxCustomerSuspendedForTooLong
 #
-# Suspended objects outside `flux-giantswarm` are legitimately paused by customers, so this never pages -
-# it only makes "paused for weeks" discoverable. This is what blocked the giantswarm#37391 mitigation:
-# 21 Kustomizations had been suspended in `default` on alba for 2.5+ months and nothing surfaced it.
+# Customers legitimately pause their own objects, so notify only. Surfaces "paused for weeks".
 #
     - alert: FluxCustomerSuspendedForTooLong
       annotations:
@@ -244,9 +241,7 @@ spec:
 #
 # FluxMetricsMissing
 #
-# Flux uptime: source-controller stops emitting reconcile metrics when it is not running or not reconciling.
-# Deliberately reads a metric published by the controller itself rather than `gotk_resource_info`, which
-# comes from the flux-ksm kube-state-metrics instance and so reports on KSM's health, not Flux's.
+# Flux uptime, from source-controller's own metric. `gotk_resource_info` is flux-ksm's, not Flux's.
 # Uses the Mimir-safe `absent()` pattern (see README, "Absent function").
 #
     - alert: FluxMetricsMissing
@@ -259,9 +254,7 @@ spec:
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
-        # No cancel_if_kube_state_metrics_down on purpose: this metric does not come from KSM, so inhibiting
-        # on KSM would mask a real Flux outage. The monitoring-pipeline inhibitions below still apply, since
-        # a dead scraper makes the metric look absent.
+        # No cancel_if_kube_state_metrics_down: this metric is not from KSM.
         cancel_if_metrics_broken: "true"
         cancel_if_monitoring_agent_down: "true"
         severity: page

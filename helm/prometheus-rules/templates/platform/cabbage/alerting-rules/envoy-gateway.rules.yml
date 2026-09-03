@@ -157,6 +157,11 @@ spec:
       #   max_over_time(...[2h:1m])     holds the alert for 2h after the last increment. The wedge
       #     does not self-heal while the counter stays static, so a bare increase() would resolve
       #     after 15m with the proxy still broken.
+      #   and on(...) envoy_sds_init_fetch_timeout
+      #     drops the hold once the pod no longer exists. A still-wedged proxy stays Ready and
+      #     keeps exporting the counter, so this only removes series whose pod is gone — which is
+      #     exactly what restarting the pod (the documented fix) or a rollout does. Without it the
+      #     2h hold keeps paging for a proxy that was already replaced.
       # The oauth2/* exclusion keeps this alert on the TLS wedge it describes; OAuth2
       # client_secret/hmac_secret timeouts are a different failure, alerted separately.
       expr: |
@@ -167,6 +172,8 @@ spec:
             ) > 0
           )[2h:1m]
         )
+        and on(installation, cluster_id, namespace, pod)
+          envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system"}
       for: 2m
       labels:
         area: platform
@@ -178,6 +185,8 @@ spec:
       annotations:
         description: '{{`Envoy proxy {{ $labels.pod }} timed out fetching OAuth2 secret {{ $labels.envoy_xds_resource_name }} over SDS within the last 15m. OIDC authentication on the routes covered by that SecurityPolicy may fail until the proxy pod is restarted.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      # Same latching-counter handling as EnvoyProxySDSInitFetchTimeout above, including the
+      # on(...) guard that drops the 2h hold once the affected pod is gone.
       expr: |
         max_over_time(
           (
@@ -186,6 +195,8 @@ spec:
             ) > 0
           )[2h:1m]
         )
+        and on(installation, cluster_id, namespace, pod)
+          envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system"}
       for: 5m
       labels:
         area: platform

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `EnvoyProxySDSInitFetchTimeout` and `EnvoyProxyOAuth2SecretInitFetchTimeout` - no longer alert for proxy pods that no longer exist.
+
 ## [4.118.1] - 2026-09-03
 
 ### Changed

@@ -24,7 +24,7 @@ spec:
         # window ends a full day back so a sustained flood never lands inside its own
         # baseline.
         #
-        # The floor is ~7 GiB/day at 800 B/event, above the ~35 events/s benign
+        # The floor is ~7 GiB/day at 1600 B/event, above the ~35 events/s benign
         # per-user bursts seen in the fleet. `for: 6h` over a 30m rate window needs
         # ~5.5h of sustained traffic — far longer than a CI job or a Kyverno scan,
         # which is what keeps recurring bursts that do clear the floor quiet.

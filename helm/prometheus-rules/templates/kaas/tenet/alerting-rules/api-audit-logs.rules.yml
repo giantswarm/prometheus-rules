@@ -18,7 +18,7 @@ spec:
         #
         # Yesterday's *peak* makes a recurring burst its own reference: workloads that
         # are bursty by design (CI service accounts, Kyverno report controllers, log
-        # agents) rarely burst at exactly T-24h, so a single-point baseline read every
+        # agents) rarely burst at exactly T-24h, so a single-point baseline reads every
         # burst as a 3x jump or as "newly appeared". Keep the subquery step <= the rate
         # window, or the samples stop tiling the day and a burst hides in a gap; the
         # window ends a full day back so a sustained flood never lands inside its own

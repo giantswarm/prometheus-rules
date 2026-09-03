@@ -57,7 +57,7 @@ tests:
               cancel_if_kube_state_metrics_down: "true"
               cancel_if_metrics_broken: "true"
               cancel_if_monitoring_agent_down: "true"
-              cancel_if_outside_working_hours: "true"
+              cancel_if_outside_working_hours: "false"
               cluster_id: "myinstall"
               cluster_type: "management_cluster"
               customresource_kind: "GitRepository"
@@ -88,39 +88,38 @@ tests:
         eval_time: 35m
         exp_alerts: []
 
-  # Dead-man's switch: every other alert in this file is built on gotk_resource_info, so if flux-ksm stops
-  # reporting they all silently stop being able to fire. (This did not happen during giantswarm#37391 -
-  # the metric was present throughout - but the blind spot is real regardless.)
+  # Flux uptime. source-controller publishes this metric itself; gotk_resource_info comes from the flux-ksm
+  # kube-state-metrics instance, so it reports KSM's health rather than Flux's.
   - interval: 1m
     input_series:
-      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="flux-giantswarm", customresource_kind="Kustomization", name="flux", ready="True"}'
+      - series: 'gotk_reconcile_duration_seconds_count{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-giantswarm/source-controller", cluster_type="management_cluster", kind="GitRepository", name="giantswarm-config"}'
         values: "1x30"
     alert_rule_test:
-      # metrics still present
+      # metrics still arriving
       - alertname: FluxMetricsMissing
         eval_time: 20m
         exp_alerts: []
+      # series stops after 30m; fires once `for: 30m` has elapsed on top of that
       - alertname: FluxMetricsMissing
         eval_time: 75m
         exp_alerts:
           - exp_labels:
               alertname: "FluxMetricsMissing"
               area: platform
-              cancel_if_kube_state_metrics_down: "true"
               cancel_if_metrics_broken: "true"
               cancel_if_monitoring_agent_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: "myinstall"
               cluster_type: "management_cluster"
               installation: "myinstall"
-              job: "flux-ksm"
+              job: "flux-giantswarm/source-controller"
               pipeline: "stable"
               provider: "$provider"
               severity: "page"
               team: "honeybadger"
               topic: "releng"
             exp_annotations:
-              description: "Flux metrics are missing on myinstall: no gotk_resource_info from flux-ksm, so no Flux alert can fire."
+              description: "Flux is not reconciling on myinstall: no reconcile metrics from source-controller."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-metrics-missing/?INSTALLATION=myinstall&CLUSTER=myinstall"
 
   # giantswarm#37456 - noise guard. On a large customer MC, 2-4 customer Kustomizations are chronically

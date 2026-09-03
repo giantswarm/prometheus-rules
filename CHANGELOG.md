@@ -9,14 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add `FluxMetricsMissing` alert firing when `flux-ksm` stops reporting `gotk_resource_info` for 30m. Every other Flux alert in this file is built on that metric, so if it stops they all silently stop being able to fire with nothing to say so.
+- Add `FluxMetricsMissing` alert firing when `source-controller` stops emitting reconcile metrics for 30m, i.e. Flux is not running or not reconciling. Reads `gotk_reconcile_duration_seconds_count`, published by the controller itself, rather than `gotk_resource_info`, which comes from the `flux-ksm` kube-state-metrics instance and so reports KSM's health rather than Flux's.
 - Add `FluxCustomerSuspendedForTooLong` alert (`severity: notify`) for Flux objects suspended for over 7 days outside `flux-giantswarm`. Long-suspended Kustomizations are what blocked the [giantswarm#37391](https://github.com/giantswarm/giantswarm/issues/37391) mitigation and nothing surfaced them. Notify-only because customers routinely and legitimately suspend objects.
 
 ### Changed
 
 - `LokiRestartingTooOften` - increased threshold
 - `LoggingAgentMissingOnNode` - increased `for` to 2h.
-- Cut `for: 2h` to `30m` on `FluxSourceFailed` and `FluxWorkloadClusterSourceFailed`, and add the `cancel_if_kube_state_metrics_down`, `cancel_if_metrics_broken` and `cancel_if_monitoring_agent_down` inhibitions so a monitoring blackout does not double-page. Both keep `cancel_if_outside_working_hours: "true"` — a source Flux cannot fetch is a delivery-pipeline problem, handled in hours.
+- Cut `for: 2h` to `30m` on `FluxSourceFailed` and `FluxWorkloadClusterSourceFailed`, and add the `cancel_if_kube_state_metrics_down`, `cancel_if_metrics_broken` and `cancel_if_monitoring_agent_down` inhibitions so a monitoring blackout does not double-page.
+- Page 24/7 on `FluxSourceFailed` (`cancel_if_outside_working_hours: "false"`). It stays scoped to `.*giantswarm.*`, so it only fires when Flux cannot fetch a source we own — a managed-service availability problem rather than customer config churn. `FluxWorkloadClusterSourceFailed` keeps working hours.
 
 ## [4.118.0] - 2026-08-31
 

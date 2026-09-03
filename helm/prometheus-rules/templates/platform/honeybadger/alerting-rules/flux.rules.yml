@@ -149,7 +149,9 @@ spec:
       for: 30m
       labels:
         area: platform
-        cancel_if_outside_working_hours: "true"
+        # Pages 24/7: scoped to our own namespaces, so this only fires when Flux cannot fetch a source we
+        # own, which is a managed-service availability problem rather than customer config churn.
+        cancel_if_outside_working_hours: "false"
         cancel_if_kube_state_metrics_down: "true"
         cancel_if_metrics_broken: "true"
         cancel_if_monitoring_agent_down: "true"
@@ -242,21 +244,24 @@ spec:
 #
 # FluxMetricsMissing
 #
-# Dead-man's switch for Flux alerting itself: every other alert here is built on `gotk_resource_info`, so
-# when flux-ksm stops reporting they all silently stop being able to fire, with nothing to say so.
+# Flux uptime: source-controller stops emitting reconcile metrics when it is not running or not reconciling.
+# Deliberately reads a metric published by the controller itself rather than `gotk_resource_info`, which
+# comes from the flux-ksm kube-state-metrics instance and so reports on KSM's health, not Flux's.
 # Uses the Mimir-safe `absent()` pattern (see README, "Absent function").
 #
     - alert: FluxMetricsMissing
       annotations:
         description: |-
-          {{`Flux metrics are missing on {{ $labels.installation }}: no gotk_resource_info from flux-ksm, so no Flux alert can fire.`}}
+          {{`Flux is not reconciling on {{ $labels.installation }}: no reconcile metrics from source-controller.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-metrics-missing/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: absent(gotk_resource_info{job="flux-ksm", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
+      expr: absent(gotk_reconcile_duration_seconds_count{job="flux-giantswarm/source-controller", cluster_type="management_cluster", cluster_id="{{ .Values.managementCluster.name }}", installation="{{ .Values.managementCluster.name }}", provider="{{ .Values.managementCluster.provider.kind }}", pipeline="{{ .Values.managementCluster.pipeline }}"})
       for: 30m
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
-        cancel_if_kube_state_metrics_down: "true"
+        # No cancel_if_kube_state_metrics_down on purpose: this metric does not come from KSM, so inhibiting
+        # on KSM would mask a real Flux outage. The monitoring-pipeline inhibitions below still apply, since
+        # a dead scraper makes the metric look absent.
         cancel_if_metrics_broken: "true"
         cancel_if_monitoring_agent_down: "true"
         severity: page

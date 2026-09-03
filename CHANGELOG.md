@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `LokiRestartingTooOften` - increased threshold
 - `LoggingAgentMissingOnNode` - increased `for` to 2h.
-- `WorkloadClusterAuditLogVolumeSpike` - raised the volume floor to 50 events/s, increased `for` to 6h, baselined against the user's busiest 30m a day ago, and moved the alert to `area: kaas`.
+- `WorkloadClusterAuditLogVolumeSpike` - tuned thresholds/baseline and moved the alert to `area: kaas`.
 
 ## [4.118.0] - 2026-08-31
 

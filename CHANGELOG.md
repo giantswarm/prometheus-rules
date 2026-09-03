@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.118.1] - 2026-09-03
+
 ### Changed
 
 - `LokiRestartingTooOften` - increased threshold
@@ -4519,7 +4521,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.1...HEAD
+[4.118.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.0...v4.118.1
 [4.118.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.117.0...v4.118.0
 [4.117.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.116.0...v4.117.0
 [4.116.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.115.0...v4.116.0

@@ -1,0 +1,56 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: api-audit-logs.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+    - name: api-audit-logs
+      rules:
+        # Names the single kube-apiserver user (ServiceAccount / identity) flooding a
+        # workload cluster's audit log, rather than just the cluster: everything above
+        # the `> 50` floor fires, unless it is within 3x of that same user's peak 30m
+        # rate a day ago. A user absent a day ago has no baseline sample for the
+        # `unless` to match against, so it fires on the floor alone.
+        #
+        # Yesterday's *peak* makes a recurring burst its own reference: workloads that
+        # are bursty by design (CI service accounts, Kyverno report controllers, log
+        # agents) rarely burst at exactly T-24h, so a single-point baseline reads every
+        # burst as a 3x jump or as "newly appeared". Keep the subquery step <= the rate
+        # window, or the samples stop tiling the day and a burst hides in a gap; the
+        # window ends a full day back so a sustained flood never lands inside its own
+        # baseline.
+        #
+        # The floor is ~7 GiB/day at 1600 B/event, above the ~35 events/s benign
+        # per-user bursts seen in the fleet. `for: 6h` over a 30m rate window needs
+        # ~5.5h of sustained traffic — far longer than a CI job or a Kyverno scan,
+        # which is what keeps recurring bursts that do clear the floor quiet.
+        - alert: WorkloadClusterAuditLogVolumeSpike
+          annotations:
+            description: >-
+              User {{`{{ $labels.user }}`}} on workload cluster {{`{{ $labels.cluster_id }}`}} (installation {{`{{ $labels.installation }}`}})
+              has been sustained at {{`{{ $value | humanize }}`}} API audit events/s — more than 3x its busiest 30m a day ago, or newly appeared — likely a workload flooding the API audit log.
+            runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/workload-cluster-audit-log-volume/
+            __dashboardUid__: api-audit-volume
+          expr: |-
+            sum by (cluster_id, installation, pipeline, provider, customer, user) (
+              rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m])
+            ) > 50
+            unless
+            sum by (cluster_id, installation, pipeline, provider, customer, user) (
+              rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m])
+            ) <= 3 * max_over_time(
+              sum by (cluster_id, installation, pipeline, provider, customer, user) (
+                rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m])
+              )[1d:30m] offset 1d
+            )
+          for: 6h
+          labels:
+            area: kaas
+            cancel_if_outside_working_hours: "true"
+            severity: notify
+            team: tenet
+            topic: kubernetes

@@ -1,0 +1,110 @@
+---
+rule_files:
+  - api-audit-logs.rules.yml
+
+tests:
+  # Existing user runs away: baseline ~5 events/s for two days, then ~500 events/s
+  # from minute 2880. 500 > 3*5 and 500 > 50, held for more than 6h -> fires.
+  # The `user` label is preserved and named in the alert.
+  - interval: 1m
+    input_series:
+      - series: 'k8s_api_audit_requests_total{cluster_id="demo-wc01", cluster_type="workload_cluster", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:kube-system:foo"}'
+        values: "0+300x2879 893700+30000x450"
+    alert_rule_test:
+      - alertname: WorkloadClusterAuditLogVolumeSpike
+        eval_time: 3330m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              cluster_id: demo-wc01
+              customer: giantswarm
+              installation: myinstall
+              pipeline: stable
+              provider: capa
+              severity: notify
+              team: tenet
+              topic: kubernetes
+              user: "system:serviceaccount:kube-system:foo"
+            exp_annotations:
+              description: "User system:serviceaccount:kube-system:foo on workload cluster demo-wc01 (installation myinstall) has been sustained at 500 API audit events/s — more than 3x its busiest 30m a day ago, or newly appeared — likely a workload flooding the API audit log."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/workload-cluster-audit-log-volume/
+              __dashboardUid__: api-audit-volume
+
+  # Brand-new user: no audit traffic in the baseline window (minutes 0-2879
+  # absent), then a sustained ~500 events/s from minute 2880. No baseline sample
+  # for the `unless` to match against, so it fires on the absolute floor
+  # (500 > 50) -> names the user.
+  - interval: 1m
+    input_series:
+      - series: 'k8s_api_audit_requests_total{cluster_id="demo-wc01", cluster_type="workload_cluster", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:default:evil-workload"}'
+        values: "_x2879 0+30000x450"
+    alert_rule_test:
+      - alertname: WorkloadClusterAuditLogVolumeSpike
+        eval_time: 3330m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              cluster_id: demo-wc01
+              customer: giantswarm
+              installation: myinstall
+              pipeline: stable
+              provider: capa
+              severity: notify
+              team: tenet
+              topic: kubernetes
+              user: "system:serviceaccount:default:evil-workload"
+            exp_annotations:
+              description: "User system:serviceaccount:default:evil-workload on workload cluster demo-wc01 (installation myinstall) has been sustained at 500 API audit events/s — more than 3x its busiest 30m a day ago, or newly appeared — likely a workload flooding the API audit log."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/workload-cluster-audit-log-volume/
+              __dashboardUid__: api-audit-volume
+
+  # Steady traffic: constant ~5 events/s throughout -> current == baseline -> no alert.
+  - interval: 1m
+    input_series:
+      - series: 'k8s_api_audit_requests_total{cluster_id="demo-wc01", cluster_type="workload_cluster", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:kube-system:foo"}'
+        values: "0+300x3330"
+    alert_rule_test:
+      - alertname: WorkloadClusterAuditLogVolumeSpike
+        eval_time: 3330m
+        exp_alerts: []
+
+  # CI service account below the floor: baseline ~1 events/s, then ~45 events/s
+  # sustained for 7.5h. 45 > 3*1 and it easily outlasts `for: 6h`, so only the
+  # floor keeps it off the notify channel (45 < 50) -> no alert.
+  - interval: 1m
+    input_series:
+      - series: 'k8s_api_audit_requests_total{cluster_id="demo-wc01", cluster_type="workload_cluster", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:jenkins:jenkins"}'
+        values: "0+60x2879 175440+2700x450"
+    alert_rule_test:
+      - alertname: WorkloadClusterAuditLogVolumeSpike
+        eval_time: 3330m
+        exp_alerts: []
+
+  # Recurring burst above the floor: the same user peaked at ~150 events/s inside
+  # the baseline window (minutes 2200-2380) and is bursting to ~150 events/s again
+  # now (from minute 4600, so 7.3h by eval time - long enough that `for: 6h` is
+  # satisfied and the baseline is the only thing suppressing it). 150 > 50, but
+  # 150 < 3*150 -> a bursty-by-design workload does not fire on every burst.
+  - interval: 1m
+    input_series:
+      - series: 'k8s_api_audit_requests_total{cluster_id="demo-wc01", cluster_type="workload_cluster", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:kyverno:kyverno-reports-controller"}'
+        values: "0+0x2199 9000+9000x180 1629000+0x2218 1638000+9000x440"
+    alert_rule_test:
+      - alertname: WorkloadClusterAuditLogVolumeSpike
+        eval_time: 5040m
+        exp_alerts: []
+
+  # Long burst, still short of `for`: a user with no prior traffic floods at ~500
+  # events/s for four hours (minutes 2880-3120). It clears the floor and its own
+  # flat baseline, so only `for: 6h` holds it back - the 30m rate stays above the
+  # floor for ~4.4h -> a long CI job or migration never reaches firing.
+  - interval: 1m
+    input_series:
+      - series: 'k8s_api_audit_requests_total{cluster_id="demo-wc01", cluster_type="workload_cluster", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:kube-system:alloy-logs"}'
+        values: "0+0x2879 30000+30000x240 7230000+0x60"
+    alert_rule_test:
+      - alertname: WorkloadClusterAuditLogVolumeSpike
+        eval_time: 3140m
+        exp_alerts: []

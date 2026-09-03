@@ -11,11 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `LokiRestartingTooOften` - increased threshold
 - `LoggingAgentMissingOnNode` - increased `for` to 2h.
+- `WorkloadClusterAuditLogVolumeSpike` - tuned thresholds/baseline and moved the alert to `area: kaas`.
 
 ## [4.118.0] - 2026-08-31
 
 ### Added
 
+- Add `ClusterServiceCIDRMissing` alert (team honeybadger).
 - Add `ClusterInternetEgressUnavailable` alert (`severity: page`, 24/7) firing when at least 20% of a cluster's nodes cannot reach one of the probed internet domains.
 - Add `LoggingAgentMissingOnNode` alert (`severity: page`) firing when a node has no running `alloy-logs` pod.
 - Add `WorkloadClusterAuditLogVolumeSpike` alert (`severity: notify`, working hours only) firing when a single kube-apiserver user on a workload cluster sustains a high API audit event rate.

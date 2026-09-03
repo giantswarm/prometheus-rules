@@ -1,0 +1,36 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: cluster-apps-operator.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: cluster-apps-operator
+    rules:
+    # cluster-apps-operator derives clusterDNSIP from the Cluster CR's
+    # spec.clusterNetwork.services.cidrBlocks and falls back to the
+    # installation-wide default when that field is absent. chart-operator runs
+    # hostNetwork with dnsPolicy: None and uses clusterDNSIP as its only
+    # resolver, so a wrong value breaks every chart pull on the cluster and
+    # stays dormant until the next one.
+    #
+    # Expected to be 0 everywhere: the cluster chart makes services.cidrBlocks
+    # required with a default, so anything else needs a human. Inhibited outside
+    # working hours -- when it fires nothing is broken yet, the breakage lands on
+    # the next chart pull.
+    - alert: ClusterServiceCIDRMissing
+      annotations:
+        description: '{{`Cluster {{ $labels.cluster_namespace }}/{{ $labels.cluster_id }} has no services CIDR, so cluster-apps-operator is emitting the installation default clusterDNSIP.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cluster-service-cidr-missing/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      expr: cluster_apps_operator_cluster_service_cidr_missing > 0
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: honeybadger
+        topic: releng

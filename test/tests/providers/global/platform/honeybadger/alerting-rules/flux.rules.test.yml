@@ -37,13 +37,11 @@ tests:
               description: "Flux Kustomization flux in ns flux-giantswarm on test has been suspended for 24h."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-suspended/?INSTALLATION=test&CLUSTER="
 
-  # giantswarm#37456 - during the egress incident (giantswarm#37391) the sources that failed lived in
-  # `default` and `org-*`, which the old `.*giantswarm.*` selector excluded. This is the case that must page.
+  # giantswarm#37456 - a giantswarm-namespace source stuck in Failed state must page. Per-source, so the
+  # failing source is named; the aggregated form was dropped once the namespace widening was reverted.
   - interval: 1m
     input_series:
-      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="default", customresource_kind="GitRepository", name="provisioners", ready="False"}'
-        values: "1x60"
-      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="default", customresource_kind="GitRepository", name="team-apps", ready="False"}'
+      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="flux-giantswarm", customresource_kind="GitRepository", name="giantswarm-config", ready="False"}'
         values: "1x60"
     alert_rule_test:
       # not yet firing before `for: 30m` has elapsed
@@ -59,22 +57,40 @@ tests:
               cancel_if_kube_state_metrics_down: "true"
               cancel_if_metrics_broken: "true"
               cancel_if_monitoring_agent_down: "true"
-              cancel_if_outside_working_hours: "false"
+              cancel_if_outside_working_hours: "true"
               cluster_id: "myinstall"
+              cluster_type: "management_cluster"
               customresource_kind: "GitRepository"
-              exported_namespace: "default"
+              exported_namespace: "flux-giantswarm"
               installation: "myinstall"
+              job: "flux-ksm"
+              name: "giantswarm-config"
               pipeline: "stable"
               provider: "$provider"
+              ready: "False"
               severity: "page"
               team: "honeybadger"
               topic: "releng"
             exp_annotations:
-              description: "2 Flux GitRepository source(s) in ns default on myinstall/myinstall are stuck in Failed state."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION=myinstall&CLUSTER=myinstall&NAMESPACE=default"
+              description: "Flux GitRepository giantswarm-config in ns flux-giantswarm on myinstall/myinstall is stuck in Failed state."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION=myinstall&CLUSTER=myinstall&NAMESPACE=flux-giantswarm&SOURCE_NAME=giantswarm-config"
 
-  # giantswarm#37456 - flux-ksm stopped reporting for 4h during the incident, which silently disabled every
-  # other alert in this file. FluxMetricsMissing is the dead-man's switch for that.
+  # Customer-namespace sources are deliberately out of scope: they are a living system that fails routinely
+  # and harmlessly, and during giantswarm#37391 no source failed in any namespace anyway. This must stay quiet.
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="default", customresource_kind="GitRepository", name="team-apps", ready="False"}'
+        values: "1x60"
+      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="org-customer", customresource_kind="GitRepository", name="team-config", ready="False"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: FluxSourceFailed
+        eval_time: 35m
+        exp_alerts: []
+
+  # Dead-man's switch: every other alert in this file is built on gotk_resource_info, so if flux-ksm stops
+  # reporting they all silently stop being able to fire. (This did not happen during giantswarm#37391 -
+  # the metric was present throughout - but the blind spot is real regardless.)
   - interval: 1m
     input_series:
       - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="flux-giantswarm", customresource_kind="Kustomization", name="flux", ready="True"}'
@@ -93,7 +109,7 @@ tests:
               cancel_if_kube_state_metrics_down: "true"
               cancel_if_metrics_broken: "true"
               cancel_if_monitoring_agent_down: "true"
-              cancel_if_outside_working_hours: "false"
+              cancel_if_outside_working_hours: "true"
               cluster_id: "myinstall"
               cluster_type: "management_cluster"
               installation: "myinstall"

@@ -10,6 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add `api-audit-logs.recording.rules` pre-aggregating the per-user API audit event rate and its rolling 24h peak.
+- Add `FluxSourceCriticalFailed`, paging 24/7 on `GitRepository` in `flux-giantswarm` — the source an oncaller needs to push a change through Flux at any hour. `GitRepository` is removed from `FluxSourceFailed` in exchange, and that alert keeps working hours: an `OCIRepository` or `HelmRepository` that cannot be pulled says little about whether the service is running, and can wait for morning.
+- Add `FluxMetricsMissing` alert firing when `source-controller` stops emitting reconcile metrics for 30m, i.e. Flux is not running or not reconciling. Reads `gotk_reconcile_duration_seconds_count`, published by the controller itself, rather than `gotk_resource_info`, which comes from the `flux-ksm` kube-state-metrics instance and so reports KSM's health rather than Flux's.
+
+### Changed
+
+- Cut `for: 2h` to `30m` on `FluxSourceFailed` and `FluxWorkloadClusterSourceFailed`, and add the `cancel_if_kube_state_metrics_down`, `cancel_if_metrics_broken` and `cancel_if_monitoring_agent_down` inhibitions so a monitoring blackout does not double-page.
+
+## [4.118.2] - 2026-09-04
+
+### Fixed
+
+- `EnvoyProxySDSInitFetchTimeout` and `EnvoyProxyOAuth2SecretInitFetchTimeout` - no longer alert for proxy pods that no longer exist.
+
+## [4.118.1] - 2026-09-03
 
 ### Changed
 
@@ -4526,7 +4540,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.2...HEAD
+[4.118.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.1...v4.118.2
+[4.118.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.0...v4.118.1
 [4.118.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.117.0...v4.118.0
 [4.117.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.116.0...v4.117.0
 [4.116.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.115.0...v4.116.0

@@ -76,6 +76,98 @@ tests:
       - alertname: EnvoyProxySDSInitFetchTimeout
         eval_time: 180m
 
+  # A proxy that wedged and was then REPLACED must stop paging immediately, even though the 2h
+  # max_over_time hold is still open. Restarting the pod is the documented fix, so once its series
+  # is gone there is nothing left to act on. A pod that is still wedged must keep paging.
+  - interval: 1m
+    input_series:
+      # wedged at 21m, then the pod is replaced and its series ends at 31m
+      - series: 'envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", pod="envoy-internal-replaced", envoy_xds_resource_name="envoy-gateway-system/gateway-internal-https-tls", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x20 2x10"
+      # wedged at 21m and never restarted: still broken, must still page
+      - series: 'envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", pod="envoy-internal-wedged", envoy_xds_resource_name="envoy-gateway-system/gateway-internal-https-tls", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x20 2+0x180"
+    alert_rule_test:
+      # both are wedged and both still exist: both page
+      - alertname: EnvoyProxySDSInitFetchTimeout
+        eval_time: 25m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "false"
+              namespace: envoy-gateway-system
+              pod: envoy-internal-replaced
+              envoy_xds_resource_name: envoy-gateway-system/gateway-internal-https-tls
+              installation: myinstall
+              cluster_id: my-cluster
+            exp_annotations:
+              description: "Envoy proxy envoy-internal-replaced timed out fetching TLS secret envoy-gateway-system/gateway-internal-https-tls over SDS within the last 15m. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519)."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "false"
+              namespace: envoy-gateway-system
+              pod: envoy-internal-wedged
+              envoy_xds_resource_name: envoy-gateway-system/gateway-internal-https-tls
+              installation: myinstall
+              cluster_id: my-cluster
+            exp_annotations:
+              description: "Envoy proxy envoy-internal-wedged timed out fetching TLS secret envoy-gateway-system/gateway-internal-https-tls over SDS within the last 15m. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519)."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
+      # 45m: inside the 2h hold for both, but the replaced pod's series is gone, so only the
+      # still-wedged pod pages. Before the on(...) guard, both kept paging until 2h had passed.
+      - alertname: EnvoyProxySDSInitFetchTimeout
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "false"
+              namespace: envoy-gateway-system
+              pod: envoy-internal-wedged
+              envoy_xds_resource_name: envoy-gateway-system/gateway-internal-https-tls
+              installation: myinstall
+              cluster_id: my-cluster
+            exp_annotations:
+              description: "Envoy proxy envoy-internal-wedged timed out fetching TLS secret envoy-gateway-system/gateway-internal-https-tls over SDS within the last 15m. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519)."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
+
+  # The same guard applies to the OAuth2 companion alert: a replaced pod stops notifying.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", pod="envoy-external-replaced", envoy_xds_resource_name="oauth2/client_secret/dex-oauth2", installation="myinstall", cluster_id="my-cluster-2"}'
+        values: "0x20 1x10"
+    alert_rule_test:
+      # firing while the pod is still there (onset 21m + 5m for-window)
+      - alertname: EnvoyProxyOAuth2SecretInitFetchTimeout
+        eval_time: 28m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: notify
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "true"
+              namespace: envoy-gateway-system
+              pod: envoy-external-replaced
+              envoy_xds_resource_name: oauth2/client_secret/dex-oauth2
+              installation: myinstall
+              cluster_id: my-cluster-2
+            exp_annotations:
+              description: "Envoy proxy envoy-external-replaced timed out fetching OAuth2 secret oauth2/client_secret/dex-oauth2 over SDS within the last 15m. OIDC authentication on the routes covered by that SecurityPolicy may fail until the proxy pod is restarted."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster-2&NAMESPACE=envoy-gateway-system"
+      # pod replaced: cleared despite the 2h hold still being open
+      - alertname: EnvoyProxyOAuth2SecretInitFetchTimeout
+        eval_time: 45m
+
   # EnvoyProxyOAuth2SecretInitFetchTimeout: OAuth2 client/hmac secrets are a different (notify)
   # failure class and must not reach the paging alert.
   - interval: 1m

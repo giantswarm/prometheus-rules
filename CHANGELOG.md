@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Rewrote all cabbage alert descriptions to a single line naming what broke and where.
+
+### Fixed
+
+- `EnvoyHighDownstreamRequestTimeoutRate`, `EnvoyClusterCircuitBreakerTripped` and `EnvoyControllerNotReconcilingGateway` - descriptions no longer render a literal `\n` and a full label dump.
+- `CoreDNSMaxHPAReplicasReached` - description now names the HPA instead of rendering an empty deployment name.
+- `ExternalDNSCantAccessRegistry`, `ExternalDNSCantAccessSource` and `ExternalDNSDown` - removed a stray bracket from the descriptions.
+
 ## [4.118.2] - 2026-09-04
 
 ### Fixed

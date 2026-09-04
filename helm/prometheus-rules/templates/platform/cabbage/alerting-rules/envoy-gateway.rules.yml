@@ -12,7 +12,7 @@ spec:
     rules:
     - alert: EnvoyGatewayDeploymentNotSatisfied
       annotations:
-        description: '{{`Envoy Gateway Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        description: '{{`Envoy Gateway Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has less than half of its replicas available.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: kube_deployment_status_replicas_available{namespace="envoy-gateway-system", deployment="envoy-gateway"} / (kube_deployment_status_replicas_available{namespace="envoy-gateway-system", deployment="envoy-gateway"} + kube_deployment_status_replicas_unavailable{namespace="envoy-gateway-system", deployment="envoy-gateway"}) * 100 <= 50
       for: 10m
@@ -24,7 +24,7 @@ spec:
         topic: envoy-gateway
     - alert: EnvoyProxyDeploymentNotSatisfied
       annotations:
-        description: '{{`Envoy Proxy Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        description: '{{`Envoy Proxy Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has less than half of its replicas available.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: envoy_proxy_deployment_status_replicas_available / (envoy_proxy_deployment_status_replicas_available + envoy_proxy_deployment_status_replicas_unavailable) * 100 <= 50
       for: 10m
@@ -36,7 +36,7 @@ spec:
         topic: envoy-gateway
     # - alert: EnvoyHighDownstreamHTTP5xxErrorRate
     #   annotations:
-    #     description: '{{`More than 5% of downstream HTTP responses are 5xx on {{ $labels.pod }} ({{ $value | printf "%.1f" }}%)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
+    #     description: '{{`More than 5% of downstream HTTP responses on {{ $labels.pod }} are 5xx ({{ $value | printf "%.1f" }}%).`}}'
     #     runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
     #   expr: |
     #     sum(
@@ -59,7 +59,7 @@ spec:
     #     topic: envoy-gateway
     # - alert: EnvoyHighClusterUpstream5xxErrorRate
     #   annotations:
-    #     description: '{{`More than 5% of upstream requests return 5xx in cluster {{ $labels.envoy_cluster_name }} on {{ $labels.pod }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
+    #     description: '{{`More than 5% of upstream requests to Envoy cluster {{ $labels.envoy_cluster_name }} on {{ $labels.pod }} return 5xx ({{ $value | printf "%.1f" }}%).`}}'
     #     runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
     #   expr: | 
     #     rate(
@@ -82,7 +82,7 @@ spec:
     #     topic: envoy-gateway
     - alert: EnvoyHighDownstreamRequestTimeoutRate
       annotations:
-        description: '{{`More than 10% of downstream requests timeout for gateway {{ $labels.gateway_name }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
+        description: '{{`More than 10% of downstream requests to gateway {{ $labels.gateway_name }} are timing out ({{ $value | printf "%.1f" }}%).`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       expr: |
         sum(
@@ -102,7 +102,7 @@ spec:
         topic: envoy-gateway
     - alert: EnvoyClusterCircuitBreakerTripped
       annotations:
-        description: '{{`Circuit breaker is open for cluster {{ $labels.envoy_cluster_name }} on {{ $labels.pod }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
+        description: '{{`Circuit breaker is open for Envoy cluster {{ $labels.envoy_cluster_name }} on {{ $labels.pod }}.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       expr: envoy_cluster_circuit_breakers_cx_open == 1 or envoy_cluster_circuit_breakers_rq_open == 1
       for: 10m
@@ -114,7 +114,7 @@ spec:
         topic: envoy-gateway
     - alert: EnvoyControllerNotReconcilingGateway
       annotations:
-        description: '{{`Envoy Gateway controller is having issues reconciling {{ $labels.name }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}`}}'
+        description: '{{`Envoy Gateway controller cannot reconcile Gateway {{ $labels.namespace }}/{{ $labels.name }}.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       expr: | 
           # Option A: accepted but config never reached the proxy
@@ -148,8 +148,11 @@ spec:
         topic: envoy-gateway
     - alert: EnvoyProxySDSInitFetchTimeout
       annotations:
-        description: '{{`Envoy proxy {{ $labels.pod }} timed out fetching TLS secret {{ $labels.envoy_xds_resource_name }} over SDS within the last 15m. New TLS handshakes on its listeners fail while the pod still reports Ready, so it will not self-heal — the proxy pod must be restarted. Typically follows an Envoy Gateway control-plane restart (see envoyproxy/gateway#9519).`}}'
+        description: '{{`Envoy proxy {{ $labels.pod }} timed out fetching TLS secret {{ $labels.envoy_xds_resource_name }} over SDS; new TLS handshakes fail until the pod is restarted.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      # The wedged proxy keeps reporting Ready, so it does not self-heal: the pod must be restarted.
+      # This typically follows an Envoy Gateway control-plane restart (envoyproxy/gateway#9519).
+      #
       # envoy_sds_init_fetch_timeout is a latching counter: once incremented it stays >0 until the
       # pod restarts. A bare `> 0` therefore keeps paging for a timeout that may have happened days
       # ago and had no lasting impact, so trigger on a *fresh* increment instead:
@@ -183,7 +186,7 @@ spec:
         topic: envoy-gateway
     - alert: EnvoyProxyOAuth2SecretInitFetchTimeout
       annotations:
-        description: '{{`Envoy proxy {{ $labels.pod }} timed out fetching OAuth2 secret {{ $labels.envoy_xds_resource_name }} over SDS within the last 15m. OIDC authentication on the routes covered by that SecurityPolicy may fail until the proxy pod is restarted.`}}'
+        description: '{{`Envoy proxy {{ $labels.pod }} timed out fetching OAuth2 secret {{ $labels.envoy_xds_resource_name }} over SDS; OIDC authentication fails until the pod is restarted.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       # Same latching-counter handling as EnvoyProxySDSInitFetchTimeout above, including the
       # on(...) guard that drops the 2h hold once the affected pod is gone.
@@ -206,7 +209,7 @@ spec:
         topic: envoy-gateway
     - alert: EnvoyProxyListenersStuckWarming
       annotations:
-        description: '{{`Envoy proxy {{ $labels.pod }} has had listeners stuck in warming state for over 15m, so its latest configuration is not being served (it may still be serving the previous config). A persistently warming listener that never becomes active points at an xDS resource (e.g. an SDS secret) that never arrives.`}}'
+        description: '{{`Envoy proxy {{ $labels.pod }} has listeners stuck warming for over 15m and is not serving its latest configuration.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       expr: envoy_listener_manager_total_listeners_warming{namespace="envoy-gateway-system"} > 0
       for: 15m

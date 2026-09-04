@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add `api-audit-logs.recording.rules` pre-aggregating the per-user API audit event rate and its rolling 24h peak.
 - Add `FluxSourceCriticalFailed`, paging 24/7 on `GitRepository` in `flux-giantswarm` — the source an oncaller needs to push a change through Flux at any hour. `GitRepository` is removed from `FluxSourceFailed` in exchange, and that alert keeps working hours: an `OCIRepository` or `HelmRepository` that cannot be pulled says little about whether the service is running, and can wait for morning.
 - Add `FluxMetricsMissing` alert firing when `source-controller` stops emitting reconcile metrics for 30m, i.e. Flux is not running or not reconciling. Reads `gotk_reconcile_duration_seconds_count`, published by the controller itself, rather than `gotk_resource_info`, which comes from the `flux-ksm` kube-state-metrics instance and so reports KSM's health rather than Flux's.
 
@@ -29,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `LokiRestartingTooOften` - increased threshold
 - `LoggingAgentMissingOnNode` - increased `for` to 2h.
 - `WorkloadClusterAuditLogVolumeSpike` - tuned thresholds/baseline and moved the alert to `area: kaas`.
+- `WorkloadClusterAuditLogVolumeSpike` - read the rate and its baseline from recording rules instead of re-deriving both per evaluation.
 
 ## [4.118.0] - 2026-08-31
 
@@ -84,6 +86,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Point the log-based alert example in the README at `/docs/support-and-ops/runbooks/log-errors/`. The `ops-recipes` path it used has been retired in favour of runbooks.
+- Remove the orphaned `crsync.rules.test.yml`. Its rule file was deleted in #1376, so the test referenced a `crsync.rules.yml` that no longer exists, and it still asserted a retired `ops-recipes` runbook URL.
 - Add `agent-platform` to the `DeploymentNotSatisfiedBumblebee` namespace selector, next to `agentic-platform`. The Agent Platform namespace is renamed per installation, so both names must match while the fleet migrates.
 
 ### Removed

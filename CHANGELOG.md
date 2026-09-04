@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `api-audit-logs.recording.rules` pre-aggregating the per-user API audit event rate and its rolling 24h peak.
+
 ### Changed
 
 - `LokiRestartingTooOften` - increased threshold
 - `LoggingAgentMissingOnNode` - increased `for` to 2h.
 - `WorkloadClusterAuditLogVolumeSpike` - tuned thresholds/baseline and moved the alert to `area: kaas`.
+- `WorkloadClusterAuditLogVolumeSpike` - read the rate and its baseline from recording rules instead of re-deriving both per evaluation.
 
 ## [4.118.0] - 2026-08-31
 

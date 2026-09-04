@@ -1,6 +1,10 @@
 ---
+# The recording rules are loaded alongside the alert so these tests drive the whole
+# chain from the raw metric: a rename or a label-set drift between the two files breaks
+# the alert silently, and only an end-to-end test catches it.
 rule_files:
   - api-audit-logs.rules.yml
+  - ../recording-rules/api-audit-logs.rules.yml
 
 tests:
   # Existing user runs away: baseline ~5 events/s for two days, then ~500 events/s
@@ -34,11 +38,15 @@ tests:
   # Brand-new user: no audit traffic in the baseline window (minutes 0-2879
   # absent), then a sustained ~500 events/s from minute 2880. No baseline sample
   # for the `unless` to match against, so it fires on the absolute floor
-  # (500 > 50) -> names the user.
+  # (500 > 50) -> names the user. The second series is an unrelated quiet user
+  # present throughout: it gives the baseline metric samples 24h back, so the
+  # `absent` warm-up guard stays open and one new user can still fire.
   - interval: 1m
     input_series:
       - series: 'k8s_api_audit_requests_total{cluster_id="demo-wc01", cluster_type="workload_cluster", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:default:evil-workload"}'
         values: "_x2879 0+30000x450"
+      - series: 'k8s_api_audit_requests_total{cluster_id="demo-wc01", cluster_type="workload_cluster", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:kube-system:quiet"}'
+        values: "0+300x3330"
     alert_rule_test:
       - alertname: WorkloadClusterAuditLogVolumeSpike
         eval_time: 3330m
@@ -94,6 +102,19 @@ tests:
     alert_rule_test:
       - alertname: WorkloadClusterAuditLogVolumeSpike
         eval_time: 5040m
+        exp_alerts: []
+
+  # Warm-up after deploy: a user floods at ~500 events/s from the very start of the
+  # window, so no baseline exists anywhere 24h earlier - exactly the state of a freshly
+  # deployed recording rule. The floor is cleared and the burst outlasts `for: 6h`, so
+  # only the `absent` guard holds the alert -> no alert.
+  - interval: 1m
+    input_series:
+      - series: 'k8s_api_audit_requests_total{cluster_id="demo-wc01", cluster_type="workload_cluster", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:kyverno:kyverno-reports-controller"}'
+        values: "0+30000x450"
+    alert_rule_test:
+      - alertname: WorkloadClusterAuditLogVolumeSpike
+        eval_time: 420m
         exp_alerts: []
 
   # Long burst, still short of `for`: a user with no prior traffic floods at ~500

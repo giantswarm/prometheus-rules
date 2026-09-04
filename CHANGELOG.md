@@ -14,9 +14,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Cut `for: 2h` to `30m` on `FluxSourceFailed` and `FluxWorkloadClusterSourceFailed`, and add the `cancel_if_kube_state_metrics_down`, `cancel_if_metrics_broken` and `cancel_if_monitoring_agent_down` inhibitions so a monitoring blackout does not double-page.
+
+## [4.118.2] - 2026-09-04
+
+### Fixed
+
+- `EnvoyProxySDSInitFetchTimeout` and `EnvoyProxyOAuth2SecretInitFetchTimeout` - no longer alert for proxy pods that no longer exist.
+
+## [4.118.1] - 2026-09-03
+
+### Changed
+
 - `LokiRestartingTooOften` - increased threshold
 - `LoggingAgentMissingOnNode` - increased `for` to 2h.
-- Cut `for: 2h` to `30m` on `FluxSourceFailed` and `FluxWorkloadClusterSourceFailed`, and add the `cancel_if_kube_state_metrics_down`, `cancel_if_metrics_broken` and `cancel_if_monitoring_agent_down` inhibitions so a monitoring blackout does not double-page.
+- `WorkloadClusterAuditLogVolumeSpike` - tuned thresholds/baseline and moved the alert to `area: kaas`.
 
 ## [4.118.0] - 2026-08-31
 
@@ -4524,7 +4536,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.2...HEAD
+[4.118.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.1...v4.118.2
+[4.118.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.0...v4.118.1
 [4.118.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.117.0...v4.118.0
 [4.117.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.116.0...v4.117.0
 [4.116.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.115.0...v4.116.0

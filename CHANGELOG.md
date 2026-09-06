@@ -7,10 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.119.0] - 2026-09-06
+
 ### Added
 
 - Add `FluxSourceCriticalFailed`, paging 24/7 on `GitRepository` in `flux-giantswarm` — the source an oncaller needs to push a change through Flux at any hour. `GitRepository` is removed from `FluxSourceFailed` in exchange, and that alert keeps working hours: an `OCIRepository` or `HelmRepository` that cannot be pulled says little about whether the service is running, and can wait for morning.
 - Add `FluxMetricsMissing` alert firing when `source-controller` stops emitting reconcile metrics for 30m, i.e. Flux is not running or not reconciling. Reads `gotk_reconcile_duration_seconds_count`, published by the controller itself, rather than `gotk_resource_info`, which comes from the `flux-ksm` kube-state-metrics instance and so reports KSM's health rather than Flux's.
+- Add team Bumblebee's agent platform availability alerts: `AgentPlatformHelmReleaseNotReady` (a `team=bumblebee` HelmRelease in `flux-giantswarm` not Ready for 1h), `KagentControllerDown` (`kagent-controller` without an available replica for 30m) and `AgentPlatformPostgresClusterNotHealthy` (a CloudNativePG `Cluster` in `agent-platform` or `kagent` outside its healthy phase for 30m). All three carry `all_pipelines: "true"`: the agent platform's own management clusters include `testing`-pipeline installations, where the existing `FluxGiantswarmHelmReleaseFailed` and `DeploymentNotSatisfiedBumblebee` alerts fire but only reach Slack. The first two step back wherever those generic alerts page (`stable` and `stable-testing` pipelines), so a stuck component never opens two incidents.
 
 ### Changed
 
@@ -4536,7 +4539,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.119.0...HEAD
+[4.119.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.2...v4.119.0
 [4.118.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.1...v4.118.2
 [4.118.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.0...v4.118.1
 [4.118.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.117.0...v4.118.0

@@ -35,12 +35,67 @@ tests:
               cancel_if_outside_working_hours: "true"
               cluster_id: graveler
               cluster_type: management_cluster
-              customresource_kind: HelmRelease
               exported_namespace: flux-giantswarm
               installation: graveler
-              job: flux-ksm
               name: kagent
-              namespace: flux-giantswarm
+              pipeline: testing
+              provider: $provider
+              ready: "False"
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "Agent platform HelmRelease flux-giantswarm/kagent on graveler has not been Ready for over an hour."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-helmrelease-not-ready/?INSTALLATION=graveler&CLUSTER=graveler&NAMESPACE=flux-giantswarm&HELMRELEASE_NAME=kagent"
+  # flux-ksm is rescheduled while the HelmRelease is not Ready: the old pod's
+  # series ends and the new pod's begins with different `pod` and `instance`
+  # labels. The alert keeps its identity across the hand-over and stays firing
+  # instead of resolving and starting its `for` period over.
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="kagent", team="bumblebee", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", namespace="flux-giantswarm", service="flux-giantswarm-flux-ksm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-aaaaa", endpoint="http", container="kube-state-metrics", instance="10.0.0.1:8080", node="ip-10-0-0-1.eu-west-1.compute.internal"}'
+        values: "1x70 _x50"
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="kagent", team="bumblebee", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", namespace="flux-giantswarm", service="flux-giantswarm-flux-ksm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-bbbbb", endpoint="http", container="kube-state-metrics", instance="10.0.0.2:8080", node="ip-10-0-0-2.eu-west-1.compute.internal"}'
+        values: "_x67 1x53"
+    alert_rule_test:
+      # Firing from the first pod alone.
+      - alertname: AgentPlatformHelmReleaseNotReady
+        eval_time: 65m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformHelmReleaseNotReady
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: graveler
+              cluster_type: management_cluster
+              exported_namespace: flux-giantswarm
+              installation: graveler
+              name: kagent
+              pipeline: testing
+              provider: $provider
+              ready: "False"
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "Agent platform HelmRelease flux-giantswarm/kagent on graveler has not been Ready for over an hour."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-helmrelease-not-ready/?INSTALLATION=graveler&CLUSTER=graveler&NAMESPACE=flux-giantswarm&HELMRELEASE_NAME=kagent"
+      # Only the second pod's series exists now. Had `pod` been part of the
+      # alert's labels, the alert would be pending here until 128m.
+      - alertname: AgentPlatformHelmReleaseNotReady
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformHelmReleaseNotReady
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: graveler
+              cluster_type: management_cluster
+              exported_namespace: flux-giantswarm
+              installation: graveler
+              name: kagent
               pipeline: testing
               provider: $provider
               ready: "False"
@@ -81,12 +136,9 @@ tests:
               cancel_if_outside_working_hours: "true"
               cluster_id: gazelle
               cluster_type: management_cluster
-              customresource_kind: HelmRelease
               exported_namespace: flux-giantswarm
               installation: gazelle
-              job: flux-ksm
               name: agent-platform-connectivity
-              namespace: flux-giantswarm
               pipeline: stable
               provider: $provider
               ready: "False"
@@ -126,7 +178,6 @@ tests:
               cluster_type: management_cluster
               deployment: kagent-controller
               installation: graveler
-              job: kube-state-metrics
               namespace: kagent
               pipeline: testing
               provider: $provider
@@ -150,7 +201,65 @@ tests:
               cluster_type: management_cluster
               deployment: kagent-controller
               installation: graveler
-              job: kube-state-metrics
+              namespace: kagent
+              pipeline: testing
+              provider: $provider
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "kagent-controller in kagent on graveler has had no available replica for 30 minutes; agents on this installation are down."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kagent-controller-down/?INSTALLATION=graveler&CLUSTER=graveler"
+  # kube-state-metrics is rescheduled during the outage: the old pod's series
+  # end and the new pod's begin with different `pod` and `instance` labels. The
+  # alert keeps its identity across the hand-over and stays firing.
+  - interval: 1m
+    input_series:
+      - series: 'kube_deployment_status_replicas_available{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", service="kube-prometheus-stack-kube-state-metrics", pod="kube-prometheus-stack-kube-state-metrics-7c9d8f6b5-aaaaa", endpoint="http", container="kube-state-metrics", instance="10.0.0.1:8080", node="ip-10-0-0-1.eu-west-1.compute.internal"}'
+        values: "0x40 _x40"
+      - series: 'kube_deployment_spec_replicas{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", service="kube-prometheus-stack-kube-state-metrics", pod="kube-prometheus-stack-kube-state-metrics-7c9d8f6b5-aaaaa", endpoint="http", container="kube-state-metrics", instance="10.0.0.1:8080", node="ip-10-0-0-1.eu-west-1.compute.internal"}'
+        values: "1x40 _x40"
+      - series: 'kube_deployment_status_replicas_available{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", service="kube-prometheus-stack-kube-state-metrics", pod="kube-prometheus-stack-kube-state-metrics-7c9d8f6b5-bbbbb", endpoint="http", container="kube-state-metrics", instance="10.0.0.2:8080", node="ip-10-0-0-2.eu-west-1.compute.internal"}'
+        values: "_x37 0x43"
+      - series: 'kube_deployment_spec_replicas{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", service="kube-prometheus-stack-kube-state-metrics", pod="kube-prometheus-stack-kube-state-metrics-7c9d8f6b5-bbbbb", endpoint="http", container="kube-state-metrics", instance="10.0.0.2:8080", node="ip-10-0-0-2.eu-west-1.compute.internal"}'
+        values: "_x37 1x43"
+    alert_rule_test:
+      # Firing from the first pod alone.
+      - alertname: KagentControllerDown
+        eval_time: 35m
+        exp_alerts:
+          - exp_labels:
+              alertname: KagentControllerDown
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: graveler
+              cluster_type: management_cluster
+              deployment: kagent-controller
+              installation: graveler
+              namespace: kagent
+              pipeline: testing
+              provider: $provider
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "kagent-controller in kagent on graveler has had no available replica for 30 minutes; agents on this installation are down."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kagent-controller-down/?INSTALLATION=graveler&CLUSTER=graveler"
+      # Only the second pod's series exist now. Had `pod` been part of the
+      # alert's labels, the alert would be pending here until 68m.
+      - alertname: KagentControllerDown
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              alertname: KagentControllerDown
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: graveler
+              cluster_type: management_cluster
+              deployment: kagent-controller
+              installation: graveler
               namespace: kagent
               pipeline: testing
               provider: $provider

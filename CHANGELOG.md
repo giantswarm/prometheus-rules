@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.119.0] - 2026-09-06
+
 ### Added
 
 - Add `FluxSourceCriticalFailed`, paging 24/7 on `GitRepository` in `flux-giantswarm` — the source an oncaller needs to push a change through Flux at any hour. `GitRepository` is removed from `FluxSourceFailed` in exchange, and that alert keeps working hours: an `OCIRepository` or `HelmRepository` that cannot be pulled says little about whether the service is running, and can wait for morning.
@@ -4537,7 +4539,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.119.0...HEAD
+[4.119.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.2...v4.119.0
 [4.118.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.1...v4.118.2
 [4.118.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.0...v4.118.1
 [4.118.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.117.0...v4.118.0

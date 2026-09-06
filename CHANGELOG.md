@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `AgentPlatformHelmReleaseNotReady` and `KagentControllerDown` no longer resolve and re-fire when the `flux-ksm` or `kube-state-metrics` pod is replaced.
+
 ## [4.119.0] - 2026-09-06
 
 ### Added

@@ -30,12 +30,21 @@ spec:
     # agent-platform-connectivity, agent-platform-mcps, muster, klaus-gateway,
     # valkey, dicebear) and the stand-alone ones in flux-giantswarm (tunnelport,
     # mcp-kubernetes, mcp-capi, sre-agent, backstage) resolve to bumblebee.
+    #
+    # The alerts aggregate the exporter's series down to the labels that
+    # routing, the description and the runbook URL use. Scrape-target labels
+    # such as `pod` and `instance` would otherwise be part of the alert's
+    # identity, and every replacement of the flux-ksm or kube-state-metrics
+    # pod would resolve the alert and open a new one. `max by` rather than
+    # `max without`, so that a new exporter label cannot creep back in.
     - alert: AgentPlatformHelmReleaseNotReady
       annotations:
         description: '{{`Agent platform HelmRelease {{ $labels.exported_namespace }}/{{ $labels.name }} on {{ $labels.installation }} has not been Ready for over an hour.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-helmrelease-not-ready/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'
       expr: |
-        gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", team="bumblebee"} > 0
+        max by (cluster_id, cluster_type, installation, pipeline, provider, exported_namespace, name, team, ready) (
+          gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", team="bumblebee"}
+        ) > 0
         unless on (cluster_id, exported_namespace, name)
         ALERTS{alertname="FluxGiantswarmHelmReleaseFailed", team="bumblebee", pipeline=~"stable|stable-testing"}
       for: 1h
@@ -55,7 +64,9 @@ spec:
         description: '{{`kagent-controller in {{ $labels.namespace }} on {{ $labels.installation }} has had no available replica for 30 minutes; agents on this installation are down.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kagent-controller-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
-        kube_deployment_status_replicas_available{cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller"} == 0
+        max by (cluster_id, cluster_type, installation, pipeline, provider, namespace, deployment) (
+          kube_deployment_status_replicas_available{cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller"}
+        ) == 0
         and on (cluster_id, namespace, deployment)
         kube_deployment_spec_replicas{cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller"} > 0
         unless on (cluster_id, namespace, deployment)

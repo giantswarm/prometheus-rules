@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.119.1] - 2026-09-06
+
 ### Fixed
 
 - `AgentPlatformHelmReleaseNotReady` and `KagentControllerDown` no longer resolve and re-fire when the `flux-ksm` or `kube-state-metrics` pod is replaced.
@@ -4543,7 +4545,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.119.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.119.1...HEAD
+[4.119.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.119.0...v4.119.1
 [4.119.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.2...v4.119.0
 [4.118.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.1...v4.118.2
 [4.118.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.0...v4.118.1

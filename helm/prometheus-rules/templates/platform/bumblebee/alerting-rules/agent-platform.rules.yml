@@ -1,0 +1,91 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: agent-platform.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: agent-platform
+    rules:
+    # Agent platform availability alerts (team Bumblebee).
+    #
+    # The agent platform runs on Giant Swarm's own management clusters, some of
+    # which sit in the `testing` pipeline (graveler). Alertmanager only pages a
+    # `testing` installation for alerts that carry `all_pipelines: "true"`. The
+    # generic alerts that already watch these components — honeybadger's
+    # `FluxGiantswarmHelmReleaseFailed` and atlas' `DeploymentNotSatisfiedBumblebee`
+    # — do not carry it, so on a `testing` installation they only reach Slack.
+    # The alerts below carry `all_pipelines` and step back wherever the generic
+    # alert pages (`pipeline` stable or stable-testing), so one stuck component
+    # never opens two incidents.
+    #
+    # Ownership is derived from the metric, not hardcoded: team-stamper copies
+    # the chart's `io.giantswarm.application.team` annotation onto every
+    # HelmRelease as `application.giantswarm.io/team`, and flux-ksm exposes it
+    # as the `team` label of `gotk_resource_info`. Every HelmRelease rendered by
+    # the agent-platform meta chart (agentgateway, kagent,
+    # agent-platform-connectivity, agent-platform-mcps, muster, klaus-gateway,
+    # valkey, dicebear) and the stand-alone ones in flux-giantswarm (tunnelport,
+    # mcp-kubernetes, mcp-capi, sre-agent, backstage) resolve to bumblebee.
+    - alert: AgentPlatformHelmReleaseNotReady
+      annotations:
+        description: '{{`Agent platform HelmRelease {{ $labels.exported_namespace }}/{{ $labels.name }} on {{ $labels.installation }} has not been Ready for over an hour.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-helmrelease-not-ready/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'
+      expr: |
+        gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", team="bumblebee"} > 0
+        unless on (cluster_id, exported_namespace, name)
+        ALERTS{alertname="FluxGiantswarmHelmReleaseFailed", team="bumblebee", pipeline=~"stable|stable-testing"}
+      for: 1h
+      labels:
+        all_pipelines: "true"
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: bumblebee
+        topic: agent-platform
+    # kagent-controller is the control plane of the agent platform: it serves
+    # the kagent API and UI and reconciles Agent, ModelConfig and session
+    # resources. Zero available replicas means agents on the installation are
+    # down. A Deployment scaled to zero on purpose does not fire.
+    - alert: KagentControllerDown
+      annotations:
+        description: '{{`kagent-controller in {{ $labels.namespace }} on {{ $labels.installation }} has had no available replica for 30 minutes; agents on this installation are down.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kagent-controller-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      expr: |
+        kube_deployment_status_replicas_available{cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller"} == 0
+        and on (cluster_id, namespace, deployment)
+        kube_deployment_spec_replicas{cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller"} > 0
+        unless on (cluster_id, namespace, deployment)
+        ALERTS{alertname="DeploymentNotSatisfiedBumblebee", pipeline=~"stable|stable-testing"}
+      for: 30m
+      labels:
+        all_pipelines: "true"
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: bumblebee
+        topic: agent-platform
+    # kagent keeps its state in a CloudNativePG cluster (kagent/kagent-pg). The
+    # instance metrics (cnpg_*) vanish together with the instance pods, so this
+    # alert reads the Cluster's status phase from kube-state-metrics' custom
+    # resource state instead. The phase is aggregated away so that a cluster
+    # moving between unhealthy phases still accumulates the 30 minutes.
+    - alert: AgentPlatformPostgresClusterNotHealthy
+      annotations:
+        description: '{{`CloudNativePG cluster {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.installation }} has not been in a healthy phase for 30 minutes.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cnpg-cluster-not-healthy/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&NAME={{ $labels.name }}`}}'
+      expr: |
+        sum by (cluster_id, installation, pipeline, provider, namespace, name) (
+          kube_cnpg_cluster_info{cluster_type="management_cluster", namespace=~"agent-platform|kagent", phase!="Cluster in healthy state"}
+        ) > 0
+      for: 30m
+      labels:
+        all_pipelines: "true"
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: bumblebee
+        topic: agent-platform

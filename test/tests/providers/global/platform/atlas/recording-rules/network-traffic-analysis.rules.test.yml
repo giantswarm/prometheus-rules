@@ -126,3 +126,51 @@ tests:
           # Only request direction should be counted: 1000 bytes per minute over 5m = 1000/60 = 16.666... bytes/sec
           - labels: 'network_traffic_analysis:beyla_network_flow_bytes_public:rate5m{cluster_id="golem", installation="golem", k8s_src_namespace="default", pipeline="testing", provider="$provider"}'
             value: 16.666666666666668
+
+  # Test network_traffic_analysis:beyla_network_flow_bytes_total:rate5m
+  # This rule should measure ALL request traffic regardless of destination (public + private)
+  - interval: 1m
+    input_series:
+      # Traffic to public IP
+      - series: 'beyla_network_flow_bytes_total{dst_address="8.8.8.8", direction="request", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider"}'
+        values: "0+1000x10"
+      # Traffic to private IP (10.x)
+      - series: 'beyla_network_flow_bytes_total{dst_address="10.0.0.1", direction="request", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider"}'
+        values: "0+2000x10"
+      # Traffic to private IP (172.16.x)
+      - series: 'beyla_network_flow_bytes_total{dst_address="172.16.0.1", direction="request", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider"}'
+        values: "0+500x10"
+      # Response direction - should be excluded
+      - series: 'beyla_network_flow_bytes_total{dst_address="8.8.8.8", direction="response", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider"}'
+        values: "0+3000x10"
+      # Traffic from different namespace
+      - series: 'beyla_network_flow_bytes_total{dst_address="10.1.2.3", direction="request", k8s_src_namespace="kube-system", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider"}'
+        values: "0+1500x10"
+    promql_expr_test:
+      - expr: network_traffic_analysis:beyla_network_flow_bytes_total:rate5m
+        eval_time: 10m
+        exp_samples:
+          # default namespace: (1000 + 2000 + 500) bytes per minute over 5m = 3500/60 = 58.333... bytes/sec
+          - labels: 'network_traffic_analysis:beyla_network_flow_bytes_total:rate5m{cluster_id="golem", installation="golem", k8s_src_namespace="default", pipeline="testing", provider="$provider"}'
+            value: 58.333333333333336
+          # kube-system namespace: 1500 bytes per minute over 5m = 1500/60 = 25 bytes/sec
+          - labels: 'network_traffic_analysis:beyla_network_flow_bytes_total:rate5m{cluster_id="golem", installation="golem", k8s_src_namespace="kube-system", pipeline="testing", provider="$provider"}'
+            value: 25
+
+  # Test that beyla_network_flow_bytes_total:rate5m aggregates across multiple clusters
+  - interval: 1m
+    input_series:
+      - series: 'beyla_network_flow_bytes_total{dst_address="8.8.8.8", direction="request", k8s_src_namespace="default", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider"}'
+        values: "0+1000x10"
+      - series: 'beyla_network_flow_bytes_total{dst_address="10.0.0.1", direction="request", k8s_src_namespace="default", cluster_id="raven", installation="raven", pipeline="stable", provider="$provider"}'
+        values: "0+600x10"
+    promql_expr_test:
+      - expr: network_traffic_analysis:beyla_network_flow_bytes_total:rate5m
+        eval_time: 10m
+        exp_samples:
+          # golem cluster: 1000/60 = 16.666... bytes/sec
+          - labels: 'network_traffic_analysis:beyla_network_flow_bytes_total:rate5m{cluster_id="golem", installation="golem", k8s_src_namespace="default", pipeline="testing", provider="$provider"}'
+            value: 16.666666666666668
+          # raven cluster: 600/60 = 10 bytes/sec
+          - labels: 'network_traffic_analysis:beyla_network_flow_bytes_total:rate5m{cluster_id="raven", installation="raven", k8s_src_namespace="default", pipeline="stable", provider="$provider"}'
+            value: 10

@@ -1,0 +1,52 @@
+---
+rule_files:
+  - coredns.rules.yml
+tests:
+  # old kube-state-metrics metric names (hpa label)
+  - interval: 1m
+    input_series:
+      - series: 'kube_hpa_status_current_replicas{namespace="kube-system", hpa="coredns"}'
+        values: "10+0x200"
+      - series: 'kube_hpa_spec_max_replicas{namespace="kube-system", hpa="coredns"}'
+        values: "10+0x200"
+      - series: 'kube_hpa_spec_min_replicas{namespace="kube-system", hpa="coredns"}'
+        values: "2+0x200"
+    alert_rule_test:
+      - alertname: CoreDNSMaxHPAReplicasReached
+        eval_time: 150m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: dns
+              cancel_if_outside_working_hours: "true"
+              namespace: kube-system
+              hpa: coredns
+            exp_annotations:
+              description: "CoreDNS HPA kube-system/coredns has been at its maximum replica count for over 2h."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coredns-max-replicas/
+  # new kube-state-metrics metric names (horizontalpodautoscaler label)
+  - interval: 1m
+    input_series:
+      - series: 'kube_horizontalpodautoscaler_status_current_replicas{namespace="kube-system", horizontalpodautoscaler="coredns"}'
+        values: "10+0x200"
+      - series: 'kube_horizontalpodautoscaler_spec_max_replicas{namespace="kube-system", horizontalpodautoscaler="coredns"}'
+        values: "10+0x200"
+      - series: 'kube_horizontalpodautoscaler_spec_min_replicas{namespace="kube-system", horizontalpodautoscaler="coredns"}'
+        values: "2+0x200"
+    alert_rule_test:
+      - alertname: CoreDNSMaxHPAReplicasReached
+        eval_time: 150m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: dns
+              cancel_if_outside_working_hours: "true"
+              namespace: kube-system
+              horizontalpodautoscaler: coredns
+            exp_annotations:
+              description: "CoreDNS HPA kube-system/coredns has been at its maximum replica count for over 2h."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coredns-max-replicas/

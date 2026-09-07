@@ -12,7 +12,7 @@ spec:
     rules:
     - alert: CoreDNSDeploymentNotSatisfied
       annotations:
-        description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
+        description: '{{`CoreDNS Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has less than half of its replicas available.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
       expr: |
         sum(kube_deployment_status_replicas_available{namespace="kube-system", deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider) / (sum(kube_deployment_status_replicas_available{namespace="kube-system", deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider) + sum(kube_deployment_status_replicas_unavailable{namespace="kube-system", deployment=~"coredns.*"}) by (cluster_id, deployment, installation, namespace, pipeline, provider))* 100 < 51
@@ -62,5 +62,5 @@ spec:
         team: cabbage
         topic: dns
       annotations:
-        description: '{{`CoreDNS Deployment {{ $labels.namespace}}/{{ $labels.deployment }} has been scaled to its maximum replica count for too long.`}}'
+        description: '{{`CoreDNS HPA {{ $labels.namespace }}/{{ or $labels.horizontalpodautoscaler $labels.hpa }} has been at its maximum replica count for over 2h.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coredns-max-replicas/

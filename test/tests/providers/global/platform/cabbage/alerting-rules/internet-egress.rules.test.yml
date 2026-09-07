@@ -38,7 +38,7 @@ tests:
         eval_time: 30m
         exp_alerts:
           - exp_annotations:
-              description: "37.5% of nodes on myinstall/myinstall cannot reach http-giantswarm. A single availability zone losing egress looks like 33-50% here. Other domains still reachable means an allowlist-style block of this domain rather than a full loss of egress."
+              description: "37.5% of nodes on myinstall/myinstall cannot reach http-giantswarm."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
             exp_labels:
               alertname: "ClusterInternetEgressUnavailable"
@@ -80,7 +80,7 @@ tests:
         eval_time: 30m
         exp_alerts:
           - exp_annotations:
-              description: "100% of nodes on myinstall/myinstall cannot reach http-giantswarm. A single availability zone losing egress looks like 33-50% here. Other domains still reachable means an allowlist-style block of this domain rather than a full loss of egress."
+              description: "100% of nodes on myinstall/myinstall cannot reach http-giantswarm."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
             exp_labels:
               alertname: "ClusterInternetEgressUnavailable"
@@ -173,7 +173,7 @@ tests:
         eval_time: 30m
         exp_alerts:
           - exp_annotations:
-              description: "100% of nodes on myinstall/myinstall cannot reach egress-github. A single availability zone losing egress looks like 33-50% here. Other domains still reachable means an allowlist-style block of this domain rather than a full loss of egress."
+              description: "100% of nodes on myinstall/myinstall cannot reach egress-github."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
             exp_labels:
               alertname: "ClusterInternetEgressUnavailable"

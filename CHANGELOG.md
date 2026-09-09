@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `TeleportKubeAgentInstanceUnreadyTooLong` - pages during working hours when a teleport-kube-agent replica has been unready for over a day, which also blocks StatefulSet rollouts.
+
 ### Changed
 
 - Rewrote all cabbage alert descriptions to a single line naming what broke and where.

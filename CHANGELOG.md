@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `log-export` alerts covering loss in the audit log export pipeline: exporter down, receiving nothing, Envoy mirror failures, upload failures and queue saturation.
+
 ### Changed
 
 - Rewrote all cabbage alert descriptions to a single line naming what broke and where.

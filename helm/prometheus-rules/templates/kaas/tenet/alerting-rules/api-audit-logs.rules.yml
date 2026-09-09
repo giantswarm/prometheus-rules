@@ -19,10 +19,23 @@ spec:
         # Yesterday's *peak* makes a recurring burst its own reference: workloads that
         # are bursty by design (CI service accounts, Kyverno report controllers, log
         # agents) rarely burst at exactly T-24h, so a single-point baseline reads every
-        # burst as a 3x jump or as "newly appeared". Keep the subquery step <= the rate
-        # window, or the samples stop tiling the day and a burst hides in a gap; the
-        # window ends a full day back so a sustained flood never lands inside its own
-        # baseline.
+        # burst as a 3x jump or as "newly appeared". Reading the peak at `offset 1d`
+        # keeps the window a full day back, so a sustained flood never lands inside its
+        # own baseline.
+        #
+        # Both series come from recording-rules/api-audit-logs.rules.yml, which owns the
+        # `sum by` label set. Deriving them here instead cost 24-43s per evaluation
+        # against a 60s interval on the largest installation. The two sides are compared
+        # directly, so their labels must stay identical — a label added to one side only
+        # makes the comparison stop matching and silences the alert.
+        #
+        # The `absent` clause holds the whole alert while no baseline exists anywhere:
+        # for the first 24h after these rules are deployed, nothing has a peak to be
+        # compared against, and every user over the floor would otherwise look newly
+        # appeared. It also fails safe if the recording rules are ever removed or
+        # renamed — silence rather than a storm of "newly appeared" pages. Note this is
+        # deliberately absence of the metric *as a whole*, not of one user's series,
+        # which is what still lets a genuinely new user fire on the floor alone.
         #
         # The floor is ~7 GiB/day at 1600 B/event, above the ~35 events/s benign
         # per-user bursts seen in the fleet. `for: 6h` over a 30m rate window needs
@@ -36,17 +49,11 @@ spec:
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/workload-cluster-audit-log-volume/
             __dashboardUid__: api-audit-volume
           expr: |-
-            sum by (cluster_id, installation, pipeline, provider, customer, user) (
-              rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m])
-            ) > 50
+            user:k8s_api_audit_requests:rate30m > 50
             unless
-            sum by (cluster_id, installation, pipeline, provider, customer, user) (
-              rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m])
-            ) <= 3 * max_over_time(
-              sum by (cluster_id, installation, pipeline, provider, customer, user) (
-                rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m])
-              )[1d:30m] offset 1d
-            )
+            user:k8s_api_audit_requests:rate30m <= 3 * (user:k8s_api_audit_requests:rate30m_max1d offset 1d)
+            unless on ()
+            absent(user:k8s_api_audit_requests:rate30m_max1d offset 1d)
           for: 6h
           labels:
             area: kaas

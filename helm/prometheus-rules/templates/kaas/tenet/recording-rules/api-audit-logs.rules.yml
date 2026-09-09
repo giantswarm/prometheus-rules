@@ -1,0 +1,35 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: api-audit-logs.recording.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+  # Pre-aggregate the per-user audit event rate and its rolling 24h peak so
+  # WorkloadClusterAuditLogVolumeSpike can compare two materialized series instead of
+  # re-deriving both from `k8s_api_audit_requests_total` on every evaluation.
+  #
+  # The raw selector is big — ~78k series on the largest installation, aggregating to
+  # ~4.6k groups — and the alert used to re-run that aggregation 48 times per
+  # evaluation to build its baseline from a `[1d:30m]` subquery. That rule group was
+  # measured at 24s typical and 43s peak against a 60s interval, leaving no headroom.
+  # Aggregating once here and reading the result twice costs a fraction of that.
+  #
+  # The grouping labels must stay in sync with the alert in
+  # alerting-rules/api-audit-logs.rules.yml: it compares these two series directly, so
+  # a label added on one side and not the other silently stops the comparison matching
+  # and the alert goes quiet.
+  - interval: 1m
+    name: api-audit-logs.recording
+    rules:
+      - expr: |
+          sum by (cluster_id, installation, pipeline, provider, customer, user) (rate(k8s_api_audit_requests_total{cluster_type="workload_cluster"}[30m]))
+        record: user:k8s_api_audit_requests:rate30m
+      # Ordered after the rule above so it sees the current sample. Sampling the peak at
+      # the 1m group interval rather than a 30m subquery step also removes the gaps a
+      # coarse step used to leave, in which a short burst could hide from the baseline.
+      - expr: |
+          max_over_time(user:k8s_api_audit_requests:rate30m[1d])
+        record: user:k8s_api_audit_requests:rate30m_max1d

@@ -123,3 +123,159 @@ tests:
             exp_annotations:
               description: "Etcd (etcd-slow-0) in cluster myinst/slow has a too high commit duration."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-troubleshooting/
+
+  # database quota: a member at ~98% of its quota pages immediately, one at ~82% only trips the 80% warning
+  - interval: 1m
+    input_series:
+      - series: 'etcd_mvcc_db_total_size_in_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="full", pod="etcd-full-0"}'
+        values: "8400000000+0x120"
+      - series: 'etcd_server_quota_backend_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="full", pod="etcd-full-0"}'
+        values: "8589934592+0x120"
+      - series: 'etcd_mvcc_db_total_size_in_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="large", pod="etcd-large-0"}'
+        values: "7000000000+0x120"
+      - series: 'etcd_server_quota_backend_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="large", pod="etcd-large-0"}'
+        values: "8589934592+0x120"
+    alert_rule_test:
+      - alertname: ManagementClusterEtcdDBSizeAlmostAtQuota
+        eval_time: 4m
+        exp_alerts: []
+      - alertname: ManagementClusterEtcdDBSizeAlmostAtQuota
+        eval_time: 10m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "false"
+              severity: page
+              team: tenet
+              topic: etcd
+              cluster_id: full
+              cluster_type: management_cluster
+              installation: myinst
+              provider: capa
+              pipeline: stable
+              pod: etcd-full-0
+            exp_annotations:
+              description: "Etcd (etcd-full-0) in cluster myinst/full is about to reach its database quota and stop accepting writes."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-database-quota/
+      # both are past 80%, so the pre-existing warning covers them once its 90m window elapses
+      - alertname: ManagementClusterEtcdDBSizeTooLarge
+        eval_time: 100m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "false"
+              severity: page
+              team: tenet
+              topic: etcd
+              cluster_id: full
+              cluster_type: management_cluster
+              installation: myinst
+              provider: capa
+              pipeline: stable
+              pod: etcd-full-0
+            exp_annotations:
+              description: "Etcd (etcd-full-0) in cluster myinst/full has a too large database."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-database-quota/
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "false"
+              severity: page
+              team: tenet
+              topic: etcd
+              cluster_id: large
+              cluster_type: management_cluster
+              installation: myinst
+              provider: capa
+              pipeline: stable
+              pod: etcd-large-0
+            exp_annotations:
+              description: "Etcd (etcd-large-0) in cluster myinst/large has a too large database."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-database-quota/
+
+  # growth trend: only a database that is both past half its quota and on a trajectory crossing it within 24h alerts
+  - interval: 1m
+    input_series:
+      # growing: starts at 50% of the quota and gains 2.5MB/min -> crosses the quota well inside 24h
+      - series: 'etcd_mvcc_db_total_size_in_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="growing", pod="etcd-growing-0"}'
+        values: "4300000000+2500000x480"
+      - series: 'etcd_server_quota_backend_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="growing", pod="etcd-growing-0"}'
+        values: "8589934592+0x480"
+      # flat: parked at 60% of the quota with no growth -> extrapolation stays below the quota
+      - series: 'etcd_mvcc_db_total_size_in_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="flat", pod="etcd-flat-0"}'
+        values: "5150000000+0x480"
+      - series: 'etcd_server_quota_backend_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="flat", pod="etcd-flat-0"}'
+        values: "8589934592+0x480"
+      # small: growing twice as fast, but still under half the quota -> held back by the guard
+      - series: 'etcd_mvcc_db_total_size_in_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="small", pod="etcd-small-0"}'
+        values: "1000000000+5000000x480"
+      - series: 'etcd_server_quota_backend_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="small", pod="etcd-small-0"}'
+        values: "8589934592+0x480"
+    alert_rule_test:
+      - alertname: ManagementClusterEtcdDBSizeGrowingTowardsQuota
+        eval_time: 60m
+        exp_alerts: []
+      - alertname: ManagementClusterEtcdDBSizeGrowingTowardsQuota
+        eval_time: 420m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              severity: notify
+              team: tenet
+              topic: etcd
+              cluster_id: growing
+              cluster_type: management_cluster
+              installation: myinst
+              provider: capa
+              pipeline: stable
+              pod: etcd-growing-0
+            exp_annotations:
+              description: "Etcd (etcd-growing-0) in cluster myinst/growing is on track to reach its database quota within 24 hours."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-database-quota/
+
+  # free pages: mirrors the etcd-defrag job's rule - fires only past 80% of quota with >10% of the quota reclaimable
+  - interval: 1m
+    input_series:
+      # fragmented: 88% of the quota allocated, 58% in use -> 30% of the quota is reclaimable, the job should have acted
+      - series: 'etcd_mvcc_db_total_size_in_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="fragmented", pod="etcd-fragmented-0"}'
+        values: "7600000000+0x150"
+      - series: 'etcd_mvcc_db_total_size_in_use_in_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="fragmented", pod="etcd-fragmented-0"}'
+        values: "5000000000+0x150"
+      - series: 'etcd_server_quota_backend_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="fragmented", pod="etcd-fragmented-0"}'
+        values: "8589934592+0x150"
+      # compact: equally large, but almost all of it in use -> a defrag reclaims nothing, this is real data
+      - series: 'etcd_mvcc_db_total_size_in_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="compact", pod="etcd-compact-0"}'
+        values: "7600000000+0x150"
+      - series: 'etcd_mvcc_db_total_size_in_use_in_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="compact", pod="etcd-compact-0"}'
+        values: "7500000000+0x150"
+      - series: 'etcd_server_quota_backend_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="compact", pod="etcd-compact-0"}'
+        values: "8589934592+0x150"
+      # roomy: heavily fragmented but only 35% of the quota allocated -> the job deliberately skips this, and so do we
+      - series: 'etcd_mvcc_db_total_size_in_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="roomy", pod="etcd-roomy-0"}'
+        values: "3000000000+0x150"
+      - series: 'etcd_mvcc_db_total_size_in_use_in_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="roomy", pod="etcd-roomy-0"}'
+        values: "200000000+0x150"
+      - series: 'etcd_server_quota_backend_bytes{cluster_type="management_cluster", provider="capa", pipeline="stable", installation="myinst", cluster_id="roomy", pod="etcd-roomy-0"}'
+        values: "8589934592+0x150"
+    alert_rule_test:
+      - alertname: ManagementClusterEtcdDBNeedsDefragmentation
+        eval_time: 60m
+        exp_alerts: []
+      - alertname: ManagementClusterEtcdDBNeedsDefragmentation
+        eval_time: 130m
+        exp_alerts:
+          - exp_labels:
+              area: kaas
+              cancel_if_outside_working_hours: "true"
+              severity: notify
+              team: tenet
+              topic: etcd
+              cluster_id: fragmented
+              cluster_type: management_cluster
+              installation: myinst
+              provider: capa
+              pipeline: stable
+              pod: etcd-fragmented-0
+            exp_annotations:
+              description: "Etcd (etcd-fragmented-0) in cluster myinst/fragmented has reclaimable free pages that the hourly etcd-defrag job should have reclaimed and did not."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-database-quota/

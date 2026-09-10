@@ -9,10 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `ManagementClusterEtcdDBSizeAlmostAtQuota` and `WorkloadClusterEtcdDBSizeAlmostAtQuota` - page when the etcd database passes 95% of its backend quota.
+- `ManagementClusterEtcdDBSizeGrowingTowardsQuota` and `WorkloadClusterEtcdDBSizeGrowingTowardsQuota` - warn when the etcd database is on track to reach its backend quota within 24 hours.
+- `ManagementClusterEtcdDBNeedsDefragmentation` and `WorkloadClusterEtcdDBNeedsDefragmentation` - warn when the hourly `etcd-defrag` job's own defrag rule has held for 2h without the database shrinking.
 - `TeleportKubeAgentInstanceUnreadyTooLong` - pages during working hours when a teleport-kube-agent replica has been unready for over a day, which also blocks StatefulSet rollouts.
 
 ### Changed
 
+- `ManagementClusterEtcdDBSizeTooLarge` and `WorkloadClusterEtcdDBSizeTooLarge` - `runbook_url` now points at the `Etcd database quota exhaustion` runbook.
 - Rewrote all cabbage alert descriptions to a single line naming what broke and where.
 
 ### Fixed

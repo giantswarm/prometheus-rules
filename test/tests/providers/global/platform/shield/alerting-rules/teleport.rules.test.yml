@@ -103,3 +103,68 @@ tests:
               description: "Cluster has no Ready teleport-kube-agent instances."
               summary: "Teleport Kube Agent has had no Ready instances for an extended period."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/teleport/"
+  # An unready replica that lasts beyond a day escalates from notify to page. Uses a 5m
+  # interval to keep the 1d window cheap to evaluate.
+  - interval: 5m
+    input_series:
+      - series: 'kube_statefulset_replicas{cluster_id="stuck-cluster", installation="gunittest", statefulset="teleport-kube-agent"}'
+        values: "3+0x350"
+      - series: 'kube_statefulset_status_replicas_ready{cluster_id="stuck-cluster", installation="gunittest", statefulset="teleport-kube-agent"}'
+        values: "2+0x350"
+    alert_rule_test:
+      - alertname: TeleportKubeAgentInstanceUnreadyTooLong
+        eval_time: 12h
+        exp_alerts: []
+      - alertname: TeleportKubeAgentInstanceUnreadyTooLong
+        eval_time: 25h
+        exp_alerts:
+          - exp_labels:
+              alertname: TeleportKubeAgentInstanceUnreadyTooLong
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: stuck-cluster
+              installation: gunittest
+              severity: page
+              statefulset: teleport-kube-agent
+              team: shield
+              topic: teleport
+            exp_annotations:
+              description: "teleport-kube-agent has had an unready instance for over a day, which also blocks StatefulSet rollouts during upgrades or node rolls."
+              summary: "Teleport Kube Agent instance unready long enough to block rollouts."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/teleport/"
+  # Replicas that were never created count too: desired 3, only 1 pod ever created and Ready.
+  - interval: 5m
+    input_series:
+      - series: 'kube_statefulset_replicas{cluster_id="uncreated-cluster", installation="gunittest", statefulset="teleport-kube-agent"}'
+        values: "3+0x350"
+      - series: 'kube_statefulset_status_replicas_ready{cluster_id="uncreated-cluster", installation="gunittest", statefulset="teleport-kube-agent"}'
+        values: "1+0x350"
+    alert_rule_test:
+      - alertname: TeleportKubeAgentInstanceUnreadyTooLong
+        eval_time: 25h
+        exp_alerts:
+          - exp_labels:
+              alertname: TeleportKubeAgentInstanceUnreadyTooLong
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: uncreated-cluster
+              installation: gunittest
+              severity: page
+              statefulset: teleport-kube-agent
+              team: shield
+              topic: teleport
+            exp_annotations:
+              description: "teleport-kube-agent has had an unready instance for over a day, which also blocks StatefulSet rollouts during upgrades or node rolls."
+              summary: "Teleport Kube Agent instance unready long enough to block rollouts."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/teleport/"
+  # A fully Ready StatefulSet must stay silent.
+  - interval: 5m
+    input_series:
+      - series: 'kube_statefulset_replicas{cluster_id="healthy-cluster", installation="gunittest", statefulset="teleport-kube-agent"}'
+        values: "3+0x350"
+      - series: 'kube_statefulset_status_replicas_ready{cluster_id="healthy-cluster", installation="gunittest", statefulset="teleport-kube-agent"}'
+        values: "3+0x350"
+    alert_rule_test:
+      - alertname: TeleportKubeAgentInstanceUnreadyTooLong
+        eval_time: 25h
+        exp_alerts: []

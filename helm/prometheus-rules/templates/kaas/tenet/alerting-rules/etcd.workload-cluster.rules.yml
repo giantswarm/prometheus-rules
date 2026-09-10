@@ -51,13 +51,61 @@ spec:
     - alert: WorkloadClusterEtcdDBSizeTooLarge
       annotations:
         description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has a too large database.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-troubleshooting/
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-database-quota/
       expr: (etcd_mvcc_db_total_size_in_bytes{cluster_type="workload_cluster", provider!~"eks|aks"} / etcd_server_quota_backend_bytes{cluster_type="workload_cluster", provider!~"eks|aks"}) * 100 > 80
       for: 15m
       labels:
         area: kaas
         severity: notify
         cancel_if_outside_working_hours: "true"
+        team: tenet
+        topic: etcd
+    - alert: WorkloadClusterEtcdDBSizeAlmostAtQuota
+      annotations:
+        description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} is about to reach its database quota and stop accepting writes.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-database-quota/
+      expr: (etcd_mvcc_db_total_size_in_bytes{cluster_type="workload_cluster", provider!~"eks|aks"} / etcd_server_quota_backend_bytes{cluster_type="workload_cluster", provider!~"eks|aks"}) * 100 > 95
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
+        severity: page
+        team: tenet
+        topic: etcd
+    - alert: WorkloadClusterEtcdDBSizeGrowingTowardsQuota
+      annotations:
+        description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} is on track to reach its database quota within 24 hours.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-database-quota/
+      # Growth is only extrapolated once the database already uses half of its quota. Below that,
+      # a short growth burst on an otherwise small database predicts an exhaustion that never happens.
+      expr: |-
+        predict_linear(etcd_mvcc_db_total_size_in_bytes{cluster_type="workload_cluster", provider!~"eks|aks"}[6h], 24 * 3600) > etcd_server_quota_backend_bytes{cluster_type="workload_cluster", provider!~"eks|aks"}
+        and
+        (etcd_mvcc_db_total_size_in_bytes{cluster_type="workload_cluster", provider!~"eks|aks"} / etcd_server_quota_backend_bytes{cluster_type="workload_cluster", provider!~"eks|aks"}) * 100 > 50
+      for: 1h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: tenet
+        topic: etcd
+    - alert: WorkloadClusterEtcdDBNeedsDefragmentation
+      annotations:
+        description: '{{`Etcd ({{ $labels.pod }}) on workload cluster {{ $labels.installation }}/{{ $labels.cluster_id }} has reclaimable free pages that the hourly etcd-defrag job should have reclaimed and did not.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/etcd-database-quota/
+      # Mirrors the defrag rule of the etcd-defrag CronJob ("dbQuotaUsage > 0.8 && dbSizeFree > dbQuota * 0.1"),
+      # which runs hourly. The quota is enforced against the allocated size, so free pages consume quota until
+      # a defrag returns them. Holding for 2h means the job had two runs to act on its own rule and the database
+      # still has not shrunk - the automation, not the database, is what needs looking at.
+      expr: |-
+        (etcd_mvcc_db_total_size_in_bytes{cluster_type="workload_cluster", provider!~"eks|aks"} / etcd_server_quota_backend_bytes{cluster_type="workload_cluster", provider!~"eks|aks"}) * 100 > 80
+        and
+        ((etcd_mvcc_db_total_size_in_bytes{cluster_type="workload_cluster", provider!~"eks|aks"} - etcd_mvcc_db_total_size_in_use_in_bytes{cluster_type="workload_cluster", provider!~"eks|aks"}) / etcd_server_quota_backend_bytes{cluster_type="workload_cluster", provider!~"eks|aks"}) * 100 > 10
+      for: 2h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: notify
         team: tenet
         topic: etcd
     - alert: WorkloadClusterEtcdNumberOfLeaderChangesTooHigh

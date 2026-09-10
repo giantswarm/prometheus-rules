@@ -129,7 +129,7 @@ tests:
               team: shield
               topic: teleport
             exp_annotations:
-              description: "teleport-kube-agent has had an unready instance for over a day, which also blocks StatefulSet rollouts."
+              description: "teleport-kube-agent has had an unready instance for over a day, which also blocks StatefulSet rollouts during upgrades or node rolls."
               summary: "Teleport Kube Agent instance unready long enough to block rollouts."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/teleport/"
   # Replicas that were never created count too: desired 3, only 1 pod ever created and Ready.
@@ -154,7 +154,7 @@ tests:
               team: shield
               topic: teleport
             exp_annotations:
-              description: "teleport-kube-agent has had an unready instance for over a day, which also blocks StatefulSet rollouts."
+              description: "teleport-kube-agent has had an unready instance for over a day, which also blocks StatefulSet rollouts during upgrades or node rolls."
               summary: "Teleport Kube Agent instance unready long enough to block rollouts."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/teleport/"
   # A fully Ready StatefulSet must stay silent.

@@ -24,6 +24,7 @@ tests:
           - exp_labels: &deployment-not-satisfied-bumblebee-labels
               alertname: DeploymentNotSatisfiedBumblebee
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
               cluster_type: management_cluster

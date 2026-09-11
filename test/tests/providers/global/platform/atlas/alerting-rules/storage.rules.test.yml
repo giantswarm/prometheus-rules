@@ -1,0 +1,68 @@
+---
+rule_files:
+- storage.rules.yml
+
+tests:
+  # Every observability PVC listed in the selector must be covered, on management clusters only.
+  - interval: 1m
+    input_series:
+      # Below threshold (5% free) - must alert.
+      - series: 'kubelet_volume_stats_available_bytes{cluster_type="management_cluster", cluster_id="bar", installation="myinstall", instance="10.0.0.1:10250", persistentvolumeclaim="grafana-postgresql-1"}'
+        values: "5x180"
+      - series: 'kubelet_volume_stats_capacity_bytes{cluster_type="management_cluster", cluster_id="bar", installation="myinstall", instance="10.0.0.1:10250", persistentvolumeclaim="grafana-postgresql-1"}'
+        values: "100x180"
+      # Below threshold (5% free) - must alert.
+      - series: 'kubelet_volume_stats_available_bytes{cluster_type="management_cluster", cluster_id="bar", installation="myinstall", instance="10.0.0.2:10250", persistentvolumeclaim="storage-mimir-store-gateway-0"}'
+        values: "5x180"
+      - series: 'kubelet_volume_stats_capacity_bytes{cluster_type="management_cluster", cluster_id="bar", installation="myinstall", instance="10.0.0.2:10250", persistentvolumeclaim="storage-mimir-store-gateway-0"}'
+        values: "100x180"
+      # Healthy (50% free) - must stay silent.
+      - series: 'kubelet_volume_stats_available_bytes{cluster_type="management_cluster", cluster_id="bar", installation="myinstall", instance="10.0.0.1:10250", persistentvolumeclaim="grafana-postgresql-2"}'
+        values: "50x180"
+      - series: 'kubelet_volume_stats_capacity_bytes{cluster_type="management_cluster", cluster_id="bar", installation="myinstall", instance="10.0.0.1:10250", persistentvolumeclaim="grafana-postgresql-2"}'
+        values: "100x180"
+      # Workload cluster - out of scope, must stay silent.
+      - series: 'kubelet_volume_stats_available_bytes{cluster_type="workload_cluster", cluster_id="baz", installation="myinstall", instance="10.0.0.3:10250", persistentvolumeclaim="grafana-postgresql-1"}'
+        values: "5x180"
+      - series: 'kubelet_volume_stats_capacity_bytes{cluster_type="workload_cluster", cluster_id="baz", installation="myinstall", instance="10.0.0.3:10250", persistentvolumeclaim="grafana-postgresql-1"}'
+        values: "100x180"
+      # PVC outside the observability selector - must stay silent.
+      - series: 'kubelet_volume_stats_available_bytes{cluster_type="management_cluster", cluster_id="bar", installation="myinstall", instance="10.0.0.4:10250", persistentvolumeclaim="data-unrelated-app-0"}'
+        values: "5x180"
+      - series: 'kubelet_volume_stats_capacity_bytes{cluster_type="management_cluster", cluster_id="bar", installation="myinstall", instance="10.0.0.4:10250", persistentvolumeclaim="data-unrelated-app-0"}'
+        values: "100x180"
+    alert_rule_test:
+      # `for: 1h` not yet satisfied.
+      - alertname: ObservabilityStorageSpaceTooLow
+        eval_time: 30m
+      - alertname: ObservabilityStorageSpaceTooLow
+        eval_time: 90m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: bar
+              cluster_type: management_cluster
+              installation: myinstall
+              instance: 10.0.0.1:10250
+              persistentvolumeclaim: grafana-postgresql-1
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "The free space on the Data Disk for instance: 10.0.0.1:10250 and PVC: grafana-postgresql-1 was below 10 percent for longer than 1 hour (current value 0.05)."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/low-disk-space/#persistent-volume?INSTALLATION=myinstall&CLUSTER=bar"
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: bar
+              cluster_type: management_cluster
+              installation: myinstall
+              instance: 10.0.0.2:10250
+              persistentvolumeclaim: storage-mimir-store-gateway-0
+              severity: page
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: "The free space on the Data Disk for instance: 10.0.0.2:10250 and PVC: storage-mimir-store-gateway-0 was below 10 percent for longer than 1 hour (current value 0.05)."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/low-disk-space/#persistent-volume?INSTALLATION=myinstall&CLUSTER=bar"

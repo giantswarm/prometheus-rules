@@ -3,201 +3,216 @@ rule_files:
 - kube-state-metrics.rules.yml
 
 tests:
-  # KubeStateMetricsDown tests
-  # Tests to be run:
-  # - no "up" metrics
-  # - "up" metrics with servicemonitor discovery (ports 8080 and 8081)
-  #   - "up" metric for port 8080 is OK, but port 8081 is set to 0
-  #   - "up" metric for port 8080 is set to 0, but port 8080 is OK
-  # - "up" metrics with label discovery (random port)
-  # - "up" is ok, but we don't have enough metrics
-  - name: "KSMDown with servicemonitor discovery"
+  # KubeStateMetricsDown anchors on the cluster's control plane being ready and fires when no
+  # kube-state-metrics target reports `up == 1` for that cluster.
+  - name: "KubeStateMetricsDown"
     interval: 1m
     input_series:
-      # Tests for servicemonitor discovery
-      # - 00:00 Start with no metrics
-      # - 00:30 Both ports up and enough metrics
-      # - 01:00 Port 8080 goes down
-      # - 01:30 All is up again
-      # - 02:00 Port 8081 goes down
-      # - 02:30 all is up again
-      # - 03:00 we don't have enough metrics
-      # - 03:30 all is up again
-      - series: 'up{job="kube-state-metrics", cluster_id="golem", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="http", installation="golem", namespace="kube-system", node="ip-10-0-1-1.eu-west-1.compute.internal", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-72vzx", provider="capa", region="eu-west-1", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
-        values: "_x30 1x30 0x30 1x30 1x30 1x30 1x30 1x30"
-      - series: 'up{job="kube-state-metrics", cluster_id="golem", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="metrics", installation="golem", namespace="kube-system", node="ip-10-0-1-1.eu-west-1.compute.internal", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-72vzx", provider="capa", region="eu-west-1", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
-        values: "_x30 1x30 1x30 1x30 0x30 1x30 1x30 1x30"
-      - series: 'testmetric2{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric3{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric4{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric5{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric6{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric7{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric8{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric9{job="kube-state-metrics"}'
-        values: "_x30 1x30 1x30 1x30 1x30 1x30 _x30 1x30"
-    alert_rule_test:
-      # - 00:00 Start with no metrics
-      - alertname: KubeStateMetricsDown
-        eval_time: 25m
-        exp_alerts:
-          - exp_labels:
-              area: "platform"
-              cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_kubelet_down: "true"
-              cancel_if_outside_working_hours: "false"
-              inhibit_kube_state_metrics_down: "true"
-              cancel_if_monitoring_agent_down: "true"
-              severity: "page"
-              team: "atlas"
-              topic: "observability"
-              cluster_id: "golem"
-              installation: "golem"
-              provider: "capa"
-              pipeline: "testing"
-            exp_annotations:
-              description: "KubeStateMetrics () is down."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/
-      # - 00:30 Both ports up and enough metrics
-      - alertname: KubeStateMetricsDown
-        eval_time: 55m
-      # - 01:00 Port 8080 goes down
-      - alertname: KubeStateMetricsDown
-        eval_time: 85m
-        exp_alerts:
-          - exp_labels:
-              area: "platform"
-              cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_kubelet_down: "true"
-              cancel_if_outside_working_hours: "false"
-              inhibit_kube_state_metrics_down: "true"
-              cancel_if_monitoring_agent_down: "true"
-              severity: "page"
-              team: "atlas"
-              topic: "observability"
-              cluster_id: "golem"
-              installation: "golem"
-              provider: "capa"
-              pipeline: "testing"
-            exp_annotations:
-              description: "KubeStateMetrics is down."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/
-      # - 01:30 All is up again
-      - alertname: KubeStateMetricsDown
-        eval_time: 115m
-      # - 02:00 Port 8081 goes down
-      - alertname: KubeStateMetricsDown
-        eval_time: 145m
-      # - 02:30 all is up again
-      - alertname: KubeStateMetricsDown
-        eval_time: 175m
-      # - 03:00 we don't have enough metrics
-      - alertname: KubeStateMetricsDown
-        eval_time: 205m
-        exp_alerts:
-          - exp_labels:
-              area: "platform"
-              cancel_if_cluster_control_plane_unhealthy: "true"
-              cancel_if_kubelet_down: "true"
-              cancel_if_outside_working_hours: "false"
-              inhibit_kube_state_metrics_down: "true"
-              cancel_if_monitoring_agent_down: "true"
-              severity: "page"
-              team: "atlas"
-              topic: "observability"
-              cluster_id: "golem"
-              installation: "golem"
-              provider: "capa"
-              pipeline: "testing"
-            exp_annotations:
-              description: "KubeStateMetrics is down."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/
-      # - 03:30 all is up again
-      - alertname: KubeStateMetricsDown
-        eval_time: 235m
-
-
-  # Tests for label-discovery targets
-  - name: "KSMDown with label discovery"
-    interval: 1m
-    input_series:
-      # - 00:00 Start with no metrics
-      # - 00:30 all goes up
-      # - 01:00 up goes down
-      # - 01:30 All is up again
-      - series: 'up{job="kube-state-metrics", cluster_id="golem", cluster_type="workload_cluster", customer="giantswarm", installation="golem", instance="10.0.2.4:10301", namespace="kube-system", node="ip-10-1-0-3.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-v2-3-0-67b5fdc5d4-78mhf", provider="capa", service_priority="highest"}'
+      - series: 'capi_cluster_status_condition{name="golem", type="ControlPlaneReady", status="True", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x240"
+      # - 00:00 no target at all
+      # - 00:30 target up
+      # - 01:00 target down
+      # - 01:30 target up again
+      - series: 'up{job="kube-state-metrics", endpoint="http", cluster_id="golem", installation="golem", provider="capa", pipeline="testing"}'
         values: "_x30 1x30 0x30 1x30"
-      - series: 'testmetric2{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric3{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric4{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric5{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric6{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric7{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric8{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric9{job="kube-state-metrics"}'
-        values: "0x1000"
-      - series: 'testmetric10{job="kube-state-metrics"}'
-        values: "0x1000"
     alert_rule_test:
-      # - 00:00 Start with no metrics
       - alertname: KubeStateMetricsDown
         eval_time: 25m
         exp_alerts:
           - exp_labels:
               area: "platform"
               cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_cluster_has_no_workers: "true"
               cancel_if_kubelet_down: "true"
-              cancel_if_outside_working_hours: "false"
-              inhibit_kube_state_metrics_down: "true"
               cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              inhibit_kube_state_metrics_down: "true"
               severity: "page"
               team: "atlas"
               topic: "observability"
               cluster_id: "golem"
               installation: "golem"
-              provider: "capa"
+              name: "golem"
               pipeline: "testing"
+              provider: "capa"
+              status: "True"
+              type: "ControlPlaneReady"
             exp_annotations:
-              description: "KubeStateMetrics () is down."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/
-      # - 00:30 all goes up
+              description: "KubeStateMetrics is down."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=golem"
+      # target is up, nothing fires
       - alertname: KubeStateMetricsDown
         eval_time: 55m
-      # - 01:00 up goes down
+      # target reports up == 0
       - alertname: KubeStateMetricsDown
         eval_time: 85m
         exp_alerts:
           - exp_labels:
               area: "platform"
               cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_cluster_has_no_workers: "true"
               cancel_if_kubelet_down: "true"
-              cancel_if_outside_working_hours: "false"
-              inhibit_kube_state_metrics_down: "true"
               cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              inhibit_kube_state_metrics_down: "true"
               severity: "page"
               team: "atlas"
               topic: "observability"
               cluster_id: "golem"
               installation: "golem"
-              provider: "capa"
+              name: "golem"
               pipeline: "testing"
+              provider: "capa"
+              status: "True"
+              type: "ControlPlaneReady"
             exp_annotations:
-              description: "KubeStateMetrics () is down."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/
-      # - 01:30 All is up again
+              description: "KubeStateMetrics is down."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=golem"
       - alertname: KubeStateMetricsDown
         eval_time: 115m
+
+  # KubeStateMetricsNotRetrievingMetrics catches the case where the target is up but serves
+  # implausibly little data.
+  - name: "KubeStateMetricsNotRetrievingMetrics"
+    interval: 1m
+    input_series:
+      - series: 'up{job="kube-state-metrics", endpoint="http", cluster_id="golem", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x60"
+      - series: 'kube_pod_status_phase{job="kube-state-metrics", cluster_id="golem", installation="golem", provider="capa", pipeline="testing", pod="a"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: KubeStateMetricsNotRetrievingMetrics
+        eval_time: 10m
+      - alertname: KubeStateMetricsNotRetrievingMetrics
+        eval_time: 25m
+        exp_alerts:
+          - exp_labels:
+              area: "platform"
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_kubelet_down: "true"
+              cancel_if_outside_working_hours: "true"
+              inhibit_kube_state_metrics_down: "true"
+              severity: "page"
+              team: "atlas"
+              topic: "observability"
+              cluster_id: "golem"
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+            exp_annotations:
+              description: "KubeStateMetrics is not retrieving metrics."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=golem"
+
+  # The inhibition source must arm well before the alerts it inhibits, and must clear as soon as
+  # kube-state-metrics serves pod metrics again.
+  - name: "InhibitionKubeStateMetricsDown"
+    interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_condition{name="golem", type="ControlPlaneReady", status="True", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x60"
+      - series: 'kube_pod_status_phase{job="kube-state-metrics", cluster_id="golem", installation="golem", provider="capa", pipeline="testing", pod="a"}'
+        values: "_x20 1x40"
+    alert_rule_test:
+      # not yet armed one minute in
+      - alertname: InhibitionKubeStateMetricsDown
+        eval_time: 1m
+      - alertname: InhibitionKubeStateMetricsDown
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: "platform"
+              inhibit_kube_state_metrics_down: "true"
+              severity: "none"
+              team: "atlas"
+              topic: "observability"
+              cluster_id: "golem"
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+            exp_annotations:
+              description: "KubeStateMetrics is not serving data for cluster golem."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=golem"
+      # pod metrics are back
+      - alertname: InhibitionKubeStateMetricsDown
+        eval_time: 25m
+
+  # One alert for the whole expected metric set: it clears only when all ten are present, and fires
+  # the same way whether one resource kind or the whole lot goes missing.
+  - name: "KubeStateMetricsMetricsMissing"
+    interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_condition{name="golem", type="ControlPlaneReady", status="True", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      # all ten present for the first hour, then kube_endpoint_created alone disappears
+      - series: 'kube_endpoint_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x60 _x60"
+      - series: 'kube_configmap_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_daemonset_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_deployment_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_namespace_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_node_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_pod_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_replicaset_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_secret_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_service_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+    alert_rule_test:
+      # all ten present
+      - alertname: KubeStateMetricsMetricsMissing
+        eval_time: 55m
+      # one missing is enough, once `for` has elapsed
+      - alertname: KubeStateMetricsMetricsMissing
+        eval_time: 80m
+      - alertname: KubeStateMetricsMetricsMissing
+        eval_time: 100m
+        exp_alerts:
+          - exp_labels:
+              area: "platform"
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_outside_working_hours: "true"
+              severity: "page"
+              team: "atlas"
+              topic: "kubernetes"
+              cluster_id: "golem"
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+            exp_annotations:
+              description: "At least one kube-state-metrics resource metric is missing for cluster golem."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=golem"
+
+  # Total loss of kube-state-metrics data fires the same single alert, not one per metric.
+  - name: "KubeStateMetricsMetricsMissing with no metrics at all"
+    interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_condition{name="golem", type="ControlPlaneReady", status="True", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: KubeStateMetricsMetricsMissing
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              area: "platform"
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_outside_working_hours: "true"
+              severity: "page"
+              team: "atlas"
+              topic: "kubernetes"
+              cluster_id: "golem"
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+            exp_annotations:
+              description: "At least one kube-state-metrics resource metric is missing for cluster golem."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=golem"

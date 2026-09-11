@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `ManagementClusterEtcdDBSizeTooLarge` and `WorkloadClusterEtcdDBSizeTooLarge` - `runbook_url` now points at the `Etcd database quota exhaustion` runbook.
 - Rewrote all cabbage alert descriptions to a single line naming what broke and where.
+- `cancel_if_kube_state_metrics_down` added to the 75 alerts that read kube-state-metrics metrics.
 
 ### Fixed
 

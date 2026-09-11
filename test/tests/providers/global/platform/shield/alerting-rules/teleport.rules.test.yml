@@ -19,6 +19,7 @@ tests:
           - exp_labels:
               alertname: TeleportJoinTokenSecretMismatch
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: my-cluster
               installation: golem
@@ -43,6 +44,7 @@ tests:
           - exp_labels:
               alertname: TeleportKubeAgentConfigMapMismatch
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: my-cluster
               installation: grizzly
@@ -67,6 +69,7 @@ tests:
           - exp_labels:
               alertname: TeleportKubeAgentInstancesNotReady
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: my-cluster
               installation: gunittest
@@ -92,6 +95,7 @@ tests:
           - exp_labels:
               alertname: TeleportKubeAgentZeroReadyReplicas
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "false"
               cluster_id: zero-test
               installation: gunittest
@@ -121,6 +125,7 @@ tests:
           - exp_labels:
               alertname: TeleportKubeAgentInstanceUnreadyTooLong
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: stuck-cluster
               installation: gunittest
@@ -146,6 +151,7 @@ tests:
           - exp_labels:
               alertname: TeleportKubeAgentInstanceUnreadyTooLong
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: uncreated-cluster
               installation: gunittest

@@ -95,6 +95,7 @@ spec:
             severity: page
             team: atlas
             topic: observability
+            cancel_if_kube_state_metrics_down: "true"
             cancel_if_outside_working_hours: "true"
             cancel_if_node_unschedulable: "true"
             cancel_if_node_not_ready: "true"

@@ -20,6 +20,7 @@ spec:
       for: 2d
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: atlas
@@ -34,6 +35,7 @@ spec:
       for: 2d
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: atlas

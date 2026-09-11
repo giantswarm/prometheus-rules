@@ -13,6 +13,7 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: CrossplaneDeploymentNotSatisfied
+              cancel_if_kube_state_metrics_down: "true"
               job: kube-state-metrics
               area: platform
               cancel_if_outside_working_hours: "true"

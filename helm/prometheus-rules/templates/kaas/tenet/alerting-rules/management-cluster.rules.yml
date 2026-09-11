@@ -18,6 +18,7 @@ spec:
       for: 1h
       labels:
         area: kaas
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: {{ include "providerTeam" . }}
@@ -29,6 +30,7 @@ spec:
       for: 15m
       labels:
         area: kaas
+        cancel_if_kube_state_metrics_down: "true"
         severity: notify
         team: {{ include "providerTeam" . }}
         topic: managementcluster
@@ -63,6 +65,7 @@ spec:
       for: 5m
       labels:
         area: kaas
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: {{ include "providerTeam" . }}
@@ -76,6 +79,7 @@ spec:
       for: 5m
       labels:
         area: kaas
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: rocket

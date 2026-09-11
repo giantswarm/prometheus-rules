@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `cancel_if_kube_state_metrics_down` added to every alert that reads kube-state-metrics metrics.
+
 ### Fixed
 
 - `kube-state-metrics` rules are unit tested again - the tests were skipped and had drifted from the rules.

@@ -26,6 +26,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cluster_id: gremlin
               installation: gremlin
               pipeline: testing
@@ -61,6 +62,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cluster_id: gremlin
               installation: gremlin
               pipeline: testing
@@ -78,6 +80,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cluster_id: gremlin
               installation: gremlin
               pipeline: testing

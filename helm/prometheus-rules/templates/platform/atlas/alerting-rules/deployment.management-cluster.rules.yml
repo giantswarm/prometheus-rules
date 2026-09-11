@@ -18,6 +18,7 @@ spec:
       for: 60m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -30,6 +31,7 @@ spec:
       for: 30m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: honeybadger
@@ -42,6 +44,7 @@ spec:
       for: 3h
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: honeybadger
@@ -54,6 +57,7 @@ spec:
       for: 30m
       labels:
         area: kaas
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: {{ include "providerTeam" . }}
@@ -66,6 +70,7 @@ spec:
       for: 3h
       labels:
         area: kaas
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: phoenix
@@ -78,6 +83,7 @@ spec:
       for: 30m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: cabbage
@@ -90,6 +96,7 @@ spec:
       for: 3h
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: cabbage
@@ -102,6 +109,7 @@ spec:
       for: 30m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: shield
@@ -114,6 +122,7 @@ spec:
       for: 60m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         # Business-hours only for now; move to OOBH (page via the platform area) once bumblebee on-call is established.
         cancel_if_outside_working_hours: "true"
         severity: page

@@ -75,6 +75,7 @@ spec:
       labels:
         all_pipelines: "true"
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: bumblebee
@@ -96,6 +97,7 @@ spec:
       labels:
         all_pipelines: "true"
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: bumblebee

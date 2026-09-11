@@ -113,6 +113,7 @@ tests:
           - exp_labels:
               all_pipelines: "true"
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: "foo"
               cluster_type: management_cluster
@@ -166,6 +167,7 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               installation: "golem"
               cluster_id: "golem"
@@ -201,6 +203,7 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               severity: page
               team: atlas

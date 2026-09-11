@@ -78,243 +78,66 @@ spec:
         severity: page
         team: atlas
         topic: observability
-    - alert: KubeConfigMapCreatedMetricMissing
+    ## Same condition as the KSM health alerts, but triggers inhibition earlier and does not page.
+    ## `count` carries no threshold on purpose: an inhibition source that fires permanently would
+    ## silently swallow every dependent page, which a `<= 100` style threshold would do on a small
+    ## cluster. Partial degradation stays with KubeStateMetricsNotRetrievingMetrics.
+    - alert: InhibitionKubeStateMetricsDown
       annotations:
-        description: '{{`kube_configmap_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
+        description: '{{`KubeStateMetrics is not serving data for cluster {{ $labels.cluster_id }}.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
-        (
+        count by (cluster_id, installation, provider, pipeline) (
           label_replace(
-            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+            capi_cluster_status_condition{type="ControlPlaneReady", status="True"} == 1,
             "cluster_id",
             "$1",
             "name",
             "(.*)"
-          ) == 1
-        ) unless on (cluster_id) (
-          count(kube_configmap_created{}) by (cluster_id)
+          )
         )
-      for: 30m
+        unless on (cluster_id) (
+          count by (cluster_id) (kube_pod_status_phase{job="kube-state-metrics"})
+        )
+      for: 2m
       labels:
         area: platform
-        cancel_if_outside_working_hours: "true"
-        cancel_if_kube_state_metrics_down: "true"
-        severity: page
+        inhibit_kube_state_metrics_down: "true"
+        severity: none
         team: atlas
-        topic: kubernetes
-    - alert: KubeDaemonSetCreatedMetricMissing
+        topic: observability
+    ## One alert for the whole set: a cluster only clears it when every expected metric is present,
+    ## so both a single missing resource kind and a total loss are covered. `count by` on the anchor
+    ## keeps scrape-target labels out of the alert's identity.
+    {{- $ksmMetrics := list "kube_configmap_created" "kube_daemonset_created" "kube_deployment_created"
+        "kube_endpoint_created" "kube_namespace_created" "kube_node_created" "kube_pod_created"
+        "kube_replicaset_created" "kube_secret_created" "kube_service_created" }}
+    - alert: KubeStateMetricsMetricsMissing
       annotations:
-        description: '{{`kube_daemonset_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
+        description: '{{`At least one kube-state-metrics resource metric is missing for cluster {{ $labels.cluster_id }}.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
-        (
+        count by (cluster_id, installation, provider, pipeline) (
           label_replace(
-            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
+            capi_cluster_status_condition{type="ControlPlaneReady", status="True"} == 1,
             "cluster_id",
             "$1",
             "name",
             "(.*)"
-          ) == 1
-        ) unless on (cluster_id) (
-          count(kube_daemonset_created{}) by (cluster_id)
+          )
+        )
+        unless on (cluster_id) (
+          count by (cluster_id) (
+            count by (cluster_id, __name__) (
+              {__name__=~"{{ join "|" $ksmMetrics }}", job="kube-state-metrics"}
+            )
+          ) == {{ len $ksmMetrics }}
         )
       for: 30m
       labels:
         area: platform
-        cancel_if_outside_working_hours: "true"
         cancel_if_kube_state_metrics_down: "true"
-        severity: page
-        team: atlas
-        topic: kubernetes
-    - alert: KubeDeploymentCreatedMetricMissing
-      annotations:
-        description: '{{`kube_deployment_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: |-
-        (
-          label_replace(
-            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
-            "cluster_id",
-            "$1",
-            "name",
-            "(.*)"
-          ) == 1
-        ) unless on (cluster_id) (
-          count(kube_deployment_created{}) by (cluster_id)
-        )
-      for: 30m
-      labels:
-        area: platform
         cancel_if_outside_working_hours: "true"
-        cancel_if_kube_state_metrics_down: "true"
-        severity: page
-        team: atlas
-        topic: kubernetes
-    - alert: KubeEndpointCreatedMetricMissing
-      annotations:
-        description: '{{`kube_endpoint_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: |-
-        (
-          label_replace(
-            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
-            "cluster_id",
-            "$1",
-            "name",
-            "(.*)"
-          ) == 1
-        ) unless on (cluster_id) (
-          count(kube_endpoint_created{}) by (cluster_id)
-        )
-      for: 30m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        cancel_if_kube_state_metrics_down: "true"
-        severity: page
-        team: atlas
-        topic: kubernetes
-    - alert: KubeNamespaceCreatedMetricMissing
-      annotations:
-        description: '{{`kube_namespace_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: |-
-        (
-          label_replace(
-            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
-            "cluster_id",
-            "$1",
-            "name",
-            "(.*)"
-          ) == 1
-        ) unless on (cluster_id) (
-          count(kube_namespace_created{}) by (cluster_id)
-        )
-      for: 30m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        cancel_if_kube_state_metrics_down: "true"
-        severity: page
-        team: atlas
-        topic: kubernetes
-    - alert: KubeNodeCreatedMetricMissing
-      annotations:
-        description: '{{`kube_node_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: |-
-        (
-          label_replace(
-            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
-            "cluster_id",
-            "$1",
-            "name",
-            "(.*)"
-          ) == 1
-        ) unless on (cluster_id) (
-          count(kube_node_created{}) by (cluster_id)
-        )
-      for: 30m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        cancel_if_kube_state_metrics_down: "true"
-        severity: page
-        team: atlas
-        topic: kubernetes
-    - alert: KubePodCreatedMetricMissing
-      annotations:
-        description: '{{`kube_pod_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: |-
-        (
-          label_replace(
-            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
-            "cluster_id",
-            "$1",
-            "name",
-            "(.*)"
-          ) == 1
-        ) unless on (cluster_id) (
-          count(kube_pod_created{}) by (cluster_id)
-        )
-      for: 30m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        cancel_if_kube_state_metrics_down: "true"
-        severity: page
-        team: atlas
-        topic: kubernetes
-    - alert: KubeReplicaSetCreatedMetricMissing
-      annotations:
-        description: '{{`kube_replicaset_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: |-
-        (
-          label_replace(
-            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
-            "cluster_id",
-            "$1",
-            "name",
-            "(.*)"
-          ) == 1
-        ) unless on (cluster_id) (
-          count(kube_replicaset_created{}) by (cluster_id)
-        )
-      for: 30m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        cancel_if_kube_state_metrics_down: "true"
-        severity: page
-        team: atlas
-        topic: kubernetes
-    - alert: KubeSecretCreatedMetricMissing
-      annotations:
-        description: '{{`kube_secret_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: |-
-        (
-          label_replace(
-            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
-            "cluster_id",
-            "$1",
-            "name",
-            "(.*)"
-          ) == 1
-        ) unless on (cluster_id) (
-          count(kube_secret_created{}) by (cluster_id)
-        )
-      for: 30m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        cancel_if_kube_state_metrics_down: "true"
-        severity: page
-        team: atlas
-        topic: kubernetes
-    - alert: KubeServiceCreatedMetricMissing
-      annotations:
-        description: '{{`kube_service_created metric is missing for cluster {{ $labels.cluster_id }}.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
-      expr: |-
-        (
-          label_replace(
-            capi_cluster_status_condition{type="ControlPlaneReady", status="True"},
-            "cluster_id",
-            "$1",
-            "name",
-            "(.*)"
-          ) == 1
-        ) unless on (cluster_id) (
-          count(kube_service_created{}) by (cluster_id)
-        )
-      for: 30m
-      labels:
-        area: platform
-        cancel_if_outside_working_hours: "true"
-        cancel_if_kube_state_metrics_down: "true"
         severity: page
         team: atlas
         topic: kubernetes

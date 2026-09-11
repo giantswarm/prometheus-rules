@@ -105,3 +105,81 @@ tests:
             exp_annotations:
               description: "KubeStateMetrics is not retrieving metrics."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=golem"
+
+  # One alert for the whole expected metric set: it clears only when all ten are present, and fires
+  # the same way whether one resource kind or the whole lot goes missing.
+  - name: "KubeStateMetricsMetricsMissing"
+    interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_condition{name="golem", type="ControlPlaneReady", status="True", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      # all ten present for the first hour, then kube_endpoint_created alone disappears
+      - series: 'kube_endpoint_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x60 _x60"
+      - series: 'kube_configmap_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_daemonset_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_deployment_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_namespace_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_node_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_pod_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_replicaset_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_secret_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+      - series: 'kube_service_created{job="kube-state-metrics", cluster_id="golem"}'
+        values: "1x120"
+    alert_rule_test:
+      # all ten present
+      - alertname: KubeStateMetricsMetricsMissing
+        eval_time: 55m
+      # one missing is enough, once `for` has elapsed
+      - alertname: KubeStateMetricsMetricsMissing
+        eval_time: 80m
+      - alertname: KubeStateMetricsMetricsMissing
+        eval_time: 100m
+        exp_alerts:
+          - exp_labels:
+              area: "platform"
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_outside_working_hours: "true"
+              severity: "page"
+              team: "atlas"
+              topic: "kubernetes"
+              cluster_id: "golem"
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+            exp_annotations:
+              description: "At least one kube-state-metrics resource metric is missing for cluster golem."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=golem"
+
+  # Total loss of kube-state-metrics data fires the same single alert, not one per metric.
+  - name: "KubeStateMetricsMetricsMissing with no metrics at all"
+    interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_condition{name="golem", type="ControlPlaneReady", status="True", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: KubeStateMetricsMetricsMissing
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              area: "platform"
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_outside_working_hours: "true"
+              severity: "page"
+              team: "atlas"
+              topic: "kubernetes"
+              cluster_id: "golem"
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+            exp_annotations:
+              description: "At least one kube-state-metrics resource metric is missing for cluster golem."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=golem"

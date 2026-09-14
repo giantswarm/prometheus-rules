@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `ObservabilityStorageSpaceTooLow` - now covers `grafana-postgresql` PVCs, which the mismatched denominator selector silently dropped.
+
 ## [4.120.0] - 2026-09-14
 
 ### Added

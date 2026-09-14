@@ -100,3 +100,59 @@ spec:
         severity: page
         team: bumblebee
         topic: agent-platform
+    # A platform component that restarts repeatedly is an outage between the
+    # restarts: every component is a single replica, and the HelmRelease and
+    # Deployment stay "Ready" enough that the alerts above never fire. The
+    # generic ManagementClusterContainerIsRestartingTooFrequently sees the same
+    # restarts but notifies team Rocket only (gazelle 2026-09-14: muster-valkey
+    # was OOM-killed 19 times in 90 minutes, the muster connector was down,
+    # nobody in Bumblebee was alerted — giantswarm/giantswarm#37779). Summed
+    # per container across the pods of a namespace: a pod replaced mid-loop
+    # starts its counter at zero, and the sum keeps counting where the old
+    # pod's series stops. The platform's namespaces hold platform pods only —
+    # agents are actors inside Substrate's worker pods, not containers of
+    # their own — so nothing here is a user's crashing agent.
+    - alert: AgentPlatformContainerRestartingTooOften
+      annotations:
+        description: '{{`Container {{ $labels.container }} in {{ $labels.namespace }} on {{ $labels.installation }} has restarted {{ printf "%.0f" $value }} times in the last hour.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-container-restarting/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&CONTAINER={{ $labels.container }}`}}'
+      expr: |
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, namespace, container) (
+          increase(kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace=~"agent-platform|kagent|mcp-kubernetes|mcp-capi|mcp-prometheus"}[1h])
+        ) > 5
+      for: 15m
+      labels:
+        all_pipelines: "true"
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: bumblebee
+        topic: agent-platform
+    # The platform's Valkeys — muster-valkey (muster's OAuth token and session
+    # store) and the MCP servers' token stores — run with a maxmemory and
+    # volatile-lru (giantswarm/agent-platform#446): above the bound Valkey
+    # evicts TTL-carrying keys instead of growing, and every eviction costs a
+    # person a sign-in or muster a re-list. This is the heads-up before that
+    # starts, to Slack. A Valkey without a bound (maxmemory 0) has no
+    # redis_memory_max_bytes above zero and is not covered here — the
+    # restart alert catches it when it dies.
+    - alert: AgentPlatformValkeyMemoryHigh
+      annotations:
+        description: '{{`Valkey in {{ $labels.namespace }} on {{ $labels.installation }} uses {{ $value | humanizePercentage }} of its maxmemory; above it Valkey evicts tokens and sessions.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-valkey-memory-high/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      expr: |
+        max by (cluster_id, cluster_type, installation, pipeline, provider, namespace) (
+          redis_memory_used_bytes{cluster_type="management_cluster", namespace=~"agent-platform|mcp-kubernetes|mcp-capi|mcp-prometheus"}
+        )
+        /
+        max by (cluster_id, cluster_type, installation, pipeline, provider, namespace) (
+          redis_memory_max_bytes{cluster_type="management_cluster", namespace=~"agent-platform|mcp-kubernetes|mcp-capi|mcp-prometheus"} > 0
+        ) > 0.9
+      for: 15m
+      labels:
+        all_pipelines: "true"
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: bumblebee
+        topic: agent-platform

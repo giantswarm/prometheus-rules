@@ -106,6 +106,39 @@ tests:
               description: "KubeStateMetrics is not retrieving metrics."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=golem"
 
+  # The inhibition source must arm well before the alerts it inhibits, and must clear as soon as
+  # kube-state-metrics serves pod metrics again.
+  - name: "InhibitionKubeStateMetricsDown"
+    interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_condition{name="golem", type="ControlPlaneReady", status="True", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x60"
+      - series: 'kube_pod_status_phase{job="kube-state-metrics", cluster_id="golem", installation="golem", provider="capa", pipeline="testing", pod="a"}'
+        values: "_x20 1x40"
+    alert_rule_test:
+      # not yet armed one minute in
+      - alertname: InhibitionKubeStateMetricsDown
+        eval_time: 1m
+      - alertname: InhibitionKubeStateMetricsDown
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: "platform"
+              inhibit_kube_state_metrics_down: "true"
+              severity: "none"
+              team: "atlas"
+              topic: "observability"
+              cluster_id: "golem"
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+            exp_annotations:
+              description: "KubeStateMetrics is not serving data for cluster golem."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=golem"
+      # pod metrics are back
+      - alertname: InhibitionKubeStateMetricsDown
+        eval_time: 25m
+
   # One alert for the whole expected metric set: it clears only when all ten are present, and fires
   # the same way whether one resource kind or the whole lot goes missing.
   - name: "KubeStateMetricsMetricsMissing"

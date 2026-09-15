@@ -43,6 +43,7 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: gauss
               cluster_type: management_cluster

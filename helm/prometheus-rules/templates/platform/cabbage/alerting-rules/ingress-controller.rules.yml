@@ -42,6 +42,7 @@ spec:
       for: 2m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: cabbage
@@ -54,6 +55,7 @@ spec:
       for: 2m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: cabbage

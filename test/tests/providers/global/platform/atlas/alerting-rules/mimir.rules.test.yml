@@ -178,6 +178,7 @@ tests:
         exp_alerts: # caused by RAM usage
           - exp_labels:
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: golem
               installation: "golem"
@@ -199,6 +200,7 @@ tests:
         exp_alerts:
           - exp_labels: # caused by cpu usage
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: golem
               installation: "golem"
@@ -254,6 +256,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: golem
               installation: "golem"
@@ -302,6 +305,7 @@ tests:
         exp_alerts:
           -  exp_labels:
                area: platform
+               cancel_if_kube_state_metrics_down: "true"
                cancel_if_outside_working_hours: "true"
                cluster_id: "myinstall"
                installation: "myinstall"
@@ -320,6 +324,7 @@ tests:
         exp_alerts:
           -  exp_labels:
                area: platform
+               cancel_if_kube_state_metrics_down: "true"
                cancel_if_outside_working_hours: "true"
                cluster_id: "myinstall"
                installation: "myinstall"

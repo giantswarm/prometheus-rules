@@ -1,0 +1,50 @@
+---
+rule_files:
+  - api-audit-logs.rules.yml
+
+tests:
+  # The pre-aggregation must keep each (cluster, user) pair separate and must drop the
+  # raw metric's extra labels, since the alert compares the two recorded series
+  # directly and only matches on the label set recorded here.
+  - interval: 1m
+    input_series:
+      # ~50 events/s for this user, split across two verbs to prove they are summed
+      - series: 'k8s_api_audit_requests_total{cluster_id="demo-wc01", cluster_type="workload_cluster", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:kube-system:foo", verb="get"}'
+        values: "0+1800x60"
+      - series: 'k8s_api_audit_requests_total{cluster_id="demo-wc01", cluster_type="workload_cluster", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:kube-system:foo", verb="list"}'
+        values: "0+1200x60"
+      # a second user on the same cluster, ~10 events/s, must stay a separate series
+      - series: 'k8s_api_audit_requests_total{cluster_id="demo-wc01", cluster_type="workload_cluster", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:default:bar", verb="get"}'
+        values: "0+600x60"
+      # management cluster traffic must not be recorded at all
+      - series: 'k8s_api_audit_requests_total{cluster_id="demo-mc", cluster_type="management_cluster", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:kube-system:foo", verb="get"}'
+        values: "0+1800x60"
+    promql_expr_test:
+      - expr: user:k8s_api_audit_requests:rate30m
+        eval_time: 45m
+        exp_samples:
+          - labels: 'user:k8s_api_audit_requests:rate30m{cluster_id="demo-wc01", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:default:bar"}'
+            value: 10
+          - labels: 'user:k8s_api_audit_requests:rate30m{cluster_id="demo-wc01", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:kube-system:foo"}'
+            value: 50
+
+  # The rolling peak must hold a burst that has already passed, which is what lets the
+  # alert treat a recurring burst as that user's own normal. Burst of ~100 events/s for
+  # 30m (minutes 60-90), quiet either side.
+  - interval: 1m
+    input_series:
+      - series: 'k8s_api_audit_requests_total{cluster_id="demo-wc01", cluster_type="workload_cluster", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:kube-system:foo"}'
+        values: "0+0x59 6000+6000x30 186000+0x120"
+    promql_expr_test:
+      # 2h after the burst ended the current rate is back to zero ...
+      - expr: user:k8s_api_audit_requests:rate30m
+        eval_time: 210m
+        exp_samples:
+          - labels: 'user:k8s_api_audit_requests:rate30m{cluster_id="demo-wc01", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:kube-system:foo"}'
+            value: 0
+      # ... while the recorded peak still remembers it
+      - expr: user:k8s_api_audit_requests:rate30m_max1d
+        eval_time: 210m
+        exp_samples:
+          - labels: 'user:k8s_api_audit_requests:rate30m_max1d{cluster_id="demo-wc01", customer="giantswarm", installation="myinstall", pipeline="stable", provider="capa", user="system:serviceaccount:kube-system:foo"}'
+            value: 100

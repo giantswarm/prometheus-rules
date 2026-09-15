@@ -1,0 +1,430 @@
+---
+rule_files:
+  - agent-platform.rules.yml
+
+tests:
+  # AgentPlatformHelmReleaseNotReady: a Bumblebee HelmRelease in flux-giantswarm
+  # stays not Ready on a testing installation. The generic honeybadger alert
+  # fires there too but only reaches Slack, so ours pages after one hour.
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="kagent", team="bumblebee", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", namespace="flux-giantswarm"}'
+        values: "1x120"
+      - series: 'ALERTS{alertname="FluxGiantswarmHelmReleaseFailed", alertstate="firing", team="bumblebee", cluster_id="graveler", installation="graveler", exported_namespace="flux-giantswarm", name="kagent", pipeline="testing", severity="page"}'
+        values: "_x10 1x110"
+      # A Ready HelmRelease never fires.
+      - series: 'gotk_resource_info{job="flux-ksm", ready="True", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="muster", team="bumblebee", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", namespace="flux-giantswarm"}'
+        values: "1x120"
+      # Another team's HelmRelease in the same namespace is not ours.
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="mcp-prometheus", team="atlas", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", namespace="flux-giantswarm"}'
+        values: "1x120"
+      # A user's agent HelmRelease outside flux-giantswarm is not a platform component.
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="kagent", name="my-agent", team="bumblebee", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", namespace="flux-giantswarm"}'
+        values: "1x120"
+    alert_rule_test:
+      - alertname: AgentPlatformHelmReleaseNotReady
+        eval_time: 50m
+        exp_alerts: []
+      - alertname: AgentPlatformHelmReleaseNotReady
+        eval_time: 90m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformHelmReleaseNotReady
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: graveler
+              cluster_type: management_cluster
+              exported_namespace: flux-giantswarm
+              installation: graveler
+              name: kagent
+              pipeline: testing
+              provider: $provider
+              ready: "False"
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "Agent platform HelmRelease flux-giantswarm/kagent on graveler has not been Ready for over an hour."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-helmrelease-not-ready/?INSTALLATION=graveler&CLUSTER=graveler&NAMESPACE=flux-giantswarm&HELMRELEASE_NAME=kagent"
+  # flux-ksm is rescheduled while the HelmRelease is not Ready: the old pod's
+  # series ends and the new pod's begins with different `pod` and `instance`
+  # labels. The alert keeps its identity across the hand-over and stays firing
+  # instead of resolving and starting its `for` period over.
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="kagent", team="bumblebee", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", namespace="flux-giantswarm", service="flux-giantswarm-flux-ksm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-aaaaa", endpoint="http", container="kube-state-metrics", instance="10.0.0.1:8080", node="ip-10-0-0-1.eu-west-1.compute.internal"}'
+        values: "1x70 _x50"
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="kagent", team="bumblebee", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", namespace="flux-giantswarm", service="flux-giantswarm-flux-ksm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-bbbbb", endpoint="http", container="kube-state-metrics", instance="10.0.0.2:8080", node="ip-10-0-0-2.eu-west-1.compute.internal"}'
+        values: "_x67 1x53"
+    alert_rule_test:
+      # Firing from the first pod alone.
+      - alertname: AgentPlatformHelmReleaseNotReady
+        eval_time: 65m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformHelmReleaseNotReady
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: graveler
+              cluster_type: management_cluster
+              exported_namespace: flux-giantswarm
+              installation: graveler
+              name: kagent
+              pipeline: testing
+              provider: $provider
+              ready: "False"
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "Agent platform HelmRelease flux-giantswarm/kagent on graveler has not been Ready for over an hour."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-helmrelease-not-ready/?INSTALLATION=graveler&CLUSTER=graveler&NAMESPACE=flux-giantswarm&HELMRELEASE_NAME=kagent"
+      # Only the second pod's series exists now. Had `pod` been part of the
+      # alert's labels, the alert would be pending here until 128m.
+      - alertname: AgentPlatformHelmReleaseNotReady
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformHelmReleaseNotReady
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: graveler
+              cluster_type: management_cluster
+              exported_namespace: flux-giantswarm
+              installation: graveler
+              name: kagent
+              pipeline: testing
+              provider: $provider
+              ready: "False"
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "Agent platform HelmRelease flux-giantswarm/kagent on graveler has not been Ready for over an hour."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-helmrelease-not-ready/?INSTALLATION=graveler&CLUSTER=graveler&NAMESPACE=flux-giantswarm&HELMRELEASE_NAME=kagent"
+  # On a stable installation the generic alert pages Bumblebee after ten
+  # minutes, so ours stays quiet as long as that alert exists for the release.
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="kagent", team="bumblebee", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider", namespace="flux-giantswarm"}'
+        values: "1x120"
+      - series: 'ALERTS{alertname="FluxGiantswarmHelmReleaseFailed", alertstate="pending", team="bumblebee", cluster_id="gazelle", installation="gazelle", exported_namespace="flux-giantswarm", name="kagent", pipeline="stable", severity="page"}'
+        values: "1x9 _x111"
+      - series: 'ALERTS{alertname="FluxGiantswarmHelmReleaseFailed", alertstate="firing", team="bumblebee", cluster_id="gazelle", installation="gazelle", exported_namespace="flux-giantswarm", name="kagent", pipeline="stable", severity="page"}'
+        values: "_x10 1x110"
+    alert_rule_test:
+      - alertname: AgentPlatformHelmReleaseNotReady
+        eval_time: 90m
+        exp_alerts: []
+  # A stable installation where the generic alert does not exist for the
+  # release (for example because its scope changed) is covered by ours again.
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="agent-platform-connectivity", team="bumblebee", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider", namespace="flux-giantswarm"}'
+        values: "1x120"
+    alert_rule_test:
+      - alertname: AgentPlatformHelmReleaseNotReady
+        eval_time: 90m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformHelmReleaseNotReady
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: gazelle
+              cluster_type: management_cluster
+              exported_namespace: flux-giantswarm
+              installation: gazelle
+              name: agent-platform-connectivity
+              pipeline: stable
+              provider: $provider
+              ready: "False"
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "Agent platform HelmRelease flux-giantswarm/agent-platform-connectivity on gazelle has not been Ready for over an hour."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-helmrelease-not-ready/?INSTALLATION=gazelle&CLUSTER=gazelle&NAMESPACE=flux-giantswarm&HELMRELEASE_NAME=agent-platform-connectivity"
+
+  # KagentControllerDown: the controller loses its only replica on a testing
+  # installation; DeploymentNotSatisfiedBumblebee fires there too but only
+  # reaches Slack, so ours pages after 30 minutes.
+  - interval: 1m
+    input_series:
+      - series: 'kube_deployment_status_replicas_available{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
+        values: "1x10 0x110"
+      - series: 'kube_deployment_spec_replicas{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
+        values: "1x120"
+      - series: 'ALERTS{alertname="DeploymentNotSatisfiedBumblebee", alertstate="pending", team="bumblebee", cluster_id="graveler", installation="graveler", namespace="kagent", deployment="kagent-controller", pipeline="testing", severity="page"}'
+        values: "_x11 1x59 _x50"
+      - series: 'ALERTS{alertname="DeploymentNotSatisfiedBumblebee", alertstate="firing", team="bumblebee", cluster_id="graveler", installation="graveler", namespace="kagent", deployment="kagent-controller", pipeline="testing", severity="page"}'
+        values: "_x71 1x49"
+    alert_rule_test:
+      - alertname: KagentControllerDown
+        eval_time: 30m
+        exp_alerts: []
+      - alertname: KagentControllerDown
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              alertname: KagentControllerDown
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: graveler
+              cluster_type: management_cluster
+              deployment: kagent-controller
+              installation: graveler
+              namespace: kagent
+              pipeline: testing
+              provider: $provider
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "kagent-controller in kagent on graveler has had no available replica for 30 minutes; agents on this installation are down."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kagent-controller-down/?INSTALLATION=graveler&CLUSTER=graveler"
+      # Still firing once the generic alert fires as well: on a testing
+      # installation the generic alert does not page, so ours must not defer.
+      - alertname: KagentControllerDown
+        eval_time: 100m
+        exp_alerts:
+          - exp_labels:
+              alertname: KagentControllerDown
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: graveler
+              cluster_type: management_cluster
+              deployment: kagent-controller
+              installation: graveler
+              namespace: kagent
+              pipeline: testing
+              provider: $provider
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "kagent-controller in kagent on graveler has had no available replica for 30 minutes; agents on this installation are down."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kagent-controller-down/?INSTALLATION=graveler&CLUSTER=graveler"
+  # kube-state-metrics is rescheduled during the outage: the old pod's series
+  # end and the new pod's begin with different `pod` and `instance` labels. The
+  # alert keeps its identity across the hand-over and stays firing.
+  - interval: 1m
+    input_series:
+      - series: 'kube_deployment_status_replicas_available{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", service="kube-prometheus-stack-kube-state-metrics", pod="kube-prometheus-stack-kube-state-metrics-7c9d8f6b5-aaaaa", endpoint="http", container="kube-state-metrics", instance="10.0.0.1:8080", node="ip-10-0-0-1.eu-west-1.compute.internal"}'
+        values: "0x40 _x40"
+      - series: 'kube_deployment_spec_replicas{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", service="kube-prometheus-stack-kube-state-metrics", pod="kube-prometheus-stack-kube-state-metrics-7c9d8f6b5-aaaaa", endpoint="http", container="kube-state-metrics", instance="10.0.0.1:8080", node="ip-10-0-0-1.eu-west-1.compute.internal"}'
+        values: "1x40 _x40"
+      - series: 'kube_deployment_status_replicas_available{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", service="kube-prometheus-stack-kube-state-metrics", pod="kube-prometheus-stack-kube-state-metrics-7c9d8f6b5-bbbbb", endpoint="http", container="kube-state-metrics", instance="10.0.0.2:8080", node="ip-10-0-0-2.eu-west-1.compute.internal"}'
+        values: "_x37 0x43"
+      - series: 'kube_deployment_spec_replicas{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider", service="kube-prometheus-stack-kube-state-metrics", pod="kube-prometheus-stack-kube-state-metrics-7c9d8f6b5-bbbbb", endpoint="http", container="kube-state-metrics", instance="10.0.0.2:8080", node="ip-10-0-0-2.eu-west-1.compute.internal"}'
+        values: "_x37 1x43"
+    alert_rule_test:
+      # Firing from the first pod alone.
+      - alertname: KagentControllerDown
+        eval_time: 35m
+        exp_alerts:
+          - exp_labels:
+              alertname: KagentControllerDown
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: graveler
+              cluster_type: management_cluster
+              deployment: kagent-controller
+              installation: graveler
+              namespace: kagent
+              pipeline: testing
+              provider: $provider
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "kagent-controller in kagent on graveler has had no available replica for 30 minutes; agents on this installation are down."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kagent-controller-down/?INSTALLATION=graveler&CLUSTER=graveler"
+      # Only the second pod's series exist now. Had `pod` been part of the
+      # alert's labels, the alert would be pending here until 68m.
+      - alertname: KagentControllerDown
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              alertname: KagentControllerDown
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: graveler
+              cluster_type: management_cluster
+              deployment: kagent-controller
+              installation: graveler
+              namespace: kagent
+              pipeline: testing
+              provider: $provider
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "kagent-controller in kagent on graveler has had no available replica for 30 minutes; agents on this installation are down."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kagent-controller-down/?INSTALLATION=graveler&CLUSTER=graveler"
+  # On a stable installation DeploymentNotSatisfiedBumblebee pages after an
+  # hour, so ours defers to it from the moment it goes pending.
+  - interval: 1m
+    input_series:
+      - series: 'kube_deployment_status_replicas_available{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "0x120"
+      - series: 'kube_deployment_spec_replicas{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "1x120"
+      - series: 'ALERTS{alertname="DeploymentNotSatisfiedBumblebee", alertstate="pending", team="bumblebee", cluster_id="gazelle", installation="gazelle", namespace="kagent", deployment="kagent-controller", pipeline="stable", severity="page"}'
+        values: "1x59 _x61"
+      - series: 'ALERTS{alertname="DeploymentNotSatisfiedBumblebee", alertstate="firing", team="bumblebee", cluster_id="gazelle", installation="gazelle", namespace="kagent", deployment="kagent-controller", pipeline="stable", severity="page"}'
+        values: "_x60 1x60"
+    alert_rule_test:
+      - alertname: KagentControllerDown
+        eval_time: 45m
+        exp_alerts: []
+      - alertname: KagentControllerDown
+        eval_time: 100m
+        exp_alerts: []
+  # A Deployment scaled to zero on purpose is not an outage.
+  - interval: 1m
+    input_series:
+      - series: 'kube_deployment_status_replicas_available{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
+        values: "0x120"
+      - series: 'kube_deployment_spec_replicas{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
+        values: "0x120"
+    alert_rule_test:
+      - alertname: KagentControllerDown
+        eval_time: 60m
+        exp_alerts: []
+
+  # AgentPlatformPostgresClusterNotHealthy: kagent-pg leaves the healthy phase
+  # and moves between two unhealthy phases; the alert accumulates across them.
+  # A healthy cluster and another team's unhealthy cluster stay quiet.
+  - interval: 1m
+    input_series:
+      - series: 'kube_cnpg_cluster_info{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", name="kagent-pg", phase="Cluster in healthy state", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
+        values: "1x10 _x110"
+      - series: 'kube_cnpg_cluster_info{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", name="kagent-pg", phase="Failing over", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
+        values: "_x11 1x14 _x95"
+      - series: 'kube_cnpg_cluster_info{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", name="kagent-pg", phase="Waiting for the instances to become active", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
+        values: "_x26 1x94"
+      - series: 'kube_cnpg_cluster_info{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", name="other-pg", phase="Cluster in healthy state", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
+        values: "1x120"
+      - series: 'kube_cnpg_cluster_info{job="kube-state-metrics", cluster_type="management_cluster", namespace="monitoring", name="grafana-postgresql", phase="Waiting for the instances to become active", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
+        values: "1x120"
+    alert_rule_test:
+      - alertname: AgentPlatformPostgresClusterNotHealthy
+        eval_time: 30m
+        exp_alerts: []
+      - alertname: AgentPlatformPostgresClusterNotHealthy
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformPostgresClusterNotHealthy
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: graveler
+              installation: graveler
+              name: kagent-pg
+              namespace: kagent
+              pipeline: testing
+              provider: $provider
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "CloudNativePG cluster kagent/kagent-pg on graveler has not been in a healthy phase for 30 minutes."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cnpg-cluster-not-healthy/?INSTALLATION=graveler&CLUSTER=graveler&NAMESPACE=kagent&NAME=kagent-pg"
+
+  # AgentPlatformContainerRestartingTooOften: the 2026-09-14 gazelle loop —
+  # muster-valkey OOM-killed about every five minutes; the pod is replaced
+  # once in the middle (the second pod's counter starts at zero) and the sum
+  # per container carries the count across. A sibling with two restarts and a
+  # container in a namespace that is not the platform's never fire.
+  - interval: 1m
+    input_series:
+      - series: 'kube_pod_container_status_restarts_total{job="kube-state-metrics", cluster_type="management_cluster", namespace="agent-platform", container="muster-valkey", pod="muster-valkey-cd978db5c-pgdtq", node="ip-10-0-122-74.eu-central-1.compute.internal", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "0x9 1x4 2x4 3x4 4x4 5x4 _x90"
+      - series: 'kube_pod_container_status_restarts_total{job="kube-state-metrics", cluster_type="management_cluster", namespace="agent-platform", container="muster-valkey", pod="muster-valkey-cd978db5c-tf5cc", node="ip-10-0-83-244.eu-central-1.compute.internal", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "_x30 0x4 1x4 2x4 3x4 4x69"
+      - series: 'kube_pod_container_status_restarts_total{job="kube-state-metrics", cluster_type="management_cluster", namespace="agent-platform", container="metrics", pod="muster-valkey-cd978db5c-pgdtq", node="ip-10-0-122-74.eu-central-1.compute.internal", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "0x20 1x30 2x69"
+      - series: 'kube_pod_container_status_restarts_total{job="kube-state-metrics", cluster_type="management_cluster", namespace="giantswarm", container="app-operator", pod="app-operator-7f9c-x1", node="ip-10-0-122-74.eu-central-1.compute.internal", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "0x5 1x5 2x5 3x5 4x5 5x5 6x5 7x5 8x5 9x74"
+    alert_rule_test:
+      # Five restarts within the hour: at the threshold, not above it.
+      - alertname: AgentPlatformContainerRestartingTooOften
+        eval_time: 29m
+        exp_alerts: []
+      # The replacement pod's restarts add up with the first pod's; pending
+      # from the sixth restart, firing 15 minutes later.
+      - alertname: AgentPlatformContainerRestartingTooOften
+        eval_time: 40m
+        exp_alerts: []
+      - alertname: AgentPlatformContainerRestartingTooOften
+        eval_time: 60m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformContainerRestartingTooOften
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: gazelle
+              cluster_type: management_cluster
+              container: muster-valkey
+              installation: gazelle
+              namespace: agent-platform
+              pipeline: stable
+              provider: $provider
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "Container muster-valkey in agent-platform on gazelle has restarted 9 times in the last hour."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-container-restarting/?INSTALLATION=gazelle&CLUSTER=gazelle&NAMESPACE=agent-platform&CONTAINER=muster-valkey"
+      # An hour after the last restart the window is empty again.
+      - alertname: AgentPlatformContainerRestartingTooOften
+        eval_time: 115m
+        exp_alerts: []
+
+  # AgentPlatformValkeyMemoryHigh: muster-valkey at 92 % of its maxmemory for
+  # fifteen minutes notifies; a Valkey without a bound (maxmemory 0) is not a
+  # ratio and never fires; the metrics sidecar's pod label is aggregated away.
+  - interval: 1m
+    input_series:
+      - series: 'redis_memory_used_bytes{job="muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-9dc789884-xfvhq", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "500000000x20 620000000x40"
+      - series: 'redis_memory_max_bytes{job="muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-9dc789884-xfvhq", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "671088640x60"
+      - series: 'redis_memory_used_bytes{job="mcp-kubernetes-valkey", cluster_type="management_cluster", namespace="mcp-kubernetes", app="valkey", container="metrics", pod="mcp-kubernetes-valkey-5d8c-aaaaa", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "250000000x60"
+      - series: 'redis_memory_max_bytes{job="mcp-kubernetes-valkey", cluster_type="management_cluster", namespace="mcp-kubernetes", app="valkey", container="metrics", pod="mcp-kubernetes-valkey-5d8c-aaaaa", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "0x60"
+    alert_rule_test:
+      - alertname: AgentPlatformValkeyMemoryHigh
+        eval_time: 30m
+        exp_alerts: []
+      - alertname: AgentPlatformValkeyMemoryHigh
+        eval_time: 40m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformValkeyMemoryHigh
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: gazelle
+              cluster_type: management_cluster
+              installation: gazelle
+              namespace: agent-platform
+              pipeline: stable
+              provider: $provider
+              severity: notify
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "Valkey in agent-platform on gazelle uses 92.39% of its maxmemory; above it Valkey evicts tokens and sessions."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-valkey-memory-high/?INSTALLATION=gazelle&CLUSTER=gazelle&NAMESPACE=agent-platform"

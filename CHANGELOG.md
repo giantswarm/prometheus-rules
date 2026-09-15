@@ -7,11 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `ObservabilityStorageSpaceTooLow` - now covers `grafana-postgresql` PVCs, which the mismatched denominator selector silently dropped.
+
+## [4.120.0] - 2026-09-14
+
+### Added
+
+- `ManagementClusterEtcdDBSizeAlmostAtQuota` and `WorkloadClusterEtcdDBSizeAlmostAtQuota` - page when the etcd database passes 95% of its backend quota.
+- `ManagementClusterEtcdDBSizeGrowingTowardsQuota` and `WorkloadClusterEtcdDBSizeGrowingTowardsQuota` - warn when the etcd database is on track to reach its backend quota within 24 hours.
+- `ManagementClusterEtcdDBNeedsDefragmentation` and `WorkloadClusterEtcdDBNeedsDefragmentation` - warn when the hourly `etcd-defrag` job's own defrag rule has held for 2h without the database shrinking.
+- `TeleportKubeAgentInstanceUnreadyTooLong` - pages during working hours when a teleport-kube-agent replica has been unready for over a day, which also blocks StatefulSet rollouts.
+
+### Changed
+
+- `ManagementClusterEtcdDBSizeTooLarge` and `WorkloadClusterEtcdDBSizeTooLarge` - `runbook_url` now points at the `Etcd database quota exhaustion` runbook.
+- Rewrote all cabbage alert descriptions to a single line naming what broke and where.
+
+### Fixed
+
+- `EnvoyHighDownstreamRequestTimeoutRate`, `EnvoyClusterCircuitBreakerTripped` and `EnvoyControllerNotReconcilingGateway` - descriptions no longer render a literal `\n` and a full label dump.
+- `CoreDNSMaxHPAReplicasReached` - description now names the HPA instead of rendering an empty deployment name.
+- `ExternalDNSCantAccessRegistry`, `ExternalDNSCantAccessSource` and `ExternalDNSDown` - removed a stray bracket from the descriptions.
+- Rules test harness extracts all rule files before running tests, fixing flaky cross-directory `rule_files` references.
+
+## [4.119.1] - 2026-09-06
+
+### Fixed
+
+- `AgentPlatformHelmReleaseNotReady` and `KagentControllerDown` no longer resolve and re-fire when the `flux-ksm` or `kube-state-metrics` pod is replaced.
+
+## [4.119.0] - 2026-09-06
+
 ### Added
 
 - Add `api-audit-logs.recording.rules` pre-aggregating the per-user API audit event rate and its rolling 24h peak.
 - Add `FluxSourceCriticalFailed`, paging 24/7 on `GitRepository` in `flux-giantswarm` — the source an oncaller needs to push a change through Flux at any hour. `GitRepository` is removed from `FluxSourceFailed` in exchange, and that alert keeps working hours: an `OCIRepository` or `HelmRepository` that cannot be pulled says little about whether the service is running, and can wait for morning.
 - Add `FluxMetricsMissing` alert firing when `source-controller` stops emitting reconcile metrics for 30m, i.e. Flux is not running or not reconciling. Reads `gotk_reconcile_duration_seconds_count`, published by the controller itself, rather than `gotk_resource_info`, which comes from the `flux-ksm` kube-state-metrics instance and so reports KSM's health rather than Flux's.
+- Add team Bumblebee's agent platform availability alerts: `AgentPlatformHelmReleaseNotReady` (a `team=bumblebee` HelmRelease in `flux-giantswarm` not Ready for 1h), `KagentControllerDown` (`kagent-controller` without an available replica for 30m) and `AgentPlatformPostgresClusterNotHealthy` (a CloudNativePG `Cluster` in `agent-platform` or `kagent` outside its healthy phase for 30m). All three carry `all_pipelines: "true"`: the agent platform's own management clusters include `testing`-pipeline installations, where the existing `FluxGiantswarmHelmReleaseFailed` and `DeploymentNotSatisfiedBumblebee` alerts fire but only reach Slack. The first two step back wherever those generic alerts page (`stable` and `stable-testing` pipelines), so a stuck component never opens two incidents.
 
 ### Changed
 
@@ -4540,7 +4574,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.2...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.120.0...HEAD
+[4.120.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.119.1...v4.120.0
+[4.119.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.119.0...v4.119.1
+[4.119.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.2...v4.119.0
 [4.118.2]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.1...v4.118.2
 [4.118.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.118.0...v4.118.1
 [4.118.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.117.0...v4.118.0

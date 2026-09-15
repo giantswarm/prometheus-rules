@@ -105,6 +105,28 @@ main() {
         # Look at each rules file for current provider
         cd "$outputPath/helm-chart/$provider/prometheus-rules/templates" || return 1
 
+        # Step 1 - extract every rules file from helm templates
+        while IFS= read -r -d '' file; do
+            file="${file#./}"
+
+            local extractDirname="${file%/*}"
+            local extractRuleFile="$outputPath/helm-chart/$provider/prometheus-rules/templates/$file"
+
+            if [[ -f "$extractRuleFile" ]]
+            then
+                [[ -d "$outputPath/generated/$provider/$extractDirname" ]] || mkdir -p "$outputPath/generated/$provider/$extractDirname"
+                "$GIT_WORKDIR/$YQ" '.spec' "$extractRuleFile" > "$outputPath/generated/$provider/$file"
+            else
+                # Fail when file is not found
+                echo "###  Warning: Failed extracting rules file $file"
+                failing_extraction+=("$provider:$file")
+            fi
+        done < <(find . -type f -regextype posix-egrep -regex "${rules_suffix_pattern}" -print0)
+
+        # Skip checks and tests if GENERATE_ONLY is set
+        if [[ "$GENERATE_ONLY" == "true" ]]; then continue; fi
+
+        # Step 2 - check and test rules
         while IFS= read -r -d '' file; do
             # Remove "./" at the vbeggining of the file path
             file="${file#./}"
@@ -120,20 +142,8 @@ main() {
 
             local ruleFile="$outputPath/helm-chart/$provider/prometheus-rules/templates/$file"
 
-            # Extract rules file from helm template
-            if [[ -f "$ruleFile" ]]
-            then
-                [[ -d "$outputPath/generated/$provider/$dirname" ]] || mkdir -p "$outputPath/generated/$provider/$dirname"
-                "$GIT_WORKDIR/$YQ" '.spec' "$ruleFile" > "$outputPath/generated/$provider/$file"
-            else
-                # Fail when file is not found
-                echo "###  Warning: Failed extracting rules file $file"
-                failing_extraction+=("$provider:$file")
-                continue
-            fi
-
-            # Skip next steps if GENERATE_ONLY is set
-            if [[ "$GENERATE_ONLY" == "true" ]]; then continue; fi
+            # Skip files that failed extraction in step 1
+            [[ -f "$ruleFile" ]] || continue
 
             # Verify tenant label exists and has the expected value
             local tenant_label

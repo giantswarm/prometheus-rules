@@ -51,7 +51,7 @@ spec:
     - alert: ClusterInternetEgressUnavailable
       annotations:
         description: |-
-          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach {{ $labels.target }}. A single availability zone losing egress looks like 33-50% here. Other domains still reachable means an allowlist-style block of this domain rather than a full loss of egress.`}}
+          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach {{ $labels.target }}.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         (

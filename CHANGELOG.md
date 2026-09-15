@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `WorkloadClusterAuditLogVolumeSpike` - read the rate and its baseline from recording rules instead of re-deriving both per evaluation.
+
 ### Fixed
 
 - `ObservabilityStorageSpaceTooLow` - now covers `grafana-postgresql` PVCs, which the mismatched denominator selector silently dropped.
@@ -64,7 +68,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `LokiRestartingTooOften` - increased threshold
 - `LoggingAgentMissingOnNode` - increased `for` to 2h.
 - `WorkloadClusterAuditLogVolumeSpike` - tuned thresholds/baseline and moved the alert to `area: kaas`.
-- `WorkloadClusterAuditLogVolumeSpike` - read the rate and its baseline from recording rules instead of re-deriving both per evaluation.
 
 ## [4.118.0] - 2026-08-31
 

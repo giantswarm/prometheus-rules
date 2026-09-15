@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `AgentPlatformMusterSessionStoresInMemory`: pages team Bumblebee in business hours when a muster on an installation runs its session auth and capability stores in memory instead of Valkey (`muster_session_store_backend{backend="memory"} == 1` for 15 minutes; giantswarm/muster#1229).
+
 ### Changed
 
 - `WorkloadClusterAuditLogVolumeSpike` - read the rate and its baseline from recording rules instead of re-deriving both per evaluation.

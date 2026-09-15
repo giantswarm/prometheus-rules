@@ -156,3 +156,29 @@ spec:
         severity: notify
         team: bumblebee
         topic: agent-platform
+    # muster keeps who is signed in where and what each session may see in
+    # its session auth and capability stores. The platform configures them on
+    # muster-valkey so they outlive a muster restart and are visible to the
+    # admin UI and to an operator; in memory they die with the pod. Since
+    # muster 5.19.13 a Valkey that is late at start-up is waited for and one
+    # that stays away fails the start (giantswarm/muster#1229), so a muster
+    # that reports the memory backend on an installation is either configured
+    # for memory -- a misconfiguration of the platform -- or a regression of
+    # that fix. Either way a person has to look, in business hours: nothing is
+    # down, but every restart of that pod signs everybody out.
+    - alert: AgentPlatformMusterSessionStoresInMemory
+      annotations:
+        description: '{{`muster in {{ $labels.namespace }} on {{ $labels.installation }} runs its session auth and capability stores in memory instead of Valkey: the sessions lose their SSO state and tool views with the pod, and nothing outside the pod can see them.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-muster-session-stores-in-memory/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      expr: |
+        max by (cluster_id, cluster_type, installation, pipeline, provider, namespace) (
+          muster_session_store_backend{cluster_type="management_cluster", backend="memory"}
+        ) == 1
+      for: 15m
+      labels:
+        all_pipelines: "true"
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: bumblebee
+        topic: agent-platform

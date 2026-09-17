@@ -105,3 +105,132 @@ tests:
             exp_annotations:
               description: "KubeStateMetrics is not retrieving metrics."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=golem"
+
+  # Both clusters sit on the same installation, so a join re-keyed on anything coarser than
+  # cluster_id (installation, provider, pipeline) would let the healthy cluster cancel the broken
+  # one and this scenario would fail.
+  - name: "KubeStateMetricsDown is scoped per cluster"
+    interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_condition{name="broken-wc", type="ControlPlaneReady", status="True", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x60"
+      - series: 'capi_cluster_status_condition{name="healthy-wc", type="ControlPlaneReady", status="True", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x60"
+      # only the healthy cluster has a kube-state-metrics target
+      - series: 'up{job="kube-state-metrics", endpoint="http", cluster_id="healthy-wc", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: KubeStateMetricsDown
+        eval_time: 25m
+        exp_alerts:
+          - exp_labels:
+              area: "platform"
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_kubelet_down: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              inhibit_kube_state_metrics_down: "true"
+              severity: "page"
+              team: "atlas"
+              topic: "observability"
+              cluster_id: "broken-wc"
+              installation: "golem"
+              name: "broken-wc"
+              pipeline: "testing"
+              provider: "capa"
+              status: "True"
+              type: "ControlPlaneReady"
+            exp_annotations:
+              description: "KubeStateMetrics is down."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=broken-wc"
+
+  # With no ready control plane to anchor on, the rule must stay silent even though no
+  # kube-state-metrics target exists. This is the guard against the dead `count(...) == 0` clause
+  # being "fixed" into something that pages for every cluster at once.
+  - name: "KubeStateMetricsDown stays silent without a ready control plane"
+    interval: 1m
+    input_series:
+      # control plane is explicitly not ready
+      - series: 'capi_cluster_status_condition{name="unready-wc", type="ControlPlaneReady", status="False", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x60"
+      # a different condition that is True must not be mistaken for the anchor
+      - series: 'capi_cluster_status_condition{name="unready-wc", type="InfrastructureReady", status="True", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: KubeStateMetricsDown
+        eval_time: 25m
+      - alertname: KubeStateMetricsDown
+        eval_time: 45m
+
+  # The anchor appearing is what starts the clock; before it exists there is nothing to page about.
+  - name: "KubeStateMetricsDown waits for the anchor to appear"
+    interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_condition{name="late-wc", type="ControlPlaneReady", status="True", installation="golem", provider="capa", pipeline="testing"}'
+        values: "_x30 1x40"
+    alert_rule_test:
+      # no anchor yet, nothing to fire on
+      - alertname: KubeStateMetricsDown
+        eval_time: 25m
+      # anchor present since 30m, `for: 15m` elapsed
+      - alertname: KubeStateMetricsDown
+        eval_time: 50m
+        exp_alerts:
+          - exp_labels:
+              area: "platform"
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_kubelet_down: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              inhibit_kube_state_metrics_down: "true"
+              severity: "page"
+              team: "atlas"
+              topic: "observability"
+              cluster_id: "late-wc"
+              installation: "golem"
+              name: "late-wc"
+              pipeline: "testing"
+              provider: "capa"
+              status: "True"
+              type: "ControlPlaneReady"
+            exp_annotations:
+              description: "KubeStateMetrics is down."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=late-wc"
+
+  # kube-state-metrics exposes two ports and the ServiceMonitor scrapes both; only the `http`
+  # endpoint serves the resource metrics. A healthy telemetry endpoint must not mask a dead one.
+  - name: "KubeStateMetricsDown only considers the http endpoint"
+    interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_condition{name="two-port-wc", type="ControlPlaneReady", status="True", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x60"
+      # the telemetry port is up, the metrics port has no target at all
+      - series: 'up{job="kube-state-metrics", endpoint="metrics", cluster_id="two-port-wc", installation="golem", provider="capa", pipeline="testing"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: KubeStateMetricsDown
+        eval_time: 25m
+        exp_alerts:
+          - exp_labels:
+              area: "platform"
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_kubelet_down: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              inhibit_kube_state_metrics_down: "true"
+              severity: "page"
+              team: "atlas"
+              topic: "observability"
+              cluster_id: "two-port-wc"
+              installation: "golem"
+              name: "two-port-wc"
+              pipeline: "testing"
+              provider: "capa"
+              status: "True"
+              type: "ControlPlaneReady"
+            exp_annotations:
+              description: "KubeStateMetrics is down."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=two-port-wc"

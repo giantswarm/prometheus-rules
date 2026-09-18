@@ -19,6 +19,7 @@ spec:
       for: 30m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: honeybadger
@@ -31,6 +32,7 @@ spec:
       for: 30m
       labels:
         area: kaas
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: {{ include "providerTeam" . }}
@@ -43,6 +45,7 @@ spec:
       for: 30m
       labels:
         area: kaas
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_monitoring_agent_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
@@ -55,6 +58,7 @@ spec:
       for: 4h
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: notify
         team: honeybadger
@@ -66,6 +70,7 @@ spec:
       for: 4h
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: shield
@@ -78,6 +83,7 @@ spec:
       for: 30m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: shield

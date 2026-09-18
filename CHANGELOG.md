@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The ten `Kube*CreatedMetricMissing` alerts are replaced by a single `KubeStateMetricsMetricsMissing`.
+
 ### Fixed
 
 - `kube-state-metrics` rules are unit tested again - the tests were skipped and had drifted from the rules.

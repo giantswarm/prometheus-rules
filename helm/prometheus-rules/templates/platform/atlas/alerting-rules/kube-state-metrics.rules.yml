@@ -78,6 +78,34 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    ## Same condition as the KSM health alerts, but triggers inhibition earlier and does not page.
+    ## `count` carries no threshold on purpose: an inhibition source that fires permanently would
+    ## silently swallow every dependent page, which a `<= 100` style threshold would do on a small
+    ## cluster. Partial degradation stays with KubeStateMetricsNotRetrievingMetrics.
+    - alert: InhibitionKubeStateMetricsDown
+      annotations:
+        description: '{{`KubeStateMetrics is not serving data for cluster {{ $labels.cluster_id }}.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      expr: |-
+        count by (cluster_id, installation, provider, pipeline) (
+          label_replace(
+            capi_cluster_status_condition{type="ControlPlaneReady", status="True"} == 1,
+            "cluster_id",
+            "$1",
+            "name",
+            "(.*)"
+          )
+        )
+        unless on (cluster_id) (
+          count by (cluster_id) (kube_pod_status_phase{job="kube-state-metrics"})
+        )
+      for: 2m
+      labels:
+        area: platform
+        inhibit_kube_state_metrics_down: "true"
+        severity: none
+        team: atlas
+        topic: observability
     ## One alert for the whole set: a cluster only clears it when every expected metric is present,
     ## so both a single missing resource kind and a total loss are covered. `count by` on the anchor
     ## keeps scrape-target labels out of the alert's identity.

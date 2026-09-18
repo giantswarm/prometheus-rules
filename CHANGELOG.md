@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `InhibitionKubeStateMetricsDown` - arms the kube-state-metrics inhibition after 2m instead of 15m.
+
 ### Changed
 
 - The ten `Kube*CreatedMetricMissing` alerts are replaced by a single `KubeStateMetricsMetricsMissing`.

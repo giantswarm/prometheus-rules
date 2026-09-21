@@ -234,3 +234,163 @@ tests:
             exp_annotations:
               description: "KubeStateMetrics is down."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=golem&CLUSTER=two-port-wc"
+
+  # Two clusters on one installation. A join keyed on anything coarser than cluster_id would let the
+  # healthy cluster cancel the broken one. `name` differs from `installation` so this also pins that
+  # cluster_id is derived from the cluster name.
+  - name: "KubeStateMetricsMetricsMissing is scoped per cluster"
+    interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_condition{name="wc-alpha", type="ControlPlaneReady", status="True", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'capi_cluster_status_condition{name="wc-beta", type="ControlPlaneReady", status="True", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      # wc-alpha loses kube_endpoint_created after an hour
+      - series: 'kube_configmap_created{job="kube-state-metrics", cluster_id="wc-alpha", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_daemonset_created{job="kube-state-metrics", cluster_id="wc-alpha", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_deployment_created{job="kube-state-metrics", cluster_id="wc-alpha", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_endpoint_created{job="kube-state-metrics", cluster_id="wc-alpha", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x60 _x60"
+      - series: 'kube_namespace_created{job="kube-state-metrics", cluster_id="wc-alpha", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_node_created{job="kube-state-metrics", cluster_id="wc-alpha", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_pod_created{job="kube-state-metrics", cluster_id="wc-alpha", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_replicaset_created{job="kube-state-metrics", cluster_id="wc-alpha", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_secret_created{job="kube-state-metrics", cluster_id="wc-alpha", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_service_created{job="kube-state-metrics", cluster_id="wc-alpha", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      # wc-beta stays healthy throughout
+      - series: 'kube_configmap_created{job="kube-state-metrics", cluster_id="wc-beta", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_daemonset_created{job="kube-state-metrics", cluster_id="wc-beta", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_deployment_created{job="kube-state-metrics", cluster_id="wc-beta", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_endpoint_created{job="kube-state-metrics", cluster_id="wc-beta", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_namespace_created{job="kube-state-metrics", cluster_id="wc-beta", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_node_created{job="kube-state-metrics", cluster_id="wc-beta", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_pod_created{job="kube-state-metrics", cluster_id="wc-beta", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_replicaset_created{job="kube-state-metrics", cluster_id="wc-beta", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_secret_created{job="kube-state-metrics", cluster_id="wc-beta", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+      - series: 'kube_service_created{job="kube-state-metrics", cluster_id="wc-beta", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x120"
+    alert_rule_test:
+      # all ten present
+      - alertname: KubeStateMetricsMetricsMissing
+        eval_time: 55m
+      # one missing since 60m, `for: 30m` has not elapsed yet
+      - alertname: KubeStateMetricsMetricsMissing
+        eval_time: 80m
+      - alertname: KubeStateMetricsMetricsMissing
+        eval_time: 100m
+        exp_alerts:
+          - exp_labels:
+              area: "platform"
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_outside_working_hours: "true"
+              severity: "page"
+              team: "atlas"
+              topic: "kubernetes"
+              cluster_id: "wc-alpha"
+              installation: "myinstall"
+              pipeline: "testing"
+              provider: "capa"
+            exp_annotations:
+              description: "At least one kube-state-metrics resource metric is missing for cluster wc-alpha."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=myinstall&CLUSTER=wc-alpha"
+
+  # A kube_*_created series from another exporter must not count towards the expected set.
+  - name: "KubeStateMetricsMetricsMissing only counts kube-state-metrics series"
+    interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_condition{name="wc-gamma", type="ControlPlaneReady", status="True", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x80"
+      - series: 'kube_configmap_created{job="kube-state-metrics", cluster_id="wc-gamma", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x80"
+      - series: 'kube_daemonset_created{job="kube-state-metrics", cluster_id="wc-gamma", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x80"
+      - series: 'kube_deployment_created{job="kube-state-metrics", cluster_id="wc-gamma", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x80"
+      - series: 'kube_endpoint_created{job="kube-state-metrics", cluster_id="wc-gamma", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x80"
+      - series: 'kube_namespace_created{job="kube-state-metrics", cluster_id="wc-gamma", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x80"
+      - series: 'kube_node_created{job="kube-state-metrics", cluster_id="wc-gamma", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x80"
+      - series: 'kube_pod_created{job="kube-state-metrics", cluster_id="wc-gamma", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x80"
+      - series: 'kube_replicaset_created{job="kube-state-metrics", cluster_id="wc-gamma", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x80"
+      - series: 'kube_secret_created{job="kube-state-metrics", cluster_id="wc-gamma", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x80"
+      # same metric name, different job
+      - series: 'kube_service_created{job="some-other-exporter", cluster_id="wc-gamma", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x80"
+    alert_rule_test:
+      - alertname: KubeStateMetricsMetricsMissing
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              area: "platform"
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_outside_working_hours: "true"
+              severity: "page"
+              team: "atlas"
+              topic: "kubernetes"
+              cluster_id: "wc-gamma"
+              installation: "myinstall"
+              pipeline: "testing"
+              provider: "capa"
+            exp_annotations:
+              description: "At least one kube-state-metrics resource metric is missing for cluster wc-gamma."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=myinstall&CLUSTER=wc-gamma"
+
+  # No ready control plane means nothing to page about, even with no metrics at all.
+  - name: "KubeStateMetricsMetricsMissing needs a ready control plane"
+    interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_condition{name="wc-delta", type="ControlPlaneReady", status="False", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x60"
+      - series: 'capi_cluster_status_condition{name="wc-delta", type="InfrastructureReady", status="True", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: KubeStateMetricsMetricsMissing
+        eval_time: 45m
+
+  # Total loss of kube-state-metrics data fires the same single alert, not one per metric.
+  - name: "KubeStateMetricsMetricsMissing with no metrics at all"
+    interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_condition{name="wc-epsilon", type="ControlPlaneReady", status="True", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: KubeStateMetricsMetricsMissing
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              area: "platform"
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_outside_working_hours: "true"
+              severity: "page"
+              team: "atlas"
+              topic: "kubernetes"
+              cluster_id: "wc-epsilon"
+              installation: "myinstall"
+              pipeline: "testing"
+              provider: "capa"
+            exp_annotations:
+              description: "At least one kube-state-metrics resource metric is missing for cluster wc-epsilon."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=myinstall&CLUSTER=wc-epsilon"

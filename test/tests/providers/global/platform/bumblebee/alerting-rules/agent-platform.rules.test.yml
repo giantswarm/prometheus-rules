@@ -47,6 +47,8 @@ tests:
             exp_annotations:
               description: "Agent platform HelmRelease flux-giantswarm/kagent on graveler has not been Ready for over an hour."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-helmrelease-not-ready/?INSTALLATION=graveler&CLUSTER=graveler&NAMESPACE=flux-giantswarm&HELMRELEASE_NAME=kagent"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
   # flux-ksm is rescheduled while the HelmRelease is not Ready: the old pod's
   # series ends and the new pod's begins with different `pod` and `instance`
   # labels. The alert keeps its identity across the hand-over and stays firing
@@ -81,6 +83,8 @@ tests:
             exp_annotations:
               description: "Agent platform HelmRelease flux-giantswarm/kagent on graveler has not been Ready for over an hour."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-helmrelease-not-ready/?INSTALLATION=graveler&CLUSTER=graveler&NAMESPACE=flux-giantswarm&HELMRELEASE_NAME=kagent"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
       # Only the second pod's series exists now. Had `pod` been part of the
       # alert's labels, the alert would be pending here until 128m.
       - alertname: AgentPlatformHelmReleaseNotReady
@@ -105,6 +109,8 @@ tests:
             exp_annotations:
               description: "Agent platform HelmRelease flux-giantswarm/kagent on graveler has not been Ready for over an hour."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-helmrelease-not-ready/?INSTALLATION=graveler&CLUSTER=graveler&NAMESPACE=flux-giantswarm&HELMRELEASE_NAME=kagent"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
   # On a stable installation the generic alert pages Bumblebee after ten
   # minutes, so ours stays quiet as long as that alert exists for the release.
   - interval: 1m
@@ -148,6 +154,8 @@ tests:
             exp_annotations:
               description: "Agent platform HelmRelease flux-giantswarm/agent-platform-connectivity on gazelle has not been Ready for over an hour."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-helmrelease-not-ready/?INSTALLATION=gazelle&CLUSTER=gazelle&NAMESPACE=flux-giantswarm&HELMRELEASE_NAME=agent-platform-connectivity"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
 
   # KagentControllerDown: the controller loses its only replica on a testing
   # installation; DeploymentNotSatisfiedBumblebee fires there too but only
@@ -187,6 +195,8 @@ tests:
             exp_annotations:
               description: "kagent-controller in kagent on graveler has had no available replica for 30 minutes; agents on this installation are down."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kagent-controller-down/?INSTALLATION=graveler&CLUSTER=graveler"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
       # Still firing once the generic alert fires as well: on a testing
       # installation the generic alert does not page, so ours must not defer.
       - alertname: KagentControllerDown
@@ -210,6 +220,8 @@ tests:
             exp_annotations:
               description: "kagent-controller in kagent on graveler has had no available replica for 30 minutes; agents on this installation are down."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kagent-controller-down/?INSTALLATION=graveler&CLUSTER=graveler"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
   # kube-state-metrics is rescheduled during the outage: the old pod's series
   # end and the new pod's begin with different `pod` and `instance` labels. The
   # alert keeps its identity across the hand-over and stays firing.
@@ -246,6 +258,8 @@ tests:
             exp_annotations:
               description: "kagent-controller in kagent on graveler has had no available replica for 30 minutes; agents on this installation are down."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kagent-controller-down/?INSTALLATION=graveler&CLUSTER=graveler"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
       # Only the second pod's series exist now. Had `pod` been part of the
       # alert's labels, the alert would be pending here until 68m.
       - alertname: KagentControllerDown
@@ -269,6 +283,8 @@ tests:
             exp_annotations:
               description: "kagent-controller in kagent on graveler has had no available replica for 30 minutes; agents on this installation are down."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kagent-controller-down/?INSTALLATION=graveler&CLUSTER=graveler"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
   # On a stable installation DeploymentNotSatisfiedBumblebee pages after an
   # hour, so ours defers to it from the moment it goes pending.
   - interval: 1m
@@ -339,6 +355,8 @@ tests:
             exp_annotations:
               description: "CloudNativePG cluster kagent/kagent-pg on graveler has not been in a healthy phase for 30 minutes."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cnpg-cluster-not-healthy/?INSTALLATION=graveler&CLUSTER=graveler&NAMESPACE=kagent&NAME=kagent-pg"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
 
   # AgentPlatformContainerRestartingTooOften: the 2026-09-14 gazelle loop —
   # muster-valkey OOM-killed about every five minutes; the pod is replaced
@@ -386,6 +404,8 @@ tests:
             exp_annotations:
               description: "Container muster-valkey in agent-platform on gazelle has restarted 9 times in the last hour."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-container-restarting/?INSTALLATION=gazelle&CLUSTER=gazelle&NAMESPACE=agent-platform&CONTAINER=muster-valkey"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
       # An hour after the last restart the window is empty again.
       - alertname: AgentPlatformContainerRestartingTooOften
         eval_time: 115m
@@ -428,6 +448,8 @@ tests:
             exp_annotations:
               description: "Valkey in agent-platform on gazelle uses 92.39% of its maxmemory; above it Valkey evicts tokens and sessions."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-valkey-memory-high/?INSTALLATION=gazelle&CLUSTER=gazelle&NAMESPACE=agent-platform"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
   # AgentPlatformMusterSessionStoresInMemory: muster reports its session
   # stores on the memory backend for fifteen minutes and pages (business
   # hours); the Valkey series of the same pod is 1 only on a healthy muster
@@ -469,6 +491,8 @@ tests:
             exp_annotations:
               description: "muster in agent-platform on gazelle runs its session auth and capability stores in memory instead of Valkey: the sessions lose their SSO state and tool views with the pod, and nothing outside the pod can see them."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-muster-session-stores-in-memory/?INSTALLATION=gazelle&CLUSTER=gazelle&NAMESPACE=agent-platform"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
   # A muster pod replaced mid-alert: the old pod's series end, the new pod's
   # begin with other pod and instance labels; the alert keeps firing.
   - interval: 1m
@@ -498,3 +522,5 @@ tests:
             exp_annotations:
               description: "muster in agent-platform on gazelle runs its session auth and capability stores in memory instead of Valkey: the sessions lose their SSO state and tool views with the pod, and nothing outside the pod can see them."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-muster-session-stores-in-memory/?INSTALLATION=gazelle&CLUSTER=gazelle&NAMESPACE=agent-platform"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"

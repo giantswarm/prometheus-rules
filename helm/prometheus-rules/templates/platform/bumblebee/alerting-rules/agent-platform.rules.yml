@@ -41,6 +41,8 @@ spec:
       annotations:
         description: '{{`Agent platform HelmRelease {{ $labels.exported_namespace }}/{{ $labels.name }} on {{ $labels.installation }} has not been Ready for over an hour.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-helmrelease-not-ready/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
       expr: |
         max by (cluster_id, cluster_type, installation, pipeline, provider, exported_namespace, name, team, ready) (
           gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", team="bumblebee"}
@@ -63,6 +65,8 @@ spec:
       annotations:
         description: '{{`kagent-controller in {{ $labels.namespace }} on {{ $labels.installation }} has had no available replica for 30 minutes; agents on this installation are down.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kagent-controller-down/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
       expr: |
         max by (cluster_id, cluster_type, installation, pipeline, provider, namespace, deployment) (
           kube_deployment_status_replicas_available{cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller"}
@@ -88,6 +92,8 @@ spec:
       annotations:
         description: '{{`CloudNativePG cluster {{ $labels.namespace }}/{{ $labels.name }} on {{ $labels.installation }} has not been in a healthy phase for 30 minutes.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cnpg-cluster-not-healthy/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&NAME={{ $labels.name }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
       expr: |
         sum by (cluster_id, installation, pipeline, provider, namespace, name) (
           kube_cnpg_cluster_info{cluster_type="management_cluster", namespace=~"agent-platform|kagent", phase!="Cluster in healthy state"}
@@ -116,6 +122,8 @@ spec:
       annotations:
         description: '{{`Container {{ $labels.container }} in {{ $labels.namespace }} on {{ $labels.installation }} has restarted {{ printf "%.0f" $value }} times in the last hour.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-container-restarting/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&CONTAINER={{ $labels.container }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
       expr: |
         sum by (cluster_id, cluster_type, installation, pipeline, provider, namespace, container) (
           increase(kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace=~"agent-platform|kagent|mcp-kubernetes|mcp-capi|mcp-prometheus"}[1h])
@@ -140,6 +148,8 @@ spec:
       annotations:
         description: '{{`Valkey in {{ $labels.namespace }} on {{ $labels.installation }} uses {{ $value | humanizePercentage }} of its maxmemory; above it Valkey evicts tokens and sessions.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-valkey-memory-high/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
       expr: |
         max by (cluster_id, cluster_type, installation, pipeline, provider, namespace) (
           redis_memory_used_bytes{cluster_type="management_cluster", namespace=~"agent-platform|mcp-kubernetes|mcp-capi|mcp-prometheus"}
@@ -170,6 +180,8 @@ spec:
       annotations:
         description: '{{`muster in {{ $labels.namespace }} on {{ $labels.installation }} runs its session auth and capability stores in memory instead of Valkey: the sessions lose their SSO state and tool views with the pod, and nothing outside the pod can see them.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-muster-session-stores-in-memory/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
       expr: |
         max by (cluster_id, cluster_type, installation, pipeline, provider, namespace) (
           muster_session_store_backend{cluster_type="management_cluster", backend="memory"}

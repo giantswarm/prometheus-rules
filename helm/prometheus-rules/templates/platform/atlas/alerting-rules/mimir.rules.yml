@@ -79,6 +79,7 @@ spec:
       for: 12h
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: ticket 
         team: atlas
@@ -102,6 +103,7 @@ spec:
       for: 30m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: ticket
         team: atlas
@@ -125,6 +127,7 @@ spec:
       for: 30m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas

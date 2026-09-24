@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `AgentPlatformValkeyMemoryHigh` divides each Valkey's used memory by its own `maxmemory` before it takes the highest ratio in the namespace. With two Valkeys in one namespace, it divided the highest usage by the highest bound, which can come from different instances (giantswarm/giantswarm#36711).
 - `kube-state-metrics` rules are unit tested again - the tests were skipped and had drifted from the rules.
 
 ## [4.121.0] - 2026-09-15

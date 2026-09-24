@@ -143,17 +143,16 @@ spec:
     # person a sign-in or muster a re-list. This is the heads-up before that
     # starts, to Slack. A Valkey without a bound (maxmemory 0) has no
     # redis_memory_max_bytes above zero and is not covered here — the
-    # restart alert catches it when it dies. The ratio is taken per instance
-    # before the max, so one Valkey's usage is never divided by another's
-    # bound in the same namespace.
+    # restart alert catches it when it dies. One alert per Valkey: `job` names
+    # the instance and survives a pod replacement, `pod` does not.
     - alert: AgentPlatformValkeyMemoryHigh
       annotations:
-        description: '{{`Valkey in {{ $labels.namespace }} on {{ $labels.installation }} uses {{ $value | humanizePercentage }} of its maxmemory; above it Valkey evicts tokens and sessions.`}}'
+        description: '{{`Valkey {{ $labels.job }} on {{ $labels.installation }} uses {{ $value | humanizePercentage }} of its maxmemory; above it Valkey evicts tokens and sessions.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-valkey-memory-high/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
         __dashboardUid__: agent-platform-overview
         dashboardQueryParams: "orgId=1"
       expr: |
-        max by (cluster_id, cluster_type, installation, pipeline, provider, namespace) (
+        max by (cluster_id, cluster_type, installation, pipeline, provider, namespace, job) (
           redis_memory_used_bytes{cluster_type="management_cluster", namespace=~"agent-platform|mcp-kubernetes|mcp-capi|mcp-prometheus"}
           /
           (redis_memory_max_bytes{cluster_type="management_cluster", namespace=~"agent-platform|mcp-kubernetes|mcp-capi|mcp-prometheus"} > 0)

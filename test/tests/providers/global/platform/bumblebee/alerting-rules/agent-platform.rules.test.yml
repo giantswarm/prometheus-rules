@@ -413,16 +413,21 @@ tests:
 
   # AgentPlatformValkeyMemoryHigh: muster-valkey at 92 % of its maxmemory for
   # fifteen minutes notifies; a Valkey without a bound (maxmemory 0) is not a
-  # ratio and never fires; the metrics sidecar's pod label is aggregated away.
+  # ratio and never fires; the pod is replaced at 36m and the alert still
+  # fires at 40m, because the pod label is aggregated away.
   - interval: 1m
     input_series:
-      - series: 'redis_memory_used_bytes{job="muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-9dc789884-xfvhq", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
-        values: "500000000x20 620000000x40"
-      - series: 'redis_memory_max_bytes{job="muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-9dc789884-xfvhq", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
-        values: "671088640x60"
-      - series: 'redis_memory_used_bytes{job="mcp-kubernetes-valkey", cluster_type="management_cluster", namespace="mcp-kubernetes", app="valkey", container="metrics", pod="mcp-kubernetes-valkey-5d8c-aaaaa", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+      - series: 'redis_memory_used_bytes{job="agent-platform/muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-9dc789884-xfvhq", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "500000000x20 620000000x15"
+      - series: 'redis_memory_max_bytes{job="agent-platform/muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-9dc789884-xfvhq", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "671088640x35"
+      - series: 'redis_memory_used_bytes{job="agent-platform/muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-9dc789884-q7wxn", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "_x35 620000000x25"
+      - series: 'redis_memory_max_bytes{job="agent-platform/muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-9dc789884-q7wxn", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "_x35 671088640x25"
+      - series: 'redis_memory_used_bytes{job="mcp-kubernetes/mcp-kubernetes-valkey", cluster_type="management_cluster", namespace="mcp-kubernetes", app="valkey", container="metrics", pod="mcp-kubernetes-valkey-5d8c-aaaaa", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
         values: "250000000x60"
-      - series: 'redis_memory_max_bytes{job="mcp-kubernetes-valkey", cluster_type="management_cluster", namespace="mcp-kubernetes", app="valkey", container="metrics", pod="mcp-kubernetes-valkey-5d8c-aaaaa", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+      - series: 'redis_memory_max_bytes{job="mcp-kubernetes/mcp-kubernetes-valkey", cluster_type="management_cluster", namespace="mcp-kubernetes", app="valkey", container="metrics", pod="mcp-kubernetes-valkey-5d8c-aaaaa", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
         values: "0x60"
     alert_rule_test:
       - alertname: AgentPlatformValkeyMemoryHigh
@@ -440,28 +445,30 @@ tests:
               cluster_type: management_cluster
               installation: gazelle
               namespace: agent-platform
+              job: agent-platform/muster-valkey
               pipeline: stable
               provider: $provider
               severity: notify
               team: bumblebee
               topic: agent-platform
             exp_annotations:
-              description: "Valkey in agent-platform on gazelle uses 92.39% of its maxmemory; above it Valkey evicts tokens and sessions."
+              description: "Valkey agent-platform/muster-valkey on gazelle uses 92.39% of its maxmemory; above it Valkey evicts tokens and sessions."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-valkey-memory-high/?INSTALLATION=gazelle&CLUSTER=gazelle&NAMESPACE=agent-platform"
               __dashboardUid__: "agent-platform-overview"
               dashboardQueryParams: "orgId=1"
   # AgentPlatformValkeyMemoryHigh, two bounded Valkeys in one namespace:
-  # muster-valkey at 92 % of its small bound fires although another instance
-  # has a larger bound; each usage is divided by its own bound.
+  # muster-valkey at 92 % of a 640 MiB bound and other-valkey at 95 % of a
+  # 4 GB bound; each usage is divided by its own bound, and each instance
+  # gets its own alert.
   - interval: 1m
     input_series:
-      - series: 'redis_memory_used_bytes{job="muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-9dc789884-xfvhq", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+      - series: 'redis_memory_used_bytes{job="agent-platform/muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-9dc789884-xfvhq", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
         values: "620000000x60"
-      - series: 'redis_memory_max_bytes{job="muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-9dc789884-xfvhq", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+      - series: 'redis_memory_max_bytes{job="agent-platform/muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-9dc789884-xfvhq", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
         values: "671088640x60"
-      - series: 'redis_memory_used_bytes{job="other-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="other-valkey-6bb5c76b67-zm76k", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
-        values: "100000000x60"
-      - series: 'redis_memory_max_bytes{job="other-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="other-valkey-6bb5c76b67-zm76k", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+      - series: 'redis_memory_used_bytes{job="agent-platform/other-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="other-valkey-6bb5c76b67-zm76k", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "3800000000x60"
+      - series: 'redis_memory_max_bytes{job="agent-platform/other-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="other-valkey-6bb5c76b67-zm76k", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
         values: "4000000000x60"
     alert_rule_test:
       - alertname: AgentPlatformValkeyMemoryHigh
@@ -476,13 +483,34 @@ tests:
               cluster_type: management_cluster
               installation: gazelle
               namespace: agent-platform
+              job: agent-platform/muster-valkey
               pipeline: stable
               provider: $provider
               severity: notify
               team: bumblebee
               topic: agent-platform
             exp_annotations:
-              description: "Valkey in agent-platform on gazelle uses 92.39% of its maxmemory; above it Valkey evicts tokens and sessions."
+              description: "Valkey agent-platform/muster-valkey on gazelle uses 92.39% of its maxmemory; above it Valkey evicts tokens and sessions."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-valkey-memory-high/?INSTALLATION=gazelle&CLUSTER=gazelle&NAMESPACE=agent-platform"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
+          - exp_labels:
+              alertname: AgentPlatformValkeyMemoryHigh
+              all_pipelines: "true"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: gazelle
+              cluster_type: management_cluster
+              installation: gazelle
+              namespace: agent-platform
+              job: agent-platform/other-valkey
+              pipeline: stable
+              provider: $provider
+              severity: notify
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "Valkey agent-platform/other-valkey on gazelle uses 95% of its maxmemory; above it Valkey evicts tokens and sessions."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-valkey-memory-high/?INSTALLATION=gazelle&CLUSTER=gazelle&NAMESPACE=agent-platform"
               __dashboardUid__: "agent-platform-overview"
               dashboardQueryParams: "orgId=1"
@@ -490,13 +518,13 @@ tests:
   # its usage above the other instance's bound never fires.
   - interval: 1m
     input_series:
-      - series: 'redis_memory_used_bytes{job="muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-b86bd87fc-pwxvc", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
+      - series: 'redis_memory_used_bytes{job="agent-platform/muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-b86bd87fc-pwxvc", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
         values: "30000000x60"
-      - series: 'redis_memory_max_bytes{job="muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-b86bd87fc-pwxvc", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
+      - series: 'redis_memory_max_bytes{job="agent-platform/muster-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="muster-valkey-b86bd87fc-pwxvc", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
         values: "671088640x60"
-      - series: 'redis_memory_used_bytes{job="repo-manager-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="repo-manager-valkey-6bb5c76b67-zm76k", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
+      - series: 'redis_memory_used_bytes{job="agent-platform/repo-manager-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="repo-manager-valkey-6bb5c76b67-zm76k", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
         values: "700000000x60"
-      - series: 'redis_memory_max_bytes{job="repo-manager-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="repo-manager-valkey-6bb5c76b67-zm76k", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
+      - series: 'redis_memory_max_bytes{job="agent-platform/repo-manager-valkey", cluster_type="management_cluster", namespace="agent-platform", app="valkey", container="metrics", pod="repo-manager-valkey-6bb5c76b67-zm76k", cluster_id="graveler", installation="graveler", pipeline="testing", provider="$provider"}'
         values: "0x60"
     alert_rule_test:
       - alertname: AgentPlatformValkeyMemoryHigh

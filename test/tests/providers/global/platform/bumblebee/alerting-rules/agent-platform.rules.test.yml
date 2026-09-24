@@ -646,7 +646,7 @@ tests:
               team: bumblebee
               topic: agent-platform
             exp_annotations:
-              description: "Slack has been rate-limiting the chat.appendStream calls of klaus-gateway in agent-platform on graveler for ten minutes; 15 calls were answered 429 in the last five. Replies are delayed, not lost."
+              description: "Slack has answered 429 to the chat.appendStream calls of klaus-gateway in agent-platform on graveler in every five-minute window of the last ten minutes, 15 times in the last five. Replies are delayed, not lost."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-slack-rate-limited/?INSTALLATION=graveler&CLUSTER=graveler&NAMESPACE=agent-platform&METHOD=chat.appendStream"
               __dashboardUid__: "agent-platform-overview"
               dashboardQueryParams: "orgId=1"
@@ -670,7 +670,7 @@ tests:
               team: bumblebee
               topic: agent-platform
             exp_annotations:
-              description: "Slack has been rate-limiting the chat.appendStream calls of klaus-gateway in agent-platform on graveler for ten minutes; 13 calls were answered 429 in the last five. Replies are delayed, not lost."
+              description: "Slack has answered 429 to the chat.appendStream calls of klaus-gateway in agent-platform on graveler in every five-minute window of the last ten minutes, 13 times in the last five. Replies are delayed, not lost."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-slack-rate-limited/?INSTALLATION=graveler&CLUSTER=graveler&NAMESPACE=agent-platform&METHOD=chat.appendStream"
               __dashboardUid__: "agent-platform-overview"
               dashboardQueryParams: "orgId=1"
@@ -695,7 +695,7 @@ tests:
               team: bumblebee
               topic: agent-platform
             exp_annotations:
-              description: "klaus-gateway in agent-platform on graveler gave up a Slack chat.appendStream call in the last fifteen minutes: Slack answered 429 to every attempt or asked for a wait above 30 seconds. A reply whose closing write is given up stays incomplete."
+              description: "klaus-gateway in agent-platform on graveler gave up a Slack chat.appendStream call in the last fifteen minutes: Slack answered 429 to every attempt or asked for a wait above 30 seconds. A reply whose closing write is given up stays incomplete; a given-up chat.postMessage is a prompt or a notice that never arrived."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-slack-rate-limited/?INSTALLATION=graveler&CLUSTER=graveler&NAMESPACE=agent-platform&METHOD=chat.appendStream"
               __dashboardUid__: "agent-platform-overview"
               dashboardQueryParams: "orgId=1"
@@ -717,7 +717,7 @@ tests:
               team: bumblebee
               topic: agent-platform
             exp_annotations:
-              description: "klaus-gateway in agent-platform on graveler gave up a Slack chat.appendStream call in the last fifteen minutes: Slack answered 429 to every attempt or asked for a wait above 30 seconds. A reply whose closing write is given up stays incomplete."
+              description: "klaus-gateway in agent-platform on graveler gave up a Slack chat.appendStream call in the last fifteen minutes: Slack answered 429 to every attempt or asked for a wait above 30 seconds. A reply whose closing write is given up stays incomplete; a given-up chat.postMessage is a prompt or a notice that never arrived."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-slack-rate-limited/?INSTALLATION=graveler&CLUSTER=graveler&NAMESPACE=agent-platform&METHOD=chat.appendStream"
               __dashboardUid__: "agent-platform-overview"
               dashboardQueryParams: "orgId=1"
@@ -728,14 +728,15 @@ tests:
   # counter of chat.stopStream exists since 5m, so its birth clause is quiet
   # again by 20m; the increment at 25m is seen through increase() at once, and
   # the alert clears fifteen minutes later. Neither the two given-up calls nor
-  # twenty 429s on chat.postMessage within one minute, all waited out, add up
-  # to ten minutes of pacing for AgentPlatformSlackRateLimited.
+  # fifteen 429s on chat.postMessage over four minutes, all waited out, put a
+  # 429 in every five-minute window for ten minutes: AgentPlatformSlackRateLimited
+  # stays quiet.
   - interval: 1m
     input_series:
       - series: 'klaus_gateway_slack_rate_limited_total{method="chat.stopStream", outcome="exhausted", job="klaus-gateway", cluster_type="management_cluster", namespace="agent-platform", app="klaus-gateway", container="klaus-gateway", endpoint="admin", service="klaus-gateway", pod="klaus-gateway-5549fb9988-pcxjq", instance="100.65.100.66:8081", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
         values: "_x5 1x19 2x34"
       - series: 'klaus_gateway_slack_rate_limited_total{method="chat.postMessage", outcome="retried", job="klaus-gateway", cluster_type="management_cluster", namespace="agent-platform", app="klaus-gateway", container="klaus-gateway", endpoint="admin", service="klaus-gateway", pod="klaus-gateway-5549fb9988-pcxjq", instance="100.65.100.66:8081", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
-        values: "_x10 1 21x48"
+        values: "_x10 1+5x3 16x45"
     alert_rule_test:
       - alertname: AgentPlatformSlackCallGivenUp
         eval_time: 22m
@@ -758,7 +759,7 @@ tests:
               team: bumblebee
               topic: agent-platform
             exp_annotations:
-              description: "klaus-gateway in agent-platform on gazelle gave up a Slack chat.stopStream call in the last fifteen minutes: Slack answered 429 to every attempt or asked for a wait above 30 seconds. A reply whose closing write is given up stays incomplete."
+              description: "klaus-gateway in agent-platform on gazelle gave up a Slack chat.stopStream call in the last fifteen minutes: Slack answered 429 to every attempt or asked for a wait above 30 seconds. A reply whose closing write is given up stays incomplete; a given-up chat.postMessage is a prompt or a notice that never arrived."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-slack-rate-limited/?INSTALLATION=gazelle&CLUSTER=gazelle&NAMESPACE=agent-platform&METHOD=chat.stopStream"
               __dashboardUid__: "agent-platform-overview"
               dashboardQueryParams: "orgId=1"
@@ -773,4 +774,25 @@ tests:
         exp_alerts: []
       - alertname: AgentPlatformSlackRateLimited
         eval_time: 60m
+        exp_alerts: []
+  # AgentPlatformSlackCallGivenUp, a scrape-target label changing value: the
+  # exhausted series of one pod goes on under another service_priority from
+  # 30m. Matched on the pod and the method, the old series fifteen minutes
+  # back still covers the new one, so no alert; matched on every label, the
+  # new label set would look like a series born at 30m.
+  - interval: 1m
+    input_series:
+      - series: 'klaus_gateway_slack_rate_limited_total{method="chat.appendStream", outcome="exhausted", job="klaus-gateway", cluster_type="management_cluster", namespace="agent-platform", app="klaus-gateway", container="klaus-gateway", endpoint="admin", service="klaus-gateway", service_priority="highest", pod="klaus-gateway-5549fb9988-pcxjq", instance="100.65.100.66:8081", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "1x29 _x30"
+      - series: 'klaus_gateway_slack_rate_limited_total{method="chat.appendStream", outcome="exhausted", job="klaus-gateway", cluster_type="management_cluster", namespace="agent-platform", app="klaus-gateway", container="klaus-gateway", endpoint="admin", service="klaus-gateway", service_priority="medium", pod="klaus-gateway-5549fb9988-pcxjq", instance="100.65.100.66:8081", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "_x30 1x29"
+    alert_rule_test:
+      - alertname: AgentPlatformSlackCallGivenUp
+        eval_time: 32m
+        exp_alerts: []
+      - alertname: AgentPlatformSlackCallGivenUp
+        eval_time: 40m
+        exp_alerts: []
+      - alertname: AgentPlatformSlackRateLimited
+        eval_time: 40m
         exp_alerts: []

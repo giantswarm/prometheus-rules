@@ -20,7 +20,10 @@ spec:
     # — do not carry it, so on a `testing` installation they only reach Slack.
     # The alerts below carry `all_pipelines` and step back wherever the generic
     # alert pages (`pipeline` stable or stable-testing), so one stuck component
-    # never opens two incidents.
+    # never opens two incidents. The two Slack alerts at the end are the
+    # exception: they notify only and carry no `all_pipelines`, because the
+    # all-pipelines PagerDuty routes match any severity and would page on a
+    # notify.
     #
     # Ownership is derived from the metric, not hardcoded: team-stamper copies
     # the chart's `io.giantswarm.application.team` annotation onto every
@@ -200,17 +203,19 @@ spec:
     # thread: chat.appendStream, which carries the streamed reply text, allows
     # about a hundred calls a minute and one reply spends up to sixty of them
     # while it streams, so two concurrent replies already saturate it;
-    # chat.startStream and chat.stopStream allow about twenty each. Being
-    # paced for ten minutes running is the signal the team agreed to wait for
-    # before building a shared pacer across the writers
-    # (giantswarm/klaus-gateway#313); a single 429 waited out is not. One
-    # alert per method, so the label says which budget is short; summed over
-    # the pods, so a restart mid-alert does not open a second one. Slack
-    # only: nothing is down, and without `all_pipelines` no PagerDuty route
-    # matches a notify.
+    # chat.startStream and chat.stopStream allow about twenty each. A 429 in
+    # every five-minute window for ten minutes — 429s spanning five minutes
+    # and more with no pause above five, which is what increase over 5m held
+    # for 10m means — is the signal the team agreed to wait for before
+    # building a shared pacer across the writers (giantswarm/klaus-gateway#313);
+    # a single 429 waited out, or a burst of a few minutes, is not. One alert
+    # per method, so the label says which budget is short; summed over the
+    # pods, so a restart mid-alert does not open a second one. Slack only:
+    # nothing is down, and without `all_pipelines` no PagerDuty route matches
+    # a notify.
     - alert: AgentPlatformSlackRateLimited
       annotations:
-        description: '{{`Slack has been rate-limiting the {{ $labels.method }} calls of klaus-gateway in {{ $labels.namespace }} on {{ $labels.installation }} for ten minutes; {{ printf "%.0f" $value }} calls were answered 429 in the last five. Replies are delayed, not lost.`}}'
+        description: '{{`Slack has answered 429 to the {{ $labels.method }} calls of klaus-gateway in {{ $labels.namespace }} on {{ $labels.installation }} in every five-minute window of the last ten minutes, {{ printf "%.0f" $value }} times in the last five. Replies are delayed, not lost.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-slack-rate-limited/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&METHOD={{ $labels.method }}`}}'
         __dashboardUid__: agent-platform-overview
         dashboardQueryParams: "orgId=1"
@@ -229,14 +234,19 @@ spec:
     # up on: Slack answered 429 to every attempt, or asked for a wait above
     # the 30-second cap. A write given up in the middle of a reply costs
     # nothing, the text rides the next flush; one given up on the closing
-    # flush leaves the reply incomplete. So every given-up call is worth a
-    # look, at once rather than after ten minutes of it. A CounterVec has no
-    # series until its first increment, so increase() cannot see the first
-    # given-up call after a pod start; the second clause catches a series
-    # that did not exist fifteen minutes ago.
+    # flush leaves the reply incomplete, and a given-up chat.postMessage is a
+    # prompt or a notice the person never sees. So every given-up call is
+    # worth a look, at once rather than after ten minutes of it. A CounterVec
+    # has no series until its first increment, so increase() cannot see the
+    # first given-up call after a pod start; the second clause catches a
+    # series that did not exist fifteen minutes ago, matched on the pod and
+    # the method so that a scrape-target label changing value does not make
+    # an old series look new. A scrape gap of more than ten minutes still
+    # does: the alert then fires once per pod that has given up a call
+    # before, with no new failure behind it.
     - alert: AgentPlatformSlackCallGivenUp
       annotations:
-        description: '{{`klaus-gateway in {{ $labels.namespace }} on {{ $labels.installation }} gave up a Slack {{ $labels.method }} call in the last fifteen minutes: Slack answered 429 to every attempt or asked for a wait above 30 seconds. A reply whose closing write is given up stays incomplete.`}}'
+        description: '{{`klaus-gateway in {{ $labels.namespace }} on {{ $labels.installation }} gave up a Slack {{ $labels.method }} call in the last fifteen minutes: Slack answered 429 to every attempt or asked for a wait above 30 seconds. A reply whose closing write is given up stays incomplete; a given-up chat.postMessage is a prompt or a notice that never arrived.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-slack-rate-limited/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&METHOD={{ $labels.method }}`}}'
         __dashboardUid__: agent-platform-overview
         dashboardQueryParams: "orgId=1"
@@ -247,7 +257,7 @@ spec:
         or
         sum by (cluster_id, cluster_type, installation, pipeline, provider, namespace, method) (
           klaus_gateway_slack_rate_limited_total{cluster_type="management_cluster", outcome="exhausted"}
-          unless
+          unless on (cluster_id, namespace, pod, method)
           klaus_gateway_slack_rate_limited_total{cluster_type="management_cluster", outcome="exhausted"} offset 15m
         ) > 0
       labels:

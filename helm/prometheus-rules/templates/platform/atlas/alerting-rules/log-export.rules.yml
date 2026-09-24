@@ -11,11 +11,11 @@ spec:
       rules:
         # Mirrored requests are fire-and-forget: Envoy never retries them and the primary write
         # path succeeds regardless, so every alert here is about an archive gap nobody would
-        # otherwise notice. The exporter's StatefulSet only exists where a LogExport does, which is
-        # what keeps these quiet on the installations that never use the feature.
+        # otherwise notice. The alloy-logexporter StatefulSet only exists where a LogExport does,
+        # which is what keeps these quiet on the installations that never use the feature.
         - alert: LogExportExporterDown
           annotations:
-            summary: The log export pipeline has no running exporter.
+            summary: alloy-logexporter has no ready replica.
             description: '{{`alloy-logexporter has no ready replica, so everything mirrored to it is being dropped and nothing is reaching the archive.`}}'
             runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
           expr: |-
@@ -31,14 +31,14 @@ spec:
             topic: observability
             cancel_if_outside_working_hours: "true"
             cancel_if_kube_state_metrics_down: "true"
-        # The exporter is up but nothing arrives: the mirror was never enabled on this
+        # alloy-logexporter is up but nothing arrives: the mirror was never enabled on this
         # installation, its ReferenceGrant is missing, or the route stopped resolving. Written as
         # `unless` rather than `rate(...) == 0` because the receiver only registers its metrics on
         # the first request -- with no traffic at all the series is absent, and `== 0` would never
         # fire.
         - alert: LogExportNotReceiving
           annotations:
-            summary: The log export pipeline is running but receiving nothing.
+            summary: alloy-logexporter is running but receiving nothing.
             description: '{{`alloy-logexporter has a ready replica but has received no pushes for 15 minutes, so the archive is silently empty.`}}'
             runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
           expr: |-
@@ -61,11 +61,11 @@ spec:
             cancel_if_outside_working_hours: "true"
             cancel_if_kube_state_metrics_down: "true"
             cancel_if_monitoring_agent_down: "true"
-        # Losses at the Envoy hop, before the exporter ever sees the request. The cluster is named
-        # after the route rule and mirror index, not the backend.
+        # Losses at the Envoy hop, before alloy-logexporter ever sees the request. The cluster is
+        # named after the route rule and mirror index, not the backend.
         - alert: LogExportMirrorDropping
           annotations:
-            summary: Envoy is failing to mirror writes to the log exporter.
+            summary: Envoy is failing to mirror log pushes to alloy-logexporter.
             description: '{{`{{ $value | printf "%.2f" }} mirrored requests per second are failing at the Envoy hop, so those log lines never reach the archive.`}}'
             runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
           expr: |-
@@ -82,11 +82,12 @@ spec:
             team: atlas
             topic: observability
             cancel_if_outside_working_hours: "true"
-        # The exporter gave up on an upload. It retries with backoff first, so a non-zero counter
-        # means those records are gone for good rather than delayed.
+        # The S3 upload component gave up on an upload. It has no retry_on_failure, so it gives up
+        # after its timeout and a non-zero counter means those records are gone for good. Like
+        # every OTel counter here, the series only appears on its first increment.
         - alert: LogExportSendFailures
           annotations:
-            summary: The log exporter is failing to write to its destination.
+            summary: alloy-logexporter is failing to upload to its destination.
             description: '{{`alloy-logexporter has given up on {{ $value | printf "%.2f" }} log records per second, which are permanently missing from the archive.`}}'
             runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
           expr: |-
@@ -104,23 +105,73 @@ spec:
             topic: observability
             cancel_if_outside_working_hours: "true"
             cancel_if_monitoring_agent_down: "true"
-        # Fires before data is lost rather than after: the queue drops silently once full, visible
-        # only as a counter nobody watches.
+        # Fires before data is lost rather than after: the queue drops silently once full.
+        # The component also reports a queue for metrics and traces, always empty, so only the
+        # logs queue is considered.
         - alert: LogExportQueueSaturated
           annotations:
-            summary: The log exporter's sending queue is filling up.
+            summary: The alloy-logexporter sending queue is filling up.
             description: '{{`The sending queue on alloy-logexporter is {{ $value | printf "%.0f" }}% full. It drops records silently once full.`}}'
             runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
           expr: |-
             100
             *
               max by (cluster_id, installation, pipeline, provider) (
-                  otelcol_exporter_queue_size{job="alloy-logexporter"}
+                  otelcol_exporter_queue_size{job="alloy-logexporter", data_type="logs"}
                 /
-                  otelcol_exporter_queue_capacity{job="alloy-logexporter"}
+                  otelcol_exporter_queue_capacity{job="alloy-logexporter", data_type="logs"}
               )
             > 80
           for: 15m
+          labels:
+            area: platform
+            severity: ticket
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+            cancel_if_monitoring_agent_down: "true"
+        # The queue was full and records were refused: the loss LogExportQueueSaturated warns about
+        # has happened. The series only appears on the first dropped record.
+        - alert: LogExportQueueDropping
+          annotations:
+            summary: The alloy-logexporter sending queue is dropping records.
+            description: '{{`alloy-logexporter is dropping {{ $value | printf "%.2f" }} log records per second at its full sending queue, which are permanently missing from the archive.`}}'
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+          expr: |-
+            sum by (cluster_id, installation, pipeline, provider) (
+              rate (
+                otelcol_exporter_enqueue_failed_log_records_total{job="alloy-logexporter"}[10m]
+              )
+            )
+            > 0
+          for: 15m
+          labels:
+            area: platform
+            severity: ticket
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+            cancel_if_monitoring_agent_down: "true"
+        # One LogExport has uploaded nothing for hours: its selector matches no stream. Every other
+        # alert here stays green in that case. The queue capacity gauge exists per export from
+        # startup, while the sent counter only appears on the first upload -- hence `unless`.
+        - alert: LogExportNothingSelected
+          annotations:
+            summary: A LogExport has uploaded nothing for 6 hours.
+            description: '{{`{{ $labels.component_id }} on alloy-logexporter has uploaded no records for 6 hours, so its selector likely matches no stream.`}}'
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+          expr: |-
+            max by (cluster_id, installation, pipeline, provider, component_id) (
+              otelcol_exporter_queue_capacity{job="alloy-logexporter", data_type="logs"}
+            )
+            unless
+            sum by (cluster_id, installation, pipeline, provider, component_id) (
+              rate (
+                otelcol_exporter_sent_log_records_total{job="alloy-logexporter"}[6h]
+              )
+            )
+            > 0
+          for: 6h
           labels:
             area: platform
             severity: ticket

@@ -78,7 +78,7 @@ spec:
           for: 15m
           labels:
             area: platform
-            severity: ticket
+            severity: notify
             team: atlas
             topic: observability
             cancel_if_outside_working_hours: "true"
@@ -100,7 +100,7 @@ spec:
           for: 15m
           labels:
             area: platform
-            severity: ticket
+            severity: notify
             team: atlas
             topic: observability
             cancel_if_outside_working_hours: "true"
@@ -125,7 +125,7 @@ spec:
           for: 15m
           labels:
             area: platform
-            severity: ticket
+            severity: notify
             team: atlas
             topic: observability
             cancel_if_outside_working_hours: "true"
@@ -147,7 +147,7 @@ spec:
           for: 15m
           labels:
             area: platform
-            severity: ticket
+            severity: notify
             team: atlas
             topic: observability
             cancel_if_outside_working_hours: "true"
@@ -174,7 +174,7 @@ spec:
           for: 6h
           labels:
             area: platform
-            severity: ticket
+            severity: notify
             team: atlas
             topic: observability
             cancel_if_outside_working_hours: "true"

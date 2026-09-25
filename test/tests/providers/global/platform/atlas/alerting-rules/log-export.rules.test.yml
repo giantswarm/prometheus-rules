@@ -108,7 +108,7 @@ tests:
               installation: myinstall
               pipeline: stable
               provider: $provider
-              severity: ticket
+              severity: notify
               team: atlas
               topic: observability
             exp_annotations:
@@ -135,7 +135,7 @@ tests:
               installation: myinstall
               pipeline: stable
               provider: $provider
-              severity: ticket
+              severity: notify
               team: atlas
               topic: observability
             exp_annotations:
@@ -164,7 +164,7 @@ tests:
               installation: myinstall
               pipeline: stable
               provider: $provider
-              severity: ticket
+              severity: notify
               team: atlas
               topic: observability
             exp_annotations:
@@ -191,7 +191,7 @@ tests:
               installation: myinstall
               pipeline: stable
               provider: $provider
-              severity: ticket
+              severity: notify
               team: atlas
               topic: observability
             exp_annotations:
@@ -226,7 +226,7 @@ tests:
               installation: myinstall
               pipeline: stable
               provider: $provider
-              severity: ticket
+              severity: notify
               team: atlas
               topic: observability
             exp_annotations:

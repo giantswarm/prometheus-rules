@@ -167,7 +167,7 @@ spec:
         description: |-
           {{`Flux {{ $labels.customresource_kind }} {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-source-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&SOURCE_NAME={{ $labels.name }}`}}'
-      expr: gotk_resource_info{job="flux-ksm", ready="False", customresource_kind=~"HelmRepository|Bucket|OCIRepository", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
+      expr: gotk_resource_info{job="flux-ksm", ready="False", suspended!="true", customresource_kind=~"HelmRepository|Bucket|OCIRepository", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*"} > 0
       for: 30m
       labels:
         area: platform

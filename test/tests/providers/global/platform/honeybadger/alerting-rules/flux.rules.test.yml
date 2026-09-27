@@ -113,6 +113,16 @@ tests:
         eval_time: 35m
         exp_alerts: []
 
+  # a suspended source is FluxSuspendedForTooLong's concern, not a failure page
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", pipeline="stable", provider="$provider", job="flux-ksm", cluster_type="management_cluster", exported_namespace="org-giantswarm", customresource_kind="OCIRepository", name="parked", ready="False", suspended="true"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: FluxSourceFailed
+        eval_time: 35m
+        exp_alerts: []
+
   # customer-namespace sources are out of scope and must stay quiet
   - interval: 1m
     input_series:

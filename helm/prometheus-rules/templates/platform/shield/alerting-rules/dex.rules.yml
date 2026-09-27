@@ -14,7 +14,16 @@ spec:
       annotations:
         description: '{{`Dex running on {{ $labels.cluster_id }} is reporting an increased error rate.`}}'
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/dex-error-rate-high/
-      expr: sum(increase(http_requests_total{job="dex", handler!~"/token|/userinfo", code=~"^[4]..$|[5]..$", cluster_type="management_cluster"}[5m])) by (cluster_id, installation, pipeline, provider) > 10
+      # Dex answers /auth/{connector} with 404 when the request carries no
+      # authorization request or names an unknown connector: crawlers following
+      # a login link produce it on public installations, and it says nothing
+      # about Dex. Every other 4xx and 5xx on /auth/{connector} still counts.
+      expr: |-
+        sum by (cluster_id, installation, pipeline, provider) (
+          increase(http_requests_total{job="dex", handler!~"/token|/userinfo|/auth/\\{connector\\}", code=~"^[4]..$|[5]..$", cluster_type="management_cluster"}[5m])
+          or
+          increase(http_requests_total{job="dex", handler="/auth/{connector}", code=~"^40[0-35-9]$|^4[1-9].$|^5..$", cluster_type="management_cluster"}[5m])
+        ) > 10
       for: 30m
       labels:
         area: platform

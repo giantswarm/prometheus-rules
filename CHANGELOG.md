@@ -13,6 +13,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The `helm.sh/chart` label is valid for long chart versions: the 63-character cut trims the whole trailing run of `-`, `.` and `_`.
+
+### Added
+
+- Every agent platform alert links to the platform's Overview board: `__dashboardUid__: agent-platform-overview` and `dashboardQueryParams: "orgId=1"` on all six of `agent-platform.rules.yml`. On-call had a runbook and no graph. The board's component-health panels read the very series these alerts read, so the page and the graph cannot disagree. `orgId=1` because the board is in `Shared Org`, the organization customers reach (giantswarm/agent-platform#617, giantswarm/giantswarm#36711).
+- `AgentPlatformSlackRateLimited` and `AgentPlatformSlackCallGivenUp`: notify team Bumblebee when Slack keeps rate-limiting one of klaus-gateway's Web API methods (a 429 in every five-minute window for ten minutes), and as soon as the gateway gives up a rate-limited call (`klaus_gateway_slack_rate_limited_total`; giantswarm/klaus-gateway#313).
+
+### Fixed
+
+- `AgentPlatformValkeyMemoryHigh` fires once per Valkey instance (`job`) instead of once per namespace, and divides each instance's used memory by its own `maxmemory`. It divided the highest usage in a namespace by the highest bound, which can come from different instances, and its description named no instance (giantswarm/giantswarm#36711).
 - `kube-state-metrics` rules are unit tested again - the tests were skipped and had drifted from the rules.
 
 ## [4.121.0] - 2026-09-15

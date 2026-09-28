@@ -5,9 +5,9 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-    - series: 'kube_secret_created{cluster_id="my-cluster", installation="golem", secret="my-cluster-teleport-join-token"}'
+    - series: 'kube_secret_created{cluster_id="my-cluster", installation="testinst", secret="my-cluster-teleport-join-token"}'
       values: "1+0x150"
-    - series: 'capi_cluster_status_phase{cluster_id="my-cluster", installation="golem", phase="Provisioned"}'
+    - series: 'capi_cluster_status_phase{cluster_id="my-cluster", installation="testinst", phase="Provisioned"}'
       values: "2+0x150"
     alert_rule_test:
       - alertname: TeleportJoinTokenSecretMismatch
@@ -21,7 +21,7 @@ tests:
               area: platform
               cancel_if_outside_working_hours: "true"
               cluster_id: my-cluster
-              installation: golem
+              installation: testinst
               severity: notify
               team: shield
               topic: teleport
@@ -29,9 +29,9 @@ tests:
               description: "Mismatch in number of teleport-join-token secrets and clusters"
   - interval: 1m
     input_series:
-      - series: 'kube_configmap_info{cluster_id="my-cluster", installation="grizzly", configmap="my-cluster-teleport-kube-agent-config"}'
+      - series: 'kube_configmap_info{cluster_id="my-cluster", installation="testinst", configmap="my-cluster-teleport-kube-agent-config"}'
         values: "1+0x150"
-      - series: 'capi_cluster_status_phase{cluster_id="my-cluster", installation="grizzly", phase="Provisioned"}'
+      - series: 'capi_cluster_status_phase{cluster_id="my-cluster", installation="testinst", phase="Provisioned"}'
         values: "2+0x150"
     alert_rule_test:
       - alertname: TeleportKubeAgentConfigMapMismatch
@@ -45,7 +45,7 @@ tests:
               area: platform
               cancel_if_outside_working_hours: "true"
               cluster_id: my-cluster
-              installation: grizzly
+              installation: testinst
               severity: notify
               team: shield
               topic: teleport

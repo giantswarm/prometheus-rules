@@ -55,7 +55,7 @@ tests:
   - interval: 1m
     input_series:
       # For the first 60min: test with 1 pod: none, up, down
-      - series: 'up{job="mimir/ingester", container="ingester", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="$provider", pipeline="testing", service="mimir-ingester"}'
+      - series: 'up{job="mimir/ingester", container="ingester", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", provider="$provider", pipeline="testing", service="mimir-ingester"}'
         values: "_x20 1+0x20 0+0x20"
     alert_rule_test:
       - alertname:  MimirComponentDown
@@ -72,19 +72,19 @@ tests:
               team: atlas
               topic: observability
               cancel_if_outside_working_hours: "true"
-              cluster_id: gauss
-              installation: gauss
+              cluster_id: testinst
+              installation: testinst
               provider: $provider
               pipeline: testing
             exp_annotations:
               __dashboardUid__: ffcd83628d7d4b5a03d1cafd159e6c9c
               dashboardQueryParams: "orgId=2"
               description: "Mimir component : mimir-ingester is down."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=gauss&CLUSTER=gauss
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=testinst&CLUSTER=testinst
   - interval: 1m
     input_series:
       # test: none, rate > 0, rate = 0
-      - series: 'cortex_prometheus_rule_evaluation_failures_total{cluster_type="management_cluster", cluster_id="golem", installation="golem", namespace="mimir", pod="mimir-ruler-0", rule_group="test-group"}'
+      - series: 'cortex_prometheus_rule_evaluation_failures_total{cluster_type="management_cluster", cluster_id="testinst", installation="testinst", namespace="mimir", pod="mimir-ruler-0", rule_group="test-group"}'
         values: "_x20 1+1x100 0+0x70"
     alert_rule_test:
       - alertname: MimirRulerRuleEvaluationFailures
@@ -95,8 +95,8 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              installation: golem
+              cluster_id: testinst
+              installation: testinst
               namespace: mimir
               pod: mimir-ruler-0
               rule_group: test-group
@@ -108,7 +108,7 @@ tests:
               dashboardQueryParams: "orgId=2"
               description: "Mimir ruler mimir-ruler-0 has failed to evaluate rule(s) 5.00 time(s)."
               summary: Mimir ruler is failing rule evaluations.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/prometheus-rules/?INSTALLATION=golem&CLUSTER=golem
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/prometheus-rules/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: MimirRulerRuleEvaluationFailures
         eval_time: 160m
 
@@ -145,14 +145,14 @@ tests:
   - interval: 1m
     input_series:
       # mimir-ingester real memory usage fluctuates between 8 out of 12 (66%) and 11 out of 12 (91%)
-      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}' 
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}' 
         values: "8+0x120 11+0x780 8+0x2400"
-      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "8+0x120 11+0x780 8+0x2400"
       # mimir-ingester memory requests stay the same for the entire duration of the test.
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "12+0x2400"
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "12+0x2400"
       # mimir-ingester cpu usage fluctuates between different values.
       # Note that:
@@ -161,14 +161,14 @@ tests:
       # so here are what each value means:
       # - +60  and +60 = +2 per second, out of 3 requests total = 66% usage
       # - +120 and +60 = +3 per second, out of 3 requests total = 100% usage
-      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "0+60x1440 86400+120x780 95500+60x2400"
-      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "0+60x2400"
       # mimir-ingester cpu requests stay the same for the entire duration of the test.
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "1.5+0x2400"
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "1.5+0x2400"
     alert_rule_test:
       - alertname: MimirIngesterNeedsToBeScaledUp
@@ -179,8 +179,8 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              installation: "golem"
+              cluster_id: testinst
+              installation: "testinst"
               pipeline: "testing"
               provider: "$provider"
               namespace: mimir
@@ -191,7 +191,7 @@ tests:
               __dashboardUid__: bc9160e50b52e89e0e49c840fea3d379
               dashboardQueryParams: "orgId=2"
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=golem&CLUSTER=golem
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: MimirIngesterNeedsToBeScaledUp
         eval_time: 20h
       - alertname: MimirIngesterNeedsToBeScaledUp
@@ -200,8 +200,8 @@ tests:
           - exp_labels: # caused by cpu usage
               area: platform
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              installation: "golem"
+              cluster_id: testinst
+              installation: "testinst"
               pipeline: "testing"
               provider: "$provider"
               namespace: mimir
@@ -212,31 +212,31 @@ tests:
               __dashboardUid__: bc9160e50b52e89e0e49c840fea3d379
               dashboardQueryParams: "orgId=2"
               description: Mimir ingester is consuming too much resources and needs to be scaled up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=golem&CLUSTER=golem
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: MimirIngesterNeedsToBeScaledUp
         eval_time: 40h
   # Test for MimirIngesterNeedsToBeScaledDown alert
   - interval: 1m
     input_series:
       # mimir-ingester real memory usage gradually decreases until it goes below 30% of the memory requests.
-      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "8+0x20 2+0x40 8+0x140 2+0x40 8+0x60"
-      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "8+0x20 2+0x40 8+0x140 2+0x40 8+0x60"
       # mimir-ingester memory requests stay the same for the entire duration of the test.
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "12+0x300"
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "12+0x300"       
       # mimir-ingester real cpu usage gradually increases until it goes below 30% of the cpu requests.                        
-      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "0+60x100 6000+10x40 6400+60x60 10000+10x40 10400+60x60"
-      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "0+30x300"
       # mimir-ingester cpu requests stay the same for the entire duration of the test
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "1.5+0x300"                                 
-      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="$provider", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "1.5+0x300"                                 
     alert_rule_test:
       - alertname: MimirIngesterNeedsToBeScaledDown
@@ -255,8 +255,8 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              installation: "golem"
+              cluster_id: testinst
+              installation: "testinst"
               pipeline: "testing"
               provider: "$provider"
               namespace: mimir
@@ -267,7 +267,7 @@ tests:
               __dashboardUid__: bc9160e50b52e89e0e49c840fea3d379
               dashboardQueryParams: "orgId=2"
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=golem&CLUSTER=golem
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: MimirIngesterNeedsToBeScaledDown
         eval_time: 280m 
   # Test for MimirHPAReachedMaxReplicas alert
@@ -334,9 +334,9 @@ tests:
   # Test for MimirCompactorFailedCompaction alert
   - interval: 1m
     input_series:
-      - series: 'cortex_compactor_runs_failed_total{reason="error", installation="golem", cluster_id="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
+      - series: 'cortex_compactor_runs_failed_total{reason="error", installation="testinst", cluster_id="testinst", namespace="mimir", pipeline="testing", provider="$provider"}'
         values: "8+0x20 1+0x40 0+0x20 4+0x130 0+0x190"
-      - series: 'cortex_compactor_last_successful_run_timestamp_seconds{installation="golem", cluster_id="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
+      - series: 'cortex_compactor_last_successful_run_timestamp_seconds{installation="testinst", cluster_id="testinst", namespace="mimir", pipeline="testing", provider="$provider"}'
         # No compactions for 2 hours, then 1 successful one at t+3h, another one at t+4h, then 2 more hours with no successful compaction.
         values: '0+0x240 14400+0x60 18000x60 21600+0x240'
     alert_rule_test:
@@ -348,8 +348,8 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              installation: "golem"
+              cluster_id: testinst
+              installation: "testinst"
               pipeline: "testing"
               provider: "$provider"
               namespace: mimir
@@ -360,7 +360,7 @@ tests:
               __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
               dashboardQueryParams: "orgId=2"
               description: Mimir compactor has been failing compactions for more than 2 hours since start-up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/#mimircompactorfailedcompaction?INSTALLATION=golem&CLUSTER=golem
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/#mimircompactorfailedcompaction?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: MimirCompactorFailedCompaction
         eval_time: 250m
       - alertname: MimirCompactorFailedCompaction
@@ -371,8 +371,8 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              installation: "golem"
+              cluster_id: testinst
+              installation: "testinst"
               pipeline: "testing"
               provider: "$provider"
               namespace: mimir
@@ -383,13 +383,13 @@ tests:
               __dashboardUid__: 09a5c49e9cdb2f2b24c6d184574a07fd
               dashboardQueryParams: "orgId=2"
               description: Mimir compactor has been failing its compactions for 2 hours.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/#mimircompactorfailedcompaction?INSTALLATION=golem&CLUSTER=golem
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/#mimircompactorfailedcompaction?INSTALLATION=testinst&CLUSTER=testinst
 
   # Test for MimirContinuousTestFailingOnWrites alert
   - interval: 1m
     input_series:
       # Test: none, rate > 0, rate = 0
-      - series: 'mimir_continuous_test_writes_failed_total{cluster_id="golem", test="continuous-test", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
+      - series: 'mimir_continuous_test_writes_failed_total{cluster_id="testinst", test="continuous-test", installation="testinst", namespace="mimir", pipeline="testing", provider="$provider"}'
         values: "_x20 1+1x80 0+0x70"
     alert_rule_test:
       - alertname: MimirContinuousTestFailingOnWrites
@@ -400,8 +400,8 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              installation: golem
+              cluster_id: testinst
+              installation: testinst
               namespace: mimir
               pipeline: testing
               provider: $provider
@@ -412,8 +412,8 @@ tests:
             exp_annotations:
               __dashboardUid__: mimir-continuous-test
               dashboardQueryParams: "orgId=2"
-              description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because writes are failing."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=golem&CLUSTER=golem
+              description: "Mimir continuous test continuous-test in testinst/mimir is not effectively running because writes are failing."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: MimirContinuousTestFailingOnWrites
         eval_time: 160m
 
@@ -421,7 +421,7 @@ tests:
   - interval: 1m
     input_series:
       # Test: none, rate > 0, rate = 0
-      - series: 'mimir_continuous_test_queries_failed_total{cluster_id="golem", test="continuous-test", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
+      - series: 'mimir_continuous_test_queries_failed_total{cluster_id="testinst", test="continuous-test", installation="testinst", namespace="mimir", pipeline="testing", provider="$provider"}'
         values: "_x20 1+1x80 0+0x70"
     alert_rule_test:
       - alertname: MimirContinuousTestFailingOnReads
@@ -432,8 +432,8 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              installation: golem
+              cluster_id: testinst
+              installation: testinst
               namespace: mimir
               pipeline: testing
               provider: $provider
@@ -444,8 +444,8 @@ tests:
             exp_annotations:
               __dashboardUid__: mimir-continuous-test
               dashboardQueryParams: "orgId=2"
-              description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because queries are failing."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=golem&CLUSTER=golem
+              description: "Mimir continuous test continuous-test in testinst/mimir is not effectively running because queries are failing."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: MimirContinuousTestFailingOnReads
         eval_time: 160m
 
@@ -453,7 +453,7 @@ tests:
   - interval: 1m
     input_series:
       # Test: none, rate > 0, rate = 0
-      - series: 'mimir_continuous_test_query_result_checks_failed_total{cluster_id="golem", test="continuous-test", installation="golem", namespace="mimir", pipeline="testing", provider="$provider"}'
+      - series: 'mimir_continuous_test_query_result_checks_failed_total{cluster_id="testinst", test="continuous-test", installation="testinst", namespace="mimir", pipeline="testing", provider="$provider"}'
         values: "_x20 1+1x80 0+0x70"
     alert_rule_test:
       - alertname: MimirContinuousTestFailing
@@ -464,8 +464,8 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              installation: golem
+              cluster_id: testinst
+              installation: testinst
               namespace: mimir
               pipeline: testing
               provider: $provider
@@ -476,8 +476,8 @@ tests:
             exp_annotations:
               __dashboardUid__: mimir-continuous-test
               dashboardQueryParams: "orgId=2"
-              description: "Mimir continuous test continuous-test in golem/mimir is not effectively running because queries are failing."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=golem&CLUSTER=golem
+              description: "Mimir continuous test continuous-test in testinst/mimir is not effectively running because queries are failing."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: MimirContinuousTestFailing
         eval_time: 160m
 

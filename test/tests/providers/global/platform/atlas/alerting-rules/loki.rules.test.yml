@@ -5,15 +5,15 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'cortex_ring_members{job="loki/loki-read", cluster_id="golem-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="golem", name="ingester", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-xxxxx", provider="capa", pipeline="stable", service_priority="highest", state="Unhealthy"}'
+      - series: 'cortex_ring_members{job="loki/loki-read", cluster_id="testinst-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="testinst", name="ingester", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-xxxxx", provider="capa", pipeline="stable", service_priority="highest", state="Unhealthy"}'
         values: "0+0x20 1+0x160"  # 1 unhealthy value after 20 minutes
-      - series: 'cortex_ring_members{job="loki/loki-read", cluster_id="golem-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="golem", name="ingester", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-yyyyy", provider="capa", pipeline="stable", service_priority="highest", state="Unhealthy"}'
+      - series: 'cortex_ring_members{job="loki/loki-read", cluster_id="testinst-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="testinst", name="ingester", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-yyyyy", provider="capa", pipeline="stable", service_priority="highest", state="Unhealthy"}'
         values: "_x30 1+0x10 0+0x60"  # no data for 30 minutes then 1 unhealthy value for 10 minutes and back to normal for 1 hour
-      - series: 'loki_panic_total{job="loki/loki-read", cluster_id="golem-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="golem", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-zzzzz", provider="capa", pipeline="stable", service_priority="highest"}'
+      - series: 'loki_panic_total{job="loki/loki-read", cluster_id="testinst-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="testinst", namespace="loki", node="ip-10-6-2-178.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-read-b7d9b85d4-zzzzz", provider="capa", pipeline="stable", service_priority="highest"}'
         values: "0+0x20 1+0x160"  # 1 panic after 20 minutes
-      - series: 'loki_request_duration_seconds_count{job="loki/loki-write", cluster_id="golem-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="golem", instance="10.7.75.90:3100", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-write-0", provider="capa", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="204", ws="false"}'
+      - series: 'loki_request_duration_seconds_count{job="loki/loki-write", cluster_id="testinst-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="testinst", instance="10.7.75.90:3100", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-write-0", provider="capa", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="204", ws="false"}'
         values: "0+60x180"  # 1 request per second OK for 3 hours
-      - series: 'loki_request_duration_seconds_count{job="loki/loki-write", cluster_id="golem-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="golem", instance="10.7.75.90:3100", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-write-0", provider="capa", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="503", ws="false"}'
+      - series: 'loki_request_duration_seconds_count{job="loki/loki-write", cluster_id="testinst-wc01", cluster_type="management_cluster", container="loki", customer="giantswarm", installation="testinst", instance="10.7.75.90:3100", method="POST", namespace="loki", node="ip-10-6-2-141.eu-central-1.compute.internal", organization="giantswarm-production", pod="loki-write-0", provider="capa", pipeline="stable", route="loki_api_v1_push", service_priority="highest", status_code="503", ws="false"}'
         values: "0+0x20 0+30x160"  # After 20 minutes, we also have 0.5 rq/s failing
     alert_rule_test:
       - alertname: LokiRequestPanics
@@ -26,8 +26,8 @@ tests:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem-wc01
-              installation: golem
+              cluster_id: testinst-wc01
+              installation: testinst
               pipeline: stable
               provider: capa
               job: loki/loki-read
@@ -37,7 +37,7 @@ tests:
               topic: observability
             exp_annotations:
               description: This alert checks that we have no panic errors on Loki.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=golem&CLUSTER=golem-wc01
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=testinst&CLUSTER=testinst-wc01
       - alertname: LokiRequestPanics
         eval_time: 40m  # After 40 minutes, all should be back to normal
         exp_alerts: []
@@ -52,8 +52,8 @@ tests:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem-wc01
-              installation: golem
+              cluster_id: testinst-wc01
+              installation: testinst
               provider: capa
               pipeline: stable
               job: loki/loki-write
@@ -64,7 +64,7 @@ tests:
               topic: observability
             exp_annotations:
               description: This alert checks that we have less than 10% errors on Loki requests.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=golem&CLUSTER=golem-wc01
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=testinst&CLUSTER=testinst-wc01
 
       - alertname: LokiRingUnhealthy
         eval_time: 15m  # should be OK after 15 minutes
@@ -82,10 +82,10 @@ tests:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem-wc01
+              cluster_id: testinst-wc01
               container: loki
               customer: giantswarm
-              installation: golem
+              installation: testinst
               provider: capa
               pipeline: stable
               job: loki/loki-read
@@ -98,7 +98,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Loki pod loki-read-b7d9b85d4-xxxxx (namespace loki) sees 1 unhealthy ring members"
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=golem&CLUSTER=golem-wc01
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=testinst&CLUSTER=testinst-wc01
   - interval: 1m
     input_series:
       - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="loki", cluster_id="foo", installation="bar"}'
@@ -130,24 +130,24 @@ tests:
   - interval: 1m
     input_series:
       # loki-backend real memory usage gradually decreases until it goes below 30% of the memory requests.
-      - series: 'container_memory_working_set_bytes{pod="loki-backend-0", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_memory_working_set_bytes{pod="loki-backend-0", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "8+0x20 2+0x1450 8+0x2900 2+0x1450 8+0x1450"
-      - series: 'container_memory_working_set_bytes{pod="loki-backend-1", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_memory_working_set_bytes{pod="loki-backend-1", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "8+0x20 2+0x1450 8+0x2900 2+0x1450 8+0x1450"
       # loki-backend memory requests stay the same for the entire duration of the test.
-      - series: 'kube_pod_container_resource_requests{pod="loki-backend-0", container="loki", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="loki-backend-0", container="loki", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "12+0x7270"
-      - series: 'kube_pod_container_resource_requests{pod="loki-backend-1", container="loki", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="loki-backend-1", container="loki", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "12+0x7270"       
       # loki-backend real cpu usage gradually increases until it goes below 30% of the cpu requests.                        
-      - series: 'container_cpu_usage_seconds_total{pod="loki-backend-0", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_cpu_usage_seconds_total{pod="loki-backend-0", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "0+60x1470 0+10x1450 0+60x1450 0+10x1450 0+60x1450"
-      - series: 'container_cpu_usage_seconds_total{pod="loki-backend-1", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_cpu_usage_seconds_total{pod="loki-backend-1", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "0+30x7270"
       # loki-backend cpu requests stay the same for the entire duration of the test
-      - series: 'kube_pod_container_resource_requests{pod="loki-backend-0", container="loki", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="loki-backend-0", container="loki", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "1.5+0x7270"                                 
-      - series: 'kube_pod_container_resource_requests{pod="loki-backend-1", container="loki", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="loki-backend-1", container="loki", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "1.5+0x7270"  
     alert_rule_test:
       - alertname: LokiNeedsToBeScaledDown
@@ -167,8 +167,8 @@ tests:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_outside_working_hours: "true"
-              installation: "golem"
-              cluster_id: "golem"
+              installation: "testinst"
+              cluster_id: "testinst"
               labelpod: "loki-backend"
               pipeline: "testing"
               provider: "capa"
@@ -178,19 +178,19 @@ tests:
               topic: observability
             exp_annotations:
               description: Loki component loki-backend is consuming very few resources and needs to be scaled down.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=golem&CLUSTER=golem
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: LokiNeedsToBeScaledDown
         eval_time: 7265m 
   - interval: 1m
     input_series:
       # loki-backend real memory usage gradually decreases until it goes below 30% of the memory requests.
-      - series: 'kube_horizontalpodautoscaler_status_desired_replicas{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_horizontalpodautoscaler_status_desired_replicas{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "2+0x20 3+0x250 2+0x250"
-      - series: 'kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "2+0x520"
-      - series: 'kube_horizontalpodautoscaler_status_target_metric{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_horizontalpodautoscaler_status_target_metric{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "60+0x20 120+0x250 60+0x250"
-      - series: 'kube_horizontalpodautoscaler_spec_target_metric{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_horizontalpodautoscaler_spec_target_metric{horizontalpodautoscaler="loki-backend", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "90+0x520"
     alert_rule_test:
       - alertname: LokiHpaReachedMaxReplicas
@@ -207,20 +207,20 @@ tests:
               topic: observability
               namespace: loki
               horizontalpodautoscaler: loki-backend
-              installation: golem
-              cluster_id: golem
+              installation: testinst
+              cluster_id: testinst
             exp_annotations:
               __dashboardUid__: loki-resources-overview
               dashboardQueryParams: "orgId=2"
               description: Loki component loki-backend has reached its maxReplicas number but still needs to be scaled up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=golem&CLUSTER=golem
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: LokiHpaReachedMaxReplicas
         eval_time: 515m 
 
   # Test for LokiCompactorFailedCompaction since last compaction alert
   - interval: 1m
     input_series:
-      - series: 'loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{cluster_id="golem", installation="golem", pipeline="testing", provider="capa"}'
+      - series: 'loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa"}'
         values: "1x240 14400+60x100" # compactions worked once at the first second the does not work for the first 240 minutes so the timestamp stays still, then it gets continuously updated after 240 minutes to a valid timestamp (which is number of seconds since start for the test).
     alert_rule_test:
       - alertname: LokiCompactorFailedCompaction
@@ -231,8 +231,8 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cluster_id: golem
-              installation: "golem"
+              cluster_id: testinst
+              installation: "testinst"
               pipeline: "testing"
               provider: "capa"
               severity: page
@@ -242,14 +242,14 @@ tests:
               __dashboardUid__: loki-retention
               dashboardQueryParams: "orgId=2"
               description: Loki compactor has been failing compactions for more than 2 hours since last compaction.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/#lokicompactorfailedcompaction?INSTALLATION=golem&CLUSTER=golem
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/#lokicompactorfailedcompaction?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: LokiCompactorFailedCompaction
         eval_time: 300m
 
   # Test for LokiCompactorFailedCompaction since start-up alert
   - interval: 1m
     input_series:
-      - series: 'loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{cluster_id="grizzly", installation="grizzly", pipeline="testing", provider="capz"}'
+      - series: 'loki_boltdb_shipper_compact_tables_operation_last_successful_run_timestamp_seconds{cluster_id="testinst", installation="testinst", pipeline="testing", provider="capz"}'
         values: "0x240 14400+60x100" # compactions did not work since start-up for the first 240 minutes so the timestamp stays at 0, then it gets continuously updated after 240 minutes to a valid timestamp (which is number of seconds since start for the test).
     alert_rule_test:
       - alertname: LokiCompactorFailedCompaction
@@ -260,8 +260,8 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_outside_working_hours: "true"
-              cluster_id: grizzly
-              installation: "grizzly"
+              cluster_id: testinst
+              installation: "testinst"
               pipeline: "testing"
               provider: "capz"
               severity: page
@@ -271,16 +271,16 @@ tests:
               __dashboardUid__: loki-retention
               dashboardQueryParams: "orgId=2"
               description: Loki compactor has been failing compactions for more than 2 hours since start-up.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/#lokicompactorfailedcompaction?INSTALLATION=grizzly&CLUSTER=grizzly
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/#lokicompactorfailedcompaction?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: LokiCompactorFailedCompaction
         eval_time: 300m
 
   # Test for LokiMissingLogs alert
   - interval: 1m
     input_series:
-      - series: 'loki_canary_entries_total{app="loki", cluster="loki", cluster_id="grizzly", cluster_type="management_cluster", container="loki-canary", customer="giantswarm", endpoint="http-metrics", installation="grizzly", namespace="loki", pod="loki-canary-5649fbcb65-lkdkq", pipeline="testing", provider="capz", service="loki-canary", service_priority="highest"}'
+      - series: 'loki_canary_entries_total{app="loki", cluster="loki", cluster_id="testinst", cluster_type="management_cluster", container="loki-canary", customer="giantswarm", endpoint="http-metrics", installation="testinst", namespace="loki", pod="loki-canary-5649fbcb65-lkdkq", pipeline="testing", provider="capz", service="loki-canary", service_priority="highest"}'
         values: 0+1x1000
-      - series: 'loki_canary_missing_entries_total{app="loki", cluster="loki", cluster_id="grizzly", cluster_type="management_cluster", container="loki-canary", customer="giantswarm", endpoint="http-metrics", installation="grizzly", namespace="loki", pod="loki-canary-5649fbcb65-lkdkq", pipeline="testing", provider="capz", service="loki-canary", service_priority="highest"}'
+      - series: 'loki_canary_missing_entries_total{app="loki", cluster="loki", cluster_id="testinst", cluster_type="management_cluster", container="loki-canary", customer="giantswarm", endpoint="http-metrics", installation="testinst", namespace="loki", pod="loki-canary-5649fbcb65-lkdkq", pipeline="testing", provider="capz", service="loki-canary", service_priority="highest"}'
         values: "0+0x120 0+1x120 120+0x120"
     alert_rule_test:
       - alertname: LokiMissingLogs
@@ -292,8 +292,8 @@ tests:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_outside_working_hours: "true"
-              cluster_id: grizzly
-              installation: "grizzly"
+              cluster_id: testinst
+              installation: "testinst"
               pipeline: "testing"
               pod: "loki-canary-5649fbcb65-lkdkq"
               provider: "capz"
@@ -304,7 +304,7 @@ tests:
               __dashboardUid__: loki-canary
               dashboardQueryParams: "orgId=2"
               description: This alert checks that loki is not missing canary logs
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=grizzly&CLUSTER=grizzly
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: LokiMissingLogs
         eval_time: 300m
 

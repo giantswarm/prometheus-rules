@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - The ten `Kube*CreatedMetricMissing` alerts are replaced by a single `KubeStateMetricsMetricsMissing`.
+- Harmonized cluster and installation names in test fixtures.
 
 ### Fixed
 

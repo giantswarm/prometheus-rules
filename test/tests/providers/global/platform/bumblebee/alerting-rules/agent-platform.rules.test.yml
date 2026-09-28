@@ -796,3 +796,43 @@ tests:
       - alertname: AgentPlatformSlackRateLimited
         eval_time: 40m
         exp_alerts: []
+  # AgentPlatformModelUnpriced: from 10m agents call claude-new, which neither
+  # the built-in catalog nor the overlay prices (Missing), once a minute; the
+  # alert is pending for thirty minutes and notifies at 41m. A priced model
+  # (Exact) and a self-hosted model on the custom provider (Missing) never
+  # fire.
+  - interval: 1m
+    input_series:
+      - series: 'agentgateway_cost_catalog_lookups_total{status="Missing", gen_ai_system="anthropic", gen_ai_request_model="claude-new", gen_ai_response_model="claude-new", listener="llm", job="agent-platform/agentgateway-controller-proxy", pod="agentgateway-fc6db956b-rzzlb", cluster_type="management_cluster", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "_x10 1+1x50"
+      - series: 'agentgateway_cost_catalog_lookups_total{status="Exact", gen_ai_system="anthropic", gen_ai_request_model="claude-sonnet-5", gen_ai_response_model="claude-sonnet-5", listener="llm", job="agent-platform/agentgateway-controller-proxy", pod="agentgateway-fc6db956b-rzzlb", cluster_type="management_cluster", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "1+5x60"
+      - series: 'agentgateway_cost_catalog_lookups_total{status="Missing", gen_ai_system="custom", gen_ai_request_model="qwen", gen_ai_response_model="Qwen/Qwen3-8B", listener="llm", job="agent-platform/agentgateway-controller-proxy", pod="agentgateway-fc6db956b-rzzlb", cluster_type="management_cluster", cluster_id="gazelle", installation="gazelle", pipeline="stable", provider="$provider"}'
+        values: "1+2x60"
+    alert_rule_test:
+      - alertname: AgentPlatformModelUnpriced
+        eval_time: 38m
+        exp_alerts: []
+      - alertname: AgentPlatformModelUnpriced
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformModelUnpriced
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: gazelle
+              cluster_type: management_cluster
+              gen_ai_response_model: claude-new
+              gen_ai_system: anthropic
+              installation: gazelle
+              pipeline: stable
+              provider: $provider
+              severity: notify
+              status: Missing
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "agentgateway on gazelle could not price anthropic/claude-new (lookup status Missing) for the last 30 minutes: its calls are missing from the Agent Platform cost figures."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-model-unpriced/?INSTALLATION=gazelle&CLUSTER=gazelle&PROVIDER=anthropic&MODEL=claude-new"
+              __dashboardUid__: "agent-platform-llm-usage"
+              dashboardQueryParams: "orgId=1"

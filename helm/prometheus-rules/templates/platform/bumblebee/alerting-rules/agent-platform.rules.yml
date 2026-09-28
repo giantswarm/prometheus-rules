@@ -266,3 +266,28 @@ spec:
         severity: notify
         team: bumblebee
         topic: agent-platform
+    # The LLM listener prices every model call from the gateway release's
+    # built-in catalog plus the agent-platform chart's llmRouting.modelCatalog
+    # overlay, and records no cost for a call it cannot price: the spend panels
+    # read low, not wrong-looking. A status other than Exact for half an hour
+    # of use is a model neither prices. Custom providers (self-hosted models)
+    # resolve to gen_ai_system="custom" and have no price yet, so they are left
+    # out. A counter series has no sample before its first lookup, so a model
+    # called once and never again does not fire. Slack only: nothing is down.
+    - alert: AgentPlatformModelUnpriced
+      annotations:
+        description: '{{`agentgateway on {{ $labels.installation }} could not price {{ $labels.gen_ai_system }}/{{ $labels.gen_ai_response_model }} (lookup status {{ $labels.status }}) for the last 30 minutes: its calls are missing from the Agent Platform cost figures.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-model-unpriced/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&PROVIDER={{ $labels.gen_ai_system }}&MODEL={{ $labels.gen_ai_response_model }}`}}'
+        __dashboardUid__: agent-platform-llm-usage
+        dashboardQueryParams: "orgId=1"
+      expr: |
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, gen_ai_system, gen_ai_response_model, status) (
+          increase(agentgateway_cost_catalog_lookups_total{cluster_type="management_cluster", listener="llm", status!="Exact", gen_ai_system!="custom"}[1h])
+        ) > 0
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: bumblebee
+        topic: agent-platform

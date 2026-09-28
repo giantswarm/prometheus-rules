@@ -6,11 +6,11 @@ tests:
   # Tests for `InhibitionClusterWithoutWorkerNodes` inhibition alert
   - interval: 1m
     input_series:
-      - series: 'capi_cluster_status_condition{cluster_id="golem", cluster_type="management_cluster", name="golem", pipeline="testing", status="True", type="ControlPlaneReady"}'
+      - series: 'capi_cluster_status_condition{cluster_id="testinst", cluster_type="management_cluster", name="testinst", pipeline="testing", status="True", type="ControlPlaneReady"}'
         values: "1+0x300"
-      - series: 'capi_machinepool_spec_replicas{cluster_id="golem", cluster_name="golem", cluster_type="management_cluster", customer="giantswarm", installation="golem", organization="giantswarm", pipeline="testing", provider="capa"}'
+      - series: 'capi_machinepool_spec_replicas{cluster_id="testinst", cluster_name="testinst", cluster_type="management_cluster", customer="giantswarm", installation="testinst", organization="giantswarm", pipeline="testing", provider="capa"}'
         values: "_x60 0x60 3x60"
-      - series: 'capi_cluster_info{infrastructure_reference_kind="AWSCluster", cluster_id="golem"}'
+      - series: 'capi_cluster_info{infrastructure_reference_kind="AWSCluster", cluster_id="testinst"}'
         values: "1+0x300"
     alert_rule_test:
       - alertname: InhibitionClusterWithoutWorkerNodes
@@ -18,32 +18,32 @@ tests:
         exp_alerts:
           - exp_labels:
               area: kaas
-              cluster_id: "golem"
+              cluster_id: "testinst"
               cluster_type: "management_cluster"
               has_worker_nodes: "false"
-              name: "golem"
+              name: "testinst"
               pipeline: "testing"
               status: "True"
               team: "phoenix"
               topic: "status"
               type: "ControlPlaneReady"
             exp_annotations:
-              description: "Cluster (golem) has no worker nodes."
+              description: "Cluster (testinst) has no worker nodes."
       - alertname: InhibitionClusterWithoutWorkerNodes
         eval_time: 90m
         exp_alerts:
           - exp_labels:
               area: kaas
-              cluster_id: "golem"
+              cluster_id: "testinst"
               cluster_type: "management_cluster"
               has_worker_nodes: "false"
-              name: "golem"
+              name: "testinst"
               pipeline: "testing"
               status: "True"
               team: "phoenix"
               topic: "status"
               type: "ControlPlaneReady"
             exp_annotations:
-              description: "Cluster (golem) has no worker nodes."
+              description: "Cluster (testinst) has no worker nodes."
       - alertname: InhibitionClusterWithoutWorkerNodes
         eval_time: 150m

@@ -3,58 +3,24 @@ rule_files:
   - log-export.rules.yml
 
 tests:
-  # LogExportExporterDown: ready replicas drop to zero, then recover.
+  # LogExportNotUploading: alloy-logexporter pods go away after 60m, so the sent series disappears.
   - interval: 1m
     input_series:
-      - series: 'kube_statefulset_status_replicas_ready{statefulset="alloy-logexporter", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable"}'
-        values: "2x30 0x30 2x30"
-    alert_rule_test:
-      - alertname: LogExportExporterDown
-        eval_time: 25m
-      # Ready hits zero at 30m; 15m of `for` means nothing before 45m.
-      - alertname: LogExportExporterDown
-        eval_time: 40m
-      - alertname: LogExportExporterDown
-        eval_time: 55m
-        exp_alerts:
-          - exp_labels:
-              area: platform
-              cancel_if_kube_state_metrics_down: "true"
-              cancel_if_outside_working_hours: "true"
-              cluster_id: myinstall
-              installation: myinstall
-              pipeline: stable
-              provider: $provider
-              severity: page
-              team: atlas
-              topic: observability
-            exp_annotations:
-              summary: alloy-logexporter has no ready replica.
-              description: "alloy-logexporter has no ready replica, so everything mirrored to it is being dropped and nothing is reaching the archive."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION=myinstall&CLUSTER=myinstall
-      - alertname: LogExportExporterDown
-        eval_time: 75m
-
-  # LogExportNotReceiving: exporter ready throughout; pushes stop after 60m.
-  - interval: 1m
-    input_series:
-      - series: 'kube_statefulset_status_replicas_ready{statefulset="alloy-logexporter", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable"}'
+      - series: 'kube_statefulset_replicas{statefulset="alloy-logexporter", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable"}'
         values: "2x180"
-      - series: 'loki_source_api_request_duration_seconds_count{job="alloy-logexporter", route="loki_api_v1_push", status_code="204", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable", pod="alloy-logexporter-0"}'
-        values: "0+60x60 3600x120"
+      - series: 'otelcol_exporter_sent_log_records_total{job="alloy-logexporter", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable", component_id="otelcol.exporter.awss3.audit"}'
+        values: "0+60x60"
     alert_rule_test:
-      # Traffic flowing: quiet.
-      - alertname: LogExportNotReceiving
-        eval_time: 45m
-      # Flat from 60m. The 15m rate window has to empty out before the 30m `for` starts.
-      - alertname: LogExportNotReceiving
-        eval_time: 80m
-      - alertname: LogExportNotReceiving
+      - alertname: LogExportNotUploading
+        eval_time: 60m
+      # The 30m rate window empties out around 90m, then the 30m `for` starts.
+      - alertname: LogExportNotUploading
+        eval_time: 110m
+      - alertname: LogExportNotUploading
         eval_time: 130m
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_kube_state_metrics_down: "true"
               cancel_if_monitoring_agent_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
@@ -65,71 +31,78 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              summary: alloy-logexporter is running but receiving nothing.
-              description: "alloy-logexporter has a ready replica but has received no pushes for 15 minutes, so the archive is silently empty."
+              summary: Log export is enabled but nothing is being uploaded.
+              description: "alloy-logexporter has uploaded no log records for 30 minutes, so the archive is silently missing data."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION=myinstall&CLUSTER=myinstall
 
-  # The feature is not in use here: no StatefulSet, so nothing may fire.
+  # LogExportNotUploading: pods stay up, uploads stop after 60m.
   - interval: 1m
     input_series:
-      - series: 'kube_statefulset_status_replicas_ready{statefulset="loki-write", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable"}'
-        values: "3x120"
+      - series: 'kube_statefulset_replicas{statefulset="alloy-logexporter", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable"}'
+        values: "2x180"
+      - series: 'otelcol_exporter_sent_log_records_total{job="alloy-logexporter", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable", component_id="otelcol.exporter.awss3.audit"}'
+        values: "0+60x60 3600x120"
     alert_rule_test:
-      - alertname: LogExportExporterDown
-        eval_time: 60m
-      - alertname: LogExportNotReceiving
-        eval_time: 90m
-      - alertname: LogExportSendFailures
-        eval_time: 60m
-      - alertname: LogExportQueueSaturated
-        eval_time: 60m
-      - alertname: LogExportQueueDropping
-        eval_time: 60m
-      - alertname: LogExportNothingSelected
-        eval_time: 60m
-
-  # LogExportMirrorDropping: 5xx at the Envoy hop.
-  - interval: 1m
-    input_series:
-      - series: 'envoy_cluster_upstream_rq_xx{envoy_cluster_name="httproute/loki/loki-gateway/rule/0-mirror-0", envoy_response_code_class="5", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable"}'
-        values: "0x60 0+12x60"
-      - series: 'envoy_cluster_upstream_rq_xx{envoy_cluster_name="httproute/loki/loki-gateway/rule/0-mirror-0", envoy_response_code_class="2", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable"}'
-        values: "0+600x120"
-    alert_rule_test:
-      - alertname: LogExportMirrorDropping
-        eval_time: 45m
-      - alertname: LogExportMirrorDropping
-        eval_time: 90m
+      - alertname: LogExportNotUploading
+        eval_time: 110m
+      - alertname: LogExportNotUploading
+        eval_time: 130m
         exp_alerts:
           - exp_labels:
               area: platform
+              cancel_if_monitoring_agent_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
               installation: myinstall
               pipeline: stable
               provider: $provider
-              severity: notify
+              severity: page
               team: atlas
               topic: observability
             exp_annotations:
-              summary: Envoy is failing to mirror log pushes to alloy-logexporter.
-              description: "0.20 mirrored requests per second are failing at the Envoy hop, so those log lines never reach the archive."
+              summary: Log export is enabled but nothing is being uploaded.
+              description: "alloy-logexporter has uploaded no log records for 30 minutes, so the archive is silently missing data."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION=myinstall&CLUSTER=myinstall
 
-  # LogExportSendFailures: uploads given up on.
+  # Uploads flowing: nothing fires.
+  - interval: 1m
+    input_series:
+      - series: 'kube_statefulset_replicas{statefulset="alloy-logexporter", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable"}'
+        values: "2x180"
+      - series: 'otelcol_exporter_sent_log_records_total{job="alloy-logexporter", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable", component_id="otelcol.exporter.awss3.audit"}'
+        values: "0+60x180"
+    alert_rule_test:
+      - alertname: LogExportNotUploading
+        eval_time: 130m
+      - alertname: LogExportRecordsLost
+        eval_time: 130m
+
+  # The feature is not in use here: no StatefulSet, so nothing may fire.
+  - interval: 1m
+    input_series:
+      - series: 'kube_statefulset_replicas{statefulset="loki-write", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable"}'
+        values: "3x480"
+    alert_rule_test:
+      - alertname: LogExportNotUploading
+        eval_time: 130m
+      - alertname: LogExportRecordsLost
+        eval_time: 130m
+      - alertname: LogExportNothingSelected
+        eval_time: 7h
+
+  # LogExportRecordsLost: uploads given up on.
   - interval: 1m
     input_series:
       - series: 'otelcol_exporter_send_failed_log_records_total{job="alloy-logexporter", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable", component_id="otelcol.exporter.awss3.audit"}'
         values: "0x60 0+60x60"
     alert_rule_test:
-      - alertname: LogExportSendFailures
+      - alertname: LogExportRecordsLost
         eval_time: 45m
-      - alertname: LogExportSendFailures
+      - alertname: LogExportRecordsLost
         eval_time: 90m
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_monitoring_agent_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
               installation: myinstall
@@ -139,53 +112,23 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              summary: alloy-logexporter is failing to upload to its destination.
-              description: "alloy-logexporter has given up on 1.00 log records per second, which are permanently missing from the archive."
+              summary: alloy-logexporter is losing log records.
+              description: "alloy-logexporter is losing 1.00 log records per second to failed uploads or a full sending queue. They are permanently missing from the archive."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION=myinstall&CLUSTER=myinstall
 
-  # LogExportQueueSaturated: queue crosses 80% of capacity.
-  - interval: 1m
-    input_series:
-      - series: 'otelcol_exporter_queue_size{job="alloy-logexporter", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable", component_id="otelcol.exporter.awss3.audit", data_type="logs"}'
-        values: "1000x60 180000x60"
-      - series: 'otelcol_exporter_queue_capacity{job="alloy-logexporter", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable", component_id="otelcol.exporter.awss3.audit", data_type="logs"}'
-        values: "200000x120"
-    alert_rule_test:
-      - alertname: LogExportQueueSaturated
-        eval_time: 45m
-      - alertname: LogExportQueueSaturated
-        eval_time: 90m
-        exp_alerts:
-          - exp_labels:
-              area: platform
-              cancel_if_monitoring_agent_down: "true"
-              cancel_if_outside_working_hours: "true"
-              cluster_id: myinstall
-              installation: myinstall
-              pipeline: stable
-              provider: $provider
-              severity: notify
-              team: atlas
-              topic: observability
-            exp_annotations:
-              summary: The alloy-logexporter sending queue is filling up.
-              description: "The sending queue on alloy-logexporter is 90% full. It drops records silently once full."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION=myinstall&CLUSTER=myinstall
-
-  # LogExportQueueDropping: the full queue refuses records.
+  # LogExportRecordsLost: the full queue refuses records.
   - interval: 1m
     input_series:
       - series: 'otelcol_exporter_enqueue_failed_log_records_total{job="alloy-logexporter", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable", component_id="otelcol.exporter.awss3.audit"}'
         values: "0x60 0+30x60"
     alert_rule_test:
-      - alertname: LogExportQueueDropping
+      - alertname: LogExportRecordsLost
         eval_time: 45m
-      - alertname: LogExportQueueDropping
+      - alertname: LogExportRecordsLost
         eval_time: 90m
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_monitoring_agent_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
               installation: myinstall
@@ -195,8 +138,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
-              summary: The alloy-logexporter sending queue is dropping records.
-              description: "alloy-logexporter is dropping 0.50 log records per second at its full sending queue, which are permanently missing from the archive."
+              summary: alloy-logexporter is losing log records.
+              description: "alloy-logexporter is losing 0.50 log records per second to failed uploads or a full sending queue. They are permanently missing from the archive."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION=myinstall&CLUSTER=myinstall
 
   # LogExportNothingSelected: two exports, one uploads, the other never does.
@@ -219,7 +162,6 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cancel_if_monitoring_agent_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: myinstall
               component_id: otelcol.exporter.awss3.teleport

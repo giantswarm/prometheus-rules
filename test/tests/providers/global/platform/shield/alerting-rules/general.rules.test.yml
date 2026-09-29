@@ -5,7 +5,7 @@ tests:
   - interval: 1m
     input_series:
       # Kyverno validating webhooks
-      - series: 'kube_pod_container_status_restarts_total{cluster_id="golem", cluster_type="workload_cluster", installation="golem", namespace="security", pipeline="stable", pod="trivy-0", provider="capa"}'
+      - series: 'kube_pod_container_status_restarts_total{cluster_id="testinst", cluster_type="workload_cluster", installation="testinst", namespace="security", pipeline="stable", pod="trivy-0", provider="capa"}'
         values: "0+1x120"
     alert_rule_test:
       # Trivy pod
@@ -14,9 +14,9 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cluster_id: golem
+              cluster_id: testinst
               cluster_type: workload_cluster
-              installation: golem
+              installation: testinst
               pipeline: stable
               provider: capa
               severity: notify

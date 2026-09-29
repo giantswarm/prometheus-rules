@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'up{cluster_id="12345", cluster_type="workload_cluster", container="cert-manager", customer="giantswarm", installation="golem", instance="10.0.0.0:1234", job="12345-prometheus/workload-12345/0", namespace="kube-system", organization="giantswarm", pod="cert-manager-controller-7fcc585578-gnprd", provider="capa", service_priority="highest"}'
+      - series: 'up{cluster_id="12345", cluster_type="workload_cluster", container="cert-manager", customer="giantswarm", installation="testinst", instance="10.0.0.0:1234", job="12345-prometheus/workload-12345/0", namespace="kube-system", organization="giantswarm", pod="cert-manager-controller-7fcc585578-gnprd", provider="capa", service_priority="highest"}'
         values: "0+0x60"
     alert_rule_test:
       - alertname: CertManagerDown
@@ -27,7 +27,7 @@ tests:
               organization: giantswarm
               pod: cert-manager-controller-7fcc585578-gnprd
               provider: capa
-              installation: golem
+              installation: testinst
               service_priority: highest
               severity: page
               team: shield
@@ -37,7 +37,7 @@ tests:
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cert-manager-troubleshooting/
   - interval: 1m
     input_series:
-      - series: 'up{cluster_id="12345", cluster_type="workload_cluster", container="cert-manager", customer="giantswarm", installation="golem", instance="10.0.0.0:1234", job="12345-prometheus/workload-12345/0", namespace="kube-system", organization="giantswarm", pod="cert-manager-controller-7fcc585578-gnprd", provider="capa", service_priority="highest"}'
+      - series: 'up{cluster_id="12345", cluster_type="workload_cluster", container="cert-manager", customer="giantswarm", installation="testinst", instance="10.0.0.0:1234", job="12345-prometheus/workload-12345/0", namespace="kube-system", organization="giantswarm", pod="cert-manager-controller-7fcc585578-gnprd", provider="capa", service_priority="highest"}'
         values: "1+0x60"
     alert_rule_test:
       - alertname: CertManagerDown

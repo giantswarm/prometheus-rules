@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `AgentPlatformWorkerPoolExhausted`, `AgentPlatformWorkerPoolBelowDesired` and `AgentPlatformAgentNamespaceQuotaNearlyFull`: notify team Bumblebee when a Substrate WorkerPool has no idle worker, fewer ready workers than desired, or its namespace's ResourceQuota is over 90 % used.
 - Every agent platform alert links to the platform's Overview board: `__dashboardUid__: agent-platform-overview` and `dashboardQueryParams: "orgId=1"` on all six of `agent-platform.rules.yml`. On-call had a runbook and no graph. The board's component-health panels read the very series these alerts read, so the page and the graph cannot disagree. `orgId=1` because the board is in `Shared Org`, the organization customers reach (giantswarm/agent-platform#617, giantswarm/giantswarm#36711).
 - `AgentPlatformSlackRateLimited` and `AgentPlatformSlackCallGivenUp`: notify team Bumblebee when Slack keeps rate-limiting one of klaus-gateway's Web API methods (a 429 in every five-minute window for ten minutes), and as soon as the gateway gives up a rate-limited call (`klaus_gateway_slack_rate_limited_total`; giantswarm/klaus-gateway#313).
 

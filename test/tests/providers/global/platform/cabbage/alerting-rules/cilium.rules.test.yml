@@ -6,7 +6,7 @@ tests:
   - interval: 1m
     input_series:
       # For the first 60min: test with 1 pod: none, up, down
-      - series: 'cilium_bpf_map_pressure{map_name="policy_00001", installation="alba", cluster_id="odp01"}'
+      - series: 'cilium_bpf_map_pressure{map_name="policy_00001", installation="testinst", cluster_id="odp01"}'
         values: "_x20 20+0x20 90+0x20"
     alert_rule_test:
       - alertname: CiliumBPFMapAlmostFull
@@ -23,14 +23,14 @@ tests:
               topic: cilium
               cancel_if_outside_working_hours: "true"
               map_name: "policy_00001"
-              installation: alba
+              installation: testinst
               cluster_id: odp01
             exp_annotations:
-              description: "Cilium BPF map policy_00001 on alba/odp01 is over 80% full."
+              description: "Cilium BPF map policy_00001 on testinst/odp01 is over 80% full."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-bpf-map/
   - interval: 1m
     input_series:
-      - series: 'cilium_bpf_map_pressure{map_name="policy_00001", installation="alba", cluster_id="odp01"}'
+      - series: 'cilium_bpf_map_pressure{map_name="policy_00001", installation="testinst", cluster_id="odp01"}'
         values: "_x20 20+0x20 90+0x20 98+0x20"
     alert_rule_test:
       - alertname: CiliumBPFMapFull
@@ -46,20 +46,20 @@ tests:
               team: cabbage
               topic: cilium
               map_name: "policy_00001"
-              installation: alba
+              installation: testinst
               cluster_id: odp01
             exp_annotations:
-              description: "Cilium BPF map policy_00001 on alba/odp01 is over 95% full."
+              description: "Cilium BPF map policy_00001 on testinst/odp01 is over 95% full."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-bpf-map/
   # CiliumNetworkPolicyFailed for 1.15+ (cilium_policy_change_total{outcome="fail.*"})
   - interval: 1m
     input_series:
       # For the first 60min: test with 1 pod: none, up, down
-      - series: 'cilium_policy_change_total{outcome="fail", installation="alba", cluster_id="odp01"}'
+      - series: 'cilium_policy_change_total{outcome="fail", installation="testinst", cluster_id="odp01"}'
         values: "_x20 0+0x20 0+100x30 _x1000"
-      - series: 'cilium_policy_change_total{outcome="success", installation="alba", cluster_id="odp01"}'
+      - series: 'cilium_policy_change_total{outcome="success", installation="testinst", cluster_id="odp01"}'
         values: "_x120 1+10000x50 _x1000"
-      - series: 'cilium_policy_import_errors_total{installation="alba", cluster_id="odp01"}'
+      - series: 'cilium_policy_import_errors_total{installation="testinst", cluster_id="odp01"}'
         values: "_x220 0+0x20 0+100x30 _x1000"
     alert_rule_test:
       # cilium_policy_change_total{outcome="fail"}
@@ -76,10 +76,10 @@ tests:
               team: cabbage
               topic: cilium
               cancel_if_outside_working_hours: "true"
-              installation: alba
+              installation: testinst
               cluster_id: odp01
             exp_annotations:
-              description: "Cilium is failing to import network policies on alba/odp01."
+              description: "Cilium is failing to import network policies on testinst/odp01."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/unsupported-cilium-network-policy/
       # cilium_policy_change_total{outcome="success"}
       - alertname: CiliumNetworkPolicyFailed
@@ -102,19 +102,19 @@ tests:
               team: cabbage
               topic: cilium
               cancel_if_outside_working_hours: "true"
-              installation: alba
+              installation: testinst
               cluster_id: odp01
             exp_annotations:
-              description: "Cilium is failing to import network policies on alba/odp01."
+              description: "Cilium is failing to import network policies on testinst/odp01."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/unsupported-cilium-network-policy/
   # CiliumHubbleTLSCertificateWillExpireSoon
   - interval: 1m
     input_series:
       # hubble cert: valid for 40 days during the first hour, then 20 days remaining
-      - series: 'cert_exporter_secret_not_after{name="hubble-server-certs", exported_namespace="kube-system", secretkey="tls.crt", installation="alba", cluster_id="odp01"}'
+      - series: 'cert_exporter_secret_not_after{name="hubble-server-certs", exported_namespace="kube-system", secretkey="tls.crt", installation="testinst", cluster_id="odp01"}'
         values: "3456000+0x59 1728000+0x120"
       # non-hubble cert about to expire: must NOT match the name filter
-      - series: 'cert_exporter_secret_not_after{name="some-other-certs", exported_namespace="kube-system", secretkey="tls.crt", installation="alba", cluster_id="odp01"}'
+      - series: 'cert_exporter_secret_not_after{name="some-other-certs", exported_namespace="kube-system", secretkey="tls.crt", installation="testinst", cluster_id="odp01"}'
         values: "864000+0x180"
     alert_rule_test:
       - alertname: CiliumHubbleTLSCertificateWillExpireSoon
@@ -131,19 +131,19 @@ tests:
               name: hubble-server-certs
               exported_namespace: kube-system
               secretkey: tls.crt
-              installation: alba
+              installation: testinst
               cluster_id: odp01
             exp_annotations:
-              description: "Hubble TLS certificate tls.crt in Secret kube-system/hubble-server-certs on alba/odp01 expires in less than 30 days."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-hubble-tls-certificates/?INSTALLATION=alba&CLUSTER=odp01"
+              description: "Hubble TLS certificate tls.crt in Secret kube-system/hubble-server-certs on testinst/odp01 expires in less than 30 days."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-hubble-tls-certificates/?INSTALLATION=testinst&CLUSTER=odp01"
   # CiliumHubbleCertificateRenewalJobFailed
   - interval: 1m
     input_series:
       # certgen job starts failing after 30 minutes
-      - series: 'kube_job_failed{namespace="kube-system", job_name="hubble-generate-certs-a1b2c", condition="true", installation="alba", cluster_id="odp01"}'
+      - series: 'kube_job_failed{namespace="kube-system", job_name="hubble-generate-certs-a1b2c", condition="true", installation="testinst", cluster_id="odp01"}'
         values: "0+0x29 1+0x90"
       # failed job with another name: must NOT match the job_name filter
-      - series: 'kube_job_failed{namespace="kube-system", job_name="some-other-job", condition="true", installation="alba", cluster_id="odp01"}'
+      - series: 'kube_job_failed{namespace="kube-system", job_name="some-other-job", condition="true", installation="testinst", cluster_id="odp01"}'
         values: "1+0x120"
     alert_rule_test:
       - alertname: CiliumHubbleCertificateRenewalJobFailed
@@ -163,8 +163,8 @@ tests:
               namespace: kube-system
               job_name: hubble-generate-certs-a1b2c
               condition: "true"
-              installation: alba
+              installation: testinst
               cluster_id: odp01
             exp_annotations:
-              description: "Hubble certificate renewal job kube-system/hubble-generate-certs-a1b2c on alba/odp01 failed."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-hubble-tls-certificates/?INSTALLATION=alba&CLUSTER=odp01"
+              description: "Hubble certificate renewal job kube-system/hubble-generate-certs-a1b2c on testinst/odp01 failed."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-hubble-tls-certificates/?INSTALLATION=testinst&CLUSTER=odp01"

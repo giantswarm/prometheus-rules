@@ -5,9 +5,9 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'kube_statefulset_status_replicas{app="kube-state-metrics", cluster_id="gauss", cluster_type="management_cluster", customer="giantswarm", installation="gauss", namespace="loki", organization="giantswarm", pipeline="testing", region="westeurope", statefulset="loki-write"}'
+      - series: 'kube_statefulset_status_replicas{app="kube-state-metrics", cluster_id="testinst", cluster_type="management_cluster", customer="giantswarm", installation="testinst", namespace="loki", organization="giantswarm", pipeline="testing", region="westeurope", statefulset="loki-write"}'
         values: "3+0x5760" # 5760 = 4 days
-      - series: 'kube_statefulset_status_replicas_ready{app="kube-state-metrics", cluster_id="gauss", cluster_type="management_cluster", customer="giantswarm", installation="gauss", namespace="loki", organization="giantswarm", pipeline="testing", region="westeurope", statefulset="loki-write"}'
+      - series: 'kube_statefulset_status_replicas_ready{app="kube-state-metrics", cluster_id="testinst", cluster_type="management_cluster", customer="giantswarm", installation="testinst", namespace="loki", organization="giantswarm", pipeline="testing", region="westeurope", statefulset="loki-write"}'
         values: "3+0x60 2+0x4440 3+0x60" # 4440 = 3 days + 2h
     alert_rule_test:
       - alertname: StatefulsetNotSatisfiedAtlas
@@ -21,10 +21,10 @@ tests:
               app: kube-state-metrics
               area: platform
               cancel_if_outside_working_hours: "false"
-              cluster_id: "gauss"
+              cluster_id: "testinst"
               cluster_type: management_cluster
               customer: giantswarm
-              installation: "gauss"
+              installation: "testinst"
               namespace: loki
               organization: giantswarm
               pipeline: "testing"
@@ -35,7 +35,7 @@ tests:
               topic: managementcluster
             exp_annotations:
               description: "Statefulset loki/loki-write is not satisfied."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION=gauss&CLUSTER=gauss&NAMESPACE=loki&KIND=statefulset&NAME=loki-write
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION=testinst&CLUSTER=testinst&NAMESPACE=loki&KIND=statefulset&NAME=loki-write
       - alertname: StatefulsetNotSatisfiedAtlas
         eval_time: 4500m # 3 days + 3h
         exp_alerts:
@@ -43,10 +43,10 @@ tests:
               app: kube-state-metrics
               area: platform
               cancel_if_outside_working_hours: "false"
-              cluster_id: "gauss"
+              cluster_id: "testinst"
               cluster_type: management_cluster
               customer: giantswarm
-              installation: "gauss"
+              installation: "testinst"
               namespace: loki
               organization: giantswarm
               pipeline: "testing"
@@ -57,6 +57,6 @@ tests:
               topic: managementcluster
             exp_annotations:
               description: "Statefulset loki/loki-write is not satisfied."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION=gauss&CLUSTER=gauss&NAMESPACE=loki&KIND=statefulset&NAME=loki-write
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION=testinst&CLUSTER=testinst&NAMESPACE=loki&KIND=statefulset&NAME=loki-write
       - alertname: StatefulsetNotSatisfiedAtlas
         eval_time: 4502m

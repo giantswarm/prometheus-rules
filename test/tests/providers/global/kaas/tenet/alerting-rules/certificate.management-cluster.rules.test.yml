@@ -5,9 +5,9 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'cert_exporter_secret_not_after{cluster_id="gauss", cluster_type="management_cluster", secretkey="tls.crt", certificatename="capa-serving-cert", exported_namespace="giantswarm", provider="capa"}'
+      - series: 'cert_exporter_secret_not_after{cluster_id="testinst", cluster_type="management_cluster", secretkey="tls.crt", certificatename="capa-serving-cert", exported_namespace="giantswarm", provider="capa"}'
         values: "1x20 1x20 0+0x20"
-      - series: 'cert_exporter_certificate_cr_not_after{cluster_id="gauss", cluster_type="management_cluster", name="capa-serving-cert", exported_namespace="giantswarm", provider="capa"}'
+      - series: 'cert_exporter_certificate_cr_not_after{cluster_id="testinst", cluster_type="management_cluster", name="capa-serving-cert", exported_namespace="giantswarm", provider="capa"}'
         values: "1x20 _x20 0+0x20"
     alert_rule_test:
       - alertname: ManagementClusterCertificateIsMissing
@@ -19,14 +19,14 @@ tests:
               area: kaas
               cancel_if_outside_working_hours: "true"
               certificatename: capa-serving-cert
-              cluster_id: gauss
+              cluster_id: testinst
               exported_namespace: giantswarm
               provider: capa
               severity: page
               team: phoenix
               topic: security
             exp_annotations:
-              description: 'Cannot renew Certificate for Secret giantswarm/capa-serving-cert on gauss because it is missing.'
+              description: 'Cannot renew Certificate for Secret giantswarm/capa-serving-cert on testinst because it is missing.'
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/management-cluster-less-than-three-workers/
       - alertname: ManagementClusterCertificateIsMissing
         eval_time: 55m

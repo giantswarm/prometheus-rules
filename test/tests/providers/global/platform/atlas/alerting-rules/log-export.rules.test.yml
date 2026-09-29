@@ -76,6 +76,8 @@ tests:
         eval_time: 130m
       - alertname: LogExportRecordsLost
         eval_time: 130m
+      - alertname: LogExportMirrorDropping
+        eval_time: 130m
 
   # The feature is not in use here: no StatefulSet, so nothing may fire.
   - interval: 1m
@@ -89,6 +91,36 @@ tests:
         eval_time: 130m
       - alertname: LogExportNothingSelected
         eval_time: 7h
+      - alertname: LogExportMirrorDropping
+        eval_time: 130m
+
+  # LogExportMirrorDropping: 5xx at the Envoy hop while 2xx still flow.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_cluster_upstream_rq_xx{envoy_cluster_name="httproute/loki/loki-gateway/rule/0-mirror-0", envoy_response_code_class="5", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable"}'
+        values: "0x60 0+12x60"
+      - series: 'envoy_cluster_upstream_rq_xx{envoy_cluster_name="httproute/loki/loki-gateway/rule/0-mirror-0", envoy_response_code_class="2", cluster_id="myinstall", installation="myinstall", provider="$provider", pipeline="stable"}'
+        values: "0+600x120"
+    alert_rule_test:
+      - alertname: LogExportMirrorDropping
+        eval_time: 45m
+      - alertname: LogExportMirrorDropping
+        eval_time: 90m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: myinstall
+              installation: myinstall
+              pipeline: stable
+              provider: $provider
+              severity: notify
+              team: atlas
+              topic: observability
+            exp_annotations:
+              summary: Envoy is failing to mirror log pushes to alloy-logexporter.
+              description: "0.20 mirrored requests per second are failing at the Envoy hop, so those log lines never reach the archive."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION=myinstall&CLUSTER=myinstall
 
   # LogExportRecordsLost: uploads given up on.
   - interval: 1m

@@ -43,6 +43,28 @@ spec:
             cancel_if_outside_working_hours: "true"
             # A failed scrape of alloy-logexporter alone looks like an outage here.
             cancel_if_monitoring_agent_down: "true"
+        # Partial loss at the Envoy hop, before alloy-logexporter ever sees the request.
+        # LogExportNotUploading stays green while the rest of the traffic still uploads. The
+        # cluster is named after the route rule and mirror index, not the backend.
+        - alert: LogExportMirrorDropping
+          annotations:
+            summary: Envoy is failing to mirror log pushes to alloy-logexporter.
+            description: '{{`{{ $value | printf "%.2f" }} mirrored requests per second are failing at the Envoy hop, so those log lines never reach the archive.`}}'
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+          expr: |-
+            sum by (cluster_id, installation, pipeline, provider) (
+              rate (
+                envoy_cluster_upstream_rq_xx{envoy_cluster_name=~"httproute/loki/loki-gateway/rule/[0-9]+-mirror-[0-9]+", envoy_response_code_class="5"}[10m]
+              )
+            )
+            > 0
+          for: 15m
+          labels:
+            area: platform
+            severity: notify
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
         # Partial, permanent loss while uploads still flow: the S3 upload component gave up on an
         # upload after its timeout (it has no retry_on_failure), or its full queue refused records.
         # Both counters only appear on their first increment.

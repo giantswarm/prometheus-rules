@@ -394,3 +394,37 @@ tests:
             exp_annotations:
               description: "At least one kube-state-metrics resource metric is missing for cluster wc-epsilon."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=myinstall&CLUSTER=wc-epsilon"
+
+  # The inhibition source must arm well before the alerts it inhibits, and must clear as soon as
+  # kube-state-metrics serves pod metrics again.
+  - name: "InhibitionKubeStateMetricsDown"
+    interval: 1m
+    input_series:
+      - series: 'capi_cluster_status_condition{name="wc-alpha", type="ControlPlaneReady", status="True", installation="myinstall", provider="capa", pipeline="testing"}'
+        values: "1x60"
+      - series: 'kube_pod_status_phase{job="kube-state-metrics", cluster_id="wc-alpha", installation="myinstall", provider="capa", pipeline="testing", pod="a"}'
+        values: "_x20 1x40"
+    alert_rule_test:
+      # not yet armed one minute in
+      - alertname: InhibitionKubeStateMetricsDown
+        eval_time: 1m
+      - alertname: InhibitionKubeStateMetricsDown
+        eval_time: 5m
+        exp_alerts:
+          - exp_labels:
+              area: "platform"
+              inhibit_kube_state_metrics_down: "true"
+              severity: "none"
+              team: "atlas"
+              topic: "observability"
+              cluster_id: "wc-alpha"
+              installation: "myinstall"
+              pipeline: "testing"
+              provider: "capa"
+            exp_annotations:
+              description: "KubeStateMetrics is not serving data for cluster wc-alpha."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/kube-state-metrics-down/?INSTALLATION=myinstall&CLUSTER=wc-alpha"
+      # pod metrics are back
+      - alertname: InhibitionKubeStateMetricsDown
+        eval_time: 25m
+

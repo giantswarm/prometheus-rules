@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.123.0] - 2026-09-30
+
+### Changed
+
+- Update inhibition condition for `FluxCustomerHelmReleaseFailed` alert to include `HelmReleaseAppToHrMigrationFailed` alerts.
+
 ## [4.122.0] - 2026-09-30
 
 ### Changed
@@ -4606,7 +4612,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.122.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.123.0...HEAD
+[4.123.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.122.0...v4.123.0
 [4.122.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.121.0...v4.122.0
 [4.121.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.120.0...v4.121.0
 [4.120.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.119.1...v4.120.0

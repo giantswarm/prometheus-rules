@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- `FluxGiantswarmHelmReleaseFailed` and `DeploymentNotSatisfiedBumblebee` keep their identity when flux-ksm or kube-state-metrics is rescheduled: the expressions aggregate with `max by (...)` down to the labels that routing, the description and the runbook URL use, so a new exporter pod no longer resolves the alert and fires it again after `for`. `deployment.management-cluster.rules.yml` gets unit tests and leaves `promtool_ignore`.
+- `FluxGiantswarmHelmReleaseFailed` and `DeploymentNotSatisfiedBumblebee` no longer resolve and fire again when their exporter pod is replaced.
 - The `helm.sh/chart` label is valid for long chart versions: the 63-character cut trims the whole trailing run of `-`, `.` and `_`.
 
 ### Added

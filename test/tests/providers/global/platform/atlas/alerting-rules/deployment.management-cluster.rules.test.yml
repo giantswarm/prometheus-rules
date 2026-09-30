@@ -1,0 +1,47 @@
+---
+rule_files:
+  - deployment.management-cluster.rules.yml
+
+tests:
+  # kube-state-metrics is rescheduled while a Deployment is not satisfied: the
+  # old pod's series ends and the new pod's begins with different `pod` and
+  # `instance` labels. The alert keeps its identity across the hand-over and
+  # stays firing instead of resolving and starting its `for` period over.
+  - interval: 1m
+    input_series:
+      - series: 'kube_deployment_status_replicas_unavailable{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="myinstall", installation="myinstall", pipeline="testing", provider="$provider", service="kube-prometheus-stack-kube-state-metrics", pod="kube-prometheus-stack-kube-state-metrics-7c9d8f6b5-aaaaa", endpoint="http", container="kube-state-metrics", instance="10.0.0.1:8080", node="ip-10-0-0-1.eu-west-1.compute.internal"}'
+        values: "1x70 _x50"
+      - series: 'kube_deployment_status_replicas_unavailable{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", deployment="kagent-controller", cluster_id="myinstall", installation="myinstall", pipeline="testing", provider="$provider", service="kube-prometheus-stack-kube-state-metrics", pod="kube-prometheus-stack-kube-state-metrics-7c9d8f6b5-bbbbb", endpoint="http", container="kube-state-metrics", instance="10.0.0.2:8080", node="ip-10-0-0-2.eu-west-1.compute.internal"}'
+        values: "_x67 1x53"
+    alert_rule_test:
+      - alertname: DeploymentNotSatisfiedBumblebee
+        eval_time: 55m
+        exp_alerts: []
+      # Firing from the first pod alone.
+      - alertname: DeploymentNotSatisfiedBumblebee
+        eval_time: 65m
+        exp_alerts:
+          - exp_labels: &deployment-not-satisfied-bumblebee-labels
+              alertname: DeploymentNotSatisfiedBumblebee
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: myinstall
+              cluster_type: management_cluster
+              deployment: kagent-controller
+              installation: myinstall
+              namespace: kagent
+              pipeline: testing
+              provider: $provider
+              severity: page
+              team: bumblebee
+              topic: managementcluster
+            exp_annotations: &deployment-not-satisfied-bumblebee-annotations
+              description: "Deployment kagent/kagent-controller is not satisfied."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION=myinstall&CLUSTER=myinstall&NAMESPACE=kagent&KIND=deployment&NAME=kagent-controller"
+      # Only the second pod's series exists now. Had `pod` been part of the
+      # alert's labels, the alert would be pending here until 127m.
+      - alertname: DeploymentNotSatisfiedBumblebee
+        eval_time: 75m
+        exp_alerts:
+          - exp_labels: *deployment-not-satisfied-bumblebee-labels
+            exp_annotations: *deployment-not-satisfied-bumblebee-annotations

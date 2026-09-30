@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.123.0] - 2026-09-30
 
+### Changed
+
+- Update inhibition condition for `FluxCustomerHelmReleaseFailed` alert to include `HelmReleaseAppToHrMigrationFailed` alerts.
+
 ## [4.122.0] - 2026-09-30
 
 ### Changed

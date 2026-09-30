@@ -70,6 +70,8 @@ spec:
 #
 # Alerting for GiantSwarm management clusters HelmRelease CRs in remaining namespaces.
 #
+# HelmReleaseAppToHrMigrationFailed is a custom, case by case alert in CMCs that exist temporarily for certain HelmReleases for the period of the migration.
+#
     - alert: FluxCustomerHelmReleaseFailed
       annotations:
         description: |-
@@ -78,7 +80,7 @@ spec:
       expr: |
         gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace!~"flux-giantswarm|giantswarm|org-t-.*", team!~"^$|noteam"} > 0
         unless on(name, exported_namespace)
-        ALERTS{alertname="FluxHelmReleaseFailed"}
+        ALERTS{alertname="FluxHelmReleaseFailed|HelmReleaseAppToHrMigrationFailed"}
       for: 10m
       labels:
         area: platform

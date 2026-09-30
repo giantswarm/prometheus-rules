@@ -39,15 +39,23 @@ spec:
 #
 # Alerting for GiantSwarm management clusters HelmRelease CRs in flux-giantswarm and giantswarm namespaces.
 #
+# The expression aggregates down to the labels that routing, the description and
+# the runbook URL use. flux-ksm's scrape-target labels (`pod`, `instance`, ...)
+# would otherwise be part of the alert's identity, and every replacement of the
+# flux-ksm pod would resolve the alert and fire it again after `for`. `max by`
+# rather than `max without`, so that a new exporter label cannot creep back in.
+#
     - alert: FluxGiantswarmHelmReleaseFailed
       annotations:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'
       expr: |
-        label_replace(
-          gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace=~"flux-giantswarm|giantswarm"},
-          "team", "honeybadger", "team", "^$"
+        max by (cluster_id, cluster_type, installation, pipeline, provider, exported_namespace, name, team) (
+          label_replace(
+            gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace=~"flux-giantswarm|giantswarm"},
+            "team", "honeybadger", "team", "^$"
+          )
         ) > 0
       for: 10m
       labels:

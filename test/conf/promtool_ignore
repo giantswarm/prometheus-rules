@@ -4,7 +4,6 @@ kaas/phoenix/alerting-rules/aws.workload-cluster.rules.yml
 kaas/phoenix/alerting-rules/capa.management-cluster.rules.yml
 kaas/phoenix/alerting-rules/dns-operator-azure.rules.yml
 kaas/phoenix/alerting-rules/irsa.rules.yml
-platform/atlas/alerting-rules/deployment.management-cluster.rules.yml
 platform/atlas/alerting-rules/deployment.workload-cluster.rules.yml
 platform/atlas/alerting-rules/fluentbit.rules.yml
 platform/atlas/alerting-rules/inhibit.oncall.rules.yml

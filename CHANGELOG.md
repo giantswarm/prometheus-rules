@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `DexErrorRateHigh` no longer counts Dex's 404s on `/auth/{connector}`. Dex answers a connector login without an authorization request (a crawler following a login link) or for an unknown connector with 404, and a crawler working through a public Dex's login links paged on-call with nothing wrong. Every other 4xx and 5xx still counts. The Dex rules are unit tested (they were in `promtool_ignore` without a test).
 - `AgentPlatformValkeyMemoryHigh` fires once per Valkey instance (`job`) instead of once per namespace, and divides each instance's used memory by its own `maxmemory`. It divided the highest usage in a namespace by the highest bound, which can come from different instances, and its description named no instance (giantswarm/giantswarm#36711).
 - `kube-state-metrics` rules are unit tested again - the tests were skipped and had drifted from the rules.
 

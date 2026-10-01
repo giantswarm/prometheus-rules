@@ -29,6 +29,7 @@ spec:
       for: 60m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: shield
@@ -52,6 +53,7 @@ spec:
       for: 60m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: notify
         team: shield
@@ -72,6 +74,7 @@ spec:
         severity: notify
         team: shield
         topic: teleport
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
     ## TeleportKubeAgentInstanceUnreadyTooLong escalates an unready replica that has lasted far
     ## longer than any transient join or rollout hiccup.
@@ -88,6 +91,7 @@ spec:
       for: 1d
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: shield
@@ -107,4 +111,5 @@ spec:
         severity: notify
         team: shield
         topic: teleport
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "false"

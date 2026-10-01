@@ -17,6 +17,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               severity: page
               team: cabbage
               topic: dns
@@ -41,6 +42,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               severity: page
               team: cabbage
               topic: dns

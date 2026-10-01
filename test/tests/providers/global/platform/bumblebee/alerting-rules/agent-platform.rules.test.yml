@@ -181,6 +181,7 @@ tests:
               alertname: KagentControllerDown
               all_pipelines: "true"
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: testinst
               cluster_type: management_cluster
@@ -206,6 +207,7 @@ tests:
               alertname: KagentControllerDown
               all_pipelines: "true"
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: testinst
               cluster_type: management_cluster
@@ -244,6 +246,7 @@ tests:
               alertname: KagentControllerDown
               all_pipelines: "true"
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: testinst
               cluster_type: management_cluster
@@ -269,6 +272,7 @@ tests:
               alertname: KagentControllerDown
               all_pipelines: "true"
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: testinst
               cluster_type: management_cluster
@@ -342,6 +346,7 @@ tests:
               alertname: AgentPlatformPostgresClusterNotHealthy
               all_pipelines: "true"
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: testinst
               installation: testinst
@@ -390,6 +395,7 @@ tests:
               alertname: AgentPlatformContainerRestartingTooOften
               all_pipelines: "true"
               area: platform
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               cluster_id: testinst
               cluster_type: management_cluster

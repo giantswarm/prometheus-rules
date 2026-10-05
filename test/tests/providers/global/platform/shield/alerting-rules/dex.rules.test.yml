@@ -1,0 +1,60 @@
+---
+rule_files:
+  - dex.rules.yml
+
+tests:
+  # Server errors page.
+  - interval: 1m
+    input_series:
+      - series: 'http_requests_total{job="dex", handler="/callback", code="500", method="get", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa"}'
+        values: "0+5x60"
+    alert_rule_test:
+      - alertname: DexErrorRateHigh
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              alertname: DexErrorRateHigh
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: golem
+              installation: golem
+              pipeline: testing
+              provider: capa
+              severity: page
+              team: shield
+              topic: dex
+            exp_annotations:
+              description: "Dex running on golem is reporting an increased error rate."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/dex-error-rate-high/
+  # A crawler's 404s on /auth/{connector} do not page.
+  - interval: 1m
+    input_series:
+      - series: 'http_requests_total{job="dex", handler="/auth/{connector}", code="404", method="get", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa"}'
+        values: "0+5x60"
+    alert_rule_test:
+      - alertname: DexErrorRateHigh
+        eval_time: 45m
+        exp_alerts: []
+  # Other errors on /auth/{connector} still page.
+  - interval: 1m
+    input_series:
+      - series: 'http_requests_total{job="dex", handler="/auth/{connector}", code="500", method="get", cluster_type="management_cluster", cluster_id="golem", installation="golem", pipeline="testing", provider="capa"}'
+        values: "0+5x60"
+    alert_rule_test:
+      - alertname: DexErrorRateHigh
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              alertname: DexErrorRateHigh
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: golem
+              installation: golem
+              pipeline: testing
+              provider: capa
+              severity: page
+              team: shield
+              topic: dex
+            exp_annotations:
+              description: "Dex running on golem is reporting an increased error rate."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/dex-error-rate-high/

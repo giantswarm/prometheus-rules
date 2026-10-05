@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `cancel_if_kube_state_metrics_down` added to every alert that reads kube-state-metrics metrics.
 
+### Fixed
+
+- `MonitoringAgentDown`, `MonitoringAgentShardsNotSatisfied` and their inhibition alerts link to the `#monitoringagentdown` section of the alloy runbook. They linked to `#monitoring-agent-down`, which does not exist, so the link opened the top of the page.
+
 ## [4.123.0] - 2026-09-30
 
 ### Changed

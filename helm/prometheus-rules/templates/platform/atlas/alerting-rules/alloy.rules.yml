@@ -106,7 +106,7 @@ spec:
           annotations:
             description: '{{`Monitoring agent fails to send samples.`}}'
             summary: Monitoring agent fails to send samples to remote write endpoint.
-            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoringagentdown?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
             __dashboardUid__: promRW001
             dashboardQueryParams: "orgId=1"
           expr: |-
@@ -139,7 +139,7 @@ spec:
           annotations:
             description: '{{`Monitoring agent fails to send samples.`}}'
             summary: Monitoring agent fails to send samples to remote write endpoint.
-            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoringagentdown?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
             __dashboardUid__: promRW001
             dashboardQueryParams: "orgId=1"
           expr: |-
@@ -168,7 +168,7 @@ spec:
           annotations:
             description: '{{`At least one of the monitoring agent shard is missing.`}}'
             summary: Monitoring agent is missing shards.
-            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoringagentdown?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
           expr: |-
             kube_statefulset_status_replicas{statefulset="alloy-metrics"}
               - kube_statefulset_status_replicas_ready{statefulset="alloy-metrics"}
@@ -186,7 +186,7 @@ spec:
           annotations:
             description: '{{`At least one of the monitoring agent shard is missing.`}}'
             summary: Monitoring agent is missing shards.
-            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoringagentdown?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
           expr: |-
             kube_statefulset_status_replicas{statefulset="alloy-metrics"}
               - kube_statefulset_status_replicas_ready{statefulset="alloy-metrics"}

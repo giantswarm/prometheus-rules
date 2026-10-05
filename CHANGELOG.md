@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `log-export` alerts for loss in the audit log export pipeline.
+
 ### Changed
 
 - `cancel_if_kube_state_metrics_down` added to every alert that reads kube-state-metrics metrics.

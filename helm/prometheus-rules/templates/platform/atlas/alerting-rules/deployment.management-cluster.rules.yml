@@ -18,6 +18,7 @@ spec:
       for: 60m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: atlas
@@ -30,6 +31,7 @@ spec:
       for: 30m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: honeybadger
@@ -42,6 +44,7 @@ spec:
       for: 3h
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: honeybadger
@@ -54,6 +57,7 @@ spec:
       for: 30m
       labels:
         area: kaas
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: {{ include "providerTeam" . }}
@@ -66,6 +70,7 @@ spec:
       for: 3h
       labels:
         area: kaas
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: phoenix
@@ -78,6 +83,7 @@ spec:
       for: 30m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: cabbage
@@ -90,6 +96,7 @@ spec:
       for: 3h
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: cabbage
@@ -102,18 +109,26 @@ spec:
       for: 30m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: {{ include "workingHoursOnly" . }}
         severity: page
         team: shield
         topic: managementcluster
+    # Aggregated down to the labels that routing, the description and the runbook
+    # URL use, so a replaced kube-state-metrics pod (new `pod`/`instance`) keeps
+    # the alert's identity instead of resolving it and starting `for` over.
     - alert: DeploymentNotSatisfiedBumblebee
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}&KIND=deployment&NAME={{ $labels.deployment }}`}}'
-      expr: kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", namespace=~"agent-platform|kagent|mcp-kubernetes"} > 0
+      expr: |
+        max by (cluster_id, cluster_type, installation, pipeline, provider, namespace, deployment) (
+          kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", namespace=~"agent-platform|kagent|mcp-kubernetes"}
+        ) > 0
       for: 60m
       labels:
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         # Business-hours only for now; move to OOBH (page via the platform area) once bumblebee on-call is established.
         cancel_if_outside_working_hours: "true"
         severity: page

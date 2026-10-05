@@ -5,7 +5,7 @@ rule_files:
 tests:
   - interval: 1m
     input_series:
-      - series: 'kube_deployment_status_replicas_unavailable{job="kube-state-metrics", cluster_id="gauss", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="crossplane", installation="gauss", instance="100.64.5.122:8080", namespace="crossplane", node="ip-10-0-5-119.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-95bbb4bd7-v6hvh", provider="capa", service_priority="highest"}'
+      - series: 'kube_deployment_status_replicas_unavailable{job="kube-state-metrics", cluster_id="testinst", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="crossplane", installation="testinst", instance="100.64.5.122:8080", namespace="crossplane", node="ip-10-0-5-119.eu-west-1.compute.internal", organization="giantswarm", pod="kube-state-metrics-95bbb4bd7-v6hvh", provider="capa", service_priority="highest"}'
         values: "0+0x20 1+0x100"
     alert_rule_test:
       - alertname: CrossplaneDeploymentNotSatisfied
@@ -13,15 +13,16 @@ tests:
         exp_alerts:
           - exp_labels:
               alertname: CrossplaneDeploymentNotSatisfied
+              cancel_if_kube_state_metrics_down: "true"
               job: kube-state-metrics
               area: platform
               cancel_if_outside_working_hours: "true"
-              cluster_id: gauss
+              cluster_id: testinst
               cluster_type: management_cluster
               container: kube-state-metrics
               customer: giantswarm
               deployment: crossplane
-              installation: gauss
+              installation: testinst
               instance: 100.64.5.122:8080
               namespace: crossplane
               node: ip-10-0-5-119.eu-west-1.compute.internal
@@ -34,4 +35,4 @@ tests:
               topic: managementcluster
             exp_annotations:
               description: "Crossplane related deployment crossplane/crossplane is not satisfied."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION=gauss&CLUSTER=gauss&NAMESPACE=crossplane&KIND=deployment&NAME=crossplane
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION=testinst&CLUSTER=testinst&NAMESPACE=crossplane&KIND=deployment&NAME=crossplane

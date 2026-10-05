@@ -1,0 +1,134 @@
+---
+rule_files:
+  - agent-platform-capacity.rules.yml
+
+tests:
+  # AgentPlatformWorkerPoolExhausted: two API server replicas report the pool.
+  # Idle drops to zero after 20 minutes and comes back after 60; the alert
+  # fires after 15 minutes of it and resolves with the first idle worker. A
+  # second pool scaled to zero (desired 0, no idle worker) never fires.
+  - interval: 1m
+    input_series:
+      - series: 'ate_workerpool_workers{cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", namespace="ate-system", pod="ateapi-a", ate_workerpool_namespace="kagent", ate_workerpool_name="kagent-default", ate_sandbox_class="gvisor", ate_worker_state="idle"}'
+        values: "2x20 0x40 1x20"
+      - series: 'ate_workerpool_workers{cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", namespace="ate-system", pod="ateapi-b", ate_workerpool_namespace="kagent", ate_workerpool_name="kagent-default", ate_sandbox_class="gvisor", ate_worker_state="idle"}'
+        values: "2x20 0x40 1x20"
+      - series: 'ate_workerpool_workers{cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", namespace="ate-system", pod="ateapi-a", ate_workerpool_namespace="kagent", ate_workerpool_name="kagent-default", ate_sandbox_class="gvisor", ate_worker_state="assigned"}'
+        values: "2x20 4x40 3x20"
+      - series: 'ate_workerpool_desired_workers{cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", namespace="ate-system", ate_workerpool_namespace="kagent", ate_workerpool_name="kagent-default"}'
+        values: "4x80"
+      - series: 'ate_workerpool_workers{cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", namespace="ate-system", pod="ateapi-a", ate_workerpool_namespace="team-a", ate_workerpool_name="paused", ate_sandbox_class="gvisor", ate_worker_state="idle"}'
+        values: "0x80"
+      - series: 'ate_workerpool_desired_workers{cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", namespace="ate-system", ate_workerpool_namespace="team-a", ate_workerpool_name="paused"}'
+        values: "0x80"
+    alert_rule_test:
+      - alertname: AgentPlatformWorkerPoolExhausted
+        eval_time: 30m
+        exp_alerts: []
+      - alertname: AgentPlatformWorkerPoolExhausted
+        eval_time: 50m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformWorkerPoolExhausted
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: testinst
+              cluster_type: management_cluster
+              installation: testinst
+              pipeline: testing
+              provider: $provider
+              ate_workerpool_namespace: kagent
+              ate_workerpool_name: kagent-default
+              severity: notify
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "WorkerPool kagent/kagent-default on testinst has had no idle worker for 15 minutes: every worker hosts an agent, and new sessions wait for one to free up."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-workerpool-capacity/?INSTALLATION=testinst&CLUSTER=testinst&NAMESPACE=kagent&WORKERPOOL=kagent-default"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
+      - alertname: AgentPlatformWorkerPoolExhausted
+        eval_time: 70m
+        exp_alerts: []
+
+  # AgentPlatformWorkerPoolBelowDesired: one of four workers is not ready for
+  # 40 minutes; a gap of 10 minutes before it is not enough to fire.
+  - interval: 1m
+    input_series:
+      - series: 'ate_workerpool_desired_workers{cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", namespace="ate-system", ate_workerpool_namespace="kagent", ate_workerpool_name="kagent-default"}'
+        values: "4x100"
+      - series: 'ate_workerpool_ready_workers{cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", namespace="ate-system", ate_workerpool_namespace="kagent", ate_workerpool_name="kagent-default"}'
+        values: "3x10 4x20 3x40 4x30"
+    alert_rule_test:
+      - alertname: AgentPlatformWorkerPoolBelowDesired
+        eval_time: 25m
+        exp_alerts: []
+      - alertname: AgentPlatformWorkerPoolBelowDesired
+        eval_time: 65m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformWorkerPoolBelowDesired
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: testinst
+              cluster_type: management_cluster
+              installation: testinst
+              pipeline: testing
+              provider: $provider
+              ate_workerpool_namespace: kagent
+              ate_workerpool_name: kagent-default
+              severity: notify
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "WorkerPool kagent/kagent-default on testinst has had 1 fewer ready workers than desired for 30 minutes."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-workerpool-capacity/?INSTALLATION=testinst&CLUSTER=testinst&NAMESPACE=kagent&WORKERPOOL=kagent-default"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
+      - alertname: AgentPlatformWorkerPoolBelowDesired
+        eval_time: 90m
+        exp_alerts: []
+
+  # AgentPlatformAgentNamespaceQuotaNearlyFull: the quota of the kagent
+  # namespace, which hosts a WorkerPool, is 95 % used for CPU requests; the
+  # same use in flux-giantswarm, which hosts none, is not an agent namespace.
+  - interval: 1m
+    input_series:
+      - series: 'kube_resourcequota{cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", namespace="kagent", resourcequota="agents", resource="requests.cpu", type="used", pod="ksm-a"}'
+        values: "8x10 19x30"
+      - series: 'kube_resourcequota{cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", namespace="kagent", resourcequota="agents", resource="requests.cpu", type="hard", pod="ksm-a"}'
+        values: "20x40"
+      - series: 'kube_resourcequota{cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", namespace="flux-giantswarm", resourcequota="pods", resource="pods", type="used", pod="ksm-a"}'
+        values: "19x40"
+      - series: 'kube_resourcequota{cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", namespace="flux-giantswarm", resourcequota="pods", resource="pods", type="hard", pod="ksm-a"}'
+        values: "20x40"
+      - series: 'ate_workerpool_desired_workers{cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", namespace="ate-system", ate_workerpool_namespace="kagent", ate_workerpool_name="kagent-default"}'
+        values: "4x40"
+    alert_rule_test:
+      - alertname: AgentPlatformAgentNamespaceQuotaNearlyFull
+        eval_time: 20m
+        exp_alerts: []
+      - alertname: AgentPlatformAgentNamespaceQuotaNearlyFull
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformAgentNamespaceQuotaNearlyFull
+              area: platform
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: testinst
+              cluster_type: management_cluster
+              installation: testinst
+              pipeline: testing
+              provider: $provider
+              namespace: kagent
+              resourcequota: agents
+              resource: requests.cpu
+              severity: notify
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "ResourceQuota kagent/agents on testinst has used 95% of its requests.cpu for 15 minutes; above the limit the agent namespace gets no new worker."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-workerpool-capacity/?INSTALLATION=testinst&CLUSTER=testinst&NAMESPACE=kagent"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"

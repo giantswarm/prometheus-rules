@@ -6,7 +6,7 @@ tests:
   - interval: 1m
     input_series:
       # For the first 60min: test with 1 pod: none, up, down
-      - series: 'up{job="monitoring/sloth", cluster_type="management_cluster", cluster_id="gauss", installation="gauss", provider="capa", pipeline="testing"}'
+      - series: 'up{job="monitoring/sloth", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", provider="capa", pipeline="testing"}'
         values: "_x20 1+0x20 0+0x20"
     alert_rule_test:
       - alertname: SlothDown
@@ -18,8 +18,8 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cluster_id: gauss
-              installation: gauss
+              cluster_id: testinst
+              installation: testinst
               provider: capa
               pipeline: testing
               severity: page
@@ -29,10 +29,10 @@ tests:
               cancel_if_outside_working_hours: "true"
             exp_annotations:
               description: "Sloth is down."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/sloth-down/?INSTALLATION=gauss&CLUSTER=gauss
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/sloth-down/?INSTALLATION=testinst&CLUSTER=testinst
   - interval: 1m
     input_series:
-      - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="monitoring", container="sloth", installation="gauss", cluster_id="gauss"}'
+      - series: 'kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace="monitoring", container="sloth", installation="testinst", cluster_id="testinst"}'
         values: "0+0x20 0+5x20 100+0x140" # 0 restarts after 20 minutes then we restart 5 times per minute for 20 minutes then we stop restarting for 140 minutes
     alert_rule_test:
       - alertname: SlothRestartingTooOften
@@ -43,17 +43,18 @@ tests:
           - exp_labels:
               area: platform
               cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
-              cluster_id: gauss
+              cluster_id: testinst
               cluster_type: management_cluster
               container: sloth
-              installation: gauss
+              installation: testinst
               namespace: monitoring
               severity: page
               team: atlas
               topic: observability
             exp_annotations:
               description: Sloth is restarting too often.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/sloth-down/?INSTALLATION=gauss&CLUSTER=gauss
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/sloth-down/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: SlothRestartingTooOften
         eval_time: 140m  # After 140m minutes, all should be back to normal

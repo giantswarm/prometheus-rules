@@ -5,19 +5,19 @@ tests:
   - interval: 1m
     input_series:
       # Kyverno validating webhooks
-      - series: 'kube_validatingwebhookconfiguration_info{cluster_id="gremlin", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="http", installation="gremlin", instance="10.0.135.241:8080", job="kube-state-metrics", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", provider="capa", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest", validatingwebhookconfiguration="kyverno-resource-validating-webhook-cfg"}'
+      - series: 'kube_validatingwebhookconfiguration_info{cluster_id="testinst", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", endpoint="http", installation="testinst", instance="10.0.135.241:8080", job="kube-state-metrics", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", provider="capa", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest", validatingwebhookconfiguration="kyverno-resource-validating-webhook-cfg"}'
         values: "1+0x20"
       # Kyverno deployment status replicas
-      - series: 'kube_deployment_status_replicas_ready{cluster_id="gremlin", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="kyverno", endpoint="http", installation="gremlin", instance="10.0.135.241:8080", job="kube-state-metrics", namespace="kyverno", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", provider="capa", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
+      - series: 'kube_deployment_status_replicas_ready{cluster_id="testinst", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="kyverno", endpoint="http", installation="testinst", instance="10.0.135.241:8080", job="kube-state-metrics", namespace="kyverno", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", provider="capa", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
         values: "0+0x20"
       # Kyverno deployment spec replicas
-      - series: 'kube_deployment_spec_replicas{cluster_id="gremlin", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="kyverno", endpoint="http", installation="gremlin", instance="10.0.135.241:8080", job="kube-state-metrics", namespace="kyverno", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", provider="capa", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
+      - series: 'kube_deployment_spec_replicas{cluster_id="testinst", cluster_type="management_cluster", container="kube-state-metrics", customer="giantswarm", deployment="kyverno", endpoint="http", installation="testinst", instance="10.0.135.241:8080", job="kube-state-metrics", namespace="kyverno", node="master-00000y", organization="giantswarm", pipeline="testing", pod="prometheus-operator-app-kube-state-metrics-d7f4ff68d-qn6sb", provider="capa", region="germanywestcentral", service="prometheus-operator-app-kube-state-metrics", service_priority="highest"}'
         values: "0+0x240 1+0x70"
       # Kyverno admission reports
-      - series: 'aggregation:kyverno_resource_counts{cluster_id="gremlin", installation="gremlin", kind="admissionreports.kyverno.io", pipeline="testing", provider="capa"}'
+      - series: 'aggregation:kyverno_resource_counts{cluster_id="testinst", installation="testinst", kind="admissionreports.kyverno.io", pipeline="testing", provider="capa"}'
         values: "0+1000x30 30000+1500x30"
       # Kyverno updaterequests
-      - series: 'aggregation:kyverno_resource_counts{cluster_id="gremlin", installation="gremlin", kind="updaterequests.kyverno.io", pipeline="testing", provider="capa"}'
+      - series: 'aggregation:kyverno_resource_counts{cluster_id="testinst", installation="testinst", kind="updaterequests.kyverno.io", pipeline="testing", provider="capa"}'
         values: "0+100x15 5000+1500x30"
     alert_rule_test:
       # Webhooks alert
@@ -26,8 +26,9 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cluster_id: gremlin
-              installation: gremlin
+              cancel_if_kube_state_metrics_down: "true"
+              cluster_id: testinst
+              installation: testinst
               pipeline: testing
               provider: capa
               severity: page
@@ -43,8 +44,8 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cluster_id: gremlin
-              installation: gremlin
+              cluster_id: testinst
+              installation: testinst
               pipeline: testing
               provider: capa
               severity: notify
@@ -61,8 +62,9 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cluster_id: gremlin
-              installation: gremlin
+              cancel_if_kube_state_metrics_down: "true"
+              cluster_id: testinst
+              installation: testinst
               pipeline: testing
               provider: capa
               severity: notify
@@ -78,8 +80,9 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              cluster_id: gremlin
-              installation: gremlin
+              cancel_if_kube_state_metrics_down: "true"
+              cluster_id: testinst
+              installation: testinst
               pipeline: testing
               provider: capa
               severity: notify

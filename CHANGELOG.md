@@ -9,7 +9,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add `log-export` alerts for loss in the audit log export pipeline.
+
+### Changed
+
+- `cancel_if_kube_state_metrics_down` added to every alert that reads kube-state-metrics metrics.
+
+## [4.123.0] - 2026-09-30
+
+### Changed
+
+- Update inhibition condition for `FluxCustomerHelmReleaseFailed` alert to include `HelmReleaseAppToHrMigrationFailed` alerts.
+
+## [4.122.0] - 2026-09-30
+
+### Changed
+
+- The ten `Kube*CreatedMetricMissing` alerts are replaced by a single `KubeStateMetricsMetricsMissing`.
+- Harmonized cluster and installation names in test fixtures.
+
+### Fixed
+
+- `FluxGiantswarmHelmReleaseFailed` and `DeploymentNotSatisfiedBumblebee` no longer resolve and fire again when their exporter pod is replaced.
+- The `helm.sh/chart` label is valid for long chart versions: the 63-character cut trims the whole trailing run of `-`, `.` and `_`.
+
+### Added
+
+- `AgentPlatformModelUnpriced`: a Slack notify when agentgateway's `llm` listener cannot price a model it proxies (`agentgateway_cost_catalog_lookups_total` with a status other than `Exact` in every one-hour window for 30 minutes), so its calls are missing from the Agent Platform cost figures.
+- `AgentPlatformWorkerPoolExhausted`, `AgentPlatformWorkerPoolBelowDesired` and `AgentPlatformAgentNamespaceQuotaNearlyFull`: notify team Bumblebee when a Substrate WorkerPool has no idle worker, fewer ready workers than desired, or its namespace's ResourceQuota is over 90 % used.
 - Every agent platform alert links to the platform's Overview board: `__dashboardUid__: agent-platform-overview` and `dashboardQueryParams: "orgId=1"` on all six of `agent-platform.rules.yml`. On-call had a runbook and no graph. The board's component-health panels read the very series these alerts read, so the page and the graph cannot disagree. `orgId=1` because the board is in `Shared Org`, the organization customers reach (giantswarm/agent-platform#617, giantswarm/giantswarm#36711).
+- `InhibitionKubeStateMetricsDown` - arms the kube-state-metrics inhibition after 2m instead of 15m.
 - `AgentPlatformSlackRateLimited` and `AgentPlatformSlackCallGivenUp`: notify team Bumblebee when Slack keeps rate-limiting one of klaus-gateway's Web API methods (a 429 in every five-minute window for ten minutes), and as soon as the gateway gives up a rate-limited call (`klaus_gateway_slack_rate_limited_total`; giantswarm/klaus-gateway#313).
 
 ### Fixed
@@ -4592,7 +4621,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.121.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.123.0...HEAD
+[4.123.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.122.0...v4.123.0
+[4.122.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.121.0...v4.122.0
 [4.121.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.120.0...v4.121.0
 [4.120.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.119.1...v4.120.0
 [4.119.1]: https://github.com/giantswarm/prometheus-rules/compare/v4.119.0...v4.119.1

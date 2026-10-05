@@ -187,3 +187,44 @@ tests:
       - alertname: FluxSuspendedForTooLong
         eval_time: 175h
         exp_alerts: []
+
+  # flux-ksm is rescheduled while a HelmRelease is failed: the old pod's series
+  # ends and the new pod's begins with different `pod` and `instance` labels.
+  # The alert keeps its identity across the hand-over and stays firing instead
+  # of resolving and starting its `for` period over.
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="kyverno", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="flux-giantswarm", service="flux-giantswarm-flux-ksm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-aaaaa", endpoint="http", container="kube-state-metrics", instance="10.0.0.1:8080", node="ip-10-0-0-1.eu-west-1.compute.internal"}'
+        values: "1x20 _x30"
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="kyverno", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="flux-giantswarm", service="flux-giantswarm-flux-ksm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-bbbbb", endpoint="http", container="kube-state-metrics", instance="10.0.0.2:8080", node="ip-10-0-0-2.eu-west-1.compute.internal"}'
+        values: "_x17 1x33"
+    alert_rule_test:
+      # Firing from the first pod alone.
+      - alertname: FluxGiantswarmHelmReleaseFailed
+        eval_time: 15m
+        exp_alerts:
+          - exp_labels: &flux-giantswarm-helmrelease-failed-labels
+              alertname: "FluxGiantswarmHelmReleaseFailed"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "myinstall"
+              cluster_type: "management_cluster"
+              exported_namespace: "flux-giantswarm"
+              installation: "myinstall"
+              name: "kyverno"
+              namespace: "flux-giantswarm"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "page"
+              team: "honeybadger"
+              topic: "releng"
+            exp_annotations: &flux-giantswarm-helmrelease-failed-annotations
+              description: "Flux HelmRelease kyverno in ns flux-giantswarm on myinstall/myinstall is stuck in Failed state."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION=myinstall&CLUSTER=myinstall&NAMESPACE=flux-giantswarm&HELMRELEASE_NAME=kyverno"
+      # Only the second pod's series exists now. Had `pod` been part of the
+      # alert's labels, the alert would be pending here until 27m.
+      - alertname: FluxGiantswarmHelmReleaseFailed
+        eval_time: 25m
+        exp_alerts:
+          - exp_labels: *flux-giantswarm-helmrelease-failed-labels
+            exp_annotations: *flux-giantswarm-helmrelease-failed-annotations

@@ -6,9 +6,9 @@ tests:
   # WorkloadClusterAppFailed tests
   - interval: 1m
     input_series:
-      - series: 'app_operator_app_info{app="cilium", app_version="1.11.2", catalog="giantswarm", cluster_id="gauss", cluster_missing="false", cluster_type="management_cluster", customer="giantswarm", deployed_version="0.2.6", installation="gauss", instance="100.64.2.221:8000", job="gauss-prometheus/app-exporter-gauss/0", name="cilium", namespace="giantswarm", node="ip-10-0-5-93.eu-west-1.compute.internal", organization="giantswarm", pod="app-exporter-7f8c5d7dd5-9dh4r", provider="capa", service_priority="highest", status="pending-upgrade", team="rocket", upgrade_available="false", version="0.2.6", version_mismatch="false"}'
+      - series: 'app_operator_app_info{app="cilium", app_version="1.11.2", catalog="giantswarm", cluster_id="testinst", cluster_missing="false", cluster_type="management_cluster", customer="giantswarm", deployed_version="0.2.6", installation="testinst", instance="100.64.2.221:8000", job="testinst-prometheus/app-exporter-testinst/0", name="cilium", namespace="giantswarm", node="ip-10-0-5-93.eu-west-1.compute.internal", organization="giantswarm", pod="app-exporter-7f8c5d7dd5-9dh4r", provider="capa", service_priority="highest", status="pending-upgrade", team="rocket", upgrade_available="false", version="0.2.6", version_mismatch="false"}'
         values: "0+0x20 1+0x100"
-      - series: 'capi_cluster_info{cluster_id="gauss", infrastructure_reference_kind="AWSCluster", provider="capa"}'
+      - series: 'capi_cluster_info{cluster_id="testinst", infrastructure_reference_kind="AWSCluster", provider="capa"}'
         values: "1x120"
     alert_rule_test:
       - alertname: WorkloadClusterAppFailed
@@ -22,14 +22,14 @@ tests:
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_outside_working_hours: "true"
               catalog: giantswarm
-              cluster_id: gauss
+              cluster_id: testinst
               cluster_missing: "false"
               cluster_type: management_cluster
               customer: giantswarm
               deployed_version: 0.2.6
-              installation: gauss
+              installation: testinst
               instance: 100.64.2.221:8000
-              job: gauss-prometheus/app-exporter-gauss/0
+              job: testinst-prometheus/app-exporter-testinst/0
               name: cilium
               namespace: giantswarm
               node: ip-10-0-5-93.eu-west-1.compute.internal
@@ -46,16 +46,16 @@ tests:
               version_mismatch: "false"
             exp_annotations:
               description: "Workload Cluster App giantswarm/cilium, version 0.2.6 is  in pending-upgrade state. "
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-failures/?INSTALLATION=gauss&CLUSTER=gauss&NAMESPACE=giantswarm&APP=cilium
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-failures/?INSTALLATION=testinst&CLUSTER=testinst&NAMESPACE=giantswarm&APP=cilium
 
   # AppWithoutTeamAnnotation tests
   - interval: 1m
     input_series:
-      - series: 'app_operator_app_info{app="cilium", app_version="1.11.2", catalog="giantswarm", cluster_id="gauss", cluster_missing="false", cluster_type="management_cluster", customer="giantswarm", deployed_version="0.2.6", installation="gauss", instance="100.64.2.221:8000", job="gauss-prometheus/app-exporter-gauss/0", name="cilium", namespace="giantswarm", node="ip-10-0-5-93.eu-west-1.compute.internal", organization="giantswarm", pod="app-exporter-7f8c5d7dd5-9dh4r", provider="capa", service_priority="highest", status="pending-upgrade", team="rocket", upgrade_available="false", version="0.2.6", version_mismatch="false"}'
+      - series: 'app_operator_app_info{app="cilium", app_version="1.11.2", catalog="giantswarm", cluster_id="testinst", cluster_missing="false", cluster_type="management_cluster", customer="giantswarm", deployed_version="0.2.6", installation="testinst", instance="100.64.2.221:8000", job="testinst-prometheus/app-exporter-testinst/0", name="cilium", namespace="giantswarm", node="ip-10-0-5-93.eu-west-1.compute.internal", organization="giantswarm", pod="app-exporter-7f8c5d7dd5-9dh4r", provider="capa", service_priority="highest", status="pending-upgrade", team="rocket", upgrade_available="false", version="0.2.6", version_mismatch="false"}'
         values: "1+0x100"
-      - series: 'app_operator_app_info{app="userd", catalog="control-plane-catalog", cluster_id="gauss", cluster_missing="false", cluster_type="management_cluster", customer="vodafone", deployed_version="1.2.1", endpoint="web", installation="gauss", instance="app-exporter", job="app-exporter", name="userd", namespace="giantswarm", node="ip-10-0-5-93.eu-west-1.compute.internal", organization="giantswarm", pod="app-exporter-64f9c4fb7b-d77pv", provider="capa", service_priority="highest", status="deployed", team="noteam", upgrade_available="false", version="1.2.1", version_mismatch="false"}'
+      - series: 'app_operator_app_info{app="userd", catalog="control-plane-catalog", cluster_id="testinst", cluster_missing="false", cluster_type="management_cluster", customer="examplecustomer", deployed_version="1.2.1", endpoint="web", installation="testinst", instance="app-exporter", job="app-exporter", name="userd", namespace="giantswarm", node="ip-10-0-5-93.eu-west-1.compute.internal", organization="giantswarm", pod="app-exporter-64f9c4fb7b-d77pv", provider="capa", service_priority="highest", status="deployed", team="noteam", upgrade_available="false", version="1.2.1", version_mismatch="false"}'
         values: "1+0x100"
-      - series: 'capi_cluster_info{cluster_id="gauss", infrastructure_reference_kind="AWSCluster", provider="capa"}'
+      - series: 'capi_cluster_info{cluster_id="testinst", infrastructure_reference_kind="AWSCluster", provider="capa"}'
         values: "1+0x120"
     alert_rule_test:
       - alertname: AppWithoutTeamAnnotation
@@ -71,13 +71,13 @@ tests:
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_outside_working_hours: "true"
               catalog: control-plane-catalog
-              cluster_id: gauss
+              cluster_id: testinst
               cluster_missing: "false"
               cluster_type: management_cluster
-              customer: vodafone
+              customer: examplecustomer
               deployed_version: 1.2.1
               endpoint: web
-              installation: gauss
+              installation: testinst
               instance: app-exporter
               job: app-exporter
               name: userd
@@ -96,12 +96,12 @@ tests:
               version_mismatch: "false"
             exp_annotations:
               description: App userd has no team label.
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-team-annotation/?INSTALLATION=gauss&CLUSTER=gauss&NAMESPACE=giantswarm&APP=userd
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-team-annotation/?INSTALLATION=testinst&CLUSTER=testinst&NAMESPACE=giantswarm&APP=userd
 
   # ClusterUpgradeStuck tests
   - interval: 1m
     input_series:
-      - series: 'app_operator_app_info{app="cluster-aws", catalog="cluster", cluster_id="abc01", cluster_missing="false", cluster_type="management_cluster", container="app-exporter", customer="giantswarm", deployed_version="2.6.2", endpoint="web", installation="alba", instance="100.64.140.199:8000", job="app-exporter", latest_version="3.2.1", name="abc01", namespace="org-giantswarm", organization="giantswarm", pipeline="stable", pod="app-exporter-ff795cc9b-bh89s", provider="capa", region="eu-west-1", service="app-exporter", service_priority="highest", status="already-exists", team="phoenix", upgrade_available="false", version="3.2.1", version_mismatch="true"}'
+      - series: 'app_operator_app_info{app="cluster-aws", catalog="cluster", cluster_id="abc01", cluster_missing="false", cluster_type="management_cluster", container="app-exporter", customer="giantswarm", deployed_version="2.6.2", endpoint="web", installation="testinst", instance="100.64.140.199:8000", job="app-exporter", latest_version="3.2.1", name="abc01", namespace="org-giantswarm", organization="giantswarm", pipeline="stable", pod="app-exporter-ff795cc9b-bh89s", provider="capa", region="eu-west-1", service="app-exporter", service_priority="highest", status="already-exists", team="phoenix", upgrade_available="false", version="3.2.1", version_mismatch="true"}'
         values: "0+0x5 1+0x100"
       - series: 'capi_cluster_info{cluster_id="abc01", infrastructure_reference_kind="AWSCluster", provider="capa"}'
         values: "1x120"
@@ -123,7 +123,7 @@ tests:
               customer: giantswarm
               deployed_version: "2.6.2"
               endpoint: web
-              installation: alba
+              installation: testinst
               instance: 100.64.140.199:8000
               job: app-exporter
               latest_version: "3.2.1"
@@ -145,4 +145,4 @@ tests:
               version_mismatch: "true"
             exp_annotations:
               description: "Cluster upgrade for cluster-aws is stuck. Version mismatch detected for abc01 in namespace org-giantswarm."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-pending-update/?INSTALLATION=alba&CLUSTER=abc01&APP=abc01
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/app-pending-update/?INSTALLATION=testinst&CLUSTER=abc01&APP=abc01

@@ -1,0 +1,113 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: agent-platform-capacity.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: agent-platform-capacity
+    rules:
+    # Agent platform capacity (team Bumblebee): the limits an agent session
+    # runs into before anything is down. Agents run as actors in the workers
+    # of a Substrate WorkerPool, one actor per worker at a time, so a pool's
+    # replicas bound the concurrently active sessions, and a ResourceQuota in
+    # the pool's namespace bounds what its workers may request. These alerts
+    # are the heads-up, to Slack: nothing is down, and without
+    # `all_pipelines` no PagerDuty route matches a notify.
+    #
+    # Substrate's metrics carry the pool as `ate_workerpool_namespace` and
+    # `ate_workerpool_name`; `namespace` is the scraped Substrate component's
+    # (ate-system). Two replicas of the API server report the same pool, so the
+    # series are reduced with `max` per pool (and per sandbox class, which a
+    # pool has one of) before they are summed.
+    #
+    # Every worker of a pool holds an actor: the next session to start or
+    # resume waits for a worker to free up. A few minutes of it is a burst;
+    # fifteen minutes is a pool that is too small for the installation's use.
+    - alert: AgentPlatformWorkerPoolExhausted
+      annotations:
+        description: '{{`WorkerPool {{ $labels.ate_workerpool_namespace }}/{{ $labels.ate_workerpool_name }} on {{ $labels.installation }} has had no idle worker for 15 minutes: every worker hosts an agent, and new sessions wait for one to free up.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-workerpool-capacity/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.ate_workerpool_namespace }}&WORKERPOOL={{ $labels.ate_workerpool_name }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
+      expr: |
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, ate_workerpool_namespace, ate_workerpool_name) (
+          max by (cluster_id, cluster_type, installation, pipeline, provider, ate_workerpool_namespace, ate_workerpool_name, ate_sandbox_class) (
+            ate_workerpool_workers{cluster_type="management_cluster", ate_worker_state="idle"}
+          )
+        ) == 0
+        and on (cluster_id, ate_workerpool_namespace, ate_workerpool_name)
+        max by (cluster_id, ate_workerpool_namespace, ate_workerpool_name) (
+          ate_workerpool_desired_workers{cluster_type="management_cluster"}
+        ) > 0
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: bumblebee
+        topic: agent-platform
+    # Fewer workers are ready than the pool wants: a worker pod that cannot be
+    # scheduled (node capacity, the CPU feature-set pin, a quota) or does not
+    # start. The pool then has less headroom than it was sized for, before it
+    # is exhausted.
+    - alert: AgentPlatformWorkerPoolBelowDesired
+      annotations:
+        description: '{{`WorkerPool {{ $labels.ate_workerpool_namespace }}/{{ $labels.ate_workerpool_name }} on {{ $labels.installation }} has had {{ printf "%.0f" $value }} fewer ready workers than desired for 30 minutes.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-workerpool-capacity/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.ate_workerpool_namespace }}&WORKERPOOL={{ $labels.ate_workerpool_name }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
+      expr: |
+        max by (cluster_id, cluster_type, installation, pipeline, provider, ate_workerpool_namespace, ate_workerpool_name) (
+          ate_workerpool_desired_workers{cluster_type="management_cluster"}
+        )
+        -
+        max by (cluster_id, cluster_type, installation, pipeline, provider, ate_workerpool_namespace, ate_workerpool_name) (
+          ate_workerpool_ready_workers{cluster_type="management_cluster"}
+        ) > 0
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: bumblebee
+        topic: agent-platform
+    # A ResourceQuota in a namespace that hosts a WorkerPool — an agent
+    # namespace — is more than 90 % used for one of its resources. Above the
+    # hard limit the API server refuses the next worker pod, so the pool stays
+    # below its desired size. Namespaces without a WorkerPool are not agent
+    # namespaces and stay out, whatever their quota.
+    - alert: AgentPlatformAgentNamespaceQuotaNearlyFull
+      annotations:
+        description: '{{`ResourceQuota {{ $labels.namespace }}/{{ $labels.resourcequota }} on {{ $labels.installation }} has used {{ $value | humanizePercentage }} of its {{ $labels.resource }} for 15 minutes; above the limit the agent namespace gets no new worker.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-workerpool-capacity/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
+      expr: |
+        (
+          max by (cluster_id, cluster_type, installation, pipeline, provider, namespace, resourcequota, resource) (
+            kube_resourcequota{cluster_type="management_cluster", type="used"}
+          )
+          /
+          (
+            max by (cluster_id, cluster_type, installation, pipeline, provider, namespace, resourcequota, resource) (
+              kube_resourcequota{cluster_type="management_cluster", type="hard"}
+            ) > 0
+          )
+        ) > 0.9
+        and on (cluster_id, namespace)
+        label_replace(
+          max by (cluster_id, ate_workerpool_namespace) (ate_workerpool_desired_workers{cluster_type="management_cluster"}),
+          "namespace", "$1", "ate_workerpool_namespace", "(.+)"
+        )
+      for: 15m
+      labels:
+        area: platform
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: bumblebee
+        topic: agent-platform

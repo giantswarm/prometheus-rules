@@ -20,10 +20,9 @@ spec:
     # — do not carry it, so on a `testing` installation they only reach Slack.
     # The alerts below carry `all_pipelines` and step back wherever the generic
     # alert pages (`pipeline` stable or stable-testing), so one stuck component
-    # never opens two incidents. The two Slack alerts at the end are the
-    # exception: they notify only and carry no `all_pipelines`, because the
-    # all-pipelines PagerDuty routes match any severity and would page on a
-    # notify.
+    # never opens two incidents. The Slack alerts at the end are the exception:
+    # they notify only and carry no `all_pipelines`, because the all-pipelines
+    # PagerDuty routes match any severity and would page on a notify.
     #
     # Ownership is derived from the metric, not hardcoded: team-stamper copies
     # the chart's `io.giantswarm.application.team` annotation onto every
@@ -82,6 +81,7 @@ spec:
       labels:
         all_pipelines: "true"
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: bumblebee
@@ -105,6 +105,7 @@ spec:
       labels:
         all_pipelines: "true"
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: bumblebee
@@ -135,6 +136,7 @@ spec:
       labels:
         all_pipelines: "true"
         area: platform
+        cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page
         team: bumblebee
@@ -260,6 +262,32 @@ spec:
           unless on (cluster_id, namespace, pod, method)
           klaus_gateway_slack_rate_limited_total{cluster_type="management_cluster", outcome="exhausted"} offset 15m
         ) > 0
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: bumblebee
+        topic: agent-platform
+    # The LLM listener prices every model call from the gateway release's
+    # built-in catalog plus the agent-platform chart's llmRouting.modelCatalog
+    # overlay, and records no cost for a call it cannot price: the spend panels
+    # read low, not wrong-looking. The alert fires once every one-hour window
+    # has held an unpriced lookup for half an hour, and resolves about an hour
+    # after the last one. Custom providers (self-hosted models) resolve to
+    # gen_ai_system="custom" and have no price yet, so they are left out. A
+    # counter series has no sample before its first lookup, so it takes a second
+    # unpriced call to start the window. Slack only: nothing is down.
+    - alert: AgentPlatformModelUnpriced
+      annotations:
+        description: '{{`agentgateway on {{ $labels.installation }} has had calls to {{ $labels.gen_ai_system }}/{{ $labels.gen_ai_response_model }} it could not price (lookup status {{ $labels.status }}) in every one-hour window for 30 minutes: they are missing from the Agent Platform cost figures.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-model-unpriced/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&PROVIDER={{ $labels.gen_ai_system }}&MODEL={{ $labels.gen_ai_response_model }}`}}'
+        __dashboardUid__: agent-platform-llm-usage
+        dashboardQueryParams: "orgId=1"
+      expr: |
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, gen_ai_system, gen_ai_response_model, status) (
+          increase(agentgateway_cost_catalog_lookups_total{cluster_type="management_cluster", listener="llm", status!="Exact", gen_ai_system!="custom"}[1h])
+        ) > 0
+      for: 30m
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"

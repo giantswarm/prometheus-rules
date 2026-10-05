@@ -280,7 +280,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=testinst&CLUSTER=testinst
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoringagentdown?INSTALLATION=testinst&CLUSTER=testinst
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
@@ -300,7 +300,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=testinst&CLUSTER=testinst
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoringagentdown?INSTALLATION=testinst&CLUSTER=testinst
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
@@ -319,7 +319,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=testinst&CLUSTER=testinst
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoringagentdown?INSTALLATION=testinst&CLUSTER=testinst
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
@@ -343,7 +343,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=testinst&CLUSTER=testinst
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoringagentdown?INSTALLATION=testinst&CLUSTER=testinst
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
@@ -362,7 +362,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=testinst&CLUSTER=testinst
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoringagentdown?INSTALLATION=testinst&CLUSTER=testinst
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
@@ -383,7 +383,7 @@ tests:
               topic: observability
             exp_annotations:
               description: "Monitoring agent fails to send samples."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=testinst&CLUSTER=testinst
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoringagentdown?INSTALLATION=testinst&CLUSTER=testinst
               __dashboardUid__: promRW001
               dashboardQueryParams: "orgId=1"
               summary: "Monitoring agent fails to send samples to remote write endpoint."
@@ -417,7 +417,7 @@ tests:
             exp_annotations:
               description: "At least one of the monitoring agent shard is missing."
               summary: "Monitoring agent is missing shards."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=testinst&CLUSTER=testinst
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoringagentdown?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: MonitoringAgentShardsNotSatisfied
         eval_time: 60m
         exp_alerts:
@@ -436,7 +436,7 @@ tests:
             exp_annotations:
               description: "At least one of the monitoring agent shard is missing."
               summary: "Monitoring agent is missing shards."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=testinst&CLUSTER=testinst
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoringagentdown?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: InhibitionMonitoringAgentShardsNotSatisfied
         eval_time: 60m
         exp_alerts:
@@ -454,7 +454,7 @@ tests:
             exp_annotations:
               description: "At least one of the monitoring agent shard is missing."
               summary: "Monitoring agent is missing shards."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoring-agent-down?INSTALLATION=testinst&CLUSTER=testinst
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/alloy/#monitoringagentdown?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: MonitoringAgentShardsNotSatisfied
         eval_time: 130m
       - alertname: InhibitionMonitoringAgentShardsNotSatisfied

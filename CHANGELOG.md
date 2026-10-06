@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `ClusterCrossplaneResourcesNotSynced` alert
 
+### Changed
+
+- Cover Azure storage, network, managed identity, and role assignment resources in `ClusterCrossplaneResourcesNotReady` and `ClusterCrossplaneResourcesNotSynced`
+
 ## [4.102.0] - 2026-04-08
 
 ### Changed

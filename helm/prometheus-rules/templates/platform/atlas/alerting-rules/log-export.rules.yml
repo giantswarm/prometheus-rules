@@ -1,0 +1,116 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: log-export.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+    - name: log-export
+      rules:
+        # Mirrored requests are fire-and-forget: Envoy never retries them and the primary write
+        # path succeeds regardless, so every alert here is about an archive gap nobody would
+        # otherwise notice. The alloy-logexporter StatefulSet only exists where a LogExport does,
+        # which is what keeps these quiet on the installations that never use the feature.
+        #
+        # End-to-end check: log export is on, but nothing reaches the destination. It covers
+        # alloy-logexporter down, the mirror or route broken, and every upload failing. The gate
+        # comes from kube-state-metrics because every alloy-logexporter series disappears with its
+        # pods. Written as `unless` because the sent counter only appears on the first upload.
+        - alert: LogExportNotUploading
+          annotations:
+            summary: Log export is enabled but nothing is being uploaded.
+            description: '{{`alloy-logexporter has uploaded no log records for 30 minutes, so the archive is silently missing data.`}}'
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+          expr: |-
+            count by (cluster_id, installation, pipeline, provider) (
+              kube_statefulset_replicas{statefulset="alloy-logexporter"} > 0
+            )
+            unless
+            count by (cluster_id, installation, pipeline, provider) (
+              rate (
+                otelcol_exporter_sent_log_records_total{job="alloy-logexporter"}[30m]
+              )
+              > 0
+            )
+          for: 30m
+          labels:
+            area: platform
+            severity: page
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+            # A failed scrape of alloy-logexporter alone looks like an outage here.
+            cancel_if_monitoring_agent_down: "true"
+        # Partial loss at the Envoy hop, before alloy-logexporter ever sees the request.
+        # LogExportNotUploading stays green while the rest of the traffic still uploads. The
+        # cluster is named after the route rule and mirror index, not the backend.
+        - alert: LogExportMirrorDropping
+          annotations:
+            summary: Envoy is failing to mirror log pushes to alloy-logexporter.
+            description: '{{`{{ $value | printf "%.2f" }} mirrored requests per second are failing at the Envoy hop, so those log lines never reach the archive.`}}'
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+          expr: |-
+            sum by (cluster_id, installation, pipeline, provider) (
+              rate (
+                envoy_cluster_upstream_rq_xx{envoy_cluster_name=~"httproute/loki/loki-gateway/rule/[0-9]+-mirror-[0-9]+", envoy_response_code_class="5"}[10m]
+              )
+            )
+            > 0
+          for: 15m
+          labels:
+            area: platform
+            severity: notify
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        # Partial, permanent loss while uploads still flow: the S3 upload component gave up on an
+        # upload after its timeout (it has no retry_on_failure), or its full queue refused records.
+        # Both counters only appear on their first increment.
+        - alert: LogExportRecordsLost
+          annotations:
+            summary: alloy-logexporter is losing log records.
+            description: '{{`alloy-logexporter is losing {{ $value | printf "%.2f" }} log records per second to failed uploads or a full sending queue. They are permanently missing from the archive.`}}'
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+          expr: |-
+            sum by (cluster_id, installation, pipeline, provider) (
+              rate (
+                {__name__=~"otelcol_exporter_(send|enqueue)_failed_log_records_total", job="alloy-logexporter"}[10m]
+              )
+            )
+            > 0
+          for: 15m
+          labels:
+            area: platform
+            severity: notify
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"
+        # One LogExport has uploaded nothing for hours: its selector matches no stream.
+        # LogExportNotUploading stays green while another export still uploads. The queue capacity
+        # gauge exists per export from startup, while the sent counter only appears on the first
+        # upload -- hence `unless`.
+        - alert: LogExportNothingSelected
+          annotations:
+            summary: A LogExport has uploaded nothing for 6 hours.
+            description: '{{`{{ $labels.component_id }} on alloy-logexporter has uploaded no records for 6 hours, so its selector likely matches no stream.`}}'
+            runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+          expr: |-
+            max by (cluster_id, installation, pipeline, provider, component_id) (
+              otelcol_exporter_queue_capacity{job="alloy-logexporter", data_type="logs"}
+            )
+            unless
+            sum by (cluster_id, installation, pipeline, provider, component_id) (
+              rate (
+                otelcol_exporter_sent_log_records_total{job="alloy-logexporter"}[6h]
+              )
+            )
+            > 0
+          for: 6h
+          labels:
+            area: platform
+            severity: notify
+            team: atlas
+            topic: observability
+            cancel_if_outside_working_hours: "true"

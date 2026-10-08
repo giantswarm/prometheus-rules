@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- `MonitoringAgentDown`, `MonitoringAgentShardsNotSatisfied` and their inhibition alerts link to the `#monitoringagentdown` section of the alloy runbook. They linked to `#monitoring-agent-down`, which does not exist, so the link opened the top of the page.
+- fix `MonitoringAgentDown`, `MonitoringAgentShardsNotSatisfied` and their inhibition alerts runbook link.
 
 ## [4.123.0] - 2026-09-30
 

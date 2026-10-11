@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `KonfigurationReconciliationFailed` carries the namespace of the failing Konfiguration in its `namespace` label instead of an unrendered template.
 - `cancel_if_kube_state_metrics_down` added to every alert that reads kube-state-metrics metrics.
 
 ## [4.123.0] - 2026-09-30

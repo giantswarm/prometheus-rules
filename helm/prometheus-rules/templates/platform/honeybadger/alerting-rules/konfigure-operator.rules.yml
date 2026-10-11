@@ -28,7 +28,7 @@ spec:
             description: |-
               {{`{{ $labels.resource_kind }} {{ $labels.resource_name }} in ns {{ $labels.resource_namespace }} on {{ $labels.installation }} is stuck in Failed state.`}}
             runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/konfigure-operator/
-          expr: konfigure_operator_reconcile_condition{condition_type="Ready", condition_status="False"} > 0
+          expr: label_replace(konfigure_operator_reconcile_condition{condition_type="Ready", condition_status="False"}, "namespace", "$1", "exported_namespace", "(.+)") > 0
           for: 10m
           labels:
             area: platform
@@ -36,5 +36,3 @@ spec:
             severity: page
             team: honeybadger
             topic: releng
-            namespace: |-
-              {{`{{ $labels.exported_namespace }}`}}

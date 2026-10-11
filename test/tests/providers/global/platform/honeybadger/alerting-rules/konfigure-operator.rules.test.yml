@@ -57,3 +57,29 @@ tests:
             exp_annotations:
               description: "ManagementClusterConfiguration test in ns giantswarm on example is stuck in Failed state."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/konfigure-operator/
+  - interval: 1m
+    input_series:
+      - series: 'konfigure_operator_reconcile_condition{condition_type="Ready", condition_status="False", resource_kind="Konfiguration", resource_name="test", resource_namespace="customer-ns", namespace="giantswarm", exported_namespace="customer-ns", installation="example"}'
+        values: '1x15'
+    alert_rule_test:
+      - alertname: KonfigurationReconciliationFailed
+        eval_time: 12m
+        exp_alerts:
+          - exp_labels:
+              alertname: "KonfigurationReconciliationFailed"
+              area: "platform"
+              cancel_if_outside_working_hours: "true"
+              condition_status: "False"
+              condition_type: "Ready"
+              exported_namespace: "customer-ns"
+              installation: "example"
+              namespace: "customer-ns"
+              resource_kind: "Konfiguration"
+              resource_name: "test"
+              resource_namespace: "customer-ns"
+              severity: "page"
+              team: "honeybadger"
+              topic: "releng"
+            exp_annotations:
+              description: "Konfiguration test in ns customer-ns on example is stuck in Failed state."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/konfigure-operator/

@@ -44,45 +44,45 @@ listRunbooks () {
 extractRunbookUrl() {
     local raw_url="$1"
     local url
-    
+
     # Remove runbook_url: prefix and trim whitespace
     url=$(echo "$raw_url" | sed 's|runbook_url:||' | sed -e 's|^[[:space:]]*||' | sed -e 's|[[:space:]]*$||')
-    
+
     # Remove quotes (single or double)
     url=$(echo "$url" | sed -e "s|^[\"']||" | sed -e "s|[\"']$||")
-    
+
     # Handle templated URLs with {{` ... `}} syntax
     if [[ "$url" =~ ^\{\{\`.*\`\}\}$ ]]; then
         # Extract content between {{` and `}}
         url=$(echo "$url" | sed 's|^{{`||' | sed 's|`}}$||')
     fi
-    
+
     # Remove query parameters (everything after ?)
     url="${url%%\?*}"
-    
+
     # Remove fragment identifiers that might remain
     url="${url%%#*}"
-    
+
     echo "$url"
 }
 
 generateAnnotationsJson() {
     local -a annotations_data=("$@")
     local first=true
-    
+
     echo "["
     for annotation in "${annotations_data[@]}"; do
         IFS='|' read -r filename line_number url <<< "$annotation"
-        
+
         if [[ "$first" == true ]]; then
             first=false
         else
             echo ","
         fi
-        
+
         # Escape quotes in the URL for JSON
         escaped_url="${url//\"/\\\"}"
-        
+
         cat << EOF
   {
     "file": "$filename",
@@ -134,7 +134,7 @@ main() {
         fi
 
         while IFS=: read -r filename line_number matched_text; do
-            
+
             url=$(extractRunbookUrl "$matched_text")
             if [[ -z "$url" ]]; then
                 continue
@@ -158,7 +158,7 @@ main() {
 
     # Check for alerts that fire outside business hours but lack runbook URLs
     ########################
-    
+
     # Find all alerts with severity: page that don't have cancel_if_outside_working_hours: "true"
     for rulesFile in $rulesFiles; do
         # Use yq to directly query YAML and find alerts missing runbook URLs
@@ -186,7 +186,7 @@ main() {
         for message in "${E_unexistingrunbook[@]}"; do
             echo "$message"
         done
-        
+
         if [[ -n "${GITHUB_ENV:-}" ]]; then
             # Generate GitHub annotations JSON file
             echo ""

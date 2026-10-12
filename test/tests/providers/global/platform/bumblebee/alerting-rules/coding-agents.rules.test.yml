@@ -1,0 +1,122 @@
+---
+rule_files:
+  - coding-agents.rules.yml
+
+tests:
+  # AgentPlatformSandboxEgressDenied: the 403 series of the egress gateway is
+  # born at 20m with the first denial and does not move again; increase()
+  # sees nothing, the birth clause fires at once and clears at 35m, when the
+  # series is fifteen minutes old. Allowed requests (200) and a 403 an
+  # upstream answered itself (reason Upstream) never fire, nor does a 403 of
+  # the platform's own agentgateway in another namespace.
+  - interval: 1m
+    input_series:
+      - series: 'agentgateway_requests_total{cluster_type="management_cluster", namespace="ate-system", job="ate-system/atenet-egress", container="agentgateway", endpoint="stats", gateway="default/default", bind="bind/wildcard", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", pod="atenet-egress-98f776d89-aaaaa", instance="10.0.0.1:15020", listener="listener0", route="default/route0", method="CONNECT", protocol="http", reason="Upstream", status="200"}'
+        values: "0+5x59"
+      - series: 'agentgateway_requests_total{cluster_type="management_cluster", namespace="ate-system", job="ate-system/atenet-egress", container="agentgateway", endpoint="stats", gateway="default/default", bind="bind/wildcard", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", pod="atenet-egress-98f776d89-aaaaa", instance="10.0.0.1:15020", listener="listener0", route="default/route0", method="CONNECT", protocol="http", reason="Authorization", status="403"}'
+        values: "_x20 1x39"
+      - series: 'agentgateway_requests_total{cluster_type="management_cluster", namespace="ate-system", job="ate-system/atenet-egress", container="agentgateway", endpoint="stats", gateway="default/default", bind="bind/wildcard", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", pod="atenet-egress-98f776d89-aaaaa", instance="10.0.0.1:15020", listener="listener2", route="default/route0", method="GET", protocol="http", reason="Upstream", status="403"}'
+        values: "_x5 1+1x54"
+      - series: 'agentgateway_requests_total{cluster_type="management_cluster", namespace="agent-platform", job="agent-platform/agentgateway-controller-proxy", pod="agentgateway-7544b69d56-mqvm7", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", listener="llm", route="agent-platform/llm", method="POST", reason="Authorization", status="403"}'
+        values: "_x5 1+1x54"
+    alert_rule_test:
+      - alertname: AgentPlatformSandboxEgressDenied
+        eval_time: 19m
+        exp_alerts: []
+      - alertname: AgentPlatformSandboxEgressDenied
+        eval_time: 22m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformSandboxEgressDenied
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: testinst
+              cluster_type: management_cluster
+              installation: testinst
+              namespace: ate-system
+              pipeline: testing
+              provider: $provider
+              severity: notify
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "The egress gateway in ate-system on testinst refused 1 requests of agent sandboxes to hosts outside their egress policy in the last fifteen minutes."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coding-agents-kill-switch/?INSTALLATION=testinst&CLUSTER=testinst"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
+      - alertname: AgentPlatformSandboxEgressDenied
+        eval_time: 34m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformSandboxEgressDenied
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: testinst
+              cluster_type: management_cluster
+              installation: testinst
+              namespace: ate-system
+              pipeline: testing
+              provider: $provider
+              severity: notify
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "The egress gateway in ate-system on testinst refused 1 requests of agent sandboxes to hosts outside their egress policy in the last fifteen minutes."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coding-agents-kill-switch/?INSTALLATION=testinst&CLUSTER=testinst"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
+      - alertname: AgentPlatformSandboxEgressDenied
+        eval_time: 36m
+        exp_alerts: []
+  # Denials keep coming, and the egress gateway's pod is replaced at 30m: the
+  # alert keeps firing across the hand-over, one alert per installation, with
+  # the pods' counts summed.
+  - interval: 1m
+    input_series:
+      - series: 'agentgateway_requests_total{cluster_type="management_cluster", namespace="ate-system", job="ate-system/atenet-egress", container="agentgateway", endpoint="stats", gateway="default/default", bind="bind/wildcard", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", pod="atenet-egress-98f776d89-aaaaa", instance="10.0.0.1:15020", listener="listener0", route="default/route0", method="CONNECT", protocol="http", reason="Authorization", status="403"}'
+        values: "0+2x30 _x29"
+      - series: 'agentgateway_requests_total{cluster_type="management_cluster", namespace="ate-system", job="ate-system/atenet-egress", container="agentgateway", endpoint="stats", gateway="default/default", bind="bind/wildcard", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", pod="atenet-egress-98f776d89-bbbbb", instance="10.0.0.2:15020", listener="listener0", route="default/route0", method="CONNECT", protocol="http", reason="Authorization", status="403"}'
+        values: "_x31 0+2x28"
+    alert_rule_test:
+      - alertname: AgentPlatformSandboxEgressDenied
+        eval_time: 25m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformSandboxEgressDenied
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: testinst
+              cluster_type: management_cluster
+              installation: testinst
+              namespace: ate-system
+              pipeline: testing
+              provider: $provider
+              severity: notify
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "The egress gateway in ate-system on testinst refused 30 requests of agent sandboxes to hosts outside their egress policy in the last fifteen minutes."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coding-agents-kill-switch/?INSTALLATION=testinst&CLUSTER=testinst"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
+      - alertname: AgentPlatformSandboxEgressDenied
+        eval_time: 55m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformSandboxEgressDenied
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: testinst
+              cluster_type: management_cluster
+              installation: testinst
+              namespace: ate-system
+              pipeline: testing
+              provider: $provider
+              severity: notify
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "The egress gateway in ate-system on testinst refused 30 requests of agent sandboxes to hosts outside their egress policy in the last fifteen minutes."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coding-agents-kill-switch/?INSTALLATION=testinst&CLUSTER=testinst"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"

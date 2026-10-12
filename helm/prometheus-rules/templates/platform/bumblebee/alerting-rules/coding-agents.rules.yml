@@ -20,10 +20,11 @@ spec:
     # ate-system), an agentgateway dataplane whose ext_proc checks the host
     # against the actor's egress policy and answers a host outside it with a
     # 403 of its own. The gateway's request counter records that answer with
-    # a reason other than `Upstream`; a 403 an upstream answers itself
-    # carries `Upstream` and is not a denial. The counter carries no actor,
-    # Atespace or agent, so the alert is per installation: which actor tried
-    # which host is in the egress gateway's log line for the refusal.
+    # the reason `Authorization`; a 403 an upstream answers itself carries
+    # `Upstream` and is not a denial, so the selector excludes `Upstream`
+    # rather than naming one reason. The counter carries no actor, Atespace
+    # or agent, and the gateway logs no line for a refusal, so the alert is
+    # per installation and does not say who tried which host.
     #
     # Any denial is worth a look: an origin the agent's toolchain needs and
     # its policy lacks, or something steering the agent to send data out. A

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `AgentPlatformSandboxEgressDenied` for requests of agent sandboxes that Substrate's egress gateway refused.
+
 ## [4.124.0] - 2026-10-06
 
 ### Added

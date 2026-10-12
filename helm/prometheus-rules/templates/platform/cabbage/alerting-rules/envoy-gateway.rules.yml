@@ -62,15 +62,15 @@ spec:
     #   annotations:
     #     description: '{{`More than 5% of upstream requests to Envoy cluster {{ $labels.envoy_cluster_name }} on {{ $labels.pod }} return 5xx ({{ $value | printf "%.1f" }}%).`}}'
     #     runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
-    #   expr: | 
+    #   expr: |
     #     rate(
     #       envoy_cluster_upstream_rq_xx{envoy_response_code_class="5"}[5m]
-    #     ) 
-    #       / 
+    #     )
+    #       /
     #     rate(
     #       envoy_cluster_upstream_rq_completed[5m]
-    #     ) 
-    #     * 100 > 5 
+    #     )
+    #     * 100 > 5
     #     and rate(
     #       envoy_cluster_upstream_rq_completed[5m]
     #     ) > 0
@@ -117,7 +117,7 @@ spec:
       annotations:
         description: '{{`Envoy Gateway controller cannot reconcile Gateway {{ $labels.namespace }}/{{ $labels.name }}.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
-      expr: | 
+      expr: |
           # Option A: accepted but config never reached the proxy
           (gatewayapi_gateway_status{type="Accepted", namespace="envoy-gateway-system"} == 1)
             and on(name, namespace, cluster_id, installation, pipeline, provider)

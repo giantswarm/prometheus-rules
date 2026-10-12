@@ -139,30 +139,30 @@ tests:
       - series: 'kube_pod_container_resource_requests{pod="loki-backend-0", container="loki", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "12+0x7270"
       - series: 'kube_pod_container_resource_requests{pod="loki-backend-1", container="loki", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "12+0x7270"       
-      # loki-backend real cpu usage gradually increases until it goes below 30% of the cpu requests.                        
+        values: "12+0x7270"
+      # loki-backend real cpu usage gradually increases until it goes below 30% of the cpu requests.
       - series: 'container_cpu_usage_seconds_total{pod="loki-backend-0", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "0+60x1470 0+10x1450 0+60x1450 0+10x1450 0+60x1450"
       - series: 'container_cpu_usage_seconds_total{pod="loki-backend-1", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "0+30x7270"
       # loki-backend cpu requests stay the same for the entire duration of the test
       - series: 'kube_pod_container_resource_requests{pod="loki-backend-0", container="loki", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "1.5+0x7270"                                 
+        values: "1.5+0x7270"
       - series: 'kube_pod_container_resource_requests{pod="loki-backend-1", container="loki", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
-        values: "1.5+0x7270"  
+        values: "1.5+0x7270"
     alert_rule_test:
       - alertname: LokiNeedsToBeScaledDown
-        eval_time: 15m 
+        eval_time: 15m
       - alertname: LokiNeedsToBeScaledDown
-        eval_time: 55m 
+        eval_time: 55m
       - alertname: LokiNeedsToBeScaledDown
         eval_time: 100m
       - alertname: LokiNeedsToBeScaledDown
         eval_time: 135m
       - alertname: LokiNeedsToBeScaledDown
-        eval_time: 180m 
+        eval_time: 180m
       - alertname: LokiNeedsToBeScaledDown
-        eval_time: 5820m 
+        eval_time: 5820m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -182,7 +182,7 @@ tests:
               description: Loki component loki-backend is consuming very few resources and needs to be scaled down.
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: LokiNeedsToBeScaledDown
-        eval_time: 7265m 
+        eval_time: 7265m
   - interval: 1m
     input_series:
       # loki-backend real memory usage gradually decreases until it goes below 30% of the memory requests.
@@ -218,7 +218,7 @@ tests:
               description: Loki component loki-backend has reached its maxReplicas number but still needs to be scaled up.
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: LokiHpaReachedMaxReplicas
-        eval_time: 515m 
+        eval_time: 515m
 
   # Test for LokiCompactorFailedCompaction since last compaction alert
   - interval: 1m

@@ -145,7 +145,7 @@ tests:
   - interval: 1m
     input_series:
       # mimir-ingester real memory usage fluctuates between 8 out of 12 (66%) and 11 out of 12 (91%)
-      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}' 
+      - series: 'container_memory_working_set_bytes{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "8+0x120 11+0x780 8+0x2400"
       - series: 'container_memory_working_set_bytes{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "8+0x120 11+0x780 8+0x2400"
@@ -229,30 +229,30 @@ tests:
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "12+0x300"
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "12+0x300"       
-      # mimir-ingester real cpu usage gradually increases until it goes below 30% of the cpu requests.                        
+        values: "12+0x300"
+      # mimir-ingester real cpu usage gradually increases until it goes below 30% of the cpu requests.
       - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-0", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "0+60x100 6000+10x40 6400+60x60 10000+10x40 10400+60x60"
       - series: 'container_cpu_usage_seconds_total{pod="mimir-ingester-1", container="ingester", namespace="mimir", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
         values: "0+30x300"
       # mimir-ingester cpu requests stay the same for the entire duration of the test
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-0", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "1.5+0x300"                                 
+        values: "1.5+0x300"
       - series: 'kube_pod_container_resource_requests{pod="mimir-ingester-1", container="ingester", namespace="mimir", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider", region="eu-west-2"}'
-        values: "1.5+0x300"                                 
+        values: "1.5+0x300"
     alert_rule_test:
       - alertname: MimirIngesterNeedsToBeScaledDown
-        eval_time: 15m 
+        eval_time: 15m
       - alertname: MimirIngesterNeedsToBeScaledDown
-        eval_time: 55m 
+        eval_time: 55m
       - alertname: MimirIngesterNeedsToBeScaledDown
         eval_time: 100m
       - alertname: MimirIngesterNeedsToBeScaledDown
         eval_time: 135m
       - alertname: MimirIngesterNeedsToBeScaledDown
-        eval_time: 180m 
+        eval_time: 180m
       - alertname: MimirIngesterNeedsToBeScaledDown
-        eval_time: 240m 
+        eval_time: 240m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -272,7 +272,7 @@ tests:
               description: Mimir ingester is consuming very few resources and needs to be scaled down.
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: MimirIngesterNeedsToBeScaledDown
-        eval_time: 280m 
+        eval_time: 280m
   # Test for MimirHPAReachedMaxReplicas alert
   - interval: 1m
     input_series:
@@ -346,9 +346,9 @@ tests:
         values: '0+0x240 14400+0x60 18000x60 21600+0x240'
     alert_rule_test:
       - alertname: MimirCompactorFailedCompaction
-        eval_time: 60m 
+        eval_time: 60m
       - alertname: MimirCompactorFailedCompaction
-        eval_time: 130m 
+        eval_time: 130m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -369,7 +369,7 @@ tests:
       - alertname: MimirCompactorFailedCompaction
         eval_time: 250m
       - alertname: MimirCompactorFailedCompaction
-        eval_time: 480m 
+        eval_time: 480m
       - alertname: MimirCompactorFailedCompaction
         eval_time: 600m
         exp_alerts:

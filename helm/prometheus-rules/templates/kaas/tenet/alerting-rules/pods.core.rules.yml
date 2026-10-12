@@ -37,4 +37,3 @@ spec:
         cancel_if_cluster_has_no_workers: "true"
         severity: page
         team: tenet
-

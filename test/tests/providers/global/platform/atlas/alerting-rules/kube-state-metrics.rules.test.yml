@@ -427,4 +427,3 @@ tests:
       # pod metrics are back
       - alertname: InhibitionKubeStateMetricsDown
         eval_time: 25m
-

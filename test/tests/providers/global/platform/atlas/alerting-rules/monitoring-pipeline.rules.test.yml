@@ -74,7 +74,7 @@ tests:
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/job-scraping-failure/?INSTALLATION=testinst&CLUSTER=testinst
               summary: "Monitoring agent failed to scrape all targets in a job."
               description: "Monitoring agents for cluster testinst/testinst has failed to scrape all targets in app-exporter job."
-  
+
       # This fires only for critical target down.
       - alertname: CriticalJobScrapingFailure
         eval_time: 9d
@@ -118,12 +118,12 @@ tests:
       - eval_time: 65m
         alertname: MetricForwardingErrors
         exp_alerts: []
-      
+
       # Alert shouldn't fire yet (not enough time elapsed)
       - eval_time: 70m
         alertname: MetricForwardingErrors
         exp_alerts: []
-      
+
       # Alert should fire after 1h of high error rate
       - eval_time: 125m
         alertname: MetricForwardingErrors

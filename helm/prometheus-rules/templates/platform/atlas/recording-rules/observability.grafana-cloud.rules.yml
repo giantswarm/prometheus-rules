@@ -57,7 +57,7 @@ spec:
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:loki:memory_requests
-      
+
     # Memory limits by SSD component
     - expr: |
         sum(
@@ -193,7 +193,7 @@ spec:
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:mimir:cpu_requests
-      
+
     # CPU limits by component
     - expr: |
         sum(
@@ -221,7 +221,7 @@ spec:
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:hpa:current_replicas
-      
+
     # Desired replicas by component
     - expr: |-
         sum(
@@ -231,7 +231,7 @@ spec:
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:hpa:desired_replicas
-      
+
     # Max replicas by component
     - expr: |-
         sum(
@@ -241,7 +241,7 @@ spec:
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:hpa:max_replicas
-      
+
     # Min replicas by component
     - expr: |-
         sum(
@@ -251,7 +251,7 @@ spec:
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:hpa:min_replicas
-      
+
     # HPA scaling events (churn detection)
     - expr: |-
         sum(
@@ -261,7 +261,7 @@ spec:
           )
         ) by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, component)
       record: aggregation:hpa:scaling_events_1h
-      
+
     # HPA utilization percentage
     - expr: |-
         aggregation:hpa:current_replicas / aggregation:hpa:max_replicas

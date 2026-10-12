@@ -22,7 +22,7 @@ spec:
                             | line_format "{{`{{.uname}}`}}"
                         [1h]
                     )
-                ) 
+                )
             )
         - record: giantswarm:observability:grafana:dashboard_views:total
           expr: |
@@ -72,7 +72,7 @@ spec:
             )
 
         # Track explore page visits (GET /explore or requests with explore referrer)
-        - record: giantswarm:observability:grafana:explore_visits:total 
+        - record: giantswarm:observability:grafana:explore_visits:total
           expr: |
             sum by (status_code, cluster_id, cluster_type, customer, installation, pipeline, provider, region) (
               count_over_time(

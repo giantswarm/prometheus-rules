@@ -67,21 +67,21 @@ spec:
         description: 'Mimir ingester is consuming too much resources and needs to be scaled up.'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
-        sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir"}) 
-          / 
-        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte"}) 
-          >= 0.90 
-        or 
-        sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir"}[5m])) by (cluster_id, installation, namespace, pipeline, provider) 
-          / 
-        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core"}) 
+        sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir"})
+          /
+        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte"})
+          >= 0.90
+        or
+        sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir"}[5m])) by (cluster_id, installation, namespace, pipeline, provider)
+          /
+        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core"})
           >= 0.95
       for: 12h
       labels:
         area: platform
         cancel_if_kube_state_metrics_down: "true"
         cancel_if_outside_working_hours: "true"
-        severity: ticket 
+        severity: ticket
         team: atlas
         topic: observability
     - alert: MimirIngesterNeedsToBeScaledDown
@@ -91,14 +91,14 @@ spec:
         description: 'Mimir ingester is consuming very few resources and needs to be scaled down.'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/mimir/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
-        sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir"}) 
-          / 
-        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte"}) 
-          <= 0.30 
+        sum by (cluster_id, installation, namespace, pipeline, provider) (container_memory_working_set_bytes{container="ingester", namespace="mimir"})
+          /
+        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="byte"})
+          <= 0.30
         and
-        sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir"}[5m])) by (cluster_id, installation, namespace, pipeline, provider) 
-          / 
-        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core"}) 
+        sum(rate(container_cpu_usage_seconds_total{container="ingester", namespace="mimir"}[5m])) by (cluster_id, installation, namespace, pipeline, provider)
+          /
+        sum by(cluster_id, installation, namespace, pipeline, provider) (kube_pod_container_resource_requests{container="ingester", namespace="mimir", unit="core"})
           <= 0.30
       for: 30m
       labels:

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Remove `AgentPlatformSandboxEgressDenied`: refusals of the agent sandbox egress gateway reach the agent's users and creators instead of the on-call.
+- Remove `AgentPlatformSandboxEgressDenied`.
 
 ## [4.124.0] - 2026-10-06
 

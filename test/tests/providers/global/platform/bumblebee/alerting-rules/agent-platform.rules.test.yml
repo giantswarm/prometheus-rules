@@ -384,12 +384,12 @@ tests:
         eval_time: 29m
         exp_alerts: []
       # The replacement pod's restarts add up with the first pod's; pending
-      # from the sixth restart, firing 15 minutes later.
+      # from the sixth restart (36m), firing 15 minutes later, still looping.
       - alertname: AgentPlatformContainerRestartingTooOften
         eval_time: 40m
         exp_alerts: []
       - alertname: AgentPlatformContainerRestartingTooOften
-        eval_time: 60m
+        eval_time: 55m
         exp_alerts:
           - exp_labels:
               alertname: AgentPlatformContainerRestartingTooOften
@@ -412,9 +412,37 @@ tests:
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-container-restarting/?INSTALLATION=testinst&CLUSTER=testinst&NAMESPACE=agent-platform&CONTAINER=muster-valkey"
               __dashboardUid__: "agent-platform-overview"
               dashboardQueryParams: "orgId=1"
+      # Ten minutes after the last restart (51m) the loop is over: the hour's
+      # count is still nine, the page is gone.
+      - alertname: AgentPlatformContainerRestartingTooOften
+        eval_time: 65m
+        exp_alerts: []
       # An hour after the last restart the window is empty again.
       - alertname: AgentPlatformContainerRestartingTooOften
         eval_time: 115m
+        exp_alerts: []
+
+  # AgentPlatformContainerRestartingTooOften, a burst that ended: the kagent
+  # controller exits on its database precheck six times in three minutes while
+  # the Postgres cluster fails over during a node roll, then runs. Above five
+  # in the hour from the sixth restart, but no restart in the ten minutes
+  # before the fifteen-minute `for` is up: never a page.
+  - interval: 1m
+    input_series:
+      - series: 'kube_pod_container_status_restarts_total{job="kube-state-metrics", cluster_type="management_cluster", namespace="kagent", container="controller", pod="kagent-controller-bcf464d64-c2dkz", node="ip-10-0-122-74.eu-central-1.compute.internal", cluster_id="testinst", installation="testinst", pipeline="stable", provider="$provider"}'
+        values: "0x10 2 4 6x108"
+    alert_rule_test:
+      # The sixth restart at 13m: pending.
+      - alertname: AgentPlatformContainerRestartingTooOften
+        eval_time: 20m
+        exp_alerts: []
+      # The `for` would be up at 28m, but the last restart (12m) left the
+      # ten-minute window before that: never pending long enough.
+      - alertname: AgentPlatformContainerRestartingTooOften
+        eval_time: 30m
+        exp_alerts: []
+      - alertname: AgentPlatformContainerRestartingTooOften
+        eval_time: 60m
         exp_alerts: []
 
   # AgentPlatformValkeyMemoryHigh: muster-valkey at 92 % of its maxmemory for

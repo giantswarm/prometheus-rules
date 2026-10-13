@@ -121,7 +121,13 @@ spec:
     # starts its counter at zero, and the sum keeps counting where the old
     # pod's series stops. The platform's namespaces hold platform pods only —
     # agents are actors inside Substrate's worker pods, not containers of
-    # their own — so nothing here is a user's crashing agent.
+    # their own — so nothing here is a user's crashing agent. The page needs
+    # the loop to be ongoing: a restart within the last ten minutes at every
+    # evaluation of the fifteen-minute `for` (CrashLoopBackOff restarts at
+    # least every five). A burst that ended — kagent-controller exiting on its
+    # database precheck six times in three minutes while the Postgres cluster
+    # failed over during a node roll — pages nobody once ten minutes pass; the
+    # hour's count stays in the description.
     - alert: AgentPlatformContainerRestartingTooOften
       annotations:
         description: '{{`Container {{ $labels.container }} in {{ $labels.namespace }} on {{ $labels.installation }} has restarted {{ printf "%.0f" $value }} times in the last hour.`}}'
@@ -132,6 +138,10 @@ spec:
         sum by (cluster_id, cluster_type, installation, pipeline, provider, namespace, container) (
           increase(kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace=~"agent-platform|kagent|mcp-kubernetes|mcp-capi|mcp-prometheus"}[1h])
         ) > 5
+        and
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, namespace, container) (
+          increase(kube_pod_container_status_restarts_total{cluster_type="management_cluster", namespace=~"agent-platform|kagent|mcp-kubernetes|mcp-capi|mcp-prometheus"}[10m])
+        ) > 0
       for: 15m
       labels:
         all_pipelines: "true"

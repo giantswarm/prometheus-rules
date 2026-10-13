@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `AgentPlatformContainerRestartingTooOften` pages only while the loop is ongoing (a restart within the last ten minutes at every evaluation of its `for`); a burst that ended, such as a database failover during a node roll, no longer pages.
+
 ### Removed
 
 - Remove `AgentPlatformSandboxEgressDenied`.

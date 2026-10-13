@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+### Removed
 
-- Add `AgentPlatformSandboxEgressDenied` for requests of agent sandboxes that Substrate's egress gateway refused.
+- Remove `AgentPlatformSandboxEgressDenied`: refusals of the agent sandbox egress gateway reach the agent's users and creators instead of the on-call.
 
 ## [4.124.0] - 2026-10-06
 

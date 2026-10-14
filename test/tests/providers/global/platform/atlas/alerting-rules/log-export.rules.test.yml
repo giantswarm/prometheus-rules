@@ -31,6 +31,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: log-export
+              dashboardQueryParams: "orgId=1"
               summary: Log export is enabled but nothing is being uploaded.
               description: "alloy-logexporter has uploaded no log records for 30 minutes, so the archive is silently missing data."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION=myinstall&CLUSTER=myinstall
@@ -60,6 +62,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: log-export
+              dashboardQueryParams: "orgId=1"
               summary: Log export is enabled but nothing is being uploaded.
               description: "alloy-logexporter has uploaded no log records for 30 minutes, so the archive is silently missing data."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION=myinstall&CLUSTER=myinstall
@@ -118,6 +122,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: log-export
+              dashboardQueryParams: "orgId=1"
               summary: Envoy is failing to mirror log pushes to alloy-logexporter.
               description: "0.20 mirrored requests per second are failing at the Envoy hop, so those log lines never reach the archive."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION=myinstall&CLUSTER=myinstall
@@ -144,6 +150,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: log-export
+              dashboardQueryParams: "orgId=1"
               summary: alloy-logexporter is losing log records.
               description: "alloy-logexporter is losing 1.00 log records per second to failed uploads or a full sending queue. They are permanently missing from the archive."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION=myinstall&CLUSTER=myinstall
@@ -170,6 +178,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: log-export
+              dashboardQueryParams: "orgId=1"
               summary: alloy-logexporter is losing log records.
               description: "alloy-logexporter is losing 0.50 log records per second to failed uploads or a full sending queue. They are permanently missing from the archive."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION=myinstall&CLUSTER=myinstall
@@ -204,6 +214,8 @@ tests:
               team: atlas
               topic: observability
             exp_annotations:
+              __dashboardUid__: log-export
+              dashboardQueryParams: "orgId=1"
               summary: A LogExport has uploaded nothing for 6 hours.
               description: "otelcol.exporter.awss3.teleport on alloy-logexporter has uploaded no records for 6 hours, so its selector likely matches no stream."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/log-export/?INSTALLATION=myinstall&CLUSTER=myinstall

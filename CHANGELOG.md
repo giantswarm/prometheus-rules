@@ -7,14 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.125.0-rc.12] - 2026-10-17
+
+### Added
+
+- `AgentPlatformActorCrashes`: pages team Bumblebee (business hours) when more than five Substrate actors of a WorkerPool crash within an hour (`ate_actor_crashes_total`).
+
+## [4.125.0-rc.8] - 2026-10-14
+
 ### Added
 
 - Add the `log-export` dashboard link to the `log-export` alerts.
-- `AgentPlatformActorCrashes`: pages team Bumblebee (business hours) when more than five Substrate actors of a WorkerPool crash within an hour (`ate_actor_crashes_total`).
+
+## [4.125.0-rc.5] - 2026-10-13
 
 ### Changed
 
 - `AgentPlatformContainerRestartingTooOften` pages only while the loop is ongoing (a restart within the last ten minutes at every evaluation of its `for`); a burst that ended, such as a database failover during a node roll, no longer pages.
+
+## [4.125.0-rc.3] - 2026-10-13
 
 ### Removed
 
@@ -4641,7 +4652,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add existing rules from https://github.com/giantswarm/prometheus-meta-operator/pull/637/commits/bc6a26759eb955de92b41ed5eb33fa37980660f2
 
-[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.124.0...HEAD
+[Unreleased]: https://github.com/giantswarm/prometheus-rules/compare/v4.125.0-rc.12...HEAD
+[4.125.0-rc.12]: https://github.com/giantswarm/prometheus-rules/compare/v4.125.0-rc.8...v4.125.0-rc.12
+[4.125.0-rc.8]: https://github.com/giantswarm/prometheus-rules/compare/v4.125.0-rc.5...v4.125.0-rc.8
+[4.125.0-rc.5]: https://github.com/giantswarm/prometheus-rules/compare/v4.125.0-rc.3...v4.125.0-rc.5
+[4.125.0-rc.3]: https://github.com/giantswarm/prometheus-rules/compare/v4.124.0...v4.125.0-rc.3
 [4.124.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.123.0...v4.124.0
 [4.123.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.122.0...v4.123.0
 [4.122.0]: https://github.com/giantswarm/prometheus-rules/compare/v4.121.0...v4.122.0

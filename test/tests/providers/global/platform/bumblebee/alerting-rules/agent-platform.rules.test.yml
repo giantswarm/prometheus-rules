@@ -870,3 +870,89 @@ tests:
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-model-unpriced/?INSTALLATION=testinst&CLUSTER=testinst&PROVIDER=anthropic&MODEL=claude-new"
               __dashboardUid__: "agent-platform-llm-usage"
               dashboardQueryParams: "orgId=1"
+  # AgentPlatformActorCrashes: a crash storm in kagent/kagent-default. An
+  # actor template that had crashed once before crashes five more times from
+  # 61m (seen through increase()), and two templates crash for the first time
+  # on the second API server replica: their series are born at 62m with one
+  # crash and at 64m with two, which increase() cannot see. Eight crashes in
+  # the hour page at once, and the page clears an hour after the storm.
+  # In team-a/coding, one new template crashes every twenty minutes from 70m:
+  # two crashes an hour. Its template that crashed four times long before
+  # goes on under another service_priority from 101m: matched on the pod and
+  # the actor's labels, that is not a new series with four crashes.
+  - interval: 1m
+    input_series:
+      - series: 'ate_actor_crashes_total{ate_actor_operation_name="resume", ate_sandbox_class="gvisor", ate_template_atespace="kagent", ate_template_name="argus-2e8680dfd09f", ate_workerpool_namespace="kagent", ate_workerpool_name="kagent-default", job="ate-system/ate-api-server", namespace="ate-system", container="ate-api-server", otel_scope_name="ateapi", pod="ate-api-server-6ffc5c5c67-qvvfk", instance="100.64.59.94:9090", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="stable", provider="$provider"}'
+        values: "1x60 2+1x4 6x80"
+      - series: 'ate_actor_crashes_total{ate_actor_operation_name="resume", ate_sandbox_class="gvisor", ate_template_atespace="kagent", ate_template_name="claude-code-03b5c1f8e313", ate_workerpool_namespace="kagent", ate_workerpool_name="kagent-default", job="ate-system/ate-api-server", namespace="ate-system", container="ate-api-server", otel_scope_name="ateapi", pod="ate-api-server-6ffc5c5c67-hqzzv", instance="100.64.61.13:9090", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="stable", provider="$provider"}'
+        values: "_x62 1x83"
+      - series: 'ate_actor_crashes_total{ate_actor_operation_name="suspend", ate_sandbox_class="gvisor", ate_template_atespace="kagent", ate_template_name="claude-code-614ad5ab67c8", ate_workerpool_namespace="kagent", ate_workerpool_name="kagent-default", job="ate-system/ate-api-server", namespace="ate-system", container="ate-api-server", otel_scope_name="ateapi", pod="ate-api-server-6ffc5c5c67-hqzzv", instance="100.64.61.13:9090", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="stable", provider="$provider"}'
+        values: "_x64 2x81"
+      - series: 'ate_actor_crashes_total{ate_actor_operation_name="resume", ate_sandbox_class="gvisor", ate_template_atespace="team-a", ate_template_name="coding-1", ate_workerpool_namespace="team-a", ate_workerpool_name="coding", job="ate-system/ate-api-server", namespace="ate-system", container="ate-api-server", otel_scope_name="ateapi", pod="ate-api-server-6ffc5c5c67-qvvfk", instance="100.64.59.94:9090", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="stable", provider="$provider"}'
+        values: "_x70 1x75"
+      - series: 'ate_actor_crashes_total{ate_actor_operation_name="resume", ate_sandbox_class="gvisor", ate_template_atespace="team-a", ate_template_name="coding-2", ate_workerpool_namespace="team-a", ate_workerpool_name="coding", job="ate-system/ate-api-server", namespace="ate-system", container="ate-api-server", otel_scope_name="ateapi", pod="ate-api-server-6ffc5c5c67-qvvfk", instance="100.64.59.94:9090", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="stable", provider="$provider"}'
+        values: "_x90 1x55"
+      - series: 'ate_actor_crashes_total{ate_actor_operation_name="resume", ate_sandbox_class="gvisor", ate_template_atespace="team-a", ate_template_name="coding-3", ate_workerpool_namespace="team-a", ate_workerpool_name="coding", job="ate-system/ate-api-server", namespace="ate-system", container="ate-api-server", otel_scope_name="ateapi", pod="ate-api-server-6ffc5c5c67-qvvfk", instance="100.64.59.94:9090", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="stable", provider="$provider"}'
+        values: "_x110 1x35"
+      - series: 'ate_actor_crashes_total{ate_actor_operation_name="resume", ate_sandbox_class="gvisor", ate_template_atespace="team-a", ate_template_name="coding-old", ate_workerpool_namespace="team-a", ate_workerpool_name="coding", job="ate-system/ate-api-server", namespace="ate-system", container="ate-api-server", otel_scope_name="ateapi", pod="ate-api-server-6ffc5c5c67-qvvfk", instance="100.64.59.94:9090", service_priority="highest", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="stable", provider="$provider"}'
+        values: "4x100 _x45"
+      - series: 'ate_actor_crashes_total{ate_actor_operation_name="resume", ate_sandbox_class="gvisor", ate_template_atespace="team-a", ate_template_name="coding-old", ate_workerpool_namespace="team-a", ate_workerpool_name="coding", job="ate-system/ate-api-server", namespace="ate-system", container="ate-api-server", otel_scope_name="ateapi", pod="ate-api-server-6ffc5c5c67-qvvfk", instance="100.64.59.94:9090", service_priority="medium", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="stable", provider="$provider"}'
+        values: "_x101 4x44"
+    alert_rule_test:
+      - alertname: AgentPlatformActorCrashes
+        eval_time: 59m
+        exp_alerts: []
+      # Three crashes so far: one increment and the series born at 62m.
+      - alertname: AgentPlatformActorCrashes
+        eval_time: 63m
+        exp_alerts: []
+      - alertname: AgentPlatformActorCrashes
+        eval_time: 70m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformActorCrashes
+              all_pipelines: "true"
+              area: platform
+              ate_workerpool_name: kagent-default
+              ate_workerpool_namespace: kagent
+              cancel_if_outside_working_hours: "true"
+              cluster_id: testinst
+              cluster_type: management_cluster
+              installation: testinst
+              pipeline: stable
+              provider: $provider
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "8 Substrate actors in WorkerPool kagent/kagent-default on testinst crashed in the last hour: the agent sessions they hosted ended with an error."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-actor-crashes/?INSTALLATION=testinst&CLUSTER=testinst&NAMESPACE=kagent&WORKERPOOL=kagent-default"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
+      - alertname: AgentPlatformActorCrashes
+        eval_time: 100m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformActorCrashes
+              all_pipelines: "true"
+              area: platform
+              ate_workerpool_name: kagent-default
+              ate_workerpool_namespace: kagent
+              cancel_if_outside_working_hours: "true"
+              cluster_id: testinst
+              cluster_type: management_cluster
+              installation: testinst
+              pipeline: stable
+              provider: $provider
+              severity: page
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "8 Substrate actors in WorkerPool kagent/kagent-default on testinst crashed in the last hour: the agent sessions they hosted ended with an error."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-actor-crashes/?INSTALLATION=testinst&CLUSTER=testinst&NAMESPACE=kagent&WORKERPOOL=kagent-default"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
+      # An hour after the storm the window is empty and no series is new.
+      - alertname: AgentPlatformActorCrashes
+        eval_time: 130m
+        exp_alerts: []

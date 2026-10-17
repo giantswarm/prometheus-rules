@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add the `log-export` dashboard link to the `log-export` alerts.
+- `AgentPlatformActorCrashes`: pages team Bumblebee (business hours) when more than five Substrate actors of a WorkerPool crash within an hour (`ate_actor_crashes_total`).
 
 ### Changed
 

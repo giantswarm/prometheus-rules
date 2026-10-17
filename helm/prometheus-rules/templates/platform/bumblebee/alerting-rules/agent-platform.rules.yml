@@ -278,6 +278,46 @@ spec:
         severity: notify
         team: bumblebee
         topic: agent-platform
+    # Substrate counts every actor that enters the CRASHED state in
+    # ate_actor_crashes_total: the agent session it hosted ended with an
+    # error. A few crashes an hour happen on a busy installation; a burst is
+    # a Substrate regression or a broken node or worker image, and users see
+    # it only as failing sessions. The counter is an OTel counter with one
+    # series per actor template, operation and API server pod, and a series
+    # is born with its first crash, so increase() misses most crashes: a
+    # series with no sample in the hour before the window counts with its
+    # whole value instead. A crash is counted once, by the API server
+    # replica that committed it, so the pods are summed. Matched on the pod
+    # and the actor's labels, so that a scrape-target label changing value
+    # does not make an old series look new; a scrape gap of more than an
+    # hour still does. One alert per WorkerPool.
+    - alert: AgentPlatformActorCrashes
+      annotations:
+        description: '{{`{{ printf "%.0f" $value }} Substrate actors in WorkerPool {{ $labels.ate_workerpool_namespace }}/{{ $labels.ate_workerpool_name }} on {{ $labels.installation }} crashed in the last hour: the agent sessions they hosted ended with an error.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-actor-crashes/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.ate_workerpool_namespace }}&WORKERPOOL={{ $labels.ate_workerpool_name }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
+      expr: |
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, ate_workerpool_namespace, ate_workerpool_name) (
+          (
+            increase(ate_actor_crashes_total{cluster_type="management_cluster"}[1h])
+            and on (cluster_id, pod, ate_actor_operation_name, ate_failure_reason, ate_failure_domain, ate_sandbox_class, ate_template_atespace, ate_template_name, ate_workerpool_namespace, ate_workerpool_name)
+            count_over_time(ate_actor_crashes_total{cluster_type="management_cluster"}[1h] offset 1h)
+          )
+          or
+          (
+            max_over_time(ate_actor_crashes_total{cluster_type="management_cluster"}[1h])
+            unless on (cluster_id, pod, ate_actor_operation_name, ate_failure_reason, ate_failure_domain, ate_sandbox_class, ate_template_atespace, ate_template_name, ate_workerpool_namespace, ate_workerpool_name)
+            count_over_time(ate_actor_crashes_total{cluster_type="management_cluster"}[1h] offset 1h)
+          )
+        ) > 5
+      labels:
+        all_pipelines: "true"
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: bumblebee
+        topic: agent-platform
     # The LLM listener prices every model call from the gateway release's
     # built-in catalog plus the agent-platform chart's llmRouting.modelCatalog
     # overlay, and records no cost for a call it cannot price: the spend panels

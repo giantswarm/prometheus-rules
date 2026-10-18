@@ -1021,3 +1021,42 @@ tests:
       - alertname: AgentPlatformForwarderRefusedRequests
         eval_time: 70m
         exp_alerts: []
+  # AgentPlatformActorDNSQueriesHigh: two actors of one template look up one
+  # name a second between them for thirty minutes, then sixty a second. The
+  # volume per actor crosses ten a second at 36m and the alert fires after its
+  # five minutes; at 45m the window holds only the burst: thirty a second each.
+  - interval: 1m
+    input_series:
+      - series: 'ate_actor_stats_dns_queries_total{ate_template_atespace="kagent", ate_template_name="sre-0123456789ab", ate_sandbox_class="gvisor", ate_stats_source="cgroup", ate_workerpool_namespace="kagent", ate_workerpool_name="kagent-default", job="ate-system/atelet", cluster_type="management_cluster", namespace="ate-system", pod="atelet-7xk2p", instance="10.0.1.12:9090", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider"}'
+        values: "0+60x30 5400+3600x29"
+      - series: 'ate_actor_stats_sampled_actors{ate_template_atespace="kagent", ate_template_name="sre-0123456789ab", ate_sandbox_class="gvisor", ate_stats_source="cgroup", ate_workerpool_namespace="kagent", ate_workerpool_name="kagent-default", job="ate-system/atelet", cluster_type="management_cluster", namespace="ate-system", pod="atelet-7xk2p", instance="10.0.1.12:9090", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider"}'
+        values: "2x60"
+    alert_rule_test:
+      - alertname: AgentPlatformActorDNSQueriesHigh
+        eval_time: 25m
+        exp_alerts: []
+      - alertname: AgentPlatformActorDNSQueriesHigh
+        eval_time: 38m
+        exp_alerts: []
+      - alertname: AgentPlatformActorDNSQueriesHigh
+        eval_time: 45m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformActorDNSQueriesHigh
+              area: platform
+              ate_template_atespace: kagent
+              ate_template_name: sre-0123456789ab
+              cancel_if_outside_working_hours: "true"
+              cluster_id: testinst
+              cluster_type: management_cluster
+              installation: testinst
+              pipeline: testing
+              provider: $provider
+              severity: notify
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "Actors of template kagent/sre-0123456789ab on testinst sent 30.0 DNS queries a second each over the last fifteen minutes: an agent may be carrying data out through DNS."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coding-agents-kill-switch/?INSTALLATION=testinst&CLUSTER=testinst"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"

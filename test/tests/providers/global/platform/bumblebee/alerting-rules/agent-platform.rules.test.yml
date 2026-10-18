@@ -956,3 +956,68 @@ tests:
       - alertname: AgentPlatformActorCrashes
         eval_time: 130m
         exp_alerts: []
+  # AgentPlatformForwarderRefusedRequests: the controller's counter for one
+  # Agent is born at 20m with its first refusal; increase() sees nothing, the
+  # birth clause fires at once and clears at 35m, when the series is fifteen
+  # minutes old. A second refusal at 50m fires through increase() until it
+  # leaves the window at 65m.
+  - interval: 1m
+    input_series:
+      - series: 'kagent_harness_forwarder_refusals_total{k8s_namespace_name="kagent", gen_ai_agent_name="sre", http_response_status_code="401", otel_scope_name="github.com/kagent-dev/kagent/go/core/internal/service/taskstore", job="kagent-controller", cluster_type="management_cluster", namespace="kagent", pod="kagent-controller-5d8f7c9b6-x2v4q", instance="100.64.12.7:8080", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider"}'
+        values: "_x20 1x30 2x30"
+    alert_rule_test:
+      - alertname: AgentPlatformForwarderRefusedRequests
+        eval_time: 19m
+        exp_alerts: []
+      - alertname: AgentPlatformForwarderRefusedRequests
+        eval_time: 22m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformForwarderRefusedRequests
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: testinst
+              cluster_type: management_cluster
+              gen_ai_agent_name: sre
+              http_response_status_code: "401"
+              installation: testinst
+              k8s_namespace_name: kagent
+              pipeline: testing
+              provider: $provider
+              severity: notify
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "The MCP forwarder of agent kagent/sre on testinst refused requests with status 401 in the last fifteen minutes: a process in the agent's sandbox other than Claude Code tried to reach its MCP servers."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coding-agents-kill-switch/?INSTALLATION=testinst&CLUSTER=testinst"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
+      - alertname: AgentPlatformForwarderRefusedRequests
+        eval_time: 40m
+        exp_alerts: []
+      - alertname: AgentPlatformForwarderRefusedRequests
+        eval_time: 55m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformForwarderRefusedRequests
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: testinst
+              cluster_type: management_cluster
+              gen_ai_agent_name: sre
+              http_response_status_code: "401"
+              installation: testinst
+              k8s_namespace_name: kagent
+              pipeline: testing
+              provider: $provider
+              severity: notify
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "The MCP forwarder of agent kagent/sre on testinst refused requests with status 401 in the last fifteen minutes: a process in the agent's sandbox other than Claude Code tried to reach its MCP servers."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coding-agents-kill-switch/?INSTALLATION=testinst&CLUSTER=testinst"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
+      - alertname: AgentPlatformForwarderRefusedRequests
+        eval_time: 70m
+        exp_alerts: []

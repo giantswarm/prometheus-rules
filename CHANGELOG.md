@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add the `log-export` dashboard link to the `log-export` alerts.
+- `AgentPlatformCreatorSpendHigh`: notifies team Bumblebee when the coding agent Sessions of one creator cost more than 50 US dollars within 24 hours (`kagent_session_turn_cost_usd_total`).
 - `AgentPlatformActorDNSQueriesHigh`: notifies team Bumblebee when the actors of one Substrate actor template send more than ten DNS queries a second each over fifteen minutes (`ate_actor_stats_dns_queries_total` over `ate_actor_stats_sampled_actors`).
 - `AgentPlatformForwarderRefusedRequests`: notifies team Bumblebee when the MCP forwarder of a coding agent refuses a request (`kagent_harness_forwarder_refusals_total`).
 - `AgentPlatformActorCrashes`: pages team Bumblebee (business hours) when more than five Substrate actors of a WorkerPool crash within an hour (`ate_actor_crashes_total`).

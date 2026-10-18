@@ -380,3 +380,35 @@ spec:
         severity: notify
         team: bumblebee
         topic: agent-platform
+    # DNS leaves an agent's sandbox through the gateway's relay, outside the
+    # egress policy, so data can go out in the names an agent looks up (a DNS
+    # tunnel through the cluster resolver). atelet counts every query each
+    # Substrate actor sends, per actor template (an Agent revision:
+    # `<agent>-<revision>` in the agent's namespace); dividing by the
+    # template's sampled actors gives the volume per actor. A coding turn
+    # looks up a few names a second at most, a tunnel sends tens to hundreds
+    # a second for as long as it carries data. Sustained for five minutes so
+    # a dependency download does not notify. Slack only: nothing is down, and
+    # the response is the kill-switch runbook's switches.
+    - alert: AgentPlatformActorDNSQueriesHigh
+      annotations:
+        description: '{{`Actors of template {{ $labels.ate_template_atespace }}/{{ $labels.ate_template_name }} on {{ $labels.installation }} sent {{ printf "%.1f" $value }} DNS queries a second each over the last fifteen minutes: an agent may be carrying data out through DNS.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coding-agents-kill-switch/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
+      expr: |
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, ate_template_atespace, ate_template_name) (
+          rate(ate_actor_stats_dns_queries_total{cluster_type="management_cluster"}[15m])
+        )
+        /
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, ate_template_atespace, ate_template_name) (
+          avg_over_time(ate_actor_stats_sampled_actors{cluster_type="management_cluster"}[15m])
+        )
+        > 10
+      for: 5m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: bumblebee
+        topic: agent-platform

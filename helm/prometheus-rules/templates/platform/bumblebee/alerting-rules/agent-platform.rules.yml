@@ -344,3 +344,39 @@ spec:
         severity: notify
         team: bumblebee
         topic: agent-platform
+    # The Claude harness fronts an agent's MCP servers with a loopback
+    # forwarder that adds the caller's credential. Claude Code holds the
+    # forwarder's token and calls only the servers it was given, so a request
+    # the forwarder refuses itself (401 without the token, 404 for a server it
+    # does not front, 400 for a path that could climb out of its server) comes
+    # from another process in the sandbox probing it: a prompt injection at
+    # work, not a misconfiguration the agent's author would fix. Every refusal
+    # is worth a look, so one is enough. The kagent controller counts them per
+    # Agent as each turn ends; the series is born with the Agent's first
+    # refusal, which increase() cannot see, so the second clause catches a
+    # series that did not exist fifteen minutes ago, matched on the pod and the
+    # Agent so that a scrape-target label changing value does not make an old
+    # series look new. Slack only: nothing is down, and the response is the
+    # kill-switch runbook's switches.
+    - alert: AgentPlatformForwarderRefusedRequests
+      annotations:
+        description: '{{`The MCP forwarder of agent {{ $labels.k8s_namespace_name }}/{{ $labels.gen_ai_agent_name }} on {{ $labels.installation }} refused requests with status {{ $labels.http_response_status_code }} in the last fifteen minutes: a process in the agent''s sandbox other than Claude Code tried to reach its MCP servers.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coding-agents-kill-switch/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
+      expr: |
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, k8s_namespace_name, gen_ai_agent_name, http_response_status_code) (
+          increase(kagent_harness_forwarder_refusals_total{cluster_type="management_cluster"}[15m])
+        ) > 0
+        or
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, k8s_namespace_name, gen_ai_agent_name, http_response_status_code) (
+          kagent_harness_forwarder_refusals_total{cluster_type="management_cluster"}
+          unless on (cluster_id, pod, k8s_namespace_name, gen_ai_agent_name, http_response_status_code)
+          kagent_harness_forwarder_refusals_total{cluster_type="management_cluster"} offset 15m
+        ) > 0
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: bumblebee
+        topic: agent-platform

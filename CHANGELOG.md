@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `DeploymentNotSatisfiedBumblebee`: no longer pages for a tunnelport tbot Deployment whose RemoteApp's upstream probe reports `unreachable` (the remote installation's Teleport app is missing); other Deployments still page.
+
 ### Added
 
 - Add the `log-export` dashboard link to the `log-export` alerts.

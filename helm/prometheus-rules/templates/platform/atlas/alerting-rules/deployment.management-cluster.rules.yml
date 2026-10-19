@@ -117,6 +117,16 @@ spec:
     # Aggregated down to the labels that routing, the description and the runbook
     # URL use, so a replaced kube-state-metrics pod (new `pod`/`instance`) keeps
     # the alert's identity instead of resolving it and starting `for` over.
+    #
+    # A tunnelport tbot Deployment (`tunnelport.giantswarm.io/role=tbot`, named
+    # after its RemoteApp) to a remote installation is not satisfied while that
+    # installation's Teleport app is missing; the remote's own on-call is paged
+    # and nothing on this installation fixes it. kube-state-metrics does not
+    # expose the role label, so the exclusion keys on the same RemoteApp: its
+    # upstream probe through the tunnel reports `unreachable` (far end answered
+    # 502/503/504 or nothing). The 30m look-back bridges the rounds in which a
+    # crash-looping tunnel is not probed. Deployments with no such RemoteApp
+    # keep paging.
     - alert: DeploymentNotSatisfiedBumblebee
       annotations:
         description: '{{`Deployment {{ $labels.namespace}}/{{ $labels.deployment }} is not satisfied.`}}'
@@ -125,6 +135,14 @@ spec:
         max by (cluster_id, cluster_type, installation, pipeline, provider, namespace, deployment) (
           kube_deployment_status_replicas_unavailable{cluster_type="management_cluster", namespace=~"agent-platform|kagent|mcp-kubernetes"}
         ) > 0
+        unless on (cluster_id, namespace, deployment)
+        label_replace(
+          label_replace(
+            last_over_time(tunnelport_remoteapp_upstream_probe_status{result="unreachable"}[30m]),
+            "namespace", "$1", "remoteapp_namespace", "(.+)"
+          ),
+          "deployment", "$1", "remoteapp_name", "(.+)"
+        )
       for: 60m
       labels:
         area: platform

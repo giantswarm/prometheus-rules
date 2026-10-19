@@ -48,18 +48,23 @@ spec:
 # `cancel_if_kube_state_metrics_down` is absent for the same reason: this rule does not read kube-state-metrics,
 # so kube-state-metrics being down must not suppress it.
 #
+# On a management cluster the description names the CAPI controllers. If they run in a zone that lost egress,
+# the MC loses its connection to workload clusters and cannot rotate their bootstrap tokens, so they cannot add
+# nodes. The oncaller should see that before opening the runbook. `cluster_type` is kept in both `count by` clauses
+# so the description can branch on it, which also makes it an alert label.
+#
     - alert: ClusterInternetEgressUnavailable
       annotations:
         description: |-
-          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach {{ $labels.target }}.`}}
+          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach {{ $labels.target }}.{{ if eq $labels.cluster_type "management_cluster" }} On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it.{{ end }}`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         (
-          count by (cluster_id, installation, pipeline, provider, target) (
+          count by (cluster_id, cluster_type, installation, pipeline, provider, target) (
             probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+|http-giantswarm"} == 0
           )
           /
-          count by (cluster_id, installation, pipeline, provider, target) (
+          count by (cluster_id, cluster_type, installation, pipeline, provider, target) (
             probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+|http-giantswarm"}
           )
         ) >= 0.2

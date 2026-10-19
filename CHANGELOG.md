@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `ClusterInternetEgressUnavailable` on a management cluster says to first check whether the CAPI controllers run in the affected zone, as they then lose every workload cluster and cannot rotate bootstrap tokens.
 - `EnvoyClusterCircuitBreakerTripped` pages only when Envoy rejects requests (`rq_open`, `rq_pending_open` or `upstream_rq_pending_overflow`); a `cx_open` trip alone no longer pages.
 - `AgentPlatformContainerRestartingTooOften` pages only while the loop is ongoing (a restart within the last ten minutes at every evaluation of its `for`); a burst that ended, such as a database failover during a node roll, no longer pages.
 - Decrease flapping `OnPremCloudProviderAPIIsDown` alerts from onprem infra APIs.

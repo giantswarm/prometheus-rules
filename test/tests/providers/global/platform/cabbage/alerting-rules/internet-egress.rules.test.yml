@@ -38,7 +38,7 @@ tests:
         eval_time: 30m
         exp_alerts:
           - exp_annotations:
-              description: "37.5% of nodes on myinstall/myinstall cannot reach http-giantswarm. On a management cluster, first check whether the CAPI controllers run in the affected zone (see the runbook)."
+              description: "37.5% of nodes on myinstall/myinstall cannot reach http-giantswarm. On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
             exp_labels:
               alertname: "ClusterInternetEgressUnavailable"
@@ -81,7 +81,7 @@ tests:
         eval_time: 30m
         exp_alerts:
           - exp_annotations:
-              description: "100% of nodes on myinstall/myinstall cannot reach http-giantswarm. On a management cluster, first check whether the CAPI controllers run in the affected zone (see the runbook)."
+              description: "100% of nodes on myinstall/myinstall cannot reach http-giantswarm. On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
             exp_labels:
               alertname: "ClusterInternetEgressUnavailable"
@@ -175,7 +175,7 @@ tests:
         eval_time: 30m
         exp_alerts:
           - exp_annotations:
-              description: "100% of nodes on myinstall/myinstall cannot reach egress-github. On a management cluster, first check whether the CAPI controllers run in the affected zone (see the runbook)."
+              description: "100% of nodes on myinstall/myinstall cannot reach egress-github. On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
             exp_labels:
               alertname: "ClusterInternetEgressUnavailable"

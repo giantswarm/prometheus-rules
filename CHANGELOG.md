@@ -10,9 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add the `log-export` dashboard link to the `log-export` alerts.
+- `AgentPlatformActorDNSQueriesHigh`: notifies team Bumblebee when the actors of one Substrate actor template send more than ten DNS queries a second each over fifteen minutes (`ate_actor_stats_dns_queries_total` over `ate_actor_stats_sampled_actors`).
+- `AgentPlatformForwarderRefusedRequests`: notifies team Bumblebee when the MCP forwarder of a coding agent refuses a request (`kagent_harness_forwarder_refusals_total`).
+- `AgentPlatformActorCrashes`: pages team Bumblebee (business hours) when more than five Substrate actors of a WorkerPool crash within an hour (`ate_actor_crashes_total`).
+- `EnvoyClusterConnectionCircuitBreakerTripped`: notifies team Cabbage when an Envoy cluster reaches its connection circuit breaker limit (`cx_open`).
 
 ### Changed
 
+- `EnvoyClusterCircuitBreakerTripped` pages only when Envoy rejects requests (`rq_open`, `rq_pending_open` or `upstream_rq_pending_overflow`); a `cx_open` trip alone no longer pages.
 - `AgentPlatformContainerRestartingTooOften` pages only while the loop is ongoing (a restart within the last ten minutes at every evaluation of its `for`); a burst that ended, such as a database failover during a node roll, no longer pages.
 - Decrease flapping `OnPremCloudProviderAPIIsDown` alerts from onprem infra APIs.
 

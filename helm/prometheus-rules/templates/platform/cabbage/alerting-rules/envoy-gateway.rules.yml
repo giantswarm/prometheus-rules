@@ -103,14 +103,35 @@ spec:
         topic: envoy-gateway
     - alert: EnvoyClusterCircuitBreakerTripped
       annotations:
-        description: '{{`Circuit breaker is open for Envoy cluster {{ $labels.envoy_cluster_name }} on {{ $labels.pod }}.`}}'
+        description: '{{`Envoy cluster {{ $labels.envoy_cluster_name }} on {{ $labels.pod }} rejects requests: its request circuit breaker is open.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
-      expr: envoy_cluster_circuit_breakers_cx_open == 1 or envoy_cluster_circuit_breakers_rq_open == 1
+      # Pages only when Envoy rejects requests. rq_open and rq_pending_open mean new requests
+      # fail fast with a 503; rq_pending_overflow counts the requests that were rejected.
+      # A connection limit alone (cx_open) only queues requests and is covered by
+      # EnvoyClusterConnectionCircuitBreakerTripped below.
+      expr: |
+        envoy_cluster_circuit_breakers_rq_open == 1
+        or envoy_cluster_circuit_breakers_rq_pending_open == 1
+        or rate(envoy_cluster_upstream_rq_pending_overflow[5m]) > 0
       for: 10m
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
         severity: page
+        team: cabbage
+        topic: envoy-gateway
+    - alert: EnvoyClusterConnectionCircuitBreakerTripped
+      annotations:
+        description: '{{`Envoy cluster {{ $labels.envoy_cluster_name }} on {{ $labels.pod }} reached its connection limit; new requests queue until a connection is free.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+      # High load trips cx_open without any rejected request, so this only notifies.
+      # EnvoyClusterCircuitBreakerTripped pages if the queue overflows.
+      expr: envoy_cluster_circuit_breakers_cx_open == 1
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
         team: cabbage
         topic: envoy-gateway
     - alert: EnvoyControllerNotReconcilingGateway

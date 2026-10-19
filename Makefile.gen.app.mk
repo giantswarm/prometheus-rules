@@ -2,25 +2,32 @@
 #
 #    devctl
 #
-#    https://github.com/giantswarm/devctl/blob/9d0e3fd3618d1aaef3098ef24f79ac07b0eccb03/pkg/gen/input/makefile/internal/file/Makefile.gen.app.mk.template
+#    https://github.com/giantswarm/devctl/blob/055144a5a009e2cc2ccee52d5be12ad1a00cf448/pkg/gen/input/makefile/internal/file/Makefile.gen.app.mk.template
 #
 
 ##@ App
 
 # yq, helm-docs and ct run from PATH when installed (yq only as mikefarah's yq v4), otherwise
-# from their container images.
+# from their container images; ct's container gets a TTY only when stdin is one.
 YQ = $(if $(shell yq --version 2>/dev/null | grep -q mikefarah && echo yq),yq,docker run --rm -u $$(id -u) -v $${PWD}:/workdir mikefarah/yq:4.29.2)
 HELM_DOCS = $(if $(shell command -v helm-docs 2>/dev/null),helm-docs,docker run --rm -u $$(id -u) -v $${PWD}:/helm-docs jnorwood/helm-docs:v1.14.2) --sort-values-order=file
-CT = $(if $(shell command -v ct 2>/dev/null),ct,docker run -it --rm -v /tmp/$(APPLICATION)-test:/wd --workdir=/wd --name ct $(IMAGE) ct)
+CT = $(if $(shell command -v ct 2>/dev/null),ct,docker run $$(test -t 0 && echo -t) --rm -v /tmp/$(APPLICATION)-test:/wd --workdir=/wd --name ct $(IMAGE) ct)
 
 # APPLICATION may be set by a later included makefile (Makefile.gen.go.mk derives it from the
 # Go module, and Makefile.*.mk are included in name order), so nothing here may read it while
 # make parses this file: DEPS is recursively expanded (=) and the guard is a recipe.
 DEPS = $(shell find helm/$(APPLICATION)/charts -maxdepth 2 -name "Chart.yaml" -printf "%h\n" 2>/dev/null)
 
+# A chart-only repository sets APPLICATION nowhere: it defaults to the one chart under helm/,
+# and stays empty when there are several or none, so check-env stops. `?=` keeps a value set
+# earlier (Makefile.custom.mk, the environment, the command line), and a later assignment
+# (Makefile.gen.go.mk's `:=`, Makefile.zzz.custom.mk) replaces the default.
+HELM_CHARTS = $(patsubst helm/%/Chart.yaml,%,$(wildcard helm/*/Chart.yaml))
+APPLICATION ?= $(if $(word 2,$(HELM_CHARTS)),,$(HELM_CHARTS))
+
 .PHONY: lint-chart check-env update-chart helm-docs update-deps
 
-lint-chart: IMAGE := giantswarm/helm-chart-testing:v3.0.0-rc.1
+lint-chart: IMAGE := gsoci.azurecr.io/giantswarm/helm-chart-testing:v3.15.0
 lint-chart: check-env ## Runs ct against the default chart.
 	@echo "====> $@"
 	rm -rf /tmp/$(APPLICATION)-test
@@ -48,12 +55,14 @@ helm-docs: check-env ## Update $(APPLICATION) README.
 	$(HELM_DOCS) -c helm/$(APPLICATION) -g helm/$(APPLICATION)
 
 check-env:
-	@test -n "$(APPLICATION)" || { echo "APPLICATION is not defined: set it in Makefile.custom.mk or run make APPLICATION=<chart>" >&2; exit 1; }
+	@test -n "$(APPLICATION)" || { echo "APPLICATION is not defined and helm/ does not hold exactly one chart (found: $(or $(HELM_CHARTS),none)): set it in Makefile.custom.mk or run make APPLICATION=<chart>" >&2; exit 1; }
 
 ##@ Chart tests
 
 # renovate: datasource=github-releases depName=helm-unittest/helm-unittest
 HELM_UNITTEST_VERSION ?= v1.2.1
+HELM_UNITTEST_ATTEMPTS ?= 3
+HELM_UNITTEST_RETRY_DELAY ?= 5
 
 .PHONY: helm-test install-helm-unittest
 
@@ -97,6 +106,11 @@ helm-test: install-helm-unittest ## Run the chart unit tests (helm-unittest).
 # a CI run are not the same run -- which is the whole point of pinning it here.
 # helm v4 verifies a plugin's source by default and refuses this one, so `--verify=false`
 # is passed whenever `helm plugin install` knows the flag; helm v3 has none and installs as before.
+# The plugin's install hook downloads its binary with curl and no retry, so a transient
+# network error (a connection reset) fails it; the install runs up to
+# HELM_UNITTEST_ATTEMPTS times, HELM_UNITTEST_RETRY_DELAY seconds apart. A failed attempt
+# can leave a half-installed plugin behind that the next install refuses, so it is
+# uninstalled before each retry.
 install-helm-unittest:
 	@have=$$(helm plugin list 2>/dev/null | awk '$$1 == "unittest" {print $$2}'); \
 	want=$$(echo "$(HELM_UNITTEST_VERSION)" | sed 's/^v//'); \
@@ -104,7 +118,14 @@ install-helm-unittest:
 		[ -z "$$have" ] || helm plugin uninstall unittest >/dev/null 2>&1 || true; \
 		verify=""; \
 		helm plugin install --help 2>&1 | grep -q -e '--verify' && verify="--verify=false"; \
-		helm plugin install $$verify https://github.com/helm-unittest/helm-unittest --version $(HELM_UNITTEST_VERSION); \
+		attempt=1; \
+		until helm plugin install $$verify https://github.com/helm-unittest/helm-unittest --version $(HELM_UNITTEST_VERSION); do \
+			[ "$$attempt" -lt "$(HELM_UNITTEST_ATTEMPTS)" ] || exit 1; \
+			echo "helm-unittest install failed (attempt $$attempt of $(HELM_UNITTEST_ATTEMPTS)), retrying in $(HELM_UNITTEST_RETRY_DELAY)s" >&2; \
+			helm plugin uninstall unittest >/dev/null 2>&1 || true; \
+			sleep $(HELM_UNITTEST_RETRY_DELAY); \
+			attempt=$$((attempt + 1)); \
+		done; \
 	fi
 
 # Chart tests join `make test`, the interface CI calls (make-target-ci-interface ADR,

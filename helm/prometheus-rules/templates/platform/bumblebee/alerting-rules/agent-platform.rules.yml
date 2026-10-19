@@ -278,6 +278,46 @@ spec:
         severity: notify
         team: bumblebee
         topic: agent-platform
+    # Substrate counts every actor that enters the CRASHED state in
+    # ate_actor_crashes_total: the agent session it hosted ended with an
+    # error. A few crashes an hour happen on a busy installation; a burst is
+    # a Substrate regression or a broken node or worker image, and users see
+    # it only as failing sessions. The counter is an OTel counter with one
+    # series per actor template, operation and API server pod, and a series
+    # is born with its first crash, so increase() misses most crashes: a
+    # series with no sample in the hour before the window counts with its
+    # whole value instead. A crash is counted once, by the API server
+    # replica that committed it, so the pods are summed. Matched on the pod
+    # and the actor's labels, so that a scrape-target label changing value
+    # does not make an old series look new; a scrape gap of more than an
+    # hour still does. One alert per WorkerPool.
+    - alert: AgentPlatformActorCrashes
+      annotations:
+        description: '{{`{{ printf "%.0f" $value }} Substrate actors in WorkerPool {{ $labels.ate_workerpool_namespace }}/{{ $labels.ate_workerpool_name }} on {{ $labels.installation }} crashed in the last hour: the agent sessions they hosted ended with an error.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/agent-platform-actor-crashes/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.ate_workerpool_namespace }}&WORKERPOOL={{ $labels.ate_workerpool_name }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
+      expr: |
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, ate_workerpool_namespace, ate_workerpool_name) (
+          (
+            increase(ate_actor_crashes_total{cluster_type="management_cluster"}[1h])
+            and on (cluster_id, pod, ate_actor_operation_name, ate_failure_reason, ate_failure_domain, ate_sandbox_class, ate_template_atespace, ate_template_name, ate_workerpool_namespace, ate_workerpool_name)
+            count_over_time(ate_actor_crashes_total{cluster_type="management_cluster"}[1h] offset 1h)
+          )
+          or
+          (
+            max_over_time(ate_actor_crashes_total{cluster_type="management_cluster"}[1h])
+            unless on (cluster_id, pod, ate_actor_operation_name, ate_failure_reason, ate_failure_domain, ate_sandbox_class, ate_template_atespace, ate_template_name, ate_workerpool_namespace, ate_workerpool_name)
+            count_over_time(ate_actor_crashes_total{cluster_type="management_cluster"}[1h] offset 1h)
+          )
+        ) > 5
+      labels:
+        all_pipelines: "true"
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: bumblebee
+        topic: agent-platform
     # The LLM listener prices every model call from the gateway release's
     # built-in catalog plus the agent-platform chart's llmRouting.modelCatalog
     # overlay, and records no cost for a call it cannot price: the spend panels
@@ -298,6 +338,74 @@ spec:
           increase(agentgateway_cost_catalog_lookups_total{cluster_type="management_cluster", listener="llm", status!="Exact", gen_ai_system!="custom"}[1h])
         ) > 0
       for: 30m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: bumblebee
+        topic: agent-platform
+    # The Claude harness fronts an agent's MCP servers with a loopback
+    # forwarder that adds the caller's credential. Claude Code holds the
+    # forwarder's token and calls only the servers it was given, so a request
+    # the forwarder refuses itself (401 without the token, 404 for a server it
+    # does not front, 400 for a path that could climb out of its server) comes
+    # from another process in the sandbox probing it: a prompt injection at
+    # work, not a misconfiguration the agent's author would fix. Every refusal
+    # is worth a look, so one is enough. The kagent controller counts them per
+    # Agent as each turn ends; the series is born with the Agent's first
+    # refusal, which increase() cannot see, so the second clause catches a
+    # series that did not exist fifteen minutes ago, matched on the pod and the
+    # Agent so that a scrape-target label changing value does not make an old
+    # series look new. Slack only: nothing is down, and the response is the
+    # kill-switch runbook's switches.
+    - alert: AgentPlatformForwarderRefusedRequests
+      annotations:
+        description: '{{`The MCP forwarder of agent {{ $labels.k8s_namespace_name }}/{{ $labels.gen_ai_agent_name }} on {{ $labels.installation }} refused requests with status {{ $labels.http_response_status_code }} in the last fifteen minutes: a process in the agent''s sandbox other than Claude Code tried to reach its MCP servers.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coding-agents-kill-switch/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
+      expr: |
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, k8s_namespace_name, gen_ai_agent_name, http_response_status_code) (
+          increase(kagent_harness_forwarder_refusals_total{cluster_type="management_cluster"}[15m])
+        ) > 0
+        or
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, k8s_namespace_name, gen_ai_agent_name, http_response_status_code) (
+          kagent_harness_forwarder_refusals_total{cluster_type="management_cluster"}
+          unless on (cluster_id, pod, k8s_namespace_name, gen_ai_agent_name, http_response_status_code)
+          kagent_harness_forwarder_refusals_total{cluster_type="management_cluster"} offset 15m
+        ) > 0
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: bumblebee
+        topic: agent-platform
+    # DNS leaves an agent's sandbox through the gateway's relay, outside the
+    # egress policy, so data can go out in the names an agent looks up (a DNS
+    # tunnel through the cluster resolver). atelet counts every query each
+    # Substrate actor sends, per actor template (an Agent revision:
+    # `<agent>-<revision>` in the agent's namespace); dividing by the
+    # template's sampled actors gives the volume per actor. A coding turn
+    # looks up a few names a second at most, a tunnel sends tens to hundreds
+    # a second for as long as it carries data. Sustained for five minutes so
+    # a dependency download does not notify. Slack only: nothing is down, and
+    # the response is the kill-switch runbook's switches.
+    - alert: AgentPlatformActorDNSQueriesHigh
+      annotations:
+        description: '{{`Actors of template {{ $labels.ate_template_atespace }}/{{ $labels.ate_template_name }} on {{ $labels.installation }} sent {{ printf "%.1f" $value }} DNS queries a second each over the last fifteen minutes: an agent may be carrying data out through DNS.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coding-agents-kill-switch/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+        __dashboardUid__: agent-platform-overview
+        dashboardQueryParams: "orgId=1"
+      expr: |
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, ate_template_atespace, ate_template_name) (
+          rate(ate_actor_stats_dns_queries_total{cluster_type="management_cluster"}[15m])
+        )
+        /
+        sum by (cluster_id, cluster_type, installation, pipeline, provider, ate_template_atespace, ate_template_name) (
+          avg_over_time(ate_actor_stats_sampled_actors{cluster_type="management_cluster"}[15m])
+        )
+        > 10
+      for: 5m
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"

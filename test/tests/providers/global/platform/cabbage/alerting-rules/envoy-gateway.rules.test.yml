@@ -347,3 +347,120 @@ tests:
             exp_annotations:
               description: "Envoy proxy envoy-external-def rejected a configuration update in the last 15m and keeps serving its previous configuration."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster-2&NAMESPACE=envoy-gateway-system"
+
+  # EnvoyClusterCircuitBreakerTripped pages only when requests are rejected.
+  # Under high load cx_open trips with no rejected request: notify only, no page.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_cluster_circuit_breakers_cx_open{namespace="envoy-gateway-system", pod="envoy-external-abc", envoy_cluster_name="httproute/app/web/rule/0", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x10 1x60"
+      - series: 'envoy_cluster_circuit_breakers_rq_open{namespace="envoy-gateway-system", pod="envoy-external-abc", envoy_cluster_name="httproute/app/web/rule/0", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x70"
+      - series: 'envoy_cluster_circuit_breakers_rq_pending_open{namespace="envoy-gateway-system", pod="envoy-external-abc", envoy_cluster_name="httproute/app/web/rule/0", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x70"
+      - series: 'envoy_cluster_upstream_rq_pending_overflow{namespace="envoy-gateway-system", pod="envoy-external-abc", envoy_cluster_name="httproute/app/web/rule/0", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x70"
+    alert_rule_test:
+      - alertname: EnvoyClusterCircuitBreakerTripped
+        eval_time: 30m
+      - alertname: EnvoyClusterConnectionCircuitBreakerTripped
+        eval_time: 15m
+      - alertname: EnvoyClusterConnectionCircuitBreakerTripped
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: notify
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "true"
+              namespace: envoy-gateway-system
+              pod: envoy-external-abc
+              envoy_cluster_name: httproute/app/web/rule/0
+              installation: myinstall
+              cluster_id: my-cluster
+            exp_annotations:
+              description: "Envoy cluster httproute/app/web/rule/0 on envoy-external-abc reached its connection limit; new requests queue until a connection is free."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
+
+  # EnvoyClusterCircuitBreakerTripped: the request circuit breaker is open.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_cluster_circuit_breakers_rq_open{namespace="envoy-gateway-system", pod="envoy-external-abc", envoy_cluster_name="httproute/app/web/rule/0", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x10 1x60"
+    alert_rule_test:
+      - alertname: EnvoyClusterCircuitBreakerTripped
+        eval_time: 15m
+      - alertname: EnvoyClusterCircuitBreakerTripped
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "true"
+              namespace: envoy-gateway-system
+              pod: envoy-external-abc
+              envoy_cluster_name: httproute/app/web/rule/0
+              installation: myinstall
+              cluster_id: my-cluster
+            exp_annotations:
+              description: "Envoy cluster httproute/app/web/rule/0 on envoy-external-abc rejects requests: its request circuit breaker is open."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
+
+  # EnvoyClusterCircuitBreakerTripped: the pending queue is full.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_cluster_circuit_breakers_rq_pending_open{namespace="envoy-gateway-system", pod="envoy-external-abc", envoy_cluster_name="httproute/app/web/rule/0", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x10 1x60"
+    alert_rule_test:
+      - alertname: EnvoyClusterCircuitBreakerTripped
+        eval_time: 15m
+      - alertname: EnvoyClusterCircuitBreakerTripped
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "true"
+              namespace: envoy-gateway-system
+              pod: envoy-external-abc
+              envoy_cluster_name: httproute/app/web/rule/0
+              installation: myinstall
+              cluster_id: my-cluster
+            exp_annotations:
+              description: "Envoy cluster httproute/app/web/rule/0 on envoy-external-abc rejects requests: its request circuit breaker is open."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
+
+  # EnvoyClusterCircuitBreakerTripped: requests overflow the pending queue, then stop.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_cluster_upstream_rq_pending_overflow{namespace="envoy-gateway-system", pod="envoy-external-abc", envoy_cluster_name="httproute/app/web/rule/0", installation="myinstall", cluster_id="my-cluster"}'
+        # flat for 10m, 30 rejections/min for 30m, then flat again
+        values: "0x10 30+30x30 930x40"
+    alert_rule_test:
+      - alertname: EnvoyClusterCircuitBreakerTripped
+        eval_time: 15m
+      - alertname: EnvoyClusterCircuitBreakerTripped
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "true"
+              namespace: envoy-gateway-system
+              pod: envoy-external-abc
+              envoy_cluster_name: httproute/app/web/rule/0
+              installation: myinstall
+              cluster_id: my-cluster
+            exp_annotations:
+              description: "Envoy cluster httproute/app/web/rule/0 on envoy-external-abc rejects requests: its request circuit breaker is open."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
+      # no new rejections: the alert clears
+      - alertname: EnvoyClusterCircuitBreakerTripped
+        eval_time: 60m

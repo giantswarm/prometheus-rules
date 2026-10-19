@@ -46,3 +46,38 @@ tests:
         exp_alerts:
           - exp_labels: *deployment-not-satisfied-bumblebee-labels
             exp_annotations: *deployment-not-satisfied-bumblebee-annotations
+
+  # A tunnel Deployment to a remote installation (named after its RemoteApp)
+  # does not page while the RemoteApp's upstream probe is `unreachable`, even
+  # when the probe series pauses for a round; a gazelle-local Deployment with
+  # the same unavailable replicas keeps paging.
+  - interval: 1m
+    input_series:
+      - series: 'kube_deployment_status_replicas_unavailable{job="kube-state-metrics", cluster_type="management_cluster", namespace="agent-platform", deployment="dex-remote", cluster_id="myinstall", installation="myinstall", pipeline="testing", provider="$provider"}'
+        values: "1x120"
+      - series: 'kube_deployment_status_replicas_unavailable{job="kube-state-metrics", cluster_type="management_cluster", namespace="agent-platform", deployment="agent-manager", cluster_id="myinstall", installation="myinstall", pipeline="testing", provider="$provider"}'
+        values: "1x120"
+      - series: 'tunnelport_remoteapp_upstream_probe_status{remoteapp_name="dex-remote", remoteapp_namespace="agent-platform", result="unreachable", cluster_id="myinstall", installation="myinstall", pipeline="testing", provider="$provider"}'
+        values: "0x40 _x10 0x70"
+    alert_rule_test:
+      - alertname: DeploymentNotSatisfiedBumblebee
+        eval_time: 100m
+        exp_alerts:
+          - exp_labels:
+              alertname: DeploymentNotSatisfiedBumblebee
+              area: platform
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: myinstall
+              cluster_type: management_cluster
+              deployment: agent-manager
+              installation: myinstall
+              namespace: agent-platform
+              pipeline: testing
+              provider: $provider
+              severity: page
+              team: bumblebee
+              topic: managementcluster
+            exp_annotations:
+              description: "Deployment agent-platform/agent-manager is not satisfied."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/deployment-not-satisfied/?INSTALLATION=myinstall&CLUSTER=myinstall&NAMESPACE=agent-platform&KIND=deployment&NAME=agent-manager"

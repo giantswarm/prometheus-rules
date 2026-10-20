@@ -40,7 +40,7 @@ spec:
     # They are using a combination of label_replace functions to set the correct values for cluster_type (workaround for https://github.com/giantswarm/giantswarm/issues/35079) and provider labels (for hybrid MCs).
     # Record rule to aggregate cluster info labels into a single metric with value 1 for each cluster.
     - expr: |-
-        avg by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, exported_namespace) (
+        avg by (cluster_id, cluster_type, customer, installation, pipeline, provider, region, namespace) (
           label_replace(
             label_replace(
               label_replace(

@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AgentPlatformContainerRestartingTooOften` pages only while the loop is ongoing (a restart within the last ten minutes at every evaluation of its `for`); a burst that ended, such as a database failover during a node roll, no longer pages.
 - Decrease flapping `OnPremCloudProviderAPIIsDown` alerts from onprem infra APIs.
 
+### Fixed
+
+- Adjust expression for `aggregation:giantswarm:cluster_info` to aggregate the `namespace` label instead of `exported_namespace`.
+
 ### Removed
 
 - Remove `AgentPlatformSandboxEgressDenied`.

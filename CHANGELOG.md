@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `ClusterInternetEgressUnavailable`: `http-giantswarm` only counts on clusters without `egress-` targets, so a proxy or customer firewall that blocks www.giantswarm.io no longer pages while egress works.
 - `ClusterInternetEgressUnavailable`: add a hint about the CAPI controllers to the description on management clusters.
 - `EnvoyClusterCircuitBreakerTripped` pages only when Envoy rejects requests (`rq_open`, `rq_pending_open` or `upstream_rq_pending_overflow`); a `cx_open` trip alone no longer pages.
 - `AgentPlatformContainerRestartingTooOften` pages only while the loop is ongoing (a restart within the last ten minutes at every evaluation of its `for`); a burst that ended, such as a database failover during a node roll, no longer pages.

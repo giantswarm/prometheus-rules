@@ -304,3 +304,78 @@ tests:
               target: "http-giantswarm"
               team: "cabbage"
               topic: "network"
+
+  # A proxy or customer firewall with a domain allowlist blocks www.giantswarm.io on every node, while the
+  # egress- targets that cover what the cluster needs stay green. http-giantswarm only counts on clusters without
+  # egress- targets, so nothing may fire (giantswarm/giantswarm#38412).
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts: []
+
+  # The http-giantswarm fallback is decided per cluster. A workload cluster still on an exporter release without
+  # egress- targets keeps paging on http-giantswarm, even though another cluster of the same installation has
+  # egress- targets and must stay quiet on its own failing http-giantswarm.
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="oldwc", cluster_type="workload_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="oldwc", cluster_type="workload_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="newwc", cluster_type="workload_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="newwc", cluster_type="workload_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="newwc", cluster_type="workload_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="newwc", cluster_type="workload_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts:
+          - exp_annotations:
+              description: "100% of nodes on myinstall/oldwc cannot reach http-giantswarm."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=oldwc"
+            exp_labels:
+              alertname: "ClusterInternetEgressUnavailable"
+              area: platform
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_metrics_broken: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "false"
+              cluster_id: "oldwc"
+              cluster_type: "workload_cluster"
+              installation: "myinstall"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "page"
+              target: "http-giantswarm"
+              team: "cabbage"
+              topic: "network"

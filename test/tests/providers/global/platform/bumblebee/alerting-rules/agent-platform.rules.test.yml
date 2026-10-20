@@ -1060,3 +1060,49 @@ tests:
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coding-agents-kill-switch/?INSTALLATION=testinst&CLUSTER=testinst"
               __dashboardUid__: "agent-platform-overview"
               dashboardQueryParams: "orgId=1"
+  # AgentPlatformCreatorSpendHigh: one creator spends through two Agents,
+  # $1 a minute from 1h on, half on each; a second creator spends $0.10 a
+  # minute. The first crosses $50 in 24h around 1h50m and clears once the
+  # spend stops at 2h30m and leaves the window; a controller restart at 2h
+  # (counters back to zero) neither fires nor hides the spend. The second
+  # never fires.
+  - interval: 1m
+    input_series:
+      - series: 'kagent_session_turn_cost_usd_total{k8s_namespace_name="kagent", gen_ai_agent_name="sre", enduser_id="jane@example.com", pod="kagent-controller-5d8f7c9b6-x2v4q", otel_scope_name="github.com/kagent-dev/kagent/go/core/internal/service/taskstore", job="kagent-controller", cluster_type="management_cluster", namespace="kagent", instance="100.64.12.7:8080", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider"}'
+        values: "_x60 0+0.5x60 _x1500"
+      - series: 'kagent_session_turn_cost_usd_total{k8s_namespace_name="kagent", gen_ai_agent_name="coder", enduser_id="jane@example.com", pod="kagent-controller-5d8f7c9b6-x2v4q", otel_scope_name="github.com/kagent-dev/kagent/go/core/internal/service/taskstore", job="kagent-controller", cluster_type="management_cluster", namespace="kagent", instance="100.64.12.7:8080", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider"}'
+        values: "_x60 0+0.5x60 _x1500"
+      - series: 'kagent_session_turn_cost_usd_total{k8s_namespace_name="kagent", gen_ai_agent_name="sre", enduser_id="jane@example.com", pod="kagent-controller-7c4b9d8f5-k3m2p", otel_scope_name="github.com/kagent-dev/kagent/go/core/internal/service/taskstore", job="kagent-controller", cluster_type="management_cluster", namespace="kagent", instance="100.64.12.7:8080", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider"}'
+        values: "_x121 0+0.5x30 _x1500"
+      - series: 'kagent_session_turn_cost_usd_total{k8s_namespace_name="kagent", gen_ai_agent_name="coder", enduser_id="jane@example.com", pod="kagent-controller-7c4b9d8f5-k3m2p", otel_scope_name="github.com/kagent-dev/kagent/go/core/internal/service/taskstore", job="kagent-controller", cluster_type="management_cluster", namespace="kagent", instance="100.64.12.7:8080", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider"}'
+        values: "_x121 0+0.5x30 _x1500"
+      - series: 'kagent_session_turn_cost_usd_total{k8s_namespace_name="kagent", gen_ai_agent_name="sre", enduser_id="joe@example.com", pod="kagent-controller-5d8f7c9b6-x2v4q", otel_scope_name="github.com/kagent-dev/kagent/go/core/internal/service/taskstore", job="kagent-controller", cluster_type="management_cluster", namespace="kagent", instance="100.64.12.7:8080", cluster_id="testinst", installation="testinst", pipeline="testing", provider="$provider"}'
+        values: "_x60 0+0.1x60 _x1500"
+    alert_rule_test:
+      - alertname: AgentPlatformCreatorSpendHigh
+        eval_time: 100m
+        exp_alerts: []
+      - alertname: AgentPlatformCreatorSpendHigh
+        eval_time: 150m
+        exp_alerts:
+          - exp_labels:
+              alertname: AgentPlatformCreatorSpendHigh
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: testinst
+              cluster_type: management_cluster
+              enduser_id: jane@example.com
+              installation: testinst
+              pipeline: testing
+              provider: $provider
+              severity: notify
+              team: bumblebee
+              topic: agent-platform
+            exp_annotations:
+              description: "The coding agent Sessions of jane@example.com on testinst cost 89.50 US dollars in the last 24 hours."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/coding-agents-kill-switch/?INSTALLATION=testinst&CLUSTER=testinst"
+              __dashboardUid__: "agent-platform-overview"
+              dashboardQueryParams: "orgId=1"
+      - alertname: AgentPlatformCreatorSpendHigh
+        eval_time: 1600m
+        exp_alerts: []

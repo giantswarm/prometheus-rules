@@ -35,6 +35,16 @@ spec:
 # which must never page as internet egress. `http-giantswarm` predates the prefix convention and keeps its name
 # so fleets on older exporter releases stay covered.
 #
+# `http-giantswarm` only counts on clusters that have no `egress-` target. Where the `egress-` targets exist they
+# cover the domains a cluster actually needs, and www.giantswarm.io is not one of them: proxies and customer
+# firewalls with a domain allowlist legitimately block it (garm's proxy answered it with 403 on 2026-10-20, and
+# on vSphere a customer firewall most likely drops it), and the alert paged permanently while egress was fine
+# (giantswarm/giantswarm#38412).
+# The `unless` is matched per cluster, so a cluster only falls back to `http-giantswarm` while its exporter
+# release does not ship the `egress-` targets. An installation that overrides `externalTargets` takes over that
+# coverage: its `egress-` targets have to include real internet endpoints, or a loss of internet egress
+# goes unnoticed.
+#
 # The threshold is a fraction of a cluster's probes, not `> 0`. Measured over 30 days on two installations, the
 # normal background is isolated single-node probe failures reaching at most 17% of a cluster, while a single
 # availability zone of two or three is 33-50%, so `>= 0.2` separates them cleanly.
@@ -48,19 +58,40 @@ spec:
 # `cancel_if_kube_state_metrics_down` is absent for the same reason: this rule does not read kube-state-metrics,
 # so kube-state-metrics being down must not suppress it.
 #
+# On a management cluster the description names the CAPI controllers. If they run in a zone that lost egress,
+# the MC loses its connection to workload clusters and cannot rotate their bootstrap tokens, so they cannot add
+# nodes. The oncaller should see that before opening the runbook. `cluster_type` is kept in both `count by` clauses
+# so the description can branch on it, which also makes it an alert label.
+#
     - alert: ClusterInternetEgressUnavailable
       annotations:
         description: |-
-          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach {{ $labels.target }}.`}}
+          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach {{ $labels.target }}.{{ if eq $labels.cluster_type "management_cluster" }} On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it.{{ end }}`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         (
-          count by (cluster_id, installation, pipeline, provider, target) (
-            probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+|http-giantswarm"} == 0
+          count by (cluster_id, cluster_type, installation, pipeline, provider, target) (
+            (
+              probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+              or
+              (
+                probe_success{job=~".*prometheus-blackbox-exporter.*", target="http-giantswarm"}
+                unless on (cluster_id, installation)
+                probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+              )
+            ) == 0
           )
           /
-          count by (cluster_id, installation, pipeline, provider, target) (
-            probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+|http-giantswarm"}
+          count by (cluster_id, cluster_type, installation, pipeline, provider, target) (
+            (
+              probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+              or
+              (
+                probe_success{job=~".*prometheus-blackbox-exporter.*", target="http-giantswarm"}
+                unless on (cluster_id, installation)
+                probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+              )
+            )
           )
         ) >= 0.2
       for: 15m

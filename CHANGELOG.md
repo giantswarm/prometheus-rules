@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Remove `AgentPlatformSandboxEgressDenied`.
+- Remove Kong alerts and Grafana Cloud recording rules, and stop paging Cabbage for the Kong admission webhook.
 
 ## [4.124.0] - 2026-10-06
 

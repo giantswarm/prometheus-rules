@@ -45,6 +45,24 @@ spec:
         severity: page
         team: cabbage
         topic: cilium
+    - alert: CiliumAgentKubernetesAPICallsFailing
+      annotations:
+        description: '{{`Cilium agent on {{ $labels.installation }}/{{ $labels.cluster_id }} node {{ $labels.node }} fails most of its Kubernetes API calls. Its Service table may be stale.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+      # A failing node stays Ready when its kubelet talks to the local apiserver, so this is the
+      # only signal that the agent stopped receiving Service and endpoint updates.
+      expr: |-
+        sum(rate(cilium_k8s_client_api_calls_total{return_code=~"<error>|5.."}[5m])) by (cluster_id, installation, node, pipeline, provider)
+          /
+        sum(rate(cilium_k8s_client_api_calls_total[5m])) by (cluster_id, installation, node, pipeline, provider)
+          > 0.5
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: cilium
     - alert: CiliumNetworkPolicyFailed
       annotations:
         description: '{{`Cilium is failing to import network policies on {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'

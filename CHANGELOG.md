@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `CiliumAgentKubernetesAPICallsFailing`: pages team Cabbage when a Cilium agent fails most of its Kubernetes API calls for 10 minutes.
 - Add the `log-export` dashboard link to the `log-export` alerts.
 - `AgentPlatformActorDNSQueriesHigh`: notifies team Bumblebee when the actors of one Substrate actor template send more than ten DNS queries a second each over fifteen minutes (`ate_actor_stats_dns_queries_total` over `ate_actor_stats_sampled_actors`).
 - `AgentPlatformForwarderRefusedRequests`: notifies team Bumblebee when the MCP forwarder of a coding agent refuses a request (`kagent_harness_forwarder_refusals_total`).

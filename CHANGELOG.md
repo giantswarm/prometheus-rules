@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AgentPlatformForwarderRefusedRequests`: notifies team Bumblebee when the MCP forwarder of a coding agent refuses a request (`kagent_harness_forwarder_refusals_total`).
 - `AgentPlatformActorCrashes`: pages team Bumblebee (business hours) when more than five Substrate actors of a WorkerPool crash within an hour (`ate_actor_crashes_total`).
 - `EnvoyClusterConnectionCircuitBreakerTripped`: notifies team Cabbage when an Envoy cluster reaches its connection circuit breaker limit (`cx_open`).
+- `ETCDBackupFailing`: pages team Tenet when backups are still being attempted for a cluster but none succeed within 24h, including clusters that have never had a successful backup (`etcd_backup_latest_attempt` without a recent `etcd_backup_latest_success`).
 
 ### Changed
 
@@ -31,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Adjust expression for `aggregation:giantswarm:cluster_info` to aggregate the `namespace` label instead of `exported_namespace`.
+- Fix the `LatestETCDBackup2DaysOld` expression so the alert fires when a cluster has had no successful backup for more than 48h (previously it could never fire).
 
 ### Removed
 

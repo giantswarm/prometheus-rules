@@ -168,3 +168,36 @@ tests:
             exp_annotations:
               description: "Hubble certificate renewal job kube-system/hubble-generate-certs-a1b2c on testinst/odp01 failed."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-hubble-tls-certificates/?INSTALLATION=testinst&CLUSTER=odp01"
+  # CiliumAgentKubernetesAPICallsFailing
+  - interval: 1m
+    input_series:
+      # node1: healthy for 30m, then all calls fail for 30m
+      - series: 'cilium_k8s_client_api_calls_total{return_code="200", method="GET", installation="testinst", cluster_id="odp01", node="node1"}'
+        values: "0+60x30 1800+0x30"
+      - series: 'cilium_k8s_client_api_calls_total{return_code="<error>", method="GET", installation="testinst", cluster_id="odp01", node="node1"}'
+        values: "0+0x30 0+30x30"
+      # node2: a few errors among many successful calls
+      - series: 'cilium_k8s_client_api_calls_total{return_code="200", method="GET", installation="testinst", cluster_id="odp01", node="node2"}'
+        values: "0+60x60"
+      - series: 'cilium_k8s_client_api_calls_total{return_code="500", method="GET", installation="testinst", cluster_id="odp01", node="node2"}'
+        values: "0+6x60"
+    alert_rule_test:
+      - alertname: CiliumAgentKubernetesAPICallsFailing
+        eval_time: 25m
+      - alertname: CiliumAgentKubernetesAPICallsFailing
+        eval_time: 38m
+      - alertname: CiliumAgentKubernetesAPICallsFailing
+        eval_time: 50m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_outside_working_hours: "true"
+              installation: testinst
+              cluster_id: odp01
+              node: node1
+            exp_annotations:
+              description: "Cilium agent on testinst/odp01 node node1 fails most of its Kubernetes API calls. Its Service table may be stale."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/

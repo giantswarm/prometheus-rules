@@ -309,7 +309,7 @@ spec:
             sum by (cluster_id, installation, pipeline, provider, namespace, deployment) (
               label_replace(
                 label_replace(
-                  sum by (cluster_id, installation, pipeline, provider, namespace, pod)(rate(container_cpu_usage_seconds_total[1m])),
+                  sum by (cluster_id, installation, pipeline, provider, namespace, pod)(rate(container_cpu_usage_seconds_total[5m])),
                   "deployment", "$1", "pod", "(.*)-(?:([0-9]+)|([a-z0-9]+)-([a-z0-9]+))"
                 ),
                 # The question mark in "(.*?)" is used to make it non-greedy, otherwise it

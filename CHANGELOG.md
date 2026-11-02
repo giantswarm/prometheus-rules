@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `cluster_id_namespace_deployment:container_cpu_usage_seconds_total:sum_rate` and `aggregation:container:cpu_usage_cores`: widen the `rate()` window on `container_cpu_usage_seconds_total` from 1m/2m to 5m so they keep producing data when cAdvisor is scraped every 60s.
 - `DeploymentNotSatisfiedBumblebee`: no longer pages for a tunnelport tbot Deployment whose RemoteApp's upstream probe reports `unreachable` (the remote installation's Teleport app is missing); other Deployments still page.
 
 ### Added

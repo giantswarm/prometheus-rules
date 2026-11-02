@@ -5,11 +5,21 @@
 # workflow in .circleci/config.yml merges into this file at pipeline runtime.
 version: 2.1
 orbs:
-  architect: giantswarm/architect@10.15.1
+  architect: giantswarm/architect@10.16.7
 
 workflows:
   build:
     jobs:
+    # Resolve the version once, at the start of the workflow, and persist it to
+    # the workspace (.pipeline_version). Every image and chart job requires
+    # this job and builds with that version instead of resolving its own, so a
+    # stable tag landing while the workflow runs (a promote) cannot give the
+    # image and the chart that references it different versions.
+    - architect/pin-version:
+        name: pin-version
+        filters:
+          tags:
+            only: /^v.*/
 
     # build-chart: package + lint via app-build-suite and persist the archive
     # (no push). Shared by the branch and tag paths -- branches get build + test
@@ -28,6 +38,11 @@ workflows:
         push_to_appcatalog: false
         push_to_oci_registry: false
         persist_chart_archive: true
+        # The version pin-version persisted (every chart job attaches the
+        # workspace for it).
+        attach_workspace: true
+        requires:
+        - pin-version
         filters:
           tags:
             only: /^v.*/
@@ -50,7 +65,9 @@ workflows:
         # packages an app built elsewhere, so that app's version is what
         # Chart.yaml declares. Keep it; the chart version is still stamped.
         override_app_version: false
+        attach_workspace: true
         requires:
+        - pin-version
         - build-chart
         filters:
           tags:

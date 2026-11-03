@@ -42,3 +42,143 @@ tests:
       - alertname: FluxKustomizationFailed
         eval_time: 30m
         exp_alerts: []
+
+  # Test: atlas workload cluster app failing for 28h → alert fires after 24h30m
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{ready="False", pod="ksm-a", job="flux-ksm", installation="test", cluster_id="wc1", pipeline="testing", provider="capa", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-foo", name="wc1-alloy-logs", team="atlas"}'
+        values: "1x1700"
+    alert_rule_test:
+      - alertname: FluxAtlasWorkloadClusterAppFailed
+        eval_time: 24h
+        exp_alerts: []
+      - alertname: FluxAtlasWorkloadClusterAppFailed
+        eval_time: 26h
+        exp_alerts:
+          - exp_labels:
+              alertname: "FluxAtlasWorkloadClusterAppFailed"
+              area: "platform"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "wc1"
+              cluster_type: "management_cluster"
+              exported_namespace: "org-foo"
+              installation: "test"
+              name: "wc1-alloy-logs"
+              pipeline: "testing"
+              provider: "capa"
+              severity: "page"
+              team: "atlas"
+              topic: "observability"
+            exp_annotations:
+              description: "Flux HelmRelease wc1-alloy-logs in ns org-foo on test has not deployed to workload cluster wc1 for 24h."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION=test&CLUSTER=wc1&NAMESPACE=org-foo&HELMRELEASE_NAME=wc1-alloy-logs"
+
+  # Test: atlas app was Ready=True within the last 24h → alert does NOT fire
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{ready="False", pod="ksm-a", job="flux-ksm", installation="test", cluster_id="wc1", pipeline="testing", provider="capa", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-foo", name="wc1-alloy-logs", team="atlas"}'
+        values: "1x1000 _x100 1x600"
+      - series: 'gotk_resource_info{ready="True", pod="ksm-a", job="flux-ksm", installation="test", cluster_id="wc1", pipeline="testing", provider="capa", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-foo", name="wc1-alloy-logs", team="atlas"}'
+        values: "_x1000 1x100"
+    alert_rule_test:
+      - alertname: FluxAtlasWorkloadClusterAppFailed
+        eval_time: 26h
+        exp_alerts: []
+
+  # Test: atlas app created 3h ago and failing since → alert does NOT fire
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{ready="False", pod="ksm-a", job="flux-ksm", installation="test", cluster_id="wc1", pipeline="testing", provider="capa", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-foo", name="wc1-alloy-logs", team="atlas"}'
+        values: "_x1380 1x180"
+    alert_rule_test:
+      - alertname: FluxAtlasWorkloadClusterAppFailed
+        eval_time: 26h
+        exp_alerts: []
+
+  # Test: HelmRelease owned by another team → alert does NOT fire
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{ready="False", job="flux-ksm", installation="test", cluster_id="wc1", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-foo", name="wc1-cilium", team="cabbage"}'
+        values: "1x1700"
+    alert_rule_test:
+      - alertname: FluxAtlasWorkloadClusterAppFailed
+        eval_time: 26h
+        exp_alerts: []
+
+  # Test: suspended atlas app → alert does NOT fire
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{ready="False", suspended="true", pod="ksm-a", job="flux-ksm", installation="test", cluster_id="wc1", pipeline="testing", provider="capa", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-foo", name="wc1-alloy-logs", team="atlas"}'
+        values: "1x1700"
+    alert_rule_test:
+      - alertname: FluxAtlasWorkloadClusterAppFailed
+        eval_time: 26h
+        exp_alerts: []
+
+  # Test: atlas app in an org-t- namespace → alert does NOT fire
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{ready="False", job="flux-ksm", installation="test", cluster_id="wc1", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-t-foo", name="wc1-alloy-logs", team="atlas"}'
+        values: "1x1700"
+    alert_rule_test:
+      - alertname: FluxAtlasWorkloadClusterAppFailed
+        eval_time: 26h
+        exp_alerts: []
+
+  # Test: 2h scrape gap and a flux-ksm pod change → alert still fires
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{ready="False", pod="ksm-a", job="flux-ksm", installation="test", cluster_id="wc1", pipeline="testing", provider="capa", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-foo", name="wc1-alloy-logs", team="atlas"}'
+        values: "1x600"
+      - series: 'gotk_resource_info{ready="False", pod="ksm-b", job="flux-ksm", installation="test", cluster_id="wc1", pipeline="testing", provider="capa", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-foo", name="wc1-alloy-logs", team="atlas"}'
+        values: "_x720 1x1000"
+    alert_rule_test:
+      - alertname: FluxAtlasWorkloadClusterAppFailed
+        eval_time: 26h
+        exp_alerts:
+          - exp_labels:
+              alertname: "FluxAtlasWorkloadClusterAppFailed"
+              area: "platform"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "wc1"
+              cluster_type: "management_cluster"
+              exported_namespace: "org-foo"
+              installation: "test"
+              name: "wc1-alloy-logs"
+              pipeline: "testing"
+              provider: "capa"
+              severity: "page"
+              team: "atlas"
+              topic: "observability"
+            exp_annotations:
+              description: "Flux HelmRelease wc1-alloy-logs in ns org-foo on test has not deployed to workload cluster wc1 for 24h."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION=test&CLUSTER=wc1&NAMESPACE=org-foo&HELMRELEASE_NAME=wc1-alloy-logs"
+
+  # Test: atlas app failing, then stalled (Ready=Unknown) → alert still fires
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{ready="False", release_status="failed", pod="ksm-a", job="flux-ksm", installation="test", cluster_id="wc1", pipeline="testing", provider="capa", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-foo", name="wc1-alloy-logs", team="atlas"}'
+        values: "1x600"
+      - series: 'gotk_resource_info{ready="Unknown", release_status="failed", pod="ksm-a", job="flux-ksm", installation="test", cluster_id="wc1", pipeline="testing", provider="capa", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-foo", name="wc1-alloy-logs", team="atlas"}'
+        values: "_x600 1x1100"
+    alert_rule_test:
+      - alertname: FluxAtlasWorkloadClusterAppFailed
+        eval_time: 26h
+        exp_alerts:
+          - exp_labels:
+              alertname: "FluxAtlasWorkloadClusterAppFailed"
+              area: "platform"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "wc1"
+              cluster_type: "management_cluster"
+              exported_namespace: "org-foo"
+              installation: "test"
+              name: "wc1-alloy-logs"
+              pipeline: "testing"
+              provider: "capa"
+              severity: "page"
+              team: "atlas"
+              topic: "observability"
+            exp_annotations:
+              description: "Flux HelmRelease wc1-alloy-logs in ns org-foo on test has not deployed to workload cluster wc1 for 24h."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION=test&CLUSTER=wc1&NAMESPACE=org-foo&HELMRELEASE_NAME=wc1-alloy-logs"

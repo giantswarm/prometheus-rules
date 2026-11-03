@@ -31,3 +31,31 @@ spec:
         severity: page
         team: atlas
         topic: releng
+    #
+    # FluxAtlasWorkloadClusterAppFailed
+    #
+    # Atlas-owned HelmReleases deploying to workload clusters. flux-ksm sets `cluster_id` to the target cluster.
+    # Fires when the release is not Ready=True now, had no Ready=True sample in 24h, and existed 24h ago.
+    # `ready!="True"` includes stalled releases, which report `ready="Unknown"`.
+    # The lookback survives flux-ksm restarts and scrape gaps, which reset a plain `for`.
+    # `job="flux-ksm"`: kube-state-metrics exports the same metric with the management cluster as `cluster_id`.
+    #
+    - alert: FluxAtlasWorkloadClusterAppFailed
+      annotations:
+        description: '{{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }} has not deployed to workload cluster {{ $labels.cluster_id }} for 24h.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'
+      expr: |
+        max by (cluster_id, cluster_type, installation, pipeline, provider, exported_namespace, name) (
+          gotk_resource_info{job="flux-ksm", ready!="True", suspended!="true", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace=~"org-.*", exported_namespace!~"org-t-.*", team="atlas"}
+        ) > 0
+        unless on (cluster_id, exported_namespace, name)
+          max_over_time(gotk_resource_info{job="flux-ksm", ready="True", customresource_kind="HelmRelease", cluster_type="management_cluster", team="atlas"}[24h])
+        and on (cluster_id, exported_namespace, name)
+          max_over_time(gotk_resource_info{job="flux-ksm", customresource_kind="HelmRelease", cluster_type="management_cluster", team="atlas"}[1h] offset 24h)
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: atlas
+        topic: observability

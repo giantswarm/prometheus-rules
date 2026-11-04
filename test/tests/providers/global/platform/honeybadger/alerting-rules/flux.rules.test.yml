@@ -39,7 +39,7 @@ tests:
               team: "honeybadger"
               topic: "releng"
             exp_annotations:
-              description: "Flux Kustomization collection in ns flux-giantswarm on myinstall/myinstall is stuck in Failed state. Kustomizations named agents-* are not covered: they are the Agent Platform's per-organization Kustomizations, which fail by design while an organization is pending erase or missing from git, and the Dev Portal shows that state."
+              description: "Flux Kustomization collection in ns flux-giantswarm on myinstall/myinstall is stuck in Failed state. Kustomizations named agents-* (Agent Platform organizations) are excluded."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-kustomization-failed/?INSTALLATION=myinstall&CLUSTER=myinstall&NAMESPACE=flux-giantswarm&KUSTOMIZATION_NAME=collection"
   - interval: 1m
     input_series:

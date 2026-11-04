@@ -11,6 +11,36 @@ tests:
       - alertname: FluxKustomizationFailed
         eval_time: 30m
         exp_alerts: []
+  # the Agent Platform's per-organization Kustomizations (agents-*) fail by design and must not page;
+  # any other failing Kustomization still does
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", job="flux-ksm", ready="False", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="agents-foo"}'
+        values: "1x60"
+      - series: 'gotk_resource_info{installation="myinstall", cluster_id="myinstall", job="flux-ksm", ready="False", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace="flux-giantswarm", name="collection"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: FluxKustomizationFailed
+        eval_time: 30m
+        exp_alerts:
+          - exp_labels:
+              alertname: "FluxKustomizationFailed"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "myinstall"
+              cluster_type: "management_cluster"
+              customresource_kind: "Kustomization"
+              exported_namespace: "flux-giantswarm"
+              installation: "myinstall"
+              job: "flux-ksm"
+              name: "collection"
+              ready: "False"
+              severity: "page"
+              team: "honeybadger"
+              topic: "releng"
+            exp_annotations:
+              description: "Flux Kustomization collection in ns flux-giantswarm on myinstall/myinstall is stuck in Failed state. Kustomizations named agents-* are not covered: they are the Agent Platform's per-organization Kustomizations, which fail by design while an organization is pending erase or missing from git, and the Dev Portal shows that state."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-kustomization-failed/?INSTALLATION=myinstall&CLUSTER=myinstall&NAMESPACE=flux-giantswarm&KUSTOMIZATION_NAME=collection"
   - interval: 1m
     input_series:
       - series: 'gotk_resource_info{installation="test", job="flux-ksm", cluster_type="management_cluster", exported_namespace="flux-giantswarm", customresource_kind="Kustomization", name="flux", suspended="true"}'

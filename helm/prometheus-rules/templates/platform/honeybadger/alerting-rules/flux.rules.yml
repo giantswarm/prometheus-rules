@@ -116,12 +116,16 @@ spec:
 #
 # Alerting for GiantSwarm management clusters Kustomization CRs.
 #
+# Kustomizations named `agents-*` are the Agent Platform's per-organization Kustomizations. They
+# fail by design while an organization is pending erase or missing from git, and the Dev Portal
+# shows that state, so they are excluded.
+#
     - alert: FluxKustomizationFailed
       annotations:
         description: |-
-          {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
+          {{`Flux Kustomization {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state. Kustomizations named agents-* are not covered: they are the Agent Platform's per-organization Kustomizations, which fail by design while an organization is pending erase or missing from git, and the Dev Portal shows that state.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-kustomization-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&KUSTOMIZATION_NAME={{ $labels.name }}`}}'
-      expr: gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*", name!="silences"} > 0
+      expr: gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="Kustomization", cluster_type="management_cluster", exported_namespace=~".*giantswarm.*", name!="silences", name!~"agents-.*"} > 0
       for: 20m
       labels:
         area: platform

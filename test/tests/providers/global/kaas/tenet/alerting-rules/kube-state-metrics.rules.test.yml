@@ -21,7 +21,7 @@ tests:
         eval_time: 25m
         exp_alerts:
           - exp_labels:
-              area: "platform"
+              area: "kaas"
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_kubelet_down: "true"
@@ -29,7 +29,7 @@ tests:
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "observability"
               cluster_id: "testinst"
               installation: "testinst"
@@ -49,7 +49,7 @@ tests:
         eval_time: 85m
         exp_alerts:
           - exp_labels:
-              area: "platform"
+              area: "kaas"
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_kubelet_down: "true"
@@ -57,7 +57,7 @@ tests:
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "observability"
               cluster_id: "testinst"
               installation: "testinst"
@@ -88,7 +88,7 @@ tests:
         eval_time: 25m
         exp_alerts:
           - exp_labels:
-              area: "platform"
+              area: "kaas"
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_kube_state_metrics_down: "true"
@@ -96,7 +96,7 @@ tests:
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "observability"
               cluster_id: "testinst"
               installation: "testinst"
@@ -124,7 +124,7 @@ tests:
         eval_time: 25m
         exp_alerts:
           - exp_labels:
-              area: "platform"
+              area: "kaas"
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_kubelet_down: "true"
@@ -132,7 +132,7 @@ tests:
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "observability"
               cluster_id: "broken-wc"
               installation: "testinst"
@@ -178,7 +178,7 @@ tests:
         eval_time: 50m
         exp_alerts:
           - exp_labels:
-              area: "platform"
+              area: "kaas"
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_kubelet_down: "true"
@@ -186,7 +186,7 @@ tests:
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "observability"
               cluster_id: "late-wc"
               installation: "testinst"
@@ -214,7 +214,7 @@ tests:
         eval_time: 25m
         exp_alerts:
           - exp_labels:
-              area: "platform"
+              area: "kaas"
               cancel_if_cluster_control_plane_unhealthy: "true"
               cancel_if_cluster_has_no_workers: "true"
               cancel_if_kubelet_down: "true"
@@ -222,7 +222,7 @@ tests:
               cancel_if_outside_working_hours: "false"
               inhibit_kube_state_metrics_down: "true"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "observability"
               cluster_id: "two-port-wc"
               installation: "testinst"
@@ -298,11 +298,11 @@ tests:
         eval_time: 100m
         exp_alerts:
           - exp_labels:
-              area: "platform"
+              area: "kaas"
               cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "kubernetes"
               cluster_id: "wc-alpha"
               installation: "myinstall"
@@ -344,11 +344,11 @@ tests:
         eval_time: 45m
         exp_alerts:
           - exp_labels:
-              area: "platform"
+              area: "kaas"
               cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "kubernetes"
               cluster_id: "wc-gamma"
               installation: "myinstall"
@@ -381,11 +381,11 @@ tests:
         eval_time: 45m
         exp_alerts:
           - exp_labels:
-              area: "platform"
+              area: "kaas"
               cancel_if_kube_state_metrics_down: "true"
               cancel_if_outside_working_hours: "true"
               severity: "page"
-              team: "atlas"
+              team: "phoenix"
               topic: "kubernetes"
               cluster_id: "wc-epsilon"
               installation: "myinstall"
@@ -412,10 +412,10 @@ tests:
         eval_time: 5m
         exp_alerts:
           - exp_labels:
-              area: "platform"
+              area: "kaas"
               inhibit_kube_state_metrics_down: "true"
               severity: "none"
-              team: "atlas"
+              team: "phoenix"
               topic: "observability"
               cluster_id: "wc-alpha"
               installation: "myinstall"

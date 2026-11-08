@@ -28,6 +28,15 @@ spec:
 # Targets absent on a cluster (older prometheus-blackbox-exporter releases only probe http-giantswarm) simply
 # produce no series and cannot fire.
 #
+# The page needs at least two failing targets on the same cluster. A single target also fails on its own when the
+# third-party service behind it rate-limits or times out the exporter's unauthenticated requests, and then it fails
+# on every cluster at once while egress works. Two failing targets on one cluster point at the cluster's egress
+# rather than at one remote service. A cluster with fewer than two targets (only http-giantswarm, or a single
+# `egress-` override) cannot meet that bar, so the required count is `clamp_max(<targets on the cluster>, 2)`:
+# such a cluster still pages on its one target. A single failing target on a cluster with more targets - which is
+# also what an allowlist change blocking one domain looks like - goes to ClusterInternetEgressTargetUnavailable,
+# which notifies without paging.
+#
 # The selector matches the `egress-` name prefix rather than an explicit domain list, so per-installation
 # overrides of prometheus-blackbox-exporter's `serviceMonitor.externalTargets` (regional or customer-specific
 # domains) are covered without touching this rule. It deliberately does NOT match `http-.*`: the exporter also
@@ -69,6 +78,102 @@ spec:
           {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach {{ $labels.target }}.{{ if eq $labels.cluster_type "management_cluster" }} On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it.{{ end }}`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
+        # Failing targets: 20% or more of the cluster's nodes fail the probe.
+        (
+          count by (cluster_id, cluster_type, installation, pipeline, provider, target) (
+            (
+              probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+              or
+              (
+                probe_success{job=~".*prometheus-blackbox-exporter.*", target="http-giantswarm"}
+                unless on (cluster_id, installation)
+                probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+              )
+            ) == 0
+          )
+          /
+          count by (cluster_id, cluster_type, installation, pipeline, provider, target) (
+            (
+              probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+              or
+              (
+                probe_success{job=~".*prometheus-blackbox-exporter.*", target="http-giantswarm"}
+                unless on (cluster_id, installation)
+                probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+              )
+            )
+          )
+        ) >= 0.2
+        # Kept only on clusters where the number of failing targets reaches min(targets on the cluster, 2).
+        and on (cluster_id, installation)
+        (
+          count by (cluster_id, installation) (
+            (
+              count by (cluster_id, installation, target) (
+                (
+                  probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+                  or
+                  (
+                    probe_success{job=~".*prometheus-blackbox-exporter.*", target="http-giantswarm"}
+                    unless on (cluster_id, installation)
+                    probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+                  )
+                ) == 0
+              )
+              /
+              count by (cluster_id, installation, target) (
+                probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+                or
+                (
+                  probe_success{job=~".*prometheus-blackbox-exporter.*", target="http-giantswarm"}
+                  unless on (cluster_id, installation)
+                  probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+                )
+              )
+            ) >= 0.2
+          )
+          >= on (cluster_id, installation)
+          clamp_max(
+            count by (cluster_id, installation) (
+              count by (cluster_id, installation, target) (
+                probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+                or
+                (
+                  probe_success{job=~".*prometheus-blackbox-exporter.*", target="http-giantswarm"}
+                  unless on (cluster_id, installation)
+                  probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+                )
+              )
+            ),
+            2
+          )
+        )
+      for: 15m
+      labels:
+        area: platform
+        # Pages 24/7 on purpose: a cluster that cannot reach the internet cannot pull images, reconcile Flux,
+        # or receive the mitigation an oncaller is applying.
+        cancel_if_outside_working_hours: "false"
+        cancel_if_cluster_has_no_workers: "true"
+        cancel_if_metrics_broken: "true"
+        cancel_if_monitoring_agent_down: "true"
+        severity: page
+        team: cabbage
+        topic: network
+#
+# ClusterInternetEgressTargetUnavailable
+#
+# Notifies, without paging, on every failing target, with the same per-target expression and threshold as
+# ClusterInternetEgressUnavailable. It keeps a single blocked or failing domain visible - for example an allowlist
+# change that blocks only the image registry - on clusters where that alone does not page. During a page it fires
+# alongside ClusterInternetEgressUnavailable for the same targets.
+#
+    - alert: ClusterInternetEgressTargetUnavailable
+      annotations:
+        description: |-
+          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach {{ $labels.target }}.`}}
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      expr: |
         (
           count by (cluster_id, cluster_type, installation, pipeline, provider, target) (
             (
@@ -97,12 +202,10 @@ spec:
       for: 15m
       labels:
         area: platform
-        # Pages 24/7 on purpose: a cluster that cannot reach the internet cannot pull images, reconcile Flux,
-        # or receive the mitigation an oncaller is applying.
-        cancel_if_outside_working_hours: "false"
+        cancel_if_outside_working_hours: "true"
         cancel_if_cluster_has_no_workers: "true"
         cancel_if_metrics_broken: "true"
         cancel_if_monitoring_agent_down: "true"
-        severity: page
+        severity: notify
         team: cabbage
         topic: network

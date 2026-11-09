@@ -131,24 +131,24 @@ tests:
   - interval: 1m
     input_series:
       # loki-backend real memory usage gradually decreases until it goes below 30% of the memory requests.
-      - series: 'container_memory_working_set_bytes{pod="loki-backend-0", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_memory_working_set_bytes{pod="loki-backend-0", container="backend", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "8+0x20 2+0x1450 8+0x2900 2+0x1450 8+0x1450"
-      - series: 'container_memory_working_set_bytes{pod="loki-backend-1", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_memory_working_set_bytes{pod="loki-backend-1", container="backend", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "8+0x20 2+0x1450 8+0x2900 2+0x1450 8+0x1450"
       # loki-backend memory requests stay the same for the entire duration of the test.
-      - series: 'kube_pod_container_resource_requests{pod="loki-backend-0", container="loki", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="loki-backend-0", container="backend", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "12+0x7270"
-      - series: 'kube_pod_container_resource_requests{pod="loki-backend-1", container="loki", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="loki-backend-1", container="backend", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "12+0x7270"
       # loki-backend real cpu usage gradually increases until it goes below 30% of the cpu requests.
-      - series: 'container_cpu_usage_seconds_total{pod="loki-backend-0", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_cpu_usage_seconds_total{pod="loki-backend-0", container="backend", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "0+60x1470 0+10x1450 0+60x1450 0+10x1450 0+60x1450"
-      - series: 'container_cpu_usage_seconds_total{pod="loki-backend-1", container="loki", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'container_cpu_usage_seconds_total{pod="loki-backend-1", container="backend", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "0+30x7270"
       # loki-backend cpu requests stay the same for the entire duration of the test
-      - series: 'kube_pod_container_resource_requests{pod="loki-backend-0", container="loki", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="loki-backend-0", container="backend", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "1.5+0x7270"
-      - series: 'kube_pod_container_resource_requests{pod="loki-backend-1", container="loki", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+      - series: 'kube_pod_container_resource_requests{pod="loki-backend-1", container="backend", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
         values: "1.5+0x7270"
     alert_rule_test:
       - alertname: LokiNeedsToBeScaledDown
@@ -183,6 +183,63 @@ tests:
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=testinst&CLUSTER=testinst
       - alertname: LokiNeedsToBeScaledDown
         eval_time: 7265m
+  - interval: 1m
+    input_series:
+      # Distributed mode: a Deployment pod and a StatefulSet pod, both using under 30% of their requests.
+      - series: 'container_memory_working_set_bytes{pod="loki-query-frontend-999fd8b98-btjhn", container="query-frontend", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "2+0x1500"
+      - series: 'kube_pod_container_resource_requests{pod="loki-query-frontend-999fd8b98-btjhn", container="query-frontend", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "12+0x1500"
+      - series: 'container_cpu_usage_seconds_total{pod="loki-query-frontend-999fd8b98-btjhn", container="query-frontend", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "0+6x1500"
+      - series: 'kube_pod_container_resource_requests{pod="loki-query-frontend-999fd8b98-btjhn", container="query-frontend", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "1.5+0x1500"
+      - series: 'container_memory_working_set_bytes{pod="loki-index-gateway-0", container="index-gateway", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "2+0x1500"
+      - series: 'kube_pod_container_resource_requests{pod="loki-index-gateway-0", container="index-gateway", namespace="loki", unit="byte", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "12+0x1500"
+      - series: 'container_cpu_usage_seconds_total{pod="loki-index-gateway-0", container="index-gateway", namespace="loki", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "0+6x1500"
+      - series: 'kube_pod_container_resource_requests{pod="loki-index-gateway-0", container="index-gateway", namespace="loki", unit="core", cluster_type="management_cluster", cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", region="eu-west-2"}'
+        values: "1.5+0x1500"
+    alert_rule_test:
+      - alertname: LokiNeedsToBeScaledDown
+        eval_time: 1460m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_outside_working_hours: "true"
+              installation: "testinst"
+              cluster_id: "testinst"
+              labelpod: "loki-index-gateway"
+              pipeline: "testing"
+              provider: "capa"
+              namespace: loki
+              severity: ticket
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Loki component loki-index-gateway is consuming very few resources and needs to be scaled down.
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=testinst&CLUSTER=testinst
+          - exp_labels:
+              area: platform
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_outside_working_hours: "true"
+              installation: "testinst"
+              cluster_id: "testinst"
+              labelpod: "loki-query-frontend"
+              pipeline: "testing"
+              provider: "capa"
+              namespace: loki
+              severity: ticket
+              team: atlas
+              topic: observability
+            exp_annotations:
+              description: Loki component loki-query-frontend is consuming very few resources and needs to be scaled down.
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION=testinst&CLUSTER=testinst
   - interval: 1m
     input_series:
       # loki-backend real memory usage gradually decreases until it goes below 30% of the memory requests.

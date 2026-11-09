@@ -75,19 +75,22 @@ spec:
         severity: page
         team: atlas
         topic: observability
+    # The loki chart names each container after its target: read/write/backend in
+    # SimpleScalable mode, one per component in Distributed mode. `labelpod` is the workload
+    # name: the pod name without its StatefulSet ordinal or its ReplicaSet hash and suffix.
     - alert: LokiNeedsToBeScaledDown
       annotations:
         description: '{{`Loki component {{ $labels.labelpod }} is consuming very few resources and needs to be scaled down.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/loki/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |-
-        sum by (cluster_id, installation, namespace, pipeline, provider, labelpod) (label_replace(container_memory_working_set_bytes{container="loki", namespace="loki", cluster_type="management_cluster"}, "labelpod", "$1", "pod", "(loki-[[:alnum:]]*)-.*"))
+        sum by (cluster_id, installation, namespace, pipeline, provider, labelpod) (label_replace(container_memory_working_set_bytes{container=~"loki|read|write|backend|distributor|ingester|querier|query-frontend|query-scheduler|index-gateway|compactor|ruler|pattern-ingester", namespace="loki", cluster_type="management_cluster"}, "labelpod", "$1", "pod", "(loki-.+?)-(?:[0-9]+|[a-z0-9]{8,10}-[a-z0-9]{5})"))
           /
-        sum by(cluster_id, installation, namespace, pipeline, provider, labelpod) (label_replace(kube_pod_container_resource_requests{container="loki", namespace="loki", unit="byte", cluster_type="management_cluster"}, "labelpod", "$1", "pod", "(loki-[[:alnum:]]*)-.*"))
+        sum by(cluster_id, installation, namespace, pipeline, provider, labelpod) (label_replace(kube_pod_container_resource_requests{container=~"loki|read|write|backend|distributor|ingester|querier|query-frontend|query-scheduler|index-gateway|compactor|ruler|pattern-ingester", namespace="loki", unit="byte", cluster_type="management_cluster"}, "labelpod", "$1", "pod", "(loki-.+?)-(?:[0-9]+|[a-z0-9]{8,10}-[a-z0-9]{5})"))
           <= 0.30
         and
-        sum(label_replace(rate(container_cpu_usage_seconds_total{container="loki", namespace="loki", cluster_type="management_cluster"}[5m]), "labelpod", "$1", "pod", "(loki-[[:alnum:]]*)-.*")) by (cluster_id, installation, namespace, pipeline, provider, labelpod)
+        sum(label_replace(rate(container_cpu_usage_seconds_total{container=~"loki|read|write|backend|distributor|ingester|querier|query-frontend|query-scheduler|index-gateway|compactor|ruler|pattern-ingester", namespace="loki", cluster_type="management_cluster"}[5m]), "labelpod", "$1", "pod", "(loki-.+?)-(?:[0-9]+|[a-z0-9]{8,10}-[a-z0-9]{5})")) by (cluster_id, installation, namespace, pipeline, provider, labelpod)
           /
-        sum by(cluster_id, installation, namespace, pipeline, provider, labelpod) (label_replace(kube_pod_container_resource_requests{container="loki", namespace="loki", unit="core", cluster_type="management_cluster"}, "labelpod", "$1", "pod", "(loki-[[:alnum:]]*)-.*"))
+        sum by(cluster_id, installation, namespace, pipeline, provider, labelpod) (label_replace(kube_pod_container_resource_requests{container=~"loki|read|write|backend|distributor|ingester|querier|query-frontend|query-scheduler|index-gateway|compactor|ruler|pattern-ingester", namespace="loki", unit="core", cluster_type="management_cluster"}, "labelpod", "$1", "pod", "(loki-.+?)-(?:[0-9]+|[a-z0-9]{8,10}-[a-z0-9]{5})"))
           <= 0.30
       for: 1d
       labels:

@@ -264,11 +264,11 @@ tests:
   # across each change and stays firing instead of starting its `for` period over.
   - interval: 1m
     input_series:
-      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-acme", name="acme-dev-kube-prometheus-stack", team="atlas", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="flux-giantswarm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-aaaaa", instance="10.0.0.1:8080", chart_version="2.0.0", chart_app_version="v0.2.0", release_status="failed"}'
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-acme", name="acme-dev-kube-prometheus-stack", team="atlas", customer="acme", organization="acme", region="eu-west-1", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="flux-giantswarm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-aaaaa", instance="10.0.0.1:8080", chart_version="2.0.0", chart_app_version="v0.2.0", release_status="failed"}'
         values: "1x15 stale _x14 1x10 stale"
-      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-acme", name="acme-dev-kube-prometheus-stack", team="atlas", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="flux-giantswarm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-aaaaa", instance="10.0.0.1:8080", chart_version="1.0.0", chart_app_version="v0.1.0", release_status="failed"}'
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-acme", name="acme-dev-kube-prometheus-stack", team="atlas", customer="acme", organization="acme", region="eu-west-1", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="flux-giantswarm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-aaaaa", instance="10.0.0.1:8080", chart_version="1.0.0", chart_app_version="v0.1.0", release_status="failed"}'
         values: "_x16 1x14 stale"
-      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-acme", name="acme-dev-kube-prometheus-stack", team="atlas", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="flux-giantswarm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-bbbbb", instance="10.0.0.2:8080", chart_version="2.0.0", chart_app_version="v0.2.0", release_status="failed"}'
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-acme", name="acme-dev-kube-prometheus-stack", team="atlas", customer="acme", organization="acme", region="eu-west-1", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="flux-giantswarm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-bbbbb", instance="10.0.0.2:8080", chart_version="2.0.0", chart_app_version="v0.2.0", release_status="failed"}'
         values: "_x42 1x20"
     alert_rule_test:
       # Firing on the first `chart_version` alone.
@@ -281,12 +281,15 @@ tests:
               cancel_if_outside_working_hours: "true"
               cluster_id: "myinstall"
               cluster_type: "management_cluster"
+              customer: "acme"
               exported_namespace: "org-acme"
               installation: "myinstall"
               name: "acme-dev-kube-prometheus-stack"
               namespace: "org-acme"
+              organization: "acme"
               pipeline: "stable"
               provider: "$provider"
+              region: "eu-west-1"
               severity: "page"
               team: "atlas"
               topic: "releng"

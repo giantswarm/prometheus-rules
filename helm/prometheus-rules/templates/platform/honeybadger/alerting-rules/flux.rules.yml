@@ -74,15 +74,24 @@ spec:
 #
 # HelmReleaseAppToHrMigrationFailed is a custom, case by case alert in CMCs that exist temporarily for certain HelmReleases for the period of the migration.
 #
+# The expression aggregates down to the labels that routing, the description and
+# the runbook URL use. Otherwise the alert's identity includes flux-ksm's
+# scrape-target labels and the HelmRelease's status labels (`chart_version`,
+# `chart_app_version`, `release_status`). helm-controller retrying a failed
+# upgrade changes `chart_version`, and a flux-ksm pod replacement changes `pod`:
+# either resolves the alert and fires it again after `for`.
+#
     - alert: FluxCustomerHelmReleaseFailed
       annotations:
         description: |-
           {{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is stuck in Failed state.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'
       expr: |
-        gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace!~"flux-giantswarm|giantswarm|org-t-.*", team!~"^$|noteam"} > 0
+        max by (cluster_id, cluster_type, installation, pipeline, provider, exported_namespace, name, team) (
+          gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace!~"flux-giantswarm|giantswarm|org-t-.*", team!~"^$|noteam"}
+        ) > 0
         unless on(name, exported_namespace)
-        ALERTS{alertname="FluxHelmReleaseFailed|HelmReleaseAppToHrMigrationFailed"}
+        ALERTS{alertname=~"FluxHelmReleaseFailed|HelmReleaseAppToHrMigrationFailed"}
       for: 10m
       labels:
         area: platform

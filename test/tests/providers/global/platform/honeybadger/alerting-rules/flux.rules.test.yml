@@ -258,3 +258,73 @@ tests:
         exp_alerts:
           - exp_labels: *flux-giantswarm-helmrelease-failed-labels
             exp_annotations: *flux-giantswarm-helmrelease-failed-annotations
+  # helm-controller retries a failed upgrade and the HelmRelease's
+  # `chart_version` alternates between the target and the previous version,
+  # while flux-ksm is replaced at the same time. The alert keeps its identity
+  # across each change and stays firing instead of starting its `for` period over.
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-acme", name="acme-dev-kube-prometheus-stack", team="atlas", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="flux-giantswarm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-aaaaa", instance="10.0.0.1:8080", chart_version="2.0.0", chart_app_version="v0.2.0", release_status="failed"}'
+        values: "1x15 stale _x14 1x10 stale"
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-acme", name="acme-dev-kube-prometheus-stack", team="atlas", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="flux-giantswarm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-aaaaa", instance="10.0.0.1:8080", chart_version="1.0.0", chart_app_version="v0.1.0", release_status="failed"}'
+        values: "_x16 1x14 stale"
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-acme", name="acme-dev-kube-prometheus-stack", team="atlas", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider", namespace="flux-giantswarm", pod="flux-giantswarm-flux-ksm-5d8c7b9f4-bbbbb", instance="10.0.0.2:8080", chart_version="2.0.0", chart_app_version="v0.2.0", release_status="failed"}'
+        values: "_x42 1x20"
+    alert_rule_test:
+      # Firing on the first `chart_version` alone.
+      - alertname: FluxCustomerHelmReleaseFailed
+        eval_time: 12m
+        exp_alerts:
+          - exp_labels: &flux-customer-helmrelease-failed-labels
+              alertname: "FluxCustomerHelmReleaseFailed"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "myinstall"
+              cluster_type: "management_cluster"
+              exported_namespace: "org-acme"
+              installation: "myinstall"
+              name: "acme-dev-kube-prometheus-stack"
+              namespace: "org-acme"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "page"
+              team: "atlas"
+              topic: "releng"
+            exp_annotations: &flux-customer-helmrelease-failed-annotations
+              description: "Flux HelmRelease acme-dev-kube-prometheus-stack in ns org-acme on myinstall/myinstall is stuck in Failed state."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION=myinstall&CLUSTER=myinstall&NAMESPACE=org-acme&HELMRELEASE_NAME=acme-dev-kube-prometheus-stack"
+      # Only the previous `chart_version` exists now. Had `chart_version` been
+      # part of the alert's labels, the alert would be pending here until 26m.
+      - alertname: FluxCustomerHelmReleaseFailed
+        eval_time: 20m
+        exp_alerts:
+          - exp_labels: *flux-customer-helmrelease-failed-labels
+            exp_annotations: *flux-customer-helmrelease-failed-annotations
+      # Back on the first `chart_version`.
+      - alertname: FluxCustomerHelmReleaseFailed
+        eval_time: 35m
+        exp_alerts:
+          - exp_labels: *flux-customer-helmrelease-failed-labels
+            exp_annotations: *flux-customer-helmrelease-failed-annotations
+      # Only the second flux-ksm pod's series exists now.
+      - alertname: FluxCustomerHelmReleaseFailed
+        eval_time: 50m
+        exp_alerts:
+          - exp_labels: *flux-customer-helmrelease-failed-labels
+            exp_annotations: *flux-customer-helmrelease-failed-annotations
+  # A HelmRelease already covered by FluxHelmReleaseFailed or
+  # HelmReleaseAppToHrMigrationFailed does not fire FluxCustomerHelmReleaseFailed.
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-acme", name="acme-dev-cilium", team="atlas", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider"}'
+        values: "1x30"
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-acme", name="acme-dev-coredns", team="atlas", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider"}'
+        values: "1x30"
+      - series: 'ALERTS{alertname="FluxHelmReleaseFailed", alertstate="firing", exported_namespace="org-acme", name="acme-dev-cilium"}'
+        values: "1x30"
+      - series: 'ALERTS{alertname="HelmReleaseAppToHrMigrationFailed", alertstate="firing", exported_namespace="org-acme", name="acme-dev-coredns"}'
+        values: "1x30"
+    alert_rule_test:
+      - alertname: FluxCustomerHelmReleaseFailed
+        eval_time: 20m
+        exp_alerts: []

@@ -75,11 +75,8 @@ spec:
 # HelmReleaseAppToHrMigrationFailed is a custom, case by case alert in CMCs that exist temporarily for certain HelmReleases for the period of the migration.
 #
 # The expression aggregates down to the labels that routing, the description and
-# the runbook URL use. Otherwise the alert's identity includes flux-ksm's
-# scrape-target labels and the HelmRelease's status labels (`chart_version`,
-# `chart_app_version`, `release_status`). helm-controller retrying a failed
-# upgrade changes `chart_version`, and a flux-ksm pod replacement changes `pod`:
-# either resolves the alert and fires it again after `for`.
+# the runbook URL use, so that flux-ksm's scrape-target labels and the
+# HelmRelease's status labels stay out of the alert's identity.
 #
     - alert: FluxCustomerHelmReleaseFailed
       annotations:

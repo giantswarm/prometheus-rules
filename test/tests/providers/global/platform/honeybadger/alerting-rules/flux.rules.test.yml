@@ -258,3 +258,37 @@ tests:
         exp_alerts:
           - exp_labels: *flux-giantswarm-helmrelease-failed-labels
             exp_annotations: *flux-giantswarm-helmrelease-failed-annotations
+  # A HelmRelease that is not Ready for less than 30 minutes does not page:
+  # HelmReleases recover on their own within that time during a cluster upgrade.
+  - interval: 1m
+    input_series:
+      - series: 'gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace="org-acme", name="acme-dev-cilium", team="atlas", cluster_id="myinstall", installation="myinstall", pipeline="stable", provider="$provider"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: FluxCustomerHelmReleaseFailed
+        eval_time: 25m
+        exp_alerts: []
+      - alertname: FluxCustomerHelmReleaseFailed
+        eval_time: 35m
+        exp_alerts:
+          - exp_labels:
+              alertname: "FluxCustomerHelmReleaseFailed"
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "myinstall"
+              cluster_type: "management_cluster"
+              customresource_kind: "HelmRelease"
+              exported_namespace: "org-acme"
+              installation: "myinstall"
+              job: "flux-ksm"
+              name: "acme-dev-cilium"
+              namespace: "org-acme"
+              pipeline: "stable"
+              provider: "$provider"
+              ready: "False"
+              severity: "page"
+              team: "atlas"
+              topic: "releng"
+            exp_annotations:
+              description: "Flux HelmRelease acme-dev-cilium in ns org-acme on myinstall/myinstall is stuck in Failed state."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION=myinstall&CLUSTER=myinstall&NAMESPACE=org-acme&HELMRELEASE_NAME=acme-dev-cilium"

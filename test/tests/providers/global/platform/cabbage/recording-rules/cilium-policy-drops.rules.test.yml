@@ -1,0 +1,25 @@
+---
+rule_files:
+  - cilium-policy-drops.rules.yml
+
+tests:
+  # Both policy reasons on two nodes are summed per cluster and direction; other drop reasons
+  # and the node label are left out. 0.5/s + 1.5/s = 2/s on EGRESS, 1/s on INGRESS.
+  - interval: 1m
+    input_series:
+      - series: 'cilium_drop_count_total{reason="Policy denied", direction="EGRESS", node="node1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp01"}'
+        values: "0+30x30"
+      - series: 'cilium_drop_count_total{reason="Policy denied by denylist", direction="EGRESS", node="node2", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp01"}'
+        values: "0+90x30"
+      - series: 'cilium_drop_count_total{reason="Policy denied", direction="INGRESS", node="node1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp01"}'
+        values: "0+60x30"
+      - series: 'cilium_drop_count_total{reason="Stale or unroutable IP", direction="EGRESS", node="node1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp01"}'
+        values: "0+600x30"
+    promql_expr_test:
+      - expr: cluster:cilium_policy_drops:rate5m
+        eval_time: 20m
+        exp_samples:
+          - labels: 'cluster:cilium_policy_drops:rate5m{direction="EGRESS", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp01"}'
+            value: 2
+          - labels: 'cluster:cilium_policy_drops:rate5m{direction="INGRESS", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp01"}'
+            value: 1

@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: cilium-policy-drops.recording.rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+  # Pre-aggregate the per-cluster policy drop rate and its daily average, so
+  # CiliumPolicyDropsIncreased compares two small series instead of reading a day of the
+  # per-node cilium_drop_count_total series on every evaluation.
+  #
+  # The recorded series must keep cluster_id and installation: the alert joins them with the
+  # clusterwide deny metric on those labels. Keep the grouping to labels whose values don't
+  # change: a new label value starts a series without a baseline, which the alert treats as a jump.
+  - interval: 1m
+    name: cilium-policy-drops.recording
+    rules:
+      - expr: |
+          sum by (cluster_id, cluster_type, installation, pipeline, provider, direction) (rate(cilium_drop_count_total{reason=~"Policy denied.*"}[5m]))
+        record: cluster:cilium_policy_drops:rate5m
+      # Ordered after the rule above so it sees the current sample. avg_over_time averages only
+      # the samples present, so the baseline of a cluster younger than a day isn't diluted.
+      - expr: |
+          avg_over_time(cluster:cilium_policy_drops:rate5m[1d])
+        record: cluster:cilium_policy_drops:rate5m_avg1d

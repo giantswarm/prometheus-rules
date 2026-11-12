@@ -1,6 +1,9 @@
 ---
+# The recording rules are loaded alongside the alerts so the tests drive the whole chain
+# from the raw metric: a label drift between the two files breaks the alert silently.
 rule_files:
   - cilium.rules.yml
+  - ../recording-rules/cilium-policy-drops.rules.yml
 
 tests:
   - interval: 1m
@@ -200,4 +203,235 @@ tests:
               node: node1
             exp_annotations:
               description: "Cilium agent on testinst/odp01 node node1 fails most of its Kubernetes API calls. Its Service table may be stale."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+  # CiliumPolicyDropsIncreased. Two days at a low rate, then a jump at 2880m (2d), held.
+  #   odp01: deny on, 0.1/s -> 1.2/s per policy reason, 2.4/s in all: fires about 15m after the
+  #          jump (10m for), stays firing for about a day, clears once the jump is in the baseline.
+  #          Its deny metric has a 6m gap at 2900m, as in a kube-state-metrics restart: still firing.
+  #   odp02: same jump, only another clusterwide policy, no deny: never fires.
+  #   odp03: deny on, steady 2/s all along: above the floor but no jump, never fires.
+  #   odp04: deny on, jump over 10x to 0.8/s, under the 1/s floor: never fires.
+  - interval: 1m
+    input_series:
+      - series: 'kube_cilium_clusterwidenetworkpolicy_info{name="default-deny-all-namespaces", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp01"}'
+        values: "1x2899 _x6 1x1494"
+      - series: 'cilium_drop_count_total{reason="Policy denied", direction="EGRESS", node="node1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp01"}'
+        values: "0+6x2879 17280+72x1520"
+      - series: 'cilium_drop_count_total{reason="Policy denied by denylist", direction="EGRESS", node="node1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp01"}'
+        values: "0+6x2879 17280+72x1520"
+      - series: 'cilium_drop_count_total{reason="Stale or unroutable IP", direction="EGRESS", node="node1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp01"}'
+        values: "0+600x4400"
+      - series: 'kube_cilium_clusterwidenetworkpolicy_info{name="standard-allow-dns", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp02"}'
+        values: "1x4400"
+      - series: 'cilium_drop_count_total{reason="Policy denied", direction="EGRESS", node="node1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp02"}'
+        values: "0+6x2879 17280+72x1520"
+      - series: 'cilium_drop_count_total{reason="Policy denied by denylist", direction="EGRESS", node="node1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp02"}'
+        values: "0+6x2879 17280+72x1520"
+      - series: 'kube_cilium_clusterwidenetworkpolicy_info{name="default-deny-all-namespaces", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp03"}'
+        values: "1x4400"
+      - series: 'cilium_drop_count_total{reason="Policy denied", direction="EGRESS", node="node1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp03"}'
+        values: "0+120x4400"
+      - series: 'kube_cilium_clusterwidenetworkpolicy_info{name="default-deny-all-namespaces", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp04"}'
+        values: "1x4400"
+      - series: 'cilium_drop_count_total{reason="Policy denied", direction="EGRESS", node="node1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp04"}'
+        values: "0+1x2879 2880+48x1520"
+    alert_rule_test:
+      - alertname: CiliumPolicyDropsIncreased
+        eval_time: 2892m
+      - alertname: CiliumPolicyDropsIncreased
+        eval_time: 2895m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_outside_working_hours: "true"
+              direction: EGRESS
+              installation: testinst
+              pipeline: testing
+              provider: capa
+              cluster_type: workload_cluster
+              cluster_id: odp01
+            exp_annotations:
+              description: "Cilium on testinst/odp01 drops 2.4 EGRESS packets per second because of network policies, a jump over the day before, while the clusterwide deny is on."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+      - alertname: CiliumPolicyDropsIncreased
+        eval_time: 4000m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_outside_working_hours: "true"
+              direction: EGRESS
+              installation: testinst
+              pipeline: testing
+              provider: capa
+              cluster_type: workload_cluster
+              cluster_id: odp01
+            exp_annotations:
+              description: "Cilium on testinst/odp01 drops 2.4 EGRESS packets per second because of network policies, a jump over the day before, while the clusterwide deny is on."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+      - alertname: CiliumPolicyDropsIncreased
+        eval_time: 2905m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_outside_working_hours: "true"
+              direction: EGRESS
+              installation: testinst
+              pipeline: testing
+              provider: capa
+              cluster_type: workload_cluster
+              cluster_id: odp01
+            exp_annotations:
+              description: "Cilium on testinst/odp01 drops 2.4 EGRESS packets per second because of network policies, a jump over the day before, while the clusterwide deny is on."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+      - alertname: CiliumPolicyDropsIncreased
+        eval_time: 4335m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_outside_working_hours: "true"
+              direction: EGRESS
+              installation: testinst
+              pipeline: testing
+              provider: capa
+              cluster_type: workload_cluster
+              cluster_id: odp01
+            exp_annotations:
+              description: "Cilium on testinst/odp01 drops 2.4 EGRESS packets per second because of network policies, a jump over the day before, while the clusterwide deny is on."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+      - alertname: CiliumPolicyDropsIncreased
+        eval_time: 4360m
+      - alertname: CiliumPolicyDropsIncreased
+        eval_time: 4400m
+  # CiliumPolicyDropsIncreased, more cases on the same timeline:
+  #   odp05: deny on, only the denylist reason jumps, INGRESS: fires.
+  #   odp06: deny on, no policy drops before, then 2/s: fires, a missing baseline counts as a jump.
+  - interval: 1m
+    input_series:
+      - series: 'kube_cilium_clusterwidenetworkpolicy_info{name="default-deny-all-namespaces", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp05"}'
+        values: "1x4400"
+      - series: 'cilium_drop_count_total{reason="Policy denied", direction="INGRESS", node="node1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp05"}'
+        values: "0+6x4400"
+      - series: 'cilium_drop_count_total{reason="Policy denied by denylist", direction="INGRESS", node="node1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp05"}'
+        values: "0+6x2879 17280+180x1520"
+      - series: 'kube_cilium_clusterwidenetworkpolicy_info{name="default-deny-all-namespaces", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp06"}'
+        values: "1x4400"
+      - series: 'cilium_drop_count_total{reason="Policy denied", direction="EGRESS", node="node1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp06"}'
+        values: "_x2880 0+120x1519"
+    alert_rule_test:
+      - alertname: CiliumPolicyDropsIncreased
+        eval_time: 2892m
+      - alertname: CiliumPolicyDropsIncreased
+        eval_time: 2895m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_outside_working_hours: "true"
+              direction: INGRESS
+              installation: testinst
+              pipeline: testing
+              provider: capa
+              cluster_type: workload_cluster
+              cluster_id: odp05
+            exp_annotations:
+              description: "Cilium on testinst/odp05 drops 3.1 INGRESS packets per second because of network policies, a jump over the day before, while the clusterwide deny is on."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_cluster_control_plane_unhealthy: "true"
+              cancel_if_outside_working_hours: "true"
+              direction: EGRESS
+              installation: testinst
+              pipeline: testing
+              provider: capa
+              cluster_type: workload_cluster
+              cluster_id: odp06
+            exp_annotations:
+              description: "Cilium on testinst/odp06 drops 2 EGRESS packets per second because of network policies, a jump over the day before, while the clusterwide deny is on."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+  # CiliumPolicyDropsIncreased: no baseline on the whole installation yet, as in the first day
+  # after these rules are deployed. odp07 has the deny on and 2/s from the start: quiet.
+  - interval: 1m
+    input_series:
+      - series: 'kube_cilium_clusterwidenetworkpolicy_info{name="default-deny-all-namespaces", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp07"}'
+        values: "1x60"
+      - series: 'cilium_drop_count_total{reason="Policy denied", direction="EGRESS", node="node1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp07"}'
+        values: "0+120x60"
+    alert_rule_test:
+      - alertname: CiliumPolicyDropsIncreased
+        eval_time: 40m
+  # NetworkPolicyDenyOptOutOnGiantSwarmNamespace: label "false" from 10m on kube-system (odp01)
+  # and giantswarm (odp02) fires after 5m. Not on giantswarm with "true", not on kube-system
+  # without the label, not on a customer namespace with "false".
+  - interval: 1m
+    input_series:
+      - series: 'kube_namespace_labels{namespace="kube-system", label_policy_giantswarm_io_default_deny="false", pod="ksm-1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp01"}'
+        values: "_x10 1x30"
+      - series: 'kube_namespace_labels{namespace="giantswarm", label_policy_giantswarm_io_default_deny="true", pod="ksm-1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp01"}'
+        values: "1x40"
+      - series: 'kube_namespace_labels{namespace="giantswarm", label_policy_giantswarm_io_default_deny="false", pod="ksm-1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp02"}'
+        values: "_x10 1x30"
+      - series: 'kube_namespace_labels{namespace="kube-system", pod="ksm-1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp02"}'
+        values: "1x40"
+      - series: 'kube_namespace_labels{namespace="my-app", label_policy_giantswarm_io_default_deny="false", pod="ksm-1", installation="testinst", pipeline="testing", provider="capa", cluster_type="workload_cluster", cluster_id="odp01"}'
+        values: "1x40"
+    alert_rule_test:
+      - alertname: NetworkPolicyDenyOptOutOnGiantSwarmNamespace
+        eval_time: 14m
+      - alertname: NetworkPolicyDenyOptOutOnGiantSwarmNamespace
+        eval_time: 15m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_outside_working_hours: "true"
+              cancel_if_kube_state_metrics_down: "true"
+              namespace: kube-system
+              installation: testinst
+              pipeline: testing
+              provider: capa
+              cluster_type: workload_cluster
+              cluster_id: odp01
+            exp_annotations:
+              description: "Namespace kube-system on testinst/odp01 is opted out of the clusterwide network policy deny."
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: cilium
+              cancel_if_outside_working_hours: "true"
+              cancel_if_kube_state_metrics_down: "true"
+              namespace: giantswarm
+              installation: testinst
+              pipeline: testing
+              provider: capa
+              cluster_type: workload_cluster
+              cluster_id: odp02
+            exp_annotations:
+              description: "Namespace giantswarm on testinst/odp02 is opted out of the clusterwide network policy deny."
               runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/

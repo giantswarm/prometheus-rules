@@ -83,7 +83,7 @@ spec:
         gotk_resource_info{job="flux-ksm", ready="False", customresource_kind="HelmRelease", cluster_type="management_cluster", exported_namespace!~"flux-giantswarm|giantswarm|org-t-.*", team!~"^$|noteam"} > 0
         unless on(name, exported_namespace)
         ALERTS{alertname="FluxHelmReleaseFailed|HelmReleaseAppToHrMigrationFailed"}
-      for: 10m
+      for: 30m
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"

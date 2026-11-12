@@ -32,7 +32,7 @@ spec:
         team: atlas
         topic: releng
     #
-    # FluxAtlasWorkloadClusterAppFailed
+    # FluxAtlasWorkloadClusterAppStuckForADay
     #
     # Atlas-owned HelmReleases deploying to workload clusters. flux-ksm sets `cluster_id` to the target cluster.
     # Fires when the release is not Ready=True now, had no Ready=True sample in 24h, and existed 24h ago.
@@ -40,7 +40,7 @@ spec:
     # The lookback survives flux-ksm restarts and scrape gaps, which reset a plain `for`.
     # `job="flux-ksm"`: kube-state-metrics exports the same metric with the management cluster as `cluster_id`.
     #
-    - alert: FluxAtlasWorkloadClusterAppFailed
+    - alert: FluxAtlasWorkloadClusterAppStuckForADay
       annotations:
         description: '{{`Flux HelmRelease {{ $labels.name }} in ns {{ $labels.exported_namespace }} on {{ $labels.installation }} has not deployed to workload cluster {{ $labels.cluster_id }} for 24h.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/flux-helmrelease-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.exported_namespace }}&HELMRELEASE_NAME={{ $labels.name }}`}}'

@@ -109,7 +109,7 @@ spec:
       expr: |-
         max by (cluster_id, cluster_type, installation, pipeline, provider, namespace) (
           max_over_time(kube_namespace_labels{namespace=~"kube-system|giantswarm", label_policy_giantswarm_io_default_deny="false"}[10m])
-        )
+        ) > 0
       for: 5m
       labels:
         area: platform

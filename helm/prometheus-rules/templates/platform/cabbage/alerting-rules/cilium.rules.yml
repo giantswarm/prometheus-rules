@@ -63,6 +63,61 @@ spec:
         severity: page
         team: cabbage
         topic: cilium
+    - alert: CiliumPolicyDropsIncreased
+      annotations:
+        description: '{{`Cilium on {{ $labels.installation }}/{{ $labels.cluster_id }} drops {{ $value | humanize }} {{ $labels.direction }} packets per second because of network policies, a jump over the day before, while the clusterwide deny is on.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+      # With the clusterwide default deny of network-policies-app, a missing allow shows up as
+      # policy drops within minutes. We deliberately don't use Cilium's policy audit mode, so
+      # this alert is how we notice.
+      # Policy drops are normal on most clusters because of customers' own policies, so the
+      # rate is compared with the day before, and only on clusters that have the deny on.
+      # The baseline is offset by a day so the jump stays out of it: the alert stays firing for
+      # about a day instead of clearing after an hour.
+      # A cluster without a baseline (no policy drops before) counts as a jump. While no cluster
+      # has a baseline yet, for a day after these rules are deployed, the alert stays quiet.
+      # The factor of 10 and the floor of 1/s come from a 7-day backtest across installations.
+      # The drop metric has no namespace, so a customer workload without allows fires this too.
+      # The deny gate looks back 10m so a kube-state-metrics restart doesn't reset the alert.
+      expr: |-
+        (
+          cluster:cilium_policy_drops:rate5m > 1
+          unless
+          cluster:cilium_policy_drops:rate5m <= 10 * (cluster:cilium_policy_drops:rate5m_avg1d offset 1d)
+          unless on ()
+          absent(cluster:cilium_policy_drops:rate5m_avg1d offset 1d)
+        )
+        and on (cluster_id, installation)
+        max by (cluster_id, installation) (max_over_time(kube_cilium_clusterwidenetworkpolicy_info{name="default-deny-all-namespaces"}[10m]))
+      for: 10m
+      labels:
+        area: platform
+        cancel_if_cluster_control_plane_unhealthy: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: cabbage
+        topic: cilium
+    - alert: NetworkPolicyDenyOptOutOnGiantSwarmNamespace
+      annotations:
+        description: '{{`Namespace {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is opted out of the clusterwide network policy deny.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+      # The opt-out label takes a namespace out of the clusterwide deny. On kube-system and
+      # giantswarm it removes the deny from Giant Swarm components. Not limited to clusters with
+      # the deny on: the label does nothing until then, and leaves the namespaces open once the
+      # deny is turned on. Aggregated and looking back 10m so a kube-state-metrics restart or
+      # pod move doesn't resolve and re-page the alert.
+      expr: |-
+        max by (cluster_id, cluster_type, installation, pipeline, provider, namespace) (
+          max_over_time(kube_namespace_labels{namespace=~"kube-system|giantswarm", label_policy_giantswarm_io_default_deny="false"}[10m])
+        ) > 0
+      for: 5m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        cancel_if_kube_state_metrics_down: "true"
+        severity: page
+        team: cabbage
+        topic: cilium
     - alert: CiliumNetworkPolicyFailed
       annotations:
         description: '{{`Cilium is failing to import network policies on {{ $labels.installation }}/{{ $labels.cluster_id }}.`}}'

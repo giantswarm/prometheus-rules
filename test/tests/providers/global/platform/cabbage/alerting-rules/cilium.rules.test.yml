@@ -256,7 +256,7 @@ tests:
               cluster_id: odp01
             exp_annotations:
               description: "Cilium on testinst/odp01 drops 2.4 EGRESS packets per second because of network policies, a jump over the day before, while the clusterwide deny is on."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/network-policy-clusterwide-deny/?INSTALLATION=testinst&CLUSTER=odp01#policy-drops-increased
       - alertname: CiliumPolicyDropsIncreased
         eval_time: 4000m
         exp_alerts:
@@ -275,7 +275,7 @@ tests:
               cluster_id: odp01
             exp_annotations:
               description: "Cilium on testinst/odp01 drops 2.4 EGRESS packets per second because of network policies, a jump over the day before, while the clusterwide deny is on."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/network-policy-clusterwide-deny/?INSTALLATION=testinst&CLUSTER=odp01#policy-drops-increased
       - alertname: CiliumPolicyDropsIncreased
         eval_time: 2905m
         exp_alerts:
@@ -294,7 +294,7 @@ tests:
               cluster_id: odp01
             exp_annotations:
               description: "Cilium on testinst/odp01 drops 2.4 EGRESS packets per second because of network policies, a jump over the day before, while the clusterwide deny is on."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/network-policy-clusterwide-deny/?INSTALLATION=testinst&CLUSTER=odp01#policy-drops-increased
       - alertname: CiliumPolicyDropsIncreased
         eval_time: 4335m
         exp_alerts:
@@ -313,7 +313,7 @@ tests:
               cluster_id: odp01
             exp_annotations:
               description: "Cilium on testinst/odp01 drops 2.4 EGRESS packets per second because of network policies, a jump over the day before, while the clusterwide deny is on."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/network-policy-clusterwide-deny/?INSTALLATION=testinst&CLUSTER=odp01#policy-drops-increased
       - alertname: CiliumPolicyDropsIncreased
         eval_time: 4360m
       - alertname: CiliumPolicyDropsIncreased
@@ -354,7 +354,7 @@ tests:
               cluster_id: odp05
             exp_annotations:
               description: "Cilium on testinst/odp05 drops 3.1 INGRESS packets per second because of network policies, a jump over the day before, while the clusterwide deny is on."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/network-policy-clusterwide-deny/?INSTALLATION=testinst&CLUSTER=odp05#policy-drops-increased
           - exp_labels:
               area: platform
               severity: page
@@ -370,7 +370,7 @@ tests:
               cluster_id: odp06
             exp_annotations:
               description: "Cilium on testinst/odp06 drops 2 EGRESS packets per second because of network policies, a jump over the day before, while the clusterwide deny is on."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/network-policy-clusterwide-deny/?INSTALLATION=testinst&CLUSTER=odp06#policy-drops-increased
   # CiliumPolicyDropsIncreased: no baseline on the whole installation yet, as in the first day
   # after these rules are deployed. odp07 has the deny on and 2/s from the start: quiet.
   - interval: 1m
@@ -418,7 +418,7 @@ tests:
               cluster_id: odp01
             exp_annotations:
               description: "Namespace kube-system on testinst/odp01 is opted out of the clusterwide network policy deny."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/network-policy-clusterwide-deny/?INSTALLATION=testinst&CLUSTER=odp01#opt-out-on-a-giant-swarm-namespace
           - exp_labels:
               area: platform
               severity: page
@@ -434,4 +434,4 @@ tests:
               cluster_id: odp02
             exp_annotations:
               description: "Namespace giantswarm on testinst/odp02 is opted out of the clusterwide network policy deny."
-              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+              runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/network-policy-clusterwide-deny/?INSTALLATION=testinst&CLUSTER=odp02#opt-out-on-a-giant-swarm-namespace

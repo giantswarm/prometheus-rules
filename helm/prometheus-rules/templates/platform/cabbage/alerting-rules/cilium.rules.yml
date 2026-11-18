@@ -66,7 +66,7 @@ spec:
     - alert: CiliumPolicyDropsIncreased
       annotations:
         description: '{{`Cilium on {{ $labels.installation }}/{{ $labels.cluster_id }} drops {{ $value | humanize }} {{ $labels.direction }} packets per second because of network policies, a jump over the day before, while the clusterwide deny is on.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/network-policy-clusterwide-deny/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}#policy-drops-increased`}}'
       # With the clusterwide default deny of network-policies-app, a missing allow shows up as
       # policy drops within minutes. We deliberately don't use Cilium's policy audit mode, so
       # this alert is how we notice.
@@ -100,7 +100,7 @@ spec:
     - alert: NetworkPolicyDenyOptOutOnGiantSwarmNamespace
       annotations:
         description: '{{`Namespace {{ $labels.namespace }} on {{ $labels.installation }}/{{ $labels.cluster_id }} is opted out of the clusterwide network policy deny.`}}'
-        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/cilium-troubleshooting/
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/network-policy-clusterwide-deny/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}#opt-out-on-a-giant-swarm-namespace`}}'
       # The opt-out label takes a namespace out of the clusterwide deny. On kube-system and
       # giantswarm it removes the deny from Giant Swarm components. Not limited to clusters with
       # the deny on: the label does nothing until then, and leaves the namespaces open once the

@@ -158,11 +158,10 @@ tests:
               cancel_if_outside_working_hours: "true"
               namespace: envoy-gateway-system
               pod: envoy-external-replaced
-              envoy_xds_resource_name: oauth2/client_secret/dex-oauth2
               installation: myinstall
               cluster_id: my-cluster-2
             exp_annotations:
-              description: "Envoy proxy envoy-external-replaced timed out fetching OAuth2 secret oauth2/client_secret/dex-oauth2 over SDS; OIDC authentication fails until the pod is restarted."
+              description: "Envoy proxy envoy-external-replaced timed out fetching 1 OAuth2 secret(s) over SDS; OIDC authentication on the affected routes can fail until the secrets arrive or the pod is restarted."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster-2&NAMESPACE=envoy-gateway-system"
       # pod replaced: cleared despite the 2h hold still being open
       - alertname: EnvoyProxyOAuth2SecretInitFetchTimeout
@@ -190,11 +189,10 @@ tests:
               cancel_if_outside_working_hours: "true"
               namespace: envoy-gateway-system
               pod: envoy-external-def
-              envoy_xds_resource_name: oauth2/client_secret/dex-oauth2
               installation: myinstall
               cluster_id: my-cluster-2
             exp_annotations:
-              description: "Envoy proxy envoy-external-def timed out fetching OAuth2 secret oauth2/client_secret/dex-oauth2 over SDS; OIDC authentication fails until the pod is restarted."
+              description: "Envoy proxy envoy-external-def timed out fetching 1 OAuth2 secret(s) over SDS; OIDC authentication on the affected routes can fail until the secrets arrive or the pod is restarted."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster-2&NAMESPACE=envoy-gateway-system"
       # an OAuth2 secret must never trigger the paging TLS alert
       - alertname: EnvoyProxySDSInitFetchTimeout
@@ -270,7 +268,7 @@ tests:
 
   # EnvoyProxyConfigUpdateRejected: the proxy NACKs a pushed config and keeps serving the old one.
   # Like the SDS timeout counters, *_update_rejected latches, so the alert triggers on the increment
-  # and is then held for 2h.
+  # and is then held for 2h. It notifies; the paging alert is EnvoyProxyConfigUpdateRejectedRepeatedly.
   - interval: 1m
     input_series:
       - series: 'envoy_listener_manager_lds_update_rejected{namespace="envoy-gateway-system", pod="envoy-internal-abc", gateway_name="giantswarm-default", installation="myinstall", cluster_id="my-cluster"}'
@@ -288,7 +286,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              severity: page
+              severity: notify
               team: cabbage
               topic: envoy-gateway
               cancel_if_outside_working_hours: "true"
@@ -298,15 +296,15 @@ tests:
               installation: myinstall
               cluster_id: my-cluster
             exp_annotations:
-              description: "Envoy proxy envoy-internal-abc rejected a configuration update in the last 15m and keeps serving its previous configuration."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
+              description: "Envoy proxy envoy-internal-abc rejected a configuration update for 1 resource(s) in the last 2h. Check whether it has converged since."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system#envoyproxyconfigupdaterejected"
       # still firing well after the 15m increase() window closed, thanks to the 2h max_over_time hold
       - alertname: EnvoyProxyConfigUpdateRejected
         eval_time: 60m
         exp_alerts:
           - exp_labels:
               area: platform
-              severity: page
+              severity: notify
               team: cabbage
               topic: envoy-gateway
               cancel_if_outside_working_hours: "true"
@@ -316,8 +314,8 @@ tests:
               installation: myinstall
               cluster_id: my-cluster
             exp_annotations:
-              description: "Envoy proxy envoy-internal-abc rejected a configuration update in the last 15m and keeps serving its previous configuration."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system"
+              description: "Envoy proxy envoy-internal-abc rejected a configuration update for 1 resource(s) in the last 2h. Check whether it has converged since."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system#envoyproxyconfigupdaterejected"
       # the 2h hold has expired and the counter never incremented again: the alert self-clears
       - alertname: EnvoyProxyConfigUpdateRejected
         eval_time: 160m
@@ -335,7 +333,7 @@ tests:
         exp_alerts:
           - exp_labels:
               area: platform
-              severity: page
+              severity: notify
               team: cabbage
               topic: envoy-gateway
               cancel_if_outside_working_hours: "true"
@@ -345,8 +343,71 @@ tests:
               installation: myinstall
               cluster_id: my-cluster-2
             exp_annotations:
-              description: "Envoy proxy envoy-external-def rejected a configuration update in the last 15m and keeps serving its previous configuration."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster-2&NAMESPACE=envoy-gateway-system"
+              description: "Envoy proxy envoy-external-def rejected a configuration update for 1 resource(s) in the last 2h. Check whether it has converged since."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster-2&NAMESPACE=envoy-gateway-system#envoyproxyconfigupdaterejected"
+
+  # One rejected SDS update NACKs every SDS subscription on the stream. The alert collapses the
+  # per-resource series into one alert per pod whose value is the number of affected resources,
+  # and a one-off rejection like this never reaches the paging alert.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_sds_update_rejected{namespace="envoy-gateway-system", pod="envoy-sds-burst", gateway_name="giantswarm-default", envoy_xds_resource_name="ns-a/app-a-tls", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x20 1+0x100"
+      - series: 'envoy_sds_update_rejected{namespace="envoy-gateway-system", pod="envoy-sds-burst", gateway_name="giantswarm-default", envoy_xds_resource_name="oauth2/client_secret/securitypolicy/ns-a/app-a", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x20 1+0x100"
+      - series: 'envoy_sds_update_rejected{namespace="envoy-gateway-system", pod="envoy-sds-burst", gateway_name="giantswarm-default", envoy_xds_resource_name="oauth2/hmac_secret/securitypolicy/ns-a/app-a", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x20 1+0x100"
+    alert_rule_test:
+      - alertname: EnvoyProxyConfigUpdateRejected
+        eval_time: 27m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: notify
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "true"
+              namespace: envoy-gateway-system
+              pod: envoy-sds-burst
+              gateway_name: giantswarm-default
+              installation: myinstall
+              cluster_id: my-cluster
+            exp_annotations:
+              description: "Envoy proxy envoy-sds-burst rejected a configuration update for 3 resource(s) in the last 2h. Check whether it has converged since."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system#envoyproxyconfigupdaterejected"
+      - alertname: EnvoyProxyConfigUpdateRejectedRepeatedly
+        eval_time: 27m
+      # the increase() window closed at 36m, so the 30m for-window was never satisfied
+      - alertname: EnvoyProxyConfigUpdateRejectedRepeatedly
+        eval_time: 60m
+
+  # EnvoyProxyConfigUpdateRejectedRepeatedly: the proxy keeps rejecting new pushes (a new rejection
+  # every 10m), so increase(...[15m]) stays above 0 for longer than the 30m for-window.
+  - interval: 1m
+    input_series:
+      - series: 'envoy_listener_manager_lds_update_rejected{namespace="envoy-gateway-system", pod="envoy-stuck", gateway_name="giantswarm-default", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x20 1x10 2x10 3x10 4x10 5x10 6x10"
+    alert_rule_test:
+      # 21m + 30m for-window: not yet
+      - alertname: EnvoyProxyConfigUpdateRejectedRepeatedly
+        eval_time: 50m
+      - alertname: EnvoyProxyConfigUpdateRejectedRepeatedly
+        eval_time: 52m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: page
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_outside_working_hours: "true"
+              namespace: envoy-gateway-system
+              pod: envoy-stuck
+              gateway_name: giantswarm-default
+              installation: myinstall
+              cluster_id: my-cluster
+            exp_annotations:
+              description: "Envoy proxy envoy-stuck has kept rejecting configuration updates for more than 30m and serves an outdated configuration."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system#envoyproxyconfigupdaterejected"
 
   # EnvoyClusterCircuitBreakerTripped pages only when requests are rejected.
   # Under high load cx_open trips with no rejected request: notify only, no page.
@@ -464,3 +525,45 @@ tests:
       # no new rejections: the alert clears
       - alertname: EnvoyClusterCircuitBreakerTripped
         eval_time: 60m
+
+  # EnvoyProxyCrashed: an envoy container that segfaults (139) and restarts within seconds.
+  - interval: 1m
+    input_series:
+      - series: 'kube_pod_container_status_restarts_total{namespace="envoy-gateway-system", pod="envoy-crashy", container="envoy", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x20 2x100"
+      - series: 'kube_pod_container_status_last_terminated_exitcode{namespace="envoy-gateway-system", pod="envoy-crashy", container="envoy", installation="myinstall", cluster_id="my-cluster"}'
+        values: "_x20 139x100"
+      # OOM kill (137) of another proxy: not this alert
+      - series: 'kube_pod_container_status_restarts_total{namespace="envoy-gateway-system", pod="envoy-oom", container="envoy", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x20 1x100"
+      - series: 'kube_pod_container_status_last_terminated_exitcode{namespace="envoy-gateway-system", pod="envoy-oom", container="envoy", installation="myinstall", cluster_id="my-cluster"}'
+        values: "_x20 137x100"
+      # a controller (not proxy) container crash: not this alert
+      - series: 'kube_pod_container_status_restarts_total{namespace="envoy-gateway-system", pod="envoy-gateway-abc", container="envoy-gateway", installation="myinstall", cluster_id="my-cluster"}'
+        values: "0x20 1x100"
+      - series: 'kube_pod_container_status_last_terminated_exitcode{namespace="envoy-gateway-system", pod="envoy-gateway-abc", container="envoy-gateway", installation="myinstall", cluster_id="my-cluster"}'
+        values: "_x20 139x100"
+    alert_rule_test:
+      - alertname: EnvoyProxyCrashed
+        eval_time: 15m
+      - alertname: EnvoyProxyCrashed
+        eval_time: 25m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              severity: notify
+              team: cabbage
+              topic: envoy-gateway
+              cancel_if_kube_state_metrics_down: "true"
+              cancel_if_outside_working_hours: "true"
+              namespace: envoy-gateway-system
+              pod: envoy-crashy
+              container: envoy
+              installation: myinstall
+              cluster_id: my-cluster
+            exp_annotations:
+              description: "Envoy proxy envoy-crashy crashed with exit code 139 (134 = abort, 139 = segmentation fault). This is a defect in Envoy or Envoy Gateway: keep the log of the crashed container for an upstream report."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION=myinstall&CLUSTER=my-cluster&NAMESPACE=envoy-gateway-system#envoyproxyconfigupdaterejected"
+      # no restart in the last hour: cleared, although the last exit code is still 139
+      - alertname: EnvoyProxyCrashed
+        eval_time: 90m

@@ -1,0 +1,157 @@
+---
+rule_files:
+  - capa.management-cluster.rules.yml
+
+tests:
+  # AWSControllerReconcileErrorRateHigh: 20% of reconciliations fail.
+  - interval: 1m
+    input_series:
+      - series: 'controller_runtime_reconcile_total{app="cluster-api-provider-aws", cluster_id="golem", cluster_type="management_cluster", controller="awsmachine", installation="golem", namespace="giantswarm", pipeline="testing", pod="capa-controller-manager-1", provider="capa", result="error"}'
+        values: "0+1x90"
+      - series: 'controller_runtime_reconcile_total{app="cluster-api-provider-aws", cluster_id="golem", cluster_type="management_cluster", controller="awsmachine", installation="golem", namespace="giantswarm", pipeline="testing", pod="capa-controller-manager-1", provider="capa", result="success"}'
+        values: "0+3x90"
+      - series: 'controller_runtime_reconcile_total{app="cluster-api-provider-aws", cluster_id="golem", cluster_type="management_cluster", controller="awsmachine", installation="golem", namespace="giantswarm", pipeline="testing", pod="capa-controller-manager-1", provider="capa", result="requeue_after"}'
+        values: "0+1x90"
+    alert_rule_test:
+      - alertname: AWSControllerReconcileErrorRateHigh
+        eval_time: 15m
+        exp_alerts: []
+      - alertname: AWSControllerReconcileErrorRateHigh
+        eval_time: 60m
+        exp_alerts:
+          - exp_labels:
+              app: "cluster-api-provider-aws"
+              area: "kaas"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "golem"
+              controller: "awsmachine"
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+              severity: "page"
+              team: "phoenix"
+              topic: "kubernetes"
+            exp_annotations:
+              description: "Controller awsmachine in cluster-api-provider-aws fails 20% of its reconciliations."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/aws-controllers/#awscontrollerreconcileerrorratehigh"
+  # AWSControllerReconcileErrorRateHigh: every reconciliation fails, but there are too few to alert on.
+  - interval: 1m
+    input_series:
+      - series: 'controller_runtime_reconcile_total{app="aws-resolver-rules-operator", cluster_id="golem", cluster_type="management_cluster", controller="resolverrules", installation="golem", namespace="giantswarm", pipeline="testing", provider="capa", result="error"}'
+        values: "0+0.2x90"
+      - series: 'controller_runtime_reconcile_total{app="aws-resolver-rules-operator", cluster_id="golem", cluster_type="management_cluster", controller="resolverrules", installation="golem", namespace="giantswarm", pipeline="testing", provider="capa", result="success"}'
+        values: "0+0x90"
+    alert_rule_test:
+      - alertname: AWSControllerReconcileErrorRateHigh
+        eval_time: 60m
+        exp_alerts: []
+  # AWSControllerWorkqueueNotDraining: one controller never drains its queue, another drains it after every resync.
+  - interval: 1m
+    input_series:
+      - series: 'workqueue_depth{app="cluster-api-provider-aws", cluster_id="golem", cluster_type="management_cluster", controller="awsmachine", installation="golem", name="awsmachine", namespace="giantswarm", pipeline="testing", priority="0", provider="capa"}'
+        values: "100 80 60 40 20 0 0 0 0 0 100 80 60 40 20 0 0 0 0 0 100 80 60 40 20 0 0 0 0 0 100 80 60 40 20 0 0 0 0 0 100 80 60 40 20 0 0 0 0 0 100 80 60 40 20 0 0 0 0 0"
+      - series: 'workqueue_depth{app="cluster-api-provider-aws", cluster_id="golem", cluster_type="management_cluster", controller="awsmachine", installation="golem", name="awsmachine", namespace="giantswarm", pipeline="testing", priority="-100", provider="capa"}'
+        values: "0x60"
+      - series: 'workqueue_depth{app="cluster-api-provider-aws", cluster_id="golem", cluster_type="management_cluster", controller="awscluster", installation="golem", name="awscluster", namespace="giantswarm", pipeline="testing", priority="0", provider="capa"}'
+        values: "60 50 40 30 20 10 5 5 5 5 60 50 40 30 20 10 5 5 5 5 60 50 40 30 20 10 5 5 5 5 60 50 40 30 20 10 5 5 5 5 60 50 40 30 20 10 5 5 5 5 60 50 40 30 20 10 5 5 5 5"
+    alert_rule_test:
+      - alertname: AWSControllerWorkqueueNotDraining
+        eval_time: 5m
+        exp_alerts: []
+      - alertname: AWSControllerWorkqueueNotDraining
+        eval_time: 40m
+        exp_alerts:
+          - exp_labels:
+              app: "cluster-api-provider-aws"
+              area: "kaas"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "golem"
+              controller: "awscluster"
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+              severity: "page"
+              team: "phoenix"
+              topic: "kubernetes"
+            exp_annotations:
+              description: "The work queue of controller awscluster in cluster-api-provider-aws has not been empty for 30 minutes, with at least 5 items queued throughout."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/aws-controllers/#awscontrollerworkqueuenotdraining"
+  # AWSControllerWorkerStuck: one reconciliation keeps running, another worker is healthy.
+  - interval: 1m
+    input_series:
+      - series: 'workqueue_longest_running_processor_seconds{app="capa-iam-operator", cluster_id="golem", cluster_type="management_cluster", controller="awscluster", installation="golem", name="awscluster", namespace="giantswarm", pipeline="testing", pod="capa-iam-operator-1", provider="capa"}'
+        values: "0+60x30"
+      - series: 'workqueue_longest_running_processor_seconds{app="capa-iam-operator", cluster_id="golem", cluster_type="management_cluster", controller="awsmachinepool", installation="golem", name="awsmachinepool", namespace="giantswarm", pipeline="testing", pod="capa-iam-operator-1", provider="capa"}'
+        values: "30x30"
+    alert_rule_test:
+      - alertname: AWSControllerWorkerStuck
+        eval_time: 12m
+        exp_alerts: []
+      - alertname: AWSControllerWorkerStuck
+        eval_time: 20m
+        exp_alerts:
+          - exp_labels:
+              app: "capa-iam-operator"
+              area: "kaas"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "golem"
+              controller: "awscluster"
+              installation: "golem"
+              pipeline: "testing"
+              provider: "capa"
+              severity: "page"
+              team: "phoenix"
+              topic: "kubernetes"
+            exp_annotations:
+              description: "A worker of controller awscluster in capa-iam-operator has been processing a single reconciliation for 20m 0s."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/aws-controllers/#awscontrollerworkerstuck"
+  # AWSControllerAPIRequestsThrottled: 10% of DescribeInstances calls are throttled, other operations are fine.
+  - interval: 1m
+    input_series:
+      - series: 'aws_api_requests_total{app="cluster-api-provider-aws", cluster_id="golem", cluster_type="management_cluster", controller="awsmachine", error_code="RequestLimitExceeded", exported_service="ec2", installation="golem", namespace="giantswarm", operation="DescribeInstances", pipeline="testing", provider="capa", region="eu-west-1", status_code="503"}'
+        values: "0+1x60"
+      - series: 'aws_api_requests_total{app="cluster-api-provider-aws", cluster_id="golem", cluster_type="management_cluster", controller="awsmachine", error_code="", exported_service="ec2", installation="golem", namespace="giantswarm", operation="DescribeInstances", pipeline="testing", provider="capa", region="eu-west-1", status_code="200"}'
+        values: "0+9x60"
+      - series: 'aws_api_requests_total{app="cluster-api-provider-aws", cluster_id="golem", cluster_type="management_cluster", controller="awsmachine", error_code="InvalidInstanceID.NotFound", exported_service="ec2", installation="golem", namespace="giantswarm", operation="RunInstances", pipeline="testing", provider="capa", region="eu-west-1", status_code="400"}'
+        values: "0+1x60"
+      - series: 'aws_api_requests_total{app="cluster-api-provider-aws", cluster_id="golem", cluster_type="management_cluster", controller="awsmachine", error_code="", exported_service="ec2", installation="golem", namespace="giantswarm", operation="RunInstances", pipeline="testing", provider="capa", region="eu-west-1", status_code="200"}'
+        values: "0+1x60"
+    alert_rule_test:
+      - alertname: AWSControllerAPIRequestsThrottled
+        eval_time: 10m
+        exp_alerts: []
+      - alertname: AWSControllerAPIRequestsThrottled
+        eval_time: 40m
+        exp_alerts:
+          - exp_labels:
+              app: "cluster-api-provider-aws"
+              area: "kaas"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "golem"
+              controller: "awsmachine"
+              exported_service: "ec2"
+              installation: "golem"
+              operation: "DescribeInstances"
+              pipeline: "testing"
+              provider: "capa"
+              severity: "page"
+              team: "phoenix"
+              topic: "kubernetes"
+            exp_annotations:
+              description: "10% of ec2 DescribeInstances requests from controller awsmachine in cluster-api-provider-aws are still throttled by AWS after retries."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/aws-controllers/#awscontrollerapirequeststhrottled"
+  # AWSControllerAPIRequestsThrottled: half of the calls to a rarely called operation are throttled, but too few to alert on.
+  - interval: 1m
+    input_series:
+      - series: 'aws_api_requests_total{app="cluster-api-provider-aws", cluster_id="golem", cluster_type="management_cluster", controller="awsmachine", error_code="RequestLimitExceeded", exported_service="ec2", installation="golem", namespace="giantswarm", operation="ModifyInstanceAttribute", pipeline="testing", provider="capa", region="eu-west-1", status_code="503"}'
+        values: "0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 4 4 4 4 4 4"
+      - series: 'aws_api_requests_total{app="cluster-api-provider-aws", cluster_id="golem", cluster_type="management_cluster", controller="awsmachine", error_code="", exported_service="ec2", installation="golem", namespace="giantswarm", operation="ModifyInstanceAttribute", pipeline="testing", provider="capa", region="eu-west-1", status_code="200"}'
+        values: "0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 4 4 4 4 4 4"
+    alert_rule_test:
+      - alertname: AWSControllerAPIRequestsThrottled
+        eval_time: 40m
+        exp_alerts: []

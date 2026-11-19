@@ -1,0 +1,40 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: oncall-scheduler.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: oncall-scheduler
+    rules:
+    - alert: OncallSchedulerCronJobFailed
+      annotations:
+        description: '{{`The last run of CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} did not succeed.`}}'
+      # The alert has no static team label. Each team runs its own scheduler, and
+      # the team comes from the application.giantswarm.io/team label of the CronJob.
+      # A CronJob that never succeeded is compared against its creation time.
+      # Failed Jobs stay in the Job history after a later run succeeds, so the
+      # alert compares the CronJob timestamps to resolve on the next success.
+      expr: |
+        (
+          kube_cronjob_status_last_schedule_time
+          * on (cluster_id, installation, namespace, cronjob) group_left (team)
+          label_replace(
+            kube_cronjob_labels{label_app_kubernetes_io_name="area-oncall-scheduler", label_application_giantswarm_io_team!=""},
+            "team", "$1", "label_application_giantswarm_io_team", "(.+)"
+          )
+        )
+        > on (cluster_id, installation, namespace, cronjob) group_left ()
+        (
+          kube_cronjob_status_last_successful_time
+          or on (cluster_id, installation, namespace, cronjob)
+          kube_cronjob_created
+        )
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        topic: oncall

@@ -1,7 +1,6 @@
 kaas/phoenix/alerting-rules/aws-load-balancer-controller.rules.yml
 kaas/phoenix/alerting-rules/aws.node.workload-cluster.rules.yml
 kaas/phoenix/alerting-rules/aws.workload-cluster.rules.yml
-kaas/phoenix/alerting-rules/capa.management-cluster.rules.yml
 kaas/phoenix/alerting-rules/dns-operator-azure.rules.yml
 kaas/phoenix/alerting-rules/irsa.rules.yml
 platform/atlas/alerting-rules/deployment.workload-cluster.rules.yml

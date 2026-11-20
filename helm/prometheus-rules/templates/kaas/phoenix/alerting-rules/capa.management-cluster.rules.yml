@@ -67,11 +67,111 @@ spec:
         runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/capa-too-many-reconciliations/
       # Computes the absolute number of reconciliation loops over the past 10 minutes (600 seconds). Fires as soon as that count exceeds 5000 (8.33 reconciliations/second on average).
       # The healthy baseline is fleet-proportional: the awsmachine controller resyncs every AWSMachine (and its owner Machine) each 10m sync-period, so an MC with N machines legitimately does up to ~3xN reconciliations per 10m. Sized against the largest CAPA fleet (~1100 machines, 90d max ~3000/10m); a real hot loop (>=10 reconciles/s = 6000/10m) still crosses this within one window.
+      # Deprecated: superseded by the AWSController* alerts below. Kept as notify-only for comparison; remove after 2026-12-17.
       expr: increase(controller_runtime_reconcile_total{app="cluster-api-provider-aws"}[10m]) > 5000
       for: 15m
       labels:
         area: kaas
         cancel_if_kube_state_metrics_down: "true"
+        cancel_if_monitoring_agent_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: phoenix
+        topic: kubernetes
+    # The AWSController* alerts cover the controller-runtime controllers owned by Phoenix on CAPA management clusters.
+    - alert: AWSControllerReconcileErrorRateHigh
+      annotations:
+        description: '{{`Controller {{ $labels.controller }} in {{ $labels.app }} fails {{ $value | humanizePercentage }} of its reconciliations.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/aws-controllers/#awscontrollerreconcileerrorratehigh
+      # Fires when more than 10% of reconciliations of a controller fail over 30 minutes, with at least 10 failures
+      # so that controllers with very little traffic do not flap.
+      expr: |-
+        (
+          sum by (cluster_id, installation, pipeline, provider, app, controller) (
+            increase(controller_runtime_reconcile_total{app=~"cluster-api-provider-aws|aws-resolver-rules-operator|capa-iam-operator|aws-vpc-operator", namespace="giantswarm", cluster_type="management_cluster", result="error"}[30m])
+          )
+          /
+          sum by (cluster_id, installation, pipeline, provider, app, controller) (
+            increase(controller_runtime_reconcile_total{app=~"cluster-api-provider-aws|aws-resolver-rules-operator|capa-iam-operator|aws-vpc-operator", namespace="giantswarm", cluster_type="management_cluster"}[30m])
+          )
+        ) > 0.1
+        and
+        sum by (cluster_id, installation, pipeline, provider, app, controller) (
+          increase(controller_runtime_reconcile_total{app=~"cluster-api-provider-aws|aws-resolver-rules-operator|capa-iam-operator|aws-vpc-operator", namespace="giantswarm", cluster_type="management_cluster", result="error"}[30m])
+        ) >= 10
+      for: 15m
+      labels:
+        area: kaas
+        cancel_if_monitoring_agent_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: kubernetes
+    - alert: AWSControllerWorkqueueNotDraining
+      annotations:
+        description: '{{`The work queue of controller {{ $labels.controller }} in {{ $labels.app }} has not been empty for 30 minutes, with at least {{ $value }} items queued throughout.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/aws-controllers/#awscontrollerworkqueuenotdraining
+      # Fires when the work queue of a controller never empties for 30 minutes (20m window + 10m `for`), i.e. three sync periods.
+      # Every sync period (10m) all objects are enqueued at once, so the queue depth and the time items wait grow with the
+      # number of objects. A controller that keeps up still drains the queue before the next resync; one that cannot keep up never does.
+      expr: |-
+        min_over_time(
+          sum by (cluster_id, installation, pipeline, provider, app, controller) (
+            workqueue_depth{app=~"cluster-api-provider-aws|aws-resolver-rules-operator|capa-iam-operator|aws-vpc-operator", namespace="giantswarm", cluster_type="management_cluster"}
+          )[20m:1m]
+        ) > 0
+      for: 10m
+      labels:
+        area: kaas
+        cancel_if_monitoring_agent_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: kubernetes
+    - alert: AWSControllerWorkerStuck
+      annotations:
+        description: '{{`A worker of controller {{ $labels.controller }} in {{ $labels.app }} has been processing a single reconciliation for {{ $value | humanizeDuration }}.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/aws-controllers/#awscontrollerworkerstuck
+      # Fires when one reconciliation has been running for more than 10 minutes, which points to a hung call or deadlock.
+      expr: |-
+        max by (cluster_id, installation, pipeline, provider, app, controller) (
+          workqueue_longest_running_processor_seconds{app=~"cluster-api-provider-aws|aws-resolver-rules-operator|capa-iam-operator|aws-vpc-operator", namespace="giantswarm", cluster_type="management_cluster"}
+        ) > 600
+      for: 5m
+      labels:
+        area: kaas
+        cancel_if_monitoring_agent_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: kubernetes
+    - alert: AWSControllerAPIRequestsThrottled
+      annotations:
+        description: '{{`{{ $value | humanizePercentage }} of {{ $labels.exported_service }} {{ $labels.operation }} requests from controller {{ $labels.controller }} in {{ $labels.app }} are still throttled by AWS after retries.`}}'
+        runbook_url: https://intranet.giantswarm.io/docs/support-and-ops/runbooks/aws-controllers/#awscontrollerapirequeststhrottled
+      # Fires when more than 1% of the requests to an AWS API operation fail with a throttling error over 15 minutes,
+      # with at least 5 throttled requests so that a blip on a rarely called operation does not page. AWS throttles per
+      # account, region and action category, so rarely called operations can still be throttled when the bucket is exhausted;
+      # in that case the high-volume operations cross the threshold as well.
+      # The error codes are the AWS SDK for Go v2 DefaultThrottleErrorCodes (aws/retry/throttle_error.go), minus the
+      # ambiguous LimitExceededException (also used for quota errors), plus HTTP429, which CAPA records when the
+      # response carries no error code.
+      # The metric's own `service` label clashes with the target label and is exposed as `exported_service`.
+      expr: |-
+        sum by (cluster_id, installation, pipeline, provider, app, controller, exported_service, operation) (
+          increase(aws_api_requests_total{app=~"cluster-api-provider-aws|aws-resolver-rules-operator|capa-iam-operator|aws-vpc-operator", namespace="giantswarm", cluster_type="management_cluster", error_code=~"Throttling|ThrottlingException|ThrottledException|RequestThrottledException|TooManyRequestsException|ProvisionedThroughputExceededException|TransactionInProgressException|RequestLimitExceeded|BandwidthLimitExceeded|RequestThrottled|SlowDown|PriorRequestNotComplete|EC2ThrottledException|HTTP429"}[15m])
+        )
+        /
+        sum by (cluster_id, installation, pipeline, provider, app, controller, exported_service, operation) (
+          increase(aws_api_requests_total{app=~"cluster-api-provider-aws|aws-resolver-rules-operator|capa-iam-operator|aws-vpc-operator", namespace="giantswarm", cluster_type="management_cluster"}[15m])
+        ) > 0.01
+        and
+        sum by (cluster_id, installation, pipeline, provider, app, controller, exported_service, operation) (
+          increase(aws_api_requests_total{app=~"cluster-api-provider-aws|aws-resolver-rules-operator|capa-iam-operator|aws-vpc-operator", namespace="giantswarm", cluster_type="management_cluster", error_code=~"Throttling|ThrottlingException|ThrottledException|RequestThrottledException|TooManyRequestsException|ProvisionedThroughputExceededException|TransactionInProgressException|RequestLimitExceeded|BandwidthLimitExceeded|RequestThrottled|SlowDown|PriorRequestNotComplete|EC2ThrottledException|HTTP429"}[15m])
+        ) >= 5
+      for: 15m
+      labels:
+        area: kaas
         cancel_if_monitoring_agent_down: "true"
         cancel_if_outside_working_hours: "true"
         severity: page

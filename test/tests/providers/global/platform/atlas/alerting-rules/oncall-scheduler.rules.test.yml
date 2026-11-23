@@ -7,7 +7,7 @@ tests:
   # A run succeeds at minute 200.
   - interval: 1m
     input_series:
-      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="scheduler-0", label_app_kubernetes_io_name="area-oncall-scheduler", label_application_giantswarm_io_team="atlas"}'
+      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="scheduler-0", label_app_kubernetes_io_name="area-oncall-scheduler"}'
         values: "1+0x240"
       - series: 'kube_cronjob_created{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="scheduler-0"}'
         values: "100+0x240"
@@ -33,8 +33,8 @@ tests:
               cronjob: scheduler-0
               installation: testinst
               namespace: oncall-scheduler
-              severity: notify
-              team: atlas
+              severity: page
+              team: phoenix
               topic: oncall
             exp_annotations:
               description: "The last run of CronJob oncall-scheduler/scheduler-0 did not succeed."
@@ -43,10 +43,10 @@ tests:
       - alertname: OncallSchedulerCronJobFailed
         eval_time: 210m
         exp_alerts: []
-  # The CronJob never succeeded, and its team label routes the alert to another team.
+  # The CronJob never succeeded.
   - interval: 1m
     input_series:
-      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="scheduler-1", label_app_kubernetes_io_name="area-oncall-scheduler", label_application_giantswarm_io_team="rocket"}'
+      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="scheduler-1", label_app_kubernetes_io_name="area-oncall-scheduler"}'
         values: "1+0x180"
       - series: 'kube_cronjob_created{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="scheduler-1"}'
         values: "100+0x180"
@@ -66,8 +66,8 @@ tests:
               cronjob: scheduler-1
               installation: testinst
               namespace: oncall-scheduler
-              severity: notify
-              team: rocket
+              severity: page
+              team: phoenix
               topic: oncall
             exp_annotations:
               description: "The last run of CronJob oncall-scheduler/scheduler-1 did not succeed."
@@ -75,7 +75,7 @@ tests:
   # An hourly CronJob fails one run, and the next run succeeds.
   - interval: 1m
     input_series:
-      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="calendar-sync", label_app_kubernetes_io_name="area-oncall-scheduler", label_application_giantswarm_io_team="atlas"}'
+      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="calendar-sync", label_app_kubernetes_io_name="area-oncall-scheduler"}'
         values: "1+0x240"
       - series: 'kube_cronjob_created{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="calendar-sync"}'
         values: "100+0x240"
@@ -93,9 +93,9 @@ tests:
   # Two kube-state-metrics pods export the same CronJob during a rollout.
   - interval: 1m
     input_series:
-      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", namespace="oncall-scheduler", cronjob="scheduler-2", pod="kube-state-metrics-a", label_app_kubernetes_io_name="area-oncall-scheduler", label_application_giantswarm_io_team="atlas"}'
+      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", namespace="oncall-scheduler", cronjob="scheduler-2", pod="kube-state-metrics-a", label_app_kubernetes_io_name="area-oncall-scheduler"}'
         values: "1+0x180"
-      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", namespace="oncall-scheduler", cronjob="scheduler-2", pod="kube-state-metrics-b", label_app_kubernetes_io_name="area-oncall-scheduler", label_application_giantswarm_io_team="atlas"}'
+      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", namespace="oncall-scheduler", cronjob="scheduler-2", pod="kube-state-metrics-b", label_app_kubernetes_io_name="area-oncall-scheduler"}'
         values: "1+0x180"
       - series: 'kube_cronjob_created{cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", namespace="oncall-scheduler", cronjob="scheduler-2", pod="kube-state-metrics-a"}'
         values: "100+0x180"
@@ -118,8 +118,8 @@ tests:
               namespace: oncall-scheduler
               pipeline: testing
               provider: capa
-              severity: notify
-              team: atlas
+              severity: page
+              team: phoenix
               topic: oncall
             exp_annotations:
               description: "The last run of CronJob oncall-scheduler/scheduler-2 did not succeed."
@@ -127,7 +127,7 @@ tests:
   # A failing CronJob of another app does not alert.
   - interval: 1m
     input_series:
-      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", namespace="default", cronjob="other", label_app_kubernetes_io_name="other-app", label_application_giantswarm_io_team="atlas"}'
+      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", namespace="default", cronjob="other", label_app_kubernetes_io_name="other-app"}'
         values: "1+0x180"
       - series: 'kube_cronjob_created{cluster_id="testinst", installation="testinst", namespace="default", cronjob="other"}'
         values: "100+0x180"

@@ -4,25 +4,27 @@ rule_files:
 
 tests:
   # The run scheduled at minute 0 succeeds. The run scheduled at minute 60 does not.
+  # A run succeeds at minute 200.
   - interval: 1m
     input_series:
       - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="scheduler-0", label_app_kubernetes_io_name="area-oncall-scheduler", label_application_giantswarm_io_team="atlas"}'
-        values: "1+0x150"
+        values: "1+0x240"
       - series: 'kube_cronjob_created{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="scheduler-0"}'
-        values: "100+0x150"
+        values: "100+0x240"
       - series: 'kube_cronjob_status_last_schedule_time{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="scheduler-0"}'
-        values: "1000+0x60 4600+0x90"
+        values: "1000+0x60 4600+0x179"
       - series: 'kube_cronjob_status_last_successful_time{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="scheduler-0"}'
-        values: "1060+0x150"
+        values: "1060+0x199 4700+0x40"
     alert_rule_test:
       - alertname: OncallSchedulerCronJobFailed
         eval_time: 50m
         exp_alerts: []
+      # The run could still be in progress.
       - alertname: OncallSchedulerCronJobFailed
-        eval_time: 80m
+        eval_time: 170m
         exp_alerts: []
       - alertname: OncallSchedulerCronJobFailed
-        eval_time: 100m
+        eval_time: 190m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -36,18 +38,26 @@ tests:
               topic: oncall
             exp_annotations:
               description: "The last run of CronJob oncall-scheduler/scheduler-0 did not succeed."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/oncall-scheduler-cronjob-failed/?INSTALLATION=testinst&CLUSTER=testinst"
+      # The alert resolves on the next successful run.
+      - alertname: OncallSchedulerCronJobFailed
+        eval_time: 210m
+        exp_alerts: []
   # The CronJob never succeeded, and its team label routes the alert to another team.
   - interval: 1m
     input_series:
       - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="scheduler-1", label_app_kubernetes_io_name="area-oncall-scheduler", label_application_giantswarm_io_team="rocket"}'
-        values: "1+0x60"
+        values: "1+0x180"
       - series: 'kube_cronjob_created{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="scheduler-1"}'
-        values: "100+0x60"
+        values: "100+0x180"
       - series: 'kube_cronjob_status_last_schedule_time{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="scheduler-1"}'
-        values: "1000+0x60"
+        values: "1000+0x180"
     alert_rule_test:
       - alertname: OncallSchedulerCronJobFailed
-        eval_time: 40m
+        eval_time: 110m
+        exp_alerts: []
+      - alertname: OncallSchedulerCronJobFailed
+        eval_time: 130m
         exp_alerts:
           - exp_labels:
               area: platform
@@ -61,16 +71,69 @@ tests:
               topic: oncall
             exp_annotations:
               description: "The last run of CronJob oncall-scheduler/scheduler-1 did not succeed."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/oncall-scheduler-cronjob-failed/?INSTALLATION=testinst&CLUSTER=testinst"
+  # An hourly CronJob fails one run, and the next run succeeds.
+  - interval: 1m
+    input_series:
+      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="calendar-sync", label_app_kubernetes_io_name="area-oncall-scheduler", label_application_giantswarm_io_team="atlas"}'
+        values: "1+0x240"
+      - series: 'kube_cronjob_created{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="calendar-sync"}'
+        values: "100+0x240"
+      - series: 'kube_cronjob_status_last_schedule_time{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="calendar-sync"}'
+        values: "1000+0x60 4600+0x60 8200+0x60 11800+0x57"
+      - series: 'kube_cronjob_status_last_successful_time{cluster_id="testinst", installation="testinst", namespace="oncall-scheduler", cronjob="calendar-sync"}'
+        values: "1060+0x121 8260+0x60 11860+0x57"
+    alert_rule_test:
+      - alertname: OncallSchedulerCronJobFailed
+        eval_time: 110m
+        exp_alerts: []
+      - alertname: OncallSchedulerCronJobFailed
+        eval_time: 200m
+        exp_alerts: []
+  # Two kube-state-metrics pods export the same CronJob during a rollout.
+  - interval: 1m
+    input_series:
+      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", namespace="oncall-scheduler", cronjob="scheduler-2", pod="kube-state-metrics-a", label_app_kubernetes_io_name="area-oncall-scheduler", label_application_giantswarm_io_team="atlas"}'
+        values: "1+0x180"
+      - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", namespace="oncall-scheduler", cronjob="scheduler-2", pod="kube-state-metrics-b", label_app_kubernetes_io_name="area-oncall-scheduler", label_application_giantswarm_io_team="atlas"}'
+        values: "1+0x180"
+      - series: 'kube_cronjob_created{cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", namespace="oncall-scheduler", cronjob="scheduler-2", pod="kube-state-metrics-a"}'
+        values: "100+0x180"
+      - series: 'kube_cronjob_created{cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", namespace="oncall-scheduler", cronjob="scheduler-2", pod="kube-state-metrics-b"}'
+        values: "100+0x180"
+      - series: 'kube_cronjob_status_last_schedule_time{cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", namespace="oncall-scheduler", cronjob="scheduler-2", pod="kube-state-metrics-a"}'
+        values: "1000+0x180"
+      - series: 'kube_cronjob_status_last_schedule_time{cluster_id="testinst", installation="testinst", pipeline="testing", provider="capa", namespace="oncall-scheduler", cronjob="scheduler-2", pod="kube-state-metrics-b"}'
+        values: "1000+0x180"
+    alert_rule_test:
+      - alertname: OncallSchedulerCronJobFailed
+        eval_time: 130m
+        exp_alerts:
+          - exp_labels:
+              area: platform
+              cancel_if_outside_working_hours: "true"
+              cluster_id: testinst
+              cronjob: scheduler-2
+              installation: testinst
+              namespace: oncall-scheduler
+              pipeline: testing
+              provider: capa
+              severity: notify
+              team: atlas
+              topic: oncall
+            exp_annotations:
+              description: "The last run of CronJob oncall-scheduler/scheduler-2 did not succeed."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/oncall-scheduler-cronjob-failed/?INSTALLATION=testinst&CLUSTER=testinst"
   # A failing CronJob of another app does not alert.
   - interval: 1m
     input_series:
       - series: 'kube_cronjob_labels{cluster_id="testinst", installation="testinst", namespace="default", cronjob="other", label_app_kubernetes_io_name="other-app", label_application_giantswarm_io_team="atlas"}'
-        values: "1+0x60"
+        values: "1+0x180"
       - series: 'kube_cronjob_created{cluster_id="testinst", installation="testinst", namespace="default", cronjob="other"}'
-        values: "100+0x60"
+        values: "100+0x180"
       - series: 'kube_cronjob_status_last_schedule_time{cluster_id="testinst", installation="testinst", namespace="default", cronjob="other"}'
-        values: "1000+0x60"
+        values: "1000+0x180"
     alert_rule_test:
       - alertname: OncallSchedulerCronJobFailed
-        eval_time: 40m
+        eval_time: 130m
         exp_alerts: []

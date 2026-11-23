@@ -208,20 +208,24 @@ spec:
         topic: envoy-gateway
     - alert: EnvoyProxyOAuth2SecretInitFetchTimeout
       annotations:
-        description: '{{`Envoy proxy {{ $labels.pod }} timed out fetching OAuth2 secret {{ $labels.envoy_xds_resource_name }} over SDS; OIDC authentication fails until the pod is restarted.`}}'
+        description: '{{`Envoy proxy {{ $labels.pod }} timed out fetching {{ $value }} OAuth2 secret(s) over SDS; OIDC authentication on the affected routes can fail until the secrets arrive or the pod is restarted.`}}'
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
       # Same latching-counter handling as EnvoyProxySDSInitFetchTimeout above, including the
       # on(...) guard that drops the 2h hold once the affected pod is gone.
+      # count without(envoy_xds_resource_name): one alert per pod, whose value is the number of
+      # affected secrets. A rollout times out dozens of OAuth2 secrets on every proxy at once.
       expr: |
-        max_over_time(
-          (
-            increase(
-              envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", envoy_xds_resource_name=~"oauth2/.*"}[15m]
-            ) > 0
-          )[2h:1m]
+        count without (envoy_xds_resource_name) (
+          max_over_time(
+            (
+              increase(
+                envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system", envoy_xds_resource_name=~"oauth2/.*"}[15m]
+              ) > 0
+            )[2h:1m]
+          )
+          and on(installation, cluster_id, namespace, pod)
+            envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system"}
         )
-        and on(installation, cluster_id, namespace, pod)
-          envoy_sds_init_fetch_timeout{namespace="envoy-gateway-system"}
       for: 5m
       labels:
         area: platform
@@ -269,28 +273,77 @@ spec:
         topic: envoy-gateway
     - alert: EnvoyProxyConfigUpdateRejected
       annotations:
-        description: '{{`Envoy proxy {{ $labels.pod }} rejected a configuration update in the last 15m and keeps serving its previous configuration.`}}'
-        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}`}}'
+        description: '{{`Envoy proxy {{ $labels.pod }} rejected a configuration update for {{ $value }} resource(s) in the last 2h. Check whether it has converged since.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}#envoyproxyconfigupdaterejected`}}'
       # Same latching-counter handling as EnvoyProxySDSInitFetchTimeout: the *_update_rejected counters
-      # never decrease until the pod restarts, so a bare `> 0` would keep paging for a rejection that
+      # never decrease until the pod restarts, so a bare `> 0` would keep firing for a rejection that
       # happened days ago. increase(...[15m]) > 0 catches the rejection as it happens and
-      # max_over_time(...[2h:1m]) holds the alert for 2h, since a rejected config does not heal on its
-      # own while the counter stays static. Do not simplify this back to `> 0`.
+      # max_over_time(...[2h:1m]) holds the alert for 2h. Do not simplify this back to `> 0`.
       # `or` rather than a sum: a proxy that exports only some of the four counters (e.g. no SDS
       # resources) would make a sum-based expression evaluate to nothing.
+      # count without(envoy_xds_resource_name): one rejected SDS update NACKs every SDS subscription on
+      # the stream, so a per-resource alert fans out into dozens. One alert per pod instead, whose
+      # value is the number of affected resources.
+      # notify, not page: a single rejection usually converges on its own within minutes (for example
+      # during a customer rollout that recreates TLS Secrets). EnvoyProxyConfigUpdateRejectedRepeatedly
+      # pages when the proxy keeps rejecting updates.
       expr: |
-        max_over_time(
-          (
-            increase(envoy_listener_manager_lds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
-            or increase(envoy_cluster_manager_cds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
-            or increase(envoy_http_rds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
-            or increase(envoy_sds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
-          )[2h:1m]
+        count without (envoy_xds_resource_name) (
+          max_over_time(
+            (
+              increase(envoy_listener_manager_lds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
+              or increase(envoy_cluster_manager_cds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
+              or increase(envoy_http_rds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
+              or increase(envoy_sds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
+            )[2h:1m]
+          )
         )
       for: 5m
       labels:
         area: platform
         cancel_if_outside_working_hours: "true"
+        severity: notify
+        team: cabbage
+        topic: envoy-gateway
+    - alert: EnvoyProxyConfigUpdateRejectedRepeatedly
+      annotations:
+        description: '{{`Envoy proxy {{ $labels.pod }} has kept rejecting configuration updates for more than 30m and serves an outdated configuration.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}#envoyproxyconfigupdaterejected`}}'
+      # No 2h hold here: increase(...[15m]) > 0 stays true for 15m after a rejection, so `for: 30m`
+      # only fires when new rejections keep coming, i.e. the controller keeps pushing and the proxy
+      # keeps refusing. A one-off rejection stays with the notify alert above.
+      expr: |
+        count without (envoy_xds_resource_name) (
+          increase(envoy_listener_manager_lds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
+          or increase(envoy_cluster_manager_cds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
+          or increase(envoy_http_rds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
+          or increase(envoy_sds_update_rejected{namespace="envoy-gateway-system"}[15m]) > 0
+        )
+      for: 30m
+      labels:
+        area: platform
+        cancel_if_outside_working_hours: "true"
         severity: page
+        team: cabbage
+        topic: envoy-gateway
+    - alert: EnvoyProxyCrashed
+      annotations:
+        description: '{{`Envoy proxy {{ $labels.pod }} crashed with exit code {{ $value }} (134 = abort, 139 = segmentation fault). This is a defect in Envoy or Envoy Gateway: keep the log of the crashed container for an upstream report.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/envoy-gateway/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}&NAMESPACE={{ $labels.namespace }}#envoyproxyconfigupdaterejected`}}'
+      # A proxy that crashes and comes back within seconds does not trigger
+      # EnvoyProxyDeploymentNotSatisfied (<=50% available for 10m), so the crash is otherwise silent.
+      # Only abort (134) and segfault (139): OOM and liveness kills (137) have their own alerts.
+      expr: |
+        (
+          kube_pod_container_status_last_terminated_exitcode{namespace="envoy-gateway-system", container="envoy"} == 134
+          or kube_pod_container_status_last_terminated_exitcode{namespace="envoy-gateway-system", container="envoy"} == 139
+        )
+        and on(installation, cluster_id, namespace, pod, container)
+          increase(kube_pod_container_status_restarts_total{namespace="envoy-gateway-system", container="envoy"}[1h]) > 0
+      labels:
+        area: platform
+        cancel_if_kube_state_metrics_down: "true"
+        cancel_if_outside_working_hours: "true"
+        severity: notify
         team: cabbage
         topic: envoy-gateway

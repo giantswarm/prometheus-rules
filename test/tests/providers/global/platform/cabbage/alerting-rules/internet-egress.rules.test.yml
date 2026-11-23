@@ -3,10 +3,12 @@ rule_files:
   - internet-egress.rules.yml
 
 tests:
-  # One availability zone loses egress: a stable fraction of the cluster failing, sustained, while the rest
-  # stays healthy. 3 of 8 probes = 37.5%, which is what one zone of three looks like.
+  # One availability zone loses egress on a cluster whose exporter only probes http-giantswarm: a stable fraction
+  # of the cluster failing, sustained, while the rest stays healthy. 3 of 8 probes = 37.5%, which is what one zone
+  # of three looks like. A node that probes a single target has to fail only that one to count.
   # http-irsawebhook is an internal probe (irsa-servicemonitors) served by the same exporter; it fails on every
-  # node here and must never appear in the alerts - only the egress-*/http-giantswarm targets may fire.
+  # node here and must never count as internet egress.
+  # The target alert stays quiet while the page is pending or firing.
   - interval: 1m
     input_series:
       - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
@@ -30,7 +32,6 @@ tests:
       - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-irsawebhook", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
         values: "0x60"
     alert_rule_test:
-      # not yet firing before `for: 15m` has elapsed
       - alertname: ClusterInternetEgressUnavailable
         eval_time: 10m
         exp_alerts: []
@@ -38,7 +39,7 @@ tests:
         eval_time: 30m
         exp_alerts:
           - exp_annotations:
-              description: "37.5% of nodes on myinstall/myinstall cannot reach http-giantswarm. On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it."
+              description: "37.5% of nodes on myinstall/myinstall cannot reach two or more of their internet egress probe targets (or any, where a node probes fewer than two). On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
             exp_labels:
               alertname: "ClusterInternetEgressUnavailable"
@@ -53,9 +54,14 @@ tests:
               pipeline: "stable"
               provider: "$provider"
               severity: "page"
-              target: "http-giantswarm"
               team: "cabbage"
               topic: "network"
+      - alertname: ClusterInternetEgressTargetUnreachable
+        eval_time: 10m
+        exp_alerts: []
+      - alertname: ClusterInternetEgressTargetUnreachable
+        eval_time: 30m
+        exp_alerts: []
 
   # Whole cluster loses egress - must page just the same.
   - interval: 1m
@@ -81,7 +87,7 @@ tests:
         eval_time: 30m
         exp_alerts:
           - exp_annotations:
-              description: "100% of nodes on myinstall/myinstall cannot reach http-giantswarm. On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it."
+              description: "100% of nodes on myinstall/myinstall cannot reach two or more of their internet egress probe targets (or any, where a node probes fewer than two). On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
             exp_labels:
               alertname: "ClusterInternetEgressUnavailable"
@@ -96,9 +102,11 @@ tests:
               pipeline: "stable"
               provider: "$provider"
               severity: "page"
-              target: "http-giantswarm"
               team: "cabbage"
               topic: "network"
+      - alertname: ClusterInternetEgressTargetUnreachable
+        eval_time: 30m
+        exp_alerts: []
 
   # Noise case. Measured over 30 days on two installations, the normal background is isolated single-node
   # probe failures peaking at 17% of a cluster. 1 of 8 = 12.5% must stay quiet.
@@ -122,6 +130,9 @@ tests:
         values: "1x60"
     alert_rule_test:
       - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts: []
+      - alertname: ClusterInternetEgressTargetUnreachable
         eval_time: 30m
         exp_alerts: []
 
@@ -149,73 +160,7 @@ tests:
       - alertname: ClusterInternetEgressUnavailable
         eval_time: 30m
         exp_alerts: []
-
-  # One domain blocked on every node while another stays reachable - the allowlist-change shape from the
-  # incident. Exactly one alert must fire, naming the blocked target, and the healthy target must stay quiet.
-  - interval: 1m
-    input_series:
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
-        values: "0x60"
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
-        values: "0x60"
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
-        values: "0x60"
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
-        values: "0x60"
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
-        values: "1x60"
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
-        values: "1x60"
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
-        values: "1x60"
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="http-giantswarm", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
-        values: "1x60"
-    alert_rule_test:
-      - alertname: ClusterInternetEgressUnavailable
-        eval_time: 30m
-        exp_alerts:
-          - exp_annotations:
-              description: "100% of nodes on myinstall/myinstall cannot reach egress-github. On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it."
-              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
-            exp_labels:
-              alertname: "ClusterInternetEgressUnavailable"
-              area: platform
-              cancel_if_cluster_has_no_workers: "true"
-              cancel_if_metrics_broken: "true"
-              cancel_if_monitoring_agent_down: "true"
-              cancel_if_outside_working_hours: "false"
-              cluster_id: "myinstall"
-              cluster_type: "management_cluster"
-              installation: "myinstall"
-              pipeline: "stable"
-              provider: "$provider"
-              severity: "page"
-              target: "egress-github"
-              team: "cabbage"
-              topic: "network"
-
-  # Single-node background noise on one of the additional targets must stay quiet, same as for
-  # http-giantswarm. 1 of 8 = 12.5%.
-  - interval: 1m
-    input_series:
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
-        values: "0x60"
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
-        values: "1x60"
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
-        values: "1x60"
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
-        values: "1x60"
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-4"}'
-        values: "1x60"
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-5"}'
-        values: "1x60"
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-6"}'
-        values: "1x60"
-      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-7"}'
-        values: "1x60"
-    alert_rule_test:
-      - alertname: ClusterInternetEgressUnavailable
+      - alertname: ClusterInternetEgressTargetUnreachable
         eval_time: 30m
         exp_alerts: []
 
@@ -242,6 +187,425 @@ tests:
       - alertname: ClusterInternetEgressUnavailable
         eval_time: 30m
         exp_alerts: []
+      - alertname: ClusterInternetEgressTargetUnreachable
+        eval_time: 30m
+        exp_alerts: []
+
+  # One availability zone loses egress on a cluster with the egress- targets: the nodes behind the dead path
+  # fail every target. 3 of 8 nodes = 37.5% pages once for the cluster, not once per target, and the target
+  # alert stays quiet.
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-4"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-5"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-6"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-7"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-4"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-5"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-6"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-7"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-4"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-5"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-6"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-7"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts:
+          - exp_annotations:
+              description: "37.5% of nodes on myinstall/myinstall cannot reach two or more of their internet egress probe targets (or any, where a node probes fewer than two). On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
+            exp_labels:
+              alertname: "ClusterInternetEgressUnavailable"
+              area: platform
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_metrics_broken: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "false"
+              cluster_id: "myinstall"
+              cluster_type: "management_cluster"
+              installation: "myinstall"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "page"
+              team: "cabbage"
+              topic: "network"
+      - alertname: ClusterInternetEgressTargetUnreachable
+        eval_time: 30m
+        exp_alerts: []
+
+  # A third-party outage: github.com times out on every node while the other egress targets stay reachable -
+  # the shape of the 2026-11-08 GitHub outage that paged 50 times on 10 installations (giantswarm/giantswarm#39086),
+  # and of the Great Firewall on China installations. It must not page; the target alert notifies instead.
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts: []
+      - alertname: ClusterInternetEgressTargetUnreachable
+        eval_time: 30m
+        exp_alerts:
+          - exp_annotations:
+              description: "100% of nodes on myinstall/myinstall cannot reach egress-github, while the cluster's other internet egress targets are reachable. Either the destination itself is down, or a firewall or proxy blocks this domain."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
+            exp_labels:
+              alertname: "ClusterInternetEgressTargetUnreachable"
+              area: platform
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_metrics_broken: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "myinstall"
+              cluster_type: "management_cluster"
+              installation: "myinstall"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "notify"
+              target: "egress-github"
+              team: "cabbage"
+              topic: "network"
+
+  # An allowlist-style firewall change blocks one domain on every node while the others stay reachable - the
+  # shape of giantswarm/giantswarm#33409. Exactly one target alert notifies, naming the blocked target. Nothing
+  # pages: what the blocked domain breaks pages through its own alerts.
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts: []
+      - alertname: ClusterInternetEgressTargetUnreachable
+        eval_time: 30m
+        exp_alerts:
+          - exp_annotations:
+              description: "100% of nodes on myinstall/myinstall cannot reach egress-registry, while the cluster's other internet egress targets are reachable. Either the destination itself is down, or a firewall or proxy blocks this domain."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
+            exp_labels:
+              alertname: "ClusterInternetEgressTargetUnreachable"
+              area: platform
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_metrics_broken: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "myinstall"
+              cluster_type: "management_cluster"
+              installation: "myinstall"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "notify"
+              target: "egress-registry"
+              team: "cabbage"
+              topic: "network"
+
+  # Two targets unreachable on the same nodes while a third works - a proxy or firewall that lets only part of
+  # the internet through. Two failing targets per node pages.
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts:
+          - exp_annotations:
+              description: "100% of nodes on myinstall/myinstall cannot reach two or more of their internet egress probe targets (or any, where a node probes fewer than two). On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
+            exp_labels:
+              alertname: "ClusterInternetEgressUnavailable"
+              area: platform
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_metrics_broken: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "false"
+              cluster_id: "myinstall"
+              cluster_type: "management_cluster"
+              installation: "myinstall"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "page"
+              team: "cabbage"
+              topic: "network"
+      - alertname: ClusterInternetEgressTargetUnreachable
+        eval_time: 30m
+        exp_alerts: []
+
+  # Two targets failing on different nodes are two unrelated problems, not a lost egress path: no node fails
+  # two targets, so nothing pages, even though each target alone is above the threshold and notifies.
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-4"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-5"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-6"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-github", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-7"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-4"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-5"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-6"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-7"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-4"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-5"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-6"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-grafana", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-7"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts: []
+      - alertname: ClusterInternetEgressTargetUnreachable
+        eval_time: 30m
+        exp_alerts:
+          - exp_annotations:
+              description: "25% of nodes on myinstall/myinstall cannot reach egress-github, while the cluster's other internet egress targets are reachable. Either the destination itself is down, or a firewall or proxy blocks this domain."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
+            exp_labels:
+              alertname: "ClusterInternetEgressTargetUnreachable"
+              area: platform
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_metrics_broken: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "myinstall"
+              cluster_type: "management_cluster"
+              installation: "myinstall"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "notify"
+              target: "egress-github"
+              team: "cabbage"
+              topic: "network"
+          - exp_annotations:
+              description: "25% of nodes on myinstall/myinstall cannot reach egress-registry, while the cluster's other internet egress targets are reachable. Either the destination itself is down, or a firewall or proxy blocks this domain."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
+            exp_labels:
+              alertname: "ClusterInternetEgressTargetUnreachable"
+              area: platform
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_metrics_broken: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "true"
+              cluster_id: "myinstall"
+              cluster_type: "management_cluster"
+              installation: "myinstall"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "notify"
+              target: "egress-registry"
+              team: "cabbage"
+              topic: "network"
+
+  # Single-node background noise on one of the egress- targets must stay quiet. 1 of 8 = 12.5%.
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-4"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-5"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-6"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-7"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts: []
+      - alertname: ClusterInternetEgressTargetUnreachable
+        eval_time: 30m
+        exp_alerts: []
+
+  # An installation that disabled all egress- targets but one is treated like the http-giantswarm fallback:
+  # that one target failing pages.
+  - interval: 1m
+    input_series:
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-0"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-1"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-2"}'
+        values: "0x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-3"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-4"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-5"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-6"}'
+        values: "1x60"
+      - series: 'probe_success{job="prometheus-blackbox-exporter", target="egress-registry", cluster_id="myinstall", cluster_type="management_cluster", installation="myinstall", pipeline="stable", provider="$provider", namespace="kube-system", pod="blackbox-7"}'
+        values: "1x60"
+    alert_rule_test:
+      - alertname: ClusterInternetEgressUnavailable
+        eval_time: 30m
+        exp_alerts:
+          - exp_annotations:
+              description: "37.5% of nodes on myinstall/myinstall cannot reach two or more of their internet egress probe targets (or any, where a node probes fewer than two). On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it."
+              runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=myinstall"
+            exp_labels:
+              alertname: "ClusterInternetEgressUnavailable"
+              area: platform
+              cancel_if_cluster_has_no_workers: "true"
+              cancel_if_metrics_broken: "true"
+              cancel_if_monitoring_agent_down: "true"
+              cancel_if_outside_working_hours: "false"
+              cluster_id: "myinstall"
+              cluster_type: "management_cluster"
+              installation: "myinstall"
+              pipeline: "stable"
+              provider: "$provider"
+              severity: "page"
+              team: "cabbage"
+              topic: "network"
+      - alertname: ClusterInternetEgressTargetUnreachable
+        eval_time: 30m
+        exp_alerts: []
 
   # A workload cluster gets the plain description, without the hint about
   # the CAPI controllers, which only run on management clusters.
@@ -256,7 +620,7 @@ tests:
         eval_time: 30m
         exp_alerts:
           - exp_annotations:
-              description: "50% of nodes on myinstall/mywc cannot reach http-giantswarm."
+              description: "50% of nodes on myinstall/mywc cannot reach two or more of their internet egress probe targets (or any, where a node probes fewer than two)."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=mywc"
             exp_labels:
               alertname: "ClusterInternetEgressUnavailable"
@@ -271,7 +635,6 @@ tests:
               pipeline: "stable"
               provider: "$provider"
               severity: "page"
-              target: "http-giantswarm"
               team: "cabbage"
               topic: "network"
 
@@ -287,7 +650,7 @@ tests:
         eval_time: 30m
         exp_alerts:
           - exp_annotations:
-              description: "50% of nodes on myinstall/mywc cannot reach http-giantswarm."
+              description: "50% of nodes on myinstall/mywc cannot reach two or more of their internet egress probe targets (or any, where a node probes fewer than two)."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=mywc"
             exp_labels:
               alertname: "ClusterInternetEgressUnavailable"
@@ -301,7 +664,6 @@ tests:
               pipeline: "stable"
               provider: "$provider"
               severity: "page"
-              target: "http-giantswarm"
               team: "cabbage"
               topic: "network"
 
@@ -338,6 +700,9 @@ tests:
       - alertname: ClusterInternetEgressUnavailable
         eval_time: 30m
         exp_alerts: []
+      - alertname: ClusterInternetEgressTargetUnreachable
+        eval_time: 30m
+        exp_alerts: []
 
   # The http-giantswarm fallback is decided per cluster. A workload cluster still on an exporter release without
   # egress- targets keeps paging on http-giantswarm, even though another cluster of the same installation has
@@ -361,7 +726,7 @@ tests:
         eval_time: 30m
         exp_alerts:
           - exp_annotations:
-              description: "100% of nodes on myinstall/oldwc cannot reach http-giantswarm."
+              description: "100% of nodes on myinstall/oldwc cannot reach two or more of their internet egress probe targets (or any, where a node probes fewer than two)."
               runbook_url: "https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION=myinstall&CLUSTER=oldwc"
             exp_labels:
               alertname: "ClusterInternetEgressUnavailable"
@@ -376,6 +741,8 @@ tests:
               pipeline: "stable"
               provider: "$provider"
               severity: "page"
-              target: "http-giantswarm"
               team: "cabbage"
               topic: "network"
+      - alertname: ClusterInternetEgressTargetUnreachable
+        eval_time: 30m
+        exp_alerts: []

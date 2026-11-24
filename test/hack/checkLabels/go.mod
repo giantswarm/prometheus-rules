@@ -11,7 +11,7 @@ require (
 	sigs.k8s.io/yaml v1.6.0
 )
 
-require github.com/prometheus/alertmanager v0.35.0
+require github.com/prometheus/alertmanager v0.35.1
 
 require (
 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b // indirect

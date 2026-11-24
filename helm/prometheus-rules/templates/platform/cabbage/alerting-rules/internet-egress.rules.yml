@@ -39,7 +39,7 @@ spec:
 # coverage: its `egress-` targets have to include real internet endpoints, or a loss of internet egress
 # goes unnoticed.
 #
-# Paging needs at least two targets to fail on the same node. Each target is a third party, and a single one
+# Paging needs at least two targets to fail on the same node. Most targets are third parties, and a single one
 # failing is far more often that third party's outage than ours: on 2026-11-08 a GitHub outage failed
 # `egress-github` on every installation and paged 50 times on 10 installations while egress worked
 # (giantswarm/giantswarm#39086), and the Great Firewall makes `egress-github` flap on China installations while
@@ -49,13 +49,18 @@ spec:
 # installation that disabled the others, or the `http-giantswarm` fallback) has to fail all of them, which
 # `clamp_max(..., 2)` expresses.
 #
-# A single unreachable target still matters: an allowlist-style firewall change can block one domain while the
-# others stay reachable - during the incident behind these alerts, www.giantswarm.io stayed green for three hours
-# while the cluster could not pull images (giantswarm/giantswarm#33409). ClusterInternetEgressTargetUnreachable
-# keeps the per-target signal, but as a working-hours notification: what a blocked domain breaks (image pulls,
-# Flux sources) pages through its own alerts, and a third-party outage is nothing an oncaller can fix at night.
+# `egress-registry` is the exception and pages on its own. It is Giant Swarm's own registry, every image we
+# deploy comes from it, and nothing else alerts when image pulls fail: there is no image pull alert, so a blocked
+# registry would otherwise surface only when one of our deployments needs a new image, and on workload clusters
+# not at all for customer workloads. That is the incident behind these alerts: www.giantswarm.io stayed green for
+# three hours while the cluster could not pull images (giantswarm/giantswarm#33409). The price is that an outage
+# of the registry itself pages on every installation, which is an outage we have to act on anyway.
+#
+# Any other single unreachable target still matters: an allowlist-style firewall change can block one domain
+# while the others stay reachable. ClusterInternetEgressTargetUnreachable keeps that per-target signal, as a
+# working-hours notification: a third-party outage is nothing an oncaller can fix at night.
 # It stays quiet while ClusterInternetEgressUnavailable is pending or firing for the cluster, so a real egress
-# loss does not notify once per target on top of the page.
+# loss or a blocked registry does not notify once per target on top of the page.
 #
 # The threshold is a fraction of a cluster's nodes, not `> 0`. Measured over 30 days on two installations, the
 # normal background is isolated single-node probe failures reaching at most 17% of a cluster, while a single
@@ -78,7 +83,7 @@ spec:
     - alert: ClusterInternetEgressUnavailable
       annotations:
         description: |-
-          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach two or more of their internet egress probe targets (or any, where a node probes fewer than two).{{ if eq $labels.cluster_type "management_cluster" }} On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it.{{ end }}`}}
+          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach the Giant Swarm registry, or two or more of their internet egress probe targets (or any, where a node probes fewer than two).{{ if eq $labels.cluster_type "management_cluster" }} On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it.{{ end }}`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         (
@@ -106,6 +111,10 @@ spec:
                   )
                 ),
                 2
+              )
+            or
+              count by (cluster_id, cluster_type, installation, pipeline, provider, namespace, pod) (
+                probe_success{job=~".*prometheus-blackbox-exporter.*", target="egress-registry"} == 0
               )
           )
           /
@@ -136,7 +145,7 @@ spec:
     - alert: ClusterInternetEgressTargetUnreachable
       annotations:
         description: |-
-          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach {{ $labels.target }}, while the cluster's other internet egress targets are reachable. Either the destination itself is down, or a firewall or proxy blocks this domain.`}}
+          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach {{ $labels.target }}. Either the destination itself is down, or a firewall or proxy blocks this domain.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         (

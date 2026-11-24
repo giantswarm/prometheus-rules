@@ -11,7 +11,7 @@ spec:
   - name: internet-egress
     rules:
 #
-# ClusterInternetEgressUnavailable
+# ClusterInternetEgressUnavailable / ClusterInternetEgressTargetUnreachable
 #
 # net-exporter cannot detect loss of internet egress: its DNS check is sent to the CoreDNS ClusterIP, so it
 # measures CoreDNS's egress rather than each node's, and if the CoreDNS pods sit in a healthy zone every node
@@ -21,19 +21,13 @@ spec:
 # prometheus-blackbox-exporter does have the signal: it runs as a DaemonSet probing external HTTPS endpoints
 # from every node, so it has per-node - and therefore per-availability-zone - coverage.
 #
-# The rule covers every external domain the exporter probes, and fires per target. An allowlist-style firewall
-# change can block a single domain while the others stay reachable - during the incident behind this alert,
-# www.giantswarm.io stayed green for three hours while the cluster could not pull images - so one representative
-# endpoint proves egress is broken when it fails, but never proves egress is healthy (giantswarm/giantswarm#33409).
-# Targets absent on a cluster (older prometheus-blackbox-exporter releases only probe http-giantswarm) simply
-# produce no series and cannot fire.
-#
-# The selector matches the `egress-` name prefix rather than an explicit domain list, so per-installation
-# overrides of prometheus-blackbox-exporter's `serviceMonitor.externalTargets` (regional or customer-specific
-# domains) are covered without touching this rule. It deliberately does NOT match `http-.*`: the exporter also
-# serves internal probes carrying that shape (`http-api`, and `http-irsawebhook` from irsa-servicemonitors),
-# which must never page as internet egress. `http-giantswarm` predates the prefix convention and keeps its name
-# so fleets on older exporter releases stay covered.
+# Both rules cover every external domain the exporter probes. The selector matches the `egress-` name prefix
+# rather than an explicit domain list, so per-installation overrides of prometheus-blackbox-exporter's
+# `serviceMonitor.externalTargets` (regional or customer-specific domains) are covered without touching these
+# rules. It deliberately does NOT match `http-.*`: the exporter also serves internal probes carrying that shape
+# (`http-api`, and `http-irsawebhook` from irsa-servicemonitors), which must never alert as internet egress.
+# `http-giantswarm` predates the prefix convention and keeps its name so fleets on older exporter releases stay
+# covered.
 #
 # `http-giantswarm` only counts on clusters that have no `egress-` target. Where the `egress-` targets exist they
 # cover the domains a cluster actually needs, and www.giantswarm.io is not one of them: proxies and customer
@@ -45,28 +39,113 @@ spec:
 # coverage: its `egress-` targets have to include real internet endpoints, or a loss of internet egress
 # goes unnoticed.
 #
-# The threshold is a fraction of a cluster's probes, not `> 0`. Measured over 30 days on two installations, the
+# Paging needs at least two targets to fail on the same node. Most targets are third parties, and a single one
+# failing is far more often that third party's outage than ours: on 2026-11-08 a GitHub outage failed
+# `egress-github` on every installation and paged 50 times on 10 installations while egress worked
+# (giantswarm/giantswarm#39086), and the Great Firewall makes `egress-github` flap on China installations while
+# the other targets stay green. The failures are counted per node (one blackbox pod per node) before they are
+# counted per cluster, because a lost egress path fails every target on the nodes behind it, while two targets
+# failing on two different nodes are two unrelated blips. A node that probes fewer than two targets (an
+# installation that disabled the others, or the `http-giantswarm` fallback) has to fail all of them, which
+# `clamp_max(..., 2)` expresses.
+#
+# `egress-registry` is the exception and pages on its own. It is Giant Swarm's own registry, every image we
+# deploy comes from it, and nothing else alerts when image pulls fail: there is no image pull alert, so a blocked
+# registry would otherwise surface only when one of our deployments needs a new image, and on workload clusters
+# not at all for customer workloads. That is the incident behind these alerts: www.giantswarm.io stayed green for
+# three hours while the cluster could not pull images (giantswarm/giantswarm#33409). The price is that an outage
+# of the registry itself pages on every installation, which is an outage we have to act on anyway.
+#
+# Any other single unreachable target still matters: an allowlist-style firewall change can block one domain
+# while the others stay reachable. ClusterInternetEgressTargetUnreachable keeps that per-target signal, as a
+# working-hours notification: a third-party outage is nothing an oncaller can fix at night.
+# It stays quiet while ClusterInternetEgressUnavailable is pending or firing for the cluster, so a real egress
+# loss or a blocked registry does not notify once per target on top of the page.
+#
+# The threshold is a fraction of a cluster's nodes, not `> 0`. Measured over 30 days on two installations, the
 # normal background is isolated single-node probe failures reaching at most 17% of a cluster, while a single
 # availability zone of two or three is 33-50%, so `>= 0.2` separates them cleanly.
 #
 # There is deliberately no kube_pod_info/kube_node_labels join here to resolve the availability zone. The zone
-# is useful context, but joining for it makes this rule inherit kube-state-metrics' availability, and
+# is useful context, but joining for it makes these rules inherit kube-state-metrics' availability, and
 # kube_pod_info emits duplicate series for a pod while it is churning - which makes the join fail with
 # `found duplicate series` rather than return a value. A rule that errors cannot fire, and node churn is
 # exactly what a loss of egress causes. The runbook carries the zone-attribution query instead.
 #
-# `cancel_if_kube_state_metrics_down` is absent for the same reason: this rule does not read kube-state-metrics,
-# so kube-state-metrics being down must not suppress it.
+# `cancel_if_kube_state_metrics_down` is absent for the same reason: these rules do not read kube-state-metrics,
+# so kube-state-metrics being down must not suppress them.
 #
 # On a management cluster the description names the CAPI controllers. If they run in a zone that lost egress,
 # the MC loses its connection to workload clusters and cannot rotate their bootstrap tokens, so they cannot add
-# nodes. The oncaller should see that before opening the runbook. `cluster_type` is kept in both `count by` clauses
-# so the description can branch on it, which also makes it an alert label.
+# nodes. The oncaller should see that before opening the runbook. `cluster_type` is kept in every `count by`
+# clause so the description can branch on it, which also makes it an alert label.
 #
     - alert: ClusterInternetEgressUnavailable
       annotations:
         description: |-
-          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach {{ $labels.target }}.{{ if eq $labels.cluster_type "management_cluster" }} On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it.{{ end }}`}}
+          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach the Giant Swarm registry, or two or more of their internet egress probe targets (or any, where a node probes fewer than two).{{ if eq $labels.cluster_type "management_cluster" }} On a management cluster, if one zone is affected, first check whether the CAPI controllers run in it.{{ end }}`}}
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      expr: |
+        (
+          count by (cluster_id, cluster_type, installation, pipeline, provider) (
+              count by (cluster_id, cluster_type, installation, pipeline, provider, namespace, pod) (
+                (
+                  probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+                  or
+                  (
+                    probe_success{job=~".*prometheus-blackbox-exporter.*", target="http-giantswarm"}
+                    unless on (cluster_id, installation)
+                    probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+                  )
+                ) == 0
+              )
+            >= on (cluster_id, cluster_type, installation, pipeline, provider, namespace, pod)
+              clamp_max(
+                count by (cluster_id, cluster_type, installation, pipeline, provider, namespace, pod) (
+                  probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+                  or
+                  (
+                    probe_success{job=~".*prometheus-blackbox-exporter.*", target="http-giantswarm"}
+                    unless on (cluster_id, installation)
+                    probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+                  )
+                ),
+                2
+              )
+            or
+              count by (cluster_id, cluster_type, installation, pipeline, provider, namespace, pod) (
+                probe_success{job=~".*prometheus-blackbox-exporter.*", target="egress-registry"} == 0
+              )
+          )
+          /
+          count by (cluster_id, cluster_type, installation, pipeline, provider) (
+            count by (cluster_id, cluster_type, installation, pipeline, provider, namespace, pod) (
+              probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+              or
+              (
+                probe_success{job=~".*prometheus-blackbox-exporter.*", target="http-giantswarm"}
+                unless on (cluster_id, installation)
+                probe_success{job=~".*prometheus-blackbox-exporter.*", target=~"egress-.+"}
+              )
+            )
+          )
+        ) >= 0.2
+      for: 15m
+      labels:
+        area: platform
+        # Pages 24/7 on purpose: a cluster that cannot reach the internet cannot pull images, reconcile Flux,
+        # or receive the mitigation an oncaller is applying.
+        cancel_if_outside_working_hours: "false"
+        cancel_if_cluster_has_no_workers: "true"
+        cancel_if_metrics_broken: "true"
+        cancel_if_monitoring_agent_down: "true"
+        severity: page
+        team: cabbage
+        topic: network
+    - alert: ClusterInternetEgressTargetUnreachable
+      annotations:
+        description: |-
+          {{`{{ $value | humanizePercentage }} of nodes on {{ $labels.installation }}/{{ $labels.cluster_id }} cannot reach {{ $labels.target }}. Either the destination itself is down, or a firewall or proxy blocks this domain.`}}
         runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/internet-egress-unavailable/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
       expr: |
         (
@@ -94,15 +173,15 @@ spec:
             )
           )
         ) >= 0.2
+        unless on (cluster_id, installation)
+        ALERTS{alertname="ClusterInternetEgressUnavailable"}
       for: 15m
       labels:
         area: platform
-        # Pages 24/7 on purpose: a cluster that cannot reach the internet cannot pull images, reconcile Flux,
-        # or receive the mitigation an oncaller is applying.
-        cancel_if_outside_working_hours: "false"
+        cancel_if_outside_working_hours: "true"
         cancel_if_cluster_has_no_workers: "true"
         cancel_if_metrics_broken: "true"
         cancel_if_monitoring_agent_down: "true"
-        severity: page
+        severity: notify
         team: cabbage
         topic: network

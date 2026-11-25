@@ -27,7 +27,7 @@ tests:
         eval_time: 190m
         exp_alerts:
           - exp_labels:
-              area: platform
+              area: kaas
               cancel_if_outside_working_hours: "true"
               cluster_id: testinst
               cronjob: scheduler-0
@@ -60,7 +60,7 @@ tests:
         eval_time: 130m
         exp_alerts:
           - exp_labels:
-              area: platform
+              area: kaas
               cancel_if_outside_working_hours: "true"
               cluster_id: testinst
               cronjob: scheduler-1
@@ -110,7 +110,7 @@ tests:
         eval_time: 130m
         exp_alerts:
           - exp_labels:
-              area: platform
+              area: kaas
               cancel_if_outside_working_hours: "true"
               cluster_id: testinst
               cronjob: scheduler-2

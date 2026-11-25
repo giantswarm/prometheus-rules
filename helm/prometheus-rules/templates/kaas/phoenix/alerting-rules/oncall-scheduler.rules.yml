@@ -41,7 +41,7 @@ spec:
       # a row.
       for: 2h
       labels:
-        area: platform
+        area: kaas
         cancel_if_outside_working_hours: "true"
         severity: page
         team: phoenix

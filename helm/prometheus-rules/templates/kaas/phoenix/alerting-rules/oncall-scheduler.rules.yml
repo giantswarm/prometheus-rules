@@ -1,0 +1,48 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    {{- include "labels.common" . | nindent 4 }}
+  name: oncall-scheduler.rules
+  namespace: {{ .Values.namespace  }}
+spec:
+  groups:
+  - name: oncall-scheduler
+    rules:
+    - alert: OncallSchedulerCronJobFailed
+      annotations:
+        description: '{{`The last run of CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} did not succeed.`}}'
+        runbook_url: '{{`https://intranet.giantswarm.io/docs/support-and-ops/runbooks/oncall-scheduler-cronjob-failed/?INSTALLATION={{ $labels.installation }}&CLUSTER={{ $labels.cluster_id }}`}}'
+      # Phoenix owns the scheduler and the credentials that the schedulers of
+      # all teams share, so the alert pages Phoenix for every team's scheduler.
+      # A CronJob that never succeeded is compared against its creation time.
+      # Failed Jobs stay in the Job history after a later run succeeds, so the
+      # alert compares the CronJob timestamps to resolve on the next success.
+      # The max aggregations drop the kube-state-metrics pod labels: two
+      # kube-state-metrics pods overlap during a rollout, and the joins need
+      # one series per CronJob.
+      expr: |
+        max by (cluster_id, cluster_type, customer, installation, organization, pipeline, provider, region, namespace, cronjob) (
+          kube_cronjob_status_last_schedule_time
+        )
+        * on (cluster_id, installation, namespace, cronjob) group_left ()
+        max by (cluster_id, installation, namespace, cronjob) (
+          kube_cronjob_labels{label_app_kubernetes_io_name="area-oncall-scheduler"}
+        )
+        > on (cluster_id, installation, namespace, cronjob) group_left ()
+        max by (cluster_id, installation, namespace, cronjob) (
+          kube_cronjob_status_last_successful_time
+          or
+          kube_cronjob_created
+        )
+      # A run in progress also has a schedule time after the last success.
+      # The scheduler chart stops a Job after 2h, so 2h never fires on a run
+      # in progress. On the hourly calendar sync, 2h needs two failed runs in
+      # a row.
+      for: 2h
+      labels:
+        area: kaas
+        cancel_if_outside_working_hours: "true"
+        severity: page
+        team: phoenix
+        topic: oncall
